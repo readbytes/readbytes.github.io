@@ -1,0 +1,782 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>Go for Beginners Error Handling</title>
+<link rel='shortcut icon' href='https://java2s.com/style/favicon.ico'>
+<link href="https://fonts.googleapis.com/css2?family=Merriweather&display=swap" rel="stylesheet" />
+<link href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+
+
+<style>
+body {
+  background: #f8f7f5;
+  font-family: 'Merriweather', serif;
+  color: #333;
+  margin: 0;
+  padding: 2rem 1rem;
+  font-size: 15px; /* smaller body font */
+  line-height: 1.5;
+}
+
+.container {
+  max-width: 700px;
+  margin: 0 auto;
+  background: white;
+  padding: 1rem 2rem;
+  box-shadow: 0 0 15px rgba(0,0,0,0.1);
+}
+.book-title-chapter {
+  font-family: 'Merriweather', serif;
+  font-size: 2rem;
+  font-weight: bold;
+  text-align: center;
+  margin-bottom: 2rem;
+  border-bottom: 2px solid #ccc;
+  padding-bottom: 0.5rem;
+  color: #2c3e50;
+}
+
+.book-subtitle-chapter {
+  text-align: center;
+  font-size: 1rem;
+  color: #666;
+  margin-top: -1rem;
+  margin-bottom: 2rem;
+}
+
+    .related-books {
+      margin-top: 40px;
+    }
+
+    .related-books h2 {
+      font-size: 22px;
+      margin-bottom: 20px;
+      border-bottom: 2px solid #eee;
+      padding-bottom: 8px;
+      color: #333;
+    }
+    .related-book-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+h1, h2, h3 {
+  font-weight: 600;
+  margin-top: 2.5rem;
+  margin-bottom: 1rem;
+  line-height: 1.2;
+}
+
+h1 {
+  font-size: 1.8rem; /* smaller heading */
+}
+
+h2 {
+  font-size: 1.4rem;
+}
+
+h3 {
+  font-size: 1.2rem;
+}
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-family: sans-serif;
+      font-size: 1em;
+      margin: 1em 0;
+    }
+
+    th, td {
+      border: 1px solid #cccccc;
+      padding: 0.6em 1em;
+      text-align: left;
+    }
+
+    th {
+      background-color: #f2f2f2;
+      font-weight: bold;
+    }
+
+    tr:nth-child(even) {
+      background-color: #fafafa;
+    }
+
+    /* Optional hover effect */
+    tr:hover {
+      background-color: #e6f7ff;
+    }
+ 
+a {
+  color: #555;
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+
+
+.code-block {
+    position: relative;
+    margin-bottom: 1em;
+}
+.copy-button {
+    background: transparent; 
+    color: white;
+
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    border: none;
+    padding: 4px 8px;
+    font-size: 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    z-index: 1;
+}
+
+.copy-button:hover {
+background-color: #0056b3;
+}
+.page-footer {
+  margin-top: 4rem;
+  padding: 1rem 0;
+  text-align: center;
+  font-size: 0.85rem;
+  color: #666;
+  border-top: 1px solid #ccc;
+  background-color: #fafafa;
+}
+.page-footer a {
+     color: #555;
+    text-decoration: none;
+  }
+  .page-footer a:hover {
+    text-decoration: underline;
+  }
+.chapter-navi-section {
+display: flex;
+justify-content: space-between;
+align-items: center;
+padding-bottom: 10px;
+}  
+
+.nav-link {
+  color: inherit;
+  text-decoration: none;
+  opacity: 0.5;
+  transition: opacity 0.3s ease, text-decoration 0.3s ease;
+}
+
+.nav-link:hover {
+  opacity: 0.9;
+  text-decoration: underline;
+}
+
+.prev {
+  text-align: left;
+}
+.toc-link {
+  text-align: center;
+}
+.next {
+  text-align: right;
+}
+.download-section {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2rem;
+  padding: 2rem 1rem;
+  max-width: 600px;
+  margin: 3rem auto;
+  background-color: #f9f9f9;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+}
+
+    .book-cover {
+      width: 130px;
+      height: 180px;
+      
+      background-size: cover; /* Ensures the image covers the entire div */
+      background-position: center; /* Centers the image */
+            
+      background: linear-gradient(145deg, #e0dede, #f9f9f9);
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 10px;
+      box-sizing: border-box;
+      position: relative;
+      font-family: 'Roboto', sans-serif;
+    }
+
+    .book-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 16px;
+      font-weight: 600;
+      color: #fff;
+      margin-bottom: 4px;
+    }
+
+    .book-subtitle {
+      font-size: 12px;
+      color: #aaa;
+      margin-bottom: 10px;
+    }
+
+    .series-name {
+      position: absolute;
+      top: 8px;
+      left: 8px;
+      font-size: 10px;
+      color: #fff;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-weight: bold;
+    }
+
+    .book-footer {
+      position: absolute;
+      bottom: 8px;
+      font-size: 10px;
+      color: #aaa;
+    }
+
+.download-info h2 {
+  margin: 0 0 0.5rem;
+  font-size: 1.2rem;
+}
+
+.format-label {
+  margin: 0 0 0.5rem;
+  font-size: 0.95rem;
+  color: #555;
+}
+
+.download-buttons {
+  display: flex;
+  gap: 1rem;
+}
+
+.download-button {
+  background-color: #4A90E2;
+  color: white;
+  padding: 0.5em 1.2em;
+  text-decoration: none;
+  border-radius: 25px;
+  font-size: 0.95rem;
+  transition: background-color 0.3s ease;
+}
+
+.download-button:hover {
+  background-color: #357ABD;
+}
+
+    code {
+ 
+      color: #d35400; 
+    }
+html {
+    scroll-behavior: smooth;
+}
+    .snippet-container {
+      overflow: hidden;    
+    }
+
+    .snippet-header {
+      background: #f0f0f0;
+      color: #333;
+      padding: 0.75rem 1rem;
+      cursor: pointer;
+      font-size: 1rem;
+    }
+
+    .snippet-body {
+      display: none;
+      font-family: monospace;
+    }
+
+    .snippet-container.open .snippet-body {
+      display: block;
+    }
+
+.CodeMirror {
+  border: 2px solid #ccc;
+  border-radius: 4px;
+  resize: vertical;
+}
+
+    button { padding: 0.5em 1em; background: green; color: white; border: none; cursor: pointer; }
+    button:hover { background: #1e7e34; }
+    .result_iframe { width:99%; height:200px; margin-top: 1em;  resize: both;border:1px solid #ccc;}        
+</style>
+</head>
+<body> 
+
+  <div class="container">
+    <div class = "chapter-navi-section">
+<a href="go-for-beginners-packages-and-modules.htm" class="nav-button prev">←</a>
+<a href='go-for-beginners.htm#error-handling' class="nav-button toc-link">Index</a>
+<a href="go-for-beginners-file-i-o-and-working-with-data.htm" class="nav-button next">→</a>
+</div>
+
+    <h1 class="book-title-chapter" id = 'top'>Error Handling</h1>
+    <h3 class="book-subtitle-chapter">Go for Beginners</h3>   
+    <!-- <h1 class ="chapter-title"></h1> -->
+    <h2 id='error-interface'>10.1 Error Interface</h2><p>Error handling is a fundamental part of writing robust Go programs. Unlike many languages that use exceptions, Go treats errors as <strong>values</strong>. This approach encourages explicit error checking and handling, improving code clarity and reliability.</p><h3 id="the-error-interface">The <code>error</code> Interface</h3><p>At the heart of Go’s error handling is the built-in <strong><code>error</code> interface</strong>, which is very simple:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-go">type error interface {
+    Error() string
+}</code></pre>
+</div><p>Any type that implements the <code>Error() string</code> method satisfies the <code>error</code> interface, making it an error type.</p><h3 id="errors-as-values">Errors as Values</h3><p>In Go, errors are just values that carry information about what went wrong. Functions typically return an <code>error</code> as their last return value to indicate success or failure:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-go">func ReadFile(filename string) ([]byte, error)</code></pre>
+</div><p>The caller checks the returned error to determine if the operation succeeded:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-go">data, err := ReadFile("file.txt")
+if err != nil {
+    // handle error
+}</code></pre>
+</div><h3 id="how-this-differs-from-exceptions">How This Differs from Exceptions</h3><ul>
+ <li>Go <strong>does not use exceptions</strong> or try/catch blocks for normal error handling.</li>
+ <li>This explicit pattern avoids hidden control flow and makes error handling more predictable.</li>
+ <li>Errors must be checked and handled consciously, which encourages writing safer code.</li>
+</ul><h3 id="standard-errors-and-checking">Standard Errors and Checking</h3><p>The Go standard library returns errors that implement the <code>error</code> interface. For example, the <code>os</code> package returns an error when a file cannot be opened:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-go">file, err := os.Open("nonexistent.txt")
+if err != nil {
+    fmt.Println("Error opening file:", err)
+}</code></pre>
+</div><p>Here, <code>err</code> is a value implementing <code>error</code> that describes the problem.</p><h3 id="example-handling-errors">Example: Handling Errors</h3><div class="code-block"><button class="copy-button" onclick="copyCode(this)">📋</button>
+ <pre><code class="language-go">package main
+
+import (
+    "errors"
+    "fmt"
+)
+
+// divide returns quotient and error if division by zero occurs
+func divide(a, b float64) (float64, error) {
+    if b == 0 {
+        return 0, errors.New("cannot divide by zero")
+    }
+    return a / b, nil
+}
+
+func main() {
+    result, err := divide(10, 0)
+    if err != nil {
+        fmt.Println("Error:", err)
+        return
+    }
+    fmt.Println("Result:", result)
+}</code></pre>
+</div><h3 id="summary">Summary</h3><ul>
+ <li>The <code>error</code> interface requires only the <code>Error() string</code> method.</li>
+ <li>Errors are values returned by functions, not exceptions.</li>
+ <li>Explicit error checking improves program safety and clarity.</li>
+ <li>Standard library functions return errors that you should always check.</li>
+</ul><div class = "chapter-navi-section">
+<a href="#top" class="nav-button prev">↑</a>
+<a href='go-for-beginners.htm#error-handling' class="nav-button toc-link">Index</a>
+<a href="#bottom" class="nav-button next">↓</a>
+</div>
+<h2 id='creating-custom-errors'>10.2 Creating Custom Errors</h2><p>While Go’s built-in errors created with <code>errors.New</code> or <code>fmt.Errorf</code> are sufficient for many cases, sometimes you need more context or additional information to make error handling more meaningful. This is where <strong>custom error types</strong> come in.</p><h3 id="why-use-custom-errors">Why Use Custom Errors?</h3><ul>
+ <li>To include <strong>extra details</strong> (like error codes, timestamps, or parameters).</li>
+ <li>To <strong>differentiate error types</strong> programmatically.</li>
+ <li>To provide <strong>more descriptive messages</strong> for debugging or logging.</li>
+</ul><h3 id="how-to-create-a-custom-error">How to Create a Custom Error</h3><p>A custom error type is simply a type (usually a struct) that implements the <code>Error() string</code> method of the <code>error</code> interface.</p><h3 id="example-custom-error-type">Example: Custom Error Type</h3><div class="code-block"><button class="copy-button" onclick="copyCode(this)">📋</button>
+ <pre><code class="language-go">package main
+
+import (
+    "fmt"
+)
+
+// MyError defines a custom error type with extra fields
+type MyError struct {
+    Code    int
+    Message string
+}
+
+// Implement the Error() method to satisfy the error interface
+func (e *MyError) Error() string {
+    return fmt.Sprintf("Error %d: %s", e.Code, e.Message)
+}
+
+// Function that returns a custom error
+func doSomething(param int) error {
+    if param &lt;= 0 {
+        return &amp;MyError{
+            Code:    400,
+            Message: "Parameter must be greater than zero",
+        }
+    }
+    return nil
+}
+
+func main() {
+    err := doSomething(0)
+    if err != nil {
+        fmt.Println("Received error:", err)
+    } else {
+        fmt.Println("Operation succeeded")
+    }
+}</code></pre>
+</div><h3 id="explanation">Explanation</h3><ul>
+ <li><code>MyError</code> struct holds an error code and message.</li>
+ <li>The <code>Error()</code> method formats these fields into a readable string.</li>
+ <li>The <code>doSomething</code> function returns a pointer to <code>MyError</code> when an invalid parameter is passed.</li>
+ <li>In <code>main</code>, the error is checked and printed.</li>
+</ul><h3 id="type-assertions-for-custom-errors">Type Assertions for Custom Errors</h3><p>You can also use a <strong>type assertion</strong> to inspect the error type and access additional fields:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-go">if myErr, ok := err.(*MyError); ok {
+    fmt.Println("Error code:", myErr.Code)
+}</code></pre>
+</div><p>This allows handling specific errors differently.</p><h3 id="summary">Summary</h3><ul>
+ <li>Custom errors are structs implementing the <code>Error() string</code> method.</li>
+ <li>They add contextual information beyond a simple error message.</li>
+ <li>Custom errors improve error handling by allowing type-specific behavior.</li>
+</ul><div class = "chapter-navi-section">
+<a href="#top" class="nav-button prev">↑</a>
+<a href='go-for-beginners.htm#error-handling' class="nav-button toc-link">Index</a>
+<a href="#bottom" class="nav-button next">↓</a>
+</div>
+<h2 id='error-wrapping-and-unwrapping'>10.3 Error Wrapping and Unwrapping</h2><p>When handling errors, it is often helpful to add contextual information while preserving the original error. This process is known as <strong>error wrapping</strong> in Go. Since Go 1.13, the standard library provides built-in support for wrapping and unwrapping errors, making error inspection more flexible and informative.</p><h3 id="error-wrapping-with-fmt-errorf-and-w">Error Wrapping with <code>fmt.Errorf</code> and <code>%w</code></h3><p>You can wrap an existing error by using <code>fmt.Errorf</code> with the <code>%w</code> verb. This attaches the original error to a new error message:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-go">import (
+    "errors"
+    "fmt"
+)
+
+func readFile(filename string) error {
+    // Simulate a low-level error
+    err := errors.New("file not found")
+    if err != nil {
+        // Wrap with more context
+        return fmt.Errorf("readFile failed for %s: %w", filename, err)
+    }
+    return nil
+}</code></pre>
+</div><p>Here, the new error contains the message <code>"readFile failed for filename: file not found"</code> and wraps the original error.</p><h3 id="unwrapping-errors-with-errors-unwrap">Unwrapping Errors with <code>errors.Unwrap</code></h3><p>To access the original error inside a wrapped error, use <code>errors.Unwrap</code>:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-go">err := readFile("data.txt")
+if err != nil {
+    fmt.Println("Error:", err)            // Prints the wrapped error message
+    originalErr := errors.Unwrap(err)     // Retrieves the wrapped error
+    fmt.Println("Original error:", originalErr)
+}</code></pre>
+</div><p>This allows you to drill down to the root cause.</p><h3 id="checking-errors-with-errors-is">Checking Errors with <code>errors.Is</code></h3><p><code>errors.Is</code> checks whether an error or any error in its chain matches a target error:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-go">var ErrFileNotFound = errors.New("file not found")
+
+func readFile(filename string) error {
+    return fmt.Errorf("readFile failed: %w", ErrFileNotFound)
+}
+
+func main() {
+    err := readFile("data.txt")
+    if errors.Is(err, ErrFileNotFound) {
+        fmt.Println("Handle file not found error specifically")
+    }
+}</code></pre>
+</div><p>This is useful for error classification without losing context.</p><h3 id="type-assertions-with-errors-as">Type Assertions with <code>errors.As</code></h3><p>If your wrapped error chain contains a custom error type, <code>errors.As</code> helps extract it safely:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-go">type MyError struct {
+    Code int
+}
+
+func (e *MyError) Error() string {
+    return fmt.Sprintf("MyError with code %d", e.Code)
+}
+
+func doSomething() error {
+    return fmt.Errorf("operation failed: %w", &amp;MyError{Code: 123})
+}
+
+func main() {
+    err := doSomething()
+    var myErr *MyError
+    if errors.As(err, &amp;myErr) {
+        fmt.Println("Custom error code:", myErr.Code)
+    }
+}</code></pre>
+</div><div class="snippet-container" id="NpkpO">
+ <div class="snippet-header" onclick="toggleSnippet('NpkpO')">
+  Click to view full runnable Code
+ </div>
+ <div class="snippet-body">
+  <div class="code-block"><button class="copy-button" onclick="copyCode(this)">📋</button>
+   <pre><code class="language-go">
+package main
+
+import (
+    "errors"
+    "fmt"
+)
+
+// Predefined sentinel error
+var ErrFileNotFound = errors.New("file not found")
+
+// readFile simulates an error wrapped with context
+func readFile(filename string) error {
+    // Wrap sentinel error with context
+    return fmt.Errorf("readFile failed for %s: %w", filename, ErrFileNotFound)
+}
+
+// MyError is a custom error type
+type MyError struct {
+    Code int
+}
+
+func (e *MyError) Error() string {
+    return fmt.Sprintf("MyError with code %d", e.Code)
+}
+
+// doSomething returns an error wrapping a custom error type
+func doSomething() error {
+    return fmt.Errorf("operation failed: %w", &amp;MyError{Code: 123})
+}
+
+func main() {
+    // --- Error wrapping and unwrapping ---
+    err := readFile("data.txt")
+    if err != nil {
+        fmt.Println("Error:", err)                     // Wrapped error message
+        originalErr := errors.Unwrap(err)              // Unwrap to original error
+        fmt.Println("Original error:", originalErr)   
+    }
+
+    // --- Checking error using errors.Is ---
+    err2 := readFile("config.yaml")
+    if errors.Is(err2, ErrFileNotFound) {
+        fmt.Println("Handle file not found error specifically")
+    }
+
+    // --- Using errors.As for custom error type ---
+    err3 := doSomething()
+    var myErr *MyError
+    if errors.As(err3, &amp;myErr) {
+        fmt.Println("Custom error code:", myErr.Code)
+    }
+} 
+</code></pre>
+  </div>
+ </div>
+</div><h3 id="summary">Summary</h3><ul>
+ <li>Use <code>fmt.Errorf</code> with <code>%w</code> to wrap errors and add context.</li>
+ <li>Use <code>errors.Unwrap</code> to retrieve the underlying error.</li>
+ <li>Use <code>errors.Is</code> to check if an error or its cause matches a target error.</li>
+ <li>Use <code>errors.As</code> to extract specific error types from an error chain.</li>
+</ul><div class = "chapter-navi-section">
+<a href="#top" class="nav-button prev">↑</a>
+<a href='go-for-beginners.htm#error-handling' class="nav-button toc-link">Index</a>
+<a href="#bottom" class="nav-button next">↓</a>
+</div>
+<h2 id='best-practices-for-error-handling'>10.4 Best Practices for Error Handling</h2><p>Go's approach to error handling encourages explicit and clear management of errors, avoiding exceptions and hidden control flows common in other languages. Following idiomatic patterns ensures your programs are robust, maintainable, and easy to understand.</p><h3 id="check-errors-immediately">Check Errors Immediately</h3><p>After calling a function that returns an error, always check it immediately. This prevents bugs caused by ignoring errors and makes your intentions clear:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-go">result, err := someFunction()
+if err != nil {
+    // Handle or return the error promptly
+    return err
+}
+// Proceed with using result</code></pre>
+</div><h3 id="return-errors-up-the-call-stack">Return Errors Up the Call Stack</h3><p>Instead of handling every error at the point it occurs, it's often better to return errors to the caller, allowing centralized error handling or more appropriate context:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-go">func readConfig(file string) error {
+    data, err := ioutil.ReadFile(file)
+    if err != nil {
+        return fmt.Errorf("readConfig: %w", err) // wrap error with context
+    }
+    // process data...
+    return nil
+}</code></pre>
+</div><p>This preserves the original error while adding useful context.</p><h3 id="avoid-silent-failures">Avoid Silent Failures</h3><p>Never ignore errors unless you have a very good reason. Silent failures cause hard-to-debug problems:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-go">_, err := someFunction()
+if err != nil {
+    // Always handle or return the error
+    log.Println("someFunction failed:", err)
+}</code></pre>
+</div><p>If ignoring an error is intentional, explicitly comment why:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-go">_ = someFunction() // Ignored because it's non-critical</code></pre>
+</div><h3 id="use-sentinel-errors-for-common-cases">Use Sentinel Errors for Common Cases</h3><p>Define sentinel errors as package-level variables for common error types you expect to check for:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-go">var ErrNotFound = errors.New("not found")
+
+func findItem(id string) error {
+    // ...
+    return ErrNotFound
+}
+
+if errors.Is(err, ErrNotFound) {
+    // Handle not found case
+}</code></pre>
+</div><p>This promotes clear, reusable error handling patterns.</p><h3 id="avoid-using-panic-for-expected-errors">Avoid Using Panic for Expected Errors</h3><p>Reserve <code>panic</code> for truly unexpected or unrecoverable situations (e.g., programmer errors, unrecoverable system states). Use error returns for all regular error handling:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-go">if err != nil {
+    return err // preferred way
+}
+
+panic("something very wrong happened") // only for fatal errors</code></pre>
+</div><h3 id="write-clean-and-readable-error-handling-code">Write Clean and Readable Error Handling Code</h3><p>Keep your error handling concise but explicit. Use early returns to reduce nesting:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-go">func doWork() error {
+    if err := step1(); err != nil {
+        return err
+    }
+    if err := step2(); err != nil {
+        return err
+    }
+    return nil
+}</code></pre>
+</div><p>This style makes it easier to follow the flow and spot error handling paths.</p><div class="snippet-container" id="3ueOf">
+ <div class="snippet-header" onclick="toggleSnippet('3ueOf')">
+  Click to view full runnable Code
+ </div>
+ <div class="snippet-body">
+  <div class="code-block"><button class="copy-button" onclick="copyCode(this)">📋</button>
+   <pre><code class="language-go">
+package main
+
+import (
+	"errors"
+	"fmt"
+	"io/ioutil"
+	"log"
+)
+
+// Sentinel error for "not found"
+var ErrNotFound = errors.New("not found")
+
+// readConfig simulates reading a config file and wraps errors with context
+func readConfig(filename string) error {
+	data, err := ioutil.ReadFile(filename)
+	if err != nil {
+		return fmt.Errorf("readConfig: %w", err) // wrap error
+	}
+	// pretend to process data
+	_ = data
+	return nil
+}
+
+// findItem simulates finding an item, returns sentinel error if not found
+func findItem(id string) error {
+	// Simulate item not found
+	if id == "42" {
+		return ErrNotFound
+	}
+	return nil
+}
+
+// doWork shows clean error handling with early returns
+func doWork() error {
+	if err := step1(); err != nil {
+		return err
+	}
+	if err := step2(); err != nil {
+		return err
+	}
+	return nil
+}
+
+func step1() error {
+	// Example error from findItem
+	if err := findItem("42"); err != nil {
+		if errors.Is(err, ErrNotFound) {
+			log.Println("Item not found, skipping...")
+			// intentionally continue despite error
+			return nil
+		}
+		return err
+	}
+	return nil
+}
+
+func step2() error {
+	// Example error from readConfig
+	err := readConfig("nonexistent.conf")
+	if err != nil {
+		// Log error and return
+		log.Println("Failed to read config:", err)
+		return err
+	}
+	return nil
+}
+
+func main() {
+	if err := doWork(); err != nil {
+		// Centralized error handling
+		log.Fatal("doWork failed:", err)
+	}
+	fmt.Println("Work completed successfully")
+} 
+</code></pre>
+  </div>
+ </div>
+</div><h3 id="summary">Summary</h3><ul>
+ <li>Check errors immediately after calls.</li>
+ <li>Return errors up the call chain, adding context if necessary.</li>
+ <li>Avoid ignoring errors silently.</li>
+ <li>Use sentinel errors for common, expected cases.</li>
+ <li>Reserve <code>panic</code> for unrecoverable errors.</li>
+ <li>Write clear, simple, and explicit error handling code.</li>
+</ul><div class = "chapter-navi-section">
+<a href="go-for-beginners-packages-and-modules.htm" class="nav-button prev">←</a>
+<a href='go-for-beginners.htm#error-handling' class="nav-button toc-link">Index</a>
+<a href="go-for-beginners-file-i-o-and-working-with-data.htm" class="nav-button next">→</a>
+</div>
+<section class="download-section">
+  <div class="book-cover" style="background-image: url('data:image/jpg;base64,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');">
+<div class="series-name">Introduction</div>
+<div class="book-title">Go for Beginners</div>
+<div class="book-subtitle">Essential concepts, practical examples, and foundational topics</div>
+<div class="book-footer">readbytes.github.io</div>
+</div>
+  <div class="download-info">
+    <h2 id='bottom'>Download This Ebook</h2>
+    <p class="format-label">Available formats:</p>
+    <div class="download-buttons">
+      <a href="go-for-beginners.pdf" class="download-button">📄 PDF</a>
+      <a href="go-for-beginners.epub" class="download-button">📘 EPUB</a>
+    </div>
+  </div>
+</section><div class='related-books'>
+<h2>Go Introduction Books</h2>
+<div class='related-book-list'>
+<a href="go-for-beginners.htm"><div class="book-cover" style="background-image: url('data:image/jpg;base64,/9j/4AAQSkZJRgABAgAAAQABAAD/2wBDAAgGBgcGBQgHBwcJCQgKDBQNDAsLDBkSEw8UHRofHh0aHBwgJC4nICIsIxwcKDcpLDAxNDQ0Hyc5PTgyPC4zNDL/2wBDAQkJCQwLDBgNDRgyIRwhMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjL/wAARCAC0AIIDASIAAhEBAxEB/8QAHwAAAQUBAQEBAQEAAAAAAAAAAAECAwQFBgcICQoL/8QAtRAAAgEDAwIEAwUFBAQAAAF9AQIDAAQRBRIhMUEGE1FhByJxFDKBkaEII0KxwRVS0fAkM2JyggkKFhcYGRolJicoKSo0NTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uHi4+Tl5ufo6erx8vP09fb3+Pn6/8QAHwEAAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoL/8QAtREAAgECBAQDBAcFBAQAAQJ3AAECAxEEBSExBhJBUQdhcRMiMoEIFEKRobHBCSMzUvAVYnLRChYkNOEl8RcYGRomJygpKjU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6goOEhYaHiImKkpOUlZaXmJmaoqOkpaanqKmqsrO0tba3uLm6wsPExcbHyMnK0tPU1dbX2Nna4uPk5ebn6Onq8vP09fb3+Pn6/9oADAMBAAIRAxEAPwDgKKKK8s9EKKKKACuW8Sf8hGP/AK5D+Zrqa5bxJ/yEY/8ArkP5mtsP8ZlW+Ax6KKK7jjCiiigAooooAKKKKACiiigAooooA9Boooryz0QooooAK5bxJ/yEY/8ArkP5muprlvEn/IRj/wCuQ/ma2w/xmVb4DHoooruOMKKKKACiiigAooooAKKKKACiiigD0GiiivLPRCiiigArlvEn/IRj/wCuQ/ma6muW8Sf8hGP/AK5D+ZrbD/GZVvgMeiiiu44wooooAKKKKACiiigAooooAKKKKAPQaKKK8s9EKKKKACuW8Sf8hGP/AK5D+Zrqa5bxJ/yEY/8ArkP5mtsP8ZlW+Ax6KKK7jjCiiigAooooAKKKKACiiigAooooA9Boooryz0QooooAK5bxJ/yEY/8ArkP5muprlvEn/IRj/wCuQ/ma2w/xmVb4DHoooruOMKKK27fS4FiXzVLuRk84x+VAFSw08XKGWUsE6KB3q3NpELAmIlGxwCcirkEIt4REuSq9CTz61JQBy8sZjcqexIplXL1ZZZWlaNlXOBlSP5+wqnQAUUUUAFFFFAHoNFFFeWeiFFFFABXLeJP+QjH/ANch/M11Nct4k/5CMf8A1yH8zW2H+MyrfAY9FFFdxxluysjd7zvCKvfGa31BCKGO5gOTjGa5qG4ltyTE5XPXvVp9QnHmbLlmw+EzGo3LzyfQ9OOep545ANyisa8urm1unhS8SZVxiRApByAe1Et5NGzKL0PiJHUhF5YhSV9sZP5UAa0sYlieM/xDGcZx71g3tobWUDOVYcGrEV5NK7qLzbiIuDIiqCwGSv8AMD1OOBnihLNJO++RizUAMooooAKKKKAPQaKKK8s9EKKKKACuW8Sf8hGP/rkP5muprlvEn/IRj/65D+ZrbD/GZVvgMeiiiu44wqWcwmQmAMEIXhuxwN2PbOce2KiqxcStI8p8lYgWXeAgGGAwe3y5OTgYHtwKAFc2fmXXliXYR/o+7qPmH3v+A5/GomKZOFXlABtzweMnnv19uasXLtJNcvHZiKNlVtmzPlpxt5x7r83U568nKTM7u5S18seRGGGzOAAvz9ONxwc/7XU55AIZDCVj8sMG2fvM9N2T0/DH45qKrlvcrC05ntVlL25jUbQuwkAB+nX34Jz1qnQAUUUUAFFFFAHoNFFFeWeiFFFFABXLeJP+QjH/ANch/M11Nct4k/5CMf8A1yH8zW2H+MyrfAY9FFFdxxhVm/S5juil3jzVRB8pUjbtG3BXg/Liq1X9QRoL28iW/NyOC0ofIm6HsTnrnv07UAQSx3M01zJKpMifPNngjLAZx9WH50lv9oWVvIzv8p84/ubTu/8AHc0rM373/Ss5jUHlvnHy/J07e/Hy8dqR3ZRxcl98ShgpPQEYQ5x0wOmRwPwAH3i3KJai427fJBh2lT8hJPb3J681VrSlixPCv9ols2e7eXHy/IT5X3v+A4OOvT1zaACiiigAooooA9Boooryz0QooooAK5bxJ/yEY/8ArkP5muprlvEn/IRj/wCuQ/ma2w/xmVb4DHoooruOMKsTG08648kSGI/6kvjcOR1x7ZqvVy7RvtVyZbOSB8BjHjaIySOcY+7zwPccnHIBAWj+fEcfKKBjdweMkc9Tg5zxycdqJTCVi8oEN5f7wHpuyen4Y/HPbFOSWJHc+SWzHtAZgcMRgt0+pA7ccnHM0JDCUW1k8n+jHzd3zlMYJcYA2jp68E880ARMbZX/AHas6+UBiTs5AyeOwOcfhnPNV6syL5YgEttIn7knn5d+SxVunTkfXHUdq1ABRRRQAUUUUAeg0UUV5Z6IUUUUAFct4k/5CMf/AFyH8zXU1y3iT/kIx/8AXIfzNbYf4zKt8Bj0UUV3HGFaNyt3Nc6hJLLEZUQNcFVADHcoIGBjIYjJ74Jye+dVu9tIre6nigukuI4gCJAQu7OM4GecE9s9CaAE2Tu8q/aFY+Qpb9595QAdufYAcf7OOoFWbazu4Vkkgli2vZNMzbC37snawHykg5yM/XnHNVBbrifdOmY4w64IO/JUYHvhs/gaVbZNxD3EYUQ+YSDnnHC+5zgcZxn2NAFgreTXCL56CQ2hJ2HH7tUJ2nA5O1R69ge+M6p/szB1VpIxuiMgIkU8YJwcHg8YwefaoKACiiigAooooA9Boooryz0QooooAK5bxJ/yEY/+uQ/ma6muW8Sf8hGP/rkP5mtsP8ZlW+Ax6KKK7jjCrlzJYvcXTW8LJEyjyF5+Q5XOcsc8bh+PQdqdaV495Pd38kkKI/lqZkVuIxuQAAEnGDtGO3TAxwAUH8sn5AyjA4Jzzjn8M5/zzVm3ksVDiaF2/wBHZVIz/rT0bqMAcDv06c8RhZ3aULsYiIFgpU/KAOmO4GM45GDnoamjv7iHdjyyfspgY7uqN64PJGQMdsDjigCvA0CyZmRmXy3GB/e2naevY4NQ1fN3ctLDJsiXFq0SAthdm1lJ5PBPzHHc9ueaFABRRRQAUUUUAeg0UUV5Z6IUUUUAFct4k/5CMf8A1yH8zRRW2H+MyrfAY9FFFdxxhTzNKWkYyOTL/rCW+/znn15ANFFACK7ISVYgkEZHoeDTaKKAFLMQASSFGBnsKSiigAooooAKKKKAP//Z');">
+<div class="series-name">Introduction</div>
+<div class="book-title">Go for Beginners</div>
+<div class="book-subtitle">Essential concepts, practical examples, and foundational topics</div>
+<div class="book-footer">readbytes.github.io</div>
+</div></a>
+
+
+
+<a href='go.htm'><div class='book-cover'>More Go Books</div></a>
+</div>
+</div>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+    <script>
+  function toggleSnippet(id) {
+      const box = document.getElementById(id);
+      box.classList.toggle("open");
+  }  
+  </script>
+  <script>
+    function copyCode(button) {
+      const code = button.nextElementSibling.innerText;
+      navigator.clipboard.writeText(code).then(() => {
+        button.textContent = 'Copied!';
+        setTimeout(() => { button.textContent = 'Copy'; }, 1500);
+      });
+    }
+  </script>  
+
+<footer class="page-footer">
+    <nav>
+      <a href="https://readbytes.github.io">Home</a> | 
+      Email:<script language="JavaScript" type="text/javascript">
+var part1 = 'yinpeng';var part6 = '263';var part2 = Math.pow(2,6);var part3 = String.fromCharCode(part2);var part4 = 'hotmail dot com';var part5 = part1 + String.fromCharCode(part2) + part4;document.write(part1 + part6 + part3 + part4);
+</script>
+    </nav>
+  <p>© 2025 — All rights reserved.</p>    
+  </footer>
+
+</body>
+</html>

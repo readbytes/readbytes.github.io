@@ -1,0 +1,806 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>Java IO and NIO Working with Character Sets and Encodings</title>
+<link rel='shortcut icon' href='https://java2s.com/style/favicon.ico'>
+<link href="https://fonts.googleapis.com/css2?family=Merriweather&display=swap" rel="stylesheet" />
+<link href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+
+
+<style>
+body {
+  background: #f8f7f5;
+  font-family: 'Merriweather', serif;
+  color: #333;
+  margin: 0;
+  padding: 2rem 1rem;
+  font-size: 15px; /* smaller body font */
+  line-height: 1.5;
+}
+
+.container {
+  max-width: 700px;
+  margin: 0 auto;
+  background: white;
+  padding: 1rem 2rem;
+  box-shadow: 0 0 15px rgba(0,0,0,0.1);
+}
+.book-title-chapter {
+  font-family: 'Merriweather', serif;
+  font-size: 2rem;
+  font-weight: bold;
+  text-align: center;
+  margin-bottom: 2rem;
+  border-bottom: 2px solid #ccc;
+  padding-bottom: 0.5rem;
+  color: #2c3e50;
+}
+
+.book-subtitle-chapter {
+  text-align: center;
+  font-size: 1rem;
+  color: #666;
+  margin-top: -1rem;
+  margin-bottom: 2rem;
+}
+
+    .related-books {
+      margin-top: 40px;
+    }
+
+    .related-books h2 {
+      font-size: 22px;
+      margin-bottom: 20px;
+      border-bottom: 2px solid #eee;
+      padding-bottom: 8px;
+      color: #333;
+    }
+    .related-book-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+h1, h2, h3 {
+  font-weight: 600;
+  margin-top: 2.5rem;
+  margin-bottom: 1rem;
+  line-height: 1.2;
+}
+
+h1 {
+  font-size: 1.8rem; /* smaller heading */
+}
+
+h2 {
+  font-size: 1.4rem;
+}
+
+h3 {
+  font-size: 1.2rem;
+}
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-family: sans-serif;
+      font-size: 1em;
+      margin: 1em 0;
+    }
+
+    th, td {
+      border: 1px solid #cccccc;
+      padding: 0.6em 1em;
+      text-align: left;
+    }
+
+    th {
+      background-color: #f2f2f2;
+      font-weight: bold;
+    }
+
+    tr:nth-child(even) {
+      background-color: #fafafa;
+    }
+
+    /* Optional hover effect */
+    tr:hover {
+      background-color: #e6f7ff;
+    }
+ 
+a {
+  color: #555;
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+
+
+.code-block {
+    position: relative;
+    margin-bottom: 1em;
+}
+.copy-button {
+    background: transparent; 
+    color: white;
+
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    border: none;
+    padding: 4px 8px;
+    font-size: 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    z-index: 1;
+}
+
+.copy-button:hover {
+background-color: #0056b3;
+}
+.page-footer {
+  margin-top: 4rem;
+  padding: 1rem 0;
+  text-align: center;
+  font-size: 0.85rem;
+  color: #666;
+  border-top: 1px solid #ccc;
+  background-color: #fafafa;
+}
+.page-footer a {
+     color: #555;
+    text-decoration: none;
+  }
+  .page-footer a:hover {
+    text-decoration: underline;
+  }
+.chapter-navi-section {
+display: flex;
+justify-content: space-between;
+align-items: center;
+padding-bottom: 10px;
+}  
+
+.nav-link {
+  color: inherit;
+  text-decoration: none;
+  opacity: 0.5;
+  transition: opacity 0.3s ease, text-decoration 0.3s ease;
+}
+
+.nav-link:hover {
+  opacity: 0.9;
+  text-decoration: underline;
+}
+
+.prev {
+  text-align: left;
+}
+.toc-link {
+  text-align: center;
+}
+.next {
+  text-align: right;
+}
+.download-section {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2rem;
+  padding: 2rem 1rem;
+  max-width: 600px;
+  margin: 3rem auto;
+  background-color: #f9f9f9;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+}
+
+    .book-cover {
+      width: 130px;
+      height: 180px;
+      
+      background-size: cover; /* Ensures the image covers the entire div */
+      background-position: center; /* Centers the image */
+            
+      background: linear-gradient(145deg, #e0dede, #f9f9f9);
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 10px;
+      box-sizing: border-box;
+      position: relative;
+      font-family: 'Roboto', sans-serif;
+    }
+
+    .book-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 16px;
+      font-weight: 600;
+      color: #fff;
+      margin-bottom: 4px;
+    }
+
+    .book-subtitle {
+      font-size: 12px;
+      color: #aaa;
+      margin-bottom: 10px;
+    }
+
+    .series-name {
+      position: absolute;
+      top: 8px;
+      left: 8px;
+      font-size: 10px;
+      color: #fff;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-weight: bold;
+    }
+
+    .book-footer {
+      position: absolute;
+      bottom: 8px;
+      font-size: 10px;
+      color: #aaa;
+    }
+
+.download-info h2 {
+  margin: 0 0 0.5rem;
+  font-size: 1.2rem;
+}
+
+.format-label {
+  margin: 0 0 0.5rem;
+  font-size: 0.95rem;
+  color: #555;
+}
+
+.download-buttons {
+  display: flex;
+  gap: 1rem;
+}
+
+.download-button {
+  background-color: #4A90E2;
+  color: white;
+  padding: 0.5em 1.2em;
+  text-decoration: none;
+  border-radius: 25px;
+  font-size: 0.95rem;
+  transition: background-color 0.3s ease;
+}
+
+.download-button:hover {
+  background-color: #357ABD;
+}
+
+    code {
+ 
+      color: #d35400; 
+    }
+html {
+    scroll-behavior: smooth;
+}
+    .snippet-container {
+      overflow: hidden;    
+    }
+
+    .snippet-header {
+      background: #f0f0f0;
+      color: #333;
+      padding: 0.75rem 1rem;
+      cursor: pointer;
+      font-size: 1rem;
+    }
+
+    .snippet-body {
+      display: none;
+      font-family: monospace;
+    }
+
+    .snippet-container.open .snippet-body {
+      display: block;
+    }
+
+.CodeMirror {
+  border: 2px solid #ccc;
+  border-radius: 4px;
+  resize: vertical;
+}
+
+    button { padding: 0.5em 1em; background: green; color: white; border: none; cursor: pointer; }
+    button:hover { background: #1e7e34; }
+    .result_iframe { width:99%; height:200px; margin-top: 1em;  resize: both;border:1px solid #ccc;}        
+</style>
+</head>
+<body> 
+
+  <div class="container">
+    <div class = "chapter-navi-section">
+<a href="java-io-and-nio-asynchronous-io.htm" class="nav-button prev">←</a>
+<a href='java-io-and-nio.htm#working-with-character-sets-and-encodings' class="nav-button toc-link">Index</a>
+<a href="java-io-and-nio-practical-java-io-and-nio-examples.htm" class="nav-button next">→</a>
+</div>
+
+    <h1 class="book-title-chapter" id = 'top'>Working with Character Sets and Encodings</h1>
+    <h3 class="book-subtitle-chapter">Java IO and NIO</h3>   
+    <!-- <h1 class ="chapter-title"></h1> -->
+    <h2 id='charset-and-charsetdecoder-charsetencoder'>9.1 Charset and CharsetDecoder/CharsetEncoder</h2><p>When working with text in Java, understanding how characters are represented and converted to bytes (and vice versa) is crucial. This is especially important for applications dealing with file IO, network communication, or interoperability with systems that may use different encodings. Java’s <code>Charset</code>, <code>CharsetEncoder</code>, and <code>CharsetDecoder</code> classes provide a robust framework to handle these conversions reliably and efficiently.</p><h3 id="what-is-a-character-set">What is a Character Set?</h3><p>A <strong>character set</strong> (or <strong>charset</strong>) defines a mapping between a collection of characters (letters, digits, symbols) and their corresponding numeric values (code points). These numeric values are then encoded into sequences of bytes to store or transmit text.</p><p>Common character sets include:</p><ul>
+ <li><strong>ASCII:</strong> 7-bit, represents basic English letters and control characters.</li>
+ <li><strong>ISO-8859-1:</strong> An 8-bit encoding covering Western European languages.</li>
+ <li><strong>UTF-8:</strong> A variable-length Unicode encoding capable of representing any character.</li>
+ <li><strong>UTF-16:</strong> A Unicode encoding using 2 or 4 bytes per character.</li>
+</ul><p>Because different systems and protocols may use different charsets, <strong>converting between bytes and characters requires specifying which charset to use</strong>. Incorrect charset assumptions often lead to mojibake (garbled text).</p><h3 id="the-charset-class-in-java">The <code>Charset</code> Class in Java</h3><p>The <code>Charset</code> class (in <code>java.nio.charset</code>) represents a named mapping between sequences of 16-bit Unicode characters (<code>char</code>) and sequences of bytes. Java’s core platform includes support for many standard charsets, and you can obtain a <code>Charset</code> instance for any supported charset.</p><h3 id="how-to-obtain-a-charset">How to Obtain a Charset</h3><p>You can get a <code>Charset</code> instance via:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-Java">Charset charset1 = Charset.forName("UTF-8");         // Standard charset by name
+Charset charset2 = StandardCharsets.UTF_8;           // Preferred constant from Java 7+</code></pre>
+</div><p>Java also provides constants for other popular charsets like <code>US_ASCII</code>, <code>ISO_8859_1</code>, and <code>UTF_16</code>.</p><h3 id="role-of-charset-in-java-text-encoding-and-decoding">Role of Charset in Java Text Encoding and Decoding</h3><ul>
+ <li><strong>Encoding:</strong> Converting a <code>CharBuffer</code> (characters) into a <code>ByteBuffer</code> (bytes) using a <code>CharsetEncoder</code>.</li>
+ <li><strong>Decoding:</strong> Converting a <code>ByteBuffer</code> back into a <code>CharBuffer</code> using a <code>CharsetDecoder</code>.</li>
+</ul><p>This two-way transformation is essential because:</p><ul>
+ <li>Internally, Java strings and characters use UTF-16.</li>
+ <li>External data (files, network data) is often represented as bytes encoded in a specific charset.</li>
+</ul><h3 id="charsetencoder-and-charsetdecoder-classes"><code>CharsetEncoder</code> and <code>CharsetDecoder</code> Classes</h3><p><strong>CharsetEncoder</strong></p><p><code>CharsetEncoder</code> converts characters into bytes according to a specific charset encoding scheme.</p><ul>
+ <li>Created from a <code>Charset</code> by calling <code>.newEncoder()</code>.</li>
+ <li>Provides methods to encode characters in bulk or incrementally.</li>
+ <li>Handles character-to-byte conversion, including error handling for unmappable or malformed characters.</li>
+</ul><p><strong>CharsetDecoder</strong></p><p><code>CharsetDecoder</code> converts bytes into characters.</p><ul>
+ <li>Created from a <code>Charset</code> by calling <code>.newDecoder()</code>.</li>
+ <li>Reads bytes from a <code>ByteBuffer</code> and outputs decoded characters into a <code>CharBuffer</code>.</li>
+ <li>Handles invalid byte sequences gracefully.</li>
+</ul><h3 id="why-use-charsetencoder-decoder-instead-of-convenience-methods">Why Use CharsetEncoder/Decoder Instead of Convenience Methods?</h3><p>While Java offers convenience methods like <code>String.getBytes(Charset)</code> and <code>new String(byte[], Charset)</code>, the encoder/decoder classes give:</p><ul>
+ <li><strong>More control:</strong> You can manage incremental encoding/decoding (streaming).</li>
+ <li><strong>Error handling:</strong> Configure how to respond to malformed or unmappable input.</li>
+ <li><strong>Performance benefits:</strong> Avoid unnecessary intermediate objects in bulk operations.</li>
+</ul><h3 id="example-using-charsetencoder-and-charsetdecoder">Example: Using CharsetEncoder and CharsetDecoder</h3><div class="code-block"><button class="copy-button" onclick="copyCode(this)">📋</button>
+ <pre><code class="language-java">import java.nio.*;
+import java.nio.charset.*;
+
+public class CharsetExample {
+    public static void main(String[] args) throws CharacterCodingException {
+        // Obtain a Charset instance for UTF-8
+        Charset charset = StandardCharsets.UTF_8;
+
+        // Create encoder and decoder
+        CharsetEncoder encoder = charset.newEncoder();
+        CharsetDecoder decoder = charset.newDecoder();
+
+        // The original string
+        String original = "Hello, 世界";  // Includes Unicode characters
+
+        // Encode: Convert characters to bytes
+        CharBuffer charBuffer = CharBuffer.wrap(original);
+        ByteBuffer byteBuffer = encoder.encode(charBuffer);
+
+        System.out.println("Encoded bytes:");
+        while (byteBuffer.hasRemaining()) {
+            System.out.printf("%02X ", byteBuffer.get());
+        }
+        System.out.println();
+
+        // Reset buffer position for reading
+        byteBuffer.flip();
+
+        // Decode: Convert bytes back to characters
+        CharBuffer decodedCharBuffer = decoder.decode(byteBuffer);
+        String decodedString = decodedCharBuffer.toString();
+
+        System.out.println("Decoded string:");
+        System.out.println(decodedString);
+    }
+}</code></pre>
+</div><p><strong>Output:</strong></p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-bash">Encoded bytes:
+48 65 6C 6C 6F 2C 20 E4 B8 96 E7 95 8C 
+Decoded string:
+Hello, 世界</code></pre>
+</div><h3 id="handling-malformed-and-unmappable-characters">Handling Malformed and Unmappable Characters</h3><p><code>CharsetEncoder</code> and <code>CharsetDecoder</code> allow configuring actions on errors:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-Java">encoder.onMalformedInput(CodingErrorAction.REPLACE);
+encoder.onUnmappableCharacter(CodingErrorAction.IGNORE);
+decoder.onMalformedInput(CodingErrorAction.REPORT);</code></pre>
+</div><p>Options include:</p><ul>
+ <li><code>REPORT</code>: Throw an exception on error.</li>
+ <li><code>IGNORE</code>: Skip malformed/unmappable sequences.</li>
+ <li><code>REPLACE</code>: Replace with a default character (e.g., <code>?</code>).</li>
+</ul><h3 id="summary">Summary</h3><ul>
+ <li>The <strong><code>Charset</code></strong> class models the concept of a named character encoding scheme and provides access to encoders and decoders.</li>
+ <li>The <strong><code>CharsetEncoder</code></strong> converts characters (Java’s internal UTF-16) into bytes according to the charset.</li>
+ <li>The <strong><code>CharsetDecoder</code></strong> converts bytes back into characters.</li>
+ <li>These classes are essential for correctly reading and writing text data in different encodings, avoiding data corruption.</li>
+ <li>They support fine-grained control over incremental encoding/decoding and error handling, making them suitable for performance-critical and robust applications.</li>
+</ul><p>By mastering <code>Charset</code>, <code>CharsetEncoder</code>, and <code>CharsetDecoder</code>, Java developers can handle text data across diverse platforms and protocols with confidence and precision.</p><div class = "chapter-navi-section">
+<a href="#top" class="nav-button prev">↑</a>
+<a href='java-io-and-nio.htm#working-with-character-sets-and-encodings' class="nav-button toc-link">Index</a>
+<a href="#bottom" class="nav-button next">↓</a>
+</div>
+<h2 id='reading-and-writing-text-with-charset-support'>9.2 Reading and Writing Text with Charset Support</h2><p>Handling text files correctly in Java requires careful attention to character encoding. A common source of bugs and data corruption arises when the character encoding used to read a file does not match the encoding in which the file was written. This mismatch can cause unreadable characters (mojibake), lost data, or exceptions. To avoid such problems, <strong>explicitly specifying the character set (charset) during text file IO is crucial</strong>.</p><h3 id="why-specifying-charset-matters">Why Specifying Charset Matters</h3><p>Every text file is essentially a sequence of bytes interpreted as characters according to an encoding scheme or charset. Examples of common charsets are UTF-8, ISO-8859-1, UTF-16, etc. Different charsets encode characters differently:</p><ul>
+ <li>For example, the character 'é' in UTF-8 is two bytes (<code>0xC3 0xA9</code>), but in ISO-8859-1 it is one byte (<code>0xE9</code>).</li>
+ <li>A file encoded in UTF-8 but read as ISO-8859-1 will produce corrupted characters or unexpected results.</li>
+</ul><p>If you rely on Java's platform default charset implicitly (e.g., <code>FileReader</code> or <code>FileWriter</code>), your code becomes non-portable and fragile because default charset varies by platform, locale, and JVM settings.</p><p><strong>Explicit charset specification ensures that your program reads and writes text consistently, regardless of platform or environment.</strong></p><h3 id="java-classes-for-charset-aware-text-io">Java Classes for Charset-Aware Text IO</h3><p>The key classes to perform charset-aware reading and writing of text files are:</p><ul>
+ <li><strong><code>InputStreamReader</code></strong>: Converts bytes from an input stream into characters using a specified charset.</li>
+ <li><strong><code>OutputStreamWriter</code></strong>: Converts characters into bytes and writes them to an output stream using a specified charset.</li>
+</ul><p>Both classes bridge between byte streams (<code>InputStream</code>/<code>OutputStream</code>) and character streams (<code>Reader</code>/<code>Writer</code>).</p><h3 id="reading-text-files-with-inputstreamreader">Reading Text Files with <code>InputStreamReader</code></h3><p>The typical pattern to read a text file with a specific charset is:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">📋</button>
+ <pre><code class="language-java">import java.io.*;
+import java.nio.charset.Charset;
+
+public class CharsetAwareFileRead {
+    public static void main(String[] args) {
+        File file = new File("example.txt");
+        Charset charset = Charset.forName("UTF-8");
+
+        try (InputStream inputStream = new FileInputStream(file);
+             Reader reader = new InputStreamReader(inputStream, charset);
+             BufferedReader bufferedReader = new BufferedReader(reader)) {
+
+            String line;
+            while ((line = bufferedReader.readLine()) != null) {
+                System.out.println(line);
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+}</code></pre>
+</div><h3 id="explanation">Explanation:</h3><ul>
+ <li><code>FileInputStream</code> reads raw bytes from the file.</li>
+ <li><code>InputStreamReader</code> converts these bytes into characters using the specified charset (<code>UTF-8</code> in this example).</li>
+ <li><code>BufferedReader</code> provides efficient buffered reading and convenient methods like <code>readLine()</code>.</li>
+</ul><p>This method guarantees that bytes are interpreted according to the specified charset, avoiding platform default pitfalls.</p><h3 id="writing-text-files-with-outputstreamwriter">Writing Text Files with <code>OutputStreamWriter</code></h3><p>Similarly, to write text safely with explicit charset:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">📋</button>
+ <pre><code class="language-java">import java.io.*;
+import java.nio.charset.Charset;
+
+public class CharsetAwareFileWrite {
+    public static void main(String[] args) {
+        File file = new File("output.txt");
+        Charset charset = Charset.forName("UTF-8");
+
+        try (OutputStream outputStream = new FileOutputStream(file);
+             Writer writer = new OutputStreamWriter(outputStream, charset);
+             BufferedWriter bufferedWriter = new BufferedWriter(writer)) {
+
+            bufferedWriter.write("Hello, 世界!");
+            bufferedWriter.newLine();
+            bufferedWriter.write("This file is written with UTF-8 charset.");
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+}</code></pre>
+</div><h3 id="explanation">Explanation:</h3><ul>
+ <li><code>FileOutputStream</code> writes raw bytes to the file.</li>
+ <li><code>OutputStreamWriter</code> encodes characters into bytes using the specified charset.</li>
+ <li><code>BufferedWriter</code> provides buffered writing with convenient methods such as <code>newLine()</code>.</li>
+</ul><p>This ensures the written bytes accurately represent the characters in UTF-8 encoding.</p><h3 id="example-round-trip-reading-and-writing">Example: Round-Trip Reading and Writing</h3><p>To illustrate safe and portable IO, consider reading a file in UTF-8 and writing its contents to another file in UTF-8 explicitly:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">📋</button>
+ <pre><code class="language-java">import java.io.*;
+import java.nio.charset.StandardCharsets;
+
+public class RoundTripTextIO {
+    public static void main(String[] args) {
+        File inputFile = new File("input.txt");
+        File outputFile = new File("output.txt");
+
+        try (BufferedReader reader = new BufferedReader(
+                new InputStreamReader(new FileInputStream(inputFile), StandardCharsets.UTF_8));
+             BufferedWriter writer = new BufferedWriter(
+                new OutputStreamWriter(new FileOutputStream(outputFile), StandardCharsets.UTF_8))) {
+
+            String line;
+            while ((line = reader.readLine()) != null) {
+                writer.write(line);
+                writer.newLine();
+            }
+
+            System.out.println("File copied successfully with UTF-8 charset.");
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+}</code></pre>
+</div><p>This example:</p><ul>
+ <li>Reads <code>input.txt</code> assuming it’s encoded in UTF-8.</li>
+ <li>Writes its contents to <code>output.txt</code> in UTF-8.</li>
+ <li>Avoids data corruption by explicitly specifying the charset for both reading and writing.</li>
+ <li>Is portable and reliable across different platforms and JVM settings.</li>
+</ul><h3 id="common-pitfalls-and-best-practices">Common Pitfalls and Best Practices</h3><ol>
+ <li><p><strong>Never rely on default charset for file IO.</strong> Always specify charset explicitly unless you have very specific reasons and control over the environment.</p></li>
+ <li><p><strong>Match the charset on both reading and writing.</strong> When reading files you wrote yourself, use the same charset consistently to avoid surprises.</p></li>
+ <li><p><strong>Use <code>StandardCharsets</code> constants when possible.</strong> E.g., <code>StandardCharsets.UTF_8</code> is preferred over <code>Charset.forName("UTF-8")</code> to avoid typos and <code>UnsupportedCharsetException</code>.</p></li>
+ <li><p><strong>Wrap streams in buffered readers/writers.</strong> For performance and convenient line-based operations.</p></li>
+ <li><p><strong>Be cautious with legacy APIs like <code>FileReader</code> and <code>FileWriter</code>.</strong> They use platform default charset internally and are discouraged for portable code.</p></li>
+</ol><h3 id="summary">Summary</h3><ul>
+ <li>Text files are sequences of bytes interpreted as characters via a charset.</li>
+ <li>Mismatched charset assumptions between reading and writing cause data corruption.</li>
+ <li>Java’s <code>InputStreamReader</code> and <code>OutputStreamWriter</code> classes allow explicit charset specification bridging byte streams to character streams.</li>
+ <li>Always specify charset explicitly for safe, portable, and correct text file IO.</li>
+ <li>Use buffered wrappers for efficient and convenient reading/writing.</li>
+</ul><p>By adhering to these principles and using the proper classes with explicit charset parameters, Java developers can avoid many common pitfalls and ensure their applications handle text files robustly across environments and locales.</p><div class = "chapter-navi-section">
+<a href="#top" class="nav-button prev">↑</a>
+<a href='java-io-and-nio.htm#working-with-character-sets-and-encodings' class="nav-button toc-link">Index</a>
+<a href="#bottom" class="nav-button next">↓</a>
+</div>
+<h2 id='handling-unicode-and-utf-variants'>9.3 Handling Unicode and UTF Variants</h2><p>In today’s globalized digital world, software often needs to handle text from many languages and scripts. This requirement has made Unicode the fundamental standard for representing text characters consistently across platforms and systems. Understanding Unicode and its encoding schemes—UTF-8, UTF-16, and UTF-32—is critical for developers, including Java programmers, to ensure correct, efficient, and interoperable text processing.</p><h3 id="what-is-unicode">What Is Unicode?</h3><p>Unicode is a <strong>universal character set</strong> designed to encode all the characters used in writing systems worldwide—letters, digits, symbols, emoji, and control characters—into a single standard. Unlike older character encodings that supported only limited alphabets (like ASCII or ISO-8859-1), Unicode can represent <strong>over one million code points</strong>, though currently fewer than 150,000 are assigned.</p><ul>
+ <li>Each character in Unicode is assigned a <strong>code point</strong>, a unique integer value typically written in hexadecimal, e.g., the Latin capital letter A is <code>U+0041</code>.</li>
+ <li>Code points are organized in <strong>planes</strong> of 65,536 characters each; the <strong>Basic Multilingual Plane (BMP)</strong> is plane 0 and contains most commonly used characters.</li>
+</ul><p>Unicode itself is an abstract mapping of characters to numbers. To store or transmit text, these numbers need to be encoded as bytes—this is where <strong>UTF encodings</strong> come in.</p><h3 id="why-different-utf-encodings-exist">Why Different UTF Encodings Exist</h3><p>Unicode code points are abstract; they do not specify how to represent characters as bytes. Different encoding schemes—UTF-8, UTF-16, and UTF-32—define how to convert these code points to byte sequences.</p><p>Each UTF encoding offers trade-offs in terms of:</p><ul>
+ <li><strong>Storage size</strong></li>
+ <li><strong>Compatibility with legacy encodings</strong></li>
+ <li><strong>Processing complexity</strong></li>
+ <li><strong>Ease of random access to characters</strong></li>
+</ul><p>No single encoding fits all use cases perfectly, so the Unicode standard provides multiple UTF variants to meet diverse needs.</p><h3 id="the-utf-encodings-explained">The UTF Encodings Explained</h3><p>UTF-8</p><ul>
+ <li><strong>Variable-length encoding:</strong> 1 to 4 bytes per character.</li>
+ <li>Uses <strong>1 byte</strong> for ASCII characters (<code>U+0000</code> to <code>U+007F</code>), making it fully backward-compatible with ASCII.</li>
+ <li>Non-ASCII characters use 2, 3, or 4 bytes.</li>
+ <li>Widely used on the web and many modern applications due to its efficiency for texts dominated by ASCII characters.</li>
+ <li>Byte order is unambiguous (no endianness issues).</li>
+</ul><p><strong>Example:</strong></p><ul>
+ <li>The character 'A' (<code>U+0041</code>) is encoded as <code>0x41</code> (1 byte).</li>
+ <li>The character '世' (<code>U+4E16</code>) is encoded as <code>0xE4 0xB8 0x96</code> (3 bytes).</li>
+</ul><h3 id="utf-16">UTF-16</h3><ul>
+ <li><strong>Variable-length encoding:</strong> 2 or 4 bytes per character.</li>
+ <li>Characters in the BMP (most common characters) are encoded as <strong>2 bytes</strong>.</li>
+ <li>Characters outside the BMP (supplementary characters) use <strong>surrogate pairs</strong>—two 2-byte code units (total 4 bytes).</li>
+ <li>Commonly used in Windows APIs and Java internally.</li>
+ <li>Requires consideration of <strong>byte order (endianness)</strong> — UTF-16LE and UTF-16BE variants exist.</li>
+</ul><h3 id="utf-32">UTF-32</h3><ul>
+ <li><strong>Fixed-length encoding:</strong> 4 bytes per character.</li>
+ <li>Each Unicode code point is stored as a 4-byte integer.</li>
+ <li>Simple for indexing and processing since every character is a fixed size.</li>
+ <li>Inefficient for storage compared to UTF-8 and UTF-16, used mostly in internal processing or environments where fixed-width encoding is beneficial.</li>
+</ul><h3 id="how-java-supports-unicode-and-utf-encodings">How Java Supports Unicode and UTF Encodings</h3><p>Java’s native <code>char</code> type is a <strong>16-bit UTF-16 code unit</strong>, meaning Java strings are internally encoded as UTF-16 sequences. This design enables Java to handle all BMP characters in a single <code>char</code>, but supplementary characters (outside BMP) are represented using <strong>two <code>char</code> units called surrogate pairs</strong>.</p><p>Java provides rich support for encoding and decoding Unicode text:</p><ul>
+ <li>Classes like <code>java.nio.charset.Charset</code>, <code>CharsetEncoder</code>, and <code>CharsetDecoder</code> support UTF-8, UTF-16 (both endian variants), and UTF-32 (less common).</li>
+ <li>StandardCharsets class includes constants like <code>StandardCharsets.UTF_8</code>, <code>StandardCharsets.UTF_16</code>, and <code>StandardCharsets.UTF_16BE</code>.</li>
+ <li>Input/output streams and readers/writers accept charset parameters for reading and writing Unicode data correctly.</li>
+ <li>Unicode-aware APIs like <code>String</code>, <code>Character</code>, and <code>CodePoint</code> methods help manage surrogate pairs and supplementary characters.</li>
+</ul><h3 id="practical-advice-on-choosing-the-right-encoding">Practical Advice on Choosing the Right Encoding</h3><ol>
+ <li><p><strong>Default to UTF-8 when possible</strong> UTF-8 is the de facto standard on the internet and in most modern software because it is compact for ASCII-heavy text, compatible with ASCII, and byte-order safe. For new projects and cross-platform interoperability, UTF-8 is generally the best choice.</p></li>
+ <li><p><strong>Use UTF-16 when interacting with systems or protocols that expect it</strong> For example, Windows and Java internally use UTF-16, and some APIs or file formats require UTF-16 encoded data. But be aware of byte order and surrogate pairs.</p></li>
+ <li><p><strong>UTF-32 is rarely needed except for specialized processing</strong> Fixed-width UTF-32 simplifies character indexing but uses much more space. Use it only if the application demands fixed-width encoding for performance reasons.</p></li>
+ <li><p><strong>Always specify the encoding explicitly</strong> Never rely on platform default charset when reading or writing text, as this can cause data corruption or incompatibility.</p></li>
+</ol><h3 id="common-pitfalls-when-handling-unicode-data">Common Pitfalls When Handling Unicode Data</h3><ul>
+ <li><p><strong>Assuming one <code>char</code> equals one character:</strong> In Java, <code>char</code> is a UTF-16 code unit, not a full Unicode character. Supplementary characters are represented by surrogate pairs (<code>char</code> pairs), so methods like <code>String.length()</code> may not correspond to the number of actual Unicode characters (code points). Use methods like <code>codePointCount()</code>, <code>codePointAt()</code>, and <code>offsetByCodePoints()</code> for proper handling.</p></li>
+ <li><p><strong>Not specifying charset on IO:</strong> Reading a UTF-8 file as ISO-8859-1 will produce garbled output. Always specify charset explicitly, e.g., <code>new InputStreamReader(inputStream, StandardCharsets.UTF_8)</code>.</p></li>
+ <li><p><strong>Ignoring byte order in UTF-16:</strong> UTF-16 encoded files can be little-endian or big-endian. The presence of a BOM (byte order mark) can help detect the order, but some files omit it. Make sure to use the correct variant or detect BOM properly.</p></li>
+ <li><p><strong>Incorrectly handling surrogate pairs:</strong> String operations that manipulate characters by index can break surrogate pairs and corrupt text. Use Unicode-aware APIs.</p></li>
+</ul><h3 id="summary">Summary</h3><p>Unicode is the universal standard for representing text from all languages, and UTF encodings specify how to serialize those characters into bytes:</p><ul>
+ <li><strong>UTF-8</strong>: Compact, ASCII-compatible, variable length (1-4 bytes), widely used.</li>
+ <li><strong>UTF-16</strong>: Variable length (2 or 4 bytes), used internally by Java and Windows, sensitive to byte order.</li>
+ <li><strong>UTF-32</strong>: Fixed length (4 bytes), simple but space-inefficient.</li>
+</ul><p>Java’s internal string representation uses UTF-16, and it offers comprehensive support for all UTF encodings through its <code>Charset</code> APIs. Choosing the right encoding involves balancing compatibility, efficiency, and application requirements, with UTF-8 being the safest default for most cases.</p><p>By understanding these fundamentals and pitfalls, developers can correctly handle Unicode text, ensuring applications are robust, internationalized, and interoperable in a multilingual world.</p><div class = "chapter-navi-section">
+<a href="#top" class="nav-button prev">↑</a>
+<a href='java-io-and-nio.htm#working-with-character-sets-and-encodings' class="nav-button toc-link">Index</a>
+<a href="#bottom" class="nav-button next">↓</a>
+</div>
+<h2 id='charset-conversion-examples'>9.4 Charset Conversion Examples</h2><p>In many real-world Java applications, you often need to convert text data from one character encoding to another—for example, reading a file encoded in ISO-8859-1 and saving it as UTF-8, or processing data streams with mixed encodings. Java’s <code>CharsetDecoder</code> and <code>CharsetEncoder</code> classes, along with utility classes in <code>java.nio.charset</code>, provide robust tools to perform such conversions reliably.</p><p>This section explains how to convert text between different charsets in Java and demonstrates practical code examples.</p><h3 id="why-charset-conversion-is-important">Why Charset Conversion is Important</h3><p>Different systems and files may use different encodings, and misinterpreting bytes as the wrong charset can lead to corrupted text (mojibake) or exceptions. Charset conversion ensures that:</p><ul>
+ <li>Text data can be interoperably exchanged between systems.</li>
+ <li>Legacy data encoded with older encodings can be converted to modern Unicode-based formats like UTF-8.</li>
+ <li>Your application can display or store text correctly according to user or system requirements.</li>
+</ul><h3 id="core-classes-charsetdecoder-and-charsetencoder">Core Classes: CharsetDecoder and CharsetEncoder</h3><ul>
+ <li><strong><code>CharsetDecoder</code></strong> converts bytes from a specific charset into Java characters (<code>char</code>), resulting in a <code>CharBuffer</code>.</li>
+ <li><strong><code>CharsetEncoder</code></strong> converts Java characters (<code>char</code>) into bytes according to a target charset, resulting in a <code>ByteBuffer</code>.</li>
+</ul><p>To convert text from one charset to another, you:</p><ol>
+ <li><strong>Decode</strong> the original bytes using the source charset into characters.</li>
+ <li><strong>Encode</strong> these characters using the target charset back into bytes.</li>
+</ol><h3 id="example-1-basic-charset-conversion-using-charsetdecoder-and-charsetencoder">Example 1: Basic Charset Conversion Using CharsetDecoder and CharsetEncoder</h3><p>This example reads a byte array encoded in ISO-8859-1 and converts it to a UTF-8 encoded byte array.</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">📋</button>
+ <pre><code class="language-java">import java.nio.ByteBuffer;
+import java.nio.CharBuffer;
+import java.nio.charset.*;
+
+public class CharsetConversionExample {
+    public static void main(String[] args) throws CharacterCodingException {
+        // Original text encoded in ISO-8859-1 bytes (for demo)
+        byte[] iso8859Bytes = {(byte)0xE9, (byte)0x20, (byte)0x6C, (byte)0xE0, (byte)0x20, (byte)0x63, (byte)0xE9, (byte)0x20, (byte)0x63, (byte)0x61, (byte)0x72};
+
+        // Step 1: Decode ISO-8859-1 bytes to characters
+        Charset sourceCharset = Charset.forName("ISO-8859-1");
+        CharsetDecoder decoder = sourceCharset.newDecoder();
+        ByteBuffer sourceBytes = ByteBuffer.wrap(iso8859Bytes);
+        CharBuffer chars = decoder.decode(sourceBytes);
+
+        System.out.println("Decoded characters:");
+        System.out.println(chars.toString());  // prints: é là cé car
+
+        // Step 2: Encode characters into UTF-8 bytes
+        Charset targetCharset = StandardCharsets.UTF_8;
+        CharsetEncoder encoder = targetCharset.newEncoder();
+        ByteBuffer utf8Bytes = encoder.encode(chars);
+
+        System.out.println("Re-encoded UTF-8 bytes:");
+        while (utf8Bytes.hasRemaining()) {
+            System.out.printf("%02X ", utf8Bytes.get());
+        }
+        // Output: C3 A9 20 6C C3 A0 20 63 C3 A9 20 63 61 72
+    }
+}</code></pre>
+</div><h3 id="explanation">Explanation</h3><ul>
+ <li>We start with a byte array <code>iso8859Bytes</code> containing text encoded in ISO-8859-1, including accented characters like <code>é</code> and <code>à</code>.</li>
+ <li>Using <code>CharsetDecoder</code> for ISO-8859-1, we decode these bytes into Java characters (<code>CharBuffer</code>).</li>
+ <li>Then, we encode these characters into UTF-8 bytes using <code>CharsetEncoder</code>.</li>
+ <li>This two-step decode-encode approach converts text from one charset to another safely.</li>
+</ul><h3 id="example-2-converting-text-file-encoding">Example 2: Converting Text File Encoding</h3><p>Suppose you have a file encoded in Windows-1252 and want to convert it to UTF-8.</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">📋</button>
+ <pre><code class="language-java">import java.io.*;
+import java.nio.ByteBuffer;
+import java.nio.CharBuffer;
+import java.nio.charset.*;
+
+public class FileEncodingConverter {
+    public static void main(String[] args) {
+        File inputFile = new File("input-win1252.txt");
+        File outputFile = new File("output-utf8.txt");
+
+        Charset sourceCharset = Charset.forName("windows-1252");
+        Charset targetCharset = StandardCharsets.UTF_8;
+
+        try (InputStream inStream = new FileInputStream(inputFile);
+             OutputStream outStream = new FileOutputStream(outputFile)) {
+
+            // Decoder and encoder
+            CharsetDecoder decoder = sourceCharset.newDecoder();
+            CharsetEncoder encoder = targetCharset.newEncoder();
+
+            // Read all bytes from source file
+            byte[] inputBytes = inStream.readAllBytes();
+            ByteBuffer sourceBuffer = ByteBuffer.wrap(inputBytes);
+
+            // Decode bytes to chars
+            CharBuffer charBuffer = decoder.decode(sourceBuffer);
+
+            // Encode chars to target charset bytes
+            ByteBuffer targetBuffer = encoder.encode(charBuffer);
+
+            // Write bytes to output file
+            outStream.write(targetBuffer.array(), 0, targetBuffer.limit());
+
+            System.out.println("File encoding converted successfully.");
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+}</code></pre>
+</div><h3 id="explanation">Explanation</h3><ul>
+ <li>This program reads all bytes from a file encoded in Windows-1252.</li>
+ <li>It uses <code>CharsetDecoder</code> to decode the bytes into characters.</li>
+ <li>It then encodes the characters into UTF-8 bytes with <code>CharsetEncoder</code>.</li>
+ <li>Finally, it writes the UTF-8 bytes to the output file.</li>
+ <li>This approach preserves the text correctly, regardless of special characters present.</li>
+</ul><h3 id="utility-approach-using-new-string-and-getbytes-for-quick-conversions">Utility Approach: Using <code>new String()</code> and <code>getBytes()</code> for Quick Conversions</h3><p>For simpler scenarios, Java’s <code>String</code> constructors and <code>getBytes()</code> methods can be used for conversion:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">📋</button>
+ <pre><code class="language-java">import java.io.UnsupportedEncodingException;
+
+public class Test {
+
+    public class SimpleConversion {
+        public static void main(String[] args) throws UnsupportedEncodingException {
+            byte[] windows1252Bytes = { (byte) 0xE9, (byte) 0x20, (byte) 0x6C, (byte) 0xE0 }; // é là
+
+            // Decode bytes into String with Windows-1252
+            String text = new String(windows1252Bytes, "windows-1252");
+            System.out.println("Decoded text: " + text);
+
+            // Encode String into UTF-8 bytes
+            byte[] utf8Bytes = text.getBytes("UTF-8");
+
+            System.out.println("UTF-8 bytes:");
+            for (byte b : utf8Bytes) {
+                System.out.printf("%02X ", b);
+            }
+        }
+    }
+}</code></pre>
+</div><h3 id="note">Note</h3><p>While convenient, this approach doesn’t provide fine-grained control over error handling or streaming conversion and may be less efficient for large data.</p><h3 id="handling-malformed-and-unmappable-characters">Handling Malformed and Unmappable Characters</h3><p>When converting between charsets, you may encounter characters that cannot be mapped from source to target charset. Both <code>CharsetDecoder</code> and <code>CharsetEncoder</code> allow configuring error handling strategies:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-Java">decoder.onMalformedInput(CodingErrorAction.REPLACE);
+decoder.onUnmappableCharacter(CodingErrorAction.IGNORE);
+
+encoder.onMalformedInput(CodingErrorAction.REPORT);
+encoder.onUnmappableCharacter(CodingErrorAction.REPLACE);</code></pre>
+</div><p>Options include:</p><ul>
+ <li><code>REPORT</code>: Throw an exception on error (default).</li>
+ <li><code>REPLACE</code>: Substitute with a replacement character (usually <code>?</code>).</li>
+ <li><code>IGNORE</code>: Skip the problematic input.</li>
+</ul><p>Use these settings depending on your tolerance for data loss or corruption.</p><h3 id="summary">Summary</h3><ul>
+ <li>Charset conversion in Java involves <strong>decoding bytes to characters</strong> from the source charset and <strong>encoding characters to bytes</strong> in the target charset.</li>
+ <li>Use <code>CharsetDecoder</code> and <code>CharsetEncoder</code> for controlled, streaming-capable, and robust conversions.</li>
+ <li>For quick tasks, <code>new String(byte[], charset)</code> and <code>String.getBytes(charset)</code> may suffice.</li>
+ <li>Always be mindful of error handling policies to deal with malformed or unmappable characters.</li>
+ <li>Explicitly specifying charsets ensures your application correctly handles multilingual data and avoids text corruption.</li>
+</ul><p>Mastering charset conversion techniques ensures your Java applications remain compatible with diverse data sources and produce reliably encoded output across environments.</p><div class = "chapter-navi-section">
+<a href="java-io-and-nio-asynchronous-io.htm" class="nav-button prev">←</a>
+<a href='java-io-and-nio.htm#working-with-character-sets-and-encodings' class="nav-button toc-link">Index</a>
+<a href="java-io-and-nio-practical-java-io-and-nio-examples.htm" class="nav-button next">→</a>
+</div>
+<section class="download-section">
+  <div class="book-cover" style="background-image: url('data:image/jpg;base64,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');">
+<div class="series-name">In-Depth</div>
+<div class="book-title">Java IO and NIO</div>
+<div class="book-subtitle">Guide for Beginner to Advanced Programmers</div>
+<div class="book-footer">readbytes.github.io</div>
+</div>
+  <div class="download-info">
+    <h2 id='bottom'>Download This Ebook</h2>
+    <p class="format-label">Available formats:</p>
+    <div class="download-buttons">
+      <a href="java-io-and-nio.pdf" class="download-button">📄 PDF</a>
+      <a href="java-io-and-nio.epub" class="download-button">📘 EPUB</a>
+    </div>
+  </div>
+</section><div class='related-books'>
+<h2>Java In-Depth Books</h2>
+<div class='related-book-list'>
+<a href="java-io-and-nio.htm"><div class="book-cover" style="background-image: url('data:image/jpg;base64,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');">
+<div class="series-name">In-Depth</div>
+<div class="book-title">Java IO and NIO</div>
+<div class="book-subtitle">Guide for Beginner to Advanced Programmers</div>
+<div class="book-footer">readbytes.github.io</div>
+</div></a>
+
+
+<a href="java-collections.htm"><div class="book-cover" style="background-image: url('data:image/jpg;base64,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');">
+<div class="series-name">In-Depth</div>
+<div class="book-title">Java Collections</div>
+<div class="book-subtitle">From Fundamentals to Advanced Applications</div>
+<div class="book-footer">readbytes.github.io</div>
+</div></a>
+
+
+<a href="java-regex.htm"><div class="book-cover" style="background-image: url('data:image/jpg;base64,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');">
+<div class="series-name">In-Depth</div>
+<div class="book-title">Java Regex</div>
+<div class="book-subtitle">From Basics to Advanced</div>
+<div class="book-footer">readbytes.github.io</div>
+</div></a>
+
+
+<a href="java-functional-programming.htm"><div class="book-cover" style="background-image: url('data:image/jpg;base64,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');">
+<div class="series-name">In-Depth</div>
+<div class="book-title">Java Functional Programming</div>
+<div class="book-subtitle">From Lambdas to Reactive Streams</div>
+<div class="book-footer">readbytes.github.io</div>
+</div></a>
+
+
+<a href="java-streams.htm"><div class="book-cover" style="background-image: url('data:image/jpg;base64,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');">
+<div class="series-name">In-Depth</div>
+<div class="book-title">Java Streams</div>
+<div class="book-subtitle">From Fundamentals to Advanced Data Processing</div>
+<div class="book-footer">readbytes.github.io</div>
+</div></a>
+
+
+
+<a href='java.htm'><div class='book-cover'>More Java Books</div></a>
+</div>
+</div>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+  
+  <script>
+    function copyCode(button) {
+      const code = button.nextElementSibling.innerText;
+      navigator.clipboard.writeText(code).then(() => {
+        button.textContent = 'Copied!';
+        setTimeout(() => { button.textContent = 'Copy'; }, 1500);
+      });
+    }
+  </script>  
+
+<footer class="page-footer">
+    <nav>
+      <a href="https://readbytes.github.io">Home</a> | 
+      Email:<script language="JavaScript" type="text/javascript">
+var part1 = 'yinpeng';var part6 = '263';var part2 = Math.pow(2,6);var part3 = String.fromCharCode(part2);var part4 = 'hotmail dot com';var part5 = part1 + String.fromCharCode(part2) + part4;document.write(part1 + part6 + part3 + part4);
+</script>
+    </nav>
+  <p>© 2025 — All rights reserved.</p>    
+  </footer>
+
+</body>
+</html>

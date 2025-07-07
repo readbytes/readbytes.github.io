@@ -1,0 +1,1162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>Java IO and NIO Security and IO</title>
+<link rel='shortcut icon' href='https://java2s.com/style/favicon.ico'>
+<link href="https://fonts.googleapis.com/css2?family=Merriweather&display=swap" rel="stylesheet" />
+<link href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+
+
+<style>
+body {
+  background: #f8f7f5;
+  font-family: 'Merriweather', serif;
+  color: #333;
+  margin: 0;
+  padding: 2rem 1rem;
+  font-size: 15px; /* smaller body font */
+  line-height: 1.5;
+}
+
+.container {
+  max-width: 700px;
+  margin: 0 auto;
+  background: white;
+  padding: 1rem 2rem;
+  box-shadow: 0 0 15px rgba(0,0,0,0.1);
+}
+.book-title-chapter {
+  font-family: 'Merriweather', serif;
+  font-size: 2rem;
+  font-weight: bold;
+  text-align: center;
+  margin-bottom: 2rem;
+  border-bottom: 2px solid #ccc;
+  padding-bottom: 0.5rem;
+  color: #2c3e50;
+}
+
+.book-subtitle-chapter {
+  text-align: center;
+  font-size: 1rem;
+  color: #666;
+  margin-top: -1rem;
+  margin-bottom: 2rem;
+}
+
+    .related-books {
+      margin-top: 40px;
+    }
+
+    .related-books h2 {
+      font-size: 22px;
+      margin-bottom: 20px;
+      border-bottom: 2px solid #eee;
+      padding-bottom: 8px;
+      color: #333;
+    }
+    .related-book-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+h1, h2, h3 {
+  font-weight: 600;
+  margin-top: 2.5rem;
+  margin-bottom: 1rem;
+  line-height: 1.2;
+}
+
+h1 {
+  font-size: 1.8rem; /* smaller heading */
+}
+
+h2 {
+  font-size: 1.4rem;
+}
+
+h3 {
+  font-size: 1.2rem;
+}
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-family: sans-serif;
+      font-size: 1em;
+      margin: 1em 0;
+    }
+
+    th, td {
+      border: 1px solid #cccccc;
+      padding: 0.6em 1em;
+      text-align: left;
+    }
+
+    th {
+      background-color: #f2f2f2;
+      font-weight: bold;
+    }
+
+    tr:nth-child(even) {
+      background-color: #fafafa;
+    }
+
+    /* Optional hover effect */
+    tr:hover {
+      background-color: #e6f7ff;
+    }
+ 
+a {
+  color: #555;
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+
+
+.code-block {
+    position: relative;
+    margin-bottom: 1em;
+}
+.copy-button {
+    background: transparent; 
+    color: white;
+
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    border: none;
+    padding: 4px 8px;
+    font-size: 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    z-index: 1;
+}
+
+.copy-button:hover {
+background-color: #0056b3;
+}
+.page-footer {
+  margin-top: 4rem;
+  padding: 1rem 0;
+  text-align: center;
+  font-size: 0.85rem;
+  color: #666;
+  border-top: 1px solid #ccc;
+  background-color: #fafafa;
+}
+.page-footer a {
+     color: #555;
+    text-decoration: none;
+  }
+  .page-footer a:hover {
+    text-decoration: underline;
+  }
+.chapter-navi-section {
+display: flex;
+justify-content: space-between;
+align-items: center;
+padding-bottom: 10px;
+}  
+
+.nav-link {
+  color: inherit;
+  text-decoration: none;
+  opacity: 0.5;
+  transition: opacity 0.3s ease, text-decoration 0.3s ease;
+}
+
+.nav-link:hover {
+  opacity: 0.9;
+  text-decoration: underline;
+}
+
+.prev {
+  text-align: left;
+}
+.toc-link {
+  text-align: center;
+}
+.next {
+  text-align: right;
+}
+.download-section {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2rem;
+  padding: 2rem 1rem;
+  max-width: 600px;
+  margin: 3rem auto;
+  background-color: #f9f9f9;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+}
+
+    .book-cover {
+      width: 130px;
+      height: 180px;
+      
+      background-size: cover; /* Ensures the image covers the entire div */
+      background-position: center; /* Centers the image */
+            
+      background: linear-gradient(145deg, #e0dede, #f9f9f9);
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 10px;
+      box-sizing: border-box;
+      position: relative;
+      font-family: 'Roboto', sans-serif;
+    }
+
+    .book-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 16px;
+      font-weight: 600;
+      color: #fff;
+      margin-bottom: 4px;
+    }
+
+    .book-subtitle {
+      font-size: 12px;
+      color: #aaa;
+      margin-bottom: 10px;
+    }
+
+    .series-name {
+      position: absolute;
+      top: 8px;
+      left: 8px;
+      font-size: 10px;
+      color: #fff;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-weight: bold;
+    }
+
+    .book-footer {
+      position: absolute;
+      bottom: 8px;
+      font-size: 10px;
+      color: #aaa;
+    }
+
+.download-info h2 {
+  margin: 0 0 0.5rem;
+  font-size: 1.2rem;
+}
+
+.format-label {
+  margin: 0 0 0.5rem;
+  font-size: 0.95rem;
+  color: #555;
+}
+
+.download-buttons {
+  display: flex;
+  gap: 1rem;
+}
+
+.download-button {
+  background-color: #4A90E2;
+  color: white;
+  padding: 0.5em 1.2em;
+  text-decoration: none;
+  border-radius: 25px;
+  font-size: 0.95rem;
+  transition: background-color 0.3s ease;
+}
+
+.download-button:hover {
+  background-color: #357ABD;
+}
+
+    code {
+ 
+      color: #d35400; 
+    }
+html {
+    scroll-behavior: smooth;
+}
+    .snippet-container {
+      overflow: hidden;    
+    }
+
+    .snippet-header {
+      background: #f0f0f0;
+      color: #333;
+      padding: 0.75rem 1rem;
+      cursor: pointer;
+      font-size: 1rem;
+    }
+
+    .snippet-body {
+      display: none;
+      font-family: monospace;
+    }
+
+    .snippet-container.open .snippet-body {
+      display: block;
+    }
+
+.CodeMirror {
+  border: 2px solid #ccc;
+  border-radius: 4px;
+  resize: vertical;
+}
+
+    button { padding: 0.5em 1em; background: green; color: white; border: none; cursor: pointer; }
+    button:hover { background: #1e7e34; }
+    .result_iframe { width:99%; height:200px; margin-top: 1em;  resize: both;border:1px solid #ccc;}        
+</style>
+</head>
+<body> 
+
+  <div class="container">
+    <div class = "chapter-navi-section">
+<a href="java-io-and-nio-performance-and-tuning.htm" class="nav-button prev">←</a>
+<a href='java-io-and-nio.htm#security-and-io' class="nav-button toc-link">Index</a>
+<a href="java-io-and-nio-new-features-and-future-of-java-io-nio.htm" class="nav-button next">→</a>
+</div>
+
+    <h1 class="book-title-chapter" id = 'top'>Security and IO</h1>
+    <h3 class="book-subtitle-chapter">Java IO and NIO</h3>   
+    <!-- <h1 class ="chapter-title"></h1> -->
+    <h2 id='io-security-basics'>12.1 IO Security Basics</h2><p>Input/output (IO) operations are foundational to nearly every Java application, enabling programs to read and write files, communicate over networks, and serialize data for storage or transmission. However, IO operations also introduce significant security risks if not handled carefully. Attackers often exploit insecure IO practices to gain unauthorized access, execute malicious code, or compromise data integrity and confidentiality.</p><p>This introduction explores why IO is a common source of security vulnerabilities in Java applications, highlights fundamental security principles like least privilege and input validation, and provides examples of common IO vulnerabilities alongside mitigation techniques.</p><h3 id="why-io-operations-present-security-risks">Why IO Operations Present Security Risks</h3><p>IO operations in Java interact with external resources outside the JVM’s internal control—such as the filesystem, network sockets, and external data streams. These interactions inherently increase the attack surface:</p><ul>
+ <li><strong>File system access</strong> can expose sensitive files or allow unauthorized file modification.</li>
+ <li><strong>Network communication</strong> can be intercepted, manipulated, or spoofed.</li>
+ <li><strong>Serialization and deserialization</strong> of objects can be exploited to inject malicious data or execute arbitrary code.</li>
+</ul><p>Since IO often deals with untrusted data—files uploaded by users, network input, or serialized objects—any lapse in validating or securing these operations can lead to serious security breaches.</p><h3 id="core-principles-for-securing-io-in-java">Core Principles for Securing IO in Java</h3><h4 id="least-privilege">Least Privilege</h4><p>Limit the permissions of your Java application and its components to the minimum necessary for their IO tasks. For example:</p><ul>
+ <li>Use Java Security Manager policies (where applicable) to restrict file or network access.</li>
+ <li>Run your application under an OS user account with limited file system privileges.</li>
+ <li>Avoid granting write access to directories unless absolutely required.</li>
+</ul><p>Least privilege reduces the potential impact if an attacker exploits an IO vulnerability.</p><h4 id="input-validation-and-sanitization">Input Validation and Sanitization</h4><p>All data read through IO channels must be treated as untrusted. Rigorously validate and sanitize input before processing:</p><ul>
+ <li>For <strong>file paths</strong>, prevent directory traversal attacks by canonicalizing paths and restricting access to safe directories.</li>
+ <li>For <strong>network data</strong>, check message formats, lengths, and character sets.</li>
+ <li>For <strong>serialized objects</strong>, use safe deserialization techniques (see below).</li>
+</ul><p>Reject or sanitize malformed or unexpected data to prevent injection attacks, buffer overflows, or crashes.</p><h4 id="secure-defaults-and-explicit-configuration">Secure Defaults and Explicit Configuration</h4><p>Java IO APIs often have default behaviors that may not be secure in all contexts. Adopt secure defaults such as:</p><ul>
+ <li>Using <strong>secure protocols</strong> (e.g., TLS) for network communication.</li>
+ <li>Setting file permissions explicitly after creating files or directories.</li>
+ <li>Avoiding deserialization of untrusted data or using validation hooks.</li>
+ <li>Closing IO resources promptly to avoid resource leaks that attackers can exploit.</li>
+</ul><h3 id="common-io-related-vulnerabilities-and-mitigation-strategies">Common IO-Related Vulnerabilities and Mitigation Strategies</h3><h4 id="vulnerability-1-directory-traversal">Vulnerability 1: Directory Traversal</h4><p><strong>Description:</strong> An attacker crafts a filename containing sequences like <code>../</code> to access files outside the intended directory.</p><p><strong>Example:</strong></p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-java">String baseDir = "/app/data/";
+String requestedFile = "../../etc/passwd";
+File file = new File(baseDir, requestedFile);</code></pre>
+</div><p>If unchecked, this may read the system’s password file.</p><p><strong>Mitigation:</strong></p><ul>
+ <li>Use <code>File#getCanonicalPath()</code> to resolve the absolute path.</li>
+ <li>Verify that the resolved path starts with the intended base directory.</li>
+</ul><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-java">File requested = new File(baseDir, requestedFile);
+String canonicalBase = new File(baseDir).getCanonicalPath();
+String canonicalRequested = requested.getCanonicalPath();
+
+if (!canonicalRequested.startsWith(canonicalBase)) {
+    throw new SecurityException("Invalid file path");
+}</code></pre>
+</div><h3 id="vulnerability-2-insecure-network-communication">Vulnerability 2: Insecure Network Communication</h3><p><strong>Description:</strong> Data sent over plaintext sockets can be intercepted or altered by attackers.</p><p><strong>Mitigation:</strong></p><ul>
+ <li>Use secure channels like <strong>TLS/SSL</strong> via <code>SSLSocket</code> or <code>HttpsURLConnection</code>.</li>
+ <li>Validate server certificates to prevent man-in-the-middle attacks.</li>
+ <li>Authenticate and authorize clients as needed.</li>
+</ul><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-java">SSLSocketFactory factory = (SSLSocketFactory) SSLSocketFactory.getDefault();
+try (SSLSocket socket = (SSLSocket) factory.createSocket(host, port)) {
+    // Secure communication
+}</code></pre>
+</div><h3 id="vulnerability-3-unsafe-deserialization">Vulnerability 3: Unsafe Deserialization</h3><p><strong>Description:</strong> Java deserialization allows reconstruction of objects from byte streams. Attackers can craft malicious byte streams to execute arbitrary code during deserialization.</p><p><strong>Mitigation:</strong></p><ul>
+ <li>Avoid deserializing untrusted data.</li>
+ <li>Use a whitelist of allowed classes with <code>ObjectInputFilter</code> (Java 9+).</li>
+ <li>Consider safer alternatives like JSON or XML parsing with strict schemas.</li>
+</ul><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-java">ObjectInputStream ois = new ObjectInputStream(inputStream);
+ObjectInputFilter filter = ObjectInputFilter.Config.createFilter("com.example.MySafeClass;!*");
+ois.setObjectInputFilter(filter);
+Object obj = ois.readObject();</code></pre>
+</div><h3 id="vulnerability-4-resource-exhaustion">Vulnerability 4: Resource Exhaustion</h3><p><strong>Description:</strong> Poor IO handling can cause resource leaks, such as open file descriptors or sockets, leading to denial of service.</p><p><strong>Mitigation:</strong></p><ul>
+ <li>Use <strong>try-with-resources</strong> to ensure streams and channels close properly.</li>
+ <li>Limit buffer sizes and validate data lengths to avoid memory exhaustion.</li>
+ <li>Monitor and log resource usage.</li>
+</ul><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-java">try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
+    // Read file safely
+}</code></pre>
+</div><h3 id="summary-best-practices-for-secure-io-in-java">Summary: Best Practices for Secure IO in Java</h3><table>
+ <thead>
+  <tr>
+   <th>Principle</th>
+   <th>Best Practice</th>
+  </tr>
+ </thead>
+ <tbody>
+  <tr>
+   <td><strong>Least Privilege</strong></td>
+   <td>Limit filesystem and network permissions</td>
+  </tr>
+  <tr>
+   <td><strong>Input Validation</strong></td>
+   <td>Sanitize paths, verify data formats</td>
+  </tr>
+  <tr>
+   <td><strong>Secure Defaults</strong></td>
+   <td>Use encrypted communication and safe deserialization</td>
+  </tr>
+  <tr>
+   <td><strong>Resource Management</strong></td>
+   <td>Close IO resources promptly with try-with-resources</td>
+  </tr>
+ </tbody>
+</table><h3 id="conclusion">Conclusion</h3><p>IO operations in Java are inherently risky due to their interaction with external resources and untrusted data. Following security principles—least privilege, rigorous input validation, secure defaults, and proper resource management—greatly reduces the attack surface.</p><p>Common vulnerabilities like directory traversal, insecure network communication, unsafe deserialization, and resource exhaustion can be mitigated through careful coding and the use of modern Java security features.</p><p>By adopting these security-conscious IO practices, Java developers can build applications that are robust, reliable, and resistant to common IO-related attacks.</p><div class = "chapter-navi-section">
+<a href="#top" class="nav-button prev">↑</a>
+<a href='java-io-and-nio.htm#security-and-io' class="nav-button toc-link">Index</a>
+<a href="#bottom" class="nav-button next">↓</a>
+</div>
+<h2 id='secure-file-access-and-permissions'>12.2 Secure File Access and Permissions</h2><p>File access is a common yet sensitive operation in Java applications. Improper handling of file permissions can lead to unauthorized reading, modification, or deletion of critical data, exposing the application and its environment to security risks. Securing file access means ensuring that your Java program only accesses files it is authorized to, and that files are protected against unintended or malicious changes.</p><p>This section covers how to check and enforce file permissions using Java’s <code>File</code> class and the more advanced <code>java.nio.file.attribute</code> package, the role of security managers in access control, and practical coding techniques to prevent unauthorized file operations.</p><h3 id="understanding-file-permissions-in-java">Understanding File Permissions in Java</h3><p>Java provides multiple layers for managing file access:</p><ul>
+ <li><strong>File system permissions:</strong> These are OS-level permissions that restrict who can read, write, or execute files.</li>
+ <li><strong>Java API-level checks:</strong> Methods that check the accessibility of files before attempting operations.</li>
+ <li><strong>Security Manager (deprecated in newer Java versions):</strong> A Java-level policy mechanism to restrict file access within the JVM.</li>
+</ul><h3 id="checking-file-permissions-with-the-file-class">Checking File Permissions with the <code>File</code> Class</h3><p>The <code>java.io.File</code> class offers simple methods to check file permissions:</p><ul>
+ <li><code>canRead()</code> — Returns <code>true</code> if the file is readable.</li>
+ <li><code>canWrite()</code> — Returns <code>true</code> if the file is writable.</li>
+ <li><code>canExecute()</code> — Returns <code>true</code> if the file is executable.</li>
+</ul><h3 id="example-checking-permissions">Example: Checking Permissions</h3><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-java">File file = new File("/path/to/file.txt");
+
+if (file.exists()) {
+    System.out.println("File exists");
+    System.out.println("Readable: " + file.canRead());
+    System.out.println("Writable: " + file.canWrite());
+    System.out.println("Executable: " + file.canExecute());
+} else {
+    System.out.println("File does not exist.");
+}</code></pre>
+</div><p>While these methods help to inspect permissions, they are often insufficient for enforcing strict security policies because they reflect the current OS permissions, and you may want more fine-grained control or to modify permissions programmatically.</p><h3 id="managing-file-permissions-with-java-nio-file-attribute">Managing File Permissions with <code>java.nio.file.attribute</code></h3><p>Java 7 introduced the <code>java.nio.file</code> package, including the <code>attribute</code> subpackage, which provides a more flexible and powerful way to inspect and modify file attributes and permissions.</p><h3 id="using-posixfilepermission">Using <code>PosixFilePermission</code></h3><p>On POSIX-compliant systems (Linux, Unix, macOS), you can read and change file permissions using <code>PosixFilePermission</code>:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-Java">import java.nio.file.*;
+import java.nio.file.attribute.*;
+import java.util.Set;
+
+Path path = Paths.get("/path/to/file.txt");
+
+// Read permissions
+Set&lt;PosixFilePermission&gt; perms = Files.getPosixFilePermissions(path);
+System.out.println("Current permissions: " + PosixFilePermissions.toString(perms));
+
+// Add owner write permission
+perms.add(PosixFilePermission.OWNER_WRITE);
+
+// Remove group write permission
+perms.remove(PosixFilePermission.GROUP_WRITE);
+
+// Set the new permissions
+Files.setPosixFilePermissions(path, perms);
+System.out.println("Permissions updated.");</code></pre>
+</div><p>This approach allows you to enforce minimum necessary permissions explicitly and prevent unwanted access.</p><h3 id="using-acls-on-windows">Using ACLs on Windows</h3><p>On Windows, the <code>AclFileAttributeView</code> can be used to manipulate Access Control Lists (ACLs):</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-Java">import java.nio.file.*;
+import java.nio.file.attribute.*;
+import java.util.List;
+
+Path path = Paths.get("C:\\path\\to\\file.txt");
+
+AclFileAttributeView aclView = Files.getFileAttributeView(path, AclFileAttributeView.class);
+List&lt;AclEntry&gt; aclEntries = aclView.getAcl();
+
+for (AclEntry entry : aclEntries) {
+    System.out.println(entry.principal() + ": " + entry.permissions());
+}
+
+// Modify ACLs as needed (requires detailed knowledge of Windows ACL)</code></pre>
+</div><p>This allows precise control over which users or groups can access or modify the file.</p><h3 id="enforcing-file-access-using-the-security-manager-legacy">Enforcing File Access Using the Security Manager (Legacy)</h3><p><strong>Note:</strong> The <code>SecurityManager</code> and its associated file permission checks are deprecated and slated for removal in future Java versions, but understanding them is helpful in legacy contexts.</p><p>The <code>SecurityManager</code> can restrict file operations by enforcing policies based on <code>java.io.FilePermission</code>. For example, you can configure a security policy file to grant or deny read/write access to specific files or directories.</p><p>Example security policy entry:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-bash">grant codeBase "file:/myapp/-" {
+    permission java.io.FilePermission "/myapp/data/-", "read,write";
+    permission java.io.FilePermission "/myapp/config/config.xml", "read";
+};</code></pre>
+</div><p>With the Security Manager enabled, Java checks these permissions before allowing file operations, throwing <code>SecurityException</code> if denied.</p><h3 id="preventing-unauthorized-file-access-best-practices">Preventing Unauthorized File Access: Best Practices</h3><ol>
+ <li><p><strong>Validate and sanitize file paths:</strong> Prevent directory traversal by canonicalizing paths and restricting access to allowed directories.</p>
+  <div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+   <pre><code class="language-Java">File baseDir = new File("/app/data/");
+File requested = new File(baseDir, userInputPath);
+
+String canonicalBase = baseDir.getCanonicalPath();
+String canonicalRequested = requested.getCanonicalPath();
+
+if (!canonicalRequested.startsWith(canonicalBase)) {
+    throw new SecurityException("Access denied: invalid file path");
+}</code></pre>
+  </div></li>
+ <li><p><strong>Check permissions before operations:</strong> Use <code>File.canRead()</code> and <code>File.canWrite()</code> to verify access, but don’t rely solely on these—handle exceptions robustly.</p></li>
+ <li><p><strong>Set secure file permissions after creating files:</strong> For example, create a file and then restrict access to owner only.</p>
+  <div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+   <pre><code class="language-Java">Path newFile = Files.createFile(Paths.get("/app/data/newfile.txt"));
+Set&lt;PosixFilePermission&gt; perms = PosixFilePermissions.fromString("rw-------");
+Files.setPosixFilePermissions(newFile, perms);</code></pre>
+  </div></li>
+ <li><p><strong>Use try-with-resources and handle exceptions:</strong> Ensure streams and channels close properly to avoid resource leaks that might cause file locks.</p></li>
+ <li><p><strong>Avoid running as an administrator or root:</strong> Run your Java process under a least-privilege OS user to limit potential damage.</p></li>
+</ol><h3 id="secure-file-handling-code-example">Secure File Handling Code Example</h3><p>Here is an example demonstrating secure reading of a user-requested file, with path validation and permission checking:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">📋</button>
+ <pre><code class="language-java">import java.io.*;
+import java.nio.file.*;
+
+public class SecureFileReader {
+
+    private final Path baseDirectory;
+
+    public SecureFileReader(String baseDir) {
+        this.baseDirectory = Paths.get(baseDir).toAbsolutePath().normalize();
+    }
+
+    public String readFile(String userProvidedPath) throws IOException {
+        Path requestedFile = baseDirectory.resolve(userProvidedPath).normalize();
+
+        if (!requestedFile.startsWith(baseDirectory)) {
+            throw new SecurityException("Unauthorized file access attempt");
+        }
+
+        if (!Files.exists(requestedFile) || !Files.isReadable(requestedFile)) {
+            throw new FileNotFoundException("File not found or not readable");
+        }
+
+        try (BufferedReader reader = Files.newBufferedReader(requestedFile)) {
+            StringBuilder content = new StringBuilder();
+            String line;
+            while ((line = reader.readLine()) != null) {
+                content.append(line).append("\n");
+            }
+            return content.toString();
+        }
+    }
+
+    public static void main(String[] args) {
+        try {
+            SecureFileReader sfr = new SecureFileReader("/app/data");
+            String content = sfr.readFile("example.txt");
+            System.out.println("File content:\n" + content);
+        } catch (Exception e) {
+            System.err.println("Error: " + e.getMessage());
+        }
+    }
+}</code></pre>
+</div><p>This code ensures the requested file resides under a base directory, checks read permissions, and safely reads the file.</p><h3 id="conclusion">Conclusion</h3><p>Securing file access in Java requires a combination of OS-level permissions and application-level checks. The <code>File</code> class provides simple permission inspection, while the <code>java.nio.file.attribute</code> package offers advanced control over file attributes and access rights. Although the Security Manager can enforce security policies, modern applications rely more on OS user permissions and explicit permission handling.</p><p>By validating file paths, verifying permissions before access, setting restrictive file attributes, and carefully managing file IO operations, you can greatly reduce the risk of unauthorized file access and modification in your Java applications.</p><div class = "chapter-navi-section">
+<a href="#top" class="nav-button prev">↑</a>
+<a href='java-io-and-nio.htm#security-and-io' class="nav-button toc-link">Index</a>
+<a href="#bottom" class="nav-button next">↓</a>
+</div>
+<h2 id='secure-network-communication-with-nio'>12.3 Secure Network Communication with NIO</h2><p>Network communication in Java NIO offers scalable, non-blocking IO operations, which are ideal for high-performance servers and clients. However, by default, NIO channels transmit data in plaintext, exposing them to eavesdropping, tampering, and man-in-the-middle attacks. To secure NIO-based networking, Java provides the <code>SSLEngine</code> API, which allows integrating SSL/TLS encryption and authentication while preserving the non-blocking nature of NIO.</p><p>This section explains how to implement secure network communication using Java NIO and <code>SSLEngine</code>. We cover:</p><ul>
+ <li>The role of <code>SSLEngine</code> in TLS integration.</li>
+ <li>Setting up a secure <code>SocketChannel</code> with <code>SSLEngine</code>.</li>
+ <li>Performing the SSL/TLS handshake in a non-blocking context.</li>
+ <li>Encrypting and decrypting application data.</li>
+ <li>Key Java code examples for each step.</li>
+</ul><h3 id="why-use-sslengine-for-tls-in-java-nio">Why Use <code>SSLEngine</code> for TLS in Java NIO?</h3><p>Traditional SSL/TLS support in Java (e.g., <code>SSLSocket</code>) is blocking and tightly coupled to socket IO. <code>SSLEngine</code> separates TLS protocol handling from actual IO and is designed for integration with non-blocking transport layers like <code>SocketChannel</code>. It allows developers to:</p><ul>
+ <li>Perform TLS handshake and data encryption/decryption manually.</li>
+ <li>Manage encrypted and decrypted buffers explicitly.</li>
+ <li>Integrate with selectors and non-blocking IO workflows.</li>
+ <li>Support scalable secure servers or clients.</li>
+</ul><h3 id="overview-how-sslengine-works-with-nio">Overview: How <code>SSLEngine</code> Works with NIO</h3><p>The key concept is that <code>SSLEngine</code> handles TLS protocol logic on byte buffers:</p><ul>
+ <li><strong>Application data</strong> buffers contain plaintext data to send or receive.</li>
+ <li><strong>Network data</strong> buffers contain encrypted TLS packets to be sent or received on the network.</li>
+</ul><p>The developer drives the handshake and data processing by repeatedly calling <code>wrap()</code> and <code>unwrap()</code> methods on <code>SSLEngine</code>, moving data between these buffers and the underlying <code>SocketChannel</code>.</p><h3 id="setting-up-a-secure-nio-channel-using-socketchannel-and-sslengine">Setting Up a Secure NIO Channel Using <code>SocketChannel</code> and <code>SSLEngine</code></h3><h4 id="step-1-initialize-ssl-context-and-create-sslengine">Step 1: Initialize SSL Context and Create SSLEngine</h4><p>First, create an <code>SSLContext</code> initialized with key and trust managers, then create an <code>SSLEngine</code> configured as client or server.</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-Java">import javax.net.ssl.*;
+
+SSLContext sslContext = SSLContext.getInstance("TLS");
+sslContext.init(keyManagers, trustManagers, null);
+
+SSLEngine sslEngine = sslContext.createSSLEngine(host, port);
+sslEngine.setUseClientMode(true); // or false if server</code></pre>
+</div><p>Here, <code>keyManagers</code> and <code>trustManagers</code> manage certificates and trust chains.</p><h4 id="step-2-create-bytebuffers-for-encrypted-and-plain-data">Step 2: Create ByteBuffers for Encrypted and Plain Data</h4><p>You must allocate buffers for outgoing (encrypted) and incoming (encrypted) network data, and for outgoing and incoming application (plaintext) data.</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-Java">SSLSession session = sslEngine.getSession();
+
+ByteBuffer appData = ByteBuffer.allocate(session.getApplicationBufferSize());
+ByteBuffer netData = ByteBuffer.allocate(session.getPacketBufferSize());
+ByteBuffer peerAppData = ByteBuffer.allocate(session.getApplicationBufferSize());
+ByteBuffer peerNetData = ByteBuffer.allocate(session.getPacketBufferSize());</code></pre>
+</div><ul>
+ <li><code>appData</code>: plaintext data to send.</li>
+ <li><code>netData</code>: encrypted data to send.</li>
+ <li><code>peerNetData</code>: encrypted data received from network.</li>
+ <li><code>peerAppData</code>: decrypted data received from peer.</li>
+</ul><h3 id="step-3-establish-non-blocking-socketchannel">Step 3: Establish Non-Blocking SocketChannel</h3><p>Create and configure the <code>SocketChannel</code> for non-blocking mode and connect it.</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-Java">SocketChannel socketChannel = SocketChannel.open();
+socketChannel.configureBlocking(false);
+socketChannel.connect(new InetSocketAddress(host, port));
+
+// Use Selector to wait for connect completion and subsequent read/write readiness.</code></pre>
+</div><h3 id="step-4-perform-the-tls-handshake">Step 4: Perform the TLS Handshake</h3><p>The handshake involves several <code>SSLEngineResult.HandshakeStatus</code> states and requires driving <code>wrap()</code> and <code>unwrap()</code> calls:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-Java">sslEngine.beginHandshake();
+SSLEngineResult.HandshakeStatus handshakeStatus = sslEngine.getHandshakeStatus();
+
+while (handshakeStatus != SSLEngineResult.HandshakeStatus.FINISHED &amp;&amp;
+       handshakeStatus != SSLEngineResult.HandshakeStatus.NOT_HANDSHAKING) {
+
+    switch (handshakeStatus) {
+        case NEED_UNWRAP:
+            if (socketChannel.read(peerNetData) &lt; 0) {
+                throw new IOException("Channel closed during handshake");
+            }
+            peerNetData.flip();
+            SSLEngineResult unwrapResult = sslEngine.unwrap(peerNetData, peerAppData);
+            peerNetData.compact();
+            handshakeStatus = unwrapResult.getHandshakeStatus();
+            break;
+
+        case NEED_WRAP:
+            netData.clear();
+            SSLEngineResult wrapResult = sslEngine.wrap(appData, netData);
+            handshakeStatus = wrapResult.getHandshakeStatus();
+            netData.flip();
+            while (netData.hasRemaining()) {
+                socketChannel.write(netData);
+            }
+            break;
+
+        case NEED_TASK:
+            Runnable task;
+            while ((task = sslEngine.getDelegatedTask()) != null) {
+                task.run();
+            }
+            handshakeStatus = sslEngine.getHandshakeStatus();
+            break;
+
+        default:
+            throw new IllegalStateException("Invalid handshake status: " + handshakeStatus);
+    }
+}</code></pre>
+</div><ul>
+ <li><strong>NEED_UNWRAP:</strong> Read encrypted data from the socket and decrypt it.</li>
+ <li><strong>NEED_WRAP:</strong> Encrypt data and send it.</li>
+ <li><strong>NEED_TASK:</strong> Run delegated tasks (CPU-intensive operations like certificate validation).</li>
+ <li>Loop until handshake finishes.</li>
+</ul><h3 id="step-5-secure-data-exchange-after-handshake">Step 5: Secure Data Exchange After Handshake</h3><p>After a successful handshake, application data can be exchanged securely using <code>wrap()</code> and <code>unwrap()</code>:</p><p><strong>Sending data:</strong></p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-Java">appData.clear();
+appData.put("Hello secure world".getBytes(StandardCharsets.UTF_8));
+appData.flip();
+
+netData.clear();
+SSLEngineResult result = sslEngine.wrap(appData, netData);
+netData.flip();
+
+while (netData.hasRemaining()) {
+    socketChannel.write(netData);
+}</code></pre>
+</div><p><strong>Receiving data:</strong></p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-Java">peerNetData.clear();
+int bytesRead = socketChannel.read(peerNetData);
+if (bytesRead &gt; 0) {
+    peerNetData.flip();
+    peerAppData.clear();
+    SSLEngineResult result = sslEngine.unwrap(peerNetData, peerAppData);
+    peerNetData.compact();
+
+    peerAppData.flip();
+    byte[] receivedBytes = new byte[peerAppData.remaining()];
+    peerAppData.get(receivedBytes);
+    System.out.println("Received: " + new String(receivedBytes, StandardCharsets.UTF_8));
+}</code></pre>
+</div><p>The <code>wrap()</code> method encrypts plaintext data into TLS packets, and <code>unwrap()</code> decrypts received TLS packets into plaintext.</p><p>Here's a <strong>complete, single runnable Java example</strong> that:</p><ul>
+ <li>Creates an SSL/TLS connection using <code>SocketChannel</code> and <code>SSLEngine</code></li>
+ <li>Performs a full handshake</li>
+ <li>Sends and receives secure data</li>
+ <li>Uses a self-contained trust manager (for demo purposes only)</li>
+</ul><p>⚠️ <strong>Note:</strong> For a real secure deployment, you'd load proper certificates. This example uses a <strong>dummy trust manager</strong> that accepts all certificates for simplicity.</p><h3 id="complete-runnable-java-example-client-side">Complete Runnable Java Example (Client-Side)</h3><div class="snippet-container" id="G78Ey">
+ <div class="snippet-header" onclick="toggleSnippet('G78Ey')">
+  Click to view full runnable Code
+ </div>
+ <div class="snippet-body">
+  <div class="code-block"><button class="copy-button" onclick="copyCode(this)">📋</button>
+   <pre><code class="language-java">
+import javax.net.ssl.*;
+import java.io.IOException;
+import java.net.InetSocketAddress;
+import java.nio.ByteBuffer;
+import java.nio.channels.SocketChannel;
+import java.nio.charset.StandardCharsets;
+import java.security.SecureRandom;
+import java.security.cert.X509Certificate;
+
+public class SecureNioClient {
+
+    public static void main(String[] args) throws Exception {
+        String host = "localhost";
+        int port = 8443;
+
+        // Step 1: Create SSLContext with dummy TrustManager (INSECURE - for demo only)
+        TrustManager[] trustAll = new TrustManager[] {
+            new X509TrustManager() {
+                public X509Certificate[] getAcceptedIssuers() { return null; }
+                public void checkClientTrusted(X509Certificate[] certs, String authType) { }
+                public void checkServerTrusted(X509Certificate[] certs, String authType) { }
+            }
+        };
+
+        SSLContext sslContext = SSLContext.getInstance("TLS");
+        sslContext.init(null, trustAll, new SecureRandom());
+
+        SSLEngine sslEngine = sslContext.createSSLEngine(host, port);
+        sslEngine.setUseClientMode(true);
+        sslEngine.beginHandshake();
+
+        SSLSession session = sslEngine.getSession();
+
+        // Step 2: Allocate Buffers
+        ByteBuffer appData = ByteBuffer.allocate(session.getApplicationBufferSize());
+        ByteBuffer netData = ByteBuffer.allocate(session.getPacketBufferSize());
+        ByteBuffer peerAppData = ByteBuffer.allocate(session.getApplicationBufferSize());
+        ByteBuffer peerNetData = ByteBuffer.allocate(session.getPacketBufferSize());
+
+        // Step 3: Open SocketChannel
+        SocketChannel socketChannel = SocketChannel.open();
+        socketChannel.configureBlocking(false);
+        socketChannel.connect(new InetSocketAddress(host, port));
+
+        while (!socketChannel.finishConnect()) {
+            Thread.sleep(50); // Wait for connection
+        }
+
+        // Step 4: TLS Handshake
+        SSLEngineResult.HandshakeStatus handshakeStatus = sslEngine.getHandshakeStatus();
+
+        while (handshakeStatus != SSLEngineResult.HandshakeStatus.FINISHED &amp;&amp;
+               handshakeStatus != SSLEngineResult.HandshakeStatus.NOT_HANDSHAKING) {
+
+            switch (handshakeStatus) {
+                case NEED_UNWRAP:
+                    if (socketChannel.read(peerNetData) &lt; 0) {
+                        throw new IOException("Channel closed during handshake");
+                    }
+                    peerNetData.flip();
+                    SSLEngineResult unwrapResult = sslEngine.unwrap(peerNetData, peerAppData);
+                    peerNetData.compact();
+                    handshakeStatus = unwrapResult.getHandshakeStatus();
+                    break;
+
+                case NEED_WRAP:
+                    netData.clear();
+                    SSLEngineResult wrapResult = sslEngine.wrap(ByteBuffer.allocate(0), netData);
+                    handshakeStatus = wrapResult.getHandshakeStatus();
+                    netData.flip();
+                    while (netData.hasRemaining()) {
+                        socketChannel.write(netData);
+                    }
+                    break;
+
+                case NEED_TASK:
+                    Runnable task;
+                    while ((task = sslEngine.getDelegatedTask()) != null) {
+                        task.run();
+                    }
+                    handshakeStatus = sslEngine.getHandshakeStatus();
+                    break;
+
+                default:
+                    throw new IllegalStateException("Unexpected handshake status: " + handshakeStatus);
+            }
+        }
+
+        System.out.println("TLS Handshake completed.");
+
+        // Step 5: Send Secure Data
+        String message = "Hello secure world!";
+        appData.clear();
+        appData.put(message.getBytes(StandardCharsets.UTF_8));
+        appData.flip();
+
+        netData.clear();
+        SSLEngineResult wrapResult = sslEngine.wrap(appData, netData);
+        netData.flip();
+
+        while (netData.hasRemaining()) {
+            socketChannel.write(netData);
+        }
+
+        System.out.println("Sent: " + message);
+
+        // Step 6: Receive Secure Response
+        peerNetData.clear();
+        int bytesRead = socketChannel.read(peerNetData);
+
+        if (bytesRead &gt; 0) {
+            peerNetData.flip();
+            peerAppData.clear();
+            SSLEngineResult result = sslEngine.unwrap(peerNetData, peerAppData);
+            peerNetData.compact();
+
+            peerAppData.flip();
+            byte[] receivedBytes = new byte[peerAppData.remaining()];
+            peerAppData.get(receivedBytes);
+            System.out.println("Received: " + new String(receivedBytes, StandardCharsets.UTF_8));
+        }
+
+        // Cleanup
+        sslEngine.closeOutbound();
+        socketChannel.close();
+    }
+} 
+</code></pre>
+  </div>
+ </div>
+</div><h3 id="requirements-to-run">Requirements to Run</h3><ul>
+ <li>Java 11+</li>
+ <li>A TLS server running at <code>localhost:8443</code> (can be a simple echo server)</li>
+ <li>Add real trust/key managers for production use (instead of the dummy trust manager)</li>
+</ul><h3 id="warning">Warning</h3><p>This demo uses a <strong>dummy <code>X509TrustManager</code> that accepts all certificates</strong>, which is insecure and should <strong>never</strong> be used in production. Always validate certificates using a properly configured trust store.</p><h3 id="key-points-and-considerations">Key Points and Considerations</h3><ul>
+ <li><strong>Buffer sizing:</strong> Use buffer sizes from <code>sslEngine.getSession()</code> to avoid buffer overflows or underflows.</li>
+ <li><strong>Handling <code>BUFFER_OVERFLOW</code> and <code>BUFFER_UNDERFLOW</code>:</strong> Check <code>SSLEngineResult.Status</code> and adjust buffer sizes or read more data accordingly.</li>
+ <li><strong>Non-blocking and selector integration:</strong> Coordinate channel readiness (read/write) with handshake and data wrap/unwrap cycles.</li>
+ <li><strong>Exception handling:</strong> Handle IOExceptions and <code>SSLException</code> to gracefully close connections on failure.</li>
+ <li><strong>Closing SSL connections:</strong> Use <code>sslEngine.closeOutbound()</code> and perform a proper SSL/TLS close_notify handshake.</li>
+</ul><h3 id="minimal-secure-client-example-outline">Minimal Secure Client Example Outline</h3><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-java">// 1. Setup SSLContext, SSLEngine (client mode)
+// 2. Create non-blocking SocketChannel and connect
+// 3. Perform handshake loop as described
+// 4. After handshake, wrap application data and write to channel
+// 5. Read encrypted data, unwrap, and process plaintext
+// 6. Close connection gracefully with SSL/TLS close_notify</code></pre>
+</div><h3 id="summary">Summary</h3><p>Integrating SSL/TLS into Java NIO applications requires explicit management of encrypted and decrypted buffers via the <code>SSLEngine</code> API. While this adds complexity compared to traditional blocking SSL sockets, it enables scalable, secure network applications with non-blocking IO.</p><p>The process involves:</p><ul>
+ <li>Creating and configuring an <code>SSLEngine</code>.</li>
+ <li>Allocating appropriate buffers for TLS packet and application data.</li>
+ <li>Driving the SSL/TLS handshake with coordinated wrap and unwrap calls.</li>
+ <li>Encrypting and decrypting data securely during communication.</li>
+</ul><p>Mastering <code>SSLEngine</code> unlocks the ability to build high-performance, secure Java servers and clients that benefit from both TLS security and NIO scalability.</p><div class = "chapter-navi-section">
+<a href="#top" class="nav-button prev">↑</a>
+<a href='java-io-and-nio.htm#security-and-io' class="nav-button toc-link">Index</a>
+<a href="#bottom" class="nav-button next">↓</a>
+</div>
+<h2 id='handling-sensitive-data-streams'>12.4 Handling Sensitive Data Streams</h2><p>Java IO streams are essential for reading and writing data, but handling sensitive information—like passwords, encryption keys, or personal user data—requires extra care. Without proper precautions, sensitive data may be inadvertently exposed through plaintext storage, memory leaks, or insecure transmission channels.</p><p>This guide covers best practices for securely handling sensitive data in Java IO streams, focusing on:</p><ul>
+ <li>Avoiding plaintext persistence of secrets.</li>
+ <li>Encrypting data before storage or transmission.</li>
+ <li>Securely clearing buffers to minimize in-memory data exposure.</li>
+ <li>Using Java’s cryptographic APIs, including <code>CipherInputStream</code> and <code>CipherOutputStream</code>.</li>
+ <li>Example code demonstrating encryption and decryption with streams.</li>
+</ul><h3 id="why-secure-handling-matters">Why Secure Handling Matters</h3><p>Sensitive data such as passwords, API keys, credit card information, or personally identifiable information (PII) are attractive targets for attackers. Common risks when handling sensitive data via IO streams include:</p><ul>
+ <li>Writing secrets directly to disk in plaintext, leaving them accessible to unauthorized users.</li>
+ <li>Transmitting sensitive data over unencrypted channels, exposing it to interception.</li>
+ <li>Leaving sensitive data in memory buffers, increasing the risk of extraction through memory dumps or side-channel attacks.</li>
+ <li>Poorly managing keys or cryptographic material, weakening overall security.</li>
+</ul><p>Following secure IO practices reduces these risks and helps comply with privacy regulations and security standards.</p><h3 id="best-practices-for-secure-io-handling-of-sensitive-data">Best Practices for Secure IO Handling of Sensitive Data</h3><h4 id="avoid-writing-plaintext-secrets-to-disk">Avoid Writing Plaintext Secrets to Disk</h4><p>Never store raw passwords, keys, or tokens in plaintext files. If persistent storage is necessary:</p><ul>
+ <li>Use strong encryption to protect data at rest.</li>
+ <li>Restrict file permissions to limit access.</li>
+ <li>Avoid logging sensitive data accidentally.</li>
+</ul><h4 id="encrypt-data-before-writing-to-disk-or-transmitting">Encrypt Data Before Writing to Disk or Transmitting</h4><p>Encrypt sensitive data with a robust symmetric cipher (e.g., AES) before writing it to disk or sending over the network. Decrypt only when necessary.</p><ul>
+ <li>Use a well-tested cryptographic provider (<code>javax.crypto</code>).</li>
+ <li>Manage encryption keys securely (never hardcode keys).</li>
+ <li>Consider authenticated encryption (e.g., AES-GCM) to ensure confidentiality and integrity.</li>
+</ul><h4 id="securely-clear-buffers-after-use">Securely Clear Buffers After Use</h4><p>Buffers holding sensitive data in memory should be cleared immediately after use to prevent lingering secrets:</p><ul>
+ <li>Overwrite byte arrays or char arrays with zeros or random data.</li>
+ <li>Avoid using immutable objects (like <code>String</code>) for sensitive data, since they cannot be erased from memory.</li>
+</ul><h4 id="use-cipherinputstream-and-cipheroutputstream-for-stream-encryption">Use <code>CipherInputStream</code> and <code>CipherOutputStream</code> for Stream Encryption</h4><p>These classes allow you to transparently encrypt or decrypt data as it flows through Java IO streams.</p><h3 id="encrypting-and-decrypting-data-with-java-io-streams">Encrypting and Decrypting Data with Java IO Streams</h3><p>Here’s how to implement stream encryption and decryption securely with <code>CipherOutputStream</code> and <code>CipherInputStream</code>.</p><h3 id="setup-create-an-aes-key-and-cipher">Setup: Create an AES Key and Cipher</h3><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-Java">import javax.crypto.Cipher;
+import javax.crypto.KeyGenerator;
+import javax.crypto.SecretKey;
+import javax.crypto.spec.GCMParameterSpec;
+import javax.crypto.CipherInputStream;
+import javax.crypto.CipherOutputStream;
+import java.io.*;
+import java.security.SecureRandom;
+
+public class SecureStreamExample {
+
+    private static final String AES = "AES";
+    private static final String TRANSFORMATION = "AES/GCM/NoPadding";
+    private static final int GCM_TAG_LENGTH = 16; // bytes
+    private static final int GCM_IV_LENGTH = 12;  // bytes
+
+    // Generate a random AES key
+    public static SecretKey generateKey() throws Exception {
+        KeyGenerator keyGen = KeyGenerator.getInstance(AES);
+        keyGen.init(256); // Use 256-bit AES key (requires JCE Unlimited Strength)
+        return keyGen.generateKey();
+    }
+
+    // Generate a secure random IV (nonce)
+    public static byte[] generateIV() {
+        byte[] iv = new byte[GCM_IV_LENGTH];
+        new SecureRandom().nextBytes(iv);
+        return iv;
+    }</code></pre>
+</div><h3 id="encrypt-data-to-file-using-cipheroutputstream">Encrypt Data to File Using <code>CipherOutputStream</code></h3><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-Java">public static void encryptToFile(byte[] plaintext, File outputFile, SecretKey key) throws Exception {
+        byte[] iv = generateIV();
+
+        Cipher cipher = Cipher.getInstance(TRANSFORMATION);
+        GCMParameterSpec spec = new GCMParameterSpec(GCM_TAG_LENGTH * 8, iv);
+        cipher.init(Cipher.ENCRYPT_MODE, key, spec);
+
+        try (FileOutputStream fos = new FileOutputStream(outputFile);
+             // Write IV at the beginning of the file for later decryption
+             BufferedOutputStream bos = new BufferedOutputStream(fos);
+             CipherOutputStream cos = new CipherOutputStream(bos, cipher)) {
+
+            bos.write(iv);  // prepend IV for use during decryption
+            cos.write(plaintext);
+        }
+
+        // Securely clear plaintext buffer
+        java.util.Arrays.fill(plaintext, (byte) 0);
+    }</code></pre>
+</div><p>This method:</p><ul>
+ <li>Generates a secure random IV.</li>
+ <li>Prepends the IV to the output file (needed for decryption).</li>
+ <li>Wraps the <code>FileOutputStream</code> in a <code>CipherOutputStream</code> for transparent encryption.</li>
+ <li>Overwrites the plaintext buffer after writing.</li>
+</ul><h3 id="decrypt-data-from-file-using-cipherinputstream">Decrypt Data from File Using <code>CipherInputStream</code></h3><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-Java">public static byte[] decryptFromFile(File inputFile, SecretKey key) throws Exception {
+        try (FileInputStream fis = new FileInputStream(inputFile);
+             BufferedInputStream bis = new BufferedInputStream(fis)) {
+
+            // Read the IV from the file header
+            byte[] iv = new byte[GCM_IV_LENGTH];
+            if (bis.read(iv) != GCM_IV_LENGTH) {
+                throw new IllegalStateException("Invalid input file format");
+            }
+
+            Cipher cipher = Cipher.getInstance(TRANSFORMATION);
+            GCMParameterSpec spec = new GCMParameterSpec(GCM_TAG_LENGTH * 8, iv);
+            cipher.init(Cipher.DECRYPT_MODE, key, spec);
+
+            try (CipherInputStream cis = new CipherInputStream(bis, cipher);
+                 ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
+
+                byte[] buffer = new byte[4096];
+                int bytesRead;
+                while ((bytesRead = cis.read(buffer)) != -1) {
+                    baos.write(buffer, 0, bytesRead);
+                }
+
+                byte[] decrypted = baos.toByteArray();
+
+                // Securely clear intermediate buffer
+                java.util.Arrays.fill(buffer, (byte) 0);
+
+                return decrypted;
+            }
+        }
+    }
+}</code></pre>
+</div><p>This method:</p><ul>
+ <li>Reads the IV from the start of the file.</li>
+ <li>Initializes a cipher for decryption.</li>
+ <li>Wraps the input stream in a <code>CipherInputStream</code> to decrypt transparently.</li>
+ <li>Reads decrypted data into a byte array.</li>
+ <li>Clears temporary buffers after use.</li>
+</ul><div class="snippet-container" id="JnzoI">
+ <div class="snippet-header" onclick="toggleSnippet('JnzoI')">
+  Click to view full runnable Code
+ </div>
+ <div class="snippet-body">
+  <div class="code-block"><button class="copy-button" onclick="copyCode(this)">📋</button>
+   <pre><code class="language-java">
+import javax.crypto.Cipher;
+import javax.crypto.CipherInputStream;
+import javax.crypto.CipherOutputStream;
+import javax.crypto.KeyGenerator;
+import javax.crypto.SecretKey;
+import javax.crypto.spec.GCMParameterSpec;
+import java.io.*;
+import java.security.SecureRandom;
+import java.util.Arrays;
+
+public class SecureStreamExample {
+
+    private static final String AES = "AES";
+    private static final String TRANSFORMATION = "AES/GCM/NoPadding";
+    private static final int GCM_TAG_LENGTH = 16; // in bytes
+    private static final int GCM_IV_LENGTH = 12;  // in bytes
+
+    public static void main(String[] args) throws Exception {
+        SecretKey key = generateKey();
+        File file = new File("encrypted.dat");
+
+        String message = "This is a top-secret message.";
+        byte[] plaintext = message.getBytes();
+
+        encryptToFile(plaintext, file, key);
+        byte[] decrypted = decryptFromFile(file, key);
+
+        System.out.println("Decrypted message: " + new String(decrypted));
+    }
+
+    // Generate a 256-bit AES key
+    public static SecretKey generateKey() throws Exception {
+        KeyGenerator keyGen = KeyGenerator.getInstance(AES);
+        keyGen.init(256);
+        return keyGen.generateKey();
+    }
+
+    // Generate secure random IV
+    public static byte[] generateIV() {
+        byte[] iv = new byte[GCM_IV_LENGTH];
+        new SecureRandom().nextBytes(iv);
+        return iv;
+    }
+
+    // Encrypt data and write to file
+    public static void encryptToFile(byte[] plaintext, File outputFile, SecretKey key) throws Exception {
+        byte[] iv = generateIV();
+
+        Cipher cipher = Cipher.getInstance(TRANSFORMATION);
+        GCMParameterSpec spec = new GCMParameterSpec(GCM_TAG_LENGTH * 8, iv);
+        cipher.init(Cipher.ENCRYPT_MODE, key, spec);
+
+        try (FileOutputStream fos = new FileOutputStream(outputFile);
+             BufferedOutputStream bos = new BufferedOutputStream(fos)) {
+
+            bos.write(iv); // prepend IV
+
+            try (CipherOutputStream cos = new CipherOutputStream(bos, cipher)) {
+                cos.write(plaintext);
+            }
+        }
+
+        Arrays.fill(plaintext, (byte) 0); // Clear sensitive data
+    }
+
+    // Decrypt data from file
+    public static byte[] decryptFromFile(File inputFile, SecretKey key) throws Exception {
+        try (FileInputStream fis = new FileInputStream(inputFile);
+             BufferedInputStream bis = new BufferedInputStream(fis)) {
+
+            byte[] iv = new byte[GCM_IV_LENGTH];
+            if (bis.read(iv) != GCM_IV_LENGTH) {
+                throw new IllegalStateException("Invalid file format: IV missing");
+            }
+
+            Cipher cipher = Cipher.getInstance(TRANSFORMATION);
+            GCMParameterSpec spec = new GCMParameterSpec(GCM_TAG_LENGTH * 8, iv);
+            cipher.init(Cipher.DECRYPT_MODE, key, spec);
+
+            try (CipherInputStream cis = new CipherInputStream(bis, cipher);
+                 ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
+
+                byte[] buffer = new byte[4096];
+                int bytesRead;
+                while ((bytesRead = cis.read(buffer)) != -1) {
+                    baos.write(buffer, 0, bytesRead);
+                }
+
+                Arrays.fill(buffer, (byte) 0);
+                return baos.toByteArray();
+            }
+        }
+    }
+} 
+</code></pre>
+  </div>
+ </div>
+</div><h3 id="additional-tips-for-secure-stream-handling">Additional Tips for Secure Stream Handling</h3><ul>
+ <li><strong>Avoid using <code>String</code> for secrets:</strong> Store sensitive data in mutable <code>char[]</code> or <code>byte[]</code> so you can overwrite it.</li>
+ <li><strong>Use try-with-resources:</strong> Always close streams promptly to flush and release resources.</li>
+ <li><strong>Use authenticated encryption:</strong> Modes like AES-GCM provide both confidentiality and integrity.</li>
+ <li><strong>Secure key management:</strong> Store keys securely (e.g., hardware security modules, encrypted key stores) and never hardcode them.</li>
+ <li><strong>Limit buffer sizes:</strong> Large buffers increase memory footprint; choose sizes balancing performance and security.</li>
+</ul><h3 id="summary">Summary</h3><p>Handling sensitive data securely in Java IO streams involves:</p><ul>
+ <li>Never writing secrets in plaintext to disk or network.</li>
+ <li>Using Java Cryptography Architecture (<code>javax.crypto</code>) to encrypt and decrypt data with <code>CipherOutputStream</code> and <code>CipherInputStream</code>.</li>
+ <li>Generating secure random IVs/nonces and using authenticated encryption modes.</li>
+ <li>Securely clearing memory buffers after use to minimize exposure.</li>
+ <li>Managing encryption keys carefully and restricting access to encrypted files.</li>
+</ul><p>By following these practices and using the Java cryptographic APIs properly, you can protect sensitive data throughout its lifecycle in your Java applications.</p><div class = "chapter-navi-section">
+<a href="java-io-and-nio-performance-and-tuning.htm" class="nav-button prev">←</a>
+<a href='java-io-and-nio.htm#security-and-io' class="nav-button toc-link">Index</a>
+<a href="java-io-and-nio-new-features-and-future-of-java-io-nio.htm" class="nav-button next">→</a>
+</div>
+<section class="download-section">
+  <div class="book-cover" style="background-image: url('data:image/jpg;base64,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');">
+<div class="series-name">In-Depth</div>
+<div class="book-title">Java IO and NIO</div>
+<div class="book-subtitle">Guide for Beginner to Advanced Programmers</div>
+<div class="book-footer">readbytes.github.io</div>
+</div>
+  <div class="download-info">
+    <h2 id='bottom'>Download This Ebook</h2>
+    <p class="format-label">Available formats:</p>
+    <div class="download-buttons">
+      <a href="java-io-and-nio.pdf" class="download-button">📄 PDF</a>
+      <a href="java-io-and-nio.epub" class="download-button">📘 EPUB</a>
+    </div>
+  </div>
+</section><div class='related-books'>
+<h2>Java In-Depth Books</h2>
+<div class='related-book-list'>
+<a href="java-io-and-nio.htm"><div class="book-cover" style="background-image: url('data:image/jpg;base64,/9j/4AAQSkZJRgABAgAAAQABAAD/2wBDAAgGBgcGBQgHBwcJCQgKDBQNDAsLDBkSEw8UHRofHh0aHBwgJC4nICIsIxwcKDcpLDAxNDQ0Hyc5PTgyPC4zNDL/2wBDAQkJCQwLDBgNDRgyIRwhMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjL/wAARCAC0AIIDASIAAhEBAxEB/8QAHwAAAQUBAQEBAQEAAAAAAAAAAAECAwQFBgcICQoL/8QAtRAAAgEDAwIEAwUFBAQAAAF9AQIDAAQRBRIhMUEGE1FhByJxFDKBkaEII0KxwRVS0fAkM2JyggkKFhcYGRolJicoKSo0NTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uHi4+Tl5ufo6erx8vP09fb3+Pn6/8QAHwEAAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoL/8QAtREAAgECBAQDBAcFBAQAAQJ3AAECAxEEBSExBhJBUQdhcRMiMoEIFEKRobHBCSMzUvAVYnLRChYkNOEl8RcYGRomJygpKjU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6goOEhYaHiImKkpOUlZaXmJmaoqOkpaanqKmqsrO0tba3uLm6wsPExcbHyMnK0tPU1dbX2Nna4uPk5ebn6Onq8vP09fb3+Pn6/9oADAMBAAIRAxEAPwDnKKKK+dOoKKKKACua8Qj/AImEf/XIfzNdLXOa+M3yf9ch/M13Zd/H+RhiPgMfFLinY5pcV9AcIwCjFP20baBDMUYp+2kxQMbijFO20YoEMxSY5qTFJigYzA9TRT8H2ooA7miiivkT1QooooAK57XRm+T/AK5j+ZroawNcH+mp/wBcx/M13Zf/ABvkYYj4DK20Yp+KXFe8jhGbaXFOxS4pgM20m2pcUhWmBFtoxUu2k20AR4pMVKRSYoEQ4oqXbRQB2VFFFfInrBRRRQAVh6yM3if9cx/M1uVjasM3a/7g/ma7sv8A4/yMa/wGXtpdtSFM04LXvpnFYiC0u2pQtG3mncLEW2l21LspQlFyrEO2k21PspCtFyWiuVpNtTlaTbQKxBtoqTZ9aKBWOqooor5E9UKKKKACsrUl3XK/7g/ma1ao3i7ph/u/413Zf/GMa3wGcE4o8urYiFO8jivcucyVymE9qURmrQhI7U4Re1S5GiplUR0vlnPSrixZ7U4w+opc5fsmUSlMKe1XzFz0pjRVSmZyptFErUbLzV4xEdqheOq5jPlK2KKk2+1FPmFynQUUUV8meiFFFFABVedQ0g+lWKYyMzZAOPXFdmBdqxjX+AhWL0qRUweRUir/AJxUyoWHCj8K9vmRyxuiFYgTUgthmpVj9iKlUKOrY+tYyOunPoQi1wOlMaAitWKINjBB/GkkgKk5UY9awvZneleN7GO0XemGIZ6VpyQr6VC0IUVamZSgZzx4qtJHkVoypjnBNVnCgfN8v1rSNQ550uqKPliirHlr60VpzmPIXqKKK+aOkKKKKACqdzfvazhF6FQf51crL1KMNdKf9gfzNdOEdqlw5OfQtJqwbhox+dWYdQhJ+YMPxrFSLP8AGFHuKspbHAbcpr0nWSNYYHm2N9LtW+7Nj/eWphMWHIhb3IxWLDAx/wDrGrS20i8o/wCYJ/pWDxUVudkcnqNXRqKydoQfo1KZUY42yL+FUEluoyNrg4746fpV2HUJMAyw5Xplc1DxMNzWOW11ov6/EVthA/eMPqKURRuMCZCfc4qY6jAw+eMov+0R/Wq017b/AMMKt/tACkqylohzwlSlq0MltgnRtx9qy7pHwcR7vxq158Emdow3spqJo9/Qt+JrRTS3ZjKEprSJjFJcn92PzorSNtJno3/fVFae2j3MfqlTsSUUUV45yBRRRQAUohjYb5EUgcZJxSVjatc3MV0qQhNpjBJbrnJ/wq4U5VHyxdjrwWJjh6vtJK6N9Yk25jjRx7Af1qX7OpwQmPciuRjv7wEb1h46YH9RTvtcz5/cxk+xP+NW8vq9Zf1957yz6juof19x1pibHyuG9ulBR14yp+h6VySyTHlYwCPRqm826IyenbL1Dy2X839febw4gX/Pv8f+AdP9xvmbHpyKeziMAyNtHqSK5USXLPsMTAjjOfp/n8D7VXuZNVjRWs4SH3ckqrfL9G49KSy3vImefO11D+vwO1SW1K/68A4/z3qWPR2kJkjiLDrgLuz+dchajUZIQt852tv+UQKJFYAFSSCAFJOODkYJI6Auub2WC4CR6XcRLyiAMkxbLEgswbGQCBkBRx06044GUVaM/wCvwOOrm8qju4r5q36nSzFLY48orjq3ymq0up2MRzNfNGvq4GPX09qyG1W93SSrp8kQDN8okPHoB85J/Xp1NclquoalfTQyXVu2IWJVmibnJHUMTnp0rengub4n+X/BOepnFWCukvua/VHby+KdOimeM+cSjFSQi4OP+BUV5wl9eoiqtzcqqjAAdsAfnRXT9Qpdzl/tzE9l+P8AmenUUUV5h54UUUUAFc9rhxqKDZnMQ5OcdTXQ1zmujfqKphT+5UjK5wct19q6sH/FJlsVEj2sW8tRkDJUd/y5qRiNrNyQBgcnr2GCOOtU2VpZiolbdtHyJ8px/Wpo9xTZJBJkNyoOc5J4JX/Jr1GCLRkSNAqJIOeGKEBVHB5P1HtUyOwQyiMAhyrMMAEDdxweTjtj2x61EeFtzCzadhliT82MdTndz0xgHuatoVgRpxbXjBWyUEuFTJIIHPUHnB7jtWcjph5sl8/EjxHcHySpKHnGBjOcZBzznH5Go5ZVEzbwJIc7siJcpyOCM8cE9u+fUVWe/kVYn2SPMCW/d2/ytkZ44OACMjHvwO10XMk9z8+6BBlSjIY2Mm0HjABB6cfXis3dGyaeiE82Nz8oY7QFzuO3kZOCOOcH8RUKykoGZZCMk/Jk4XHYAZpJbhyzbJizsVKE4wD6Ahiw5GPrj6U19rqZULoB8u8KxAPGehPoPrn65tGMxJJWYAIrMQcEHtz/AIEVAzkozOMAkZywyP0/CnMgQnaqsrjG0ptyPXB/H8uvGRAQqKvXglcqw4Oc4POO/Qf1qkZsPMycgLj/AK6//WoqM3VupK+aOOOVXNFUQdtRRRXhAFFFFABXM+Iiq6hGzySKPKHCk4PJ64FdNXL+JJUTUog24N5PBAPqfbnp611YP+KTLbUzl2yKgGPKIAB3jnuOo+tKY0kVXWOKTaQGbZvBJ9QKhDCcohll+Y8OrbR+R/ClhldGMYCANwwcZz+nPFes7masy3bB5C4iEKyKudyhgT6YXHHB24FTyJcxzlyz4AL4Ctkdfm5ORxgY6cflV2ecY8zW4dRuUMpGQcD2OBzUcEKxtMxuGWUL5bMgIK84/A9B36+o4ydmdULx/wCHNaKeVdQMjpdeQXKkFB93OO3PrgccdM9KjgmlnlBVZORhCEZRgDv8vA5UcZ9e9Z099BE2w77mNipz5Y6YG7DA89ORUV1dRmQLBGVweFaMYAxkjkZ7jPHapUGy3WS6mr9sfmBwV2klZMfKQSRyMDbz1wOMHpVW1uQsUUE6CQyAnYqDC49Dxk9T1P6VSklS6kkcr5OTvBaAHA9sD2A9Pf1EeQkFfOwi4VwAqgY9yO3Bz1/Q2oWMJVbsm+1kIIzEoYkZJzjgcDknHQ9cf0o3SK43iNXAzwBng9OOvX07UxG/dD91blepOzcAf0zj05pJJS7Sb2RCw2sVQgdfXPQ/r61RFyTzJ/8Anqn/AH1RVE3VwpwskYUcADHSinYVz0eiiivANAooooAK5TxRN5V+mC24wjO3jAye/wDnFdXXFeMFzq0Tbc4gHJzj7zV14NXqkTdkZzXce1gXJ4ypBJ+v0/Kh74E4VyeDjgDb+hzVIQnGShxnHBxzTvJ4BJCj/b6169kY8zZKbmZgqJK+0dBEmB/j3NIjyZlYAyKRyx2k4/EHB/XtSxRBCAzhSBncCwNP43SAOpwmN28+/OBnNLQer3BTHC6l4S64HBUrxjP4kcfWpjDIZCWhBVlyIxlcDOMerHOPXoeKeLgIrpEgkyNvmGTr0x/CCOnTilF48b8RxxHjgbge/IZck+uR6VF2aKMerI45vKjZ0ZlACqDu5Ax054HfHTpS7fmH+kJIqnkqcknHHzEYxzjrTE3B1xL87ED5FUZHoMnP6UrTJL5gMbPj5VyzM27P04/SmIkjml+zyQBINyr99SCxzj39KbHvyR5g2pkgADBGcg9c+/PFI0hWSRSSVXBc7OB6cN0qu80eAwjUOB0BH59D/OhBdLcsfapB0kYj/fSiqv2vH/LI/mP8KKdieY9Nooor583CiiigArjvFhQalHuXP7gdf95q7GuJ8YY/teIlQQIB3/2mrrwX8UzqfCYrSk/LHlAw5JFKkmMs6q2e3Q8++KiLOEC5IGew/lUZc7cAjHX1r1zC5ZMSYyPKH/Ajx+VTx3B3BX3Og/gMx5/X+lZ28e+f88UoIY8/e4ApNXLUrbF1rgGU7FMOM4KuR1x3xx0qMyTKMK83BO4GTIxnoRUSyIv4A/KwzzTfOCjKIFfGC3+ApWC5LuYzuxkDsDuJxnp1OaeJmI3jHmZyH4/z61RqRCVGAxHPTsadhXLpZipbzpVLEAs6sM/lx+FVwzONqliPTGTj+lRnc2SA20fXAFOEZ25Pc4FMV7knzDjc49vNHFFJ5MfeVM/7/wD9aijQNT1KiiivnTqCiiigArh/GTEavF/1wX/0JqKK68H/ABTOp8Jz3JByTxTj9xvaiivXOciooooKDPWiiigBe1IDg0UUAW7dNxT5iCQelMkkfzHTe2FJA5xRRQDHKqlQdvb1NFFFAWP/2Q==');">
+<div class="series-name">In-Depth</div>
+<div class="book-title">Java IO and NIO</div>
+<div class="book-subtitle">Guide for Beginner to Advanced Programmers</div>
+<div class="book-footer">readbytes.github.io</div>
+</div></a>
+
+
+<a href="java-collections.htm"><div class="book-cover" style="background-image: url('data:image/jpg;base64,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');">
+<div class="series-name">In-Depth</div>
+<div class="book-title">Java Collections</div>
+<div class="book-subtitle">From Fundamentals to Advanced Applications</div>
+<div class="book-footer">readbytes.github.io</div>
+</div></a>
+
+
+<a href="java-regex.htm"><div class="book-cover" style="background-image: url('data:image/jpg;base64,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');">
+<div class="series-name">In-Depth</div>
+<div class="book-title">Java Regex</div>
+<div class="book-subtitle">From Basics to Advanced</div>
+<div class="book-footer">readbytes.github.io</div>
+</div></a>
+
+
+<a href="java-functional-programming.htm"><div class="book-cover" style="background-image: url('data:image/jpg;base64,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');">
+<div class="series-name">In-Depth</div>
+<div class="book-title">Java Functional Programming</div>
+<div class="book-subtitle">From Lambdas to Reactive Streams</div>
+<div class="book-footer">readbytes.github.io</div>
+</div></a>
+
+
+<a href="java-streams.htm"><div class="book-cover" style="background-image: url('data:image/jpg;base64,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');">
+<div class="series-name">In-Depth</div>
+<div class="book-title">Java Streams</div>
+<div class="book-subtitle">From Fundamentals to Advanced Data Processing</div>
+<div class="book-footer">readbytes.github.io</div>
+</div></a>
+
+
+
+<a href='java.htm'><div class='book-cover'>More Java Books</div></a>
+</div>
+</div>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+    <script>
+  function toggleSnippet(id) {
+      const box = document.getElementById(id);
+      box.classList.toggle("open");
+  }  
+  </script>
+  <script>
+    function copyCode(button) {
+      const code = button.nextElementSibling.innerText;
+      navigator.clipboard.writeText(code).then(() => {
+        button.textContent = 'Copied!';
+        setTimeout(() => { button.textContent = 'Copy'; }, 1500);
+      });
+    }
+  </script>  
+
+<footer class="page-footer">
+    <nav>
+      <a href="https://readbytes.github.io">Home</a> | 
+      Email:<script language="JavaScript" type="text/javascript">
+var part1 = 'yinpeng';var part6 = '263';var part2 = Math.pow(2,6);var part3 = String.fromCharCode(part2);var part4 = 'hotmail dot com';var part5 = part1 + String.fromCharCode(part2) + part4;document.write(part1 + part6 + part3 + part4);
+</script>
+    </nav>
+  <p>© 2025 — All rights reserved.</p>    
+  </footer>
+
+</body>
+</html>

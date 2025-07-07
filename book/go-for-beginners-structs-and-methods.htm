@@ -1,0 +1,821 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>Go for Beginners Structs and Methods</title>
+<link rel='shortcut icon' href='https://java2s.com/style/favicon.ico'>
+<link href="https://fonts.googleapis.com/css2?family=Merriweather&display=swap" rel="stylesheet" />
+<link href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+
+
+<style>
+body {
+  background: #f8f7f5;
+  font-family: 'Merriweather', serif;
+  color: #333;
+  margin: 0;
+  padding: 2rem 1rem;
+  font-size: 15px; /* smaller body font */
+  line-height: 1.5;
+}
+
+.container {
+  max-width: 700px;
+  margin: 0 auto;
+  background: white;
+  padding: 1rem 2rem;
+  box-shadow: 0 0 15px rgba(0,0,0,0.1);
+}
+.book-title-chapter {
+  font-family: 'Merriweather', serif;
+  font-size: 2rem;
+  font-weight: bold;
+  text-align: center;
+  margin-bottom: 2rem;
+  border-bottom: 2px solid #ccc;
+  padding-bottom: 0.5rem;
+  color: #2c3e50;
+}
+
+.book-subtitle-chapter {
+  text-align: center;
+  font-size: 1rem;
+  color: #666;
+  margin-top: -1rem;
+  margin-bottom: 2rem;
+}
+
+    .related-books {
+      margin-top: 40px;
+    }
+
+    .related-books h2 {
+      font-size: 22px;
+      margin-bottom: 20px;
+      border-bottom: 2px solid #eee;
+      padding-bottom: 8px;
+      color: #333;
+    }
+    .related-book-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+h1, h2, h3 {
+  font-weight: 600;
+  margin-top: 2.5rem;
+  margin-bottom: 1rem;
+  line-height: 1.2;
+}
+
+h1 {
+  font-size: 1.8rem; /* smaller heading */
+}
+
+h2 {
+  font-size: 1.4rem;
+}
+
+h3 {
+  font-size: 1.2rem;
+}
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-family: sans-serif;
+      font-size: 1em;
+      margin: 1em 0;
+    }
+
+    th, td {
+      border: 1px solid #cccccc;
+      padding: 0.6em 1em;
+      text-align: left;
+    }
+
+    th {
+      background-color: #f2f2f2;
+      font-weight: bold;
+    }
+
+    tr:nth-child(even) {
+      background-color: #fafafa;
+    }
+
+    /* Optional hover effect */
+    tr:hover {
+      background-color: #e6f7ff;
+    }
+ 
+a {
+  color: #555;
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+
+
+.code-block {
+    position: relative;
+    margin-bottom: 1em;
+}
+.copy-button {
+    background: transparent; 
+    color: white;
+
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    border: none;
+    padding: 4px 8px;
+    font-size: 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    z-index: 1;
+}
+
+.copy-button:hover {
+background-color: #0056b3;
+}
+.page-footer {
+  margin-top: 4rem;
+  padding: 1rem 0;
+  text-align: center;
+  font-size: 0.85rem;
+  color: #666;
+  border-top: 1px solid #ccc;
+  background-color: #fafafa;
+}
+.page-footer a {
+     color: #555;
+    text-decoration: none;
+  }
+  .page-footer a:hover {
+    text-decoration: underline;
+  }
+.chapter-navi-section {
+display: flex;
+justify-content: space-between;
+align-items: center;
+padding-bottom: 10px;
+}  
+
+.nav-link {
+  color: inherit;
+  text-decoration: none;
+  opacity: 0.5;
+  transition: opacity 0.3s ease, text-decoration 0.3s ease;
+}
+
+.nav-link:hover {
+  opacity: 0.9;
+  text-decoration: underline;
+}
+
+.prev {
+  text-align: left;
+}
+.toc-link {
+  text-align: center;
+}
+.next {
+  text-align: right;
+}
+.download-section {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2rem;
+  padding: 2rem 1rem;
+  max-width: 600px;
+  margin: 3rem auto;
+  background-color: #f9f9f9;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+}
+
+    .book-cover {
+      width: 130px;
+      height: 180px;
+      
+      background-size: cover; /* Ensures the image covers the entire div */
+      background-position: center; /* Centers the image */
+            
+      background: linear-gradient(145deg, #e0dede, #f9f9f9);
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 10px;
+      box-sizing: border-box;
+      position: relative;
+      font-family: 'Roboto', sans-serif;
+    }
+
+    .book-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 16px;
+      font-weight: 600;
+      color: #fff;
+      margin-bottom: 4px;
+    }
+
+    .book-subtitle {
+      font-size: 12px;
+      color: #aaa;
+      margin-bottom: 10px;
+    }
+
+    .series-name {
+      position: absolute;
+      top: 8px;
+      left: 8px;
+      font-size: 10px;
+      color: #fff;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-weight: bold;
+    }
+
+    .book-footer {
+      position: absolute;
+      bottom: 8px;
+      font-size: 10px;
+      color: #aaa;
+    }
+
+.download-info h2 {
+  margin: 0 0 0.5rem;
+  font-size: 1.2rem;
+}
+
+.format-label {
+  margin: 0 0 0.5rem;
+  font-size: 0.95rem;
+  color: #555;
+}
+
+.download-buttons {
+  display: flex;
+  gap: 1rem;
+}
+
+.download-button {
+  background-color: #4A90E2;
+  color: white;
+  padding: 0.5em 1.2em;
+  text-decoration: none;
+  border-radius: 25px;
+  font-size: 0.95rem;
+  transition: background-color 0.3s ease;
+}
+
+.download-button:hover {
+  background-color: #357ABD;
+}
+
+    code {
+ 
+      color: #d35400; 
+    }
+html {
+    scroll-behavior: smooth;
+}
+    .snippet-container {
+      overflow: hidden;    
+    }
+
+    .snippet-header {
+      background: #f0f0f0;
+      color: #333;
+      padding: 0.75rem 1rem;
+      cursor: pointer;
+      font-size: 1rem;
+    }
+
+    .snippet-body {
+      display: none;
+      font-family: monospace;
+    }
+
+    .snippet-container.open .snippet-body {
+      display: block;
+    }
+
+.CodeMirror {
+  border: 2px solid #ccc;
+  border-radius: 4px;
+  resize: vertical;
+}
+
+    button { padding: 0.5em 1em; background: green; color: white; border: none; cursor: pointer; }
+    button:hover { background: #1e7e34; }
+    .result_iframe { width:99%; height:200px; margin-top: 1em;  resize: both;border:1px solid #ccc;}        
+</style>
+</head>
+<body> 
+
+  <div class="container">
+    <div class = "chapter-navi-section">
+<a href="go-for-beginners-arrays-slices-and-maps.htm" class="nav-button prev">←</a>
+<a href='go-for-beginners.htm#structs-and-methods' class="nav-button toc-link">Index</a>
+<a href="go-for-beginners-interfaces-and-polymorphism.htm" class="nav-button next">→</a>
+</div>
+
+    <h1 class="book-title-chapter" id = 'top'>Structs and Methods</h1>
+    <h3 class="book-subtitle-chapter">Go for Beginners</h3>   
+    <!-- <h1 class ="chapter-title"></h1> -->
+    <h2 id='defining-structs'>6.1 Defining Structs</h2><p>In Go, a <strong>struct</strong> (short for "structure") is a <strong>composite data type</strong> that groups together <strong>zero or more fields</strong> of potentially different types. Structs are the foundation for creating custom types in Go and are commonly used to model real-world entities like users, products, or configurations.</p><h3 id="what-is-a-struct">What Is a Struct?</h3><p>A struct is a collection of named fields that can hold values of different types. You can think of a struct as a way to bundle multiple pieces of related data into a single unit.</p><h3 id="declaring-a-struct-type">Declaring a Struct Type</h3><p>You define a struct using the <code>type</code> and <code>struct</code> keywords:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-go">type Person struct {
+    Name string
+    Age  int
+}</code></pre>
+</div><p>In this example, <code>Person</code> is a struct type with two fields: <code>Name</code> (a string) and <code>Age</code> (an int).</p><h3 id="creating-and-initializing-structs">Creating and Initializing Structs</h3><p>You can create an instance of a struct in several ways:</p><h4 id="using-field-names">Using field names:</h4><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-go">p1 := Person{Name: "Alice", Age: 30}</code></pre>
+</div><h4 id="without-field-names-order-matters">Without field names (order matters):</h4><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-go">p2 := Person{"Bob", 25}</code></pre>
+</div><h4 id="zero-value-initialization">Zero-value initialization:</h4><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-go">var p3 Person</code></pre>
+</div><p>When a struct is created without explicit initialization, all fields are set to their <strong>zero values</strong>:</p><ul>
+ <li>Numbers: <code>0</code></li>
+ <li>Strings: <code>""</code> (empty string)</li>
+ <li>Booleans: <code>false</code></li>
+ <li>Pointers, slices, maps, interfaces, functions, and channels: <code>nil</code></li>
+</ul><p>You can access and assign values to struct fields using dot notation:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-go">p3.Name = "Charlie"
+p3.Age = 40</code></pre>
+</div><h3 id="example-defining-and-using-a-struct">Example: Defining and Using a Struct</h3><div class="code-block"><button class="copy-button" onclick="copyCode(this)">📋</button>
+ <pre><code class="language-go">package main
+
+import "fmt"
+
+// Define a struct type
+type Person struct {
+    Name string
+    Age  int
+}
+
+func main() {
+    // Initialize using field names
+    alice := Person{Name: "Alice", Age: 30}
+
+    // Zero-value struct, then assign fields
+    var bob Person
+    bob.Name = "Bob"
+    bob.Age = 25
+
+    // Print struct values
+    fmt.Println("Person 1:", alice)
+    fmt.Println("Person 2:", bob)
+}</code></pre>
+</div><h4 id="output">Output:</h4><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-bash">Person 1: {Alice 30}
+Person 2: {Bob 25}</code></pre>
+</div><h3 id="summary">Summary</h3><ul>
+ <li>Structs in Go are custom data types that group related fields.</li>
+ <li>They are ideal for modeling entities with multiple attributes.</li>
+ <li>Fields can be initialized directly or set later.</li>
+ <li>Uninitialized fields take on their respective zero values.</li>
+</ul><p>Structs are a key building block in Go and pave the way for defining <strong>methods</strong>, <strong>interfaces</strong>, and <strong>composition</strong> in more advanced topics.</p><div class = "chapter-navi-section">
+<a href="#top" class="nav-button prev">↑</a>
+<a href='go-for-beginners.htm#structs-and-methods' class="nav-button toc-link">Index</a>
+<a href="#bottom" class="nav-button next">↓</a>
+</div>
+<h2 id='accessing-struct-fields'>6.2 Accessing Struct Fields</h2><p>Once you've defined a struct and created an instance of it, you can access and modify its fields using the <strong>dot (<code>.</code>) notation</strong>. Go also allows you to work with <strong>pointers to structs</strong>, making it easy to modify structs efficiently without copying entire values.</p><h3 id="accessing-and-modifying-fields">Accessing and Modifying Fields</h3><p>Use the dot notation to access or modify a struct’s fields:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-go">type Person struct {
+    Name string
+    Age  int
+}
+
+func main() {
+    var p Person
+    p.Name = "Alice"
+    p.Age = 30
+
+    fmt.Println("Name:", p.Name)
+    fmt.Println("Age:", p.Age)
+
+    p.Age += 1
+    fmt.Println("Updated Age:", p.Age)
+}</code></pre>
+</div><h3 id="pointers-to-structs">Pointers to Structs</h3><p>A pointer to a struct allows you to reference the original struct in memory, avoiding copying. This is useful when you want to modify the struct inside a function or pass it efficiently.</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-go">p := Person{Name: "Bob", Age: 25}
+ptr := &amp;p  // pointer to p
+
+fmt.Println(ptr.Name) // Go automatically dereferences the pointer
+ptr.Age = 26          // Modifies the original struct</code></pre>
+</div><blockquote>
+ <p>✅ <strong>Note:</strong> In Go, you can access fields through a struct pointer <strong>without explicit dereferencing</strong> (i.e., <code>(*ptr).Name</code> is the same as <code>ptr.Name</code>).</p>
+</blockquote><h3 id="example-struct-field-access-and-modification">Example: Struct Field Access and Modification</h3><div class="code-block"><button class="copy-button" onclick="copyCode(this)">📋</button>
+ <pre><code class="language-go">package main
+
+import "fmt"
+
+type Person struct {
+    Name string
+    Age  int
+}
+
+func main() {
+    // Direct struct instance
+    alice := Person{Name: "Alice", Age: 30}
+    fmt.Println("Before:", alice)
+
+    alice.Age += 1
+    fmt.Println("After Birthday:", alice)
+
+    // Pointer to struct
+    bob := &amp;Person{Name: "Bob", Age: 25}
+    fmt.Println("Before:", *bob)
+
+    bob.Age += 1 // modifies the original via pointer
+    fmt.Println("After Birthday:", *bob)
+}</code></pre>
+</div><h4 id="output">Output:</h4><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-bash">Before: {Alice 30}
+After Birthday: {Alice 31}
+Before: {Bob 25}
+After Birthday: {Bob 26}</code></pre>
+</div><h3 id="why-use-pointers-to-structs">Why Use Pointers to Structs?</h3><ul>
+ <li>To avoid copying large structs.</li>
+ <li>To modify struct values in functions.</li>
+ <li>To follow idiomatic Go patterns like method receivers (<code>*T</code> vs <code>T</code>).</li>
+</ul><h3 id="summary">Summary</h3><ul>
+ <li>Access and modify struct fields using dot (<code>.</code>) notation.</li>
+ <li>Struct fields can be updated directly or via a pointer.</li>
+ <li>Go simplifies pointer usage by automatically dereferencing pointers when accessing fields.</li>
+ <li>Pointers to structs enable efficient data manipulation and are widely used in Go programs.</li>
+</ul><div class = "chapter-navi-section">
+<a href="#top" class="nav-button prev">↑</a>
+<a href='go-for-beginners.htm#structs-and-methods' class="nav-button toc-link">Index</a>
+<a href="#bottom" class="nav-button next">↓</a>
+</div>
+<h2 id='methods-on-structs'>6.3 Methods on Structs</h2><p>In Go, you can define <strong>methods</strong>—functions that are associated with a specific <strong>struct type</strong>. Methods allow you to perform actions on struct instances and are useful for organizing related functionality.</p><h3 id="what-is-a-method-in-go">What Is a Method in Go?</h3><p>A method is a function with a <strong>receiver</strong>. The receiver is like a parameter that appears before the method name and binds the method to a specific struct type.</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-go">func (receiver StructType) MethodName(parameters) returnType {
+    // method body
+}</code></pre>
+</div><ul>
+ <li><code>receiver</code> is a variable name (often a short version of the type, like <code>p</code> for <code>Person</code>)</li>
+ <li><code>StructType</code> is the type the method is associated with</li>
+ <li>Inside the method, you can access the receiver's fields using dot notation</li>
+</ul><h3 id="defining-a-method-on-a-struct">Defining a Method on a Struct</h3><p>Let’s define a <code>Person</code> struct and a method that prints a greeting:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-go">package main
+
+import "fmt"
+
+type Person struct {
+    Name string
+    Age  int
+}
+
+// Method with value receiver
+func (p Person) Greet() {
+    fmt.Printf("Hello, my name is %s and I am %d years old.", p.Name, p.Age)
+}</code></pre>
+</div><p>This <code>Greet</code> method is tied to the <code>Person</code> type and can be called on any <code>Person</code> value.</p><h3 id="calling-a-method">Calling a Method</h3><p>You call a method using dot notation, just like accessing a field:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-go">func main() {
+    alice := Person{Name: "Alice", Age: 30}
+    alice.Greet()  // Output: Hello, my name is Alice and I am 30 years old.
+}</code></pre>
+</div><h3 id="how-methods-differ-from-regular-functions">How Methods Differ from Regular Functions</h3><table>
+ <thead>
+  <tr>
+   <th>Feature</th>
+   <th>Function</th>
+   <th>Method</th>
+  </tr>
+ </thead>
+ <tbody>
+  <tr>
+   <td>Syntax</td>
+   <td><code>func name(...)</code></td>
+   <td><code>func (receiver Type) name(...)</code></td>
+  </tr>
+  <tr>
+   <td>Tied to a type?</td>
+   <td>No</td>
+   <td>Yes (receiver binds it to a struct)</td>
+  </tr>
+  <tr>
+   <td>Access struct data?</td>
+   <td>Must be passed explicitly</td>
+   <td>Can access via receiver automatically</td>
+  </tr>
+ </tbody>
+</table><h3 id="example-multiple-methods">Example: Multiple Methods</h3><div class="code-block"><button class="copy-button" onclick="copyCode(this)">📋</button>
+ <pre><code class="language-go">package main
+
+import (
+    "fmt"
+)
+
+type Rectangle struct {
+    Width  float64
+    Height float64
+}
+
+// Method to compute area
+func (r Rectangle) Area() float64 {
+    return r.Width * r.Height
+}
+
+// Method to compute perimeter
+func (r Rectangle) Perimeter() float64 {
+    return 2 * (r.Width + r.Height)
+}
+
+func main() {
+    rect := Rectangle{Width: 5, Height: 3}
+    fmt.Println("Area:", rect.Area())         // Output: 15
+    fmt.Println("Perimeter:", rect.Perimeter()) // Output: 16
+}</code></pre>
+</div><h3 id="summary">Summary</h3><ul>
+ <li>A method is a function with a receiver that associates it with a struct type.</li>
+ <li>Methods provide a clean way to organize behavior with data.</li>
+ <li>You define methods using the <code>func (receiver Type)</code> syntax.</li>
+ <li>Methods are invoked on struct instances just like field access.</li>
+ <li>In the next section, you'll learn how <strong>pointer receivers</strong> let methods modify struct values.</li>
+</ul><div class = "chapter-navi-section">
+<a href="#top" class="nav-button prev">↑</a>
+<a href='go-for-beginners.htm#structs-and-methods' class="nav-button toc-link">Index</a>
+<a href="#bottom" class="nav-button next">↓</a>
+</div>
+<h2 id='pointer-vs-value-receivers'>6.4 Pointer vs Value Receivers</h2><p>When defining methods on a struct in Go, you can choose whether the method <strong>receives a copy</strong> of the struct (value receiver) or a <strong>reference</strong> to the original struct (pointer receiver). This choice has significant implications on <strong>behavior</strong>, <strong>memory usage</strong>, and <strong>mutability</strong>.</p><h3 id="value-receiver">Value Receiver</h3><p>A <strong>value receiver</strong> means the method receives a <strong>copy</strong> of the struct. Any modifications to the receiver inside the method <strong>do not affect</strong> the original struct.</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-go">func (r Rectangle) SetWidth(w float64) {
+    r.Width = w // modifies the copy
+}</code></pre>
+</div><h3 id="pointer-receiver">Pointer Receiver</h3><p>A <strong>pointer receiver</strong> means the method receives a <strong>reference</strong> to the original struct. Modifications to the receiver <strong>affect the original</strong>.</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-go">func (r *Rectangle) SetWidth(w float64) {
+    r.Width = w // modifies the original
+}</code></pre>
+</div><h3 id="when-to-use-value-vs-pointer-receivers">When to Use Value vs Pointer Receivers</h3><table>
+ <thead>
+  <tr>
+   <th>Use Case</th>
+   <th>Receiver Type</th>
+   <th>Reason</th>
+  </tr>
+ </thead>
+ <tbody>
+  <tr>
+   <td>Modifying the struct's fields</td>
+   <td>Pointer receiver</td>
+   <td>Allows method to update original data</td>
+  </tr>
+  <tr>
+   <td>Avoiding copies for large structs</td>
+   <td>Pointer receiver</td>
+   <td>More memory efficient</td>
+  </tr>
+  <tr>
+   <td>Read-only operations</td>
+   <td>Value receiver</td>
+   <td>Cleaner and safer for immutable logic</td>
+  </tr>
+  <tr>
+   <td>Interface implementation</td>
+   <td>Consistency</td>
+   <td>If any method uses pointer, all should</td>
+  </tr>
+ </tbody>
+</table><blockquote>
+ <p>⚠️ Tip: If your struct is large or your methods modify state, <strong>use pointer receivers</strong> consistently.</p>
+</blockquote><h3 id="example-value-vs-pointer-receiver">Example: Value vs Pointer Receiver</h3><div class="code-block"><button class="copy-button" onclick="copyCode(this)">📋</button>
+ <pre><code class="language-go">package main
+
+import "fmt"
+
+type Rectangle struct {
+    Width, Height float64
+}
+
+// Value receiver – does NOT modify original
+func (r Rectangle) ResizeValue(w, h float64) {
+    r.Width = w
+    r.Height = h
+}
+
+// Pointer receiver – modifies original
+func (r *Rectangle) ResizePointer(w, h float64) {
+    r.Width = w
+    r.Height = h
+}
+
+func main() {
+    rect := Rectangle{Width: 3, Height: 4}
+
+    rect.ResizeValue(10, 20)
+    fmt.Println("After ResizeValue:", rect) // Output: {3 4} — original not changed
+
+    rect.ResizePointer(10, 20)
+    fmt.Println("After ResizePointer:", rect) // Output: {10 20} — original changed
+}</code></pre>
+</div><h3 id="method-call-flexibility">Method Call Flexibility</h3><p>Go allows both pointer and value types to call either kind of receiver method:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-go">r := Rectangle{5, 6}
+r.ResizePointer(8, 9)   // Valid — Go takes the address of r automatically
+(&amp;r).ResizeValue(2, 2)  // Also valid — Go dereferences the pointer</code></pre>
+</div><p>This flexibility makes calling methods more intuitive.</p><h3 id="summary">Summary</h3><ul>
+ <li><strong>Value receivers</strong> get a copy; changes do not affect the original.</li>
+ <li><strong>Pointer receivers</strong> get a reference; they can modify the original.</li>
+ <li>Use <strong>pointer receivers</strong> when modifying struct fields or to avoid copying large structs.</li>
+ <li>Be consistent across methods to avoid confusion and interface mismatches.</li>
+</ul><div class = "chapter-navi-section">
+<a href="#top" class="nav-button prev">↑</a>
+<a href='go-for-beginners.htm#structs-and-methods' class="nav-button toc-link">Index</a>
+<a href="#bottom" class="nav-button next">↓</a>
+</div>
+<h2 id='embedding-and-composition-basics'>6.5 Embedding and Composition Basics</h2><p>Go does not support classical inheritance like some object-oriented languages. Instead, it embraces <strong>composition</strong> through a feature called <strong>struct embedding</strong>. Struct embedding allows one struct to be included (embedded) within another, enabling <strong>code reuse</strong>, <strong>field promotion</strong>, and <strong>method sharing</strong>.</p><h3 id="what-is-struct-embedding">What Is Struct Embedding?</h3><p>Struct embedding means placing one struct type inside another <strong>without giving it a field name</strong>. The embedded struct’s <strong>fields and methods are promoted</strong>, meaning they can be accessed directly from the outer struct as if they belonged to it.</p><p>This promotes <strong>composition over inheritance</strong>, which is a fundamental design principle in Go.</p><h3 id="declaring-embedded-structs">Declaring Embedded Structs</h3><p>Here's a simple example of embedding an <code>Address</code> struct into a <code>Person</code> struct:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-go">type Address struct {
+    City    string
+    Country string
+}
+
+type Person struct {
+    Name string
+    Age  int
+    Address  // Embedded struct
+}</code></pre>
+</div><p>Notice that <code>Address</code> is embedded without a field name.</p><h3 id="accessing-promoted-fields">Accessing Promoted Fields</h3><p>You can access the fields of the embedded struct directly through the outer struct:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-go">func main() {
+    p := Person{
+        Name: "Alice",
+        Age:  30,
+        Address: Address{
+            City:    "Toronto",
+            Country: "Canada",
+        },
+    }
+
+    // Access promoted fields
+    fmt.Println(p.Name)       // Alice
+    fmt.Println(p.City)       // Toronto — promoted from Address
+    fmt.Println(p.Country)    // Canada
+}</code></pre>
+</div><h3 id="promoted-methods">Promoted Methods</h3><p>Methods defined on an embedded struct are also promoted to the outer struct.</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-go">type Address struct {
+    City    string
+    Country string
+}
+
+func (a Address) FullAddress() string {
+    return a.City + ", " + a.Country
+}
+
+type Person struct {
+    Name string
+    Age  int
+    Address
+}
+
+func main() {
+    p := Person{
+        Name: "Bob",
+        Age:  40,
+        Address: Address{
+            City:    "Vancouver",
+            Country: "Canada",
+        },
+    }
+
+    fmt.Println(p.FullAddress()) // Calls method from Address
+}</code></pre>
+</div><div class="snippet-container" id="Jtt98">
+ <div class="snippet-header" onclick="toggleSnippet('Jtt98')">
+  Click to view full runnable Code
+ </div>
+ <div class="snippet-body">
+  <div class="code-block"><button class="copy-button" onclick="copyCode(this)">📋</button>
+   <pre><code class="language-go">
+package main
+
+import (
+    "fmt"
+)
+
+type Address struct {
+    City    string
+    Country string
+}
+
+func (a Address) FullAddress() string {
+    return a.City + ", " + a.Country
+}
+
+type Person struct {
+    Name string
+    Age  int
+    Address // Embedded struct
+}
+
+func main() {
+    p1 := Person{
+        Name: "Alice",
+        Age:  30,
+        Address: Address{
+            City:    "Toronto",
+            Country: "Canada",
+        },
+    }
+
+    fmt.Println("Accessing promoted fields:")
+    fmt.Println("Name:", p1.Name)       // Alice
+    fmt.Println("City:", p1.City)       // Toronto
+    fmt.Println("Country:", p1.Country) // Canada
+
+    p2 := Person{
+        Name: "Bob",
+        Age:  40,
+        Address: Address{
+            City:    "Vancouver",
+            Country: "Canada",
+        },
+    }
+
+    fmt.Println("Using promoted method:")
+    fmt.Println(p2.FullAddress()) // Vancouver, Canada
+} 
+</code></pre>
+  </div>
+ </div>
+</div><h3 id="why-use-embedding">Why Use Embedding?</h3><ul>
+ <li><strong>Code reuse</strong>: Share common fields or behaviors (like logging, metadata).</li>
+ <li><strong>Composition</strong>: Combine behaviors from multiple sources without inheritance.</li>
+ <li><strong>Flexibility</strong>: Change behavior by overriding promoted methods.</li>
+</ul><h3 id="summary">Summary</h3><ul>
+ <li>Struct embedding allows you to include one struct within another without naming the field.</li>
+ <li>Embedded struct fields and methods are <strong>promoted</strong> to the outer struct.</li>
+ <li>You can use embedding to achieve <strong>composition</strong>, making your code cleaner and more reusable.</li>
+ <li>This is Go’s idiomatic approach to structuring related data and behavior, replacing classical inheritance.</li>
+</ul><div class = "chapter-navi-section">
+<a href="go-for-beginners-arrays-slices-and-maps.htm" class="nav-button prev">←</a>
+<a href='go-for-beginners.htm#structs-and-methods' class="nav-button toc-link">Index</a>
+<a href="go-for-beginners-interfaces-and-polymorphism.htm" class="nav-button next">→</a>
+</div>
+<section class="download-section">
+  <div class="book-cover" style="background-image: url('data:image/jpg;base64,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');">
+<div class="series-name">Introduction</div>
+<div class="book-title">Go for Beginners</div>
+<div class="book-subtitle">Essential concepts, practical examples, and foundational topics</div>
+<div class="book-footer">readbytes.github.io</div>
+</div>
+  <div class="download-info">
+    <h2 id='bottom'>Download This Ebook</h2>
+    <p class="format-label">Available formats:</p>
+    <div class="download-buttons">
+      <a href="go-for-beginners.pdf" class="download-button">📄 PDF</a>
+      <a href="go-for-beginners.epub" class="download-button">📘 EPUB</a>
+    </div>
+  </div>
+</section><div class='related-books'>
+<h2>Go Introduction Books</h2>
+<div class='related-book-list'>
+<a href="go-for-beginners.htm"><div class="book-cover" style="background-image: url('data:image/jpg;base64,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');">
+<div class="series-name">Introduction</div>
+<div class="book-title">Go for Beginners</div>
+<div class="book-subtitle">Essential concepts, practical examples, and foundational topics</div>
+<div class="book-footer">readbytes.github.io</div>
+</div></a>
+
+
+
+<a href='go.htm'><div class='book-cover'>More Go Books</div></a>
+</div>
+</div>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+    <script>
+  function toggleSnippet(id) {
+      const box = document.getElementById(id);
+      box.classList.toggle("open");
+  }  
+  </script>
+  <script>
+    function copyCode(button) {
+      const code = button.nextElementSibling.innerText;
+      navigator.clipboard.writeText(code).then(() => {
+        button.textContent = 'Copied!';
+        setTimeout(() => { button.textContent = 'Copy'; }, 1500);
+      });
+    }
+  </script>  
+
+<footer class="page-footer">
+    <nav>
+      <a href="https://readbytes.github.io">Home</a> | 
+      Email:<script language="JavaScript" type="text/javascript">
+var part1 = 'yinpeng';var part6 = '263';var part2 = Math.pow(2,6);var part3 = String.fromCharCode(part2);var part4 = 'hotmail dot com';var part5 = part1 + String.fromCharCode(part2) + part4;document.write(part1 + part6 + part3 + part4);
+</script>
+    </nav>
+  <p>© 2025 — All rights reserved.</p>    
+  </footer>
+
+</body>
+</html>

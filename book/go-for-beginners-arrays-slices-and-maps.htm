@@ -1,0 +1,735 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>Go for Beginners Arrays, Slices, and Maps</title>
+<link rel='shortcut icon' href='https://java2s.com/style/favicon.ico'>
+<link href="https://fonts.googleapis.com/css2?family=Merriweather&display=swap" rel="stylesheet" />
+<link href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+
+
+<style>
+body {
+  background: #f8f7f5;
+  font-family: 'Merriweather', serif;
+  color: #333;
+  margin: 0;
+  padding: 2rem 1rem;
+  font-size: 15px; /* smaller body font */
+  line-height: 1.5;
+}
+
+.container {
+  max-width: 700px;
+  margin: 0 auto;
+  background: white;
+  padding: 1rem 2rem;
+  box-shadow: 0 0 15px rgba(0,0,0,0.1);
+}
+.book-title-chapter {
+  font-family: 'Merriweather', serif;
+  font-size: 2rem;
+  font-weight: bold;
+  text-align: center;
+  margin-bottom: 2rem;
+  border-bottom: 2px solid #ccc;
+  padding-bottom: 0.5rem;
+  color: #2c3e50;
+}
+
+.book-subtitle-chapter {
+  text-align: center;
+  font-size: 1rem;
+  color: #666;
+  margin-top: -1rem;
+  margin-bottom: 2rem;
+}
+
+    .related-books {
+      margin-top: 40px;
+    }
+
+    .related-books h2 {
+      font-size: 22px;
+      margin-bottom: 20px;
+      border-bottom: 2px solid #eee;
+      padding-bottom: 8px;
+      color: #333;
+    }
+    .related-book-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+h1, h2, h3 {
+  font-weight: 600;
+  margin-top: 2.5rem;
+  margin-bottom: 1rem;
+  line-height: 1.2;
+}
+
+h1 {
+  font-size: 1.8rem; /* smaller heading */
+}
+
+h2 {
+  font-size: 1.4rem;
+}
+
+h3 {
+  font-size: 1.2rem;
+}
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-family: sans-serif;
+      font-size: 1em;
+      margin: 1em 0;
+    }
+
+    th, td {
+      border: 1px solid #cccccc;
+      padding: 0.6em 1em;
+      text-align: left;
+    }
+
+    th {
+      background-color: #f2f2f2;
+      font-weight: bold;
+    }
+
+    tr:nth-child(even) {
+      background-color: #fafafa;
+    }
+
+    /* Optional hover effect */
+    tr:hover {
+      background-color: #e6f7ff;
+    }
+ 
+a {
+  color: #555;
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+
+
+.code-block {
+    position: relative;
+    margin-bottom: 1em;
+}
+.copy-button {
+    background: transparent; 
+    color: white;
+
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    border: none;
+    padding: 4px 8px;
+    font-size: 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    z-index: 1;
+}
+
+.copy-button:hover {
+background-color: #0056b3;
+}
+.page-footer {
+  margin-top: 4rem;
+  padding: 1rem 0;
+  text-align: center;
+  font-size: 0.85rem;
+  color: #666;
+  border-top: 1px solid #ccc;
+  background-color: #fafafa;
+}
+.page-footer a {
+     color: #555;
+    text-decoration: none;
+  }
+  .page-footer a:hover {
+    text-decoration: underline;
+  }
+.chapter-navi-section {
+display: flex;
+justify-content: space-between;
+align-items: center;
+padding-bottom: 10px;
+}  
+
+.nav-link {
+  color: inherit;
+  text-decoration: none;
+  opacity: 0.5;
+  transition: opacity 0.3s ease, text-decoration 0.3s ease;
+}
+
+.nav-link:hover {
+  opacity: 0.9;
+  text-decoration: underline;
+}
+
+.prev {
+  text-align: left;
+}
+.toc-link {
+  text-align: center;
+}
+.next {
+  text-align: right;
+}
+.download-section {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2rem;
+  padding: 2rem 1rem;
+  max-width: 600px;
+  margin: 3rem auto;
+  background-color: #f9f9f9;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+}
+
+    .book-cover {
+      width: 130px;
+      height: 180px;
+      
+      background-size: cover; /* Ensures the image covers the entire div */
+      background-position: center; /* Centers the image */
+            
+      background: linear-gradient(145deg, #e0dede, #f9f9f9);
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 10px;
+      box-sizing: border-box;
+      position: relative;
+      font-family: 'Roboto', sans-serif;
+    }
+
+    .book-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 16px;
+      font-weight: 600;
+      color: #fff;
+      margin-bottom: 4px;
+    }
+
+    .book-subtitle {
+      font-size: 12px;
+      color: #aaa;
+      margin-bottom: 10px;
+    }
+
+    .series-name {
+      position: absolute;
+      top: 8px;
+      left: 8px;
+      font-size: 10px;
+      color: #fff;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-weight: bold;
+    }
+
+    .book-footer {
+      position: absolute;
+      bottom: 8px;
+      font-size: 10px;
+      color: #aaa;
+    }
+
+.download-info h2 {
+  margin: 0 0 0.5rem;
+  font-size: 1.2rem;
+}
+
+.format-label {
+  margin: 0 0 0.5rem;
+  font-size: 0.95rem;
+  color: #555;
+}
+
+.download-buttons {
+  display: flex;
+  gap: 1rem;
+}
+
+.download-button {
+  background-color: #4A90E2;
+  color: white;
+  padding: 0.5em 1.2em;
+  text-decoration: none;
+  border-radius: 25px;
+  font-size: 0.95rem;
+  transition: background-color 0.3s ease;
+}
+
+.download-button:hover {
+  background-color: #357ABD;
+}
+
+    code {
+ 
+      color: #d35400; 
+    }
+html {
+    scroll-behavior: smooth;
+}
+    .snippet-container {
+      overflow: hidden;    
+    }
+
+    .snippet-header {
+      background: #f0f0f0;
+      color: #333;
+      padding: 0.75rem 1rem;
+      cursor: pointer;
+      font-size: 1rem;
+    }
+
+    .snippet-body {
+      display: none;
+      font-family: monospace;
+    }
+
+    .snippet-container.open .snippet-body {
+      display: block;
+    }
+
+.CodeMirror {
+  border: 2px solid #ccc;
+  border-radius: 4px;
+  resize: vertical;
+}
+
+    button { padding: 0.5em 1em; background: green; color: white; border: none; cursor: pointer; }
+    button:hover { background: #1e7e34; }
+    .result_iframe { width:99%; height:200px; margin-top: 1em;  resize: both;border:1px solid #ccc;}        
+</style>
+</head>
+<body> 
+
+  <div class="container">
+    <div class = "chapter-navi-section">
+<a href="go-for-beginners-functions.htm" class="nav-button prev">←</a>
+<a href='go-for-beginners.htm#arrays-slices-and-maps' class="nav-button toc-link">Index</a>
+<a href="go-for-beginners-structs-and-methods.htm" class="nav-button next">→</a>
+</div>
+
+    <h1 class="book-title-chapter" id = 'top'>Arrays, Slices, and Maps</h1>
+    <h3 class="book-subtitle-chapter">Go for Beginners</h3>   
+    <!-- <h1 class ="chapter-title"></h1> -->
+    <h2 id='arrays-declaration-and-usage'>5.1 Arrays: Declaration and Usage</h2><p>An <strong>array</strong> in Go is a <strong>fixed-size sequence</strong> of elements that are all of the same type. Once declared, the size of an array cannot be changed, and its elements are stored contiguously in memory.</p><p>Arrays provide a simple way to work with a collection of related values, but because their size is fixed, slices are often preferred for more flexible use cases (covered in the next section).</p><h3 id="declaring-arrays">Declaring Arrays</h3><p>The syntax to declare an array is:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-go">var arrayName [size]elementType</code></pre>
+</div><ul>
+ <li><code>size</code> is a constant that specifies the number of elements.</li>
+ <li><code>elementType</code> defines the type of each element in the array.</li>
+</ul><h3 id="initializing-arrays">Initializing Arrays</h3><p>You can initialize arrays by specifying the values in braces <code>{}</code>:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-go">var arr = [5]int{10, 20, 30, 40, 50}</code></pre>
+</div><p>Alternatively, use the shorthand declaration with inferred size:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-go">arr := [...]int{10, 20, 30, 40, 50}</code></pre>
+</div><p>Here, the compiler counts the number of elements to determine the size automatically.</p><h3 id="accessing-array-elements">Accessing Array Elements</h3><p>Elements are accessed by their index, starting at 0:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-go">fmt.Println(arr[0]) // prints the first element: 10</code></pre>
+</div><h3 id="example-declaring-and-iterating-over-an-array">Example: Declaring and Iterating Over an Array</h3><div class="code-block"><button class="copy-button" onclick="copyCode(this)">📋</button>
+ <pre><code class="language-go">package main
+
+import "fmt"
+
+func main() {
+    // Declare and initialize an array of 5 integers
+    var numbers [5]int = [5]int{1, 2, 3, 4, 5}
+
+    // Iterate over the array using a for loop
+    for i := 0; i &lt; len(numbers); i++ {
+        fmt.Printf("Element at index %d: %d", i, numbers[i])
+    }
+
+    // Alternatively, use range for iteration
+    fmt.Println("Using range loop:")
+    for index, value := range numbers {
+        fmt.Printf("Element at index %d: %d", index, value)
+    }
+}</code></pre>
+</div><h3 id="output">Output:</h3><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-bash">Element at index 0: 1
+Element at index 1: 2
+Element at index 2: 3
+Element at index 3: 4
+Element at index 4: 5
+Using range loop:
+Element at index 0: 1
+Element at index 1: 2
+Element at index 2: 3
+Element at index 3: 4
+Element at index 4: 5</code></pre>
+</div><h3 id="summary">Summary</h3><ul>
+ <li>Arrays in Go are fixed-size, ordered collections of elements of the same type.</li>
+ <li>Declare arrays with a size and element type, initialize using composite literals.</li>
+ <li>Access elements via zero-based indexing.</li>
+ <li>Iterate arrays using traditional <code>for</code> loops or <code>range</code> loops.</li>
+ <li>Arrays are useful when the size is known and fixed; for dynamic sizes, use slices.</li>
+</ul><div class = "chapter-navi-section">
+<a href="#top" class="nav-button prev">↑</a>
+<a href='go-for-beginners.htm#arrays-slices-and-maps' class="nav-button toc-link">Index</a>
+<a href="#bottom" class="nav-button next">↓</a>
+</div>
+<h2 id='slices-creating-reslicing-and-capacity'>5.2 Slices: Creating, Reslicing, and Capacity</h2><p>In Go, <strong>slices</strong> are one of the most powerful and commonly used data structures. Unlike arrays, which have a fixed size, slices are <strong>dynamically-sized, flexible views into arrays</strong>. This flexibility makes slices ideal for working with collections of data that can grow or shrink as needed.</p><h4 id="what-is-a-slice">What is a Slice?</h4><p>A slice is essentially a lightweight descriptor that points to a segment (or "view") of an underlying array. It contains three key pieces of information:</p><ul>
+ <li><strong>Pointer</strong>: Points to the first element of the slice in the underlying array.</li>
+ <li><strong>Length</strong>: The number of elements the slice currently contains.</li>
+ <li><strong>Capacity</strong>: The maximum number of elements the slice can hold, starting from the pointer in the underlying array.</li>
+</ul><h4 id="creating-slices">Creating Slices</h4><p>You can create slices in several ways:</p><ol>
+ <li><strong>From an array or another slice using slicing syntax:</strong></li>
+</ol><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-go">arr := [5]int{10, 20, 30, 40, 50}
+slice := arr[1:4]  // Elements from index 1 to 3 (excluding 4)
+fmt.Println(slice) // Output: [20 30 40]</code></pre>
+</div><ol start="2">
+ <li><strong>Directly using the built-in <code>make</code> function:</strong></li>
+</ol><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-go">slice := make([]int, 3, 5) // Creates a slice of length 3 and capacity 5
+fmt.Println(slice)         // Output: [0 0 0]</code></pre>
+</div><ol start="3">
+ <li><strong>Using a slice literal:</strong></li>
+</ol><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-go">slice := []int{1, 2, 3, 4}
+fmt.Println(slice) // Output: [1 2 3 4]</code></pre>
+</div><div class="snippet-container" id="we9Kw">
+ <div class="snippet-header" onclick="toggleSnippet('we9Kw')">
+  Click to view full runnable Code
+ </div>
+ <div class="snippet-body">
+  <div class="code-block"><button class="copy-button" onclick="copyCode(this)">📋</button>
+   <pre><code class="language-go">
+package main
+
+import (
+    "fmt"
+)
+
+func main() {
+    // 1. From an array using slicing syntax
+    arr := [5]int{10, 20, 30, 40, 50}
+    sliceFromArray := arr[1:4] // Elements from index 1 to 3
+    fmt.Println("Slice from array:", sliceFromArray) // Output: [20 30 40]
+
+    // 2. Using make
+    sliceWithMake := make([]int, 3, 5) // len=3, cap=5
+    fmt.Println("Slice with make:", sliceWithMake) // Output: [0 0 0]
+
+    // 3. Using a slice literal
+    sliceLiteral := []int{1, 2, 3, 4}
+    fmt.Println("Slice literal:", sliceLiteral) // Output: [1 2 3 4]
+} 
+</code></pre>
+  </div>
+ </div>
+</div><h4 id="slicing-syntax">Slicing Syntax</h4><p>The general form of slicing is:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-go">slice := array_or_slice[low : high]</code></pre>
+</div><ul>
+ <li><code>low</code> is the starting index (inclusive),</li>
+ <li><code>high</code> is the ending index (exclusive).</li>
+</ul><p>Both <code>low</code> and <code>high</code> are optional. If omitted, they default to the start or end of the array/slice.</p><p>Examples:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-go">s := arr[:]     // Entire array as a slice
+s = arr[:3]     // First 3 elements
+s = arr[2:]     // From index 2 to the end</code></pre>
+</div><div class="snippet-container" id="azVTT">
+ <div class="snippet-header" onclick="toggleSnippet('azVTT')">
+  Click to view full runnable Code
+ </div>
+ <div class="snippet-body">
+  <div class="code-block"><button class="copy-button" onclick="copyCode(this)">📋</button>
+   <pre><code class="language-go">
+package main
+
+import (
+    "fmt"
+)
+
+func main() {
+    arr := [5]int{10, 20, 30, 40, 50}
+
+    // Create slices using various slicing forms
+    fullSlice := arr[:]     // Entire array
+    firstThree := arr[:3]   // Index 0 to 2
+    fromTwo := arr[2:]      // Index 2 to end
+    middle := arr[1:4]      // Index 1 to 3
+
+    // Display the results
+    fmt.Println("Original array:  ", arr)
+    fmt.Println("Full slice:      ", fullSlice)
+    fmt.Println("First 3 elements:", firstThree)
+    fmt.Println("From index 2 on: ", fromTwo)
+    fmt.Println("Middle section:  ", middle)
+} 
+</code></pre>
+  </div>
+ </div>
+</div><h4 id="length-vs-capacity">Length vs. Capacity</h4><ul>
+ <li><strong>Length (<code>len</code>)</strong>: Number of elements in the slice.</li>
+ <li><strong>Capacity (<code>cap</code>)</strong>: Number of elements the slice can grow to without allocating new memory (from the slice start to the end of the underlying array).</li>
+</ul><p>Example:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-go">arr := [5]int{10, 20, 30, 40, 50}
+slice := arr[1:3]           // Elements: 20, 30
+fmt.Println(len(slice))     // Output: 2
+fmt.Println(cap(slice))     // Output: 4 (from arr[1] to arr[4])</code></pre>
+</div><h4 id="reslicing">Reslicing</h4><p>You can reslice a slice within its capacity:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-go">slice = slice[:cap(slice)]  // Extends slice to full capacity
+fmt.Println(slice)          // Output: [20 30 40 50]</code></pre>
+</div><p>Attempting to reslice beyond the capacity will cause a runtime panic.</p><h4 id="appending-to-slices">Appending to Slices</h4><p>You can append elements to a slice using the built-in <code>append</code> function:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-go">slice := []int{1, 2, 3}
+slice = append(slice, 4, 5)
+fmt.Println(slice) // Output: [1 2 3 4 5]</code></pre>
+</div><p>If appending exceeds the current capacity, Go automatically allocates a new underlying array with larger capacity and copies the existing data over. This means the original array might not be modified, and the slice now refers to a new underlying array.</p><h4 id="inspecting-length-and-capacity">Inspecting Length and Capacity</h4><p>Use the built-in functions <code>len()</code> and <code>cap()</code> to inspect slices:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-go">fmt.Printf("len=%d cap=%d slice=%v", len(slice), cap(slice), slice)</code></pre>
+</div><h3 id="complete-example">Complete Example</h3><div class="code-block"><button class="copy-button" onclick="copyCode(this)">📋</button>
+ <pre><code class="language-go">package main
+
+import "fmt"
+
+func main() {
+    arr := [5]int{10, 20, 30, 40, 50}
+    slice := arr[1:4] // Slice of arr: [20 30 40]
+
+    fmt.Println("Initial slice:", slice)
+    fmt.Printf("Length: %d, Capacity: %d", len(slice), cap(slice))
+
+    // Reslicing within capacity
+    slice = slice[:cap(slice)]
+    fmt.Println("After reslicing:", slice)
+
+    // Append beyond capacity triggers new array allocation
+    slice = append(slice, 60, 70)
+    fmt.Println("After appending:", slice)
+    fmt.Printf("Length: %d, Capacity: %d", len(slice), cap(slice))
+}</code></pre>
+</div><p><strong>Output:</strong></p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-bash">Initial slice: [20 30 40]
+Length: 3, Capacity: 4
+After reslicing: [20 30 40 50]
+After appending: [20 30 40 50 60 70]
+Length: 6, Capacity: 8</code></pre>
+</div><div class = "chapter-navi-section">
+<a href="#top" class="nav-button prev">↑</a>
+<a href='go-for-beginners.htm#arrays-slices-and-maps' class="nav-button toc-link">Index</a>
+<a href="#bottom" class="nav-button next">↓</a>
+</div>
+<h2 id='maps-creating-and-using-key-value-pairs'>5.3 Maps: Creating and Using Key-Value Pairs</h2><p>In Go, <strong>maps</strong> are the built-in associative data type, also known as hash tables or dictionaries in other languages. Maps store <strong>key-value pairs</strong>, where each key is unique and maps to a corresponding value. They provide a fast and convenient way to look up data based on keys.</p><h4 id="what-is-a-map">What is a Map?</h4><p>A map is a collection where keys are associated with values. You can think of it like a real-world dictionary: the <strong>key</strong> is the word, and the <strong>value</strong> is the definition. Maps allow you to efficiently store and retrieve values by their keys.</p><h4 id="declaring-maps">Declaring Maps</h4><p>To declare a map, use the syntax:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-go">var m map[keyType]valueType</code></pre>
+</div><p>However, declaring a map only creates a nil map (no underlying storage yet), so you must initialize it before use.</p><h4 id="initializing-maps">Initializing Maps</h4><p>You can initialize maps using:</p><ul>
+ <li><strong><code>make</code> function:</strong></li>
+</ul><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-go">m := make(map[string]int)</code></pre>
+</div><ul>
+ <li><strong>Map literals:</strong></li>
+</ul><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-go">m := map[string]int{"apple": 5, "banana": 3}</code></pre>
+</div><h4 id="basic-operations-on-maps">Basic Operations on Maps</h4><ul>
+ <li><strong>Insertion / Update:</strong></li>
+</ul><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-go">m["USA"] = "United States"</code></pre>
+</div><ul>
+ <li><strong>Retrieval:</strong></li>
+</ul><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-go">country := m["USA"] // Retrieves the value for key "USA"</code></pre>
+</div><ul>
+ <li><strong>Deletion:</strong></li>
+</ul><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-go">delete(m, "USA") // Removes the key "USA" and its value from the map</code></pre>
+</div><ul>
+ <li><strong>Check if a key exists:</strong></li>
+</ul><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-go">value, exists := m["USA"]
+if exists {
+    fmt.Println("Key found:", value)
+} else {
+    fmt.Println("Key not found")
+}</code></pre>
+</div><h4 id="practical-example-country-codes-map">Practical Example: Country Codes Map</h4><p>Here’s a practical example showing how to use a map that stores country codes and their corresponding country names:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">📋</button>
+ <pre><code class="language-go">package main
+
+import "fmt"
+
+func main() {
+    // Declare and initialize a map with country codes as keys and country names as values
+    countries := make(map[string]string)
+
+    // Insert key-value pairs
+    countries["US"] = "United States"
+    countries["CA"] = "Canada"
+    countries["MX"] = "Mexico"
+
+    // Retrieve and print a value
+    fmt.Println("Country code 'CA' is:", countries["CA"])
+
+    // Check if a key exists
+    code := "FR"
+    if country, found := countries[code]; found {
+        fmt.Printf("Country code '%s' is %s", code, country)
+    } else {
+        fmt.Printf("Country code '%s' not found", code)
+    }
+
+    // Delete a key-value pair
+    delete(countries, "MX")
+    fmt.Println("After deletion, countries map:", countries)
+}</code></pre>
+</div><p><strong>Output:</strong></p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-bash">Country code 'CA' is: Canada
+Country code 'FR' not found
+After deletion, countries map: map[CA:Canada US:United States]</code></pre>
+</div><p>Maps are a versatile and essential data structure in Go for associating data in a key-value format. They are particularly useful when you need fast lookups, insertions, or deletions based on unique keys.</p><div class = "chapter-navi-section">
+<a href="#top" class="nav-button prev">↑</a>
+<a href='go-for-beginners.htm#arrays-slices-and-maps' class="nav-button toc-link">Index</a>
+<a href="#bottom" class="nav-button next">↓</a>
+</div>
+<h2 id='common-operations-on-slices-and-maps'>5.4 Common Operations on Slices and Maps</h2><p>While arrays in Go have a fixed size, <strong>slices</strong> provide a more powerful and flexible way to work with sequences of elements. A slice is a <strong>dynamically-sized, flexible view into an underlying array</strong>.</p><h3 id="what-is-a-slice">What is a Slice?</h3><ul>
+ <li>A slice does <strong>not</strong> store data itself; it describes a segment of an underlying array.</li>
+ <li>Slices have a <strong>length</strong> (number of accessible elements) and a <strong>capacity</strong> (maximum size before needing to grow).</li>
+ <li>You can think of a slice as a window over an array that can grow and shrink dynamically.</li>
+</ul><h3 id="creating-slices">Creating Slices</h3><p>You can create slices in several ways:</p><ol>
+ <li><strong>From an array or another slice using slicing syntax:</strong></li>
+</ol><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-go">arr := [5]int{10, 20, 30, 40, 50}
+slice := arr[1:4] // slice of elements at indices 1, 2, 3</code></pre>
+</div><ol start="2">
+ <li><strong>Using the built-in <code>make</code> function:</strong></li>
+</ol><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-go">slice := make([]int, 3, 5) // length 3, capacity 5</code></pre>
+</div><ol start="3">
+ <li><strong>By declaring a slice literal:</strong></li>
+</ol><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-go">slice := []int{1, 2, 3, 4}</code></pre>
+</div><h3 id="slicing-syntax">Slicing Syntax</h3><p>The general slicing syntax is:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-go">slice := array[startIndex:endIndex]</code></pre>
+</div><ul>
+ <li><code>startIndex</code> is inclusive (default 0 if omitted).</li>
+ <li><code>endIndex</code> is exclusive (default is the length of the array or slice).</li>
+ <li>The resulting slice has length <code>endIndex - startIndex</code>.</li>
+</ul><p>Example:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-go">arr := [5]int{10, 20, 30, 40, 50}
+s := arr[1:4] // contains 20, 30, 40</code></pre>
+</div><h3 id="length-and-capacity">Length and Capacity</h3><ul>
+ <li><code>len(slice)</code>: Number of elements currently accessible in the slice.</li>
+ <li><code>cap(slice)</code>: Number of elements in the underlying array, starting from the first element in the slice, which determines how much the slice can grow before needing a new underlying array.</li>
+</ul><p>Example:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-go">fmt.Println(len(s)) // Output: 3
+fmt.Println(cap(s)) // Output: 4 (from index 1 to end of array)</code></pre>
+</div><h3 id="reslicing">Reslicing</h3><p>You can reslice a slice to grow or shrink it, as long as you stay within its capacity.</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-go">s = s[:cap(s)] // extend slice length to its capacity</code></pre>
+</div><h3 id="appending-to-slices">Appending to Slices</h3><p>Slices are flexible because you can <strong>append</strong> elements dynamically using the built-in <code>append</code> function:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-go">s = append(s, 60, 70)</code></pre>
+</div><ul>
+ <li>If the underlying array is large enough, <code>append</code> reuses it.</li>
+ <li>If not, <code>append</code> creates a new larger array, copies data, and returns the new slice.</li>
+</ul><h3 id="example-working-with-slices">Example: Working with Slices</h3><div class="code-block"><button class="copy-button" onclick="copyCode(this)">📋</button>
+ <pre><code class="language-go">package main
+
+import "fmt"
+
+func main() {
+    arr := [5]int{10, 20, 30, 40, 50}
+
+    // Create a slice from an array
+    s := arr[1:4]
+    fmt.Println("Slice:", s)             // [20 30 40]
+    fmt.Println("Length:", len(s))       // 3
+    fmt.Println("Capacity:", cap(s))     // 4 (from index 1 to end)
+
+    // Reslice to extend length up to capacity
+    s = s[:cap(s)]
+    fmt.Println("Resliced:", s)          // [20 30 40 50]
+
+    // Append elements to the slice
+    s = append(s, 60, 70)
+    fmt.Println("After append:", s)      // [20 30 40 50 60 70]
+
+    // Length and capacity after append
+    fmt.Println("Length:", len(s))       // 6
+    fmt.Println("Capacity:", cap(s))     // Capacity may increase depending on allocation
+}</code></pre>
+</div><h3 id="summary">Summary</h3><ul>
+ <li>Slices are flexible, dynamically-sized views into arrays.</li>
+ <li>Create slices using slicing syntax, literals, or <code>make</code>.</li>
+ <li>Use <code>len()</code> to get current length and <code>cap()</code> to check capacity.</li>
+ <li>Reslicing can change slice length within capacity limits.</li>
+ <li>Use <code>append()</code> to add elements; it may increase capacity by allocating a new underlying array.</li>
+ <li>Slices provide powerful and efficient ways to work with sequences in Go.</li>
+</ul><div class = "chapter-navi-section">
+<a href="go-for-beginners-functions.htm" class="nav-button prev">←</a>
+<a href='go-for-beginners.htm#arrays-slices-and-maps' class="nav-button toc-link">Index</a>
+<a href="go-for-beginners-structs-and-methods.htm" class="nav-button next">→</a>
+</div>
+<section class="download-section">
+  <div class="book-cover" style="background-image: url('data:image/jpg;base64,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');">
+<div class="series-name">Introduction</div>
+<div class="book-title">Go for Beginners</div>
+<div class="book-subtitle">Essential concepts, practical examples, and foundational topics</div>
+<div class="book-footer">readbytes.github.io</div>
+</div>
+  <div class="download-info">
+    <h2 id='bottom'>Download This Ebook</h2>
+    <p class="format-label">Available formats:</p>
+    <div class="download-buttons">
+      <a href="go-for-beginners.pdf" class="download-button">📄 PDF</a>
+      <a href="go-for-beginners.epub" class="download-button">📘 EPUB</a>
+    </div>
+  </div>
+</section><div class='related-books'>
+<h2>Go Introduction Books</h2>
+<div class='related-book-list'>
+<a href="go-for-beginners.htm"><div class="book-cover" style="background-image: url('data:image/jpg;base64,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');">
+<div class="series-name">Introduction</div>
+<div class="book-title">Go for Beginners</div>
+<div class="book-subtitle">Essential concepts, practical examples, and foundational topics</div>
+<div class="book-footer">readbytes.github.io</div>
+</div></a>
+
+
+
+<a href='go.htm'><div class='book-cover'>More Go Books</div></a>
+</div>
+</div>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+    <script>
+  function toggleSnippet(id) {
+      const box = document.getElementById(id);
+      box.classList.toggle("open");
+  }  
+  </script>
+  <script>
+    function copyCode(button) {
+      const code = button.nextElementSibling.innerText;
+      navigator.clipboard.writeText(code).then(() => {
+        button.textContent = 'Copied!';
+        setTimeout(() => { button.textContent = 'Copy'; }, 1500);
+      });
+    }
+  </script>  
+
+<footer class="page-footer">
+    <nav>
+      <a href="https://readbytes.github.io">Home</a> | 
+      Email:<script language="JavaScript" type="text/javascript">
+var part1 = 'yinpeng';var part6 = '263';var part2 = Math.pow(2,6);var part3 = String.fromCharCode(part2);var part4 = 'hotmail dot com';var part5 = part1 + String.fromCharCode(part2) + part4;document.write(part1 + part6 + part3 + part4);
+</script>
+    </nav>
+  <p>© 2025 — All rights reserved.</p>    
+  </footer>
+
+</body>
+</html>

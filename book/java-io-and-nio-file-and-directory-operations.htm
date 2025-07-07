@@ -1,0 +1,1245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>Java IO and NIO File and Directory Operations</title>
+<link rel='shortcut icon' href='https://java2s.com/style/favicon.ico'>
+<link href="https://fonts.googleapis.com/css2?family=Merriweather&display=swap" rel="stylesheet" />
+<link href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+
+
+<style>
+body {
+  background: #f8f7f5;
+  font-family: 'Merriweather', serif;
+  color: #333;
+  margin: 0;
+  padding: 2rem 1rem;
+  font-size: 15px; /* smaller body font */
+  line-height: 1.5;
+}
+
+.container {
+  max-width: 700px;
+  margin: 0 auto;
+  background: white;
+  padding: 1rem 2rem;
+  box-shadow: 0 0 15px rgba(0,0,0,0.1);
+}
+.book-title-chapter {
+  font-family: 'Merriweather', serif;
+  font-size: 2rem;
+  font-weight: bold;
+  text-align: center;
+  margin-bottom: 2rem;
+  border-bottom: 2px solid #ccc;
+  padding-bottom: 0.5rem;
+  color: #2c3e50;
+}
+
+.book-subtitle-chapter {
+  text-align: center;
+  font-size: 1rem;
+  color: #666;
+  margin-top: -1rem;
+  margin-bottom: 2rem;
+}
+
+    .related-books {
+      margin-top: 40px;
+    }
+
+    .related-books h2 {
+      font-size: 22px;
+      margin-bottom: 20px;
+      border-bottom: 2px solid #eee;
+      padding-bottom: 8px;
+      color: #333;
+    }
+    .related-book-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+h1, h2, h3 {
+  font-weight: 600;
+  margin-top: 2.5rem;
+  margin-bottom: 1rem;
+  line-height: 1.2;
+}
+
+h1 {
+  font-size: 1.8rem; /* smaller heading */
+}
+
+h2 {
+  font-size: 1.4rem;
+}
+
+h3 {
+  font-size: 1.2rem;
+}
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-family: sans-serif;
+      font-size: 1em;
+      margin: 1em 0;
+    }
+
+    th, td {
+      border: 1px solid #cccccc;
+      padding: 0.6em 1em;
+      text-align: left;
+    }
+
+    th {
+      background-color: #f2f2f2;
+      font-weight: bold;
+    }
+
+    tr:nth-child(even) {
+      background-color: #fafafa;
+    }
+
+    /* Optional hover effect */
+    tr:hover {
+      background-color: #e6f7ff;
+    }
+ 
+a {
+  color: #555;
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+
+
+.code-block {
+    position: relative;
+    margin-bottom: 1em;
+}
+.copy-button {
+    background: transparent; 
+    color: white;
+
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    border: none;
+    padding: 4px 8px;
+    font-size: 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    z-index: 1;
+}
+
+.copy-button:hover {
+background-color: #0056b3;
+}
+.page-footer {
+  margin-top: 4rem;
+  padding: 1rem 0;
+  text-align: center;
+  font-size: 0.85rem;
+  color: #666;
+  border-top: 1px solid #ccc;
+  background-color: #fafafa;
+}
+.page-footer a {
+     color: #555;
+    text-decoration: none;
+  }
+  .page-footer a:hover {
+    text-decoration: underline;
+  }
+.chapter-navi-section {
+display: flex;
+justify-content: space-between;
+align-items: center;
+padding-bottom: 10px;
+}  
+
+.nav-link {
+  color: inherit;
+  text-decoration: none;
+  opacity: 0.5;
+  transition: opacity 0.3s ease, text-decoration 0.3s ease;
+}
+
+.nav-link:hover {
+  opacity: 0.9;
+  text-decoration: underline;
+}
+
+.prev {
+  text-align: left;
+}
+.toc-link {
+  text-align: center;
+}
+.next {
+  text-align: right;
+}
+.download-section {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2rem;
+  padding: 2rem 1rem;
+  max-width: 600px;
+  margin: 3rem auto;
+  background-color: #f9f9f9;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+}
+
+    .book-cover {
+      width: 130px;
+      height: 180px;
+      
+      background-size: cover; /* Ensures the image covers the entire div */
+      background-position: center; /* Centers the image */
+            
+      background: linear-gradient(145deg, #e0dede, #f9f9f9);
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 10px;
+      box-sizing: border-box;
+      position: relative;
+      font-family: 'Roboto', sans-serif;
+    }
+
+    .book-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 16px;
+      font-weight: 600;
+      color: #fff;
+      margin-bottom: 4px;
+    }
+
+    .book-subtitle {
+      font-size: 12px;
+      color: #aaa;
+      margin-bottom: 10px;
+    }
+
+    .series-name {
+      position: absolute;
+      top: 8px;
+      left: 8px;
+      font-size: 10px;
+      color: #fff;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-weight: bold;
+    }
+
+    .book-footer {
+      position: absolute;
+      bottom: 8px;
+      font-size: 10px;
+      color: #aaa;
+    }
+
+.download-info h2 {
+  margin: 0 0 0.5rem;
+  font-size: 1.2rem;
+}
+
+.format-label {
+  margin: 0 0 0.5rem;
+  font-size: 0.95rem;
+  color: #555;
+}
+
+.download-buttons {
+  display: flex;
+  gap: 1rem;
+}
+
+.download-button {
+  background-color: #4A90E2;
+  color: white;
+  padding: 0.5em 1.2em;
+  text-decoration: none;
+  border-radius: 25px;
+  font-size: 0.95rem;
+  transition: background-color 0.3s ease;
+}
+
+.download-button:hover {
+  background-color: #357ABD;
+}
+
+    code {
+ 
+      color: #d35400; 
+    }
+html {
+    scroll-behavior: smooth;
+}
+    .snippet-container {
+      overflow: hidden;    
+    }
+
+    .snippet-header {
+      background: #f0f0f0;
+      color: #333;
+      padding: 0.75rem 1rem;
+      cursor: pointer;
+      font-size: 1rem;
+    }
+
+    .snippet-body {
+      display: none;
+      font-family: monospace;
+    }
+
+    .snippet-container.open .snippet-body {
+      display: block;
+    }
+
+.CodeMirror {
+  border: 2px solid #ccc;
+  border-radius: 4px;
+  resize: vertical;
+}
+
+    button { padding: 0.5em 1em; background: green; color: white; border: none; cursor: pointer; }
+    button:hover { background: #1e7e34; }
+    .result_iframe { width:99%; height:200px; margin-top: 1em;  resize: both;border:1px solid #ccc;}        
+</style>
+</head>
+<body> 
+
+  <div class="container">
+    <div class = "chapter-navi-section">
+<a href="java-io-and-nio-java-io-fundamentals.htm" class="nav-button prev">←</a>
+<a href='java-io-and-nio.htm#file-and-directory-operations' class="nav-button toc-link">Index</a>
+<a href="java-io-and-nio-advanced-java-io-concepts.htm" class="nav-button next">→</a>
+</div>
+
+    <h1 class="book-title-chapter" id = 'top'>File and Directory Operations</h1>
+    <h3 class="book-subtitle-chapter">Java IO and NIO</h3>   
+    <!-- <h1 class ="chapter-title"></h1> -->
+    <h2 id='working-with-files-file-class-overview'>3.1 Working with Files: File Class Overview</h2><p>In Java, the <code>java.io.File</code> class serves as an abstract representation of file and directory pathnames in the filesystem. Unlike stream classes that handle reading and writing data, the <code>File</code> class focuses on <strong>metadata and structure</strong>—such as verifying whether a file or directory exists, checking permissions, and creating or deleting files and directories.</p><p>The <code>File</code> class is part of the <code>java.io</code> package and plays a critical role in Java IO operations involving filesystems.</p><h3 id="what-is-the-file-class">What is the <code>File</code> Class?</h3><p>The <code>File</code> class encapsulates the <strong>pathname</strong> of a file or directory (absolute or relative). However, a <code>File</code> object <strong>does not represent actual file content</strong>—it represents a path string and provides methods to interact with the file or directory associated with that path.</p><h4 id="creating-a-file-object">Creating a <code>File</code> Object</h4><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-java">File file1 = new File("example.txt");             // Relative path
+File file2 = new File("/home/user/example.txt");  // Absolute path</code></pre>
+</div><p>This does <strong>not create</strong> a new file; it only creates a <code>File</code> object pointing to a path.</p><h3 id="querying-file-and-directory-properties">Querying File and Directory Properties</h3><p>The <code>File</code> class provides several methods to inspect file properties:</p><h4 id="checking-existence">Checking Existence</h4><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-java">File file = new File("example.txt");
+System.out.println("Exists: " + file.exists());</code></pre>
+</div><h4 id="checking-type">Checking Type</h4><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-java">System.out.println("Is file: " + file.isFile());
+System.out.println("Is directory: " + file.isDirectory());</code></pre>
+</div><h4 id="getting-size-and-path">Getting Size and Path</h4><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-java">System.out.println("Absolute path: " + file.getAbsolutePath());
+System.out.println("File name: " + file.getName());
+System.out.println("Parent directory: " + file.getParent());
+System.out.println("File size (bytes): " + file.length());</code></pre>
+</div><h4 id="checking-permissions">Checking Permissions</h4><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-java">System.out.println("Readable: " + file.canRead());
+System.out.println("Writable: " + file.canWrite());
+System.out.println("Executable: " + file.canExecute());</code></pre>
+</div><p>These checks are particularly useful for verifying access before performing IO operations.</p><h3 id="creating-files-and-directories">Creating Files and Directories</h3><h4 id="creating-a-new-file">Creating a New File</h4><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-java">File file = new File("newfile.txt");
+try {
+    if (file.createNewFile()) {
+        System.out.println("File created.");
+    } else {
+        System.out.println("File already exists.");
+    }
+} catch (IOException e) {
+    e.printStackTrace();
+}</code></pre>
+</div><ul>
+ <li><code>createNewFile()</code> creates an empty file only if it does not already exist.</li>
+ <li>Returns <code>true</code> if a new file is created, <code>false</code> otherwise.</li>
+</ul><h4 id="creating-directories">Creating Directories</h4><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-java">File dir = new File("myDirectory");
+if (dir.mkdir()) {
+    System.out.println("Directory created.");
+}
+
+File nestedDir = new File("parent/child/grandchild");
+if (nestedDir.mkdirs()) {
+    System.out.println("Nested directories created.");
+}</code></pre>
+</div><ul>
+ <li><code>mkdir()</code> creates a single directory.</li>
+ <li><code>mkdirs()</code> creates a directory along with all necessary parent directories.</li>
+</ul><h3 id="deleting-files-and-directories">Deleting Files and Directories</h3><h4 id="deleting-a-file-or-directory">Deleting a File or Directory</h4><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-java">File file = new File("toDelete.txt");
+if (file.delete()) {
+    System.out.println("Deleted successfully.");
+} else {
+    System.out.println("Deletion failed.");
+}</code></pre>
+</div><ul>
+ <li><code>delete()</code> works for both files and empty directories.</li>
+ <li>Deleting non-empty directories requires recursion or <code>java.nio.file.Files</code>.</li>
+</ul><h3 id="renaming-and-moving-files">Renaming and Moving Files</h3><h4 id="renaming-a-file">Renaming a File</h4><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-java">File oldFile = new File("old.txt");
+File newFile = new File("new.txt");
+
+if (oldFile.renameTo(newFile)) {
+    System.out.println("File renamed successfully.");
+} else {
+    System.out.println("Rename failed.");
+}</code></pre>
+</div><ul>
+ <li><code>renameTo()</code> can also be used to move files if the destination path differs.</li>
+</ul><h3 id="listing-directory-contents">Listing Directory Contents</h3><p>You can list files and directories inside a folder using <code>list()</code> or <code>listFiles()</code>.</p><h4 id="listing-file-names">Listing File Names</h4><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-java">File directory = new File("myDirectory");
+String[] fileList = directory.list();
+
+for (String name : fileList) {
+    System.out.println(name);
+}</code></pre>
+</div><h4 id="listing-as-file-objects">Listing as File Objects</h4><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-java">File[] files = directory.listFiles();
+for (File f : files) {
+    System.out.println(f.getName() + (f.isDirectory() ? " (dir)" : " (file)"));
+}</code></pre>
+</div><p>These methods are helpful for building file browsers, searching files, or batch processing.</p><h3 id="working-with-paths">Working with Paths</h3><h4 id="absolute-vs-relative-paths">Absolute vs Relative Paths</h4><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-java">File relative = new File("data.txt");
+System.out.println("Absolute path: " + relative.getAbsolutePath());
+
+File absolute = new File("/usr/local/data.txt");
+System.out.println("Is absolute: " + absolute.isAbsolute());</code></pre>
+</div><ul>
+ <li><code>getCanonicalPath()</code> resolves symbolic links and <code>..</code> or <code>.</code> in the path.</li>
+ <li>Use absolute paths when precise file locations are critical.</li>
+</ul><h3 id="practical-use-case-file-validation">Practical Use Case: File Validation</h3><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-java">public static void validateFile(String path) {
+    File file = new File(path);
+    if (!file.exists()) {
+        System.out.println("File not found.");
+        return;
+    }
+    if (!file.isFile()) {
+        System.out.println("Not a regular file.");
+        return;
+    }
+    if (!file.canRead()) {
+        System.out.println("Cannot read file.");
+        return;
+    }
+
+    System.out.println("File is ready for processing: " + file.getName());
+}</code></pre>
+</div><p>This kind of validation is essential before attempting to read from or write to a file.</p><div class="snippet-container" id="m98OC">
+ <div class="snippet-header" onclick="toggleSnippet('m98OC')">
+  Click to view full runnable Code
+ </div>
+ <div class="snippet-body">
+  <div class="code-block"><button class="copy-button" onclick="copyCode(this)">📋</button>
+   <pre><code class="language-java">
+import java.io.File;
+import java.io.IOException;
+
+public class FileExample {
+    public static void main(String[] args) {
+        try {
+            // Create a new file
+            File file = new File("example.txt");
+            if (file.createNewFile()) {
+                System.out.println("File created: " + file.getName());
+            } else {
+                System.out.println("File already exists.");
+            }
+
+            // Check file properties
+            System.out.println("Exists: " + file.exists());
+            System.out.println("Is file: " + file.isFile());
+            System.out.println("Is directory: " + file.isDirectory());
+            System.out.println("Readable: " + file.canRead());
+            System.out.println("Writable: " + file.canWrite());
+            System.out.println("Executable: " + file.canExecute());
+            System.out.println("Absolute path: " + file.getAbsolutePath());
+            System.out.println("File size (bytes): " + file.length());
+
+            // Create a directory
+            File dir = new File("demoDir");
+            if (dir.mkdir()) {
+                System.out.println("Directory created: " + dir.getName());
+            }
+
+            // Rename file
+            File renamed = new File("renamed_example.txt");
+            if (file.renameTo(renamed)) {
+                System.out.println("File renamed to: " + renamed.getName());
+            }
+
+            // List contents of current directory
+            File current = new File(".");
+            File[] files = current.listFiles();
+            if (files != null) {
+                System.out.println("\nDirectory contents:");
+                for (File f : files) {
+                    System.out.println(f.getName() + (f.isDirectory() ? " (dir)" : " (file)"));
+                }
+            }
+
+            // Delete the renamed file
+            if (renamed.delete()) {
+                System.out.println("\nDeleted file: " + renamed.getName());
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+} 
+</code></pre>
+  </div>
+ </div>
+</div><h3 id="recap">Recap</h3><p>The Java <code>File</code> class is a foundational component of the IO system, enabling applications to interact with the filesystem in a platform-independent way. While it doesn't handle file contents directly, it provides robust support for inspecting and manipulating files and directories. Mastery of <code>File</code> is essential for tasks like file validation, path resolution, directory traversal, and metadata querying. For file content operations, it is typically used in conjunction with stream or reader/writer classes.</p><div class = "chapter-navi-section">
+<a href="#top" class="nav-button prev">↑</a>
+<a href='java-io-and-nio.htm#file-and-directory-operations' class="nav-button toc-link">Index</a>
+<a href="#bottom" class="nav-button next">↓</a>
+</div>
+<h2 id='reading-and-writing-files-with-fileinputstream-and-fileoutputstream'>3.2 Reading and Writing Files with FileInputStream and FileOutputStream</h2><p>In Java IO, the <code>FileInputStream</code> and <code>FileOutputStream</code> classes are fundamental for performing <strong>byte-oriented file input and output operations</strong>. These classes are part of the <code>java.io</code> package and are typically used when dealing with <strong>binary data</strong> such as images, audio files, PDFs, or raw byte sequences.</p><h3 id="understanding-byte-streams">Understanding Byte Streams</h3><p>Java’s IO system is built around two types of streams:</p><ul>
+ <li><strong>Byte streams</strong>, which deal with raw bytes (<code>InputStream</code>/<code>OutputStream</code> hierarchy)</li>
+ <li><strong>Character streams</strong>, which deal with characters (<code>Reader</code>/<code>Writer</code> hierarchy)</li>
+</ul><p><code>FileInputStream</code> and <code>FileOutputStream</code> are <strong>concrete implementations</strong> of the byte stream classes specifically designed to work with files.</p><h3 id="fileinputstream-reading-bytes-from-a-file">FileInputStream Reading Bytes from a File</h3><p><code>FileInputStream</code> allows you to <strong>read bytes from a file</strong>. It is ideal for reading binary files or when you need precise control over the byte-level structure of the data.</p><h4 id="key-methods">Key Methods</h4><ul>
+ <li><code>int read()</code> – reads a single byte, returns -1 at end of file.</li>
+ <li><code>int read(byte[] b)</code> – reads bytes into a buffer array.</li>
+ <li><code>int read(byte[] b, int off, int len)</code> – reads bytes into a buffer with offset and length.</li>
+ <li><code>void close()</code> – closes the stream and releases system resources.</li>
+</ul><h4 id="example-reading-a-file-byte-by-byte">Example: Reading a File Byte-by-Byte</h4><div class="code-block"><button class="copy-button" onclick="copyCode(this)">📋</button>
+ <pre><code class="language-java">import java.io.FileInputStream;
+import java.io.IOException;
+
+public class FileReadExample {
+    public static void main(String[] args) {
+        try (FileInputStream fis = new FileInputStream("input.bin")) {
+            int byteData;
+            while ((byteData = fis.read()) != -1) {
+                System.out.print((char) byteData); // Cast to char for text output
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+}</code></pre>
+</div><p><strong>Explanation</strong>:</p><ul>
+ <li>The file <code>input.bin</code> is opened in binary mode.</li>
+ <li>Each byte is read sequentially and printed as a character.</li>
+ <li>The <code>try-with-resources</code> block ensures the stream is closed automatically.</li>
+</ul><h3 id="fileoutputstream-writing-bytes-to-a-file">FileOutputStream Writing Bytes to a File</h3><p><code>FileOutputStream</code> lets you <strong>write bytes to a file</strong>. It's commonly used for creating or modifying binary files.</p><h4 id="key-methods">Key Methods</h4><ul>
+ <li><code>void write(int b)</code> – writes a single byte.</li>
+ <li><code>void write(byte[] b)</code> – writes an entire byte array.</li>
+ <li><code>void write(byte[] b, int off, int len)</code> – writes part of a byte array.</li>
+ <li><code>void close()</code> – closes the stream.</li>
+</ul><h4 id="example-writing-bytes-to-a-file">Example: Writing Bytes to a File</h4><div class="code-block"><button class="copy-button" onclick="copyCode(this)">📋</button>
+ <pre><code class="language-java">import java.io.FileOutputStream;
+import java.io.IOException;
+
+public class FileWriteExample {
+    public static void main(String[] args) {
+        String data = "Java FileOutputStream Example";
+
+        try (FileOutputStream fos = new FileOutputStream("output.txt")) {
+            byte[] bytes = data.getBytes(); // Convert string to byte array
+            fos.write(bytes);              // Write all bytes to file
+            System.out.println("Data written to file.");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+}</code></pre>
+</div><p><strong>Explanation</strong>:</p><ul>
+ <li>The string is converted to bytes using <code>getBytes()</code>.</li>
+ <li>The byte array is written to the file <code>output.txt</code>.</li>
+ <li>If the file doesn’t exist, it is created; if it exists, it is overwritten.</li>
+</ul><h3 id="writing-in-append-mode">Writing in Append Mode</h3><p>To <strong>append data</strong> to an existing file instead of overwriting it, use the <code>FileOutputStream</code> constructor with a <code>true</code> flag:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-java">try (FileOutputStream fos = new FileOutputStream("log.txt", true)) {
+    fos.write("New log entry\n".getBytes());
+}</code></pre>
+</div><p>This mode is useful for logging or appending updates to a file.</p><h3 id="using-buffers-for-efficiency">Using Buffers for Efficiency</h3><p>Reading or writing byte-by-byte is inefficient for large files. Use a <strong>byte array buffer</strong> to read/write chunks of data:</p><h4 id="buffered-reading-and-writing">Buffered Reading and Writing</h4><div class="code-block"><button class="copy-button" onclick="copyCode(this)">📋</button>
+ <pre><code class="language-java">import java.io.*;
+
+public class FileCopyExample {
+    public static void main(String[] args) {
+        try (
+            FileInputStream fis = new FileInputStream("source.jpg");
+            FileOutputStream fos = new FileOutputStream("copy.jpg")
+        ) {
+            byte[] buffer = new byte[4096]; // 4 KB buffer
+            int bytesRead;
+
+            while ((bytesRead = fis.read(buffer)) != -1) {
+                fos.write(buffer, 0, bytesRead); // Write only bytes read
+            }
+
+            System.out.println("File copied successfully.");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+}</code></pre>
+</div><p><strong>Advantages</strong>:</p><ul>
+ <li>Reduces the number of IO operations.</li>
+ <li>Greatly improves performance, especially for large files.</li>
+</ul><h3 id="common-use-cases">Common Use Cases</h3><ul>
+ <li>Reading and writing <strong>binary files</strong> (images, audio, executables)</li>
+ <li>Implementing <strong>file copying utilities</strong></li>
+ <li>Saving <strong>serialized binary data</strong> (e.g., custom file formats)</li>
+ <li>Writing <strong>raw network data</strong> to disk</li>
+</ul><p>For <strong>text files</strong>, <code>FileReader</code> and <code>FileWriter</code> (or their buffered counterparts) are preferred to handle character encoding.</p><h3 id="error-handling-and-resource-management">Error Handling and Resource Management</h3><p>Always close file streams to avoid resource leaks. The <strong>try-with-resources</strong> statement ensures this automatically:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-java">try (FileInputStream fis = new FileInputStream("input.txt")) {
+    // use the stream
+} catch (IOException e) {
+    e.printStackTrace();
+}</code></pre>
+</div><h3 id="important-considerations">Important Considerations</h3><ul>
+ <li><strong>No automatic character encoding</strong>: These streams work with raw bytes; use <code>OutputStreamWriter</code> or <code>InputStreamReader</code> if encoding matters.</li>
+ <li><strong>Overwriting risk</strong>: <code>FileOutputStream</code> will overwrite files by default—use with caution.</li>
+ <li><strong>Not thread-safe</strong>: Synchronize access if multiple threads read/write the same file.</li>
+</ul><h3 id="conclusion">Conclusion</h3><p><code>FileInputStream</code> and <code>FileOutputStream</code> are powerful classes in Java’s IO toolkit, offering efficient and low-level control over reading and writing byte data to and from files. Whether you're building a file copier, manipulating binary files, or handling large datasets, these classes provide the foundation for reliable and performant IO operations. By combining them with buffering and proper resource management, you can ensure that your file-handling code is both fast and safe.</p><div class = "chapter-navi-section">
+<a href="#top" class="nav-button prev">↑</a>
+<a href='java-io-and-nio.htm#file-and-directory-operations' class="nav-button toc-link">Index</a>
+<a href="#bottom" class="nav-button next">↓</a>
+</div>
+<h2 id='reading-and-writing-files-with-filereader-filewriter'>3.3 Reading and Writing Files with FileReader/FileWriter</h2><p>Java provides two broad categories of stream classes for file input and output:</p><ul>
+ <li><strong>Byte streams</strong>: Use <code>InputStream</code> and <code>OutputStream</code> classes, designed for raw binary data.</li>
+ <li><strong>Character streams</strong>: Use <code>Reader</code> and <code>Writer</code> classes, designed for text (i.e., character data).</li>
+</ul><p><code>FileReader</code> and <code>FileWriter</code> are concrete implementations of the character stream classes. They are specifically used to <strong>read from and write to text files</strong>, automatically handling character encoding based on the system’s default or specified charset.</p><h3 id="why-use-character-streams">Why Use Character Streams?</h3><p>When dealing with <strong>text files</strong>, character streams are preferred over byte streams for several reasons:</p><ul>
+ <li>They automatically <strong>convert bytes to characters</strong> using a character encoding (like UTF-8 or UTF-16).</li>
+ <li>They allow you to process characters, lines, or strings instead of raw byte arrays.</li>
+ <li>They reduce the need for manual conversion between bytes and characters.</li>
+</ul><p>For binary data such as images or audio files, <strong>byte streams</strong> are better suited. But for textual data—such as <code>.txt</code>, <code>.csv</code>, <code>.xml</code>, <code>.json</code>—<code>FileReader</code> and <code>FileWriter</code> are more convenient and semantically appropriate.</p><h3 id="filereader-reading-characters-from-a-file">FileReader Reading Characters from a File</h3><p><code>FileReader</code> is a subclass of <code>InputStreamReader</code>, designed to read character data from a file using the <strong>default platform encoding</strong> (e.g., UTF-8 or ISO-8859-1, depending on the system).</p><h4 id="basic-usage">Basic Usage</h4><div class="code-block"><button class="copy-button" onclick="copyCode(this)">📋</button>
+ <pre><code class="language-java">import java.io.FileReader;
+import java.io.IOException;
+
+public class FileReaderExample {
+    public static void main(String[] args) {
+        try (FileReader reader = new FileReader("example.txt")) {
+            int character;
+            while ((character = reader.read()) != -1) {
+                System.out.print((char) character); // Cast int to char
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+}</code></pre>
+</div><p><strong>Explanation</strong>:</p><ul>
+ <li>The <code>read()</code> method reads one character at a time.</li>
+ <li>The loop continues until <code>read()</code> returns -1 (end of file).</li>
+ <li>Each character is printed to the console.</li>
+</ul><h3 id="filewriter-writing-characters-to-a-file">FileWriter Writing Characters to a File</h3><p><code>FileWriter</code> is a subclass of <code>OutputStreamWriter</code> and allows you to write character data directly to a file.</p><h4 id="basic-usage">Basic Usage</h4><div class="code-block"><button class="copy-button" onclick="copyCode(this)">📋</button>
+ <pre><code class="language-java">import java.io.FileWriter;
+import java.io.IOException;
+
+public class FileWriterExample {
+    public static void main(String[] args) {
+        String content = "This text is written using FileWriter in Java.";
+
+        try (FileWriter writer = new FileWriter("output.txt")) {
+            writer.write(content);  // Writes the entire string
+            System.out.println("Data written to file.");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+}</code></pre>
+</div><p><strong>Explanation</strong>:</p><ul>
+ <li>The file <code>output.txt</code> is created (or overwritten) with the given string content.</li>
+ <li><code>FileWriter</code> handles the conversion from characters to bytes based on the system encoding.</li>
+</ul><h3 id="writing-in-append-mode">Writing in Append Mode</h3><p>To <strong>append</strong> text to an existing file without overwriting:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-java">try (FileWriter writer = new FileWriter("log.txt", true)) {
+    writer.write("Appended text line.\n");
+}</code></pre>
+</div><p>The second argument <code>true</code> tells <code>FileWriter</code> to append rather than overwrite.</p><h3 id="buffered-character-streams">Buffered Character Streams</h3><p>Reading and writing character-by-character is inefficient. For better performance, wrap <code>FileReader</code> or <code>FileWriter</code> with buffered streams:</p><h4 id="bufferedreader-example">BufferedReader Example</h4><div class="code-block"><button class="copy-button" onclick="copyCode(this)">📋</button>
+ <pre><code class="language-java">import java.io.*;
+
+public class BufferedReaderExample {
+    public static void main(String[] args) {
+        try (BufferedReader reader = new BufferedReader(new FileReader("notes.txt"))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                System.out.println(line);  // Reads line by line
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+}</code></pre>
+</div><h4 id="bufferedwriter-example">BufferedWriter Example</h4><div class="code-block"><button class="copy-button" onclick="copyCode(this)">📋</button>
+ <pre><code class="language-java">import java.io.*;
+
+public class BufferedWriterExample {
+    public static void main(String[] args) {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter("notes.txt"))) {
+            writer.write("First line of text.");
+            writer.newLine(); // Platform-specific line separator
+            writer.write("Second line.");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+}</code></pre>
+</div><p>Using buffered streams is highly recommended for performance and convenience (e.g., <code>readLine()</code>, <code>newLine()</code>).</p><h3 id="handling-character-encoding">Handling Character Encoding</h3><p>By default, <code>FileReader</code> and <code>FileWriter</code> use the <strong>platform's default encoding</strong>, which can vary. To explicitly control encoding (such as UTF-8), use <code>InputStreamReader</code> and <code>OutputStreamWriter</code>:</p><h4 id="specifying-encoding">Specifying Encoding</h4><div class="code-block"><button class="copy-button" onclick="copyCode(this)">📋</button>
+ <pre><code class="language-java">import java.io.*;
+import java.nio.charset.StandardCharsets;
+
+public class UTF8WriterExample {
+    public static void main(String[] args) {
+        try (Writer writer = new OutputStreamWriter(new FileOutputStream("utf8.txt"), StandardCharsets.UTF_8)) {
+            writer.write("Writing with UTF-8 encoding.");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+}</code></pre>
+</div><p>This ensures consistent behavior across platforms, especially when dealing with non-ASCII characters.</p><h3 id="typical-use-cases-for-character-streams">Typical Use Cases for Character Streams</h3><ul>
+ <li>Reading and writing <strong>plain text files</strong></li>
+ <li>Working with <strong>CSV, XML, JSON</strong>, or configuration files</li>
+ <li><strong>Logging</strong> to text-based log files</li>
+ <li>Processing user-generated text content</li>
+</ul><h3 id="recap">Recap</h3><p><code>FileReader</code> and <code>FileWriter</code> provide a simple, high-level way to handle <strong>text-based file input and output</strong> in Java. Unlike byte streams, they automatically handle character encoding and make it easier to work with strings, characters, and lines. For more efficient and robust applications, it’s often best to combine them with buffered streams and to explicitly set the character encoding when needed. These classes form the foundation of many file-based applications in Java that deal with human-readable data.</p><div class = "chapter-navi-section">
+<a href="#top" class="nav-button prev">↑</a>
+<a href='java-io-and-nio.htm#file-and-directory-operations' class="nav-button toc-link">Index</a>
+<a href="#bottom" class="nav-button next">↓</a>
+</div>
+<h2 id='file-permissions-and-attributes'>3.4 File Permissions and Attributes</h2><p>Managing file permissions and attributes is an essential part of file handling in Java. Whether you are developing applications that need to check if files are accessible, or modify permissions for security reasons, Java provides several ways to work with these properties — from the basic <code>File</code> class to the more powerful NIO API.</p><h3 id="checking-file-permissions-using-the-file-class">Checking File Permissions Using the <code>File</code> Class</h3><p>The <code>java.io.File</code> class offers simple methods to <strong>check basic permissions</strong> of files and directories:</p><ul>
+ <li><strong><code>canRead()</code></strong>: Checks if the file is readable by the application.</li>
+ <li><strong><code>canWrite()</code></strong>: Checks if the file is writable.</li>
+ <li><strong><code>canExecute()</code></strong>: Checks if the file is executable (applicable mostly for scripts or executables).</li>
+</ul><h4 id="example-checking-permissions">Example: Checking Permissions</h4><div class="code-block"><button class="copy-button" onclick="copyCode(this)">📋</button>
+ <pre><code class="language-java">import java.io.File;
+
+public class FilePermissionCheck {
+    public static void main(String[] args) {
+        File file = new File("example.txt");
+
+        System.out.println("Readable: " + file.canRead());
+        System.out.println("Writable: " + file.canWrite());
+        System.out.println("Executable: " + file.canExecute());
+    }
+}</code></pre>
+</div><h3 id="modifying-file-permissions-using-the-file-class">Modifying File Permissions Using the <code>File</code> Class</h3><p>The <code>File</code> class also allows changing permissions using:</p><ul>
+ <li><strong><code>setReadable(boolean readable)</code></strong></li>
+ <li><strong><code>setWritable(boolean writable)</code></strong></li>
+ <li><strong><code>setExecutable(boolean executable)</code></strong></li>
+</ul><p>These methods attempt to change the file’s permission for the <strong>owner only</strong> by default. You can optionally specify a second boolean parameter <code>ownerOnly</code> to restrict changes to the owner.</p><h4 id="example-changing-permissions">Example: Changing Permissions</h4><div class="code-block"><button class="copy-button" onclick="copyCode(this)">📋</button>
+ <pre><code class="language-java">import java.io.File;
+
+public class FilePermissionModify {
+    public static void main(String[] args) {
+        File file = new File("example.txt");
+
+        boolean readableSet = file.setReadable(true);
+        boolean writableSet = file.setWritable(false);
+        boolean executableSet = file.setExecutable(false);
+
+        System.out.println("Readable set: " + readableSet);
+        System.out.println("Writable set: " + writableSet);
+        System.out.println("Executable set: " + executableSet);
+    }
+}</code></pre>
+</div><p>Note: These methods return <code>true</code> if the permission was successfully changed, or <code>false</code> otherwise. On some platforms or filesystems, permission changes may fail silently due to security policies or user rights.</p><h3 id="advanced-attributes-and-permissions-with-nio">Advanced Attributes and Permissions with NIO</h3><p>Starting from <strong>Java 7</strong>, the <code>java.nio.file</code> package introduced a more comprehensive way to manage file permissions and attributes, including:</p><ul>
+ <li>Support for <strong>POSIX file permissions</strong> on Unix/Linux systems</li>
+ <li>Access to file metadata such as creation time, last modified time, owner, etc.</li>
+ <li>Atomic and secure operations via the <code>Files</code> utility class</li>
+</ul><h3 id="using-java-nio-file-attribute-posixfilepermissions">Using <code>java.nio.file.attribute.PosixFilePermissions</code></h3><p>On POSIX-compliant systems (like Linux and macOS), you can get and set file permissions using the <code>PosixFilePermissions</code> class.</p><h4 id="checking-and-setting-posix-permissions-example">Checking and Setting POSIX Permissions Example:</h4><div class="code-block"><button class="copy-button" onclick="copyCode(this)">📋</button>
+ <pre><code class="language-java">import java.nio.file.*;
+import java.nio.file.attribute.*;
+import java.io.IOException;
+import java.util.Set;
+
+public class PosixPermissionsExample {
+    public static void main(String[] args) {
+        Path path = Paths.get("example.txt");
+
+        try {
+            // Read current permissions
+            Set&lt;PosixFilePermission&gt; permissions = Files.getPosixFilePermissions(path);
+            System.out.println("Current permissions: " + PosixFilePermissions.toString(permissions));
+
+            // Set new permissions: rw-r--r--
+            Set&lt;PosixFilePermission&gt; newPermissions = PosixFilePermissions.fromString("rw-r--r--");
+            Files.setPosixFilePermissions(path, newPermissions);
+
+            System.out.println("Permissions updated.");
+
+        } catch (UnsupportedOperationException e) {
+            System.out.println("POSIX permissions not supported on this platform.");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+}</code></pre>
+</div><p><strong>Notes:</strong></p><ul>
+ <li>This will throw <code>UnsupportedOperationException</code> on Windows or non-POSIX filesystems.</li>
+ <li><code>PosixFilePermission</code> enums represent read, write, execute permissions for owner, group, and others.</li>
+</ul><h3 id="reading-and-modifying-basic-file-attributes">Reading and Modifying Basic File Attributes</h3><p>NIO also provides the <code>BasicFileAttributes</code> interface for reading attributes like:</p><ul>
+ <li>Creation time</li>
+ <li>Last access time</li>
+ <li>Last modified time</li>
+ <li>Whether it’s a regular file or directory</li>
+</ul><p>Example to read these attributes:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">📋</button>
+ <pre><code class="language-java">import java.nio.file.*;
+import java.nio.file.attribute.*;
+import java.io.IOException;
+
+public class BasicAttributesExample {
+    public static void main(String[] args) {
+        Path path = Paths.get("example.txt");
+
+        try {
+            BasicFileAttributes attrs = Files.readAttributes(path, BasicFileAttributes.class);
+
+            System.out.println("Creation Time: " + attrs.creationTime());
+            System.out.println("Last Access Time: " + attrs.lastAccessTime());
+            System.out.println("Last Modified Time: " + attrs.lastModifiedTime());
+            System.out.println("Is Directory: " + attrs.isDirectory());
+            System.out.println("Is Regular File: " + attrs.isRegularFile());
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+}</code></pre>
+</div><h3 id="modifying-file-timestamps">Modifying File Timestamps</h3><p>You can also update timestamps using <code>Files.setAttribute()</code>:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">📋</button>
+ <pre><code class="language-java">import java.nio.file.*;
+import java.nio.file.attribute.*;
+import java.io.IOException;
+import java.util.concurrent.TimeUnit;
+
+public class ModifyTimestampExample {
+    public static void main(String[] args) {
+        Path path = Paths.get("example.txt");
+
+        try {
+            FileTime now = FileTime.from(System.currentTimeMillis(), TimeUnit.MILLISECONDS);
+            Files.setAttribute(path, "lastModifiedTime", now);
+            System.out.println("Last modified time updated.");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+}</code></pre>
+</div><h3 id="managing-file-owners">Managing File Owners</h3><p>You can retrieve and modify file owners using <code>FileOwnerAttributeView</code>:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">📋</button>
+ <pre><code class="language-java">import java.nio.file.*;
+import java.nio.file.attribute.*;
+import java.io.IOException;
+
+public class FileOwnerExample {
+    public static void main(String[] args) {
+        Path path = Paths.get("example.txt");
+
+        try {
+            FileOwnerAttributeView ownerView = Files.getFileAttributeView(path, FileOwnerAttributeView.class);
+
+            System.out.println("Current owner: " + ownerView.getOwner());
+
+            // Example: Set owner (requires appropriate permissions)
+            // UserPrincipal newOwner = path.getFileSystem().getUserPrincipalLookupService().lookupPrincipalByName("username");
+            // ownerView.setOwner(newOwner);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+}</code></pre>
+</div><h3 id="recap">Recap</h3><ul>
+ <li><p>The <strong><code>File</code> class</strong> provides basic methods to check and modify file readability, writability, and executability.</p></li>
+ <li><p>For <strong>more advanced and cross-platform file attribute management</strong>, the <strong>NIO.2 API (<code>java.nio.file</code> and <code>java.nio.file.attribute</code>)</strong> offers richer functionality:</p>
+  <ul>
+   <li>Reading and setting <strong>POSIX permissions</strong> on compatible systems.</li>
+   <li>Accessing <strong>file timestamps</strong>, <strong>owners</strong>, and other metadata.</li>
+  </ul></li>
+ <li><p>Always handle exceptions, especially when working with permissions that might require elevated privileges or when running on unsupported platforms.</p></li>
+</ul><div class = "chapter-navi-section">
+<a href="#top" class="nav-button prev">↑</a>
+<a href='java-io-and-nio.htm#file-and-directory-operations' class="nav-button toc-link">Index</a>
+<a href="#bottom" class="nav-button next">↓</a>
+</div>
+<h2 id='listing-files-and-directories'>3.5 Listing Files and Directories</h2><p>Working with files and directories often requires <strong>listing their contents</strong>—for example, to display files in a folder, filter files by type, or perform operations recursively on subdirectories. Java's <code>java.io.File</code> class provides several convenient methods to list directory contents and apply filters.</p><h3 id="using-the-file-class-to-list-directory-contents">Using the <code>File</code> Class to List Directory Contents</h3><p>The <code>File</code> class provides two primary methods to list the contents of a directory:</p><ul>
+ <li><strong><code>list()</code></strong>: Returns an array of <code>String</code> names (file and directory names).</li>
+ <li><strong><code>listFiles()</code></strong>: Returns an array of <code>File</code> objects representing files and directories.</li>
+</ul><p>Both methods return <code>null</code> if the <code>File</code> object is not a directory or an I/O error occurs.</p><h3 id="listing-all-files-and-directories">Listing All Files and Directories</h3><p>Here’s a simple example that lists all names in a directory using <code>list()</code>:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">📋</button>
+ <pre><code class="language-java">import java.io.File;
+
+public class ListDirectoryNames {
+    public static void main(String[] args) {
+        File dir = new File("myDirectory");
+
+        // Check if directory exists and is a directory
+        if (dir.exists() &amp;&amp; dir.isDirectory()) {
+            String[] contents = dir.list();
+
+            if (contents != null) {
+                for (String name : contents) {
+                    System.out.println(name);
+                }
+            } else {
+                System.out.println("Could not list directory contents.");
+            }
+        } else {
+            System.out.println("Directory does not exist or is not a directory.");
+        }
+    }
+}</code></pre>
+</div><p><strong>Explanation</strong>:</p><ul>
+ <li><code>list()</code> returns an array of file and directory names as strings.</li>
+ <li>This is useful when you only need names, not full <code>File</code> objects.</li>
+</ul><h3 id="using-listfiles-to-get-file-objects">Using <code>listFiles()</code> to Get <code>File</code> Objects</h3><p><code>listFiles()</code> returns an array of <code>File</code> objects, allowing you to inspect each entry's properties such as whether it is a file or directory, size, or last modified time.</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">📋</button>
+ <pre><code class="language-java">import java.io.File;
+
+public class ListDirectoryFiles {
+    public static void main(String[] args) {
+        File dir = new File("myDirectory");
+
+        if (dir.exists() &amp;&amp; dir.isDirectory()) {
+            File[] files = dir.listFiles();
+
+            if (files != null) {
+                for (File file : files) {
+                    if (file.isDirectory()) {
+                        System.out.println("[DIR]  " + file.getName());
+                    } else {
+                        System.out.println("[FILE] " + file.getName());
+                    }
+                }
+            } else {
+                System.out.println("Could not list files.");
+            }
+        } else {
+            System.out.println("Directory not found or invalid.");
+        }
+    }
+}</code></pre>
+</div><p>This approach is more flexible because you can differentiate between files and directories and get more info.</p><h3 id="filtering-files-with-filenamefilter-and-filefilter">Filtering Files with FilenameFilter and FileFilter</h3><p>You can filter the listed files using two interfaces:</p><ul>
+ <li><strong><code>FilenameFilter</code></strong>: Filters by file name strings.</li>
+ <li><strong><code>FileFilter</code></strong>: Filters by <code>File</code> objects.</li>
+</ul><h4 id="example-filter-files-by-extension-using-filenamefilter">Example: Filter Files by Extension Using <code>FilenameFilter</code></h4><div class="code-block"><button class="copy-button" onclick="copyCode(this)">📋</button>
+ <pre><code class="language-java">import java.io.File;
+import java.io.FilenameFilter;
+
+public class ListTxtFiles {
+    public static void main(String[] args) {
+        File dir = new File("myDirectory");
+
+        FilenameFilter filter = new FilenameFilter() {
+            @Override
+            public boolean accept(File dir, String name) {
+                return name.endsWith(".txt");  // Only accept .txt files
+            }
+        };
+
+        String[] txtFiles = dir.list(filter);
+
+        if (txtFiles != null) {
+            for (String fileName : txtFiles) {
+                System.out.println(fileName);
+            }
+        }
+    }
+}</code></pre>
+</div><p>This example lists only files ending with <code>.txt</code>.</p><h4 id="using-a-lambda-expression-java-8">Using a Lambda Expression (Java 8)</h4><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-java">String[] txtFiles = dir.list((d, name) -&gt; name.endsWith(".txt"));</code></pre>
+</div><h3 id="filtering-with-filefilter">Filtering with <code>FileFilter</code></h3><p>Using <code>FileFilter</code> gives access to the full <code>File</code> object:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">📋</button>
+ <pre><code class="language-java">import java.io.File;
+import java.io.FileFilter;
+
+public class ListLargeFiles {
+    public static void main(String[] args) {
+        File dir = new File("myDirectory");
+
+        FileFilter filter = file -&gt; file.isFile() &amp;&amp; file.length() &gt; 1_000_000; // Files larger than 1MB
+
+        File[] largeFiles = dir.listFiles(filter);
+
+        if (largeFiles != null) {
+            for (File file : largeFiles) {
+                System.out.println(file.getName() + " - " + file.length() + " bytes");
+            }
+        }
+    }
+}</code></pre>
+</div><h3 id="recursively-listing-files-in-subdirectories">Recursively Listing Files in Subdirectories</h3><p>To list all files inside a directory and its subdirectories, you need to use <strong>recursion</strong>:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">📋</button>
+ <pre><code class="language-java">import java.io.File;
+
+public class RecursiveFileLister {
+    public static void listFilesRecursive(File dir) {
+        if (dir == null || !dir.exists()) return;
+
+        File[] files = dir.listFiles();
+        if (files == null) return;
+
+        for (File file : files) {
+            if (file.isDirectory()) {
+                System.out.println("[DIR]  " + file.getAbsolutePath());
+                listFilesRecursive(file);  // Recursive call for subdirectory
+            } else {
+                System.out.println("[FILE] " + file.getAbsolutePath());
+            }
+        }
+    }
+
+    public static void main(String[] args) {
+        File rootDir = new File("myDirectory");
+        listFilesRecursive(rootDir);
+    }
+}</code></pre>
+</div><p><strong>Explanation</strong>:</p><ul>
+ <li>The method checks if the current <code>File</code> is a directory.</li>
+ <li>If so, it prints the directory path and recursively lists its contents.</li>
+ <li>If it’s a file, it prints the file path.</li>
+ <li>This continues until all nested files and folders are processed.</li>
+</ul><h3 id="using-java-nio-file-for-advanced-listing-brief-intro">Using <code>java.nio.file</code> for Advanced Listing (Brief Intro)</h3><p>While the <code>File</code> class is simple, the newer <strong>NIO</strong> API (<code>java.nio.file</code>) provides more powerful directory traversal using <code>Files.walk()</code> or <code>Files.list()</code>. This can be used to filter files more flexibly and perform parallel processing.</p><p>Example with <code>Files.walk()</code> (Java 8+):</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">📋</button>
+ <pre><code class="language-java">import java.nio.file.*;
+import java.io.IOException;
+
+public class NIOFileWalkExample {
+    public static void main(String[] args) {
+        Path start = Paths.get("myDirectory");
+
+        try {
+            Files.walk(start)
+                .filter(Files::isRegularFile)
+                .filter(path -&gt; path.toString().endsWith(".txt"))
+                .forEach(System.out::println);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+}</code></pre>
+</div><h3 id="recap">Recap</h3><ul>
+ <li>Use <code>File.list()</code> to get names of all entries in a directory.</li>
+ <li>Use <code>File.listFiles()</code> for detailed <code>File</code> objects allowing inspection of files vs directories.</li>
+ <li>Use <code>FilenameFilter</code> or <code>FileFilter</code> to filter files by name or attributes.</li>
+ <li>Use recursion to list files in nested subdirectories.</li>
+ <li>For more advanced features, consider the NIO API (<code>java.nio.file</code>).</li>
+</ul><div class = "chapter-navi-section">
+<a href="#top" class="nav-button prev">↑</a>
+<a href='java-io-and-nio.htm#file-and-directory-operations' class="nav-button toc-link">Index</a>
+<a href="#bottom" class="nav-button next">↓</a>
+</div>
+<h2 id='file-deletion-renaming-and-creation'>3.6 File Deletion, Renaming, and Creation</h2><p>Managing files often involves <strong>creating new files</strong>, <strong>renaming existing ones</strong>, or <strong>deleting files</strong> that are no longer needed. The Java <code>java.io.File</code> class provides straightforward methods to perform these file operations. However, because file operations depend on the underlying filesystem and operating system permissions, it’s important to handle errors carefully and understand the potential pitfalls.</p><h3 id="creating-files-with-createnewfile">Creating Files with <code>createNewFile()</code></h3><p>The method <code>createNewFile()</code> creates a new, empty file at the path specified by the <code>File</code> object.</p><ul>
+ <li>If the file <strong>does not exist</strong>, the method attempts to create it and returns <code>true</code>.</li>
+ <li>If the file <strong>already exists</strong>, it returns <code>false</code>.</li>
+ <li>It throws an <code>IOException</code> if an I/O error occurs (e.g., invalid path, no permissions).</li>
+</ul><h4 id="example-creating-a-new-file">Example: Creating a New File</h4><div class="code-block"><button class="copy-button" onclick="copyCode(this)">📋</button>
+ <pre><code class="language-java">import java.io.File;
+import java.io.IOException;
+
+public class FileCreationExample {
+    public static void main(String[] args) {
+        File file = new File("newFile.txt");
+
+        try {
+            if (file.createNewFile()) {
+                System.out.println("File created successfully: " + file.getName());
+            } else {
+                System.out.println("File already exists: " + file.getName());
+            }
+        } catch (IOException e) {
+            System.out.println("An error occurred while creating the file.");
+            e.printStackTrace();
+        }
+    }
+}</code></pre>
+</div><p><strong>Best Practices and Pitfalls:</strong></p><ul>
+ <li><strong>Parent directories must exist</strong> before creating a file; otherwise, <code>createNewFile()</code> will fail. Use <code>file.getParentFile().mkdirs()</code> to create parent directories if necessary.</li>
+ <li>Always check the return value to know if the file was created or already existed.</li>
+ <li>Handle <code>IOException</code> to catch permission errors or invalid paths.</li>
+</ul><h3 id="deleting-files-with-delete">Deleting Files with <code>delete()</code></h3><p>The <code>delete()</code> method deletes the file or directory denoted by the <code>File</code> object.</p><ul>
+ <li>Returns <code>true</code> if deletion succeeds.</li>
+ <li>Returns <code>false</code> if the file does not exist, deletion is denied, or the file is a non-empty directory.</li>
+</ul><h4 id="example-deleting-a-file">Example: Deleting a File</h4><div class="code-block"><button class="copy-button" onclick="copyCode(this)">📋</button>
+ <pre><code class="language-java">import java.io.File;
+
+public class FileDeletionExample {
+    public static void main(String[] args) {
+        File file = new File("oldFile.txt");
+
+        if (file.delete()) {
+            System.out.println("File deleted successfully.");
+        } else {
+            System.out.println("Failed to delete the file. It may not exist or is in use.");
+        }
+    }
+}</code></pre>
+</div><p><strong>Important Notes and Pitfalls:</strong></p><ul>
+ <li>On some operating systems (e.g., Windows), a file cannot be deleted if it is open or locked by another process.</li>
+ <li>The <code>delete()</code> method <strong>does not throw exceptions</strong>; it returns a boolean, so always check its return value.</li>
+ <li>To delete directories, the directory must be <strong>empty</strong>; otherwise, deletion will fail. Recursive deletion must be implemented manually.</li>
+ <li>There is no undo — once deleted, the file is gone unless the OS or filesystem supports recovery.</li>
+</ul><h3 id="renaming-and-moving-files-with-renameto">Renaming and Moving Files with <code>renameTo()</code></h3><p>The method <code>renameTo(File dest)</code> renames the file to the new pathname specified by the <code>dest</code> <code>File</code> object. This method can also be used to move a file between directories.</p><ul>
+ <li>Returns <code>true</code> if the rename/move succeeded.</li>
+ <li>Returns <code>false</code> if it failed.</li>
+</ul><h4 id="example-renaming-a-file">Example: Renaming a File</h4><div class="code-block"><button class="copy-button" onclick="copyCode(this)">📋</button>
+ <pre><code class="language-java">import java.io.File;
+
+public class FileRenameExample {
+    public static void main(String[] args) {
+        File oldFile = new File("oldName.txt");
+        File newFile = new File("newName.txt");
+
+        if (oldFile.renameTo(newFile)) {
+            System.out.println("File renamed successfully.");
+        } else {
+            System.out.println("Failed to rename file.");
+        }
+    }
+}</code></pre>
+</div><h4 id="example-moving-a-file">Example: Moving a File</h4><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-java">File sourceFile = new File("file.txt");
+File destinationFile = new File("subfolder/file.txt");
+
+if (sourceFile.renameTo(destinationFile)) {
+    System.out.println("File moved successfully.");
+} else {
+    System.out.println("Failed to move the file.");
+}</code></pre>
+</div><h3 id="potential-issues-with-renameto">Potential Issues with <code>renameTo()</code></h3><ul>
+ <li><strong>Cross-filesystem moves might fail</strong>: <code>renameTo()</code> works reliably only within the same filesystem or partition.</li>
+ <li><strong>No exception thrown</strong>: You must check the return value to detect failure.</li>
+ <li>On some platforms, renaming might fail if the destination file exists.</li>
+ <li>It does <strong>not automatically overwrite</strong> existing files at the destination.</li>
+</ul><h3 id="best-practices-for-file-creation-deletion-and-renaming">Best Practices for File Creation, Deletion, and Renaming</h3><ul>
+ <li><p><strong>Always check method return values (<code>boolean</code>)</strong> to verify success.</p></li>
+ <li><p>Use <strong>try-catch blocks</strong> for methods that throw exceptions, such as <code>createNewFile()</code>.</p></li>
+ <li><p>Before creating a file, <strong>ensure parent directories exist</strong>:</p>
+  <div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+   <pre><code class="language-java">File file = new File("path/to/newFile.txt");
+file.getParentFile().mkdirs(); // creates all nonexistent parent directories
+file.createNewFile();</code></pre>
+  </div></li>
+ <li><p>For more robust file moves and deletes, consider using the <strong>NIO API (<code>java.nio.file.Files</code>)</strong> introduced in Java 7, which offers methods like <code>Files.move()</code> and <code>Files.delete()</code> that throw exceptions on failure and provide more control.</p></li>
+ <li><p>Remember that <strong>file operations depend on OS permissions</strong>. Your Java program must have the necessary rights to manipulate files.</p></li>
+ <li><p>Avoid naming conflicts by <strong>checking if a file exists</strong> before creating or renaming.</p></li>
+ <li><p>When deleting directories recursively, you must manually delete all files/subdirectories first before deleting the directory.</p></li>
+</ul><h3 id="recursively-deleting-a-directory-example">Recursively Deleting a Directory Example</h3><p>Because <code>File.delete()</code> won’t delete non-empty directories, recursive deletion is needed:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-java">public static boolean deleteDirectory(File directory) {
+    if (directory.isDirectory()) {
+        File[] entries = directory.listFiles();
+        if (entries != null) {
+            for (File entry : entries) {
+                if (!deleteDirectory(entry)) {
+                    return false;  // Failed to delete a file/subdir
+                }
+            }
+        }
+    }
+    return directory.delete();
+}</code></pre>
+</div><p>Use with care, as recursive deletion is <strong>destructive and irreversible</strong>.</p><h3 id="recap">Recap</h3><ul>
+ <li><strong><code>createNewFile()</code></strong> creates new files but requires existing parent directories.</li>
+ <li><strong><code>delete()</code></strong> removes files/directories but returns <code>false</code> on failure, without throwing exceptions.</li>
+ <li><strong><code>renameTo()</code></strong> renames or moves files but can be unreliable across filesystems and doesn't overwrite by default.</li>
+ <li>Always check return values and handle exceptions where applicable.</li>
+ <li>For more powerful and reliable file operations, consider Java NIO's <code>Files</code> class.</li>
+ <li>Manage parent directories and consider permissions when performing file operations.</li>
+</ul><div class = "chapter-navi-section">
+<a href="java-io-and-nio-java-io-fundamentals.htm" class="nav-button prev">←</a>
+<a href='java-io-and-nio.htm#file-and-directory-operations' class="nav-button toc-link">Index</a>
+<a href="java-io-and-nio-advanced-java-io-concepts.htm" class="nav-button next">→</a>
+</div>
+<section class="download-section">
+  <div class="book-cover" style="background-image: url('data:image/jpg;base64,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');">
+<div class="series-name">In-Depth</div>
+<div class="book-title">Java IO and NIO</div>
+<div class="book-subtitle">Guide for Beginner to Advanced Programmers</div>
+<div class="book-footer">readbytes.github.io</div>
+</div>
+  <div class="download-info">
+    <h2 id='bottom'>Download This Ebook</h2>
+    <p class="format-label">Available formats:</p>
+    <div class="download-buttons">
+      <a href="java-io-and-nio.pdf" class="download-button">📄 PDF</a>
+      <a href="java-io-and-nio.epub" class="download-button">📘 EPUB</a>
+    </div>
+  </div>
+</section><div class='related-books'>
+<h2>Java In-Depth Books</h2>
+<div class='related-book-list'>
+<a href="java-io-and-nio.htm"><div class="book-cover" style="background-image: url('data:image/jpg;base64,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');">
+<div class="series-name">In-Depth</div>
+<div class="book-title">Java IO and NIO</div>
+<div class="book-subtitle">Guide for Beginner to Advanced Programmers</div>
+<div class="book-footer">readbytes.github.io</div>
+</div></a>
+
+
+<a href="java-collections.htm"><div class="book-cover" style="background-image: url('data:image/jpg;base64,/9j/4AAQSkZJRgABAgAAAQABAAD/2wBDAAgGBgcGBQgHBwcJCQgKDBQNDAsLDBkSEw8UHRofHh0aHBwgJC4nICIsIxwcKDcpLDAxNDQ0Hyc5PTgyPC4zNDL/2wBDAQkJCQwLDBgNDRgyIRwhMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjL/wAARCAC0AIIDASIAAhEBAxEB/8QAHwAAAQUBAQEBAQEAAAAAAAAAAAECAwQFBgcICQoL/8QAtRAAAgEDAwIEAwUFBAQAAAF9AQIDAAQRBRIhMUEGE1FhByJxFDKBkaEII0KxwRVS0fAkM2JyggkKFhcYGRolJicoKSo0NTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uHi4+Tl5ufo6erx8vP09fb3+Pn6/8QAHwEAAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoL/8QAtREAAgECBAQDBAcFBAQAAQJ3AAECAxEEBSExBhJBUQdhcRMiMoEIFEKRobHBCSMzUvAVYnLRChYkNOEl8RcYGRomJygpKjU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6goOEhYaHiImKkpOUlZaXmJmaoqOkpaanqKmqsrO0tba3uLm6wsPExcbHyMnK0tPU1dbX2Nna4uPk5ebn6Onq8vP09fb3+Pn6/9oADAMBAAIRAxEAPwDzGiiivIOgKKKKACtfSgTbN/vn+QrIrc0Zd1o//XQ/yFetkjti16MumryLipUqpUix1MkdfXymdkaY2GBpG2rtBALfMwXoM9/p079KkSOpVj9qmWP2rCUzojAjWOplSpEiqdI/asJVDeMCNI6mSOpUjqZI/auedQ2USNY6mWOpEjqdY655VDRIg8uirjRqGO0krngkYJFFZe0KseH0UUV86fKhRRRQAV0nh0lbSRgFPzsvzKGHKgd/r17dRXN11PhpN2nyH/pqf5CvTyh2xPyZvh1eZpJHU6RVKkVTpF7CvppVD1IwIliqZIqlWP2FWIYd7BWZUB7nOB+QrnlUNlGxCsdTLHV+GwWRwiTK7HtGjE/yq02j3KAbYJ2/7YsP6VzTrJbmiaW5mLHU6R1cXTbof8us3/fs1PFptw5AMZQZ5LjGK5p1o9yuaK6lJY/apljrRTS2BO6RfYqM5qcafEFAy2R3HeuWeIiJ1oIyzEVYg4yOODmitn7HB/zz/U0Vl7dE/WF2Pm2iiivPPmwooooAK7Hwmm7TJDj/AJbH/wBBWuOr0TwDYLdaLNIzkAXLAgD/AGV713ZdNQr3fZnVg1eqX0iqdYvatOPTVWQh3YqOhVDk0zyNrYDA+navclWT2PYSKqxe1TLF7VYWKp4reR+URmx6DOKwnVNEkissdTKlWSkseA+9frkVKu9dwZ5FYDge/v6VzSqlXK6oakA4AwBj9anWSUdJHH/AjTxLN/z1k/76Nc8qjByZFFBJKTsUtjrirB0+4EZYqOP4QcmlS4nTpIx/3jn+dWPt8v8Acj/I/wCNYylLoYylUvpYrCwuCAfL6+pFFWft0v8AdT8j/jRU80iear2R820UUVynz4UUUUAFem/Duwe68PTyIyjF0wIP+4leZV6l8NpJU8O3ARsD7W3Yf3Erowraqe6dOE/iHVnSZEUM0kSqeMsSBn8qhEG1iOuO4PFXxJM2NxBwcjKiq1xrVtDBvNxFNg4CptYk16SdWTslc9Xn5dWxqRlGDLwfUdanUzf89JP++zVm1mlnsorgRIqSKCMwgdfqP179e9OKFzkgA+wArGctdS1NS1IA0v8Az0k/76NPO85HmOV9z1qYRU4RVi2hOSKoj9qsQ2wYBn4HpUqwgnpVnbUSZE6vREQhjxjav5UxrVTyrqPY5/wqxso2GoMudrqVPs//AE1j/X/CirflUU7j9o+58xUUUVzHjBRRRQAV6D4HnePQbhRIVT7SxIH+6tefV3Pg69tINFlin82NvtRJm2ZjAKjAOOc/Ke3/ANbvy1XxC0Lp7nVXOozy6WtiI/LXcSzg/My/3fYZJz6/nnL8gIBngdBmnvfxzQGS3G7naWP8J7ZHuM4/+scZ8u+WbezdOefWvp4RUb8qsaN33O10O/S1s1s7hwIXzh1Y7kbvkHIA6EYGP1xs2srSuY5VQMACGjYsr8ZOOPxx1xz05riLC5a5laOZ8yFRsOOXIwMe5xznuR3Jqz9ojjZSHOARll7D2rzauEUpN9WdEKllodwvl7gCSB64pN4B+7+tYt1f3MSKjTLyuRIoz5oOOQfX8v1qez1L/Rg1wCVztWQDP4H3/wA/Xi+r+7zbm3NrqbZWNNp8xCD3BzU5i2ttPDelZEcqXEavEwOR93uOmePxFJLMISGdzu4xjrWXsLuyZLV+pr+V7UvlVSS6ZUKmTzFAPzRyD8Tnk9xUD30UFuzm48pWY/MXGGJ7E8c4H/6qhUZMmz7mp5ftRXHt4lslYgRzsAcBgowfzNFbfUpjsv5jweiiivKPNCiiigAre0UZs3/66H+QrBrf0MgWb5HHmHp9BXqZP/vK9GJuyNaB3t5VkTsQSp6MAQcEdxkDitbdbSNuJaJWRWXA3Lk8NnnIAbPYnHr3yVZcdce1TxkN0wRX1Eo31FGpbc0WiaFlmhk3KCCsiMMg9RnB+U8Hj2NWpriK8TzJCIpwDvwPlf8A2vY+v58c1mxqp6cH3qyEduoGcAcDFZOK3Zaq9jRt76aFlkkAljJyVk53Zz689c/Q59TmaTUUzuhjKbxl0DcZ+mPx/Gs1EPQipBET0NZOlC9x+3laxdGoIuTgjjinrqyDBcDr0HNUZLGZYhKyHYRkN2qDyuwo5IMXtmas+sIAfLUu3bJ4FZdxdTXLZkbI7KOAKgkmt4c+bPGhUhSGYcE9M1lXPiC0jjLQtvPYbSD+oq4UorZCddmrRXNf8Jki8NZZYcEiTAP6UVfKT7ZnMUUUV8OUFFFFABW1pDOLRwpwPMz09hWLVrTr8Q6hb2m4/vQ+VA6HjBP5MK9PKXbEr0InsdTEyMo3HDd81YWIFgFIJxkYqhBNHNLLEjAvEQHHpkZH6fh+RxaVcEEZB9RX1ZkaEPyjDgn3q3GyqMqxHsRVVLtRy0WR/vYq/psdzeb5I9KuLyEfLm2VvlbjqcEdO3vWM9FdlIuW8MhkGDDM3aMEMW/Ac0t2wtwftNu0D4yM/IAv0I9c85p+qi3sNNSUaff2cxwpN3bjYW44DEjsG/hOfauN1fVWnleWadp5jg5Zsg9se3A/QVlTi5vm6A2a0/iG3iV4nkkMandx90n256+/tXMatrj3a7GASLIwo5I4IPP5/kPxz727M+VVSE3ZGevTGOPxqhJuckscmuhRS2IbbLFxdDbvBLO3JLc/nVKaZpccYA7Cl2E0xQGZwM5Q4P5A/wBabAixRUu2igB9FFFfBnSFFFFABWbd3H2XVIJtobYFYg+zZ49OlaVY2rf8fS/7g/ma78tdq6IqbGnoWslNdmkkZIYroktkhVUjJGT+nvnNd3HOp4YYI615RbyKrhHiSWNmBKnAJOCB83UDn6HjPSu0sbxnlWJo1jUIuFX+E8DH619TRldamNzudGg026u2GpagbWBQCNkJcv6jI+6emOCOvtn1aSzkn8OtaaLq5QupUXbyG4JwMHDbvl5HbpzgA14dpV+La5ivPs8F0NpKx3Kb0ORjlc+9eqW3i/TtbtBaLdXVjdXGI8RrlwSATtbBGOoycHHPFceOpVJNSjqvvX3DTPOPEVrfWes3FtqVx9ou0C+ZLvZ92VBHLYJ4xXPXA9K9A1LwFcrLJLa3VtFaopJe6uCTgZ+Y4jAUYxxzjnmuHvbf7PdTQeZHKY3ZPMibcj4OMqe4PUGu2jUjONkxMynSozHV1owKiKE1qIpy/u0LYJx6An+VYVpfxxG4d1bLsWUZ4zycf/Xrd1G3Mtk6KFLHGA7EAn/P64rmbK6a0m3AjaR8wIzn29qwqSakgLf9sN2hOP8Af/8ArUVUlilkld98Y3MTjz04/Wis/aT/AKQG/RRRXxh1BRRRQAVjat/x9L/uD+ZrZrH1VSbpSB/AP5mu/Lf4/wAiJ7GeDgg4z7V0MBcQKCAvygYBzxXPVp6dcO0gjJLA9MnpX0tJ62MTpLLUmSRFcHYqbQM8duT+R/Ous8Fa1pv9tF72YRTLHmAuQqBuQwyTycEY/wCBe1cGB6dqNvtW8lzRsB6fq+r6n4lhd9PAl01AWUQTAmRTgjem7OflyAVyM461y89tdQbfPtZod2ceYhXP51kaXqt1pJuFt5HRJ42VxGdpztYKc4yNpbPHpXS3HinTdTuDNf2QZULJEm9lbZldpZgcDq5Iwe3PBJmC5NEtAMkpUbDFWJXUuxVQgJJCjJA9ucmoDzWwjnvEIUopMgyMfu9+D3+bGefyz71z6FRIpcZXIzxnj8xW3rN5FOxSOO3lIyvmc5H04HfPQkVjBMN16VyVE3LQdhJVXzX8oP5e47dw5x2z70U7jP3aKXKh2Ojooor4w6AooooAKx9Wx9qXsdg5/E1sVj6qB9qXP9wc/ia78t/j/JkT2KLNkYK09WBIOSCKjIIHqKARjBH0Ir6JSaepkakEpKq6Ng1eiuegkH4isFJmj6YKn9atwXIdsDOfQ1tGomI2lkiY4DDNS+Vms1GDexqZZ2t0J3YUdQa1uBsxXBwBICT/AHvx/wAKq3mq/ZE3FQWbIRSe+Ov0H9ay5deCLhIMtjqW7/Ssi5uZbyXzJSCQMDsAKidVLRbgNIBkLe/QUjMR359BTScDAGB602sG7Kw7i59qKTafSiouxanUUUUV8gdIUUUUAFY+qg/alwf4B/M1sVjav/x9L/uD+Zrvy3+P8mRPYpAHmjleDjFNyR3pQWzj+dfQ3RiOUcHGDnrzRkoQy5BHSm5z14pO9F10AtwXbq3zjcPUUk968w2kKADkYqvhiMDgU4AKPX3NWnKw0hpI/wDrUme+aDijgdeai4hMZ6UuPSjPtRnPWjQBP89KKdke9FGgHTUUUV8edIUUUUAFY2rf8faf7g/maKK78u/joiexSZRjNMoor6CW5iwzRRRUiCjJ9aKKAFXk0p44FFFWthrYbRRRUCFooooA/9k=');">
+<div class="series-name">In-Depth</div>
+<div class="book-title">Java Collections</div>
+<div class="book-subtitle">From Fundamentals to Advanced Applications</div>
+<div class="book-footer">readbytes.github.io</div>
+</div></a>
+
+
+<a href="java-regex.htm"><div class="book-cover" style="background-image: url('data:image/jpg;base64,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');">
+<div class="series-name">In-Depth</div>
+<div class="book-title">Java Regex</div>
+<div class="book-subtitle">From Basics to Advanced</div>
+<div class="book-footer">readbytes.github.io</div>
+</div></a>
+
+
+<a href="java-functional-programming.htm"><div class="book-cover" style="background-image: url('data:image/jpg;base64,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');">
+<div class="series-name">In-Depth</div>
+<div class="book-title">Java Functional Programming</div>
+<div class="book-subtitle">From Lambdas to Reactive Streams</div>
+<div class="book-footer">readbytes.github.io</div>
+</div></a>
+
+
+<a href="java-streams.htm"><div class="book-cover" style="background-image: url('data:image/jpg;base64,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');">
+<div class="series-name">In-Depth</div>
+<div class="book-title">Java Streams</div>
+<div class="book-subtitle">From Fundamentals to Advanced Data Processing</div>
+<div class="book-footer">readbytes.github.io</div>
+</div></a>
+
+
+
+<a href='java.htm'><div class='book-cover'>More Java Books</div></a>
+</div>
+</div>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+    <script>
+  function toggleSnippet(id) {
+      const box = document.getElementById(id);
+      box.classList.toggle("open");
+  }  
+  </script>
+  <script>
+    function copyCode(button) {
+      const code = button.nextElementSibling.innerText;
+      navigator.clipboard.writeText(code).then(() => {
+        button.textContent = 'Copied!';
+        setTimeout(() => { button.textContent = 'Copy'; }, 1500);
+      });
+    }
+  </script>  
+
+<footer class="page-footer">
+    <nav>
+      <a href="https://readbytes.github.io">Home</a> | 
+      Email:<script language="JavaScript" type="text/javascript">
+var part1 = 'yinpeng';var part6 = '263';var part2 = Math.pow(2,6);var part3 = String.fromCharCode(part2);var part4 = 'hotmail dot com';var part5 = part1 + String.fromCharCode(part2) + part4;document.write(part1 + part6 + part3 + part4);
+</script>
+    </nav>
+  <p>© 2025 — All rights reserved.</p>    
+  </footer>
+
+</body>
+</html>

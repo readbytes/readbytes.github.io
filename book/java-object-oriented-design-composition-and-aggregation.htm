@@ -1,0 +1,1139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>Java Object-Oriented Design Composition and Aggregation</title>
+<link rel='shortcut icon' href='https://java2s.com/style/favicon.ico'>
+<link href="https://fonts.googleapis.com/css2?family=Merriweather&display=swap" rel="stylesheet" />
+<link href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+
+
+<style>
+body {
+  background: #f8f7f5;
+  font-family: 'Merriweather', serif;
+  color: #333;
+  margin: 0;
+  padding: 2rem 1rem;
+  font-size: 15px; /* smaller body font */
+  line-height: 1.5;
+}
+
+.container {
+  max-width: 700px;
+  margin: 0 auto;
+  background: white;
+  padding: 1rem 2rem;
+  box-shadow: 0 0 15px rgba(0,0,0,0.1);
+}
+.book-title-chapter {
+  font-family: 'Merriweather', serif;
+  font-size: 2rem;
+  font-weight: bold;
+  text-align: center;
+  margin-bottom: 2rem;
+  border-bottom: 2px solid #ccc;
+  padding-bottom: 0.5rem;
+  color: #2c3e50;
+}
+
+.book-subtitle-chapter {
+  text-align: center;
+  font-size: 1rem;
+  color: #666;
+  margin-top: -1rem;
+  margin-bottom: 2rem;
+}
+
+    .related-books {
+      margin-top: 40px;
+    }
+
+    .related-books h2 {
+      font-size: 22px;
+      margin-bottom: 20px;
+      border-bottom: 2px solid #eee;
+      padding-bottom: 8px;
+      color: #333;
+    }
+    .related-book-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+h1, h2, h3 {
+  font-weight: 600;
+  margin-top: 2.5rem;
+  margin-bottom: 1rem;
+  line-height: 1.2;
+}
+
+h1 {
+  font-size: 1.8rem; /* smaller heading */
+}
+
+h2 {
+  font-size: 1.4rem;
+}
+
+h3 {
+  font-size: 1.2rem;
+}
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-family: sans-serif;
+      font-size: 1em;
+      margin: 1em 0;
+    }
+
+    th, td {
+      border: 1px solid #cccccc;
+      padding: 0.6em 1em;
+      text-align: left;
+    }
+
+    th {
+      background-color: #f2f2f2;
+      font-weight: bold;
+    }
+
+    tr:nth-child(even) {
+      background-color: #fafafa;
+    }
+
+    /* Optional hover effect */
+    tr:hover {
+      background-color: #e6f7ff;
+    }
+ 
+a {
+  color: #555;
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+
+
+.code-block {
+    position: relative;
+    margin-bottom: 1em;
+}
+.copy-button {
+    background: transparent; 
+    color: white;
+
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    border: none;
+    padding: 4px 8px;
+    font-size: 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    z-index: 1;
+}
+
+.copy-button:hover {
+background-color: #0056b3;
+}
+.page-footer {
+  margin-top: 4rem;
+  padding: 1rem 0;
+  text-align: center;
+  font-size: 0.85rem;
+  color: #666;
+  border-top: 1px solid #ccc;
+  background-color: #fafafa;
+}
+.page-footer a {
+     color: #555;
+    text-decoration: none;
+  }
+  .page-footer a:hover {
+    text-decoration: underline;
+  }
+.chapter-navi-section {
+display: flex;
+justify-content: space-between;
+align-items: center;
+padding-bottom: 10px;
+}  
+
+.nav-link {
+  color: inherit;
+  text-decoration: none;
+  opacity: 0.5;
+  transition: opacity 0.3s ease, text-decoration 0.3s ease;
+}
+
+.nav-link:hover {
+  opacity: 0.9;
+  text-decoration: underline;
+}
+
+.prev {
+  text-align: left;
+}
+.toc-link {
+  text-align: center;
+}
+.next {
+  text-align: right;
+}
+.download-section {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2rem;
+  padding: 2rem 1rem;
+  max-width: 600px;
+  margin: 3rem auto;
+  background-color: #f9f9f9;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+}
+
+    .book-cover {
+      width: 130px;
+      height: 180px;
+      
+      background-size: cover; /* Ensures the image covers the entire div */
+      background-position: center; /* Centers the image */
+            
+      background: linear-gradient(145deg, #e0dede, #f9f9f9);
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 10px;
+      box-sizing: border-box;
+      position: relative;
+      font-family: 'Roboto', sans-serif;
+    }
+
+    .book-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 16px;
+      font-weight: 600;
+      color: #fff;
+      margin-bottom: 4px;
+    }
+
+    .book-subtitle {
+      font-size: 12px;
+      color: #aaa;
+      margin-bottom: 10px;
+    }
+
+    .series-name {
+      position: absolute;
+      top: 8px;
+      left: 8px;
+      font-size: 10px;
+      color: #fff;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-weight: bold;
+    }
+
+    .book-footer {
+      position: absolute;
+      bottom: 8px;
+      font-size: 10px;
+      color: #aaa;
+    }
+
+.download-info h2 {
+  margin: 0 0 0.5rem;
+  font-size: 1.2rem;
+}
+
+.format-label {
+  margin: 0 0 0.5rem;
+  font-size: 0.95rem;
+  color: #555;
+}
+
+.download-buttons {
+  display: flex;
+  gap: 1rem;
+}
+
+.download-button {
+  background-color: #4A90E2;
+  color: white;
+  padding: 0.5em 1.2em;
+  text-decoration: none;
+  border-radius: 25px;
+  font-size: 0.95rem;
+  transition: background-color 0.3s ease;
+}
+
+.download-button:hover {
+  background-color: #357ABD;
+}
+
+    code {
+ 
+      color: #d35400; 
+    }
+html {
+    scroll-behavior: smooth;
+}
+    .snippet-container {
+      overflow: hidden;    
+    }
+
+    .snippet-header {
+      background: #f0f0f0;
+      color: #333;
+      padding: 0.75rem 1rem;
+      cursor: pointer;
+      font-size: 1rem;
+    }
+
+    .snippet-body {
+      display: none;
+      font-family: monospace;
+    }
+
+    .snippet-container.open .snippet-body {
+      display: block;
+    }
+
+.CodeMirror {
+  border: 2px solid #ccc;
+  border-radius: 4px;
+  resize: vertical;
+}
+
+    button { padding: 0.5em 1em; background: green; color: white; border: none; cursor: pointer; }
+    button:hover { background: #1e7e34; }
+    .result_iframe { width:99%; height:200px; margin-top: 1em;  resize: both;border:1px solid #ccc;}        
+</style>
+</head>
+<body> 
+
+  <div class="container">
+    <div class = "chapter-navi-section">
+<a href="java-object-oriented-design-abstraction.htm" class="nav-button prev">←</a>
+<a href='java-object-oriented-design.htm#composition-and-aggregation' class="nav-button toc-link">Index</a>
+<a href="java-object-oriented-design-inner-classes-and-anonymous-classes.htm" class="nav-button next">→</a>
+</div>
+
+    <h1 class="book-title-chapter" id = 'top'>Composition and Aggregation</h1>
+    <h3 class="book-subtitle-chapter">Java Object-Oriented Design</h3>   
+    <!-- <h1 class ="chapter-title"></h1> -->
+    <h2 id='has-a-relationships'>7.1 &quot;Has-a&quot; Relationships</h2><p>One of the foundational principles in Object-Oriented Design (OOD) is understanding the <strong>relationships between objects</strong>. Two primary types of relationships often discussed are <strong>“is-a”</strong> and <strong>“has-a”</strong>. This section focuses on the “has-a” relationship, which plays a crucial role in designing flexible, maintainable systems by favoring <strong>composition</strong> over inheritance.</p><h3 id="what-is-a-has-a-relationship">What Is a Has-a Relationship?</h3><p>A <strong>“has-a” relationship</strong> describes a situation where one object <strong>contains</strong> or <strong>owns</strong> another object as part of its state or behavior. It models real-world entities by capturing the fact that some objects are made up of or possess other objects. This kind of relationship is also known as <strong>composition</strong> or <strong>aggregation</strong>, depending on the strength of the relationship.</p><p>For example:</p><ul>
+ <li>A <strong>Car has an Engine</strong>. The engine is a component of the car, and the car cannot function without it.</li>
+ <li>A <strong>House has Rooms</strong>. Rooms exist as part of the house but may also have some independence.</li>
+</ul><p>These relationships reflect <strong>part-whole hierarchies</strong> where the whole object “has” one or more parts.</p><h3 id="contrasting-has-a-and-is-a-relationships">Contrasting Has-a and Is-a Relationships</h3><p>Understanding the difference between <strong>“has-a” (composition)</strong> and <strong>“is-a” (inheritance)</strong> relationships is essential for sound design:</p><ul>
+ <li><p><strong>“Is-a” (Inheritance):</strong> When an object is a specialized type of another, it uses inheritance. For example, a <code>SportsCar</code> <strong>is a</strong> <code>Car</code>, so it inherits properties and behaviors from <code>Car</code>. The relationship indicates that the subclass <strong>is</strong> a kind of the superclass.</p></li>
+ <li><p><strong>“Has-a” (Composition):</strong> When an object contains or is composed of other objects, it uses composition. For example, a <code>Car</code> <strong>has an</strong> <code>Engine</code>. The car is not a type of engine but contains one.</p></li>
+</ul><p>In summary:</p><ul>
+ <li>Use <strong>inheritance</strong> when creating a clear hierarchical relationship based on “is-a”.</li>
+ <li>Use <strong>composition</strong> to model objects that <strong>own or contain</strong> other objects, representing “has-a”.</li>
+</ul><h3 id="why-favor-has-a-relationships">Why Favor Has-a Relationships?</h3><p>While inheritance is powerful, relying too heavily on it can lead to rigid, tightly coupled designs. In contrast, composition via “has-a” relationships offers greater <strong>flexibility</strong>, <strong>modularity</strong>, and <strong>reuse</strong>. Here’s why:</p><ul>
+ <li><strong>Encapsulation:</strong> Each component object encapsulates its own behavior and data. Changes in one component typically do not affect others.</li>
+ <li><strong>Flexibility:</strong> You can easily replace or modify parts without altering the whole. For example, changing the type of engine in a car object is straightforward if the engine is a separate object.</li>
+ <li><strong>Avoids Inheritance Pitfalls:</strong> Overusing inheritance can create deep, fragile class hierarchies that are hard to maintain and extend.</li>
+ <li><strong>Realistic Modeling:</strong> Most real-world objects are naturally described as being composed of parts, making “has-a” a natural fit.</li>
+</ul><h3 id="examples-of-has-a-relationships">Examples of Has-a Relationships</h3><p>Here are some simple Java examples illustrating “has-a” relationships:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-java">class Engine {
+    void start() {
+        System.out.println("Engine started.");
+    }
+}
+
+class Car {
+    private Engine engine; // Car "has-a" Engine
+
+    public Car() {
+        this.engine = new Engine();
+    }
+
+    public void startCar() {
+        engine.start(); // Delegates behavior to the engine
+        System.out.println("Car is ready to go!");
+    }
+}</code></pre>
+</div><p>In this example, the <code>Car</code> class <strong>has an</strong> <code>Engine</code> object. The car delegates engine-related tasks to the engine object rather than inheriting from it.</p><p>Another example:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-java">class Room {
+    private String name;
+
+    public Room(String name) {
+        this.name = name;
+    }
+
+    public String getName() {
+        return name;
+    }
+}
+
+class House {
+    private Room[] rooms; // House "has-a" collection of Rooms
+
+    public House(Room[] rooms) {
+        this.rooms = rooms;
+    }
+
+    public void listRooms() {
+        for (Room room : rooms) {
+            System.out.println("Room: " + room.getName());
+        }
+    }
+}</code></pre>
+</div><p>The <code>House</code> object contains an array of <code>Room</code> objects, showing a “has-a” relationship with multiple components.</p><div class="snippet-container" id="IS5Ex">
+ <div class="snippet-header" onclick="toggleSnippet('IS5Ex')">
+  Click to view full runnable Code
+ </div>
+ <div class="snippet-body">
+  <div class="code-block"><button class="copy-button" onclick="copyCode(this)">📋</button>
+   <pre><code class="language-java">
+class Engine {
+    void start() {
+        System.out.println("Engine started.");
+    }
+}
+
+class Car {
+    private Engine engine; // Car "has-a" Engine
+
+    public Car() {
+        this.engine = new Engine();
+    }
+
+    public void startCar() {
+        engine.start(); // Delegates behavior to the engine
+        System.out.println("Car is ready to go!");
+    }
+}
+
+class Room {
+    private String name;
+
+    public Room(String name) {
+        this.name = name;
+    }
+
+    public String getName() {
+        return name;
+    }
+}
+
+class House {
+    private Room[] rooms; // House "has-a" collection of Rooms
+
+    public House(Room[] rooms) {
+        this.rooms = rooms;
+    }
+
+    public void listRooms() {
+        for (Room room : rooms) {
+            System.out.println("Room: " + room.getName());
+        }
+    }
+}
+
+public class HasARelationshipDemo {
+    public static void main(String[] args) {
+        Car car = new Car();
+        car.startCar();
+
+        Room[] rooms = { new Room("Living Room"), new Room("Bedroom"), new Room("Kitchen") };
+        House house = new House(rooms);
+        house.listRooms();
+    }
+} 
+</code></pre>
+  </div>
+ </div>
+</div><h3 id="reflecting-on-has-a-relationships">Reflecting on Has-a Relationships</h3><p>When designing software, try to think in terms of how objects are composed of other objects rather than forcing everything into an inheritance hierarchy. Ask yourself:</p><ul>
+ <li>Does this object logically contain or own another?</li>
+ <li>Is this a whole-part relationship rather than a kind-of relationship?</li>
+</ul><p>By focusing on “has-a” relationships, your designs will tend to be more adaptable to change, easier to test, and clearer to understand.</p><h3 id="summary">Summary</h3><ul>
+ <li><strong>“Has-a” relationships</strong> represent objects containing other objects as parts or components.</li>
+ <li>They contrast with “is-a” relationships, which represent inheritance hierarchies.</li>
+ <li>Favoring composition over inheritance leads to more modular and flexible designs.</li>
+ <li>Real-world modeling often naturally follows “has-a” relationships.</li>
+</ul><p>Mastering these concepts will help you design better, more maintainable object-oriented systems as you progress through this book.</p><div class = "chapter-navi-section">
+<a href="#top" class="nav-button prev">↑</a>
+<a href='java-object-oriented-design.htm#composition-and-aggregation' class="nav-button toc-link">Index</a>
+<a href="#bottom" class="nav-button next">↓</a>
+</div>
+<h2 id='composition-vs-inheritance'>7.2 Composition vs Inheritance</h2><p>In object-oriented design, two fundamental ways to model relationships between classes are <strong>inheritance</strong> and <strong>composition</strong>. Both techniques allow one class to reuse or extend the behavior of another, but they do so in very different ways, each with distinct advantages and trade-offs. Understanding when to use each is crucial to designing flexible, maintainable, and reusable Java software.</p><h3 id="what-is-inheritance">What Is Inheritance?</h3><p>Inheritance is a mechanism where one class (called the <strong>subclass</strong> or <strong>child class</strong>) <strong>inherits</strong> fields and methods from another class (the <strong>superclass</strong> or <strong>parent class</strong>). It represents an <strong>“is-a”</strong> relationship: the subclass <strong>is a specialized type of</strong> the superclass.</p><p>For example, consider a class hierarchy where <code>Car</code> extends <code>Vehicle</code>:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-java">class Vehicle {
+    void start() {
+        System.out.println("Vehicle starting");
+    }
+}
+
+class Car extends Vehicle {
+    void openTrunk() {
+        System.out.println("Opening trunk");
+    }
+}</code></pre>
+</div><p>Here, <code>Car</code> inherits the <code>start()</code> method from <code>Vehicle</code> and adds its own behavior.</p><h3 id="what-is-composition">What Is Composition?</h3><p>Composition models a <strong>“has-a”</strong> relationship where one class contains an instance of another as a <strong>component</strong>. Instead of inheriting behavior, the containing class <strong>delegates</strong> tasks to the component objects it holds.</p><p>Using the same example:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-java">class Engine {
+    void start() {
+        System.out.println("Engine starting");
+    }
+}
+
+class Car {
+    private Engine engine;
+
+    public Car() {
+        engine = new Engine();
+    }
+
+    void start() {
+        engine.start();
+        System.out.println("Car is ready to go");
+    }
+}</code></pre>
+</div><p>Here, <code>Car</code> <strong>has an</strong> <code>Engine</code>, and it uses that engine to perform the start operation.</p><div class="snippet-container" id="z6XHX">
+ <div class="snippet-header" onclick="toggleSnippet('z6XHX')">
+  Click to view full runnable Code
+ </div>
+ <div class="snippet-body">
+  <div class="code-block"><button class="copy-button" onclick="copyCode(this)">📋</button>
+   <pre><code class="language-java">
+public class Main {
+    public static void main(String[] args) {
+        System.out.println("Inheritance example:");
+        CarInheritance car1 = new CarInheritance();
+        car1.start();         // Inherited from Vehicle
+        car1.openTrunk();     // Defined in CarInheritance
+
+        System.out.println("\nComposition example:");
+        CarComposition car2 = new CarComposition();
+        car2.start();         // Delegates to Engine
+    }
+}
+
+// Inheritance example
+class Vehicle {
+    void start() {
+        System.out.println("Vehicle starting");
+    }
+}
+
+class CarInheritance extends Vehicle {
+    void openTrunk() {
+        System.out.println("Opening trunk");
+    }
+}
+
+// Composition example
+class Engine {
+    void start() {
+        System.out.println("Engine starting");
+    }
+}
+
+class CarComposition {
+    private Engine engine;
+
+    public CarComposition() {
+        engine = new Engine();
+    }
+
+    void start() {
+        engine.start();
+        System.out.println("Car is ready to go");
+    }
+} 
+</code></pre>
+  </div>
+ </div>
+</div><h3 id="comparing-composition-and-inheritance">Comparing Composition and Inheritance</h3><table>
+ <thead>
+  <tr>
+   <th>Aspect</th>
+   <th>Inheritance</th>
+   <th>Composition</th>
+  </tr>
+ </thead>
+ <tbody>
+  <tr>
+   <td><strong>Relationship</strong></td>
+   <td>“Is-a” — subclass is a specialized type of superclass</td>
+   <td>“Has-a” — class contains component objects</td>
+  </tr>
+  <tr>
+   <td><strong>Coupling</strong></td>
+   <td>Tight coupling to superclass implementation</td>
+   <td>Loose coupling; components are replaceable</td>
+  </tr>
+  <tr>
+   <td><strong>Flexibility</strong></td>
+   <td>Less flexible; changes in superclass affect subclasses</td>
+   <td>More flexible; components can be changed or replaced independently</td>
+  </tr>
+  <tr>
+   <td><strong>Reuse</strong></td>
+   <td>Reuse by inheriting behavior and overriding methods</td>
+   <td>Reuse by delegating behavior to composed objects</td>
+  </tr>
+  <tr>
+   <td><strong>Maintenance</strong></td>
+   <td>Can lead to fragile base classes if superclass changes</td>
+   <td>Easier to maintain as components are independent</td>
+  </tr>
+  <tr>
+   <td><strong>Multiple inheritance</strong></td>
+   <td>Java does not support multiple class inheritance</td>
+   <td>Allows mixing different components freely</td>
+  </tr>
+ </tbody>
+</table><h3 id="pros-and-cons-of-inheritance">Pros and Cons of Inheritance</h3><p><strong>Pros:</strong></p><ul>
+ <li>Easy to express natural hierarchies.</li>
+ <li>Code reuse is straightforward through inheritance.</li>
+ <li>Polymorphism is naturally supported.</li>
+</ul><p><strong>Cons:</strong></p><ul>
+ <li>Tight coupling to the superclass can cause cascading changes.</li>
+ <li>Inheritance hierarchies can become deep and complex, leading to brittle designs.</li>
+ <li>Subclasses inherit all superclass behavior, even if not all is relevant.</li>
+ <li>Java supports only single inheritance for classes, limiting flexibility.</li>
+</ul><h3 id="pros-and-cons-of-composition">Pros and Cons of Composition</h3><p><strong>Pros:</strong></p><ul>
+ <li>Promotes loose coupling and encapsulation.</li>
+ <li>Components can be swapped or extended independently.</li>
+ <li>Encourages building small, focused classes.</li>
+ <li>Supports multiple behaviors by composing multiple objects.</li>
+</ul><p><strong>Cons:</strong></p><ul>
+ <li>Can require more boilerplate delegation code.</li>
+ <li>Designing component interfaces requires upfront planning.</li>
+</ul><h3 id="modeling-the-same-scenario-inheritance-vs-composition">Modeling the Same Scenario: Inheritance vs Composition</h3><p>Suppose you want to model different types of payment processing.</p><p><strong>Inheritance example:</strong></p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-java">class PaymentProcessor {
+    void processPayment(double amount) {
+        System.out.println("Processing payment: " + amount);
+    }
+}
+
+class CreditCardProcessor extends PaymentProcessor {
+    @Override
+    void processPayment(double amount) {
+        System.out.println("Processing credit card payment: " + amount);
+    }
+}</code></pre>
+</div><p><strong>Composition example:</strong></p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-java">interface PaymentMethod {
+    void pay(double amount);
+}
+
+class CreditCard implements PaymentMethod {
+    public void pay(double amount) {
+        System.out.println("Paying with credit card: " + amount);
+    }
+}
+
+class PaymentProcessor {
+    private PaymentMethod paymentMethod;
+
+    public PaymentProcessor(PaymentMethod paymentMethod) {
+        this.paymentMethod = paymentMethod;
+    }
+
+    void processPayment(double amount) {
+        paymentMethod.pay(amount);
+    }
+}</code></pre>
+</div><p>In the composition example, <code>PaymentProcessor</code> can work with any <code>PaymentMethod</code> implementation, making it flexible and extensible without changing the processor class.</p><h3 id="favor-composition-over-inheritance-the-guiding-principle">Favor Composition Over Inheritance: The Guiding Principle</h3><p>Modern object-oriented design strongly advocates <strong>“favor composition over inheritance”</strong>. The rationale is:</p><ul>
+ <li><strong>Inheritance creates strong coupling</strong> between subclass and superclass, making code fragile and difficult to evolve.</li>
+ <li><strong>Composition promotes flexibility</strong> by allowing objects to be composed dynamically at runtime or easily swapped.</li>
+ <li><strong>Composition supports better encapsulation</strong>, hiding component implementations behind well-defined interfaces.</li>
+ <li>It helps avoid the pitfalls of deep and complex inheritance trees.</li>
+</ul><p>This does not mean inheritance is bad—it's still valuable for clear “is-a” relationships and polymorphism. However, composition should be the default choice when designing relationships between classes.</p><h3 id="summary">Summary</h3><ul>
+ <li><strong>Inheritance</strong> expresses an “is-a” relationship with code reuse via subclassing but can lead to tight coupling and fragile designs.</li>
+ <li><strong>Composition</strong> expresses “has-a” relationships by assembling objects with distinct responsibilities, offering greater flexibility and maintainability.</li>
+ <li>Favor composition for most cases, using inheritance carefully when natural hierarchies exist.</li>
+ <li>Designing with composition leads to more adaptable and reusable Java programs.</li>
+</ul><p>Understanding these concepts deeply equips you to make better design choices as you build complex, scalable object-oriented systems.</p><div class = "chapter-navi-section">
+<a href="#top" class="nav-button prev">↑</a>
+<a href='java-object-oriented-design.htm#composition-and-aggregation' class="nav-button toc-link">Index</a>
+<a href="#bottom" class="nav-button next">↓</a>
+</div>
+<h2 id='designing-for-reuse'>7.3 Designing for Reuse</h2><p>In software development, <strong>code reuse</strong> is a key goal—it saves time, reduces errors, and promotes consistency across projects. Designing classes and components for reuse requires thoughtful planning, especially when using <strong>composition</strong>, which is the preferred way to build flexible and maintainable systems.</p><h3 id="why-composition-enhances-reuse">Why Composition Enhances Reuse</h3><p>Unlike inheritance, which tightly couples subclasses to their parent classes, <strong>composition enables reuse by assembling independent, well-defined components</strong>. This modular approach makes it easier to reuse and extend parts of a system without affecting unrelated areas.</p><p>For example, a logging component designed as a standalone class can be reused across many different parts of an application or even across different projects simply by including and configuring it, rather than forcing all clients to inherit from a base class that provides logging.</p><h3 id="strategies-for-designing-reusable-components">Strategies for Designing Reusable Components</h3><h4 id="single-responsibility-principle-srp">Single Responsibility Principle (SRP)</h4><p>Design classes to have <strong>one clear responsibility</strong>. When a class does one thing well, it becomes easier to understand, test, and reuse in different contexts.</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-java">class Logger {
+    void log(String message) {
+        System.out.println("LOG: " + message);
+    }
+}</code></pre>
+</div><p>This <code>Logger</code> class is simple and focused—perfect for reuse anywhere logging is needed.</p><h4 id="programming-to-interfaces">Programming to Interfaces</h4><p>Define components using <strong>interfaces</strong> rather than concrete classes. Interfaces specify <em>what</em> a component does without prescribing <em>how</em> it does it. This abstraction enables multiple implementations that can be swapped easily.</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-java">interface PaymentMethod {
+    void pay(double amount);
+}
+
+class CreditCardPayment implements PaymentMethod {
+    public void pay(double amount) {
+        System.out.println("Paying $" + amount + " by credit card");
+    }
+}</code></pre>
+</div><p>By depending on <code>PaymentMethod</code> rather than <code>CreditCardPayment</code> directly, your system becomes more flexible and reusable.</p><h4 id="favor-composition-and-delegation">Favor Composition and Delegation</h4><p>Build complex behavior by composing small, reusable components. Use <strong>delegation</strong> to forward requests to component objects, avoiding the pitfalls of inheritance.</p><p>Example: A <code>Car</code> class composed of an <code>Engine</code> and <code>Transmission</code>:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-java">class Engine {
+    void start() { System.out.println("Engine started"); }
+}
+
+class Transmission {
+    void shiftGear(int gear) { System.out.println("Shifted to gear " + gear); }
+}
+
+class Car {
+    private Engine engine = new Engine();
+    private Transmission transmission = new Transmission();
+
+    void drive() {
+        engine.start();
+        transmission.shiftGear(1);
+        System.out.println("Car is driving");
+    }
+}</code></pre>
+</div><p>Each component is reusable on its own, and <code>Car</code> simply composes these parts.</p><h4 id="use-immutability-where-possible">Use Immutability Where Possible</h4><p>Immutable objects (objects whose state cannot change after construction) are naturally reusable because they are thread-safe and side-effect free.</p><h3 id="examples-of-reusable-components">Examples of Reusable Components</h3><ul>
+ <li><strong>Utility Classes:</strong> Common helper classes for string manipulation, file operations, or math calculations.</li>
+ <li><strong>Service Classes:</strong> Authentication, caching, or notification services that encapsulate functionality usable in many contexts.</li>
+ <li><strong>UI Components:</strong> Reusable buttons, dialogs, or form elements in GUI applications.</li>
+</ul><p>By designing these components with clear interfaces and minimal dependencies, you enable reuse across many parts of your application or even across projects.</p><h3 id="design-patterns-that-emphasize-composition-for-reuse">Design Patterns That Emphasize Composition for Reuse</h3><p>Several well-known design patterns explicitly promote composition to maximize reuse:</p><ul>
+ <li><strong>Decorator Pattern:</strong> Adds responsibilities to objects dynamically by wrapping them with decorator classes rather than subclassing. This promotes flexible, runtime composition.</li>
+</ul><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-java">interface Coffee {
+    double cost();
+}
+
+class SimpleCoffee implements Coffee {
+    public double cost() { return 2.0; }
+}
+
+class MilkDecorator implements Coffee {
+    private Coffee coffee;
+    public MilkDecorator(Coffee coffee) { this.coffee = coffee; }
+    public double cost() { return coffee.cost() + 0.5; }
+}</code></pre>
+</div><ul>
+ <li><strong>Strategy Pattern:</strong> Defines a family of algorithms, encapsulates each one, and makes them interchangeable. The client composes with different strategy objects to vary behavior.</li>
+</ul><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-java">interface SortingStrategy {
+    void sort(int[] array);
+}
+
+class BubbleSort implements SortingStrategy {
+    public void sort(int[] array) { /* bubble sort implementation */ }
+}
+
+class QuickSort implements SortingStrategy {
+    public void sort(int[] array) { /* quick sort implementation */ }
+}
+
+class Sorter {
+    private SortingStrategy strategy;
+    public Sorter(SortingStrategy strategy) { this.strategy = strategy; }
+    public void sortArray(int[] array) { strategy.sort(array); }
+}</code></pre>
+</div><div class="snippet-container" id="7x9ZO">
+ <div class="snippet-header" onclick="toggleSnippet('7x9ZO')">
+  Click to view full runnable Code
+ </div>
+ <div class="snippet-body">
+  <div class="code-block"><button class="copy-button" onclick="copyCode(this)">📋</button>
+   <pre><code class="language-java">
+interface SortingStrategy {
+    void sort(int[] array);
+}
+
+class BubbleSort implements SortingStrategy {
+    public void sort(int[] array) {
+        // Simple bubble sort implementation
+        int n = array.length;
+        for(int i = 0; i &lt; n-1; i++) {
+            for(int j = 0; j &lt; n-i-1; j++) {
+                if(array[j] &gt; array[j+1]) {
+                    int temp = array[j];
+                    array[j] = array[j+1];
+                    array[j+1] = temp;
+                }
+            }
+        }
+    }
+}
+
+class QuickSort implements SortingStrategy {
+    public void sort(int[] array) {
+        quickSort(array, 0, array.length - 1);
+    }
+
+    private void quickSort(int[] arr, int low, int high) {
+        if(low &lt; high) {
+            int pi = partition(arr, low, high);
+            quickSort(arr, low, pi -1);
+            quickSort(arr, pi + 1, high);
+        }
+    }
+
+    private int partition(int[] arr, int low, int high) {
+        int pivot = arr[high];
+        int i = (low - 1);
+        for(int j = low; j &lt; high; j++) {
+            if(arr[j] &lt; pivot) {
+                i++;
+                int temp = arr[i];
+                arr[i] = arr[j];
+                arr[j] = temp;
+            }
+        }
+        int temp = arr[i+1];
+        arr[i+1] = arr[high];
+        arr[high] = temp;
+        return i + 1;
+    }
+}
+
+class Sorter {
+    private SortingStrategy strategy;
+
+    public Sorter(SortingStrategy strategy) {
+        this.strategy = strategy;
+    }
+
+    public void sortArray(int[] array) {
+        strategy.sort(array);
+    }
+}
+
+public class MainSort {
+    public static void main(String[] args) {
+        int[] data = {5, 3, 8, 1, 2};
+
+        Sorter bubbleSorter = new Sorter(new BubbleSort());
+        bubbleSorter.sortArray(data);
+        System.out.print("BubbleSorted array: ");
+        for(int num : data) System.out.print(num + " ");
+        System.out.println();
+
+        data = new int[]{5, 3, 8, 1, 2}; // reset array
+
+        Sorter quickSorter = new Sorter(new QuickSort());
+        quickSorter.sortArray(data);
+        System.out.print("QuickSorted array: ");
+        for(int num : data) System.out.print(num + " ");
+        System.out.println();
+    }
+} 
+</code></pre>
+  </div>
+ </div>
+</div><h3 id="summary">Summary</h3><p>Designing for reuse with composition involves:</p><ul>
+ <li>Creating <strong>small, focused components</strong> with clear responsibilities.</li>
+ <li>Using <strong>interfaces</strong> to define contracts and enable flexible implementations.</li>
+ <li><strong>Composing</strong> behavior by delegating to these components rather than inheriting from monolithic base classes.</li>
+ <li>Applying design patterns like <strong>Decorator</strong> and <strong>Strategy</strong> to structure reusable and extensible systems.</li>
+</ul><p>By following these strategies, you build software that is easier to maintain, extend, and adapt—key qualities for modern, scalable Java applications.</p><div class = "chapter-navi-section">
+<a href="#top" class="nav-button prev">↑</a>
+<a href='java-object-oriented-design.htm#composition-and-aggregation' class="nav-button toc-link">Index</a>
+<a href="#bottom" class="nav-button next">↓</a>
+</div>
+<h2 id='example-modeling-a-car-with-components'>7.4 Example: Modeling a Car with Components</h2><p>In this section, we will explore a practical, real-world example of <strong>composition</strong> by modeling a <code>Car</code> composed of several smaller components such as an <code>Engine</code>, <code>Wheel</code>, and <code>Transmission</code>. This example will demonstrate how objects can be assembled from other objects to build flexible and maintainable designs.</p><h3 id="why-use-composition-to-model-a-car">Why Use Composition to Model a Car?</h3><p>A car is not just one big object; it is made up of many parts working together. Instead of trying to cram all functionality into one monolithic class, composition allows us to break down the problem into manageable, reusable pieces.</p><p>By modeling a car as a <strong>has-a</strong> relationship—i.e., a car <em>has an</em> engine, <em>has wheels</em>, <em>has a transmission</em>—we reflect the real-world relationships clearly and create components that can be developed and tested independently.</p><h3 id="defining-component-classes">Defining Component Classes</h3><p>First, let’s define each component class with simple functionality.</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-java">// Engine.java
+public class Engine {
+    private boolean running;
+
+    public void start() {
+        running = true;
+        System.out.println("Engine started.");
+    }
+
+    public void stop() {
+        running = false;
+        System.out.println("Engine stopped.");
+    }
+
+    public boolean isRunning() {
+        return running;
+    }
+}</code></pre>
+</div><p>Wheel.java</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-java">public class Wheel {
+    private String position;
+
+    public Wheel(String position) {
+        this.position = position;
+    }
+
+    public void rotate() {
+        System.out.println(position + " wheel is rotating.");
+    }
+}</code></pre>
+</div><p>Transmission.java</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-java">public class Transmission {
+    private int currentGear = 0;
+
+    public void shiftGear(int gear) {
+        currentGear = gear;
+        System.out.println("Shifted to gear " + currentGear);
+    }
+
+    public int getCurrentGear() {
+        return currentGear;
+    }
+}</code></pre>
+</div><h3 id="defining-the-car-class-with-composition">Defining the Car Class with Composition</h3><p>The <code>Car</code> class <strong>has</strong> an <code>Engine</code>, multiple <code>Wheel</code> objects, and a <code>Transmission</code>. We compose these inside <code>Car</code> as fields and use their behavior to implement the car's functionality.</p><p>Car.java</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-java">public class Car {
+    private Engine engine;
+    private Wheel[] wheels;
+    private Transmission transmission;
+
+    public Car() {
+        // Initialize components
+        engine = new Engine();
+        wheels = new Wheel[] {
+            new Wheel("Front Left"),
+            new Wheel("Front Right"),
+            new Wheel("Rear Left"),
+            new Wheel("Rear Right")
+        };
+        transmission = new Transmission();
+    }
+
+    public void startCar() {
+        engine.start();
+        transmission.shiftGear(1);
+        for (Wheel wheel : wheels) {
+            wheel.rotate();
+        }
+        System.out.println("Car is started and ready to drive.");
+    }
+
+    public void stopCar() {
+        transmission.shiftGear(0);
+        engine.stop();
+        System.out.println("Car has stopped.");
+    }
+
+    // Additional behaviors can be added here...
+}</code></pre>
+</div><h3 id="running-the-example">Running the Example</h3><p>Let’s create a <code>Main</code> class to run this car simulation.</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-java">// Main.java
+public class Main {
+    public static void main(String[] args) {
+        Car myCar = new Car();
+
+        myCar.startCar();
+        // Simulate driving...
+
+        myCar.stopCar();
+    }
+}</code></pre>
+</div><p><strong>Expected Console Output:</strong></p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-bash">Engine started.
+Shifted to gear 1
+Front Left wheel is rotating.
+Front Right wheel is rotating.
+Rear Left wheel is rotating.
+Rear Right wheel is rotating.
+Car is started and ready to drive.
+Shifted to gear 0
+Engine stopped.
+Car has stopped.</code></pre>
+</div><div class="snippet-container" id="KtY27">
+ <div class="snippet-header" onclick="toggleSnippet('KtY27')">
+  Click to view full runnable Code
+ </div>
+ <div class="snippet-body">
+  <div class="code-block"><button class="copy-button" onclick="copyCode(this)">📋</button>
+   <pre><code class="language-java">
+// Engine.java
+class Engine {
+    private boolean running;
+
+    public void start() {
+        running = true;
+        System.out.println("Engine started.");
+    }
+
+    public void stop() {
+        running = false;
+        System.out.println("Engine stopped.");
+    }
+
+    public boolean isRunning() {
+        return running;
+    }
+}
+
+// Wheel.java
+class Wheel {
+    private String position;
+
+    public Wheel(String position) {
+        this.position = position;
+    }
+
+    public void rotate() {
+        System.out.println(position + " wheel is rotating.");
+    }
+}
+
+// Transmission.java
+class Transmission {
+    private int currentGear = 0;
+
+    public void shiftGear(int gear) {
+        currentGear = gear;
+        System.out.println("Shifted to gear " + currentGear);
+    }
+
+    public int getCurrentGear() {
+        return currentGear;
+    }
+}
+
+// Car.java
+class Car {
+    private Engine engine;
+    private Wheel[] wheels;
+    private Transmission transmission;
+
+    public Car() {
+        engine = new Engine();
+        wheels = new Wheel[] {
+            new Wheel("Front Left"),
+            new Wheel("Front Right"),
+            new Wheel("Rear Left"),
+            new Wheel("Rear Right")
+        };
+        transmission = new Transmission();
+    }
+
+    public void startCar() {
+        engine.start();
+        transmission.shiftGear(1);
+        for (Wheel wheel : wheels) {
+            wheel.rotate();
+        }
+        System.out.println("Car is started and ready to drive.");
+    }
+
+    public void stopCar() {
+        transmission.shiftGear(0);
+        engine.stop();
+        System.out.println("Car has stopped.");
+    }
+}
+
+// Main.java
+public class Main {
+    public static void main(String[] args) {
+        Car myCar = new Car();
+
+        myCar.startCar();
+        // Simulate driving...
+
+        myCar.stopCar();
+    }
+} 
+</code></pre>
+  </div>
+ </div>
+</div><h3 id="design-reflection-and-advantages-of-composition">Design Reflection and Advantages of Composition</h3><ol>
+ <li><p><strong>Modularity:</strong> Each component (<code>Engine</code>, <code>Wheel</code>, <code>Transmission</code>) encapsulates its own behavior and state. This modularity makes it easier to maintain and enhance individual parts without affecting the whole car.</p></li>
+ <li><p><strong>Reusability:</strong> The same <code>Engine</code> or <code>Transmission</code> classes could be reused in other vehicle types like trucks or motorcycles with little or no modification.</p></li>
+ <li><p><strong>Flexibility:</strong> If we want to model different types of wheels or engines (e.g., electric vs combustion), we can subclass or swap components without changing the <code>Car</code> class’s overall structure.</p></li>
+ <li><p><strong>Clear Responsibilities:</strong> Each class has a clear responsibility—<code>Engine</code> starts and stops, <code>Wheel</code> rotates, <code>Transmission</code> shifts gears—promoting better separation of concerns.</p></li>
+ <li><p><strong>Testability:</strong> You can unit test each component independently before integrating them into the <code>Car</code>. This reduces bugs and improves reliability.</p></li>
+</ol><h3 id="summary">Summary</h3><p>This example showcases how <strong>composition models real-world “has-a” relationships</strong> effectively in Java. Instead of one large class trying to do everything, breaking down a complex object like a <code>Car</code> into components leads to a cleaner, more manageable design.</p><p>Composition encourages building systems by assembling smaller parts with defined roles—making code easier to understand, extend, and maintain. This principle is central to modern object-oriented design and is preferred over inheritance when modeling “part-of” relationships.</p><div class = "chapter-navi-section">
+<a href="java-object-oriented-design-abstraction.htm" class="nav-button prev">←</a>
+<a href='java-object-oriented-design.htm#composition-and-aggregation' class="nav-button toc-link">Index</a>
+<a href="java-object-oriented-design-inner-classes-and-anonymous-classes.htm" class="nav-button next">→</a>
+</div>
+<section class="download-section">
+  <div class="book-cover" style="background-image: url('data:image/jpg;base64,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');">
+<div class="series-name">Introduction</div>
+<div class="book-title">Java Object-Oriented Design</div>
+<div class="book-subtitle">Principles, Patterns, and Practices</div>
+<div class="book-footer">readbytes.github.io</div>
+</div>
+  <div class="download-info">
+    <h2 id='bottom'>Download This Ebook</h2>
+    <p class="format-label">Available formats:</p>
+    <div class="download-buttons">
+      <a href="java-object-oriented-design.pdf" class="download-button">📄 PDF</a>
+      <a href="java-object-oriented-design.epub" class="download-button">📘 EPUB</a>
+    </div>
+  </div>
+</section><div class='related-books'>
+<h2>Java Introduction Books</h2>
+<div class='related-book-list'>
+<a href="java-for-beginners.htm"><div class="book-cover" style="background-image: url('data:image/jpg;base64,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');">
+<div class="series-name">Introduction</div>
+<div class="book-title">Java for Beginners</div>
+<div class="book-subtitle">Learn to Code from Scratch</div>
+<div class="book-footer">readbytes.github.io</div>
+</div></a>
+
+
+<a href="java-syntax.htm"><div class="book-cover" style="background-image: url('data:image/jpg;base64,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');">
+<div class="series-name">Introduction</div>
+<div class="book-title">Java Syntax</div>
+<div class="book-subtitle">From Beginner to Expert</div>
+<div class="book-footer">readbytes.github.io</div>
+</div></a>
+
+
+<a href="java-date-and-time.htm"><div class="book-cover" style="background-image: url('data:image/jpg;base64,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');">
+<div class="series-name">Introduction</div>
+<div class="book-title">Java Date and Time</div>
+<div class="book-subtitle">A Systematic Approach</div>
+<div class="book-footer">readbytes.github.io</div>
+</div></a>
+
+
+<a href="java-object-oriented-design.htm"><div class="book-cover" style="background-image: url('data:image/jpg;base64,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');">
+<div class="series-name">Introduction</div>
+<div class="book-title">Java Object-Oriented Design</div>
+<div class="book-subtitle">Principles, Patterns, and Practices</div>
+<div class="book-footer">readbytes.github.io</div>
+</div></a>
+
+
+
+<a href='java.htm'><div class='book-cover'>More Java Books</div></a>
+</div>
+</div>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+    <script>
+  function toggleSnippet(id) {
+      const box = document.getElementById(id);
+      box.classList.toggle("open");
+  }  
+  </script>
+  <script>
+    function copyCode(button) {
+      const code = button.nextElementSibling.innerText;
+      navigator.clipboard.writeText(code).then(() => {
+        button.textContent = 'Copied!';
+        setTimeout(() => { button.textContent = 'Copy'; }, 1500);
+      });
+    }
+  </script>  
+
+<footer class="page-footer">
+    <nav>
+      <a href="https://readbytes.github.io">Home</a> | 
+      Email:<script language="JavaScript" type="text/javascript">
+var part1 = 'yinpeng';var part6 = '263';var part2 = Math.pow(2,6);var part3 = String.fromCharCode(part2);var part4 = 'hotmail dot com';var part5 = part1 + String.fromCharCode(part2) + part4;document.write(part1 + part6 + part3 + part4);
+</script>
+    </nav>
+  <p>© 2025 — All rights reserved.</p>    
+  </footer>
+
+</body>
+</html>

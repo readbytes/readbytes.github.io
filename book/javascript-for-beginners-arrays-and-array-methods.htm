@@ -1,0 +1,1254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>JavaScript for Beginners Arrays and Array Methods</title>
+<link rel='shortcut icon' href='https://java2s.com/style/favicon.ico'>
+<link href="https://fonts.googleapis.com/css2?family=Merriweather&display=swap" rel="stylesheet" />
+<link href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.css" />
+<script src="https://cdn.jsdelivr.net/npm/typescript@5/lib/typescript.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/htmlmixed/htmlmixed.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/xml/xml.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/css/css.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/javascript/javascript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/javascript/typescript.min.js"></script>
+<script>
+  const codeMirrorMap = new Map();
+  function renderIframe(textarea_id, iframe_id) {
+      const html = codeMirrorMap.get(textarea_id).getValue();
+      const iframe = document.getElementById(iframe_id);
+      iframe.style.display = "block";
+      iframe.srcdoc = html;  
+  }
+  function renderIframeForClientTypescript(textarea_id, iframe_id) {
+      let code = codeMirrorMap.get(textarea_id).getValue();
+      code = ts.transpile(code);
+      const iframe = document.getElementById(iframe_id);
+      const doc = iframe.contentDocument || iframe.contentWindow.document;
+
+const html = `
+  <!DOCTYPE html>
+  <html>
+    <head>
+      <title>Output</title>
+      <style>
+        body { font-family: monospace; padding: 1em; background: #f4f4f4; color: #222; }
+        pre { white-space: pre-wrap; word-break: break-word; }
+        .error { color: red; }
+      </style>
+    </head>
+    <body>
+      <pre id="log"></pre>
+      <script>
+        (function(){
+          const logEl = document.getElementById('log');
+          const origLog = console.log;
+          const origError = console.error;
+
+          console.log = (...args) => {
+            logEl.textContent += args.join(' ') + '\\n';
+            origLog.apply(console, args);
+          };
+          console.table = (...args) => {
+            logEl.textContent += args.join(' ') + '\\n';
+            origLog.apply(console, args);
+          };
+
+          console.error = (...args) => {
+            logEl.innerHTML +='<span class="error">' + args.join(' ') + '</span>';
+            origError.apply(console, args);
+          };
+          window.addEventListener("error", function (event) {
+              console.error("Caught by event listener:", event.message);
+          });    
+          try {             
+              ${code};
+          } catch (err) {
+            console.error(err.stack || err.message);
+          }
+        })();
+      <\/script>
+    </body>
+  </html>
+`;
+      iframe.style.display = "block";
+      iframe.srcdoc = html;  
+  }
+
+    function renderIframeForClientJavascript(textarea_id, iframe_id) {
+        const code = codeMirrorMap.get(textarea_id).getValue();
+        const iframe = document.getElementById(iframe_id);
+        const doc = iframe.contentDocument || iframe.contentWindow.document;
+
+  const html = `
+    <!DOCTYPE html>
+    <html>
+      <head>
+        <title>Output</title>
+        <style>
+          body { font-family: monospace; padding: 1em; background: #f4f4f4; color: #222; }
+          pre { white-space: pre-wrap; word-break: break-word; }
+          .error { color: red; }
+        </style>
+      </head>
+      <body>
+        <pre id="log"></pre>
+        <script>
+          (function(){
+            const logEl = document.getElementById('log');
+            const origLog = console.log;
+            const origError = console.error;
+
+            console.log = (...args) => {
+              logEl.textContent += args.join(' ') + '\\n';
+              origLog.apply(console, args);
+            };
+            console.table = (...args) => {
+              logEl.textContent += args.join(' ') + '\\n';
+              origLog.apply(console, args);
+            };
+
+            console.error = (...args) => {
+              logEl.innerHTML +='<span class="error">' + args.join(' ') + '</span>';
+              origError.apply(console, args);
+            };
+            window.addEventListener("error", function (event) {
+                console.error("Caught by event listener:", event.message);
+            });    
+            try {
+             ${code}; 
+            } catch (err) {
+              console.error(err.stack || err.message);
+            }
+          })();
+        <\/script>
+      </body>
+    </html>
+  `;
+    
+        iframe.style.display = "block";
+        iframe.srcdoc = html;  
+    }
+
+    function toggleSnippetAndRefresh(id, textarea_id) {
+      const box = document.getElementById(id);
+      box.classList.toggle("open");
+      codeMirrorMap.get(textarea_id).refresh();
+    }
+
+  </script>
+<style>
+body {
+  background: #f8f7f5;
+  font-family: 'Merriweather', serif;
+  color: #333;
+  margin: 0;
+  padding: 2rem 1rem;
+  font-size: 15px; /* smaller body font */
+  line-height: 1.5;
+}
+
+.container {
+  max-width: 700px;
+  margin: 0 auto;
+  background: white;
+  padding: 1rem 2rem;
+  box-shadow: 0 0 15px rgba(0,0,0,0.1);
+}
+.book-title-chapter {
+  font-family: 'Merriweather', serif;
+  font-size: 2rem;
+  font-weight: bold;
+  text-align: center;
+  margin-bottom: 2rem;
+  border-bottom: 2px solid #ccc;
+  padding-bottom: 0.5rem;
+  color: #2c3e50;
+}
+
+.book-subtitle-chapter {
+  text-align: center;
+  font-size: 1rem;
+  color: #666;
+  margin-top: -1rem;
+  margin-bottom: 2rem;
+}
+
+    .related-books {
+      margin-top: 40px;
+    }
+
+    .related-books h2 {
+      font-size: 22px;
+      margin-bottom: 20px;
+      border-bottom: 2px solid #eee;
+      padding-bottom: 8px;
+      color: #333;
+    }
+    .related-book-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+h1, h2, h3 {
+  font-weight: 600;
+  margin-top: 2.5rem;
+  margin-bottom: 1rem;
+  line-height: 1.2;
+}
+
+h1 {
+  font-size: 1.8rem; /* smaller heading */
+}
+
+h2 {
+  font-size: 1.4rem;
+}
+
+h3 {
+  font-size: 1.2rem;
+}
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-family: sans-serif;
+      font-size: 1em;
+      margin: 1em 0;
+    }
+
+    th, td {
+      border: 1px solid #cccccc;
+      padding: 0.6em 1em;
+      text-align: left;
+    }
+
+    th {
+      background-color: #f2f2f2;
+      font-weight: bold;
+    }
+
+    tr:nth-child(even) {
+      background-color: #fafafa;
+    }
+
+    /* Optional hover effect */
+    tr:hover {
+      background-color: #e6f7ff;
+    }
+ 
+a {
+  color: #555;
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+
+
+.code-block {
+    position: relative;
+    margin-bottom: 1em;
+}
+.copy-button {
+    background: transparent; 
+    color: white;
+
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    border: none;
+    padding: 4px 8px;
+    font-size: 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    z-index: 1;
+}
+
+.copy-button:hover {
+background-color: #0056b3;
+}
+.page-footer {
+  margin-top: 4rem;
+  padding: 1rem 0;
+  text-align: center;
+  font-size: 0.85rem;
+  color: #666;
+  border-top: 1px solid #ccc;
+  background-color: #fafafa;
+}
+.page-footer a {
+     color: #555;
+    text-decoration: none;
+  }
+  .page-footer a:hover {
+    text-decoration: underline;
+  }
+.chapter-navi-section {
+display: flex;
+justify-content: space-between;
+align-items: center;
+padding-bottom: 10px;
+}  
+
+.nav-link {
+  color: inherit;
+  text-decoration: none;
+  opacity: 0.5;
+  transition: opacity 0.3s ease, text-decoration 0.3s ease;
+}
+
+.nav-link:hover {
+  opacity: 0.9;
+  text-decoration: underline;
+}
+
+.prev {
+  text-align: left;
+}
+.toc-link {
+  text-align: center;
+}
+.next {
+  text-align: right;
+}
+.download-section {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2rem;
+  padding: 2rem 1rem;
+  max-width: 600px;
+  margin: 3rem auto;
+  background-color: #f9f9f9;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+}
+
+    .book-cover {
+      width: 130px;
+      height: 180px;
+      
+      background-size: cover; /* Ensures the image covers the entire div */
+      background-position: center; /* Centers the image */
+            
+      background: linear-gradient(145deg, #e0dede, #f9f9f9);
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 10px;
+      box-sizing: border-box;
+      position: relative;
+      font-family: 'Roboto', sans-serif;
+    }
+
+    .book-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 16px;
+      font-weight: 600;
+      color: #fff;
+      margin-bottom: 4px;
+    }
+
+    .book-subtitle {
+      font-size: 12px;
+      color: #aaa;
+      margin-bottom: 10px;
+    }
+
+    .series-name {
+      position: absolute;
+      top: 8px;
+      left: 8px;
+      font-size: 10px;
+      color: #fff;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-weight: bold;
+    }
+
+    .book-footer {
+      position: absolute;
+      bottom: 8px;
+      font-size: 10px;
+      color: #aaa;
+    }
+
+.download-info h2 {
+  margin: 0 0 0.5rem;
+  font-size: 1.2rem;
+}
+
+.format-label {
+  margin: 0 0 0.5rem;
+  font-size: 0.95rem;
+  color: #555;
+}
+
+.download-buttons {
+  display: flex;
+  gap: 1rem;
+}
+
+.download-button {
+  background-color: #4A90E2;
+  color: white;
+  padding: 0.5em 1.2em;
+  text-decoration: none;
+  border-radius: 25px;
+  font-size: 0.95rem;
+  transition: background-color 0.3s ease;
+}
+
+.download-button:hover {
+  background-color: #357ABD;
+}
+
+    code {
+ 
+      color: #d35400; 
+    }
+html {
+    scroll-behavior: smooth;
+}
+    .snippet-container {
+      overflow: hidden;    
+    }
+
+    .snippet-header {
+      background: #f0f0f0;
+      color: #333;
+      padding: 0.75rem 1rem;
+      cursor: pointer;
+      font-size: 1rem;
+    }
+
+    .snippet-body {
+      display: none;
+      font-family: monospace;
+    }
+
+    .snippet-container.open .snippet-body {
+      display: block;
+    }
+
+.CodeMirror {
+  border: 2px solid #ccc;
+  border-radius: 4px;
+  resize: vertical;
+}
+
+    button { padding: 0.5em 1em; background: green; color: white; border: none; cursor: pointer; }
+    button:hover { background: #1e7e34; }
+    .result_iframe { width:99%; height:200px; margin-top: 1em;  resize: both;border:1px solid #ccc;}        
+</style>
+</head>
+<body> 
+
+  <div class="container">
+    <div class = "chapter-navi-section">
+<a href="javascript-for-beginners-loops-and-iteration.htm" class="nav-button prev">←</a>
+<a href='javascript-for-beginners.htm#arrays-and-array-methods' class="nav-button toc-link">Index</a>
+<a href="javascript-for-beginners-objects-and-object-literals.htm" class="nav-button next">→</a>
+</div>
+
+    <h1 class="book-title-chapter" id = 'top'>Arrays and Array Methods</h1>
+    <h3 class="book-subtitle-chapter">JavaScript for Beginners</h3>   
+    <!-- <h1 class ="chapter-title"></h1> -->
+    <h2 id='creating-and-accessing-arrays'>7.1 Creating and Accessing Arrays</h2><p>Arrays are one of the most important data structures in JavaScript. They allow you to store multiple values in a single variable, making it easy to manage collections of data such as lists of numbers, strings, objects, or even other arrays.</p><h4 id="what-is-an-array">What Is an Array?</h4><p>An array is an <strong>ordered collection</strong> of items where each item can be accessed by its <strong>index</strong>, which starts at 0. Arrays are especially useful when you need to work with lists of related values — for example, a list of student names, a series of temperatures, or a shopping cart's contents.</p><h4 id="creating-arrays">Creating Arrays</h4><p>There are two common ways to create arrays in JavaScript:</p><p><strong>1. Using Array Literals (Recommended)</strong></p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-js">let fruits = ['apple', 'banana', 'cherry'];</code></pre>
+</div><p>This is the most concise and preferred way to create an array. The array <code>fruits</code> contains three string elements.</p><p><strong>2. Using the Array Constructor</strong></p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-js">let numbers = new Array(10, 20, 30);</code></pre>
+</div><p>This creates an array <code>numbers</code> with the elements <code>10</code>, <code>20</code>, and <code>30</code>.</p><p>You can also create an empty array:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-js">let emptyArray = [];</code></pre>
+</div><p>Or use the constructor with a specified length:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-js">let scores = new Array(5); // creates an array with 5 empty slots</code></pre>
+</div><blockquote>
+ <p>⚠️ Be careful: <code>new Array(5)</code> creates an array with <em>length 5</em> but doesn't assign values to any of the elements.</p>
+</blockquote><h4 id="accessing-array-elements">Accessing Array Elements</h4><p>You access elements in an array by referring to their index (starting from 0):</p><div>
+ <div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+  <pre><code class="language-js">let colors = ['red', 'green', 'blue'];
+console.log(colors[0]); // Output: 'red'
+console.log(colors[2]); // Output: 'blue'</code></pre>
+ </div>
+ <div class="snippet-container" id="TlLlQ">
+  <div class="snippet-header" onclick="toggleSnippetAndRefresh('TlLlQ','7yt5C')">
+   Try it in editor
+  </div>
+  <div class="snippet-body"><textarea id="7yt5C">let colors = ['red', 'green', 'blue'];
+console.log(colors[0]); // Output: 'red'
+console.log(colors[2]); // Output: 'blue'</textarea> <br> <button onclick="renderIframeForClientJavascript('7yt5C','qjXRr')">Run</button> <iframe id="qjXRr" class="result_iframe" style="display: none;"></iframe>
+   <script>
+  {let editor1 = CodeMirror.fromTextArea(document.getElementById("7yt5C"), {
+    mode: "javascript",
+    lineNumbers:false,
+    tabSize: 2
+  });
+   codeMirrorMap.set("7yt5C", editor1);}
+  </script>
+  </div>
+ </div>
+</div><p>To modify a specific element:</p><div>
+ <div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+  <pre><code class="language-js">let colors = ['red', 'green', 'blue'];
+colors[1] = 'yellow';
+console.log(colors); // ['red', 'yellow', 'blue']</code></pre>
+ </div>
+ <div class="snippet-container" id="0rjcg">
+  <div class="snippet-header" onclick="toggleSnippetAndRefresh('0rjcg','XJOwd')">
+   Try it in editor
+  </div>
+  <div class="snippet-body"><textarea id="XJOwd">let colors = ['red', 'green', 'blue'];
+colors[1] = 'yellow';
+console.log(colors); // ['red', 'yellow', 'blue']</textarea> <br> <button onclick="renderIframeForClientJavascript('XJOwd','tw1cD')">Run</button> <iframe id="tw1cD" class="result_iframe" style="display: none;"></iframe>
+   <script>
+  {let editor1 = CodeMirror.fromTextArea(document.getElementById("XJOwd"), {
+    mode: "javascript",
+    lineNumbers:false,
+    tabSize: 2
+  });
+   codeMirrorMap.set("XJOwd", editor1);}
+  </script>
+  </div>
+ </div>
+</div><h4 id="accessing-out-of-range-indexes">Accessing Out-of-Range Indexes</h4><p>If you try to access an index that doesn’t exist in the array, JavaScript will return <code>undefined</code>:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-js">let pets = ['dog', 'cat'];
+console.log(pets[5]); // Output: undefined</code></pre>
+</div><p>Assigning a value to an out-of-range index expands the array and fills missing spots with <code>undefined</code>:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-js">pets[4] = 'hamster';
+console.log(pets); // ['dog', 'cat', undefined, undefined, 'hamster']</code></pre>
+</div><h4 id="summary">Summary</h4><p>Arrays are essential for working with ordered data in JavaScript. You can create them using literals or constructors and access items using numeric indexes. Being aware of how JavaScript handles array lengths and out-of-range indexes will help you write more reliable and efficient code.</p><div class = "chapter-navi-section">
+<a href="#top" class="nav-button prev">↑</a>
+<a href='javascript-for-beginners.htm#arrays-and-array-methods' class="nav-button toc-link">Index</a>
+<a href="#bottom" class="nav-button next">↓</a>
+</div>
+<h2 id='common-array-methods-push-pop-shift-unshift-slice-splice'>7.2 Common Array Methods (<code>push</code>, <code>pop</code>, <code>shift</code>, <code>unshift</code>, <code>slice</code>, <code>splice</code>)</h2><p>JavaScript provides several built-in methods that make working with arrays easier and more powerful. In this section, we’ll explore six essential array methods that help you add, remove, copy, and modify elements.</p><h4 id="push"><code>push()</code></h4><p><strong>Purpose:</strong> Adds one or more elements to the <strong>end</strong> of an array.</p><p><strong>Syntax:</strong></p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-js">array.push(element1, element2, ...);</code></pre>
+</div><p><strong>Example:</strong></p><div>
+ <div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+  <pre><code class="language-js">let fruits = ['apple', 'banana'];
+fruits.push('cherry');
+console.log(fruits); // ['apple', 'banana', 'cherry']</code></pre>
+ </div>
+ <div class="snippet-container" id="rB11Z">
+  <div class="snippet-header" onclick="toggleSnippetAndRefresh('rB11Z','rLMj1')">
+   Try it in editor
+  </div>
+  <div class="snippet-body"><textarea id="rLMj1">let fruits = ['apple', 'banana'];
+fruits.push('cherry');
+console.log(fruits); // ['apple', 'banana', 'cherry']</textarea> <br> <button onclick="renderIframeForClientJavascript('rLMj1','mhFnF')">Run</button> <iframe id="mhFnF" class="result_iframe" style="display: none;"></iframe>
+   <script>
+  {let editor1 = CodeMirror.fromTextArea(document.getElementById("rLMj1"), {
+    mode: "javascript",
+    lineNumbers:false,
+    tabSize: 2
+  });
+   codeMirrorMap.set("rLMj1", editor1);}
+  </script>
+  </div>
+ </div>
+</div><p><strong>Use Case:</strong> Adding new items to the end of a list.</p><h4 id="pop"><code>pop()</code></h4><p><strong>Purpose:</strong> Removes the <strong>last</strong> element from an array and returns it.</p><p><strong>Syntax:</strong></p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-js">let removedItem = array.pop();</code></pre>
+</div><p><strong>Example:</strong></p><div>
+ <div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+  <pre><code class="language-js">let fruits = ['apple', 'banana', 'cherry'];
+let lastFruit = fruits.pop();
+console.log(lastFruit); // 'cherry'
+console.log(fruits);    // ['apple', 'banana']</code></pre>
+ </div>
+ <div class="snippet-container" id="cIYtt">
+  <div class="snippet-header" onclick="toggleSnippetAndRefresh('cIYtt','xXBoE')">
+   Try it in editor
+  </div>
+  <div class="snippet-body"><textarea id="xXBoE">let fruits = ['apple', 'banana', 'cherry'];
+let lastFruit = fruits.pop();
+console.log(lastFruit); // 'cherry'
+console.log(fruits);    // ['apple', 'banana']</textarea> <br> <button onclick="renderIframeForClientJavascript('xXBoE','I48cv')">Run</button> <iframe id="I48cv" class="result_iframe" style="display: none;"></iframe>
+   <script>
+  {let editor1 = CodeMirror.fromTextArea(document.getElementById("xXBoE"), {
+    mode: "javascript",
+    lineNumbers:false,
+    tabSize: 2
+  });
+   codeMirrorMap.set("xXBoE", editor1);}
+  </script>
+  </div>
+ </div>
+</div><p><strong>Use Case:</strong> Removing the most recent item from the end.</p><h4 id="shift"><code>shift()</code></h4><p><strong>Purpose:</strong> Removes the <strong>first</strong> element from an array and returns it.</p><p><strong>Syntax:</strong></p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-js">let removedItem = array.shift();</code></pre>
+</div><p><strong>Example:</strong></p><div>
+ <div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+  <pre><code class="language-js">let colors = ['red', 'green', 'blue'];
+let firstColor = colors.shift();
+console.log(firstColor); // 'red'
+console.log(colors);     // ['green', 'blue']</code></pre>
+ </div>
+ <div class="snippet-container" id="BEnI2">
+  <div class="snippet-header" onclick="toggleSnippetAndRefresh('BEnI2','F4gPp')">
+   Try it in editor
+  </div>
+  <div class="snippet-body"><textarea id="F4gPp">let colors = ['red', 'green', 'blue'];
+let firstColor = colors.shift();
+console.log(firstColor); // 'red'
+console.log(colors);     // ['green', 'blue']</textarea> <br> <button onclick="renderIframeForClientJavascript('F4gPp','ruzc5')">Run</button> <iframe id="ruzc5" class="result_iframe" style="display: none;"></iframe>
+   <script>
+  {let editor1 = CodeMirror.fromTextArea(document.getElementById("F4gPp"), {
+    mode: "javascript",
+    lineNumbers:false,
+    tabSize: 2
+  });
+   codeMirrorMap.set("F4gPp", editor1);}
+  </script>
+  </div>
+ </div>
+</div><p><strong>Use Case:</strong> Processing a queue (FIFO — first in, first out).</p><h4 id="unshift"><code>unshift()</code></h4><p><strong>Purpose:</strong> Adds one or more elements to the <strong>beginning</strong> of an array.</p><p><strong>Syntax:</strong></p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-js">array.unshift(element1, element2, ...);</code></pre>
+</div><p><strong>Example:</strong></p><div>
+ <div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+  <pre><code class="language-js">let colors = ['green', 'blue'];
+colors.unshift('red');
+console.log(colors); // ['red', 'green', 'blue']</code></pre>
+ </div>
+ <div class="snippet-container" id="cjZUl">
+  <div class="snippet-header" onclick="toggleSnippetAndRefresh('cjZUl','3Sldy')">
+   Try it in editor
+  </div>
+  <div class="snippet-body"><textarea id="3Sldy">let colors = ['green', 'blue'];
+colors.unshift('red');
+console.log(colors); // ['red', 'green', 'blue']</textarea> <br> <button onclick="renderIframeForClientJavascript('3Sldy','SWOFm')">Run</button> <iframe id="SWOFm" class="result_iframe" style="display: none;"></iframe>
+   <script>
+  {let editor1 = CodeMirror.fromTextArea(document.getElementById("3Sldy"), {
+    mode: "javascript",
+    lineNumbers:false,
+    tabSize: 2
+  });
+   codeMirrorMap.set("3Sldy", editor1);}
+  </script>
+  </div>
+ </div>
+</div><p><strong>Use Case:</strong> Prepending items to a list.</p><h4 id="slice"><code>slice()</code></h4><p><strong>Purpose:</strong> Returns a <strong>shallow copy</strong> of a portion of an array without modifying the original array.</p><p><strong>Syntax:</strong></p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-js">array.slice(startIndex, endIndex);</code></pre>
+</div><ul>
+ <li><code>startIndex</code>: Index to start (inclusive)</li>
+ <li><code>endIndex</code>: Index to stop (exclusive)</li>
+</ul><p><strong>Example:</strong></p><div>
+ <div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+  <pre><code class="language-js">let numbers = [10, 20, 30, 40, 50];
+let subArray = numbers.slice(1, 4);
+console.log(subArray); // [20, 30, 40]
+console.log(numbers);  // [10, 20, 30, 40, 50] (unchanged)</code></pre>
+ </div>
+ <div class="snippet-container" id="LGKPf">
+  <div class="snippet-header" onclick="toggleSnippetAndRefresh('LGKPf','JsbaV')">
+   Try it in editor
+  </div>
+  <div class="snippet-body"><textarea id="JsbaV">let numbers = [10, 20, 30, 40, 50];
+let subArray = numbers.slice(1, 4);
+console.log(subArray); // [20, 30, 40]
+console.log(numbers);  // [10, 20, 30, 40, 50] (unchanged)</textarea> <br> <button onclick="renderIframeForClientJavascript('JsbaV','QJtah')">Run</button> <iframe id="QJtah" class="result_iframe" style="display: none;"></iframe>
+   <script>
+  {let editor1 = CodeMirror.fromTextArea(document.getElementById("JsbaV"), {
+    mode: "javascript",
+    lineNumbers:false,
+    tabSize: 2
+  });
+   codeMirrorMap.set("JsbaV", editor1);}
+  </script>
+  </div>
+ </div>
+</div><p><strong>Use Case:</strong> Copying a portion of an array without affecting the original.</p><h4 id="splice"><code>splice()</code></h4><p><strong>Purpose:</strong> Changes an array by <strong>adding, removing, or replacing</strong> elements in place.</p><p><strong>Syntax:</strong></p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-js">array.splice(startIndex, deleteCount, item1, item2, ...);</code></pre>
+</div><ul>
+ <li><code>startIndex</code>: Index to begin changes</li>
+ <li><code>deleteCount</code>: Number of elements to remove</li>
+ <li><code>item1, item2, ...</code>: Elements to add (optional)</li>
+</ul><p><strong>Example 1 – Removing Elements:</strong></p><div>
+ <div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+  <pre><code class="language-js">let items = ['a', 'b', 'c', 'd'];
+items.splice(1, 2); 
+console.log(items); // ['a', 'd']</code></pre>
+ </div>
+ <div class="snippet-container" id="TyJXe">
+  <div class="snippet-header" onclick="toggleSnippetAndRefresh('TyJXe','UX6vR')">
+   Try it in editor
+  </div>
+  <div class="snippet-body"><textarea id="UX6vR">let items = ['a', 'b', 'c', 'd'];
+items.splice(1, 2); 
+console.log(items); // ['a', 'd']</textarea> <br> <button onclick="renderIframeForClientJavascript('UX6vR','5Nh45')">Run</button> <iframe id="5Nh45" class="result_iframe" style="display: none;"></iframe>
+   <script>
+  {let editor1 = CodeMirror.fromTextArea(document.getElementById("UX6vR"), {
+    mode: "javascript",
+    lineNumbers:false,
+    tabSize: 2
+  });
+   codeMirrorMap.set("UX6vR", editor1);}
+  </script>
+  </div>
+ </div>
+</div><p><strong>Example 2 – Adding Elements:</strong></p><div>
+ <div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+  <pre><code class="language-js">let items = ['a', 'd'];
+items.splice(1, 0, 'b', 'c');
+console.log(items); // ['a', 'b', 'c', 'd']</code></pre>
+ </div>
+ <div class="snippet-container" id="kSaCX">
+  <div class="snippet-header" onclick="toggleSnippetAndRefresh('kSaCX','gGeaF')">
+   Try it in editor
+  </div>
+  <div class="snippet-body"><textarea id="gGeaF">let items = ['a', 'd'];
+items.splice(1, 0, 'b', 'c');
+console.log(items); // ['a', 'b', 'c', 'd']</textarea> <br> <button onclick="renderIframeForClientJavascript('gGeaF','we5xa')">Run</button> <iframe id="we5xa" class="result_iframe" style="display: none;"></iframe>
+   <script>
+  {let editor1 = CodeMirror.fromTextArea(document.getElementById("gGeaF"), {
+    mode: "javascript",
+    lineNumbers:false,
+    tabSize: 2
+  });
+   codeMirrorMap.set("gGeaF", editor1);}
+  </script>
+  </div>
+ </div>
+</div><p><strong>Example 3 – Replacing Elements:</strong></p><div>
+ <div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+  <pre><code class="language-js">let items = ['a', 'b', 'c'];
+items.splice(1, 1, 'x');
+console.log(items); // ['a', 'x', 'c']</code></pre>
+ </div>
+ <div class="snippet-container" id="3eqj6">
+  <div class="snippet-header" onclick="toggleSnippetAndRefresh('3eqj6','7bdrn')">
+   Try it in editor
+  </div>
+  <div class="snippet-body"><textarea id="7bdrn">let items = ['a', 'b', 'c'];
+items.splice(1, 1, 'x');
+console.log(items); // ['a', 'x', 'c']</textarea> <br> <button onclick="renderIframeForClientJavascript('7bdrn','DSV4H')">Run</button> <iframe id="DSV4H" class="result_iframe" style="display: none;"></iframe>
+   <script>
+  {let editor1 = CodeMirror.fromTextArea(document.getElementById("7bdrn"), {
+    mode: "javascript",
+    lineNumbers:false,
+    tabSize: 2
+  });
+   codeMirrorMap.set("7bdrn", editor1);}
+  </script>
+  </div>
+ </div>
+</div><p><strong>Use Case:</strong> Directly modifying part of an array, such as editing a to-do list.</p><h4 id="summary-table">Summary Table</h4><table>
+ <thead>
+  <tr>
+   <th>Method</th>
+   <th>Action</th>
+   <th>Modifies Original?</th>
+   <th>Common Use</th>
+  </tr>
+ </thead>
+ <tbody>
+  <tr>
+   <td><code>push()</code></td>
+   <td>Add to end</td>
+   <td>✅ Yes</td>
+   <td>Stack: Add</td>
+  </tr>
+  <tr>
+   <td><code>pop()</code></td>
+   <td>Remove from end</td>
+   <td>✅ Yes</td>
+   <td>Stack: Remove</td>
+  </tr>
+  <tr>
+   <td><code>shift()</code></td>
+   <td>Remove from start</td>
+   <td>✅ Yes</td>
+   <td>Queue: Dequeue</td>
+  </tr>
+  <tr>
+   <td><code>unshift()</code></td>
+   <td>Add to start</td>
+   <td>✅ Yes</td>
+   <td>Queue: Enqueue</td>
+  </tr>
+  <tr>
+   <td><code>slice()</code></td>
+   <td>Copy portion (no change)</td>
+   <td>❌ No</td>
+   <td>Cloning subarrays</td>
+  </tr>
+  <tr>
+   <td><code>splice()</code></td>
+   <td>Add/Remove/Replace in-place</td>
+   <td>✅ Yes</td>
+   <td>Editing arrays</td>
+  </tr>
+ </tbody>
+</table><p>Understanding these methods gives you powerful tools to manipulate arrays efficiently in a wide variety of practical programming tasks.</p><div class = "chapter-navi-section">
+<a href="#top" class="nav-button prev">↑</a>
+<a href='javascript-for-beginners.htm#arrays-and-array-methods' class="nav-button toc-link">Index</a>
+<a href="#bottom" class="nav-button next">↓</a>
+</div>
+<h2 id='iterating-arrays-with-loops'>7.3 Iterating Arrays with Loops</h2><p>Iterating over arrays—going through each item one by one—is a common task in programming. JavaScript offers several types of loops to help you work with array elements effectively. In this section, we’ll look at the most commonly used loop types: <code>for</code>, <code>while</code>, and <code>for...of</code>.</p><h3 id="the-classic-for-loop">The Classic <code>for</code> Loop</h3><p><strong>Purpose:</strong> Gives full control over the iteration process using an index.</p><p><strong>Syntax:</strong></p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-js">for (let i = 0; i &lt; array.length; i++) {
+  // Use array[i]
+}</code></pre>
+</div><p><strong>Example – Summing Numbers:</strong></p><div>
+ <div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+  <pre><code class="language-js">let numbers = [10, 20, 30];
+let sum = 0;
+
+for (let i = 0; i &lt; numbers.length; i++) {
+  sum += numbers[i];
+}
+console.log(sum); // 60</code></pre>
+ </div>
+ <div class="snippet-container" id="MvB6H">
+  <div class="snippet-header" onclick="toggleSnippetAndRefresh('MvB6H','dSWda')">
+   Try it in editor
+  </div>
+  <div class="snippet-body"><textarea id="dSWda">let numbers = [10, 20, 30];
+let sum = 0;
+
+for (let i = 0; i &lt; numbers.length; i++) {
+  sum += numbers[i];
+}
+console.log(sum); // 60</textarea> <br> <button onclick="renderIframeForClientJavascript('dSWda','JfjuR')">Run</button> <iframe id="JfjuR" class="result_iframe" style="display: none;"></iframe>
+   <script>
+  {let editor1 = CodeMirror.fromTextArea(document.getElementById("dSWda"), {
+    mode: "javascript",
+    lineNumbers:false,
+    tabSize: 2
+  });
+   codeMirrorMap.set("dSWda", editor1);}
+  </script>
+  </div>
+ </div>
+</div><p><strong>Common Mistake:</strong> Off-by-one errors like using <code>i &lt;= array.length</code> instead of <code>i &lt; array.length</code>, which will try to access an out-of-range index.</p><h3 id="the-while-loop">The <code>while</code> Loop</h3><p><strong>Purpose:</strong> Repeats a block of code while a condition is true. Useful when the number of iterations isn’t fixed or depends on dynamic conditions.</p><p><strong>Syntax:</strong></p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-js">let i = 0;
+while (i &lt; array.length) {
+  // Use array[i]
+  i++;
+}</code></pre>
+</div><p><strong>Example – Printing Elements:</strong></p><div>
+ <div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+  <pre><code class="language-js">let fruits = ['apple', 'banana', 'cherry'];
+let i = 0;
+
+while (i &lt; fruits.length) {
+  console.log(fruits[i]);
+  i++;
+}
+// Output:
+// apple
+// banana
+// cherry</code></pre>
+ </div>
+ <div class="snippet-container" id="LPxfB">
+  <div class="snippet-header" onclick="toggleSnippetAndRefresh('LPxfB','JgE1A')">
+   Try it in editor
+  </div>
+  <div class="snippet-body"><textarea id="JgE1A">let fruits = ['apple', 'banana', 'cherry'];
+let i = 0;
+
+while (i &lt; fruits.length) {
+  console.log(fruits[i]);
+  i++;
+}
+// Output:
+// apple
+// banana
+// cherry</textarea> <br> <button onclick="renderIframeForClientJavascript('JgE1A','Dnfoq')">Run</button> <iframe id="Dnfoq" class="result_iframe" style="display: none;"></iframe>
+   <script>
+  {let editor1 = CodeMirror.fromTextArea(document.getElementById("JgE1A"), {
+    mode: "javascript",
+    lineNumbers:false,
+    tabSize: 2
+  });
+   codeMirrorMap.set("JgE1A", editor1);}
+  </script>
+  </div>
+ </div>
+</div><p><strong>Tip:</strong> Always make sure your loop has an end condition. Forgetting to increment <code>i</code> can cause an infinite loop.</p><h3 id="the-for-of-loop">The <code>for...of</code> Loop</h3><p><strong>Purpose:</strong> A modern, concise way to loop through array values <strong>without using indexes</strong>. Improves readability and avoids index-related bugs.</p><p><strong>Syntax:</strong></p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-js">for (let element of array) {
+  // Use element
+}</code></pre>
+</div><p><strong>Example – Capitalizing Words:</strong></p><div>
+ <div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+  <pre><code class="language-js">let animals = ['cat', 'dog', 'fox'];
+
+for (let animal of animals) {
+  console.log(animal.toUpperCase());
+}
+// Output:
+// CAT
+// DOG
+// FOX</code></pre>
+ </div>
+ <div class="snippet-container" id="G0Yrk">
+  <div class="snippet-header" onclick="toggleSnippetAndRefresh('G0Yrk','zVlZD')">
+   Try it in editor
+  </div>
+  <div class="snippet-body"><textarea id="zVlZD">let animals = ['cat', 'dog', 'fox'];
+
+for (let animal of animals) {
+  console.log(animal.toUpperCase());
+}
+// Output:
+// CAT
+// DOG
+// FOX</textarea> <br> <button onclick="renderIframeForClientJavascript('zVlZD','fGM6A')">Run</button> <iframe id="fGM6A" class="result_iframe" style="display: none;"></iframe>
+   <script>
+  {let editor1 = CodeMirror.fromTextArea(document.getElementById("zVlZD"), {
+    mode: "javascript",
+    lineNumbers:false,
+    tabSize: 2
+  });
+   codeMirrorMap.set("zVlZD", editor1);}
+  </script>
+  </div>
+ </div>
+</div><p><strong>Use Case:</strong> When you just need the values, not the index.</p><h3 id="comparing-loop-styles">Comparing Loop Styles</h3><table>
+ <thead>
+  <tr>
+   <th>Loop Type</th>
+   <th>Best When You Need...</th>
+   <th>Has Index?</th>
+   <th>Readability</th>
+  </tr>
+ </thead>
+ <tbody>
+  <tr>
+   <td><code>for</code></td>
+   <td>Full control over start/stop/index</td>
+   <td>✅ Yes</td>
+   <td>Moderate</td>
+  </tr>
+  <tr>
+   <td><code>while</code></td>
+   <td>Dynamic stopping conditions</td>
+   <td>✅ Yes</td>
+   <td>Low–Moderate</td>
+  </tr>
+  <tr>
+   <td><code>for...of</code></td>
+   <td>Simple value-based iteration</td>
+   <td>❌ No</td>
+   <td>✅ High</td>
+  </tr>
+ </tbody>
+</table><h3 id="beginner-tips">Beginner Tips</h3><ul>
+ <li><p><strong>Avoid <code>i &lt;= array.length</code></strong> — it will go one step too far.</p></li>
+ <li><p><strong>Use <code>for...of</code></strong> when you don’t need the index—it’s cleaner and safer.</p></li>
+ <li><p><strong>Keep loops focused</strong> — avoid doing too much inside a loop block.</p></li>
+ <li><p><strong>Use <code>const</code> inside <code>for...of</code></strong> if the value doesn't change:</p>
+  <div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+   <pre><code class="language-js">for (const name of names) {
+  console.log(name);
+}</code></pre>
+  </div></li>
+</ul><h3 id="summary">Summary</h3><p>Looping through arrays is essential for tasks like summing values, transforming data, and displaying results. Understanding how and when to use different loop types will help you write cleaner, more efficient JavaScript. Start with <code>for...of</code> for simplicity, and use classic loops when more control is needed.</p><div class = "chapter-navi-section">
+<a href="#top" class="nav-button prev">↑</a>
+<a href='javascript-for-beginners.htm#arrays-and-array-methods' class="nav-button toc-link">Index</a>
+<a href="#bottom" class="nav-button next">↓</a>
+</div>
+<h2 id='advanced-array-methods-map-filter-reduce-foreach-find'>7.4 Advanced Array Methods (<code>map</code>, <code>filter</code>, <code>reduce</code>, <code>forEach</code>, <code>find</code>)</h2><p>JavaScript arrays come with powerful <strong>higher-order methods</strong> that allow you to write cleaner, more expressive code. These methods take <strong>callback functions</strong> as arguments and help you <strong>transform</strong>, <strong>filter</strong>, <strong>summarize</strong>, and <strong>search</strong> data efficiently.</p><p>Let’s explore each one with practical, real-world examples.</p><h3 id="map-transforming-data"><code>map()</code>: Transforming Data</h3><p><strong>Purpose:</strong> Creates a <strong>new array</strong> by applying a function to <strong>each element</strong> of the original array.</p><p><strong>Syntax:</strong></p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-js">array.map((element, index, array) =&gt; {
+  // return transformed value
+});</code></pre>
+</div><p><strong>Example – Convert prices from USD to EUR:</strong></p><div>
+ <div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+  <pre><code class="language-js">let usdPrices = [10, 20, 30];
+let eurPrices = usdPrices.map(price =&gt; price * 0.9);
+console.log(eurPrices); // [9, 18, 27]</code></pre>
+ </div>
+ <div class="snippet-container" id="SDN3W">
+  <div class="snippet-header" onclick="toggleSnippetAndRefresh('SDN3W','aot4x')">
+   Try it in editor
+  </div>
+  <div class="snippet-body"><textarea id="aot4x">let usdPrices = [10, 20, 30];
+let eurPrices = usdPrices.map(price =&gt; price * 0.9);
+console.log(eurPrices); // [9, 18, 27]</textarea> <br> <button onclick="renderIframeForClientJavascript('aot4x','mh0ts')">Run</button> <iframe id="mh0ts" class="result_iframe" style="display: none;"></iframe>
+   <script>
+  {let editor1 = CodeMirror.fromTextArea(document.getElementById("aot4x"), {
+    mode: "javascript",
+    lineNumbers:false,
+    tabSize: 2
+  });
+   codeMirrorMap.set("aot4x", editor1);}
+  </script>
+  </div>
+ </div>
+</div><p><strong>Use Case:</strong> Applying the same transformation to each item (e.g., converting units, formatting text).</p><h3 id="filter-selecting-subsets"><code>filter()</code>: Selecting Subsets</h3><p><strong>Purpose:</strong> Creates a <strong>new array</strong> with only the elements that <strong>pass a test</strong> (i.e., return <code>true</code> from the callback).</p><p><strong>Syntax:</strong></p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-js">array.filter((element, index, array) =&gt; {
+  return condition;
+});</code></pre>
+</div><p><strong>Example – Get users over age 18:</strong></p><div>
+ <div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+  <pre><code class="language-js">let users = [
+  { name: 'Alice', age: 17 },
+  { name: 'Bob', age: 22 },
+  { name: 'Carol', age: 19 }
+];
+
+let adults = users.filter(user =&gt; user.age &gt;= 18);
+//console.table(adults);
+
+// Pretty-print with indentation
+console.log(JSON.stringify(adults, null, 2));
+
+// [
+//   { name: 'Bob', age: 22 },
+//   { name: 'Carol', age: 19 }
+// ]</code></pre>
+ </div>
+ <div class="snippet-container" id="dmAjH">
+  <div class="snippet-header" onclick="toggleSnippetAndRefresh('dmAjH','qos3W')">
+   Try it in editor
+  </div>
+  <div class="snippet-body"><textarea id="qos3W">let users = [
+  { name: 'Alice', age: 17 },
+  { name: 'Bob', age: 22 },
+  { name: 'Carol', age: 19 }
+];
+
+let adults = users.filter(user =&gt; user.age &gt;= 18);
+//console.table(adults);
+
+// Pretty-print with indentation
+console.log(JSON.stringify(adults, null, 2));
+
+// [
+//   { name: 'Bob', age: 22 },
+//   { name: 'Carol', age: 19 }
+// ]</textarea> <br> <button onclick="renderIframeForClientJavascript('qos3W','LzvC4')">Run</button> <iframe id="LzvC4" class="result_iframe" style="display: none;"></iframe>
+   <script>
+  {let editor1 = CodeMirror.fromTextArea(document.getElementById("qos3W"), {
+    mode: "javascript",
+    lineNumbers:false,
+    tabSize: 2
+  });
+   codeMirrorMap.set("qos3W", editor1);}
+  </script>
+  </div>
+ </div>
+</div><p><strong>Use Case:</strong> Keeping only the items that match a condition (e.g., active users, valid inputs).</p><h3 id="reduce-aggregating-results"><code>reduce()</code>: Aggregating Results</h3><p><strong>Purpose:</strong> Reduces an array to a <strong>single value</strong> by applying a function cumulatively.</p><p><strong>Syntax:</strong></p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-js">array.reduce((accumulator, current, index, array) =&gt; {
+  return updatedAccumulator;
+}, initialValue);</code></pre>
+</div><p><strong>Example – Calculate total cart price:</strong></p><div>
+ <div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+  <pre><code class="language-js">let cart = [29.99, 9.99, 4.99];
+let total = cart.reduce((sum, price) =&gt; sum + price, 0);
+console.log(total); // 44.97</code></pre>
+ </div>
+ <div class="snippet-container" id="lIWJf">
+  <div class="snippet-header" onclick="toggleSnippetAndRefresh('lIWJf','OwFhJ')">
+   Try it in editor
+  </div>
+  <div class="snippet-body"><textarea id="OwFhJ">let cart = [29.99, 9.99, 4.99];
+let total = cart.reduce((sum, price) =&gt; sum + price, 0);
+console.log(total); // 44.97</textarea> <br> <button onclick="renderIframeForClientJavascript('OwFhJ','k0HQH')">Run</button> <iframe id="k0HQH" class="result_iframe" style="display: none;"></iframe>
+   <script>
+  {let editor1 = CodeMirror.fromTextArea(document.getElementById("OwFhJ"), {
+    mode: "javascript",
+    lineNumbers:false,
+    tabSize: 2
+  });
+   codeMirrorMap.set("OwFhJ", editor1);}
+  </script>
+  </div>
+ </div>
+</div><p><strong>Use Case:</strong> Summing values, counting occurrences, or building a new object from array data.</p><h3 id="foreach-executing-side-effects"><code>forEach()</code>: Executing Side Effects</h3><p><strong>Purpose:</strong> Executes a function <strong>on each element</strong> in the array. Unlike <code>map</code>, it <strong>does not return a new array</strong>.</p><p><strong>Syntax:</strong></p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-js">array.forEach((element, index, array) =&gt; {
+  // side effect (e.g., logging)
+});</code></pre>
+</div><p><strong>Example – Log each order ID:</strong></p><div>
+ <div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+  <pre><code class="language-js">let orders = [101, 102, 103];
+orders.forEach(id =&gt; console.log(`Order #${id}`));
+// Output:
+// Order #101
+// Order #102
+// Order #103</code></pre>
+ </div>
+ <div class="snippet-container" id="09Dq7">
+  <div class="snippet-header" onclick="toggleSnippetAndRefresh('09Dq7','8g0d0')">
+   Try it in editor
+  </div>
+  <div class="snippet-body"><textarea id="8g0d0">let orders = [101, 102, 103];
+orders.forEach(id =&gt; console.log(`Order #${id}`));
+// Output:
+// Order #101
+// Order #102
+// Order #103</textarea> <br> <button onclick="renderIframeForClientJavascript('8g0d0','xTWxI')">Run</button> <iframe id="xTWxI" class="result_iframe" style="display: none;"></iframe>
+   <script>
+  {let editor1 = CodeMirror.fromTextArea(document.getElementById("8g0d0"), {
+    mode: "javascript",
+    lineNumbers:false,
+    tabSize: 2
+  });
+   codeMirrorMap.set("8g0d0", editor1);}
+  </script>
+  </div>
+ </div>
+</div><p><strong>Use Case:</strong> Performing operations like logging, DOM updates, or API calls.</p><blockquote>
+ <p>⚠️ <strong>Tip:</strong> Don’t use <code>forEach()</code> when you need to transform data—use <code>map()</code> instead.</p>
+</blockquote><h3 id="find-locating-an-element"><code>find()</code>: Locating an Element</h3><p><strong>Purpose:</strong> Returns the <strong>first element</strong> that satisfies a condition. If none is found, returns <code>undefined</code>.</p><p><strong>Syntax:</strong></p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-js">array.find((element, index, array) =&gt; {
+  return condition;
+});</code></pre>
+</div><p><strong>Example – Find the first overdue task:</strong></p><div>
+ <div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+  <pre><code class="language-js">let tasks = [
+  { title: 'Pay bills', done: true },
+  { title: 'Clean room', done: false },
+  { title: 'Buy groceries', done: false }
+];
+
+let firstUndone = tasks.find(task =&gt; !task.done);
+console.log(JSON.stringify(firstUndone, null, 2));
+// { title: 'Clean room', done: false }</code></pre>
+ </div>
+ <div class="snippet-container" id="0z7mq">
+  <div class="snippet-header" onclick="toggleSnippetAndRefresh('0z7mq','lnRpK')">
+   Try it in editor
+  </div>
+  <div class="snippet-body"><textarea id="lnRpK">let tasks = [
+  { title: 'Pay bills', done: true },
+  { title: 'Clean room', done: false },
+  { title: 'Buy groceries', done: false }
+];
+
+let firstUndone = tasks.find(task =&gt; !task.done);
+console.log(JSON.stringify(firstUndone, null, 2));
+// { title: 'Clean room', done: false }</textarea> <br> <button onclick="renderIframeForClientJavascript('lnRpK','k5IO1')">Run</button> <iframe id="k5IO1" class="result_iframe" style="display: none;"></iframe>
+   <script>
+  {let editor1 = CodeMirror.fromTextArea(document.getElementById("lnRpK"), {
+    mode: "javascript",
+    lineNumbers:false,
+    tabSize: 2
+  });
+   codeMirrorMap.set("lnRpK", editor1);}
+  </script>
+  </div>
+ </div>
+</div><p><strong>Use Case:</strong> Searching for a specific match (e.g., user by ID, product by name).</p><h3 id="summary-table">Summary Table</h3><table>
+ <thead>
+  <tr>
+   <th>Method</th>
+   <th>Purpose</th>
+   <th>Returns</th>
+   <th>Mutates?</th>
+   <th>Best For</th>
+  </tr>
+ </thead>
+ <tbody>
+  <tr>
+   <td><code>map()</code></td>
+   <td>Transform elements</td>
+   <td>New array</td>
+   <td>❌</td>
+   <td>Format/change array values</td>
+  </tr>
+  <tr>
+   <td><code>filter()</code></td>
+   <td>Select elements</td>
+   <td>New array</td>
+   <td>❌</td>
+   <td>Get a subset of items</td>
+  </tr>
+  <tr>
+   <td><code>reduce()</code></td>
+   <td>Aggregate to single value</td>
+   <td>Single value</td>
+   <td>❌</td>
+   <td>Sum, count, or combine items</td>
+  </tr>
+  <tr>
+   <td><code>forEach()</code></td>
+   <td>Perform side effects</td>
+   <td><code>undefined</code></td>
+   <td>❌</td>
+   <td>Logging, DOM manipulation</td>
+  </tr>
+  <tr>
+   <td><code>find()</code></td>
+   <td>Find first match</td>
+   <td>Single item/<code>undefined</code></td>
+   <td>❌</td>
+   <td>Locate an object or value</td>
+  </tr>
+ </tbody>
+</table><p>Mastering these advanced methods lets you write elegant, efficient code for complex data tasks. With practice, you’ll find they often replace traditional loops entirely in modern JavaScript development.</p><div class = "chapter-navi-section">
+<a href="javascript-for-beginners-loops-and-iteration.htm" class="nav-button prev">←</a>
+<a href='javascript-for-beginners.htm#arrays-and-array-methods' class="nav-button toc-link">Index</a>
+<a href="javascript-for-beginners-objects-and-object-literals.htm" class="nav-button next">→</a>
+</div>
+<section class="download-section">
+  <div class="book-cover" style="background-image: url('data:image/jpg;base64,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');">
+<div class="series-name">Introduction</div>
+<div class="book-title">JavaScript for Beginners</div>
+<div class="book-subtitle">From Basics to Advanced Programming</div>
+<div class="book-footer">readbytes.github.io</div>
+</div>
+  <div class="download-info">
+    <h2 id='bottom'>Download This Ebook</h2>
+    <p class="format-label">Available formats:</p>
+    <div class="download-buttons">
+      <a href="javascript-for-beginners.pdf" class="download-button">📄 PDF</a>
+      <a href="javascript-for-beginners.epub" class="download-button">📘 EPUB</a>
+    </div>
+  </div>
+</section><div class='related-books'>
+<h2>Javascript Introduction Books</h2>
+<div class='related-book-list'>
+<a href="javascript-for-beginners.htm"><div class="book-cover" style="background-image: url('data:image/jpg;base64,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');">
+<div class="series-name">Introduction</div>
+<div class="book-title">JavaScript for Beginners</div>
+<div class="book-subtitle">From Basics to Advanced Programming</div>
+<div class="book-footer">readbytes.github.io</div>
+</div></a>
+
+
+<a href="javascript-syntax.htm"><div class="book-cover" style="background-image: url('data:image/jpg;base64,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');">
+<div class="series-name">Introduction</div>
+<div class="book-title">JavaScript Syntax</div>
+<div class="book-subtitle">From Fundamentals to Advanced Patterns</div>
+<div class="book-footer">readbytes.github.io</div>
+</div></a>
+
+
+
+<a href='javascript.htm'><div class='book-cover'>More Javascript Books</div></a>
+</div>
+</div>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+  
+  <script>
+    function copyCode(button) {
+      const code = button.nextElementSibling.innerText;
+      navigator.clipboard.writeText(code).then(() => {
+        button.textContent = 'Copied!';
+        setTimeout(() => { button.textContent = 'Copy'; }, 1500);
+      });
+    }
+  </script>  
+
+<footer class="page-footer">
+    <nav>
+      <a href="https://readbytes.github.io">Home</a> | 
+      Email:<script language="JavaScript" type="text/javascript">
+var part1 = 'yinpeng';var part6 = '263';var part2 = Math.pow(2,6);var part3 = String.fromCharCode(part2);var part4 = 'hotmail dot com';var part5 = part1 + String.fromCharCode(part2) + part4;document.write(part1 + part6 + part3 + part4);
+</script>
+    </nav>
+  <p>© 2025 — All rights reserved.</p>    
+  </footer>
+
+</body>
+</html>

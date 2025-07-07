@@ -1,0 +1,814 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>JavaScript Object-Oriented Programming Event-Driven OOP with Classes</title>
+<link rel='shortcut icon' href='https://java2s.com/style/favicon.ico'>
+<link href="https://fonts.googleapis.com/css2?family=Merriweather&display=swap" rel="stylesheet" />
+<link href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+
+
+<style>
+body {
+  background: #f8f7f5;
+  font-family: 'Merriweather', serif;
+  color: #333;
+  margin: 0;
+  padding: 2rem 1rem;
+  font-size: 15px; /* smaller body font */
+  line-height: 1.5;
+}
+
+.container {
+  max-width: 700px;
+  margin: 0 auto;
+  background: white;
+  padding: 1rem 2rem;
+  box-shadow: 0 0 15px rgba(0,0,0,0.1);
+}
+.book-title-chapter {
+  font-family: 'Merriweather', serif;
+  font-size: 2rem;
+  font-weight: bold;
+  text-align: center;
+  margin-bottom: 2rem;
+  border-bottom: 2px solid #ccc;
+  padding-bottom: 0.5rem;
+  color: #2c3e50;
+}
+
+.book-subtitle-chapter {
+  text-align: center;
+  font-size: 1rem;
+  color: #666;
+  margin-top: -1rem;
+  margin-bottom: 2rem;
+}
+
+    .related-books {
+      margin-top: 40px;
+    }
+
+    .related-books h2 {
+      font-size: 22px;
+      margin-bottom: 20px;
+      border-bottom: 2px solid #eee;
+      padding-bottom: 8px;
+      color: #333;
+    }
+    .related-book-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+h1, h2, h3 {
+  font-weight: 600;
+  margin-top: 2.5rem;
+  margin-bottom: 1rem;
+  line-height: 1.2;
+}
+
+h1 {
+  font-size: 1.8rem; /* smaller heading */
+}
+
+h2 {
+  font-size: 1.4rem;
+}
+
+h3 {
+  font-size: 1.2rem;
+}
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-family: sans-serif;
+      font-size: 1em;
+      margin: 1em 0;
+    }
+
+    th, td {
+      border: 1px solid #cccccc;
+      padding: 0.6em 1em;
+      text-align: left;
+    }
+
+    th {
+      background-color: #f2f2f2;
+      font-weight: bold;
+    }
+
+    tr:nth-child(even) {
+      background-color: #fafafa;
+    }
+
+    /* Optional hover effect */
+    tr:hover {
+      background-color: #e6f7ff;
+    }
+ 
+a {
+  color: #555;
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+
+
+.code-block {
+    position: relative;
+    margin-bottom: 1em;
+}
+.copy-button {
+    background: transparent; 
+    color: white;
+
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    border: none;
+    padding: 4px 8px;
+    font-size: 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    z-index: 1;
+}
+
+.copy-button:hover {
+background-color: #0056b3;
+}
+.page-footer {
+  margin-top: 4rem;
+  padding: 1rem 0;
+  text-align: center;
+  font-size: 0.85rem;
+  color: #666;
+  border-top: 1px solid #ccc;
+  background-color: #fafafa;
+}
+.page-footer a {
+     color: #555;
+    text-decoration: none;
+  }
+  .page-footer a:hover {
+    text-decoration: underline;
+  }
+.chapter-navi-section {
+display: flex;
+justify-content: space-between;
+align-items: center;
+padding-bottom: 10px;
+}  
+
+.nav-link {
+  color: inherit;
+  text-decoration: none;
+  opacity: 0.5;
+  transition: opacity 0.3s ease, text-decoration 0.3s ease;
+}
+
+.nav-link:hover {
+  opacity: 0.9;
+  text-decoration: underline;
+}
+
+.prev {
+  text-align: left;
+}
+.toc-link {
+  text-align: center;
+}
+.next {
+  text-align: right;
+}
+.download-section {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2rem;
+  padding: 2rem 1rem;
+  max-width: 600px;
+  margin: 3rem auto;
+  background-color: #f9f9f9;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+}
+
+    .book-cover {
+      width: 130px;
+      height: 180px;
+      
+      background-size: cover; /* Ensures the image covers the entire div */
+      background-position: center; /* Centers the image */
+            
+      background: linear-gradient(145deg, #e0dede, #f9f9f9);
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 10px;
+      box-sizing: border-box;
+      position: relative;
+      font-family: 'Roboto', sans-serif;
+    }
+
+    .book-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 16px;
+      font-weight: 600;
+      color: #fff;
+      margin-bottom: 4px;
+    }
+
+    .book-subtitle {
+      font-size: 12px;
+      color: #aaa;
+      margin-bottom: 10px;
+    }
+
+    .series-name {
+      position: absolute;
+      top: 8px;
+      left: 8px;
+      font-size: 10px;
+      color: #fff;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-weight: bold;
+    }
+
+    .book-footer {
+      position: absolute;
+      bottom: 8px;
+      font-size: 10px;
+      color: #aaa;
+    }
+
+.download-info h2 {
+  margin: 0 0 0.5rem;
+  font-size: 1.2rem;
+}
+
+.format-label {
+  margin: 0 0 0.5rem;
+  font-size: 0.95rem;
+  color: #555;
+}
+
+.download-buttons {
+  display: flex;
+  gap: 1rem;
+}
+
+.download-button {
+  background-color: #4A90E2;
+  color: white;
+  padding: 0.5em 1.2em;
+  text-decoration: none;
+  border-radius: 25px;
+  font-size: 0.95rem;
+  transition: background-color 0.3s ease;
+}
+
+.download-button:hover {
+  background-color: #357ABD;
+}
+
+    code {
+ 
+      color: #d35400; 
+    }
+html {
+    scroll-behavior: smooth;
+}
+    .snippet-container {
+      overflow: hidden;    
+    }
+
+    .snippet-header {
+      background: #f0f0f0;
+      color: #333;
+      padding: 0.75rem 1rem;
+      cursor: pointer;
+      font-size: 1rem;
+    }
+
+    .snippet-body {
+      display: none;
+      font-family: monospace;
+    }
+
+    .snippet-container.open .snippet-body {
+      display: block;
+    }
+
+.CodeMirror {
+  border: 2px solid #ccc;
+  border-radius: 4px;
+  resize: vertical;
+}
+
+    button { padding: 0.5em 1em; background: green; color: white; border: none; cursor: pointer; }
+    button:hover { background: #1e7e34; }
+    .result_iframe { width:99%; height:200px; margin-top: 1em;  resize: both;border:1px solid #ccc;}        
+</style>
+</head>
+<body> 
+
+  <div class="container">
+    <div class = "chapter-navi-section">
+<a href="javascript-object-oriented-programming-object-immutability-and-functional-oop.htm" class="nav-button prev">←</a>
+<a href='javascript-object-oriented-programming.htm#event-driven-oop-with-classes' class="nav-button toc-link">Index</a>
+<a href="javascript-object-oriented-programming-working-with-dom-using-oop.htm" class="nav-button next">→</a>
+</div>
+
+    <h1 class="book-title-chapter" id = 'top'>Event-Driven OOP with Classes</h1>
+    <h3 class="book-subtitle-chapter">JavaScript Object-Oriented Programming</h3>   
+    <!-- <h1 class ="chapter-title"></h1> -->
+    <h2 id='understanding-event-emitters'>13.1 Understanding Event Emitters</h2><p>Modern JavaScript applications often rely on <strong>event-driven programming</strong> to respond to user interactions, network responses, and other asynchronous events. Rather than executing code in a strict top-down order, event-driven systems react to events as they occur, allowing for more dynamic and interactive behavior.</p><h3 id="what-are-event-emitters">What Are Event Emitters?</h3><p>At the heart of event-driven programming in JavaScript is the <strong>Event Emitter</strong> — an object that facilitates communication between different parts of a system through the <strong>observer pattern</strong>.</p><p>The <strong>observer pattern</strong> involves two key roles:</p><ul>
+ <li><strong>Subject (Event Emitter):</strong> The object that maintains a list of observers and notifies them when events occur.</li>
+ <li><strong>Observers (Listeners):</strong> Functions or components that respond to specific events when notified.</li>
+</ul><p>This pattern promotes <strong>loose coupling</strong>: components don’t need to know about each other directly, they just listen for or emit events.</p><h3 id="basic-event-emitter-methods">Basic Event Emitter Methods</h3><p>A typical event emitter supports the following methods:</p><table>
+ <thead>
+  <tr>
+   <th>Method</th>
+   <th>Description</th>
+  </tr>
+ </thead>
+ <tbody>
+  <tr>
+   <td><code>on(event, handler)</code></td>
+   <td>Registers a listener (handler) for a specific event.</td>
+  </tr>
+  <tr>
+   <td><code>emit(event, data)</code></td>
+   <td>Triggers an event, calling all listeners attached to it.</td>
+  </tr>
+  <tr>
+   <td><code>off(event, handler)</code></td>
+   <td>Removes a specific listener from an event.</td>
+  </tr>
+ </tbody>
+</table><h3 id="example-simple-event-emitter">Example: Simple Event Emitter</h3><p>Let’s implement a minimal custom event emitter:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">📋</button>
+ <pre><code class="language-js">class EventEmitter {
+  constructor() {
+    this.events = {};
+  }
+
+  on(event, handler) {
+    if (!this.events[event]) {
+      this.events[event] = [];
+    }
+    this.events[event].push(handler);
+  }
+
+  emit(event, data) {
+    if (this.events[event]) {
+      this.events[event].forEach(handler =&gt; handler(data));
+    }
+  }
+
+  off(event, handler) {
+    if (this.events[event]) {
+      this.events[event] = this.events[event].filter(h =&gt; h !== handler);
+    }
+  }
+}
+
+
+// Using the EventEmitter
+
+const emitter = new EventEmitter();
+
+function onLogin(user) {
+  console.log(`User logged in: ${user}`);
+}
+
+emitter.on('login', onLogin);
+emitter.emit('login', 'alice'); // Output: User logged in: alice
+
+emitter.off('login', onLogin);
+emitter.emit('login', 'bob'); // No output, listener removed</code></pre>
+</div><h3 id="benefits-of-using-event-emitters">Benefits of Using Event Emitters</h3><ul>
+ <li><strong>Decoupling:</strong> Components don’t need to call each other directly. They can simply emit and respond to events.</li>
+ <li><strong>Modularity:</strong> Logic is split into smaller, manageable parts that react to specific triggers.</li>
+ <li><strong>Reusability:</strong> Event emitters can be mixed into any class to add event capabilities.</li>
+ <li><strong>Flexibility:</strong> You can add, remove, or change event handlers without altering core logic.</li>
+</ul><h3 id="common-use-cases">Common Use Cases</h3><ul>
+ <li>UI components listening for user interactions (e.g., <code>click</code>, <code>submit</code>)</li>
+ <li>Communication between services in a frontend app</li>
+ <li>Plugin systems and hooks</li>
+ <li>Logging and analytics tracking</li>
+</ul><h3 id="summary">Summary</h3><p>Event emitters bring the power of the observer pattern to JavaScript, enabling parts of your codebase to <strong>communicate without tight dependencies</strong>. By supporting methods like <code>on</code>, <code>emit</code>, and <code>off</code>, they provide a clean and flexible way to build <strong>modular, maintainable</strong>, and <strong>scalable</strong> systems. In the next section, you’ll learn how to build custom event-handling classes using this pattern in your own applications.</p><div class = "chapter-navi-section">
+<a href="#top" class="nav-button prev">↑</a>
+<a href='javascript-object-oriented-programming.htm#event-driven-oop-with-classes' class="nav-button toc-link">Index</a>
+<a href="#bottom" class="nav-button next">↓</a>
+</div>
+<h2 id='creating-custom-event-handling-classes'>13.2 Creating Custom Event-Handling Classes</h2><p>In object-oriented programming, designing <strong>custom event-handling classes</strong> enables components to communicate through events in a modular and flexible way. These classes can register listeners, emit events, and remove handlers—all essential for building dynamic applications that respond to user input, internal changes, or asynchronous events.</p><h3 id="why-build-custom-event-classes">Why Build Custom Event Classes?</h3><p>While JavaScript environments like Node.js offer built-in event systems (e.g., <code>EventEmitter</code>), in many frontend or cross-platform projects you may need to create your own event system. Doing so allows you to:</p><ul>
+ <li>Keep event logic encapsulated inside classes.</li>
+ <li>Enable any class to emit or react to events.</li>
+ <li>Improve modularity and separation of concerns.</li>
+</ul><h3 id="event-system-design">Event System Design</h3><p>A robust event-handling class should support:</p><ul>
+ <li><strong>Registration (<code>on</code>)</strong>: Attach a handler for a named event.</li>
+ <li><strong>Emission (<code>emit</code>)</strong>: Trigger an event with optional data.</li>
+ <li><strong>Deregistration (<code>off</code>)</strong>: Remove a specific handler from a named event.</li>
+ <li><strong>One-time listeners (<code>once</code>)</strong> <em>(optional)</em>: Attach a listener that runs only once.</li>
+</ul><h3 id="implementing-a-custom-event-class">Implementing a Custom Event Class</h3><p>Let’s walk through the creation of a reusable <code>EventEmitter</code> class.</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-js">class EventEmitter {
+  constructor() {
+    this.events = new Map(); // Map to store event types and their listeners
+  }
+
+  on(event, listener) {
+    if (!this.events.has(event)) {
+      this.events.set(event, []);
+    }
+    this.events.get(event).push(listener);
+  }
+
+  emit(event, data) {
+    const listeners = this.events.get(event);
+    if (listeners) {
+      listeners.forEach(listener =&gt; listener(data));
+    }
+  }
+
+  off(event, listener) {
+    const listeners = this.events.get(event);
+    if (listeners) {
+      this.events.set(event, listeners.filter(l =&gt; l !== listener));
+    }
+  }
+
+  once(event, listener) {
+    const wrapper = (data) =&gt; {
+      listener(data);
+      this.off(event, wrapper);
+    };
+    this.on(event, wrapper);
+  }
+}</code></pre>
+</div><h3 id="example-usage-in-a-custom-class">Example Usage in a Custom Class</h3><p>You can extend or embed the <code>EventEmitter</code> in any custom class:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-js">class ChatRoom extends EventEmitter {
+  constructor(name) {
+    super();
+    this.name = name;
+  }
+
+  message(user, text) {
+    const msg = `[${this.name}] ${user}: ${text}`;
+    this.emit('message', msg);
+  }
+}
+
+const room = new ChatRoom('general');
+
+function logMessage(msg) {
+  console.log('Received:', msg);
+}
+
+room.on('message', logMessage);
+room.message('Alice', 'Hello!'); // Received: [general] Alice: Hello!
+room.off('message', logMessage);
+room.message('Bob', 'Still there?'); // No output</code></pre>
+</div><div class="snippet-container" id="Hxqwp">
+ <div class="snippet-header" onclick="toggleSnippet('Hxqwp')">
+  Click to view full runnable Code
+ </div>
+ <div class="snippet-body">
+  <div class="code-block"><button class="copy-button" onclick="copyCode(this)">📋</button>
+   <pre><code class="language-js">
+class EventEmitter {
+  constructor() {
+    this.events = new Map(); // Map to store event types and their listeners
+  }
+
+  on(event, listener) {
+    if (!this.events.has(event)) {
+      this.events.set(event, []);
+    }
+    this.events.get(event).push(listener);
+  }
+
+  emit(event, data) {
+    const listeners = this.events.get(event);
+    if (listeners) {
+      listeners.forEach(listener =&gt; listener(data));
+    }
+  }
+
+  off(event, listener) {
+    const listeners = this.events.get(event);
+    if (listeners) {
+      this.events.set(event, listeners.filter(l =&gt; l !== listener));
+    }
+  }
+
+  once(event, listener) {
+    const wrapper = (data) =&gt; {
+      listener(data);
+      this.off(event, wrapper);
+    };
+    this.on(event, wrapper);
+  }
+}
+
+class ChatRoom extends EventEmitter {
+  constructor(name) {
+    super();
+    this.name = name;
+  }
+
+  message(user, text) {
+    const msg = `[${this.name}] ${user}: ${text}`;
+    this.emit('message', msg);
+  }
+}
+
+const room = new ChatRoom('general');
+
+function logMessage(msg) {
+  console.log('Received:', msg);
+}
+
+room.on('message', logMessage);
+room.message('Alice', 'Hello!'); // Received: [general] Alice: Hello!
+room.off('message', logMessage);
+room.message('Bob', 'Still there?'); // No output 
+</code></pre>
+  </div>
+ </div>
+</div><h3 id="managing-multiple-events-and-memory">Managing Multiple Events and Memory</h3><p>Using a <code>Map</code> instead of an object for storing listeners helps prevent name collisions. To manage memory effectively:</p><ul>
+ <li><strong>Remove listeners</strong> when they’re no longer needed using <code>off()</code>.</li>
+ <li>Use <code>once()</code> for handlers that should run only once.</li>
+ <li>Periodically audit your application to ensure listeners aren’t persisting longer than necessary.</li>
+</ul><p><strong>Memory Leak Tip</strong>: Long-lived listeners on short-lived objects (like DOM elements in SPA frameworks) can lead to memory leaks if not explicitly removed.</p><h3 id="best-practices">Best Practices</h3><ul>
+ <li><strong>Avoid duplicate listeners</strong>: Optionally check for existing handlers before adding.</li>
+ <li><strong>Encapsulate event logic</strong>: Don't expose internal details through events unless necessary.</li>
+ <li><strong>Prefer weak references</strong> <em>(in advanced cases)</em> to allow garbage collection (not shown here for simplicity).</li>
+</ul><h3 id="summary">Summary</h3><p>Custom event-handling classes enable clean, loosely coupled communication within your JavaScript applications. By implementing common event operations like <code>on</code>, <code>emit</code>, <code>off</code>, and <code>once</code>, your classes can broadcast changes, coordinate behavior, and enhance interactivity—all while maintaining clarity and modularity. In the next section, we’ll apply these principles to build a simple yet powerful <strong>event bus</strong>.</p><div class = "chapter-navi-section">
+<a href="#top" class="nav-button prev">↑</a>
+<a href='javascript-object-oriented-programming.htm#event-driven-oop-with-classes' class="nav-button toc-link">Index</a>
+<a href="#bottom" class="nav-button next">↓</a>
+</div>
+<h2 id='practical-building-a-simple-event-bus'>13.3 Practical: Building a Simple Event Bus</h2><p>In this section, you'll learn how to build a <strong>simple event bus</strong>—a central messaging hub that facilitates communication between different components of your application. This is especially useful in decoupled architectures, where components should not directly depend on each other but still need to react to events.</p><h3 id="what-is-an-event-bus">What Is an Event Bus?</h3><p>An <strong>event bus</strong> is a shared object or module that enables objects to:</p><ul>
+ <li><strong>Emit events</strong> when something happens.</li>
+ <li><strong>Listen to events</strong> to respond to changes or actions elsewhere.</li>
+</ul><p>It implements the <strong>observer pattern</strong>, where multiple listeners observe and respond to changes from a shared publisher (the bus).</p><h3 id="building-a-simple-eventbus-class">Building a Simple EventBus Class</h3><p>We'll build an <code>EventBus</code> class from scratch. It will support:</p><ul>
+ <li><code>on(event, listener)</code>: Register a listener for an event.</li>
+ <li><code>off(event, listener)</code>: Remove a specific listener.</li>
+ <li><code>emit(event, data)</code>: Notify all listeners of an event.</li>
+ <li><code>once(event, listener)</code>: Register a listener that fires only once.</li>
+</ul><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-js">class EventBus {
+  constructor() {
+    this.listeners = new Map(); // Stores event =&gt; [listeners]
+  }
+
+  on(event, handler) {
+    if (!this.listeners.has(event)) {
+      this.listeners.set(event, []);
+    }
+    this.listeners.get(event).push(handler);
+  }
+
+  emit(event, payload) {
+    const handlers = this.listeners.get(event);
+    if (handlers) {
+      handlers.forEach(handler =&gt; handler(payload));
+    }
+  }
+
+  off(event, handler) {
+    const handlers = this.listeners.get(event);
+    if (handlers) {
+      const filtered = handlers.filter(h =&gt; h !== handler);
+      this.listeners.set(event, filtered);
+    }
+  }
+
+  once(event, handler) {
+    const wrapper = (payload) =&gt; {
+      handler(payload);
+      this.off(event, wrapper);
+    };
+    this.on(event, wrapper);
+  }
+}</code></pre>
+</div><h3 id="example-communicating-between-components">Example: Communicating Between Components</h3><p>Let’s simulate two components—<strong>UserForm</strong> and <strong>UserList</strong>—communicating via the event bus:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-js">const bus = new EventBus();
+
+// UserList component
+class UserList {
+  constructor() {
+    this.users = [];
+    bus.on('user:added', this.addUser.bind(this));
+  }
+
+  addUser(user) {
+    this.users.push(user);
+    console.log(`User added: ${user.name}`);
+    this.display();
+  }
+
+  display() {
+    console.log("Current Users:", this.users.map(u =&gt; u.name).join(', '));
+  }
+}
+
+// UserForm component
+class UserForm {
+  submit(name) {
+    const user = { name };
+    console.log(`Submitting user: ${name}`);
+    bus.emit('user:added', user);
+  }
+}
+
+// Usage
+const userList = new UserList();
+const form = new UserForm();
+
+form.submit('Alice');
+// Output:
+// Submitting user: Alice
+// User added: Alice
+// Current Users: Alice
+
+form.submit('Bob');
+// Output:
+// Submitting user: Bob
+// User added: Bob
+// Current Users: Alice, Bob</code></pre>
+</div><h3 id="avoiding-memory-leaks">Avoiding Memory Leaks</h3><p>When components are no longer in use, be sure to call <code>off()</code> to remove listeners:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-js">// Later, if UserList is destroyed:
+bus.off('user:added', userList.addUser.bind(userList)); 
+// Won’t work as intended due to new binding</code></pre>
+</div><blockquote>
+ <p>💡 <strong>Tip</strong>: Store listener references before registering so they can be removed properly.</p>
+</blockquote><div class="snippet-container" id="IvCjN">
+ <div class="snippet-header" onclick="toggleSnippet('IvCjN')">
+  Click to view full runnable Code
+ </div>
+ <div class="snippet-body">
+  <div class="code-block"><button class="copy-button" onclick="copyCode(this)">📋</button>
+   <pre><code class="language-js">
+class EventBus {
+  constructor() {
+    this.listeners = new Map(); // Stores event =&gt; [listeners]
+  }
+
+  on(event, handler) {
+    if (!this.listeners.has(event)) {
+      this.listeners.set(event, []);
+    }
+    this.listeners.get(event).push(handler);
+  }
+
+  emit(event, payload) {
+    const handlers = this.listeners.get(event);
+    if (handlers) {
+      handlers.forEach(handler =&gt; handler(payload));
+    }
+  }
+
+  off(event, handler) {
+    const handlers = this.listeners.get(event);
+    if (handlers) {
+      const filtered = handlers.filter(h =&gt; h !== handler);
+      this.listeners.set(event, filtered);
+    }
+  }
+
+  once(event, handler) {
+    const wrapper = (payload) =&gt; {
+      handler(payload);
+      this.off(event, wrapper);
+    };
+    this.on(event, wrapper);
+  }
+}
+const bus = new EventBus();
+
+// UserList component
+class UserList {
+  constructor() {
+    this.users = [];
+    bus.on('user:added', this.addUser.bind(this));
+  }
+
+  addUser(user) {
+    this.users.push(user);
+    console.log(`User added: ${user.name}`);
+    this.display();
+  }
+
+  display() {
+    console.log("Current Users:", this.users.map(u =&gt; u.name).join(', '));
+  }
+}
+
+// UserForm component
+class UserForm {
+  submit(name) {
+    const user = { name };
+    console.log(`Submitting user: ${name}`);
+    bus.emit('user:added', user);
+  }
+}
+
+// Usage
+const userList = new UserList();
+const form = new UserForm();
+
+form.submit('Alice');
+// Output:
+// Submitting user: Alice
+// User added: Alice
+// Current Users: Alice
+
+form.submit('Bob');
+// Output:
+// Submitting user: Bob
+// User added: Bob
+// Current Users: Alice, Bob 
+</code></pre>
+  </div>
+ </div>
+</div><h3 id="summary">Summary</h3><p>An <strong>event bus</strong> promotes <strong>loose coupling</strong> by allowing components to communicate without direct references. This technique is particularly useful in:</p><ul>
+ <li>Modular frontend frameworks (e.g., Vue, React)</li>
+ <li>Pub-sub architectures</li>
+ <li>Game loops and GUI state handling</li>
+</ul><p>By implementing your own <code>EventBus</code> class, you gain fine-grained control over your application's event system and deepen your understanding of event-driven object-oriented programming.</p><p>In larger applications, consider extending this idea with namespacing, wildcard events, or async event support.</p><div class = "chapter-navi-section">
+<a href="javascript-object-oriented-programming-object-immutability-and-functional-oop.htm" class="nav-button prev">←</a>
+<a href='javascript-object-oriented-programming.htm#event-driven-oop-with-classes' class="nav-button toc-link">Index</a>
+<a href="javascript-object-oriented-programming-working-with-dom-using-oop.htm" class="nav-button next">→</a>
+</div>
+<section class="download-section">
+  <div class="book-cover" style="background-image: url('data:image/jpg;base64,/9j/4AAQSkZJRgABAgAAAQABAAD/2wBDAAgGBgcGBQgHBwcJCQgKDBQNDAsLDBkSEw8UHRofHh0aHBwgJC4nICIsIxwcKDcpLDAxNDQ0Hyc5PTgyPC4zNDL/2wBDAQkJCQwLDBgNDRgyIRwhMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjL/wAARCAC0AIIDASIAAhEBAxEB/8QAHwAAAQUBAQEBAQEAAAAAAAAAAAECAwQFBgcICQoL/8QAtRAAAgEDAwIEAwUFBAQAAAF9AQIDAAQRBRIhMUEGE1FhByJxFDKBkaEII0KxwRVS0fAkM2JyggkKFhcYGRolJicoKSo0NTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uHi4+Tl5ufo6erx8vP09fb3+Pn6/8QAHwEAAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoL/8QAtREAAgECBAQDBAcFBAQAAQJ3AAECAxEEBSExBhJBUQdhcRMiMoEIFEKRobHBCSMzUvAVYnLRChYkNOEl8RcYGRomJygpKjU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6goOEhYaHiImKkpOUlZaXmJmaoqOkpaanqKmqsrO0tba3uLm6wsPExcbHyMnK0tPU1dbX2Nna4uPk5ebn6Onq8vP09fb3+Pn6/9oADAMBAAIRAxEAPwDy+iiiuA9cKKKKAComvBazDOGUjLRseG9PUdz1B796lqSCGITrcSNs4MfmMxCoT0PHXv059BmtKTtK6OTGq9ILN7KFWU2amRYwp8w7suSDkcgqBgjIPQ80n/Hn5WWV1YCaMspDSHdhWxzg4GeDg8detPiOYYpLmFnEa7AzH+HjtwSDknHA578YZJcRs5lkj8x+5x93OM8Y/X1rphTu+aR5DdtBPMEckyLEwSTawBxnHAH6Z59T260lvcNKj+cF8uTjaeQPX6/h0qnI0qlyQVVvlKgkgnryec9uP8KGvAs3yMcEbcE/Lj36+447VpJRauiItliZ1RStsAjLjevQ4zjB/wAKqSTSPdCPcQhIYpjAzjA49cf1qUNg+axPyD7uBknoM55/DGBn8KqWvzXLseuT2xWlO1wlpFs0egpM+1KaaabZxCE0ZopCcVDZSQ7d7UUzJ9aKLjsWKKKK8w+vCiiigAq3bXQgi2lxtLHdGGO5sjjHXH1xmqlZ9+7CVVBOAM4zW1CPNOxy4x2pFl9UdzuB4OSSzbWJ654wMjgfh0qqWGQ5J6jOT155yfzNVwMZ556ClLbWJJzjIx1/z9a7notDxXdscXO4EAFRzzwDxyP5UkaFQ7FG2rkDjjd6Zx+OKQknO5+gPIcEj/GgyKwKQiMjZ1K4Ixyfrn/OKz22KSHyuyW5HGZCOhB6f5x2/KpbCIrEXbqary2rJOkbRyKzICykA4OP5dOe3vjNaYVYyqKBhR271pT2uZV3Zco402lbrSUNnIIaQmnGmGoZaD8P0opMH1/SikUWaKKK88+tCiiigArOvwTMuDzgDHr1rRqjdrI91GsQO4jII7e/tW1B2mcuM1pFZcBwSQVGTznH049f84qOKOS4cxwIztjOB2Hqa17TQprtylxcRxxRsMLvGG9xznJCntzj8utstDi2lbeS3ATAk+dcr1OCB06k+vX8eidZLQ4qOElPV6I5Sx0Aspa4UnaeRnj16iuhtrKKCMQrGQvJ+UYIPr254Hp0rbh0a5QFApmZnyHBAQDp1znpz+B9gW3AFhpk7TQsu4ALtyxU/Udc569DgmuWU3I740YU0cRciKPULmUBSCxKFTnB6H9f1J9OIFz36mo3wJXUMThiWOc5bJPXA6Z/n06VKg5rujpE+dry5ptinrRjijvUVzJsiwOrcUbmCV3YeCCOKaRVeF9rbSeM1aPNKWhbjZkdFGfeioHYtUUUVwn1oUUUUAFaOmwwlTcSof3TBlk4IX+HkEjqWAznuCelZ1df4WtbafTd9wpZVuSCGbahyqgAnvknGPw7nJewmri2Gni+CNLKY/vOsZjAyQ2RyVPsDkddw+bJroLXS9oXzTI8uxArvydw7sPXABJzyRV2OAByxReDhyy7eP8AZzxtwOg9STyTUxiltrdTDb4jQA8ZBH4Dt079PTAzm53KSsZr2dss4LuyyOcqSmQGzlS2Ou3GOvQnOBzXFeJrsrBImArTALlWycnOeqr1+Y5I7npgV2erzC3s9kEhgBGwn0XjkHHGNoxzjn6V5nqUgudSkRCwiwGkG0YXHXBJI5IGcf3e5zWtLWRyYyfLDlXUpsnkoIiQWJycVIowOaicgz43bgMdvarSx7rZ5vMjGx1XyyfmOQeQPQbefqPWu++h87UWpGO9U7qT96F6jr1q0xwpNZkpJuCT0xVRCjG7uOVgsny8jrV1GDJVBeGxg1bjOBRLYuoiSijJorIzLVFFFcR9aFFFFABXfeBlLaPKNz4+0nCqDydq8kjt7d64Gu78E3JXR5oEALNcHdk9AVUDjrzg/wD16mWw0dWpCRpIcqzqAjNnLDvleo69znr0qpd3QlijdZGe2yr+YACCuRjg54OR82MjB5FV5b8Dbcyoyqu7YN3Mhx0x6gjHpyPw4XxP4rheM2OmCWKPcfni24dgRgqVOQBhQPr2xgxCDk7IirVjTV2O1zUpmjntLV2ugqqHZ5S2w7vuFlOST6E8nIBOQBgwSyxxAGczkEFUY7dq8ZGTnrngdM5z0xT7Kxa0mtmNv+7kdl851Lq4yVYYXjAOThuoXqOlWL9cR28vluyPGMHHHTIO7nBJyMf4V1xSj7qPMrSc/eZlrGQ56ccnBqwGOzFRKxYksGHbB60/Ix6V0XPHnqxrsFWq21ZQWAPPSkuXfgDualh4XBrRaIpKyuVgjAkH8Kmj4pXUhqROlJspu6JMfWijiisyS5RRRXEfVhRRRQAVqafeQWNm7yAxs7ECbDdVAIAx1IJJweueOmDl1Wuopbgbdm+GIbtu4LlmOMA9c8DHrg475aipaMyrTcI3QXGpsIzaxSxqihWyinLNt4GeehLDK4HcYGKt6Jo0zMbiYcH7jFsAOdvAGOc5wT06+gp+n6XcpZ7JhFby3PyLDIQruAFYh2yMD5c9jn8jsSXccMflWVzaxXcsxWGeBywxuDICiqc5MhH4E4NU5292BxKH2pluKwDXEztIhheNUSIEARkgEjA6565/TgEYOoqUuWDOW3BmY7l3H5hg8DpwTgdM84ya628YwQRR7o5DH8qlCiZxu+UBunAx16Z6AZri9QaeWe4YxvGgY5D8bW69SPm4C8g4GMdwTNG7ZWJilGyKSr8nXIznNDEiM4oT7ozTXxgAdQcgeo712I8RrUpPI3nBc8dKuRj5AaZJCqnp9D9akTAAwO1W2VJppWEPIpnQ05zjoaaPcVIkSZoptFSBeooorjPqgooooAKs2YhRnncDz0RjE20nYONzng8Aegz1z0FVqpXWDcqr8Iy7dwYjaTu9Ox47Hp+bUebQwxMuWnc0L3W7p4mjguhBHHM67odyk5Y4HIB4BHHbjngAZ0UzWkTxwyoFBEqHbvZSPuggjjt+PPPFVRG8hL/M0fK7lPXggt+hPfp2FTsiRxRgFskjndyegzg55x3reMElZHjym27tnd6BqAu7NbaS6E1yqNMXjdiSM4DEsPmyeemFxg45U83qlpJbvKCGJ3ZdlT5cc4AGWCjBHUg/Me3FL4VaEalcRz+WGS3Em9lAOQy/KNwIPGOxPBxzjE9+luLE/Y2iEETMwwrfKT0xnGF4YZ9sZrJLlm7HXOXPSuxnh+3s72G/gukXzvspa2Yz+WRICNoAP3ic4xgnnt94YyxESFic88ewq3pl3JZalFdIGSSJ9ykEAqR0PTscUy6gltZ5beVds0TlHUEHDA4IyPcV1X0PLZDIPm5pDxQx5zSE55ouSNOSaXFOWg0XAbRRmipGX6KKK5D6kKKKKACq9y5QoRII+/TJJBGMZOM/h357VYqrfbBASHcSEjjbwR7H15P5c9aqG5y4z+EM252kbhACVjVmD7VPPUjrgjOAM4Jx6oUxKqs3mNt5O75gMdDz1/PqfoIrfc7ZIAWRchGHDEAk89P/ANfTinGZwjqPLKNnOSATz246nkfh+FdXQ8d3ubXhl3nmvVYK0UUOwIM7ssRu+UnBJCfNxlto9eXXtyk1kkxtoYQTmP5hjYAeFB5C/KDwBx2zyTwpPBbvfREklk8xn4IIBG35epY72xz1xw2KS9s3jkECZkkVdrOpUbMMvReMfLg88njHqOVv94zsTvS0KSymO5WZAC6tuXcocfKRjOQQR7EY/OpdXEJnjlt2YpNCjtvYE+ZjD5wTjLAnBxwRxjBNNZFMUahvmVSMNwQMDn9KvXRup9LtJZSHhQsiNtGU6HaW6+4B464710I8+S1M08qDSGl7EU3vVEDloNItK2ccUmIb+NFNxRQBpUUUVyH1QUUUUAFULx9tyBtD5TLLnHAOf/rfn+F+qF6cXCfKCNp6tgZ5/pmrp/EcuL/hBGJDbqCxjUhWTgsSOvI9OPbofemSIFZEEqkHGTxkjOep5x1Of0pkjmeRis0caMcBS2VTJ+vr35PGeaY5ZCUMo2pnPyjOCOOOO305xW7PIsXLWc2dsZFh/eq6yRthg6bQxHqMbsE8A4UYIyas2Op3mpEC4yyAsTOFOFI3N8zHtkrjkYA7YzWYHXB/eSFH+aRVzl+e+MdQf1NJaXJ+1SpZtOiSSfuk3GSVB0UZG0E4OO2T2FQ43WprTbs0aV4qJIEgBALZLgEZPXg9O/8ALnipIozJYysJlQRcmM5+bJxlcDHHfke1D7ZIlmKbS65ZSrYPvluTnPqRxS28Il8yMOFYKSAxwpAUsfx4wB6n8yLOeqrMpZ5x2qM/ep5BDH1ppHNaIyFFBPFJQaGA3mijiikBpUUUVyn1IUUUUAFZ98VS5jyxVnXbk42j+f8AL8a0KztRhMkoZY2YquSNo245/i9fb3q6fxHNi/4YK0cNxGssIEZ6sBkA/wB5exzgc+/Wo5VkLEo3lxK7FHRMZ7HnHbC9eBn3yWI+1ERhkMuBng4z054PQ+lDSfaVSPyiMLgHOT167cf5/EVueTuyUASKGZlDqqynOWIGc5ODzwcn27+tV7cIOJPmOTnAC57jB5HQnj245FWLdYioM0bM4JKgMSFAxxj1z2+nFNnHl2jZnkDBg6LvyBx14GewHbqD0pLcIv3rFrz4p9PjVURXQ4LqThgq4yM9M8ccdRVu2O6RVMiKrrtLE/KM9z1OB1/CseEvmJiinAUZyMsDjgED6cdR09a1oJGt5IpImKOjZR16j0IpNWM625Vk4kIprVLdrsunBUKQTlfT2qJjmrRiJnijNJnigU2AYoo4oqQNKiiiuU+pCiiigAqhqEYJQmM7mIAfIwBznPp1H+RV+qF/jzFI5IUkrjjHPOfzq6fxHNi/4RVkzJbHlgQNpUZ559D7nHtUkXlSRiSVVckrubOByemO59s+/biGXDFWgyGx2PX6H65FS4MbbJHyh2YJyuV5BGcdMZ45Pp0rfoeT0EYBo3ICGIsFG0/dHcr+IIz+XBpbg+XEis5kwykgsPwxnpxjnB6fWljIjyWJ3MMNkAnknLYI9h9OtQXbOkQQhlIGQAemRggjrjg89KOoLeyEtZTFCCrlWDHcpYheBkZAxz179q08YkDZ4bBwOKyLf5UZGG1/v5xk+3f0z+ZrSil8yKMkHONpz7YokiayJrzO6MsRynbHqetVye1TXbKfLwOcHNQE8fhRHYwE70opuc0oqmIXB9KKXiioA0aKKK5j6kKKKKACs+9/4+AMA7gqHI7Emiirhuc2L/hFQFWZ3EaL8uQAOmNv496ers828k7hKVJznJJ+8c9/mPtRRWy2PKLVrAkiTM43bIUIyOu7AOf89+c1Udi6yFtuNrjAUADGenFFFV1GVLYbyykkDC9PqP8AGtG2A8kHpyePwFFFOWxFYmuj8ie9Qn/GiiojsYDacKKKbEx2BRRRSEf/2Q==');">
+<div class="series-name">Introduction</div>
+<div class="book-title">JavaScript Object-Oriented Programming</div>
+<div class="book-subtitle">From Basics to Advanced Design</div>
+<div class="book-footer">readbytes.github.io</div>
+</div>
+  <div class="download-info">
+    <h2 id='bottom'>Download This Ebook</h2>
+    <p class="format-label">Available formats:</p>
+    <div class="download-buttons">
+      <a href="javascript-object-oriented-programming.pdf" class="download-button">📄 PDF</a>
+      <a href="javascript-object-oriented-programming.epub" class="download-button">📘 EPUB</a>
+    </div>
+  </div>
+</section><div class='related-books'>
+<h2>Java Introduction Books</h2>
+<div class='related-book-list'>
+<a href="javascript-object-oriented-programming.htm"><div class="book-cover" style="background-image: url('data:image/jpg;base64,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');">
+<div class="series-name">Introduction</div>
+<div class="book-title">JavaScript Object-Oriented Programming</div>
+<div class="book-subtitle">From Basics to Advanced Design</div>
+<div class="book-footer">readbytes.github.io</div>
+</div></a>
+
+
+
+<a href='java.htm'><div class='book-cover'>More Java Books</div></a>
+</div>
+</div>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+    <script>
+  function toggleSnippet(id) {
+      const box = document.getElementById(id);
+      box.classList.toggle("open");
+  }  
+  </script>
+  <script>
+    function copyCode(button) {
+      const code = button.nextElementSibling.innerText;
+      navigator.clipboard.writeText(code).then(() => {
+        button.textContent = 'Copied!';
+        setTimeout(() => { button.textContent = 'Copy'; }, 1500);
+      });
+    }
+  </script>  
+
+<footer class="page-footer">
+    <nav>
+      <a href="https://readbytes.github.io">Home</a> | 
+      Email:<script language="JavaScript" type="text/javascript">
+var part1 = 'yinpeng';var part6 = '263';var part2 = Math.pow(2,6);var part3 = String.fromCharCode(part2);var part4 = 'hotmail dot com';var part5 = part1 + String.fromCharCode(part2) + part4;document.write(part1 + part6 + part3 + part4);
+</script>
+    </nav>
+  <p>© 2025 — All rights reserved.</p>    
+  </footer>
+
+</body>
+</html>

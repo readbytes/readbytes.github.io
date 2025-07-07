@@ -1,0 +1,812 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>Java Collections Streams and Functional Programming with Collections</title>
+<link rel='shortcut icon' href='https://java2s.com/style/favicon.ico'>
+<link href="https://fonts.googleapis.com/css2?family=Merriweather&display=swap" rel="stylesheet" />
+<link href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+
+
+<style>
+body {
+  background: #f8f7f5;
+  font-family: 'Merriweather', serif;
+  color: #333;
+  margin: 0;
+  padding: 2rem 1rem;
+  font-size: 15px; /* smaller body font */
+  line-height: 1.5;
+}
+
+.container {
+  max-width: 700px;
+  margin: 0 auto;
+  background: white;
+  padding: 1rem 2rem;
+  box-shadow: 0 0 15px rgba(0,0,0,0.1);
+}
+.book-title-chapter {
+  font-family: 'Merriweather', serif;
+  font-size: 2rem;
+  font-weight: bold;
+  text-align: center;
+  margin-bottom: 2rem;
+  border-bottom: 2px solid #ccc;
+  padding-bottom: 0.5rem;
+  color: #2c3e50;
+}
+
+.book-subtitle-chapter {
+  text-align: center;
+  font-size: 1rem;
+  color: #666;
+  margin-top: -1rem;
+  margin-bottom: 2rem;
+}
+
+    .related-books {
+      margin-top: 40px;
+    }
+
+    .related-books h2 {
+      font-size: 22px;
+      margin-bottom: 20px;
+      border-bottom: 2px solid #eee;
+      padding-bottom: 8px;
+      color: #333;
+    }
+    .related-book-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+h1, h2, h3 {
+  font-weight: 600;
+  margin-top: 2.5rem;
+  margin-bottom: 1rem;
+  line-height: 1.2;
+}
+
+h1 {
+  font-size: 1.8rem; /* smaller heading */
+}
+
+h2 {
+  font-size: 1.4rem;
+}
+
+h3 {
+  font-size: 1.2rem;
+}
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-family: sans-serif;
+      font-size: 1em;
+      margin: 1em 0;
+    }
+
+    th, td {
+      border: 1px solid #cccccc;
+      padding: 0.6em 1em;
+      text-align: left;
+    }
+
+    th {
+      background-color: #f2f2f2;
+      font-weight: bold;
+    }
+
+    tr:nth-child(even) {
+      background-color: #fafafa;
+    }
+
+    /* Optional hover effect */
+    tr:hover {
+      background-color: #e6f7ff;
+    }
+ 
+a {
+  color: #555;
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+
+
+.code-block {
+    position: relative;
+    margin-bottom: 1em;
+}
+.copy-button {
+    background: transparent; 
+    color: white;
+
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    border: none;
+    padding: 4px 8px;
+    font-size: 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    z-index: 1;
+}
+
+.copy-button:hover {
+background-color: #0056b3;
+}
+.page-footer {
+  margin-top: 4rem;
+  padding: 1rem 0;
+  text-align: center;
+  font-size: 0.85rem;
+  color: #666;
+  border-top: 1px solid #ccc;
+  background-color: #fafafa;
+}
+.page-footer a {
+     color: #555;
+    text-decoration: none;
+  }
+  .page-footer a:hover {
+    text-decoration: underline;
+  }
+.chapter-navi-section {
+display: flex;
+justify-content: space-between;
+align-items: center;
+padding-bottom: 10px;
+}  
+
+.nav-link {
+  color: inherit;
+  text-decoration: none;
+  opacity: 0.5;
+  transition: opacity 0.3s ease, text-decoration 0.3s ease;
+}
+
+.nav-link:hover {
+  opacity: 0.9;
+  text-decoration: underline;
+}
+
+.prev {
+  text-align: left;
+}
+.toc-link {
+  text-align: center;
+}
+.next {
+  text-align: right;
+}
+.download-section {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2rem;
+  padding: 2rem 1rem;
+  max-width: 600px;
+  margin: 3rem auto;
+  background-color: #f9f9f9;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+}
+
+    .book-cover {
+      width: 130px;
+      height: 180px;
+      
+      background-size: cover; /* Ensures the image covers the entire div */
+      background-position: center; /* Centers the image */
+            
+      background: linear-gradient(145deg, #e0dede, #f9f9f9);
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 10px;
+      box-sizing: border-box;
+      position: relative;
+      font-family: 'Roboto', sans-serif;
+    }
+
+    .book-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 16px;
+      font-weight: 600;
+      color: #fff;
+      margin-bottom: 4px;
+    }
+
+    .book-subtitle {
+      font-size: 12px;
+      color: #aaa;
+      margin-bottom: 10px;
+    }
+
+    .series-name {
+      position: absolute;
+      top: 8px;
+      left: 8px;
+      font-size: 10px;
+      color: #fff;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-weight: bold;
+    }
+
+    .book-footer {
+      position: absolute;
+      bottom: 8px;
+      font-size: 10px;
+      color: #aaa;
+    }
+
+.download-info h2 {
+  margin: 0 0 0.5rem;
+  font-size: 1.2rem;
+}
+
+.format-label {
+  margin: 0 0 0.5rem;
+  font-size: 0.95rem;
+  color: #555;
+}
+
+.download-buttons {
+  display: flex;
+  gap: 1rem;
+}
+
+.download-button {
+  background-color: #4A90E2;
+  color: white;
+  padding: 0.5em 1.2em;
+  text-decoration: none;
+  border-radius: 25px;
+  font-size: 0.95rem;
+  transition: background-color 0.3s ease;
+}
+
+.download-button:hover {
+  background-color: #357ABD;
+}
+
+    code {
+ 
+      color: #d35400; 
+    }
+html {
+    scroll-behavior: smooth;
+}
+    .snippet-container {
+      overflow: hidden;    
+    }
+
+    .snippet-header {
+      background: #f0f0f0;
+      color: #333;
+      padding: 0.75rem 1rem;
+      cursor: pointer;
+      font-size: 1rem;
+    }
+
+    .snippet-body {
+      display: none;
+      font-family: monospace;
+    }
+
+    .snippet-container.open .snippet-body {
+      display: block;
+    }
+
+.CodeMirror {
+  border: 2px solid #ccc;
+  border-radius: 4px;
+  resize: vertical;
+}
+
+    button { padding: 0.5em 1em; background: green; color: white; border: none; cursor: pointer; }
+    button:hover { background: #1e7e34; }
+    .result_iframe { width:99%; height:200px; margin-top: 1em;  resize: both;border:1px solid #ccc;}        
+</style>
+</head>
+<body> 
+
+  <div class="container">
+    <div class = "chapter-navi-section">
+<a href="java-collections-concurrent-collections.htm" class="nav-button prev">←</a>
+<a href='java-collections.htm#streams-and-functional-programming-with-collections' class="nav-button toc-link">Index</a>
+<a href="java-collections-advanced-collection-patterns-and-best-practices.htm" class="nav-button next">→</a>
+</div>
+
+    <h1 class="book-title-chapter" id = 'top'>Streams and Functional Programming with Collections</h1>
+    <h3 class="book-subtitle-chapter">Java Collections</h3>   
+    <!-- <h1 class ="chapter-title"></h1> -->
+    <h2 id='introduction-to-streams-api'>14.1 Introduction to Streams API</h2><p>The <strong>Streams API</strong>, introduced in Java 8, revolutionized how developers work with collections by offering a <strong>declarative, functional-style approach</strong> to data processing. Rather than relying on loops and external iteration, streams enable concise and readable code that focuses on <em>what</em> to do with data rather than <em>how</em> to do it.</p><h3 id="what-is-a-stream">What Is a Stream?</h3><p>A <strong>stream</strong> is a sequence of elements that supports <strong>aggregate operations</strong> such as filtering, mapping, and reducing. Streams don’t store data themselves; instead, they operate on data sources like <code>Collection</code>, <code>List</code>, or arrays. Think of a stream as a pipeline through which data flows, undergoing transformations or actions along the way.</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-java">List&lt;String&gt; names = Arrays.asList("Alice", "Bob", "Charlie");
+names.stream()
+     .filter(name -&gt; name.startsWith("A"))
+     .forEach(System.out::println);  // Output: Alice</code></pre>
+</div><p>In this example, the stream filters names starting with "A" and prints them. This approach is both readable and expressive, eliminating boilerplate loop constructs.</p><h3 id="key-characteristics-of-streams">Key Characteristics of Streams</h3><ol>
+ <li><p><strong>Declarative and Functional</strong>: Streams favor a high-level, declarative style. Operations like <code>filter</code>, <code>map</code>, and <code>collect</code> describe <em>what</em> should happen, not <em>how</em> to loop or manage state.</p></li>
+ <li><p><strong>Lazy Evaluation</strong>: Intermediate operations (like <code>filter</code> or <code>map</code>) are <strong>lazy</strong>—they don't execute until a terminal operation (like <code>forEach</code>, <code>collect</code>, or <code>reduce</code>) is invoked. This enables performance optimizations, such as short-circuiting.</p></li>
+ <li><p><strong>Single Use</strong>: Streams can only be traversed once. After a terminal operation, the stream is considered consumed.</p></li>
+ <li><p><strong>Can Be Parallelized</strong>: With <code>.parallelStream()</code>, the same operations can be processed in parallel, improving performance for large datasets.</p></li>
+</ol><h3 id="streams-vs-collections">Streams vs. Collections</h3><table>
+ <thead>
+  <tr>
+   <th>Feature</th>
+   <th>Collection</th>
+   <th>Stream</th>
+  </tr>
+ </thead>
+ <tbody>
+  <tr>
+   <td>Data Structure</td>
+   <td>Stores elements (in memory)</td>
+   <td>Computes elements on demand</td>
+  </tr>
+  <tr>
+   <td>Iteration</td>
+   <td>External (e.g., for-loop)</td>
+   <td>Internal (handled by stream pipeline)</td>
+  </tr>
+  <tr>
+   <td>Mutability</td>
+   <td>Can be modified (add/remove)</td>
+   <td>Immutable – does not modify source</td>
+  </tr>
+  <tr>
+   <td>Reusability</td>
+   <td>Can iterate multiple times</td>
+   <td>Consumed after one use</td>
+  </tr>
+ </tbody>
+</table><h3 id="why-use-streams">Why Use Streams?</h3><p>Streams simplify complex data manipulations, such as filtering or aggregating, into a series of concise steps:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-java">int sum = numbers.stream()
+                 .filter(n -&gt; n &gt; 0)
+                 .mapToInt(Integer::intValue)
+                 .sum();  // Sum of positive integers</code></pre>
+</div><p>This avoids verbose loops and improves clarity, especially in multi-step transformations.</p><p>By separating the <strong>intent</strong> of data processing from the <strong>mechanics</strong>, the Streams API encourages cleaner, more maintainable code. As we delve deeper into filtering, mapping, reducing, and collecting in later sections, you’ll see just how powerful and elegant stream-based programming can be.</p><div class = "chapter-navi-section">
+<a href="#top" class="nav-button prev">↑</a>
+<a href='java-collections.htm#streams-and-functional-programming-with-collections' class="nav-button toc-link">Index</a>
+<a href="#bottom" class="nav-button next">↓</a>
+</div>
+<h2 id='filtering-mapping-reducing-collections'>14.2 Filtering, Mapping, Reducing Collections</h2><p>The Streams API in Java provides a powerful set of <strong>core operations</strong> that allow us to process collections in a fluent and expressive manner. The three most essential operations are <strong>filtering</strong>, <strong>mapping</strong>, and <strong>reducing</strong>. These form the backbone of functional-style data processing in Java.</p><h3 id="filtering-selecting-elements">Filtering: Selecting Elements</h3><p><strong><code>filter()</code></strong> is an intermediate operation that lets you retain elements based on a condition. It takes a predicate (a function that returns <code>true</code> or <code>false</code>) and produces a new stream with only the elements that match.</p><p><strong>Example:</strong></p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-java">List&lt;String&gt; names = Arrays.asList("Alice", "Bob", "Amanda", "Brian");
+
+List&lt;String&gt; filtered = names.stream()
+    .filter(name -&gt; name.startsWith("A"))
+    .collect(Collectors.toList());
+
+System.out.println(filtered); // Output: [Alice, Amanda]</code></pre>
+</div><p>In this example, only names starting with "A" are selected.</p><h3 id="mapping-transforming-elements">Mapping: Transforming Elements</h3><p><strong><code>map()</code></strong> is another intermediate operation that transforms each element of the stream into another form. It takes a function and applies it to each element.</p><p><strong>Example:</strong></p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-java">List&lt;String&gt; names = Arrays.asList("Alice", "Bob", "Charlie");
+
+List&lt;Integer&gt; nameLengths = names.stream()
+    .map(String::length)
+    .collect(Collectors.toList());
+
+System.out.println(nameLengths); // Output: [5, 3, 7]</code></pre>
+</div><p>Here, the <code>map()</code> function transforms each string into its length.</p><h3 id="reducing-aggregating-results">Reducing: Aggregating Results</h3><p><strong><code>reduce()</code></strong> is a terminal operation that combines elements into a single result, such as a sum or concatenation. It takes a binary operator (e.g., addition) and applies it cumulatively.</p><p><strong>Example:</strong></p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-java">List&lt;Integer&gt; numbers = Arrays.asList(1, 2, 3, 4, 5);
+
+int sum = numbers.stream()
+    .reduce(0, Integer::sum);
+
+System.out.println(sum); // Output: 15</code></pre>
+</div><p>The stream reduces the list of integers to their total sum.</p><h3 id="chaining-combining-operations-fluently">Chaining: Combining Operations Fluently</h3><p>One of the most powerful aspects of streams is the ability to chain operations together to build complex data transformations in a clean and readable way.</p><p><strong>Example:</strong></p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-java">List&lt;String&gt; words = Arrays.asList("stream", "filter", "map", "reduce", "collect");
+
+int totalChars = words.stream()
+    .filter(word -&gt; word.length() &gt; 4)   // Keep words longer than 4 characters
+    .map(String::length)                 // Convert to word length
+    .reduce(0, Integer::sum);            // Sum the lengths
+
+System.out.println(totalChars); // Output: 30</code></pre>
+</div><p>This example filters out short words, maps the remaining words to their lengths, and then sums those lengths.</p><div class="snippet-container" id="Bgzrp">
+ <div class="snippet-header" onclick="toggleSnippet('Bgzrp')">
+  Click to view full runnable Code
+ </div>
+ <div class="snippet-body">
+  <div class="code-block"><button class="copy-button" onclick="copyCode(this)">📋</button>
+   <pre><code class="language-java">
+import java.util.*;
+import java.util.stream.Collectors;
+
+public class StreamOperationsDemo {
+    public static void main(String[] args) {
+        // FILTER: Select names starting with "A"
+        List&lt;String&gt; names = Arrays.asList("Alice", "Bob", "Amanda", "Brian");
+        List&lt;String&gt; filtered = names.stream()
+            .filter(name -&gt; name.startsWith("A"))
+            .collect(Collectors.toList());
+        System.out.println("Filtered (starts with A): " + filtered); // [Alice, Amanda]
+
+        // MAP: Transform names to their lengths
+        List&lt;String&gt; moreNames = Arrays.asList("Alice", "Bob", "Charlie");
+        List&lt;Integer&gt; nameLengths = moreNames.stream()
+            .map(String::length)
+            .collect(Collectors.toList());
+        System.out.println("Name lengths: " + nameLengths); // [5, 3, 7]
+
+        // REDUCE: Sum a list of integers
+        List&lt;Integer&gt; numbers = Arrays.asList(1, 2, 3, 4, 5);
+        int sum = numbers.stream()
+            .reduce(0, Integer::sum);
+        System.out.println("Sum of numbers: " + sum); // 15
+
+        // CHAINING: Filter, map, and reduce
+        List&lt;String&gt; words = Arrays.asList("stream", "filter", "map", "reduce", "collect");
+        int totalChars = words.stream()
+            .filter(word -&gt; word.length() &gt; 4)
+            .map(String::length)
+            .reduce(0, Integer::sum);
+        System.out.println("Total characters (length &gt; 4): " + totalChars); // 30
+    }
+} 
+</code></pre>
+  </div>
+ </div>
+</div><h3 id="summary">Summary</h3><table>
+ <thead>
+  <tr>
+   <th>Operation</th>
+   <th>Purpose</th>
+   <th>Type</th>
+  </tr>
+ </thead>
+ <tbody>
+  <tr>
+   <td><code>filter()</code></td>
+   <td>Selects elements conditionally</td>
+   <td>Intermediate</td>
+  </tr>
+  <tr>
+   <td><code>map()</code></td>
+   <td>Transforms elements</td>
+   <td>Intermediate</td>
+  </tr>
+  <tr>
+   <td><code>reduce()</code></td>
+   <td>Combines elements into one value</td>
+   <td>Terminal</td>
+  </tr>
+ </tbody>
+</table><p>Filtering, mapping, and reducing are foundational to stream processing. They allow developers to write clean, concise, and declarative code for complex data transformations. In the next section, we'll expand this foundation using <code>Collectors</code> for grouped results and explore the benefits of parallel streams.</p><div class = "chapter-navi-section">
+<a href="#top" class="nav-button prev">↑</a>
+<a href='java-collections.htm#streams-and-functional-programming-with-collections' class="nav-button toc-link">Index</a>
+<a href="#bottom" class="nav-button next">↓</a>
+</div>
+<h2 id='collectors-and-parallel-streams'>14.3 Collectors and Parallel Streams</h2><p>The Streams API provides a powerful way to process collections functionally, and <strong>collectors</strong> play a central role in gathering the results of stream operations. At the same time, <strong>parallel streams</strong> enable data processing across multiple threads for improved performance—if used wisely.</p><h3 id="collectors-gathering-results">Collectors: Gathering Results</h3><p>The <strong><code>Collectors</code></strong> class provides a variety of static methods that can be used to <strong>collect</strong> stream elements into various formats. These methods are typically passed to the <code>collect()</code> terminal operation.</p><h4 id="common-collectors">Common Collectors</h4><ol>
+ <li><p><strong><code>Collectors.toList()</code></strong> Gathers stream elements into a <code>List</code>.</p>
+  <div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+   <pre><code class="language-java">List&lt;String&gt; names = Stream.of("Alice", "Bob", "Charlie")
+    .collect(Collectors.toList());</code></pre>
+  </div></li>
+ <li><p><strong><code>Collectors.toSet()</code></strong> Collects elements into a <code>Set</code>, eliminating duplicates.</p>
+  <div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+   <pre><code class="language-java">Set&lt;Integer&gt; numbers = Stream.of(1, 2, 2, 3)
+    .collect(Collectors.toSet()); // Output: [1, 2, 3]</code></pre>
+  </div></li>
+ <li><p><strong><code>Collectors.joining()</code></strong> Concatenates strings into a single string, optionally with delimiters.</p>
+  <div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+   <pre><code class="language-java">String result = Stream.of("Java", "Streams", "API")
+    .collect(Collectors.joining(", "));
+System.out.println(result); // Output: Java, Streams, API</code></pre>
+  </div></li>
+ <li><p><strong><code>Collectors.groupingBy()</code></strong> Groups elements by a classification function, returning a <code>Map</code>.</p>
+  <div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+   <pre><code class="language-java">List&lt;String&gt; words = Arrays.asList("apple", "banana", "apricot", "blueberry");
+
+Map&lt;Character, List&lt;String&gt;&gt; grouped = words.stream()
+    .collect(Collectors.groupingBy(w -&gt; w.charAt(0)));
+
+System.out.println(grouped);
+// Output: {a=[apple, apricot], b=[banana, blueberry]}</code></pre>
+  </div></li>
+ <li><p><strong><code>Collectors.summarizingInt()</code></strong> Provides summary statistics like count, sum, min, max, and average.</p>
+  <div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+   <pre><code class="language-java">IntSummaryStatistics stats = Stream.of(3, 5, 7, 2, 9)
+    .collect(Collectors.summarizingInt(Integer::intValue));
+
+System.out.println(stats); // count=5, sum=26, min=2, average=5.2, max=9</code></pre>
+  </div></li>
+</ol><h3 id="parallel-streams">Parallel Streams</h3><p>Parallel streams offer a convenient way to leverage <strong>multi-core processors</strong> by dividing a stream’s elements and processing them concurrently.</p><p>To convert a regular stream into a parallel one, simply call <code>parallel()</code>:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-java">List&lt;Integer&gt; nums = IntStream.range(1, 10000)
+    .boxed()
+    .collect(Collectors.toList());
+
+int sum = nums.parallelStream()
+    .reduce(0, Integer::sum);
+System.out.println("Sum: " + sum);</code></pre>
+</div><h4 id="benefits">Benefits</h4><ul>
+ <li>Improved performance for <strong>large datasets</strong>.</li>
+ <li>Automatic management of threads by the <strong>ForkJoinPool</strong>.</li>
+</ul><h4 id="caveats">Caveats</h4><ul>
+ <li><strong>Thread safety</strong>: Make sure that the collector used is <strong>concurrent-safe</strong> or use <code>Collectors.toConcurrentMap()</code> or similar.</li>
+ <li><strong>Ordering</strong>: Parallel streams may <strong>not preserve encounter order</strong>, unless explicitly told (e.g., using <code>forEachOrdered()</code>).</li>
+ <li><strong>Overhead</strong>: For small data sets, the overhead of parallelization may outweigh benefits.</li>
+</ul><h4 id="example-demonstrating-ordering-issue">Example: Demonstrating Ordering Issue</h4><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-java">List&lt;String&gt; letters = Arrays.asList("A", "B", "C", "D", "E");
+
+System.out.println("Using parallel forEach:");
+letters.parallelStream().forEach(System.out::print); // Order not guaranteed
+
+System.out.println("\nUsing parallel forEachOrdered:");
+letters.parallelStream().forEachOrdered(System.out::print); // Order preserved</code></pre>
+</div><div class="snippet-container" id="9WVHo">
+ <div class="snippet-header" onclick="toggleSnippet('9WVHo')">
+  Click to view full runnable Code
+ </div>
+ <div class="snippet-body">
+  <div class="code-block"><button class="copy-button" onclick="copyCode(this)">📋</button>
+   <pre><code class="language-java">
+import java.util.*;
+import java.util.function.Function;
+import java.util.stream.*;
+
+public class CollectorAndParallelDemo {
+    public static void main(String[] args) {
+        // toList()
+        List&lt;String&gt; names = Stream.of("Alice", "Bob", "Charlie")
+            .collect(Collectors.toList());
+        System.out.println("List: " + names);
+
+        // toSet()
+        Set&lt;Integer&gt; numbers = Stream.of(1, 2, 2, 3)
+            .collect(Collectors.toSet());
+        System.out.println("Set (no duplicates): " + numbers);
+
+        // joining()
+        String joined = Stream.of("Java", "Streams", "API")
+            .collect(Collectors.joining(", "));
+        System.out.println("Joined string: " + joined);
+
+        // groupingBy()
+        List&lt;String&gt; words = Arrays.asList("apple", "banana", "apricot", "blueberry");
+        Map&lt;Character, List&lt;String&gt;&gt; grouped = words.stream()
+            .collect(Collectors.groupingBy(w -&gt; w.charAt(0)));
+        System.out.println("Grouped by first letter: " + grouped);
+
+        // summarizingInt()
+        IntSummaryStatistics stats = Stream.of(3, 5, 7, 2, 9)
+            .collect(Collectors.summarizingInt(Integer::intValue));
+        System.out.println("Summary statistics: " + stats);
+
+        // Parallel stream sum
+        List&lt;Integer&gt; bigList = IntStream.range(1, 10_000)
+            .boxed()
+            .collect(Collectors.toList());
+        int sum = bigList.parallelStream()
+            .reduce(0, Integer::sum);
+        System.out.println("Parallel sum: " + sum);
+
+        // Demonstrating ordering issue
+        List&lt;String&gt; letters = Arrays.asList("A", "B", "C", "D", "E");
+
+        System.out.print("Parallel forEach: ");
+        letters.parallelStream().forEach(System.out::print); // May print out of order
+
+        System.out.print("\nParallel forEachOrdered: ");
+        letters.parallelStream().forEachOrdered(System.out::print); // Preserves order
+    }
+} 
+</code></pre>
+  </div>
+ </div>
+</div><h3 id="summary">Summary</h3><table>
+ <thead>
+  <tr>
+   <th>Collector</th>
+   <th>Use Case</th>
+  </tr>
+ </thead>
+ <tbody>
+  <tr>
+   <td><code>toList()</code>, <code>toSet()</code></td>
+   <td>Gather into collections</td>
+  </tr>
+  <tr>
+   <td><code>joining()</code></td>
+   <td>Concatenate string results</td>
+  </tr>
+  <tr>
+   <td><code>groupingBy()</code></td>
+   <td>Classify elements into map groups</td>
+  </tr>
+  <tr>
+   <td><code>summarizingInt()</code></td>
+   <td>Collect numeric stats</td>
+  </tr>
+ </tbody>
+</table><p><strong>Parallel streams</strong> can greatly enhance performance but must be used with <strong>careful attention to side effects, ordering, and shared mutable state</strong>.</p><p>In the next section, we’ll explore more hands-on examples to bring together the concepts of filtering, mapping, reducing, and collecting—all in a functional style.</p><div class = "chapter-navi-section">
+<a href="#top" class="nav-button prev">↑</a>
+<a href='java-collections.htm#streams-and-functional-programming-with-collections' class="nav-button toc-link">Index</a>
+<a href="#bottom" class="nav-button next">↓</a>
+</div>
+<h2 id='runnable-examples-functional-style-collection-processing'>14.4 Runnable Examples: Functional-style collection processing</h2><p>Streams provide a fluent, readable way to process collections with a sequence of operations—filtering, mapping, reducing, and collecting results. Below are runnable examples demonstrating these concepts, including parallel processing and collectors.</p><h3 id="example-1-filtering-mapping-and-reducing">Example 1: Filtering, Mapping, and Reducing</h3><p>This example takes a list of integers, filters out odd numbers, squares the even ones, and sums the results.</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">📋</button>
+ <pre><code class="language-java">import java.util.Arrays;
+import java.util.List;
+
+public class StreamExample1 {
+    public static void main(String[] args) {
+        List&lt;Integer&gt; numbers = Arrays.asList(1, 2, 3, 4, 5, 6);
+
+        int sumOfSquares = numbers.stream()
+            // Filter: keep only even numbers
+            .filter(n -&gt; n % 2 == 0)
+            // Map: square each remaining number
+            .map(n -&gt; n * n)
+            // Reduce: sum all squared values
+            .reduce(0, Integer::sum);
+
+        System.out.println("Sum of squares of even numbers: " + sumOfSquares);
+    }
+}</code></pre>
+</div><p><strong>Explanation:</strong></p><ul>
+ <li><code>.filter()</code> narrows the stream to even numbers.</li>
+ <li><code>.map()</code> transforms each number to its square.</li>
+ <li><code>.reduce()</code> aggregates by summing all squared values. This declarative style replaces verbose loops and conditionals.</li>
+</ul><h3 id="example-2-collecting-to-a-list-and-grouping">Example 2: Collecting to a List and Grouping</h3><p>Now we convert a stream of words to uppercase and group them by their first letter.</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">📋</button>
+ <pre><code class="language-java">import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+public class StreamExample2 {
+    public static void main(String[] args) {
+        List&lt;String&gt; words = Arrays.asList("apple", "banana", "avocado", "blueberry", "cherry");
+
+        Map&lt;Character, List&lt;String&gt;&gt; grouped = words.stream()
+            // Map to uppercase
+            .map(String::toUpperCase)
+            // Group by first character
+            .collect(Collectors.groupingBy(word -&gt; word.charAt(0)));
+
+        System.out.println(grouped);
+    }
+}</code></pre>
+</div><p><strong>Explanation:</strong></p><ul>
+ <li><code>.map(String::toUpperCase)</code> transforms each string.</li>
+ <li><code>Collectors.groupingBy()</code> collects elements into a map keyed by the first letter. This shows combining mapping with advanced collectors.</li>
+</ul><h3 id="example-3-parallel-stream-for-performance">Example 3: Parallel Stream for Performance</h3><p>Parallel streams can improve performance on large collections. This example calculates the sum of squares using parallel processing.</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">📋</button>
+ <pre><code class="language-java">import java.util.List;
+import java.util.stream.IntStream;
+
+public class StreamExample3 {
+    public static void main(String[] args) {
+        List&lt;Integer&gt; numbers = IntStream.rangeClosed(1, 1_000_000)
+            .boxed()
+            .toList();
+
+        long start = System.currentTimeMillis();
+
+        int sumOfSquares = numbers.parallelStream()
+            .filter(n -&gt; n % 2 == 0)
+            .map(n -&gt; n * n)
+            .reduce(0, Integer::sum);
+
+        long end = System.currentTimeMillis();
+
+        System.out.println("Sum of squares (parallel): " + sumOfSquares);
+        System.out.println("Time taken (ms): " + (end - start));
+    }
+}</code></pre>
+</div><p><strong>Explanation:</strong></p><ul>
+ <li><code>.parallelStream()</code> processes the stream concurrently.</li>
+ <li>Suitable for CPU-intensive operations on large datasets.</li>
+ <li>Beware of thread-safety issues when using shared mutable data (not shown here).</li>
+</ul><h3 id="summary">Summary</h3><p>These examples highlight the expressive power of streams:</p><ul>
+ <li><strong>Filter</strong> narrows down data.</li>
+ <li><strong>Map</strong> transforms elements.</li>
+ <li><strong>Reduce</strong> and <strong>collect</strong> accumulate results.</li>
+ <li><strong>Parallel streams</strong> can improve throughput but require care.</li>
+</ul><p>Streams enable concise, readable, and maintainable code, making collection processing easier and often more efficient.</p><div class = "chapter-navi-section">
+<a href="java-collections-concurrent-collections.htm" class="nav-button prev">←</a>
+<a href='java-collections.htm#streams-and-functional-programming-with-collections' class="nav-button toc-link">Index</a>
+<a href="java-collections-advanced-collection-patterns-and-best-practices.htm" class="nav-button next">→</a>
+</div>
+<section class="download-section">
+  <div class="book-cover" style="background-image: url('data:image/jpg;base64,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');">
+<div class="series-name">In-Depth</div>
+<div class="book-title">Java Collections</div>
+<div class="book-subtitle">From Fundamentals to Advanced Applications</div>
+<div class="book-footer">readbytes.github.io</div>
+</div>
+  <div class="download-info">
+    <h2 id='bottom'>Download This Ebook</h2>
+    <p class="format-label">Available formats:</p>
+    <div class="download-buttons">
+      <a href="java-collections.pdf" class="download-button">📄 PDF</a>
+      <a href="java-collections.epub" class="download-button">📘 EPUB</a>
+    </div>
+  </div>
+</section><div class='related-books'>
+<h2>Java In-Depth Books</h2>
+<div class='related-book-list'>
+<a href="java-io-and-nio.htm"><div class="book-cover" style="background-image: url('data:image/jpg;base64,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');">
+<div class="series-name">In-Depth</div>
+<div class="book-title">Java IO and NIO</div>
+<div class="book-subtitle">Guide for Beginner to Advanced Programmers</div>
+<div class="book-footer">readbytes.github.io</div>
+</div></a>
+
+
+<a href="java-collections.htm"><div class="book-cover" style="background-image: url('data:image/jpg;base64,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');">
+<div class="series-name">In-Depth</div>
+<div class="book-title">Java Collections</div>
+<div class="book-subtitle">From Fundamentals to Advanced Applications</div>
+<div class="book-footer">readbytes.github.io</div>
+</div></a>
+
+
+<a href="java-regex.htm"><div class="book-cover" style="background-image: url('data:image/jpg;base64,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');">
+<div class="series-name">In-Depth</div>
+<div class="book-title">Java Regex</div>
+<div class="book-subtitle">From Basics to Advanced</div>
+<div class="book-footer">readbytes.github.io</div>
+</div></a>
+
+
+<a href="java-functional-programming.htm"><div class="book-cover" style="background-image: url('data:image/jpg;base64,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');">
+<div class="series-name">In-Depth</div>
+<div class="book-title">Java Functional Programming</div>
+<div class="book-subtitle">From Lambdas to Reactive Streams</div>
+<div class="book-footer">readbytes.github.io</div>
+</div></a>
+
+
+<a href="java-streams.htm"><div class="book-cover" style="background-image: url('data:image/jpg;base64,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');">
+<div class="series-name">In-Depth</div>
+<div class="book-title">Java Streams</div>
+<div class="book-subtitle">From Fundamentals to Advanced Data Processing</div>
+<div class="book-footer">readbytes.github.io</div>
+</div></a>
+
+
+
+<a href='java.htm'><div class='book-cover'>More Java Books</div></a>
+</div>
+</div>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+    <script>
+  function toggleSnippet(id) {
+      const box = document.getElementById(id);
+      box.classList.toggle("open");
+  }  
+  </script>
+  <script>
+    function copyCode(button) {
+      const code = button.nextElementSibling.innerText;
+      navigator.clipboard.writeText(code).then(() => {
+        button.textContent = 'Copied!';
+        setTimeout(() => { button.textContent = 'Copy'; }, 1500);
+      });
+    }
+  </script>  
+
+<footer class="page-footer">
+    <nav>
+      <a href="https://readbytes.github.io">Home</a> | 
+      Email:<script language="JavaScript" type="text/javascript">
+var part1 = 'yinpeng';var part6 = '263';var part2 = Math.pow(2,6);var part3 = String.fromCharCode(part2);var part4 = 'hotmail dot com';var part5 = part1 + String.fromCharCode(part2) + part4;document.write(part1 + part6 + part3 + part4);
+</script>
+    </nav>
+  <p>© 2025 — All rights reserved.</p>    
+  </footer>
+
+</body>
+</html>

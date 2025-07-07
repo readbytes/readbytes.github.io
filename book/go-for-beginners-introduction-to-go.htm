@@ -1,0 +1,734 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>Go for Beginners Introduction to Go</title>
+<link rel='shortcut icon' href='https://java2s.com/style/favicon.ico'>
+<link href="https://fonts.googleapis.com/css2?family=Merriweather&display=swap" rel="stylesheet" />
+<link href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+
+
+<style>
+body {
+  background: #f8f7f5;
+  font-family: 'Merriweather', serif;
+  color: #333;
+  margin: 0;
+  padding: 2rem 1rem;
+  font-size: 15px; /* smaller body font */
+  line-height: 1.5;
+}
+
+.container {
+  max-width: 700px;
+  margin: 0 auto;
+  background: white;
+  padding: 1rem 2rem;
+  box-shadow: 0 0 15px rgba(0,0,0,0.1);
+}
+.book-title-chapter {
+  font-family: 'Merriweather', serif;
+  font-size: 2rem;
+  font-weight: bold;
+  text-align: center;
+  margin-bottom: 2rem;
+  border-bottom: 2px solid #ccc;
+  padding-bottom: 0.5rem;
+  color: #2c3e50;
+}
+
+.book-subtitle-chapter {
+  text-align: center;
+  font-size: 1rem;
+  color: #666;
+  margin-top: -1rem;
+  margin-bottom: 2rem;
+}
+
+    .related-books {
+      margin-top: 40px;
+    }
+
+    .related-books h2 {
+      font-size: 22px;
+      margin-bottom: 20px;
+      border-bottom: 2px solid #eee;
+      padding-bottom: 8px;
+      color: #333;
+    }
+    .related-book-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+h1, h2, h3 {
+  font-weight: 600;
+  margin-top: 2.5rem;
+  margin-bottom: 1rem;
+  line-height: 1.2;
+}
+
+h1 {
+  font-size: 1.8rem; /* smaller heading */
+}
+
+h2 {
+  font-size: 1.4rem;
+}
+
+h3 {
+  font-size: 1.2rem;
+}
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-family: sans-serif;
+      font-size: 1em;
+      margin: 1em 0;
+    }
+
+    th, td {
+      border: 1px solid #cccccc;
+      padding: 0.6em 1em;
+      text-align: left;
+    }
+
+    th {
+      background-color: #f2f2f2;
+      font-weight: bold;
+    }
+
+    tr:nth-child(even) {
+      background-color: #fafafa;
+    }
+
+    /* Optional hover effect */
+    tr:hover {
+      background-color: #e6f7ff;
+    }
+ 
+a {
+  color: #555;
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+
+
+.code-block {
+    position: relative;
+    margin-bottom: 1em;
+}
+.copy-button {
+    background: transparent; 
+    color: white;
+
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    border: none;
+    padding: 4px 8px;
+    font-size: 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    z-index: 1;
+}
+
+.copy-button:hover {
+background-color: #0056b3;
+}
+.page-footer {
+  margin-top: 4rem;
+  padding: 1rem 0;
+  text-align: center;
+  font-size: 0.85rem;
+  color: #666;
+  border-top: 1px solid #ccc;
+  background-color: #fafafa;
+}
+.page-footer a {
+     color: #555;
+    text-decoration: none;
+  }
+  .page-footer a:hover {
+    text-decoration: underline;
+  }
+.chapter-navi-section {
+display: flex;
+justify-content: space-between;
+align-items: center;
+padding-bottom: 10px;
+}  
+
+.nav-link {
+  color: inherit;
+  text-decoration: none;
+  opacity: 0.5;
+  transition: opacity 0.3s ease, text-decoration 0.3s ease;
+}
+
+.nav-link:hover {
+  opacity: 0.9;
+  text-decoration: underline;
+}
+
+.prev {
+  text-align: left;
+}
+.toc-link {
+  text-align: center;
+}
+.next {
+  text-align: right;
+}
+.download-section {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2rem;
+  padding: 2rem 1rem;
+  max-width: 600px;
+  margin: 3rem auto;
+  background-color: #f9f9f9;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+}
+
+    .book-cover {
+      width: 130px;
+      height: 180px;
+      
+      background-size: cover; /* Ensures the image covers the entire div */
+      background-position: center; /* Centers the image */
+            
+      background: linear-gradient(145deg, #e0dede, #f9f9f9);
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 10px;
+      box-sizing: border-box;
+      position: relative;
+      font-family: 'Roboto', sans-serif;
+    }
+
+    .book-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 16px;
+      font-weight: 600;
+      color: #fff;
+      margin-bottom: 4px;
+    }
+
+    .book-subtitle {
+      font-size: 12px;
+      color: #aaa;
+      margin-bottom: 10px;
+    }
+
+    .series-name {
+      position: absolute;
+      top: 8px;
+      left: 8px;
+      font-size: 10px;
+      color: #fff;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-weight: bold;
+    }
+
+    .book-footer {
+      position: absolute;
+      bottom: 8px;
+      font-size: 10px;
+      color: #aaa;
+    }
+
+.download-info h2 {
+  margin: 0 0 0.5rem;
+  font-size: 1.2rem;
+}
+
+.format-label {
+  margin: 0 0 0.5rem;
+  font-size: 0.95rem;
+  color: #555;
+}
+
+.download-buttons {
+  display: flex;
+  gap: 1rem;
+}
+
+.download-button {
+  background-color: #4A90E2;
+  color: white;
+  padding: 0.5em 1.2em;
+  text-decoration: none;
+  border-radius: 25px;
+  font-size: 0.95rem;
+  transition: background-color 0.3s ease;
+}
+
+.download-button:hover {
+  background-color: #357ABD;
+}
+
+    code {
+ 
+      color: #d35400; 
+    }
+html {
+    scroll-behavior: smooth;
+}
+    .snippet-container {
+      overflow: hidden;    
+    }
+
+    .snippet-header {
+      background: #f0f0f0;
+      color: #333;
+      padding: 0.75rem 1rem;
+      cursor: pointer;
+      font-size: 1rem;
+    }
+
+    .snippet-body {
+      display: none;
+      font-family: monospace;
+    }
+
+    .snippet-container.open .snippet-body {
+      display: block;
+    }
+
+.CodeMirror {
+  border: 2px solid #ccc;
+  border-radius: 4px;
+  resize: vertical;
+}
+
+    button { padding: 0.5em 1em; background: green; color: white; border: none; cursor: pointer; }
+    button:hover { background: #1e7e34; }
+    .result_iframe { width:99%; height:200px; margin-top: 1em;  resize: both;border:1px solid #ccc;}        
+</style>
+</head>
+<body> 
+
+  <div class="container">
+    <div class = "chapter-navi-section">
+<a href="" class="nav-button prev"></a>
+<a href='go-for-beginners.htm#introduction-to-go' class="nav-button toc-link">Index</a>
+<a href="go-for-beginners-go-basics-syntax-and-data-types.htm" class="nav-button next">→</a>
+</div>
+
+    <h1 class="book-title-chapter" id = 'top'>Introduction to Go</h1>
+    <h3 class="book-subtitle-chapter">Go for Beginners</h3>   
+    <!-- <h1 class ="chapter-title"></h1> -->
+    <h2 id='what-is-go-history-and-evolution'>1.1 What is Go? History and Evolution</h2><p>Go, often referred to as <strong>Golang</strong>, is a modern programming language developed at <strong>Google</strong>. It was created by <strong>Robert Griesemer, Rob Pike, and Ken Thompson</strong> in 2007 and publicly released in <strong>2009</strong> as an open-source project. The motivation behind Go’s creation was rooted in frustration with existing languages at Google that were either too slow to compile (like C++) or lacked the robustness and tooling support needed for large-scale software (like Python or JavaScript).</p><h3 id="why-did-google-create-go">Why Did Google Create Go?</h3><p>Google, operating at web scale, needed a language that could:</p><ul>
+ <li><strong>Compile quickly</strong>, allowing for faster iteration during development</li>
+ <li><strong>Run efficiently</strong>, providing performance close to low-level languages like C or C++</li>
+ <li><strong>Support concurrency natively</strong>, to handle the growing need for parallel processing in modern, networked systems</li>
+ <li><strong>Remain simple and readable</strong>, so large engineering teams could write maintainable code</li>
+</ul><p>The result was Go: a language that embraces the <strong>simplicity of C</strong>, the <strong>productivity of Python</strong>, and the <strong>concurrency model inspired by CSP (Communicating Sequential Processes)</strong>.</p><h3 id="design-goals-of-go">Design Goals of Go</h3><p>Go was built with several clear design goals in mind:</p><ul>
+ <li><strong>Simplicity</strong>: The language has a minimal syntax, no inheritance, and avoids complex features like generics (at least in the early versions). This leads to code that is easy to read and maintain.</li>
+ <li><strong>Performance</strong>: Go is compiled directly to machine code, enabling fast execution times similar to C/C++.</li>
+ <li><strong>Built-in Concurrency</strong>: Go introduces <strong>goroutines</strong> and <strong>channels</strong>, making it easier to write concurrent programs without relying on threads or OS-level primitives.</li>
+ <li><strong>Developer Efficiency</strong>: Features like fast compilation, automatic formatting (<code>gofmt</code>), and a powerful standard library help teams develop software quickly and reliably.</li>
+</ul><h3 id="gos-evolution-since-inception">Gos Evolution Since Inception</h3><p>Since its first stable release in <strong>2012 (Go 1.0)</strong>, Go has steadily matured without breaking backward compatibility. The Go team focuses on <strong>stability, simplicity, and productivity</strong>. Key milestones in Go’s evolution include:</p><ul>
+ <li><strong>Go modules</strong> (introduced in Go 1.11) for dependency management</li>
+ <li><strong>Improved tooling</strong> like <code>gopls</code> (Go language server)</li>
+ <li><strong>Growing ecosystem</strong> of libraries and frameworks</li>
+ <li><strong>Generics</strong> (finally introduced in Go 1.18), enhancing code reusability while keeping the language concise</li>
+</ul><p>Today, Go is widely adopted in cloud infrastructure, web development, DevOps tooling, microservices, and more. Companies like <strong>Google, Uber, Dropbox, Kubernetes, and Docker</strong> rely heavily on Go.</p><h3 id="comparison-with-c-and-java">Comparison with C and Java</h3><p>Go borrows ideas from C, such as explicit memory management and a minimal runtime, but avoids its complexity (like manual memory allocation and pointer arithmetic). Unlike Java, Go avoids a heavy object-oriented model, preferring <strong>composition over inheritance</strong> and <strong>interfaces over abstract classes</strong>. It also compiles much faster than Java and does not require a virtual machine (JVM), making deployment easier.</p><p>In short:</p><table>
+ <thead>
+  <tr>
+   <th>Language</th>
+   <th>Compilation</th>
+   <th>Memory Management</th>
+   <th>Concurrency</th>
+   <th>Simplicity</th>
+  </tr>
+ </thead>
+ <tbody>
+  <tr>
+   <td>C</td>
+   <td>Fast</td>
+   <td>Manual</td>
+   <td>Threads</td>
+   <td>Low-level</td>
+  </tr>
+  <tr>
+   <td>Java</td>
+   <td>Slow</td>
+   <td>Garbage-collected</td>
+   <td>Threads</td>
+   <td>Verbose</td>
+  </tr>
+  <tr>
+   <td><strong>Go</strong></td>
+   <td>Very fast</td>
+   <td>Garbage-collected</td>
+   <td>Goroutines</td>
+   <td>Minimal</td>
+  </tr>
+ </tbody>
+</table><h3 id="why-go-is-called-a-compiled-statically-typed-language-with-garbage-collection">Why Go is Called a Compiled, Statically Typed Language with Garbage Collection</h3><ul>
+ <li><strong>Compiled</strong>: Go source code is converted directly into machine code by the Go compiler (<code>go build</code>), enabling high performance without an interpreter or VM.</li>
+ <li><strong>Statically Typed</strong>: Types are known and checked at compile time, which helps catch many bugs early and improves performance through optimized code.</li>
+ <li><strong>Garbage Collected</strong>: Go automatically manages memory using a garbage collector, relieving the programmer from manually allocating and freeing memory like in C or C++.</li>
+</ul><p>This combination makes Go a <strong>balanced choice</strong>—it offers both the <strong>speed and safety of compiled languages</strong>, and the <strong>ease of use and memory management of scripting languages</strong>.</p><div class = "chapter-navi-section">
+<a href="#top" class="nav-button prev">↑</a>
+<a href='go-for-beginners.htm#introduction-to-go' class="nav-button toc-link">Index</a>
+<a href="#bottom" class="nav-button next">↓</a>
+</div>
+<h2 id='why-use-go-features-and-advantages'>1.2 Why Use Go? Features and Advantages</h2><p>Go has grown rapidly in popularity since its release, thanks to a carefully chosen set of features that prioritize simplicity, performance, and scalability. Designed by engineers at Google to solve real-world problems at scale, Go offers a developer experience that blends the best aspects of low-level systems programming with modern language design.</p><p>In this section, we’ll explore the key features that make Go a compelling choice for beginners and professionals alike, along with the real-world scenarios where Go truly shines.</p><h3 id="simplicity-and-readability">Simplicity and Readability</h3><p>Go was intentionally designed to be <strong>simple and minimalistic</strong>. The language syntax is concise, consistent, and easy to learn. Features that complicate codebases in other languages—such as inheritance, generics (until recently), operator overloading, and macros—were deliberately left out to favor clarity over complexity.</p><blockquote>
+ <p>“The Go programming language was designed to make it easier to build reliable, efficient software.” — Go team</p>
+</blockquote><p>This simplicity makes Go a fantastic choice for beginners. Even large codebases tend to be easy to read and maintain, which is why teams at companies like <strong>Google, Uber, and Dropbox</strong> adopt it widely.</p><h3 id="fast-compilation">Fast Compilation</h3><p>One of Go’s most celebrated features is its <strong>blazing-fast compilation time</strong>. While traditional compiled languages like C++ can take minutes or hours to build large projects, Go compiles programs <strong>in seconds</strong>—regardless of size. This rapid feedback loop enables faster development and testing cycles, a huge productivity boost.</p><p>Behind the scenes, Go achieves this by:</p><ul>
+ <li>Avoiding unnecessary file scanning and preprocessor directives</li>
+ <li>Using a dependency model that prevents redundant recompilation</li>
+ <li>Compiling to machine code directly without the need for intermediate bytecode</li>
+</ul><h3 id="built-in-concurrency-with-goroutines-and-channels">Built-in Concurrency with Goroutines and Channels</h3><p>Modern applications often require concurrent processing—handling many tasks at once. Go was <strong>built for concurrency from the ground up</strong>.</p><p>It introduces <strong>goroutines</strong>, lightweight threads managed by the Go runtime. You can start a new goroutine with just the <code>go</code> keyword, making it simple to run functions concurrently. Go also provides <strong>channels</strong> for safe communication between goroutines, inspired by CSP (Communicating Sequential Processes).</p><p>Here’s a basic example:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-go">go fetchData()  // Runs fetchData concurrently</code></pre>
+</div><p>With built-in concurrency primitives, Go simplifies the development of:</p><ul>
+ <li><strong>Web servers</strong> handling thousands of requests</li>
+ <li><strong>Data pipelines</strong> processing tasks in parallel</li>
+ <li><strong>Networked services</strong> that must remain responsive under load</li>
+</ul><h3 id="strong-standard-library">Strong Standard Library</h3><p>Go’s standard library is <strong>extensive, efficient, and well-documented</strong>. From HTTP servers and file I/O to JSON encoding and cryptography, many everyday tasks can be handled without external dependencies.</p><p>Some of the most popular standard packages include:</p><ul>
+ <li><code>net/http</code> – Building web servers and RESTful APIs</li>
+ <li><code>encoding/json</code> – Parsing and generating JSON</li>
+ <li><code>io/ioutil</code>, <code>os</code>, <code>bufio</code> – File and stream handling</li>
+ <li><code>sync</code> – Concurrency utilities like mutexes and wait groups</li>
+</ul><p>Having so much built-in functionality reduces reliance on third-party libraries and makes codebases simpler and more maintainable.</p><h3 id="efficient-garbage-collection">Efficient Garbage Collection</h3><p>Go has an <strong>automatic garbage collector</strong>, which means you don’t need to manually manage memory (as in C/C++). The garbage collector is designed to be efficient and low-latency, ensuring high performance even in concurrent or real-time systems.</p><p>This makes Go <strong>safe and performant</strong>—you avoid memory leaks and pointer errors, while still enjoying the performance benefits of a compiled language.</p><h3 id="real-world-applications-where-go-excels">Real-World Applications Where Go Excels</h3><p>Thanks to its design, Go has become the backbone of many high-performance and scalable systems. It is particularly well-suited for:</p><h4 id="cloud-services-and-microservices">Cloud Services and Microservices</h4><ul>
+ <li>Tools like <strong>Docker</strong>, <strong>Kubernetes</strong>, and <strong>Terraform</strong> are written in Go</li>
+ <li>Go’s concurrency model and portability make it ideal for scalable cloud apps</li>
+</ul><h4 id="networking-and-apis">Networking and APIs</h4><ul>
+ <li>Go makes it easy to build performant web servers with minimal effort</li>
+ <li>With <code>net/http</code>, you can build full-featured REST APIs with a few lines of code</li>
+</ul><h4 id="command-line-tools">Command-Line Tools</h4><ul>
+ <li>Static binaries, fast startup times, and ease of deployment make Go perfect for CLI apps (e.g., Hugo, Cobra-based tools)</li>
+</ul><h3 id="advantages-over-dynamically-typed-or-scripting-languages">Advantages Over Dynamically Typed or Scripting Languages</h3><p>Compared to scripting or dynamically typed languages like Python, JavaScript, or Ruby, Go offers several compelling benefits:</p><table>
+ <thead>
+  <tr>
+   <th>Feature</th>
+   <th>Go</th>
+   <th>Scripting Languages</th>
+  </tr>
+ </thead>
+ <tbody>
+  <tr>
+   <td><strong>Type Safety</strong></td>
+   <td>✅ Statically typed (compile-time errors)</td>
+   <td>❌ Dynamic typing (runtime errors)</td>
+  </tr>
+  <tr>
+   <td><strong>Performance</strong></td>
+   <td>✅ Compiled to machine code</td>
+   <td>❌ Interpreted or bytecode</td>
+  </tr>
+  <tr>
+   <td><strong>Concurrency</strong></td>
+   <td>✅ Built-in with goroutines and channels</td>
+   <td>❌ Requires external libraries or threads</td>
+  </tr>
+  <tr>
+   <td><strong>Deployment</strong></td>
+   <td>✅ Single, self-contained binary</td>
+   <td>❌ Requires interpreter/runtime</td>
+  </tr>
+  <tr>
+   <td><strong>Compilation Speed</strong></td>
+   <td>✅ Extremely fast</td>
+   <td>✅ N/A (not compiled)</td>
+  </tr>
+ </tbody>
+</table><p>While scripting languages are great for quick scripts and prototyping, Go is designed for <strong>building robust, maintainable, and high-performance production systems</strong>.</p><h3 id="in-summary">In Summary</h3><p>Go's combination of simplicity, speed, concurrency support, and a strong standard library has made it a go-to language for modern systems programming, especially in cloud-native and DevOps environments.</p><p>Its learning curve is gentle, making it an excellent choice for beginners—and its capabilities are powerful enough for building production-grade infrastructure.</p><div class = "chapter-navi-section">
+<a href="#top" class="nav-button prev">↑</a>
+<a href='go-for-beginners.htm#introduction-to-go' class="nav-button toc-link">Index</a>
+<a href="#bottom" class="nav-button next">↓</a>
+</div>
+<h2 id='setting-up-your-go-environment'>1.3 Setting Up Your Go Environment</h2><p>Before writing any Go code, you need to set up your development environment. Thankfully, Go offers a straightforward installation process and works well across all major operating systems. In this section, you'll learn how to install Go, configure your workspace, and choose tools that make Go development easier and more productive.</p><h3 id="installing-go-on-major-platforms">Installing Go on Major Platforms</h3><p>The official Go compiler and tools are distributed as part of a single package. Here’s how to install it based on your operating system:</p><h4 id="windows">Windows</h4><ol>
+ <li><p>Visit the official download page: <a href="https://go.dev/dl/">https://go.dev/dl/</a></p></li>
+ <li><p>Download the <code>.msi</code> installer for Windows.</p></li>
+ <li><p>Run the installer and follow the prompts. The installer will:</p>
+  <ul>
+   <li>Install Go in <code>C:\Program Files\Go</code></li>
+   <li>Set up the <code>GOPATH</code> and add Go to your <code>PATH</code> environment variable</li>
+  </ul></li>
+ <li><p>Open a new command prompt (<code>cmd.exe</code>) or PowerShell window and verify the installation:</p>
+  <div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+   <pre><code class="language-bash">go version</code></pre>
+  </div></li>
+</ol><h4 id="macos">macOS</h4><ol>
+ <li><p>Download the <code>.pkg</code> installer from <a href="https://go.dev/dl/">https://go.dev/dl/</a></p></li>
+ <li><p>Double-click the package and follow the installation steps.</p></li>
+ <li><p>By default, Go is installed to <code>/usr/local/go</code>, and the installer should automatically add it to your <code>PATH</code>.</p></li>
+ <li><p>Verify the installation in your terminal:</p>
+  <div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+   <pre><code class="language-bash">go version</code></pre>
+  </div></li>
+</ol><p>Alternatively, you can install Go using Homebrew:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-bash">brew install go</code></pre>
+</div><h4 id="linux-ubuntu-debian-example">Linux (Ubuntu/Debian Example)</h4><ol>
+ <li><p>Download the latest tarball:</p>
+  <div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+   <pre><code class="language-bash">wget https://go.dev/dl/go1.xx.x.linux-amd64.tar.gz</code></pre>
+  </div></li>
+ <li><p>Extract and move it to <code>/usr/local</code>:</p>
+  <div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+   <pre><code class="language-bash">sudo tar -C /usr/local -xzf go1.xx.x.linux-amd64.tar.gz</code></pre>
+  </div></li>
+ <li><p>Add Go to your <code>PATH</code>. Open <code>~/.bashrc</code> or <code>~/.zshrc</code> and add:</p>
+  <div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+   <pre><code class="language-bash">export PATH=$PATH:/usr/local/go/bin</code></pre>
+  </div></li>
+ <li><p>Apply the changes:</p>
+  <div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+   <pre><code class="language-bash">source ~/.bashrc</code></pre>
+  </div></li>
+ <li><p>Verify:</p>
+  <div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+   <pre><code class="language-bash">go version</code></pre>
+  </div></li>
+</ol><h3 id="understanding-gopath-and-the-go-workspace-pre-go-modules">Understanding <code>GOPATH</code> and the Go Workspace (Pre-Go Modules)</h3><p>In early versions of Go, you had to set a <code>GOPATH</code> environment variable, which defined the root of your workspace. Inside the workspace, code was organized into three directories:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-bash">GOPATH/
+├── bin/
+├── pkg/
+└── src/</code></pre>
+</div><ul>
+ <li><code>src/</code>: your Go source files</li>
+ <li><code>pkg/</code>: compiled package objects</li>
+ <li><code>bin/</code>: compiled binaries</li>
+</ul><p>However, with the introduction of <strong>Go Modules</strong> (starting from Go 1.11 and enabled by default since Go 1.16), the need for a manual <code>GOPATH</code> has largely been replaced. Now, you can build Go projects <strong>anywhere on your system</strong>, and dependencies are managed via a <code>go.mod</code> file instead.</p><p>That said, Go still maintains a default <code>GOPATH</code> (usually <code>$HOME/go</code>), and it’s good to be aware of it, especially if you work with tools or legacy code.</p><p>To check your <code>GOPATH</code>:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-bash">go env GOPATH</code></pre>
+</div><h3 id="verifying-your-installation">Verifying Your Installation</h3><p>Once Go is installed and added to your path, you can confirm everything is set up correctly by running:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-bash">go version</code></pre>
+</div><p>You should see output similar to:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-bash">go version go1.21.3 linux/amd64</code></pre>
+</div><p>You can also confirm Go’s environment settings:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-bash">go env</code></pre>
+</div><p>This displays variables like <code>GOPATH</code>, <code>GOROOT</code>, and module settings.</p><h3 id="choosing-an-editor-or-ide">Choosing an Editor or IDE</h3><p>You can write Go code in any text editor, but using a modern IDE or editor will boost your productivity with features like autocompletion, syntax checking, and debugging.</p><h4 id="recommended-options">Recommended Options:</h4><ul>
+ <li><p><strong>Visual Studio Code (VS Code)</strong></p>
+  <ul>
+   <li>Free and lightweight</li>
+   <li>Excellent Go support via the official Go extension (<code>golang.Go</code>)</li>
+   <li>Install: <a href="https://code.visualstudio.com/">https://code.visualstudio.com/</a></li>
+  </ul></li>
+ <li><p><strong>GoLand (by JetBrains)</strong></p>
+  <ul>
+   <li>Paid, full-featured Go IDE with advanced features</li>
+   <li>Recommended for professional developers</li>
+   <li>Install: <a href="https://www.jetbrains.com/go/">https://www.jetbrains.com/go/</a></li>
+  </ul></li>
+ <li><p><strong>Lite Editors</strong> (with syntax support):</p>
+  <ul>
+   <li>Sublime Text, Atom, Vim, or Neovim (with Go plugins)</li>
+  </ul></li>
+</ul><blockquote>
+ <p>✨ Once your editor is configured with Go support, you're ready to write and run your first program!</p>
+</blockquote><h3 id="in-summary">In Summary</h3><p>Setting up your Go environment is quick and beginner-friendly. After installation, you’ll have access to powerful tooling that supports rapid development and clean code organization. Whether you're using Windows, macOS, or Linux, Go’s cross-platform support ensures a consistent experience across environments.</p><div class = "chapter-navi-section">
+<a href="#top" class="nav-button prev">↑</a>
+<a href='go-for-beginners.htm#introduction-to-go' class="nav-button toc-link">Index</a>
+<a href="#bottom" class="nav-button next">↓</a>
+</div>
+<h2 id='writing-your-first-go-program'>1.4 Writing Your First Go Program</h2><p>Now that your Go environment is set up, it’s time to write and run your very first Go program. We’ll walk through a classic <strong>“Hello, World!”</strong> example, which introduces the basic structure of a Go program. You’ll learn how Go organizes source files, and how to execute a program using the Go toolchain.</p><h3 id="step-by-step-your-first-go-program">Step-by-Step: Your First Go Program</h3><p>Let’s write a simple program that prints a message to the console.</p><h4 id="create-a-new-file">Create a New File</h4><p>You can use any text editor or IDE. Open a terminal and create a new file called <code>hello.go</code>:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-bash">touch hello.go</code></pre>
+</div><p>Or, if you're using VS Code:</p><ul>
+ <li>Open the folder where you want to save your code.</li>
+ <li>Create a new file: <code>hello.go</code></li>
+</ul><h4 id="write-the-code">Write the Code</h4><p>Here’s the full source code for your first Go program:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">📋</button>
+ <pre><code class="language-go">package main
+
+import "fmt"
+
+func main() {
+    fmt.Println("Hello, World!")
+}</code></pre>
+</div><p>Let’s break this down:</p><h3 id="code-breakdown">Code Breakdown</h3><h4 id="package-main"><code>package main</code></h4><p>Every Go program starts with a <code>package</code> declaration.</p><ul>
+ <li><code>main</code> is a special package name that tells the Go compiler this is an <strong>executable program</strong> (not a reusable library).</li>
+ <li>Only packages named <code>main</code> can be compiled into standalone executables.</li>
+</ul><h4 id="import-fmt"><code>import "fmt"</code></h4><p>The <code>import</code> keyword is used to include packages.</p><ul>
+ <li><code>"fmt"</code> stands for <strong>format</strong> and is part of Go’s standard library.</li>
+ <li>It provides I/O formatting functions, including printing to the console.</li>
+</ul><h4 id="func-main"><code>func main()</code></h4><p>This defines the <strong>main function</strong>, the entry point of your program.</p><ul>
+ <li>When you run the program, Go starts executing code from this function.</li>
+ <li><code>func</code> is how you declare a function in Go.</li>
+</ul><h4 id="fmt-println-hello-world"><code>fmt.Println("Hello, World!")</code></h4><ul>
+ <li><code>fmt.Println</code> prints the provided string to the terminal, followed by a newline.</li>
+ <li>You can think of it like <code>print()</code> in Python or <code>System.out.println()</code> in Java.</li>
+</ul><h3 id="run-the-program">Run the Program</h3><p>Now let’s run your program. Open a terminal and navigate to the folder where <code>hello.go</code> is located.</p><p>Then run:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-bash">go run hello.go</code></pre>
+</div><p><strong>Output:</strong></p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-bash">Hello, World!</code></pre>
+</div><p>That’s it! You’ve successfully run your first Go program.</p><h3 id="what-just-happened">What Just Happened?</h3><ul>
+ <li>The <code>go run</code> command compiles and executes your Go code in one step.</li>
+ <li>It’s great for development and quick testing.</li>
+ <li>For production builds, you’ll typically use <code>go build</code> to compile the code into a standalone binary (we’ll cover this in the next section).</li>
+</ul><h3 id="summary">Summary</h3><p>In this section, you:</p><ul>
+ <li>Wrote a basic "Hello, World!" program</li>
+ <li>Learned the purpose of <code>package main</code>, <code>import</code>, and <code>func main()</code></li>
+ <li>Used <code>fmt.Println()</code> to print output</li>
+ <li>Ran the program using <code>go run</code></li>
+</ul><p>This small program demonstrates Go's simplicity and clarity. With just a few lines of code, you have a fully functional, compiled program.</p><div class = "chapter-navi-section">
+<a href="#top" class="nav-button prev">↑</a>
+<a href='go-for-beginners.htm#introduction-to-go' class="nav-button toc-link">Index</a>
+<a href="#bottom" class="nav-button next">↓</a>
+</div>
+<h2 id='understanding-the-go-toolchain-go-run-go-build-go-fmt-go-get'>1.5 Understanding the Go Toolchain (<code>go run</code>, <code>go build</code>, <code>go fmt</code>, <code>go get</code>)</h2><p>One of the strengths of the Go programming language is its powerful and unified toolchain. Go provides a set of built-in commands that make compiling, formatting, managing dependencies, and running code both simple and consistent. In this section, we’ll cover four essential commands every Go developer should know:</p><ul>
+ <li><code>go run</code></li>
+ <li><code>go build</code></li>
+ <li><code>go fmt</code></li>
+ <li><code>go get</code></li>
+</ul><p>Let’s explore the purpose of each tool and how to use it with practical examples.</p><h3 id="go-run-compile-and-execute"><code>go run</code>: Compile and Execute</h3><p>The <code>go run</code> command is perfect for <strong>quickly compiling and running Go programs</strong>. It compiles the code in memory and executes it immediately—great for development and testing.</p><h4 id="example-file-hello-go">Example File: <code>hello.go</code></h4><div class="code-block"><button class="copy-button" onclick="copyCode(this)">📋</button>
+ <pre><code class="language-go">package main
+
+import "fmt"
+
+func main() {
+    fmt.Println("Hello, Toolchain!")
+}</code></pre>
+</div><h4 id="run-the-program">Run the Program</h4><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-bash">go run hello.go</code></pre>
+</div><p><strong>Output:</strong></p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-bash">Hello, Toolchain!</code></pre>
+</div><blockquote>
+ <p>✅ Use <code>go run</code> when you want to <strong>test or debug</strong> code without generating a binary on disk.</p>
+</blockquote><h3 id="go-build-compile-to-a-binary"><code>go build</code>: Compile to a Binary</h3><p>The <code>go build</code> command compiles Go source code into an <strong>executable binary</strong>. Unlike <code>go run</code>, it saves the compiled binary file to disk.</p><h4 id="build-the-program">Build the Program</h4><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-bash">go build hello.go</code></pre>
+</div><p>This creates an executable:</p><ul>
+ <li><code>hello.exe</code> on Windows</li>
+ <li><code>hello</code> on Linux/macOS</li>
+</ul><h4 id="run-the-binary">Run the Binary</h4><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-bash">./hello</code></pre>
+</div><p><strong>Output:</strong></p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-bash">Hello, Toolchain!</code></pre>
+</div><blockquote>
+ <p>✅ Use <code>go build</code> when you're preparing your application for <strong>distribution or deployment</strong>.</p>
+</blockquote><h3 id="go-fmt-format-your-code"><code>go fmt</code>: Format Your Code</h3><p>Go enforces a standard code style, and the <code>go fmt</code> command automatically formats your source files to match these conventions. This ensures all Go code looks and feels consistent—regardless of who writes it.</p><h4 id="unformatted-code-example-ugly-go">Unformatted Code Example: <code>ugly.go</code></h4><div class="code-block"><button class="copy-button" onclick="copyCode(this)">📋</button>
+ <pre><code class="language-go">package main
+import "fmt"
+func main(){fmt.Println("Needs formatting")}</code></pre>
+</div><h4 id="format-the-code">Format the Code</h4><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-bash">go fmt ugly.go</code></pre>
+</div><h4 id="reformatted-output">Reformatted Output:</h4><div class="code-block"><button class="copy-button" onclick="copyCode(this)">📋</button>
+ <pre><code class="language-go">package main
+
+import "fmt"
+
+func main() {
+	fmt.Println("Needs formatting")
+}</code></pre>
+</div><blockquote>
+ <p>✅ Use <code>go fmt</code> frequently. It improves <strong>readability</strong> and keeps your codebase clean.</p>
+</blockquote><h3 id="go-get-install-third-party-packages"><code>go get</code>: Install Third-Party Packages</h3><p>Go comes with a powerful standard library, but sometimes you’ll need external packages. The <code>go get</code> command downloads and installs third-party libraries or tools from a remote repository (typically GitHub), and adds them to your module’s dependency list.</p><blockquote>
+ <p><strong>Note:</strong> With Go Modules (default since Go 1.16), <code>go get</code> is primarily used for adding <strong>binaries</strong> or upgrading dependencies.</p>
+</blockquote><h4 id="example-install-a-cli-tool">Example: Install a CLI tool</h4><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-bash">go install github.com/cosmtrek/air@latest</code></pre>
+</div><p>This command downloads, builds, and installs the <code>air</code> tool (a live reloader for Go apps).</p><h4 id="add-a-library-dependency">Add a Library Dependency</h4><p>Inside a Go module project:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-bash">go get github.com/gorilla/mux</code></pre>
+</div><ul>
+ <li><p>This fetches the package and updates <code>go.mod</code> and <code>go.sum</code>.</p></li>
+ <li><p>You can now import it in your code:</p>
+  <div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+   <pre><code class="language-go">import "github.com/gorilla/mux"</code></pre>
+  </div></li>
+</ul><blockquote>
+ <p>✅ Use <code>go get</code> (or <code>go install</code>) to manage <strong>external tools and libraries</strong> for your project.</p>
+</blockquote><h3 id="summary-table">Summary Table</h3><table>
+ <thead>
+  <tr>
+   <th>Command</th>
+   <th>Purpose</th>
+   <th>Usage Example</th>
+  </tr>
+ </thead>
+ <tbody>
+  <tr>
+   <td><code>go run</code></td>
+   <td>Compile and execute code immediately</td>
+   <td><code>go run main.go</code></td>
+  </tr>
+  <tr>
+   <td><code>go build</code></td>
+   <td>Compile code into a binary</td>
+   <td><code>go build main.go</code></td>
+  </tr>
+  <tr>
+   <td><code>go fmt</code></td>
+   <td>Format code to Go’s standard style</td>
+   <td><code>go fmt myfile.go</code></td>
+  </tr>
+  <tr>
+   <td><code>go get</code></td>
+   <td>Fetch and install third-party dependencies</td>
+   <td><code>go get github.com/gorilla/mux</code></td>
+  </tr>
+ </tbody>
+</table><p>These tools form the backbone of the Go development workflow. As you build more complex applications, they’ll help you maintain quality, manage dependencies, and ship reliable code.</p><div class = "chapter-navi-section">
+<a href="" class="nav-button prev"></a>
+<a href='go-for-beginners.htm#introduction-to-go' class="nav-button toc-link">Index</a>
+<a href="go-for-beginners-go-basics-syntax-and-data-types.htm" class="nav-button next">→</a>
+</div>
+<section class="download-section">
+  <div class="book-cover" style="background-image: url('data:image/jpg;base64,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');">
+<div class="series-name">Introduction</div>
+<div class="book-title">Go for Beginners</div>
+<div class="book-subtitle">Essential concepts, practical examples, and foundational topics</div>
+<div class="book-footer">readbytes.github.io</div>
+</div>
+  <div class="download-info">
+    <h2 id='bottom'>Download This Ebook</h2>
+    <p class="format-label">Available formats:</p>
+    <div class="download-buttons">
+      <a href="go-for-beginners.pdf" class="download-button">📄 PDF</a>
+      <a href="go-for-beginners.epub" class="download-button">📘 EPUB</a>
+    </div>
+  </div>
+</section><div class='related-books'>
+<h2>Go Introduction Books</h2>
+<div class='related-book-list'>
+<a href="go-for-beginners.htm"><div class="book-cover" style="background-image: url('data:image/jpg;base64,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');">
+<div class="series-name">Introduction</div>
+<div class="book-title">Go for Beginners</div>
+<div class="book-subtitle">Essential concepts, practical examples, and foundational topics</div>
+<div class="book-footer">readbytes.github.io</div>
+</div></a>
+
+
+
+<a href='go.htm'><div class='book-cover'>More Go Books</div></a>
+</div>
+</div>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+  
+  <script>
+    function copyCode(button) {
+      const code = button.nextElementSibling.innerText;
+      navigator.clipboard.writeText(code).then(() => {
+        button.textContent = 'Copied!';
+        setTimeout(() => { button.textContent = 'Copy'; }, 1500);
+      });
+    }
+  </script>  
+
+<footer class="page-footer">
+    <nav>
+      <a href="https://readbytes.github.io">Home</a> | 
+      Email:<script language="JavaScript" type="text/javascript">
+var part1 = 'yinpeng';var part6 = '263';var part2 = Math.pow(2,6);var part3 = String.fromCharCode(part2);var part4 = 'hotmail dot com';var part5 = part1 + String.fromCharCode(part2) + part4;document.write(part1 + part6 + part3 + part4);
+</script>
+    </nav>
+  <p>© 2025 — All rights reserved.</p>    
+  </footer>
+
+</body>
+</html>

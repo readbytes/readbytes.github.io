@@ -1,0 +1,1018 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>Go for Beginners Go Basics: Syntax and Data Types</title>
+<link rel='shortcut icon' href='https://java2s.com/style/favicon.ico'>
+<link href="https://fonts.googleapis.com/css2?family=Merriweather&display=swap" rel="stylesheet" />
+<link href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+
+
+<style>
+body {
+  background: #f8f7f5;
+  font-family: 'Merriweather', serif;
+  color: #333;
+  margin: 0;
+  padding: 2rem 1rem;
+  font-size: 15px; /* smaller body font */
+  line-height: 1.5;
+}
+
+.container {
+  max-width: 700px;
+  margin: 0 auto;
+  background: white;
+  padding: 1rem 2rem;
+  box-shadow: 0 0 15px rgba(0,0,0,0.1);
+}
+.book-title-chapter {
+  font-family: 'Merriweather', serif;
+  font-size: 2rem;
+  font-weight: bold;
+  text-align: center;
+  margin-bottom: 2rem;
+  border-bottom: 2px solid #ccc;
+  padding-bottom: 0.5rem;
+  color: #2c3e50;
+}
+
+.book-subtitle-chapter {
+  text-align: center;
+  font-size: 1rem;
+  color: #666;
+  margin-top: -1rem;
+  margin-bottom: 2rem;
+}
+
+    .related-books {
+      margin-top: 40px;
+    }
+
+    .related-books h2 {
+      font-size: 22px;
+      margin-bottom: 20px;
+      border-bottom: 2px solid #eee;
+      padding-bottom: 8px;
+      color: #333;
+    }
+    .related-book-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+h1, h2, h3 {
+  font-weight: 600;
+  margin-top: 2.5rem;
+  margin-bottom: 1rem;
+  line-height: 1.2;
+}
+
+h1 {
+  font-size: 1.8rem; /* smaller heading */
+}
+
+h2 {
+  font-size: 1.4rem;
+}
+
+h3 {
+  font-size: 1.2rem;
+}
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-family: sans-serif;
+      font-size: 1em;
+      margin: 1em 0;
+    }
+
+    th, td {
+      border: 1px solid #cccccc;
+      padding: 0.6em 1em;
+      text-align: left;
+    }
+
+    th {
+      background-color: #f2f2f2;
+      font-weight: bold;
+    }
+
+    tr:nth-child(even) {
+      background-color: #fafafa;
+    }
+
+    /* Optional hover effect */
+    tr:hover {
+      background-color: #e6f7ff;
+    }
+ 
+a {
+  color: #555;
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+
+
+.code-block {
+    position: relative;
+    margin-bottom: 1em;
+}
+.copy-button {
+    background: transparent; 
+    color: white;
+
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    border: none;
+    padding: 4px 8px;
+    font-size: 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    z-index: 1;
+}
+
+.copy-button:hover {
+background-color: #0056b3;
+}
+.page-footer {
+  margin-top: 4rem;
+  padding: 1rem 0;
+  text-align: center;
+  font-size: 0.85rem;
+  color: #666;
+  border-top: 1px solid #ccc;
+  background-color: #fafafa;
+}
+.page-footer a {
+     color: #555;
+    text-decoration: none;
+  }
+  .page-footer a:hover {
+    text-decoration: underline;
+  }
+.chapter-navi-section {
+display: flex;
+justify-content: space-between;
+align-items: center;
+padding-bottom: 10px;
+}  
+
+.nav-link {
+  color: inherit;
+  text-decoration: none;
+  opacity: 0.5;
+  transition: opacity 0.3s ease, text-decoration 0.3s ease;
+}
+
+.nav-link:hover {
+  opacity: 0.9;
+  text-decoration: underline;
+}
+
+.prev {
+  text-align: left;
+}
+.toc-link {
+  text-align: center;
+}
+.next {
+  text-align: right;
+}
+.download-section {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2rem;
+  padding: 2rem 1rem;
+  max-width: 600px;
+  margin: 3rem auto;
+  background-color: #f9f9f9;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+}
+
+    .book-cover {
+      width: 130px;
+      height: 180px;
+      
+      background-size: cover; /* Ensures the image covers the entire div */
+      background-position: center; /* Centers the image */
+            
+      background: linear-gradient(145deg, #e0dede, #f9f9f9);
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 10px;
+      box-sizing: border-box;
+      position: relative;
+      font-family: 'Roboto', sans-serif;
+    }
+
+    .book-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 16px;
+      font-weight: 600;
+      color: #fff;
+      margin-bottom: 4px;
+    }
+
+    .book-subtitle {
+      font-size: 12px;
+      color: #aaa;
+      margin-bottom: 10px;
+    }
+
+    .series-name {
+      position: absolute;
+      top: 8px;
+      left: 8px;
+      font-size: 10px;
+      color: #fff;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-weight: bold;
+    }
+
+    .book-footer {
+      position: absolute;
+      bottom: 8px;
+      font-size: 10px;
+      color: #aaa;
+    }
+
+.download-info h2 {
+  margin: 0 0 0.5rem;
+  font-size: 1.2rem;
+}
+
+.format-label {
+  margin: 0 0 0.5rem;
+  font-size: 0.95rem;
+  color: #555;
+}
+
+.download-buttons {
+  display: flex;
+  gap: 1rem;
+}
+
+.download-button {
+  background-color: #4A90E2;
+  color: white;
+  padding: 0.5em 1.2em;
+  text-decoration: none;
+  border-radius: 25px;
+  font-size: 0.95rem;
+  transition: background-color 0.3s ease;
+}
+
+.download-button:hover {
+  background-color: #357ABD;
+}
+
+    code {
+ 
+      color: #d35400; 
+    }
+html {
+    scroll-behavior: smooth;
+}
+    .snippet-container {
+      overflow: hidden;    
+    }
+
+    .snippet-header {
+      background: #f0f0f0;
+      color: #333;
+      padding: 0.75rem 1rem;
+      cursor: pointer;
+      font-size: 1rem;
+    }
+
+    .snippet-body {
+      display: none;
+      font-family: monospace;
+    }
+
+    .snippet-container.open .snippet-body {
+      display: block;
+    }
+
+.CodeMirror {
+  border: 2px solid #ccc;
+  border-radius: 4px;
+  resize: vertical;
+}
+
+    button { padding: 0.5em 1em; background: green; color: white; border: none; cursor: pointer; }
+    button:hover { background: #1e7e34; }
+    .result_iframe { width:99%; height:200px; margin-top: 1em;  resize: both;border:1px solid #ccc;}        
+</style>
+</head>
+<body> 
+
+  <div class="container">
+    <div class = "chapter-navi-section">
+<a href="go-for-beginners-introduction-to-go.htm" class="nav-button prev">←</a>
+<a href='go-for-beginners.htm#go-basics-syntax-and-data-types' class="nav-button toc-link">Index</a>
+<a href="go-for-beginners-control-structures.htm" class="nav-button next">→</a>
+</div>
+
+    <h1 class="book-title-chapter" id = 'top'>Go Basics: Syntax and Data Types</h1>
+    <h3 class="book-subtitle-chapter">Go for Beginners</h3>   
+    <!-- <h1 class ="chapter-title"></h1> -->
+    <h2 id='variables-and-constants'>2.1 Variables and Constants</h2><p>In Go, variables and constants are fundamental building blocks of every program. Go provides simple and efficient ways to declare and use them, with a strong focus on type safety and clarity. In this section, you’ll learn how to declare variables and constants, the difference between declaration styles, how scope works, and when to prefer constants over variables.</p><h3 id="declaring-variables">Declaring Variables</h3><p>Go supports several ways to declare variables. The most common are:</p><h4 id="using-the-var-keyword">Using the <code>var</code> Keyword</h4><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-go">var name string = "Alice"
+var age int = 30</code></pre>
+</div><ul>
+ <li>This is an <strong>explicit declaration</strong> with a <strong>type</strong>.</li>
+ <li>It works at both package level and inside functions.</li>
+</ul><p>You can also omit the type if Go can infer it from the value:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-go">var city = "Toronto"  // Go infers that this is a string</code></pre>
+</div><h4 id="short-variable-declaration">Short Variable Declaration (<code>:</code>)</h4><p>Inside functions, you can use the shorthand:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-go">score := 95
+isPassed := true</code></pre>
+</div><ul>
+ <li>Go automatically infers the type.</li>
+ <li>This form <strong>cannot be used outside of functions</strong> (i.e., not at the package level).</li>
+ <li>It's concise and commonly used in idiomatic Go code.</li>
+</ul><h4 id="example-comparison">Example Comparison</h4><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-go">var language string = "Go"  // Full declaration
+version := 1.21             // Short declaration with type inference</code></pre>
+</div><h3 id="declaring-multiple-variables">Declaring Multiple Variables</h3><p>You can declare multiple variables in one line:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-go">var a, b, c int = 1, 2, 3
+x, y := "hello", "world"</code></pre>
+</div><p>You can also use parentheses for grouping:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-go">var (
+    name  = "Bob"
+    age   = 25
+    score = 88.5
+)</code></pre>
+</div><h3 id="variable-scope-rules">Variable Scope Rules</h3><p>In Go, variable scope determines <strong>where</strong> a variable can be accessed:</p><table>
+ <thead>
+  <tr>
+   <th>Scope Level</th>
+   <th>Where Declared</th>
+   <th>Accessible In</th>
+  </tr>
+ </thead>
+ <tbody>
+  <tr>
+   <td>Package-level</td>
+   <td>Outside all functions</td>
+   <td>Entire package</td>
+  </tr>
+  <tr>
+   <td>Local</td>
+   <td>Inside a function or block</td>
+   <td>Only within that function or block</td>
+  </tr>
+ </tbody>
+</table><h4 id="example">Example:</h4><div class="code-block"><button class="copy-button" onclick="copyCode(this)">📋</button>
+ <pre><code class="language-go">var globalVar = "I’m accessible everywhere"
+
+func main() {
+    localVar := "Only inside main"
+    fmt.Println(globalVar) // ✅ OK
+    fmt.Println(localVar)  // ✅ OK
+}
+
+func anotherFunc() {
+    fmt.Println(globalVar) // ✅ OK
+    // fmt.Println(localVar) ❌ ERROR: undefined
+}</code></pre>
+</div><h3 id="declaring-constants">Declaring Constants</h3><p>Constants are declared using the <code>const</code> keyword and must be assigned a value at declaration.</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-go">const Pi = 3.14
+const Greeting string = "Hello"</code></pre>
+</div><h4 id="important">Important:</h4><ul>
+ <li>Constants <strong>cannot</strong> be declared using <code>:=</code>.</li>
+ <li>Constants <strong>must be assigned a compile-time value</strong> (i.e., cannot be the result of a function call).</li>
+</ul><h4 id="why-use-constants">Why Use Constants?</h4><ul>
+ <li>To represent values that never change, like mathematical constants, configuration keys, or fixed limits.</li>
+ <li>Improves <strong>code readability</strong> and <strong>maintainability</strong>.</li>
+</ul><h4 id="constant-example">Constant Example:</h4><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-go">const (
+    MaxRetries = 5
+    AppName    = "GoForBeginners"
+)</code></pre>
+</div><h3 id="practice-example-declaring-variables-and-constants">Practice Example: Declaring Variables and Constants</h3><div class="code-block"><button class="copy-button" onclick="copyCode(this)">📋</button>
+ <pre><code class="language-go">package main
+
+import "fmt"
+
+const Pi = 3.14159
+
+func main() {
+    var language string = "Go"
+    version := 1.21
+    const Greeting = "Welcome to Go!"
+
+    fmt.Println(Greeting)
+    fmt.Println("Language:", language)
+    fmt.Println("Version:", version)
+    fmt.Println("Pi:", Pi)
+}</code></pre>
+</div><p><strong>Output:</strong></p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-bash">Welcome to Go!
+Language: Go
+Version: 1.21
+Pi: 3.14159</code></pre>
+</div><h3 id="summary">Summary</h3><ul>
+ <li>Use <code>var</code> for general-purpose variable declarations.</li>
+ <li>Use <code>:=</code> for concise declarations <strong>inside functions</strong>.</li>
+ <li>Use <code>const</code> for values that should never change.</li>
+ <li>Scope rules determine variable visibility within a program.</li>
+</ul><p>Understanding how to work with variables and constants is essential for writing readable and reliable Go code. Next, we’ll explore Go’s basic data types and how they are used in practice.</p><div class = "chapter-navi-section">
+<a href="#top" class="nav-button prev">↑</a>
+<a href='go-for-beginners.htm#go-basics-syntax-and-data-types' class="nav-button toc-link">Index</a>
+<a href="#bottom" class="nav-button next">↓</a>
+</div>
+<h2 id='basic-data-types-int-float-bool-string'>2.2 Basic Data Types (int, float, bool, string)</h2><p>Go is a statically typed language, which means every variable has a specific type known at compile time. Understanding Go’s basic (or primitive) data types is crucial for working with variables and performing operations effectively.</p><p>In this section, we'll explore the most commonly used primitive types:</p><ul>
+ <li><code>int</code> and other integer types</li>
+ <li><code>float32</code> and <code>float64</code></li>
+ <li><code>bool</code></li>
+ <li><code>string</code></li>
+</ul><p>We’ll also show how to declare and use them, and finish with a simple practical example.</p><h3 id="integer-types-int-int8-int16-int32-int64">Integer Types (<code>int</code>, <code>int8</code>, <code>int16</code>, <code>int32</code>, <code>int64</code>)</h3><p>Go provides both platform-dependent and fixed-size integer types.</p><table>
+ <thead>
+  <tr>
+   <th>Type</th>
+   <th>Size</th>
+   <th>Description</th>
+  </tr>
+ </thead>
+ <tbody>
+  <tr>
+   <td><code>int</code></td>
+   <td>32 or 64-bit</td>
+   <td>Depends on the architecture (default)</td>
+  </tr>
+  <tr>
+   <td><code>int8</code></td>
+   <td>8 bits</td>
+   <td>-128 to 127</td>
+  </tr>
+  <tr>
+   <td><code>int16</code></td>
+   <td>16 bits</td>
+   <td>-32,768 to 32,767</td>
+  </tr>
+  <tr>
+   <td><code>int32</code></td>
+   <td>32 bits</td>
+   <td>-2 billion range</td>
+  </tr>
+  <tr>
+   <td><code>int64</code></td>
+   <td>64 bits</td>
+   <td>Very large integer range</td>
+  </tr>
+  <tr>
+   <td><code>uint*</code></td>
+   <td>Unsigned</td>
+   <td>Only positive values (no negatives)</td>
+  </tr>
+ </tbody>
+</table><h4 id="example">Example:</h4><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-go">var age int = 30
+var year int16 = 2025
+var fileSize uint64 = 102400</code></pre>
+</div><h3 id="floating-point-types-float32-float64">Floating-Point Types (<code>float32</code>, <code>float64</code>)</h3><p>Used for representing decimal values.</p><table>
+ <thead>
+  <tr>
+   <th>Type</th>
+   <th>Precision</th>
+   <th>Use Case</th>
+  </tr>
+ </thead>
+ <tbody>
+  <tr>
+   <td><code>float32</code></td>
+   <td>~6 decimal places</td>
+   <td>Less memory, lower precision</td>
+  </tr>
+  <tr>
+   <td><code>float64</code></td>
+   <td>~15 decimal places</td>
+   <td>Default for most decimal values</td>
+  </tr>
+ </tbody>
+</table><h4 id="example">Example:</h4><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-go">var price float32 = 19.99
+var pi float64 = 3.141592653589793</code></pre>
+</div><blockquote>
+ <p><strong>Note:</strong> Go does not have a <code>double</code> type. <code>float64</code> is the standard for high-precision decimal operations.</p>
+</blockquote><h3 id="boolean-type-bool">Boolean Type (<code>bool</code>)</h3><p>The <code>bool</code> type holds a value of either <code>true</code> or <code>false</code>.</p><h4 id="example">Example:</h4><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-go">var isLoggedIn bool = true
+var isExpired = false  // type inferred</code></pre>
+</div><p>Boolean values are commonly used in conditionals and control structures.</p><h3 id="string-type-string">String Type (<code>string</code>)</h3><p>Strings in Go are a sequence of Unicode characters, enclosed in double quotes.</p><h4 id="example">Example:</h4><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-go">var greeting string = "Hello, Gopher!"
+var name = "Alice" // type inferred as string</code></pre>
+</div><p>You can concatenate strings using the <code>+</code> operator:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-go">message := greeting + " My name is " + name</code></pre>
+</div><h3 id="practical-example-a-simple-calculator-with-type-usage">Practical Example: A Simple Calculator with Type Usage</h3><p>Here’s a basic Go program that demonstrates all the core data types in action.</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">📋</button>
+ <pre><code class="language-go">package main
+
+import (
+	"fmt"
+)
+
+func main() {
+	// Integer and float
+	var num1 int = 10
+	var num2 int = 3
+	division := float64(num1) / float64(num2) // type conversion
+
+	// Boolean
+	isEven := num1%2 == 0
+
+	// String
+	name := "Calculator"
+
+	fmt.Println("Welcome to", name)
+	fmt.Println("Addition:", num1+num2)
+	fmt.Println("Division:", division)
+	fmt.Println("Is", num1, "even?", isEven)
+}</code></pre>
+</div><h4 id="output">Output:</h4><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-bash">Welcome to Calculator
+Addition: 13
+Division: 3.3333333333333335
+Is 10 even? true</code></pre>
+</div><h3 id="summary">Summary</h3><table>
+ <thead>
+  <tr>
+   <th>Type</th>
+   <th>Example Value</th>
+   <th>Typical Use Case</th>
+  </tr>
+ </thead>
+ <tbody>
+  <tr>
+   <td><code>int</code></td>
+   <td><code>42</code></td>
+   <td>Counting, indexing</td>
+  </tr>
+  <tr>
+   <td><code>float64</code></td>
+   <td><code>3.14</code></td>
+   <td>Calculations with decimals</td>
+  </tr>
+  <tr>
+   <td><code>bool</code></td>
+   <td><code>true</code> / <code>false</code></td>
+   <td>Logic, conditions</td>
+  </tr>
+  <tr>
+   <td><code>string</code></td>
+   <td><code>"Hello"</code></td>
+   <td>Text data, messages</td>
+  </tr>
+ </tbody>
+</table><ul>
+ <li>Use <code>int</code> for whole numbers, <code>float64</code> for decimals.</li>
+ <li>Use <code>bool</code> in condition checks.</li>
+ <li>Use <code>string</code> for names, messages, and any textual content.</li>
+</ul><p>Understanding these data types is essential as they form the core of every Go program. In the next section, we’ll explore how Go handles <strong>type inference and zero values</strong> when no initial value is provided.</p><div class = "chapter-navi-section">
+<a href="#top" class="nav-button prev">↑</a>
+<a href='go-for-beginners.htm#go-basics-syntax-and-data-types' class="nav-button toc-link">Index</a>
+<a href="#bottom" class="nav-button next">↓</a>
+</div>
+<h2 id='type-inference-and-zero-values'>2.3 Type Inference and Zero Values</h2><p>Go is a statically typed language, but it doesn't always require you to explicitly declare variable types. Thanks to <strong>type inference</strong>, Go can determine the type of a variable based on the value you assign. Additionally, when variables are declared without an initial value, Go assigns a sensible <strong>zero value</strong> depending on the type.</p><p>Understanding type inference and zero values helps you write cleaner code and avoid uninitialized variables.</p><h3 id="type-inference-with">Type Inference with <code>:</code></h3><p>Go can infer the type of a variable from the value on the right-hand side of an assignment. This is done using the shorthand declaration operator <code>:=</code>, which is allowed <strong>only inside functions</strong>.</p><h4 id="example">Example:</h4><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-go">name := "Alice"       // Inferred as string
+age := 25             // Inferred as int
+height := 5.9         // Inferred as float64
+isMember := true      // Inferred as bool</code></pre>
+</div><p>You don’t need to specify the types—Go figures them out automatically based on the values.</p><blockquote>
+ <p>🧠 <strong>Tip:</strong> Use <code>:=</code> for local variables when the type is obvious and readability is preserved.</p>
+</blockquote><h3 id="declaring-without-initialization">Declaring Without Initialization</h3><p>When you declare a variable using the <code>var</code> keyword <strong>without assigning a value</strong>, Go automatically assigns it a <strong>zero value</strong> based on its type.</p><h4 id="example">Example:</h4><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-go">var a int
+var b float64
+var c bool
+var d string
+
+fmt.Println(a) // 0
+fmt.Println(b) // 0.0
+fmt.Println(c) // false
+fmt.Println(d) // ""</code></pre>
+</div><h3 id="zero-values-table">Zero Values Table</h3><table>
+ <thead>
+  <tr>
+   <th>Type</th>
+   <th>Zero Value</th>
+   <th>Description</th>
+  </tr>
+ </thead>
+ <tbody>
+  <tr>
+   <td><code>int</code></td>
+   <td><code>0</code></td>
+   <td>Integer zero</td>
+  </tr>
+  <tr>
+   <td><code>float64</code></td>
+   <td><code>0.0</code></td>
+   <td>Floating point zero</td>
+  </tr>
+  <tr>
+   <td><code>bool</code></td>
+   <td><code>false</code></td>
+   <td>Default boolean value</td>
+  </tr>
+  <tr>
+   <td><code>string</code></td>
+   <td><code>""</code></td>
+   <td>Empty string</td>
+  </tr>
+  <tr>
+   <td><code>pointer</code></td>
+   <td><code>nil</code></td>
+   <td>Represents no value</td>
+  </tr>
+  <tr>
+   <td><code>slice</code></td>
+   <td><code>nil</code></td>
+   <td>Not initialized (zero length)</td>
+  </tr>
+  <tr>
+   <td><code>map</code></td>
+   <td><code>nil</code></td>
+   <td>Uninitialized map</td>
+  </tr>
+  <tr>
+   <td><code>func</code></td>
+   <td><code>nil</code></td>
+   <td>No function assigned</td>
+  </tr>
+ </tbody>
+</table><h3 id="why-zero-values-matter">Why Zero Values Matter</h3><p>Zero values provide a safe and predictable default for every variable:</p><ul>
+ <li>They <strong>eliminate the need for manual initialization</strong>.</li>
+ <li>They help avoid undefined behavior or random memory content (common in languages like C).</li>
+ <li>They ensure <strong>compile-time safety</strong>—you can declare a variable and use it immediately without worrying about uninitialized memory.</li>
+</ul><h4 id="example-using-zero-values">Example: Using Zero Values</h4><div class="code-block"><button class="copy-button" onclick="copyCode(this)">📋</button>
+ <pre><code class="language-go">package main
+
+import "fmt"
+
+func main() {
+	var count int
+	var average float64
+	var valid bool
+	var message string
+
+	fmt.Println("Count:", count)
+	fmt.Println("Average:", average)
+	fmt.Println("Valid:", valid)
+	fmt.Println("Message:", message)
+}</code></pre>
+</div><h4 id="output">Output:</h4><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-bash">Count: 0
+Average: 0
+Valid: false
+Message:</code></pre>
+</div><h3 id="summary">Summary</h3><ul>
+ <li>Go uses <code>:=</code> for concise <strong>type-inferred</strong> variable declarations inside functions.</li>
+ <li>Variables declared with <code>var</code> but without initialization get assigned <strong>zero values</strong>.</li>
+ <li>Zero values ensure variables are always initialized to a known, safe state.</li>
+ <li>This behavior supports Go’s philosophy of simplicity, safety, and robustness.</li>
+</ul><p>Understanding how Go handles types and initialization will help you write more reliable and idiomatic code. Next, we’ll dive into <strong>operators and expressions</strong> to explore how to perform calculations and logic in Go.</p><div class = "chapter-navi-section">
+<a href="#top" class="nav-button prev">↑</a>
+<a href='go-for-beginners.htm#go-basics-syntax-and-data-types' class="nav-button toc-link">Index</a>
+<a href="#bottom" class="nav-button next">↓</a>
+</div>
+<h2 id='operators-and-expressions'>2.4 Operators and Expressions</h2><p>Operators are symbols that perform operations on variables and values. In Go, expressions combine these operators with operands (variables, constants, or literals) to perform calculations, comparisons, logic operations, and value assignments.</p><p>In this section, you’ll learn the most commonly used categories of operators in Go:</p><ul>
+ <li>Arithmetic operators</li>
+ <li>Relational (comparison) operators</li>
+ <li>Logical operators</li>
+ <li>Assignment operators (including compound assignments)</li>
+</ul><p>We’ll also build and evaluate simple expressions using these operators.</p><h3 id="arithmetic-operators">Arithmetic Operators</h3><p>These are used for basic mathematical calculations:</p><table>
+ <thead>
+  <tr>
+   <th>Operator</th>
+   <th>Description</th>
+   <th>Example</th>
+  </tr>
+ </thead>
+ <tbody>
+  <tr>
+   <td><code>+</code></td>
+   <td>Addition</td>
+   <td><code>a + b</code></td>
+  </tr>
+  <tr>
+   <td><code>-</code></td>
+   <td>Subtraction</td>
+   <td><code>a - b</code></td>
+  </tr>
+  <tr>
+   <td><code>*</code></td>
+   <td>Multiplication</td>
+   <td><code>a * b</code></td>
+  </tr>
+  <tr>
+   <td><code>/</code></td>
+   <td>Division</td>
+   <td><code>a / b</code></td>
+  </tr>
+  <tr>
+   <td><code>%</code></td>
+   <td>Modulus (remainder)</td>
+   <td><code>a % b</code></td>
+  </tr>
+ </tbody>
+</table><h4 id="example">Example:</h4><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-go">a := 10
+b := 3
+fmt.Println("Sum:", a+b)
+fmt.Println("Product:", a*b)
+fmt.Println("Quotient:", a/b)
+fmt.Println("Remainder:", a%b)</code></pre>
+</div><h3 id="relational-comparison-operators">Relational (Comparison) Operators</h3><p>These return boolean (<code>true</code> or <code>false</code>) values and are commonly used in conditions.</p><table>
+ <thead>
+  <tr>
+   <th>Operator</th>
+   <th>Description</th>
+   <th>Example</th>
+  </tr>
+ </thead>
+ <tbody>
+  <tr>
+   <td><code>==</code></td>
+   <td>Equal</td>
+   <td><code>a == b</code></td>
+  </tr>
+  <tr>
+   <td><code>!=</code></td>
+   <td>Not equal</td>
+   <td><code>a != b</code></td>
+  </tr>
+  <tr>
+   <td><code>&lt;</code></td>
+   <td>Less than</td>
+   <td><code>a &lt; b</code></td>
+  </tr>
+  <tr>
+   <td><code>&lt;=</code></td>
+   <td>Less than or equal</td>
+   <td><code>a &lt;= b</code></td>
+  </tr>
+  <tr>
+   <td><code>&gt;</code></td>
+   <td>Greater than</td>
+   <td><code>a &gt; b</code></td>
+  </tr>
+  <tr>
+   <td><code>&gt;=</code></td>
+   <td>Greater or equal</td>
+   <td><code>a &gt;= b</code></td>
+  </tr>
+ </tbody>
+</table><h4 id="example">Example:</h4><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-go">x := 5
+y := 10
+fmt.Println("x == y:", x == y)
+fmt.Println("x &lt; y:", x &lt; y)</code></pre>
+</div><h3 id="logical-operators">Logical Operators</h3><p>Used to combine boolean expressions.</p><table>
+ <thead>
+  <tr>
+   <th>Operator</th>
+   <th>Description</th>
+   <th>Example</th>
+  </tr>
+ </thead>
+ <tbody>
+  <tr>
+   <td><code>&amp;&amp;</code></td>
+   <td>Logical AND</td>
+   <td><code>a &gt; 0 &amp;&amp; b &lt; 10</code></td>
+  </tr>
+  <tr>
+   <td>||</td>
+   <td>Logical OR</td>
+   <td>a &gt; 0 || b &lt; 10</td>
+  </tr>
+  <tr>
+   <td><code>!</code></td>
+   <td>Logical NOT</td>
+   <td><code>!flag</code></td>
+  </tr>
+ </tbody>
+</table><h4 id="example">Example:</h4><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-go">a := true
+b := false
+fmt.Println("a &amp;&amp; b:", a &amp;&amp; b)
+fmt.Println("a || b:", a || b)
+fmt.Println("!a:", !a)</code></pre>
+</div><h3 id="assignment-and-compound-operators">Assignment and Compound Operators</h3><p>Assignment operators assign values to variables. Compound operators combine arithmetic with assignment.</p><table>
+ <thead>
+  <tr>
+   <th>Operator</th>
+   <th>Description</th>
+   <th>Example</th>
+  </tr>
+ </thead>
+ <tbody>
+  <tr>
+   <td><code>=</code></td>
+   <td>Assign</td>
+   <td><code>x = 10</code></td>
+  </tr>
+  <tr>
+   <td><code>+=</code></td>
+   <td>Add and assign</td>
+   <td><code>x += 5</code></td>
+  </tr>
+  <tr>
+   <td><code>-=</code></td>
+   <td>Subtract and assign</td>
+   <td><code>x -= 2</code></td>
+  </tr>
+  <tr>
+   <td><code>*=</code></td>
+   <td>Multiply and assign</td>
+   <td><code>x *= 3</code></td>
+  </tr>
+  <tr>
+   <td><code>/=</code></td>
+   <td>Divide and assign</td>
+   <td><code>x /= 4</code></td>
+  </tr>
+  <tr>
+   <td><code>%=</code></td>
+   <td>Modulus and assign</td>
+   <td><code>x %= 3</code></td>
+  </tr>
+ </tbody>
+</table><h4 id="example">Example:</h4><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-go">x := 10
+x += 5  // x = x + 5
+x *= 2  // x = x * 2
+fmt.Println("Final x:", x)</code></pre>
+</div><h3 id="evaluating-expressions-a-mini-example">Evaluating Expressions: A Mini Example</h3><p>Let’s build a simple program that demonstrates variables, arithmetic, and relational expressions:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">📋</button>
+ <pre><code class="language-go">package main
+
+import "fmt"
+
+func main() {
+    var a int = 12
+    var b int = 5
+
+    sum := a + b
+    average := float64(sum) / 2
+    isEven := sum%2 == 0
+
+    fmt.Println("Sum:", sum)
+    fmt.Println("Average:", average)
+    fmt.Println("Is sum even?", isEven)
+}</code></pre>
+</div><h4 id="output">Output:</h4><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-bash">Sum: 17
+Average: 8.5
+Is sum even? false</code></pre>
+</div><h3 id="summary">Summary</h3><ul>
+ <li><strong>Arithmetic operators</strong> perform math operations like addition or division.</li>
+ <li><strong>Relational operators</strong> compare values and return booleans.</li>
+ <li><strong>Logical operators</strong> combine or negate boolean expressions.</li>
+ <li><strong>Assignment operators</strong> assign or update variable values.</li>
+ <li>Compound assignments (<code>+=</code>, <code>*=</code>) simplify updating variables in-place.</li>
+</ul><p>Understanding how to combine these operators in expressions allows you to build meaningful logic in Go programs. In the next section, we'll look at <strong>comments and formatting</strong>, which help keep your code clean and readable.</p><div class = "chapter-navi-section">
+<a href="#top" class="nav-button prev">↑</a>
+<a href='go-for-beginners.htm#go-basics-syntax-and-data-types' class="nav-button toc-link">Index</a>
+<a href="#bottom" class="nav-button next">↓</a>
+</div>
+<h2 id='comments-and-formatting'>2.5 Comments and Formatting</h2><p>Writing clear and maintainable code is just as important as writing code that works. Comments help explain the purpose and logic behind your code, making it easier for others—and yourself—to understand later. Proper formatting improves readability and keeps code consistent.</p><p>In this section, you’ll learn how to write comments in Go and how to use the built-in <code>go fmt</code> tool to automatically format your code.</p><h3 id="writing-comments-in-go">Writing Comments in Go</h3><p>Go supports two types of comments:</p><h4 id="single-line-comments">Single-Line Comments</h4><ul>
+ <li>Start with <code>//</code> and continue to the end of the line.</li>
+ <li>Commonly used for brief explanations or notes.</li>
+</ul><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-go">// This is a single-line comment
+fmt.Println("Hello, World!") // This prints a message</code></pre>
+</div><h4 id="multi-line-comments">Multi-Line Comments</h4><ul>
+ <li>Enclosed between <code>/*</code> and <code>*/</code>.</li>
+ <li>Useful for longer explanations or temporarily disabling blocks of code.</li>
+</ul><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-go">/*
+   This is a multi-line comment.
+   It can span multiple lines.
+*/
+fmt.Println("Multi-line comments are helpful!")</code></pre>
+</div><blockquote>
+ <p>🧠 <strong>Tip:</strong> Use comments to explain <strong>why</strong> the code does something, not just <strong>what</strong> it does.</p>
+</blockquote><h3 id="importance-of-comments">Importance of Comments</h3><ul>
+ <li>Improve <strong>readability</strong> by providing context.</li>
+ <li>Assist in <strong>maintenance</strong> when revisiting code after time.</li>
+ <li>Help <strong>team collaboration</strong> by clarifying intent.</li>
+ <li>Serve as <strong>documentation</strong> for complex algorithms or decisions.</li>
+</ul><p>Avoid over-commenting trivial code; well-written code often explains itself.</p><h3 id="formatting-with-go-fmt">Formatting with <code>go fmt</code></h3><p>Go includes a powerful tool called <code>go fmt</code> that <strong>automatically formats</strong> your source code to follow Go’s standard style guidelines. This ensures consistent indentation, spacing, and alignment across all Go projects.</p><h4 id="example-poorly-formatted-code-ugly-go">Example: Poorly Formatted Code (<code>ugly.go</code>)</h4><div class="code-block"><button class="copy-button" onclick="copyCode(this)">📋</button>
+ <pre><code class="language-go">package main
+import "fmt"
+func main(){fmt.Println("Hello, Go!")   }</code></pre>
+</div><h4 id="running-go-fmt">Running <code>go fmt</code></h4><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-bash">go fmt ugly.go</code></pre>
+</div><h4 id="after-formatting">After Formatting:</h4><div class="code-block"><button class="copy-button" onclick="copyCode(this)">📋</button>
+ <pre><code class="language-go">package main
+
+import "fmt"
+
+func main() {
+	fmt.Println("Hello, Go!")
+}</code></pre>
+</div><h3 id="why-use-go-fmt">Why Use <code>go fmt</code>?</h3><ul>
+ <li>Saves time manually adjusting spacing and indentation.</li>
+ <li>Ensures everyone on a team uses the same style.</li>
+ <li>Makes code easier to read and reduces merge conflicts.</li>
+ <li>Widely adopted as a best practice in the Go community.</li>
+</ul><p>You can run <code>go fmt</code> manually or integrate it into your editor/IDE for automatic formatting on save.</p><h3 id="summary">Summary</h3><table>
+ <thead>
+  <tr>
+   <th>Comment Type</th>
+   <th>Syntax</th>
+   <th>Use Case</th>
+  </tr>
+ </thead>
+ <tbody>
+  <tr>
+   <td>Single-line comment</td>
+   <td><code>// Comment</code></td>
+   <td>Brief notes or inline comments</td>
+  </tr>
+  <tr>
+   <td>Multi-line comment</td>
+   <td><code>/* Comment */</code></td>
+   <td>Longer explanations or disabling code blocks</td>
+  </tr>
+ </tbody>
+</table><ul>
+ <li>Use comments thoughtfully to clarify your code.</li>
+ <li>Always run <code>go fmt</code> to keep your code clean and idiomatic.</li>
+ <li>Formatting tools and comments together improve code quality and maintainability.</li>
+</ul><div class = "chapter-navi-section">
+<a href="go-for-beginners-introduction-to-go.htm" class="nav-button prev">←</a>
+<a href='go-for-beginners.htm#go-basics-syntax-and-data-types' class="nav-button toc-link">Index</a>
+<a href="go-for-beginners-control-structures.htm" class="nav-button next">→</a>
+</div>
+<section class="download-section">
+  <div class="book-cover" style="background-image: url('data:image/jpg;base64,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');">
+<div class="series-name">Introduction</div>
+<div class="book-title">Go for Beginners</div>
+<div class="book-subtitle">Essential concepts, practical examples, and foundational topics</div>
+<div class="book-footer">readbytes.github.io</div>
+</div>
+  <div class="download-info">
+    <h2 id='bottom'>Download This Ebook</h2>
+    <p class="format-label">Available formats:</p>
+    <div class="download-buttons">
+      <a href="go-for-beginners.pdf" class="download-button">📄 PDF</a>
+      <a href="go-for-beginners.epub" class="download-button">📘 EPUB</a>
+    </div>
+  </div>
+</section><div class='related-books'>
+<h2>Go Introduction Books</h2>
+<div class='related-book-list'>
+<a href="go-for-beginners.htm"><div class="book-cover" style="background-image: url('data:image/jpg;base64,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');">
+<div class="series-name">Introduction</div>
+<div class="book-title">Go for Beginners</div>
+<div class="book-subtitle">Essential concepts, practical examples, and foundational topics</div>
+<div class="book-footer">readbytes.github.io</div>
+</div></a>
+
+
+
+<a href='go.htm'><div class='book-cover'>More Go Books</div></a>
+</div>
+</div>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+  
+  <script>
+    function copyCode(button) {
+      const code = button.nextElementSibling.innerText;
+      navigator.clipboard.writeText(code).then(() => {
+        button.textContent = 'Copied!';
+        setTimeout(() => { button.textContent = 'Copy'; }, 1500);
+      });
+    }
+  </script>  
+
+<footer class="page-footer">
+    <nav>
+      <a href="https://readbytes.github.io">Home</a> | 
+      Email:<script language="JavaScript" type="text/javascript">
+var part1 = 'yinpeng';var part6 = '263';var part2 = Math.pow(2,6);var part3 = String.fromCharCode(part2);var part4 = 'hotmail dot com';var part5 = part1 + String.fromCharCode(part2) + part4;document.write(part1 + part6 + part3 + part4);
+</script>
+    </nav>
+  <p>© 2025 — All rights reserved.</p>    
+  </footer>
+
+</body>
+</html>

@@ -1,0 +1,1419 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>JavaScript for Beginners Functions and Scope</title>
+<link rel='shortcut icon' href='https://java2s.com/style/favicon.ico'>
+<link href="https://fonts.googleapis.com/css2?family=Merriweather&display=swap" rel="stylesheet" />
+<link href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.css" />
+<script src="https://cdn.jsdelivr.net/npm/typescript@5/lib/typescript.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/htmlmixed/htmlmixed.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/xml/xml.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/css/css.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/javascript/javascript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/javascript/typescript.min.js"></script>
+<script>
+  const codeMirrorMap = new Map();
+  function renderIframe(textarea_id, iframe_id) {
+      const html = codeMirrorMap.get(textarea_id).getValue();
+      const iframe = document.getElementById(iframe_id);
+      iframe.style.display = "block";
+      iframe.srcdoc = html;  
+  }
+  function renderIframeForClientTypescript(textarea_id, iframe_id) {
+      let code = codeMirrorMap.get(textarea_id).getValue();
+      code = ts.transpile(code);
+      const iframe = document.getElementById(iframe_id);
+      const doc = iframe.contentDocument || iframe.contentWindow.document;
+
+const html = `
+  <!DOCTYPE html>
+  <html>
+    <head>
+      <title>Output</title>
+      <style>
+        body { font-family: monospace; padding: 1em; background: #f4f4f4; color: #222; }
+        pre { white-space: pre-wrap; word-break: break-word; }
+        .error { color: red; }
+      </style>
+    </head>
+    <body>
+      <pre id="log"></pre>
+      <script>
+        (function(){
+          const logEl = document.getElementById('log');
+          const origLog = console.log;
+          const origError = console.error;
+
+          console.log = (...args) => {
+            logEl.textContent += args.join(' ') + '\\n';
+            origLog.apply(console, args);
+          };
+          console.table = (...args) => {
+            logEl.textContent += args.join(' ') + '\\n';
+            origLog.apply(console, args);
+          };
+
+          console.error = (...args) => {
+            logEl.innerHTML +='<span class="error">' + args.join(' ') + '</span>';
+            origError.apply(console, args);
+          };
+          window.addEventListener("error", function (event) {
+              console.error("Caught by event listener:", event.message);
+          });    
+          try {             
+              ${code};
+          } catch (err) {
+            console.error(err.stack || err.message);
+          }
+        })();
+      <\/script>
+    </body>
+  </html>
+`;
+      iframe.style.display = "block";
+      iframe.srcdoc = html;  
+  }
+
+    function renderIframeForClientJavascript(textarea_id, iframe_id) {
+        const code = codeMirrorMap.get(textarea_id).getValue();
+        const iframe = document.getElementById(iframe_id);
+        const doc = iframe.contentDocument || iframe.contentWindow.document;
+
+  const html = `
+    <!DOCTYPE html>
+    <html>
+      <head>
+        <title>Output</title>
+        <style>
+          body { font-family: monospace; padding: 1em; background: #f4f4f4; color: #222; }
+          pre { white-space: pre-wrap; word-break: break-word; }
+          .error { color: red; }
+        </style>
+      </head>
+      <body>
+        <pre id="log"></pre>
+        <script>
+          (function(){
+            const logEl = document.getElementById('log');
+            const origLog = console.log;
+            const origError = console.error;
+
+            console.log = (...args) => {
+              logEl.textContent += args.join(' ') + '\\n';
+              origLog.apply(console, args);
+            };
+            console.table = (...args) => {
+              logEl.textContent += args.join(' ') + '\\n';
+              origLog.apply(console, args);
+            };
+
+            console.error = (...args) => {
+              logEl.innerHTML +='<span class="error">' + args.join(' ') + '</span>';
+              origError.apply(console, args);
+            };
+            window.addEventListener("error", function (event) {
+                console.error("Caught by event listener:", event.message);
+            });    
+            try {
+             ${code}; 
+            } catch (err) {
+              console.error(err.stack || err.message);
+            }
+          })();
+        <\/script>
+      </body>
+    </html>
+  `;
+    
+        iframe.style.display = "block";
+        iframe.srcdoc = html;  
+    }
+
+    function toggleSnippetAndRefresh(id, textarea_id) {
+      const box = document.getElementById(id);
+      box.classList.toggle("open");
+      codeMirrorMap.get(textarea_id).refresh();
+    }
+
+  </script>
+<style>
+body {
+  background: #f8f7f5;
+  font-family: 'Merriweather', serif;
+  color: #333;
+  margin: 0;
+  padding: 2rem 1rem;
+  font-size: 15px; /* smaller body font */
+  line-height: 1.5;
+}
+
+.container {
+  max-width: 700px;
+  margin: 0 auto;
+  background: white;
+  padding: 1rem 2rem;
+  box-shadow: 0 0 15px rgba(0,0,0,0.1);
+}
+.book-title-chapter {
+  font-family: 'Merriweather', serif;
+  font-size: 2rem;
+  font-weight: bold;
+  text-align: center;
+  margin-bottom: 2rem;
+  border-bottom: 2px solid #ccc;
+  padding-bottom: 0.5rem;
+  color: #2c3e50;
+}
+
+.book-subtitle-chapter {
+  text-align: center;
+  font-size: 1rem;
+  color: #666;
+  margin-top: -1rem;
+  margin-bottom: 2rem;
+}
+
+    .related-books {
+      margin-top: 40px;
+    }
+
+    .related-books h2 {
+      font-size: 22px;
+      margin-bottom: 20px;
+      border-bottom: 2px solid #eee;
+      padding-bottom: 8px;
+      color: #333;
+    }
+    .related-book-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+h1, h2, h3 {
+  font-weight: 600;
+  margin-top: 2.5rem;
+  margin-bottom: 1rem;
+  line-height: 1.2;
+}
+
+h1 {
+  font-size: 1.8rem; /* smaller heading */
+}
+
+h2 {
+  font-size: 1.4rem;
+}
+
+h3 {
+  font-size: 1.2rem;
+}
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-family: sans-serif;
+      font-size: 1em;
+      margin: 1em 0;
+    }
+
+    th, td {
+      border: 1px solid #cccccc;
+      padding: 0.6em 1em;
+      text-align: left;
+    }
+
+    th {
+      background-color: #f2f2f2;
+      font-weight: bold;
+    }
+
+    tr:nth-child(even) {
+      background-color: #fafafa;
+    }
+
+    /* Optional hover effect */
+    tr:hover {
+      background-color: #e6f7ff;
+    }
+ 
+a {
+  color: #555;
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+
+
+.code-block {
+    position: relative;
+    margin-bottom: 1em;
+}
+.copy-button {
+    background: transparent; 
+    color: white;
+
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    border: none;
+    padding: 4px 8px;
+    font-size: 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    z-index: 1;
+}
+
+.copy-button:hover {
+background-color: #0056b3;
+}
+.page-footer {
+  margin-top: 4rem;
+  padding: 1rem 0;
+  text-align: center;
+  font-size: 0.85rem;
+  color: #666;
+  border-top: 1px solid #ccc;
+  background-color: #fafafa;
+}
+.page-footer a {
+     color: #555;
+    text-decoration: none;
+  }
+  .page-footer a:hover {
+    text-decoration: underline;
+  }
+.chapter-navi-section {
+display: flex;
+justify-content: space-between;
+align-items: center;
+padding-bottom: 10px;
+}  
+
+.nav-link {
+  color: inherit;
+  text-decoration: none;
+  opacity: 0.5;
+  transition: opacity 0.3s ease, text-decoration 0.3s ease;
+}
+
+.nav-link:hover {
+  opacity: 0.9;
+  text-decoration: underline;
+}
+
+.prev {
+  text-align: left;
+}
+.toc-link {
+  text-align: center;
+}
+.next {
+  text-align: right;
+}
+.download-section {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2rem;
+  padding: 2rem 1rem;
+  max-width: 600px;
+  margin: 3rem auto;
+  background-color: #f9f9f9;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+}
+
+    .book-cover {
+      width: 130px;
+      height: 180px;
+      
+      background-size: cover; /* Ensures the image covers the entire div */
+      background-position: center; /* Centers the image */
+            
+      background: linear-gradient(145deg, #e0dede, #f9f9f9);
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 10px;
+      box-sizing: border-box;
+      position: relative;
+      font-family: 'Roboto', sans-serif;
+    }
+
+    .book-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 16px;
+      font-weight: 600;
+      color: #fff;
+      margin-bottom: 4px;
+    }
+
+    .book-subtitle {
+      font-size: 12px;
+      color: #aaa;
+      margin-bottom: 10px;
+    }
+
+    .series-name {
+      position: absolute;
+      top: 8px;
+      left: 8px;
+      font-size: 10px;
+      color: #fff;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-weight: bold;
+    }
+
+    .book-footer {
+      position: absolute;
+      bottom: 8px;
+      font-size: 10px;
+      color: #aaa;
+    }
+
+.download-info h2 {
+  margin: 0 0 0.5rem;
+  font-size: 1.2rem;
+}
+
+.format-label {
+  margin: 0 0 0.5rem;
+  font-size: 0.95rem;
+  color: #555;
+}
+
+.download-buttons {
+  display: flex;
+  gap: 1rem;
+}
+
+.download-button {
+  background-color: #4A90E2;
+  color: white;
+  padding: 0.5em 1.2em;
+  text-decoration: none;
+  border-radius: 25px;
+  font-size: 0.95rem;
+  transition: background-color 0.3s ease;
+}
+
+.download-button:hover {
+  background-color: #357ABD;
+}
+
+    code {
+ 
+      color: #d35400; 
+    }
+html {
+    scroll-behavior: smooth;
+}
+    .snippet-container {
+      overflow: hidden;    
+    }
+
+    .snippet-header {
+      background: #f0f0f0;
+      color: #333;
+      padding: 0.75rem 1rem;
+      cursor: pointer;
+      font-size: 1rem;
+    }
+
+    .snippet-body {
+      display: none;
+      font-family: monospace;
+    }
+
+    .snippet-container.open .snippet-body {
+      display: block;
+    }
+
+.CodeMirror {
+  border: 2px solid #ccc;
+  border-radius: 4px;
+  resize: vertical;
+}
+
+    button { padding: 0.5em 1em; background: green; color: white; border: none; cursor: pointer; }
+    button:hover { background: #1e7e34; }
+    .result_iframe { width:99%; height:200px; margin-top: 1em;  resize: both;border:1px solid #ccc;}        
+</style>
+</head>
+<body> 
+
+  <div class="container">
+    <div class = "chapter-navi-section">
+<a href="javascript-for-beginners-objects-and-object-literals.htm" class="nav-button prev">←</a>
+<a href='javascript-for-beginners.htm#functions-and-scope' class="nav-button toc-link">Index</a>
+<a href="javascript-for-beginners-events-and-user-interaction.htm" class="nav-button next">→</a>
+</div>
+
+    <h1 class="book-title-chapter" id = 'top'>Functions and Scope</h1>
+    <h3 class="book-subtitle-chapter">JavaScript for Beginners</h3>   
+    <!-- <h1 class ="chapter-title"></h1> -->
+    <h2 id='declaring-functions-function-arrow-functions'>9.1 Declaring Functions (<code>function</code>, arrow functions)</h2><p>Functions are one of the most fundamental building blocks in JavaScript. They allow you to <strong>group reusable code</strong> into named blocks that can be called whenever needed. JavaScript supports multiple ways to declare functions, with two of the most common being:</p><ul>
+ <li><strong>Function declarations</strong> (traditional)</li>
+ <li><strong>Arrow functions</strong> (introduced in ES6)</li>
+</ul><p>In this section, you'll learn how to use both styles, understand their differences, and see when each is most appropriate.</p><h3 id="traditional-function-declarations">Traditional Function Declarations</h3><p>The traditional way to declare a function uses the <code>function</code> keyword.</p><p><strong>Syntax:</strong></p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-js">function functionName(parameters) {
+  // code to execute
+  return result;
+}</code></pre>
+</div><p><strong>Example – Add two numbers:</strong></p><div>
+ <div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+  <pre><code class="language-js">function add(a, b) {
+  return a + b;
+}
+
+console.log(add(3, 4)); // 7</code></pre>
+ </div>
+ <div class="snippet-container" id="0iKpw">
+  <div class="snippet-header" onclick="toggleSnippetAndRefresh('0iKpw','bLrDT')">
+   Try it in editor
+  </div>
+  <div class="snippet-body"><textarea id="bLrDT">function add(a, b) {
+  return a + b;
+}
+
+console.log(add(3, 4)); // 7</textarea> <br> <button onclick="renderIframeForClientJavascript('bLrDT','TkS90')">Run</button> <iframe id="TkS90" class="result_iframe" style="display: none;"></iframe>
+   <script>
+  {let editor1 = CodeMirror.fromTextArea(document.getElementById("bLrDT"), {
+    mode: "javascript",
+    lineNumbers:false,
+    tabSize: 2
+  });
+   codeMirrorMap.set("bLrDT", editor1);}
+  </script>
+  </div>
+ </div>
+</div><p><strong>Example – Greet a user:</strong></p><div>
+ <div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+  <pre><code class="language-js">function greet(name) {
+  return `Hello, ${name}!`;
+}
+
+console.log(greet('Alice')); // Hello, Alice!</code></pre>
+ </div>
+ <div class="snippet-container" id="EIFH9">
+  <div class="snippet-header" onclick="toggleSnippetAndRefresh('EIFH9','VXf3M')">
+   Try it in editor
+  </div>
+  <div class="snippet-body"><textarea id="VXf3M">function greet(name) {
+  return `Hello, ${name}!`;
+}
+
+console.log(greet('Alice')); // Hello, Alice!</textarea> <br> <button onclick="renderIframeForClientJavascript('VXf3M','dFLPk')">Run</button> <iframe id="dFLPk" class="result_iframe" style="display: none;"></iframe>
+   <script>
+  {let editor1 = CodeMirror.fromTextArea(document.getElementById("VXf3M"), {
+    mode: "javascript",
+    lineNumbers:false,
+    tabSize: 2
+  });
+   codeMirrorMap.set("VXf3M", editor1);}
+  </script>
+  </div>
+ </div>
+</div><h3 id="arrow-functions">Arrow Functions</h3><p>Arrow functions offer a <strong>shorter syntax</strong> and are commonly used in modern JavaScript, especially for small or anonymous functions.</p><p><strong>Syntax:</strong></p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-js">const functionName = (parameters) =&gt; {
+  // code to execute
+  return result;
+};</code></pre>
+</div><p>If the function has only <strong>one expression</strong>, you can omit the braces and <code>return</code> keyword:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-js">const add = (a, b) =&gt; a + b;</code></pre>
+</div><p><strong>Example – Greet a user (arrow version):</strong></p><div>
+ <div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+  <pre><code class="language-js">const greet = name =&gt; `Hello, ${name}!`;
+
+console.log(greet('Bob')); // Hello, Bob!</code></pre>
+ </div>
+ <div class="snippet-container" id="QxyQK">
+  <div class="snippet-header" onclick="toggleSnippetAndRefresh('QxyQK','SLC50')">
+   Try it in editor
+  </div>
+  <div class="snippet-body"><textarea id="SLC50">const greet = name =&gt; `Hello, ${name}!`;
+
+console.log(greet('Bob')); // Hello, Bob!</textarea> <br> <button onclick="renderIframeForClientJavascript('SLC50','1PVZJ')">Run</button> <iframe id="1PVZJ" class="result_iframe" style="display: none;"></iframe>
+   <script>
+  {let editor1 = CodeMirror.fromTextArea(document.getElementById("SLC50"), {
+    mode: "javascript",
+    lineNumbers:false,
+    tabSize: 2
+  });
+   codeMirrorMap.set("SLC50", editor1);}
+  </script>
+  </div>
+ </div>
+</div><h3 id="comparing-function-declarations-vs-arrow-functions">Comparing Function Declarations vs. Arrow Functions</h3><table>
+ <thead>
+  <tr>
+   <th>Feature</th>
+   <th>Function Declaration</th>
+   <th>Arrow Function</th>
+  </tr>
+ </thead>
+ <tbody>
+  <tr>
+   <td>Syntax</td>
+   <td>Verbose</td>
+   <td>Concise</td>
+  </tr>
+  <tr>
+   <td><code>this</code> binding</td>
+   <td>Dynamic (<code>this</code> depends on caller)</td>
+   <td>Lexical (<code>this</code> is inherited from scope)</td>
+  </tr>
+  <tr>
+   <td>Hoisting</td>
+   <td>Yes (can be used before defined)</td>
+   <td>No (must be declared first)</td>
+  </tr>
+  <tr>
+   <td>Best for</td>
+   <td>Methods, complex logic</td>
+   <td>Callbacks, one-liners</td>
+  </tr>
+ </tbody>
+</table><h3 id="important-this-behavior">Important: <code>this</code> Behavior</h3><p>One of the biggest differences between the two styles is how they handle the <code>this</code> keyword.</p><p><strong>Function Declaration:</strong></p><div>
+ <div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+  <pre><code class="language-js">const user = {
+  name: 'Alice',
+  greet: function () {
+    console.log(`Hi, I'm ${this.name}`);
+  }
+};
+
+user.greet(); // Hi, I'm Alice</code></pre>
+ </div>
+ <div class="snippet-container" id="401nY">
+  <div class="snippet-header" onclick="toggleSnippetAndRefresh('401nY','nxIeB')">
+   Try it in editor
+  </div>
+  <div class="snippet-body"><textarea id="nxIeB">const user = {
+  name: 'Alice',
+  greet: function () {
+    console.log(`Hi, I'm ${this.name}`);
+  }
+};
+
+user.greet(); // Hi, I'm Alice</textarea> <br> <button onclick="renderIframeForClientJavascript('nxIeB','vGAWy')">Run</button> <iframe id="vGAWy" class="result_iframe" style="display: none;"></iframe>
+   <script>
+  {let editor1 = CodeMirror.fromTextArea(document.getElementById("nxIeB"), {
+    mode: "javascript",
+    lineNumbers:false,
+    tabSize: 2
+  });
+   codeMirrorMap.set("nxIeB", editor1);}
+  </script>
+  </div>
+ </div>
+</div><p><strong>Arrow Function (wrong in this case):</strong></p><div>
+ <div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+  <pre><code class="language-js">const user = {
+  name: 'Bob',
+  greet: () =&gt; {
+    console.log(`Hi, I'm ${this.name}`);
+  }
+};
+
+user.greet(); // Hi, I'm undefined</code></pre>
+ </div>
+ <div class="snippet-container" id="WXRtO">
+  <div class="snippet-header" onclick="toggleSnippetAndRefresh('WXRtO','Zuso9')">
+   Try it in editor
+  </div>
+  <div class="snippet-body"><textarea id="Zuso9">const user = {
+  name: 'Bob',
+  greet: () =&gt; {
+    console.log(`Hi, I'm ${this.name}`);
+  }
+};
+
+user.greet(); // Hi, I'm undefined</textarea> <br> <button onclick="renderIframeForClientJavascript('Zuso9','EkxWY')">Run</button> <iframe id="EkxWY" class="result_iframe" style="display: none;"></iframe>
+   <script>
+  {let editor1 = CodeMirror.fromTextArea(document.getElementById("Zuso9"), {
+    mode: "javascript",
+    lineNumbers:false,
+    tabSize: 2
+  });
+   codeMirrorMap.set("Zuso9", editor1);}
+  </script>
+  </div>
+ </div>
+</div><blockquote>
+ <p>Arrow functions do <strong>not</strong> have their own <code>this</code>. They inherit it from the surrounding context, which can lead to unexpected results when used in object methods.</p>
+</blockquote><h3 id="summary">Summary</h3><ul>
+ <li>Use <strong>function declarations</strong> when you need hoisting or when defining methods inside objects.</li>
+ <li>Use <strong>arrow functions</strong> for <strong>shorter syntax</strong>, especially in callbacks, array methods, or simple functions.</li>
+ <li>Be careful with <code>this</code> — prefer function declarations for methods that rely on object context.</li>
+</ul><p>By mastering both styles, you'll be able to write clean, modern JavaScript code that's both expressive and efficient.</p><div class = "chapter-navi-section">
+<a href="#top" class="nav-button prev">↑</a>
+<a href='javascript-for-beginners.htm#functions-and-scope' class="nav-button toc-link">Index</a>
+<a href="#bottom" class="nav-button next">↓</a>
+</div>
+<h2 id='parameters-and-return-values'>9.2 Parameters and Return Values</h2><p>Functions in JavaScript behave much like <strong>machines</strong>: you give them <strong>input</strong> (parameters), they perform a task, and they may produce <strong>output</strong> (a return value). Understanding how to pass data into functions and get results back is essential to writing flexible, reusable code.</p><h3 id="what-are-parameters">What Are Parameters?</h3><p><strong>Parameters</strong> are like variables listed in a function’s definition. They represent values that will be passed <strong>into the function</strong> when it’s called.</p><p><strong>Arguments</strong> are the actual values you pass when calling the function.</p><h3 id="functions-with-no-parameters">Functions with No Parameters</h3><p>Sometimes, a function doesn't need any input — it simply performs an action.</p><p><strong>Example – Say Hello:</strong></p><div>
+ <div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+  <pre><code class="language-js">function sayHello() {
+  console.log('Hello!');
+}
+
+sayHello(); // Output: Hello!</code></pre>
+ </div>
+ <div class="snippet-container" id="XOuPI">
+  <div class="snippet-header" onclick="toggleSnippetAndRefresh('XOuPI','rpLjh')">
+   Try it in editor
+  </div>
+  <div class="snippet-body"><textarea id="rpLjh">function sayHello() {
+  console.log('Hello!');
+}
+
+sayHello(); // Output: Hello!</textarea> <br> <button onclick="renderIframeForClientJavascript('rpLjh','R0XAZ')">Run</button> <iframe id="R0XAZ" class="result_iframe" style="display: none;"></iframe>
+   <script>
+  {let editor1 = CodeMirror.fromTextArea(document.getElementById("rpLjh"), {
+    mode: "javascript",
+    lineNumbers:false,
+    tabSize: 2
+  });
+   codeMirrorMap.set("rpLjh", editor1);}
+  </script>
+  </div>
+ </div>
+</div><h3 id="functions-with-one-parameter">Functions with One Parameter</h3><p><strong>Example – Greet a user by name:</strong></p><div>
+ <div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+  <pre><code class="language-js">function greet(name) {
+  console.log(`Hello, ${name}!`);
+}
+
+greet('Alice'); // Output: Hello, Alice!</code></pre>
+ </div>
+ <div class="snippet-container" id="70b4z">
+  <div class="snippet-header" onclick="toggleSnippetAndRefresh('70b4z','udCJu')">
+   Try it in editor
+  </div>
+  <div class="snippet-body"><textarea id="udCJu">function greet(name) {
+  console.log(`Hello, ${name}!`);
+}
+
+greet('Alice'); // Output: Hello, Alice!</textarea> <br> <button onclick="renderIframeForClientJavascript('udCJu','ZoNh8')">Run</button> <iframe id="ZoNh8" class="result_iframe" style="display: none;"></iframe>
+   <script>
+  {let editor1 = CodeMirror.fromTextArea(document.getElementById("udCJu"), {
+    mode: "javascript",
+    lineNumbers:false,
+    tabSize: 2
+  });
+   codeMirrorMap.set("udCJu", editor1);}
+  </script>
+  </div>
+ </div>
+</div><p>Here, <code>name</code> is a parameter, and <code>'Alice'</code> is the argument passed to it.</p><h3 id="functions-with-multiple-parameters">Functions with Multiple Parameters</h3><p>You can define as many parameters as you need, separated by commas.</p><p><strong>Example – Add two numbers:</strong></p><div>
+ <div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+  <pre><code class="language-js">function add(a, b) {
+  return a + b;
+}
+
+let result = add(5, 3);
+console.log(result); // 8</code></pre>
+ </div>
+ <div class="snippet-container" id="80qyy">
+  <div class="snippet-header" onclick="toggleSnippetAndRefresh('80qyy','ad8bM')">
+   Try it in editor
+  </div>
+  <div class="snippet-body"><textarea id="ad8bM">function add(a, b) {
+  return a + b;
+}
+
+let result = add(5, 3);
+console.log(result); // 8</textarea> <br> <button onclick="renderIframeForClientJavascript('ad8bM','WlYnI')">Run</button> <iframe id="WlYnI" class="result_iframe" style="display: none;"></iframe>
+   <script>
+  {let editor1 = CodeMirror.fromTextArea(document.getElementById("ad8bM"), {
+    mode: "javascript",
+    lineNumbers:false,
+    tabSize: 2
+  });
+   codeMirrorMap.set("ad8bM", editor1);}
+  </script>
+  </div>
+ </div>
+</div><h3 id="default-parameter-values">Default Parameter Values</h3><p>If a caller doesn’t provide an argument, you can define a <strong>default value</strong> to use instead.</p><p><strong>Example – Greet with a default name:</strong></p><div>
+ <div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+  <pre><code class="language-js">function greet(name = 'Guest') {
+  console.log(`Welcome, ${name}!`);
+}
+
+greet();          // Welcome, Guest!
+greet('Charlie'); // Welcome, Charlie!</code></pre>
+ </div>
+ <div class="snippet-container" id="c3PIU">
+  <div class="snippet-header" onclick="toggleSnippetAndRefresh('c3PIU','pse5U')">
+   Try it in editor
+  </div>
+  <div class="snippet-body"><textarea id="pse5U">function greet(name = 'Guest') {
+  console.log(`Welcome, ${name}!`);
+}
+
+greet();          // Welcome, Guest!
+greet('Charlie'); // Welcome, Charlie!</textarea> <br> <button onclick="renderIframeForClientJavascript('pse5U','gqh5b')">Run</button> <iframe id="gqh5b" class="result_iframe" style="display: none;"></iframe>
+   <script>
+  {let editor1 = CodeMirror.fromTextArea(document.getElementById("pse5U"), {
+    mode: "javascript",
+    lineNumbers:false,
+    tabSize: 2
+  });
+   codeMirrorMap.set("pse5U", editor1);}
+  </script>
+  </div>
+ </div>
+</div><p>This makes your functions more <strong>robust</strong> and <strong>error-tolerant</strong>.</p><h3 id="returning-values">Returning Values</h3><p>A function can return a value using the <code>return</code> keyword. This lets you <strong>store or use the result</strong> of a computation later in your code.</p><p><strong>Example – Calculate area of a rectangle:</strong></p><div>
+ <div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+  <pre><code class="language-js">function calculateArea(width, height) {
+  return width * height;
+}
+
+let area = calculateArea(5, 4);
+console.log(area); // 20</code></pre>
+ </div>
+ <div class="snippet-container" id="mZ3vJ">
+  <div class="snippet-header" onclick="toggleSnippetAndRefresh('mZ3vJ','tCtTu')">
+   Try it in editor
+  </div>
+  <div class="snippet-body"><textarea id="tCtTu">function calculateArea(width, height) {
+  return width * height;
+}
+
+let area = calculateArea(5, 4);
+console.log(area); // 20</textarea> <br> <button onclick="renderIframeForClientJavascript('tCtTu','Qwvnk')">Run</button> <iframe id="Qwvnk" class="result_iframe" style="display: none;"></iframe>
+   <script>
+  {let editor1 = CodeMirror.fromTextArea(document.getElementById("tCtTu"), {
+    mode: "javascript",
+    lineNumbers:false,
+    tabSize: 2
+  });
+   codeMirrorMap.set("tCtTu", editor1);}
+  </script>
+  </div>
+ </div>
+</div><p>Without <code>return</code>, the function would perform the calculation but not give the result back to the code that called it.</p><h3 id="real-world-analogy">Real-World Analogy</h3><p>Think of a function like a <strong>coffee machine</strong>:</p><ul>
+ <li><strong>Parameters</strong> = the inputs (e.g. water, coffee beans, sugar)</li>
+ <li><strong>Function body</strong> = the brewing process</li>
+ <li><strong>Return value</strong> = the finished cup of coffee</li>
+</ul><p>If you press the button without choosing sugar, maybe it adds none (default value). When the brewing is done, you get coffee (the return value), which you can drink (use in your program).</p><h3 id="summary">Summary</h3><table>
+ <thead>
+  <tr>
+   <th>Concept</th>
+   <th>Example</th>
+   <th>Purpose</th>
+  </tr>
+ </thead>
+ <tbody>
+  <tr>
+   <td>No parameters</td>
+   <td><code>function sayHi() {}</code></td>
+   <td>Executes fixed code</td>
+  </tr>
+  <tr>
+   <td>One parameter</td>
+   <td><code>function greet(name) {}</code></td>
+   <td>Accepts a single value</td>
+  </tr>
+  <tr>
+   <td>Multiple parameters</td>
+   <td><code>function add(a, b) {}</code></td>
+   <td>Accepts two or more values</td>
+  </tr>
+  <tr>
+   <td>Default values</td>
+   <td><code>function greet(name = 'Guest') {}</code></td>
+   <td>Fallback when no argument passed</td>
+  </tr>
+  <tr>
+   <td>Return a value</td>
+   <td><code>return a + b;</code></td>
+   <td>Outputs a result from the function</td>
+  </tr>
+ </tbody>
+</table><p>Knowing how to pass data into functions and return results lets you build <strong>custom, reusable tools</strong> for your code—just like mini-programs inside your program.</p><div class = "chapter-navi-section">
+<a href="#top" class="nav-button prev">↑</a>
+<a href='javascript-for-beginners.htm#functions-and-scope' class="nav-button toc-link">Index</a>
+<a href="#bottom" class="nav-button next">↓</a>
+</div>
+<h2 id='function-expressions'>9.3 Function Expressions</h2><p>In JavaScript, functions are <strong>first-class citizens</strong>, meaning they can be treated like any other value — stored in variables, passed as arguments, or returned from other functions. One way to create functions that leverages this flexibility is through <strong>function expressions</strong>.</p><h3 id="what-is-a-function-expression">What Is a Function Expression?</h3><p>A <strong>function expression</strong> defines a function inside an expression, typically assigning it to a variable.</p><p><strong>Syntax:</strong></p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-js">const sayHello = function() {
+  console.log('Hello!');
+};</code></pre>
+</div><p>Unlike function declarations (<code>function sayHello() {}</code>), function expressions are <strong>not hoisted</strong>, which means you cannot call them before they are defined.</p><h3 id="example-storing-functions-in-variables">Example: Storing Functions in Variables</h3><p>You can store a function in a variable just like a number or string.</p><div>
+ <div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+  <pre><code class="language-js">const multiply = function(a, b) {
+  return a * b;
+};
+
+console.log(multiply(4, 5)); // 20</code></pre>
+ </div>
+ <div class="snippet-container" id="QhtgH">
+  <div class="snippet-header" onclick="toggleSnippetAndRefresh('QhtgH','orlzk')">
+   Try it in editor
+  </div>
+  <div class="snippet-body"><textarea id="orlzk">const multiply = function(a, b) {
+  return a * b;
+};
+
+console.log(multiply(4, 5)); // 20</textarea> <br> <button onclick="renderIframeForClientJavascript('orlzk','Yf9qC')">Run</button> <iframe id="Yf9qC" class="result_iframe" style="display: none;"></iframe>
+   <script>
+  {let editor1 = CodeMirror.fromTextArea(document.getElementById("orlzk"), {
+    mode: "javascript",
+    lineNumbers:false,
+    tabSize: 2
+  });
+   codeMirrorMap.set("orlzk", editor1);}
+  </script>
+  </div>
+ </div>
+</div><h3 id="passing-functions-as-arguments-callbacks">Passing Functions as Arguments (Callbacks)</h3><p>Because functions can be stored in variables, they can also be <strong>passed as arguments</strong> to other functions. This is useful for things like event handling or array processing.</p><p><strong>Example – Using a callback with <code>setTimeout</code>:</strong></p><div>
+ <div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+  <pre><code class="language-js">setTimeout(function() {
+  console.log('This message appears after 2 seconds');
+}, 2000);</code></pre>
+ </div>
+ <div class="snippet-container" id="mbQCh">
+  <div class="snippet-header" onclick="toggleSnippetAndRefresh('mbQCh','Gd6L3')">
+   Try it in editor
+  </div>
+  <div class="snippet-body"><textarea id="Gd6L3">setTimeout(function() {
+  console.log('This message appears after 2 seconds');
+}, 2000);</textarea> <br> <button onclick="renderIframeForClientJavascript('Gd6L3','E3cpV')">Run</button> <iframe id="E3cpV" class="result_iframe" style="display: none;"></iframe>
+   <script>
+  {let editor1 = CodeMirror.fromTextArea(document.getElementById("Gd6L3"), {
+    mode: "javascript",
+    lineNumbers:false,
+    tabSize: 2
+  });
+   codeMirrorMap.set("Gd6L3", editor1);}
+  </script>
+  </div>
+ </div>
+</div><p>Here, the anonymous function (a function without a name) is passed directly as an argument to <code>setTimeout</code>.</p><h3 id="anonymous-functions">Anonymous Functions</h3><p>Functions without a name are called <strong>anonymous functions</strong>. They are often used in function expressions or as callbacks:</p><div>
+ <div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+  <pre><code class="language-js">const greet = function(name) {
+  console.log(`Hello, ${name}!`);
+};
+
+greet('Alice'); // Hello, Alice!</code></pre>
+ </div>
+ <div class="snippet-container" id="bKdMj">
+  <div class="snippet-header" onclick="toggleSnippetAndRefresh('bKdMj','hTkHJ')">
+   Try it in editor
+  </div>
+  <div class="snippet-body"><textarea id="hTkHJ">const greet = function(name) {
+  console.log(`Hello, ${name}!`);
+};
+
+greet('Alice'); // Hello, Alice!</textarea> <br> <button onclick="renderIframeForClientJavascript('hTkHJ','DOwgS')">Run</button> <iframe id="DOwgS" class="result_iframe" style="display: none;"></iframe>
+   <script>
+  {let editor1 = CodeMirror.fromTextArea(document.getElementById("hTkHJ"), {
+    mode: "javascript",
+    lineNumbers:false,
+    tabSize: 2
+  });
+   codeMirrorMap.set("hTkHJ", editor1);}
+  </script>
+  </div>
+ </div>
+</div><p>You can also write anonymous arrow functions:</p><div>
+ <div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+  <pre><code class="language-js">setTimeout(() =&gt; console.log('Done!'), 1000);</code></pre>
+ </div>
+ <div class="snippet-container" id="faiKS">
+  <div class="snippet-header" onclick="toggleSnippetAndRefresh('faiKS','5f8oG')">
+   Try it in editor
+  </div>
+  <div class="snippet-body"><textarea id="5f8oG">setTimeout(() =&gt; console.log('Done!'), 1000);</textarea> <br> <button onclick="renderIframeForClientJavascript('5f8oG','zEJSJ')">Run</button> <iframe id="zEJSJ" class="result_iframe" style="display: none;"></iframe>
+   <script>
+  {let editor1 = CodeMirror.fromTextArea(document.getElementById("5f8oG"), {
+    mode: "javascript",
+    lineNumbers:false,
+    tabSize: 2
+  });
+   codeMirrorMap.set("5f8oG", editor1);}
+  </script>
+  </div>
+ </div>
+</div><h3 id="function-declarations-vs-function-expressions">Function Declarations vs. Function Expressions</h3><table>
+ <thead>
+  <tr>
+   <th>Feature</th>
+   <th>Function Declaration</th>
+   <th>Function Expression</th>
+  </tr>
+ </thead>
+ <tbody>
+  <tr>
+   <td>Syntax</td>
+   <td><code>function foo() {}</code></td>
+   <td><code>const foo = function() {}</code></td>
+  </tr>
+  <tr>
+   <td>Hoisting</td>
+   <td>Hoisted (can call before defined)</td>
+   <td>Not hoisted (must define first)</td>
+  </tr>
+  <tr>
+   <td>Naming</td>
+   <td>Usually named</td>
+   <td>Can be anonymous or named</td>
+  </tr>
+  <tr>
+   <td>Usage</td>
+   <td>General purpose</td>
+   <td>When assigning or passing functions</td>
+  </tr>
+ </tbody>
+</table><h3 id="summary">Summary</h3><ul>
+ <li><strong>Function expressions</strong> create functions inside expressions, often assigned to variables.</li>
+ <li>They <strong>are not hoisted</strong>, so define them before use.</li>
+ <li>They can be <strong>anonymous</strong>, making them handy as inline callbacks.</li>
+ <li>Function expressions enable powerful patterns like passing functions as arguments or returning functions from other functions.</li>
+</ul><p>Understanding function expressions unlocks much of JavaScript’s flexibility and lets you write more dynamic and functional code.</p><div class = "chapter-navi-section">
+<a href="#top" class="nav-button prev">↑</a>
+<a href='javascript-for-beginners.htm#functions-and-scope' class="nav-button toc-link">Index</a>
+<a href="#bottom" class="nav-button next">↓</a>
+</div>
+<h2 id='variable-scope-and-hoisting'>9.4 Variable Scope and Hoisting</h2><p>Understanding <strong>variable scope</strong> and <strong>hoisting</strong> is essential for writing reliable JavaScript code. These concepts determine <strong>where variables are accessible</strong> and <strong>how they behave during code execution</strong>.</p><h3 id="what-is-variable-scope">What Is Variable Scope?</h3><p><strong>Scope</strong> defines the <strong>region of your code where a variable is available</strong>. In JavaScript, there are three main types of scope:</p><ul>
+ <li><strong>Global scope</strong></li>
+ <li><strong>Function scope</strong></li>
+ <li><strong>Block scope</strong></li>
+</ul><h3 id="global-scope">Global Scope</h3><p>Variables declared outside any function or block have <strong>global scope</strong> and can be accessed anywhere in your code.</p><div>
+ <div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+  <pre><code class="language-js">let globalVar = 'I am global';
+
+function showVar() {
+  console.log(globalVar); // Accessible here
+}
+
+showVar();               // Output: I am global
+console.log(globalVar);  // Output: I am global</code></pre>
+ </div>
+ <div class="snippet-container" id="aN86s">
+  <div class="snippet-header" onclick="toggleSnippetAndRefresh('aN86s','ZcjRR')">
+   Try it in editor
+  </div>
+  <div class="snippet-body"><textarea id="ZcjRR">let globalVar = 'I am global';
+
+function showVar() {
+  console.log(globalVar); // Accessible here
+}
+
+showVar();               // Output: I am global
+console.log(globalVar);  // Output: I am global</textarea> <br> <button onclick="renderIframeForClientJavascript('ZcjRR','PzpJB')">Run</button> <iframe id="PzpJB" class="result_iframe" style="display: none;"></iframe>
+   <script>
+  {let editor1 = CodeMirror.fromTextArea(document.getElementById("ZcjRR"), {
+    mode: "javascript",
+    lineNumbers:false,
+    tabSize: 2
+  });
+   codeMirrorMap.set("ZcjRR", editor1);}
+  </script>
+  </div>
+ </div>
+</div><h3 id="function-scope">Function Scope</h3><p>Variables declared inside a function are only accessible <strong>within that function</strong>.</p><div>
+ <div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+  <pre><code class="language-js">function myFunc() {
+  let funcVar = 'I am local to myFunc';
+  console.log(funcVar); // Works here
+}
+
+myFunc();
+console.log(funcVar); // Error: funcVar is not defined</code></pre>
+ </div>
+ <div class="snippet-container" id="Fs1ab">
+  <div class="snippet-header" onclick="toggleSnippetAndRefresh('Fs1ab','SgfKr')">
+   Try it in editor
+  </div>
+  <div class="snippet-body"><textarea id="SgfKr">function myFunc() {
+  let funcVar = 'I am local to myFunc';
+  console.log(funcVar); // Works here
+}
+
+myFunc();
+console.log(funcVar); // Error: funcVar is not defined</textarea> <br> <button onclick="renderIframeForClientJavascript('SgfKr','x9cpW')">Run</button> <iframe id="x9cpW" class="result_iframe" style="display: none;"></iframe>
+   <script>
+  {let editor1 = CodeMirror.fromTextArea(document.getElementById("SgfKr"), {
+    mode: "javascript",
+    lineNumbers:false,
+    tabSize: 2
+  });
+   codeMirrorMap.set("SgfKr", editor1);}
+  </script>
+  </div>
+ </div>
+</div><p>Variables declared with <code>var</code> and <code>let</code> inside functions are both function-scoped, meaning they exist throughout the function.</p><h3 id="block-scope">Block Scope</h3><p>Block scope means variables are only accessible <strong>inside the nearest pair of <code>{}</code></strong>, such as in <code>if</code> statements, loops, or blocks.</p><ul>
+ <li><code>let</code> and <code>const</code> are <strong>block-scoped</strong>.</li>
+ <li><code>var</code> is <strong>not block-scoped</strong> — it’s function-scoped.</li>
+</ul><p><strong>Example:</strong></p><div>
+ <div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+  <pre><code class="language-js">if (true) {
+  let blockVar = 'I exist only in this block';
+  var varVar = 'I am function-scoped';
+}
+
+console.log(blockVar); // Error: blockVar is not defined
+console.log(varVar);   // Output: I am function-scoped</code></pre>
+ </div>
+ <div class="snippet-container" id="tZokk">
+  <div class="snippet-header" onclick="toggleSnippetAndRefresh('tZokk','zTTX6')">
+   Try it in editor
+  </div>
+  <div class="snippet-body"><textarea id="zTTX6">if (true) {
+  let blockVar = 'I exist only in this block';
+  var varVar = 'I am function-scoped';
+}
+
+console.log(blockVar); // Error: blockVar is not defined
+console.log(varVar);   // Output: I am function-scoped</textarea> <br> <button onclick="renderIframeForClientJavascript('zTTX6','xIX2J')">Run</button> <iframe id="xIX2J" class="result_iframe" style="display: none;"></iframe>
+   <script>
+  {let editor1 = CodeMirror.fromTextArea(document.getElementById("zTTX6"), {
+    mode: "javascript",
+    lineNumbers:false,
+    tabSize: 2
+  });
+   codeMirrorMap.set("zTTX6", editor1);}
+  </script>
+  </div>
+ </div>
+</div><h3 id="var-vs-let-vs-const"><code>var</code> vs. <code>let</code> vs. <code>const</code></h3><table>
+ <thead>
+  <tr>
+   <th>Keyword</th>
+   <th>Scope</th>
+   <th>Can be Reassigned?</th>
+   <th>Can be Redeclared in Same Scope?</th>
+  </tr>
+ </thead>
+ <tbody>
+  <tr>
+   <td><code>var</code></td>
+   <td>Function scope</td>
+   <td>Yes</td>
+   <td>Yes</td>
+  </tr>
+  <tr>
+   <td><code>let</code></td>
+   <td>Block scope</td>
+   <td>Yes</td>
+   <td>No</td>
+  </tr>
+  <tr>
+   <td><code>const</code></td>
+   <td>Block scope</td>
+   <td>No (constant)</td>
+   <td>No</td>
+  </tr>
+ </tbody>
+</table><p><strong>Example of <code>let</code> and <code>const</code>:</strong></p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-js">let count = 1;
+count = 2; // Allowed
+
+const max = 10;
+max = 20; // Error: Assignment to constant variable</code></pre>
+</div><h3 id="what-is-hoisting">What Is Hoisting?</h3><p><strong>Hoisting</strong> is JavaScript’s behavior of moving <strong>variable and function declarations</strong> to the top of their scope during compilation, <strong>before code runs</strong>.</p><p>This means you can sometimes use variables and functions before they are declared — but the details vary depending on how they were declared.</p><h3 id="hoisting-with-var">Hoisting with <code>var</code></h3><p><code>var</code> declarations are hoisted and <strong>initialized with <code>undefined</code></strong>.</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-js">console.log(myVar); // Output: undefined
+var myVar = 10;</code></pre>
+</div><p>Behind the scenes, JavaScript treats it like:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-js">var myVar;
+console.log(myVar); // undefined
+myVar = 10;</code></pre>
+</div><h3 id="hoisting-with-let-and-const">Hoisting with <code>let</code> and <code>const</code></h3><p><code>let</code> and <code>const</code> declarations are hoisted <strong>but not initialized</strong>. Accessing them before declaration causes a <strong>ReferenceError</strong> due to the <strong>Temporal Dead Zone (TDZ)</strong>.</p><div>
+ <div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+  <pre><code class="language-js">console.log(myLet); // ReferenceError
+let myLet = 5;</code></pre>
+ </div>
+ <div class="snippet-container" id="XoozK">
+  <div class="snippet-header" onclick="toggleSnippetAndRefresh('XoozK','ADuNj')">
+   Try it in editor
+  </div>
+  <div class="snippet-body"><textarea id="ADuNj">console.log(myLet); // ReferenceError
+let myLet = 5;</textarea> <br> <button onclick="renderIframeForClientJavascript('ADuNj','uaWI5')">Run</button> <iframe id="uaWI5" class="result_iframe" style="display: none;"></iframe>
+   <script>
+  {let editor1 = CodeMirror.fromTextArea(document.getElementById("ADuNj"), {
+    mode: "javascript",
+    lineNumbers:false,
+    tabSize: 2
+  });
+   codeMirrorMap.set("ADuNj", editor1);}
+  </script>
+  </div>
+ </div>
+</div><h3 id="hoisting-with-functions">Hoisting with Functions</h3><ul>
+ <li><strong>Function declarations</strong> are fully hoisted and can be called before their definition.</li>
+</ul><div>
+ <div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+  <pre><code class="language-js">sayHi(); // Works!
+
+function sayHi() {
+  console.log('Hi!');
+}</code></pre>
+ </div>
+ <div class="snippet-container" id="2bWWQ">
+  <div class="snippet-header" onclick="toggleSnippetAndRefresh('2bWWQ','NvpuO')">
+   Try it in editor
+  </div>
+  <div class="snippet-body"><textarea id="NvpuO">sayHi(); // Works!
+
+function sayHi() {
+  console.log('Hi!');
+}</textarea> <br> <button onclick="renderIframeForClientJavascript('NvpuO','485mY')">Run</button> <iframe id="485mY" class="result_iframe" style="display: none;"></iframe>
+   <script>
+  {let editor1 = CodeMirror.fromTextArea(document.getElementById("NvpuO"), {
+    mode: "javascript",
+    lineNumbers:false,
+    tabSize: 2
+  });
+   codeMirrorMap.set("NvpuO", editor1);}
+  </script>
+  </div>
+ </div>
+</div><ul>
+ <li><strong>Function expressions</strong> (including arrow functions) behave like variables declared with <code>var</code>, <code>let</code>, or <code>const</code> depending on how they are assigned.</li>
+</ul><div>
+ <div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+  <pre><code class="language-js">sayHello(); // Error or undefined behavior depending on declaration
+
+const sayHello = function() {
+  console.log('Hello!');
+};</code></pre>
+ </div>
+ <div class="snippet-container" id="FU7Vx">
+  <div class="snippet-header" onclick="toggleSnippetAndRefresh('FU7Vx','FDBI2')">
+   Try it in editor
+  </div>
+  <div class="snippet-body"><textarea id="FDBI2">sayHello(); // Error or undefined behavior depending on declaration
+
+const sayHello = function() {
+  console.log('Hello!');
+};</textarea> <br> <button onclick="renderIframeForClientJavascript('FDBI2','GGcvt')">Run</button> <iframe id="GGcvt" class="result_iframe" style="display: none;"></iframe>
+   <script>
+  {let editor1 = CodeMirror.fromTextArea(document.getElementById("FDBI2"), {
+    mode: "javascript",
+    lineNumbers:false,
+    tabSize: 2
+  });
+   codeMirrorMap.set("FDBI2", editor1);}
+  </script>
+  </div>
+ </div>
+</div><h3 id="summary">Summary</h3><table>
+ <thead>
+  <tr>
+   <th>Concept</th>
+   <th>Description</th>
+   <th>Example</th>
+  </tr>
+ </thead>
+ <tbody>
+  <tr>
+   <td>Global scope</td>
+   <td>Variables available anywhere</td>
+   <td><code>let x = 5;</code></td>
+  </tr>
+  <tr>
+   <td>Function scope</td>
+   <td>Variables available only inside a function</td>
+   <td><code>function() { var y = 10; }</code></td>
+  </tr>
+  <tr>
+   <td>Block scope</td>
+   <td>Variables available only inside <code>{}</code> blocks (<code>let</code>, <code>const</code>)</td>
+   <td><code>if (true) { let z = 3; }</code></td>
+  </tr>
+  <tr>
+   <td>Hoisting</td>
+   <td>Declarations moved to top; <code>var</code> initialized to <code>undefined</code>, <code>let</code>/<code>const</code> not initialized</td>
+   <td><code>console.log(a); var a = 1;</code></td>
+  </tr>
+  <tr>
+   <td>Temporal Dead Zone (TDZ)</td>
+   <td>Time before <code>let</code> or <code>const</code> declaration when accessing them throws an error</td>
+   <td><code>console.log(b); let b = 2;</code></td>
+  </tr>
+ </tbody>
+</table><p>Understanding scope and hoisting helps you avoid bugs, write cleaner code, and debug issues related to variable accessibility and initialization.</p><div class = "chapter-navi-section">
+<a href="#top" class="nav-button prev">↑</a>
+<a href='javascript-for-beginners.htm#functions-and-scope' class="nav-button toc-link">Index</a>
+<a href="#bottom" class="nav-button next">↓</a>
+</div>
+<h2 id='closures-introductory'>9.5 Closures (Introductory)</h2><p>A <strong>closure</strong> is a powerful and important concept in JavaScript. Simply put, a closure is when a function <strong>remembers the environment in which it was created</strong>, even after that environment has finished executing.</p><p>This might sound complicated, but closures let you write functions that keep access to variables defined outside themselves — which can be incredibly useful.</p><h3 id="what-does-a-closure-mean">What Does a Closure Mean?</h3><p>When a function is defined inside another function, the inner function <strong>retains access</strong> to the variables of the outer function, even after the outer function has returned. This saved environment is called a <strong>closure</strong>.</p><h3 id="simple-example-a-counter-function">Simple Example: A Counter Function</h3><p>Let's build a function that creates counters — each counter remembers its own count:</p><div>
+ <div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+  <pre><code class="language-js">function createCounter() {
+  let count = 0;  // This variable is "closed over"
+
+  return function() {
+    count++;
+    return count;
+  };
+}
+
+const counter = createCounter();
+
+console.log(counter()); // 1
+console.log(counter()); // 2
+console.log(counter()); // 3</code></pre>
+ </div>
+ <div class="snippet-container" id="4Q0Li">
+  <div class="snippet-header" onclick="toggleSnippetAndRefresh('4Q0Li','qz3AW')">
+   Try it in editor
+  </div>
+  <div class="snippet-body"><textarea id="qz3AW">function createCounter() {
+  let count = 0;  // This variable is "closed over"
+
+  return function() {
+    count++;
+    return count;
+  };
+}
+
+const counter = createCounter();
+
+console.log(counter()); // 1
+console.log(counter()); // 2
+console.log(counter()); // 3</textarea> <br> <button onclick="renderIframeForClientJavascript('qz3AW','NB5fZ')">Run</button> <iframe id="NB5fZ" class="result_iframe" style="display: none;"></iframe>
+   <script>
+  {let editor1 = CodeMirror.fromTextArea(document.getElementById("qz3AW"), {
+    mode: "javascript",
+    lineNumbers:false,
+    tabSize: 2
+  });
+   codeMirrorMap.set("qz3AW", editor1);}
+  </script>
+  </div>
+ </div>
+</div><p><strong>What’s happening here?</strong></p><ul>
+ <li><code>createCounter()</code> defines a local variable <code>count</code> and returns an <strong>anonymous function</strong>.</li>
+ <li>That returned function <strong>closes over</strong> <code>count</code>, remembering it.</li>
+ <li>Even though <code>createCounter()</code> finished executing, the inner function still has access to <code>count</code>.</li>
+ <li>Each time you call <code>counter()</code>, it updates and returns the updated <code>count</code>.</li>
+</ul><h3 id="another-example-greeting-generator">Another Example: Greeting Generator</h3><p>Closures also help when you want to generate customized functions:</p><div>
+ <div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+  <pre><code class="language-js">function greetGenerator(greeting) {
+  return function(name) {
+    return `${greeting}, ${name}!`;
+  };
+}
+
+const sayHello = greetGenerator('Hello');
+const sayHi = greetGenerator('Hi');
+
+console.log(sayHello('Alice')); // Hello, Alice!
+console.log(sayHi('Bob'));       // Hi, Bob!</code></pre>
+ </div>
+ <div class="snippet-container" id="MJIdD">
+  <div class="snippet-header" onclick="toggleSnippetAndRefresh('MJIdD','X7BSP')">
+   Try it in editor
+  </div>
+  <div class="snippet-body"><textarea id="X7BSP">function greetGenerator(greeting) {
+  return function(name) {
+    return `${greeting}, ${name}!`;
+  };
+}
+
+const sayHello = greetGenerator('Hello');
+const sayHi = greetGenerator('Hi');
+
+console.log(sayHello('Alice')); // Hello, Alice!
+console.log(sayHi('Bob'));       // Hi, Bob!</textarea> <br> <button onclick="renderIframeForClientJavascript('X7BSP','qqkFf')">Run</button> <iframe id="qqkFf" class="result_iframe" style="display: none;"></iframe>
+   <script>
+  {let editor1 = CodeMirror.fromTextArea(document.getElementById("X7BSP"), {
+    mode: "javascript",
+    lineNumbers:false,
+    tabSize: 2
+  });
+   codeMirrorMap.set("X7BSP", editor1);}
+  </script>
+  </div>
+ </div>
+</div><p>Here, each generated function remembers the <code>greeting</code> passed to the outer function.</p><h3 id="why-are-closures-useful">Why Are Closures Useful?</h3><ul>
+ <li><strong>Data privacy</strong>: Variables inside a closure can’t be accessed from outside, protecting data.</li>
+ <li><strong>Function factories</strong>: Create specialized functions dynamically.</li>
+ <li><strong>Maintaining state</strong>: Keep track of data across multiple calls without using global variables.</li>
+</ul><p>Closures are everywhere in JavaScript — in event handlers, callbacks, and many libraries — because they let you write more flexible, modular, and powerful code.</p><h3 id="summary">Summary</h3><ul>
+ <li>A <strong>closure</strong> happens when a function remembers its surrounding scope even after the outer function finishes.</li>
+ <li>Closures allow inner functions to access variables of outer functions.</li>
+ <li>They are useful for <strong>keeping state</strong>, <strong>data privacy</strong>, and <strong>creating customizable functions</strong>.</li>
+</ul><p>By understanding closures, you'll unlock deeper JavaScript concepts and write code that’s both elegant and effective.</p><div class = "chapter-navi-section">
+<a href="javascript-for-beginners-objects-and-object-literals.htm" class="nav-button prev">←</a>
+<a href='javascript-for-beginners.htm#functions-and-scope' class="nav-button toc-link">Index</a>
+<a href="javascript-for-beginners-events-and-user-interaction.htm" class="nav-button next">→</a>
+</div>
+<section class="download-section">
+  <div class="book-cover" style="background-image: url('data:image/jpg;base64,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');">
+<div class="series-name">Introduction</div>
+<div class="book-title">JavaScript for Beginners</div>
+<div class="book-subtitle">From Basics to Advanced Programming</div>
+<div class="book-footer">readbytes.github.io</div>
+</div>
+  <div class="download-info">
+    <h2 id='bottom'>Download This Ebook</h2>
+    <p class="format-label">Available formats:</p>
+    <div class="download-buttons">
+      <a href="javascript-for-beginners.pdf" class="download-button">📄 PDF</a>
+      <a href="javascript-for-beginners.epub" class="download-button">📘 EPUB</a>
+    </div>
+  </div>
+</section><div class='related-books'>
+<h2>Javascript Introduction Books</h2>
+<div class='related-book-list'>
+<a href="javascript-for-beginners.htm"><div class="book-cover" style="background-image: url('data:image/jpg;base64,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');">
+<div class="series-name">Introduction</div>
+<div class="book-title">JavaScript for Beginners</div>
+<div class="book-subtitle">From Basics to Advanced Programming</div>
+<div class="book-footer">readbytes.github.io</div>
+</div></a>
+
+
+<a href="javascript-syntax.htm"><div class="book-cover" style="background-image: url('data:image/jpg;base64,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');">
+<div class="series-name">Introduction</div>
+<div class="book-title">JavaScript Syntax</div>
+<div class="book-subtitle">From Fundamentals to Advanced Patterns</div>
+<div class="book-footer">readbytes.github.io</div>
+</div></a>
+
+
+
+<a href='javascript.htm'><div class='book-cover'>More Javascript Books</div></a>
+</div>
+</div>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+  
+  <script>
+    function copyCode(button) {
+      const code = button.nextElementSibling.innerText;
+      navigator.clipboard.writeText(code).then(() => {
+        button.textContent = 'Copied!';
+        setTimeout(() => { button.textContent = 'Copy'; }, 1500);
+      });
+    }
+  </script>  
+
+<footer class="page-footer">
+    <nav>
+      <a href="https://readbytes.github.io">Home</a> | 
+      Email:<script language="JavaScript" type="text/javascript">
+var part1 = 'yinpeng';var part6 = '263';var part2 = Math.pow(2,6);var part3 = String.fromCharCode(part2);var part4 = 'hotmail dot com';var part5 = part1 + String.fromCharCode(part2) + part4;document.write(part1 + part6 + part3 + part4);
+</script>
+    </nav>
+  <p>© 2025 — All rights reserved.</p>    
+  </footer>
+
+</body>
+</html>

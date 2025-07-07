@@ -1,0 +1,835 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>JavaScript Object-Oriented Programming Polymorphism in JavaScript</title>
+<link rel='shortcut icon' href='https://java2s.com/style/favicon.ico'>
+<link href="https://fonts.googleapis.com/css2?family=Merriweather&display=swap" rel="stylesheet" />
+<link href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.css" />
+<script src="https://cdn.jsdelivr.net/npm/typescript@5/lib/typescript.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/htmlmixed/htmlmixed.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/xml/xml.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/css/css.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/javascript/javascript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/javascript/typescript.min.js"></script>
+<script>
+  const codeMirrorMap = new Map();
+  function renderIframe(textarea_id, iframe_id) {
+      const html = codeMirrorMap.get(textarea_id).getValue();
+      const iframe = document.getElementById(iframe_id);
+      iframe.style.display = "block";
+      iframe.srcdoc = html;  
+  }
+  function renderIframeForClientTypescript(textarea_id, iframe_id) {
+      let code = codeMirrorMap.get(textarea_id).getValue();
+      code = ts.transpile(code);
+      const iframe = document.getElementById(iframe_id);
+      const doc = iframe.contentDocument || iframe.contentWindow.document;
+
+const html = `
+  <!DOCTYPE html>
+  <html>
+    <head>
+      <title>Output</title>
+      <style>
+        body { font-family: monospace; padding: 1em; background: #f4f4f4; color: #222; }
+        pre { white-space: pre-wrap; word-break: break-word; }
+        .error { color: red; }
+      </style>
+    </head>
+    <body>
+      <pre id="log"></pre>
+      <script>
+        (function(){
+          const logEl = document.getElementById('log');
+          const origLog = console.log;
+          const origError = console.error;
+
+          console.log = (...args) => {
+            logEl.textContent += args.join(' ') + '\\n';
+            origLog.apply(console, args);
+          };
+          console.table = (...args) => {
+            logEl.textContent += args.join(' ') + '\\n';
+            origLog.apply(console, args);
+          };
+
+          console.error = (...args) => {
+            logEl.innerHTML +='<span class="error">' + args.join(' ') + '</span>';
+            origError.apply(console, args);
+          };
+          window.addEventListener("error", function (event) {
+              console.error("Caught by event listener:", event.message);
+          });    
+          try {             
+              ${code};
+          } catch (err) {
+            console.error(err.stack || err.message);
+          }
+        })();
+      <\/script>
+    </body>
+  </html>
+`;
+      iframe.style.display = "block";
+      iframe.srcdoc = html;  
+  }
+
+    function renderIframeForClientJavascript(textarea_id, iframe_id) {
+        const code = codeMirrorMap.get(textarea_id).getValue();
+        const iframe = document.getElementById(iframe_id);
+        const doc = iframe.contentDocument || iframe.contentWindow.document;
+
+  const html = `
+    <!DOCTYPE html>
+    <html>
+      <head>
+        <title>Output</title>
+        <style>
+          body { font-family: monospace; padding: 1em; background: #f4f4f4; color: #222; }
+          pre { white-space: pre-wrap; word-break: break-word; }
+          .error { color: red; }
+        </style>
+      </head>
+      <body>
+        <pre id="log"></pre>
+        <script>
+          (function(){
+            const logEl = document.getElementById('log');
+            const origLog = console.log;
+            const origError = console.error;
+
+            console.log = (...args) => {
+              logEl.textContent += args.join(' ') + '\\n';
+              origLog.apply(console, args);
+            };
+            console.table = (...args) => {
+              logEl.textContent += args.join(' ') + '\\n';
+              origLog.apply(console, args);
+            };
+
+            console.error = (...args) => {
+              logEl.innerHTML +='<span class="error">' + args.join(' ') + '</span>';
+              origError.apply(console, args);
+            };
+            window.addEventListener("error", function (event) {
+                console.error("Caught by event listener:", event.message);
+            });    
+            try {
+             ${code}; 
+            } catch (err) {
+              console.error(err.stack || err.message);
+            }
+          })();
+        <\/script>
+      </body>
+    </html>
+  `;
+    
+        iframe.style.display = "block";
+        iframe.srcdoc = html;  
+    }
+
+    function toggleSnippetAndRefresh(id, textarea_id) {
+      const box = document.getElementById(id);
+      box.classList.toggle("open");
+      codeMirrorMap.get(textarea_id).refresh();
+    }
+
+  </script>
+<style>
+body {
+  background: #f8f7f5;
+  font-family: 'Merriweather', serif;
+  color: #333;
+  margin: 0;
+  padding: 2rem 1rem;
+  font-size: 15px; /* smaller body font */
+  line-height: 1.5;
+}
+
+.container {
+  max-width: 700px;
+  margin: 0 auto;
+  background: white;
+  padding: 1rem 2rem;
+  box-shadow: 0 0 15px rgba(0,0,0,0.1);
+}
+.book-title-chapter {
+  font-family: 'Merriweather', serif;
+  font-size: 2rem;
+  font-weight: bold;
+  text-align: center;
+  margin-bottom: 2rem;
+  border-bottom: 2px solid #ccc;
+  padding-bottom: 0.5rem;
+  color: #2c3e50;
+}
+
+.book-subtitle-chapter {
+  text-align: center;
+  font-size: 1rem;
+  color: #666;
+  margin-top: -1rem;
+  margin-bottom: 2rem;
+}
+
+    .related-books {
+      margin-top: 40px;
+    }
+
+    .related-books h2 {
+      font-size: 22px;
+      margin-bottom: 20px;
+      border-bottom: 2px solid #eee;
+      padding-bottom: 8px;
+      color: #333;
+    }
+    .related-book-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+h1, h2, h3 {
+  font-weight: 600;
+  margin-top: 2.5rem;
+  margin-bottom: 1rem;
+  line-height: 1.2;
+}
+
+h1 {
+  font-size: 1.8rem; /* smaller heading */
+}
+
+h2 {
+  font-size: 1.4rem;
+}
+
+h3 {
+  font-size: 1.2rem;
+}
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-family: sans-serif;
+      font-size: 1em;
+      margin: 1em 0;
+    }
+
+    th, td {
+      border: 1px solid #cccccc;
+      padding: 0.6em 1em;
+      text-align: left;
+    }
+
+    th {
+      background-color: #f2f2f2;
+      font-weight: bold;
+    }
+
+    tr:nth-child(even) {
+      background-color: #fafafa;
+    }
+
+    /* Optional hover effect */
+    tr:hover {
+      background-color: #e6f7ff;
+    }
+ 
+a {
+  color: #555;
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+
+
+.code-block {
+    position: relative;
+    margin-bottom: 1em;
+}
+.copy-button {
+    background: transparent; 
+    color: white;
+
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    border: none;
+    padding: 4px 8px;
+    font-size: 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    z-index: 1;
+}
+
+.copy-button:hover {
+background-color: #0056b3;
+}
+.page-footer {
+  margin-top: 4rem;
+  padding: 1rem 0;
+  text-align: center;
+  font-size: 0.85rem;
+  color: #666;
+  border-top: 1px solid #ccc;
+  background-color: #fafafa;
+}
+.page-footer a {
+     color: #555;
+    text-decoration: none;
+  }
+  .page-footer a:hover {
+    text-decoration: underline;
+  }
+.chapter-navi-section {
+display: flex;
+justify-content: space-between;
+align-items: center;
+padding-bottom: 10px;
+}  
+
+.nav-link {
+  color: inherit;
+  text-decoration: none;
+  opacity: 0.5;
+  transition: opacity 0.3s ease, text-decoration 0.3s ease;
+}
+
+.nav-link:hover {
+  opacity: 0.9;
+  text-decoration: underline;
+}
+
+.prev {
+  text-align: left;
+}
+.toc-link {
+  text-align: center;
+}
+.next {
+  text-align: right;
+}
+.download-section {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2rem;
+  padding: 2rem 1rem;
+  max-width: 600px;
+  margin: 3rem auto;
+  background-color: #f9f9f9;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+}
+
+    .book-cover {
+      width: 130px;
+      height: 180px;
+      
+      background-size: cover; /* Ensures the image covers the entire div */
+      background-position: center; /* Centers the image */
+            
+      background: linear-gradient(145deg, #e0dede, #f9f9f9);
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 10px;
+      box-sizing: border-box;
+      position: relative;
+      font-family: 'Roboto', sans-serif;
+    }
+
+    .book-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 16px;
+      font-weight: 600;
+      color: #fff;
+      margin-bottom: 4px;
+    }
+
+    .book-subtitle {
+      font-size: 12px;
+      color: #aaa;
+      margin-bottom: 10px;
+    }
+
+    .series-name {
+      position: absolute;
+      top: 8px;
+      left: 8px;
+      font-size: 10px;
+      color: #fff;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-weight: bold;
+    }
+
+    .book-footer {
+      position: absolute;
+      bottom: 8px;
+      font-size: 10px;
+      color: #aaa;
+    }
+
+.download-info h2 {
+  margin: 0 0 0.5rem;
+  font-size: 1.2rem;
+}
+
+.format-label {
+  margin: 0 0 0.5rem;
+  font-size: 0.95rem;
+  color: #555;
+}
+
+.download-buttons {
+  display: flex;
+  gap: 1rem;
+}
+
+.download-button {
+  background-color: #4A90E2;
+  color: white;
+  padding: 0.5em 1.2em;
+  text-decoration: none;
+  border-radius: 25px;
+  font-size: 0.95rem;
+  transition: background-color 0.3s ease;
+}
+
+.download-button:hover {
+  background-color: #357ABD;
+}
+
+    code {
+ 
+      color: #d35400; 
+    }
+html {
+    scroll-behavior: smooth;
+}
+    .snippet-container {
+      overflow: hidden;    
+    }
+
+    .snippet-header {
+      background: #f0f0f0;
+      color: #333;
+      padding: 0.75rem 1rem;
+      cursor: pointer;
+      font-size: 1rem;
+    }
+
+    .snippet-body {
+      display: none;
+      font-family: monospace;
+    }
+
+    .snippet-container.open .snippet-body {
+      display: block;
+    }
+
+.CodeMirror {
+  border: 2px solid #ccc;
+  border-radius: 4px;
+  resize: vertical;
+}
+
+    button { padding: 0.5em 1em; background: green; color: white; border: none; cursor: pointer; }
+    button:hover { background: #1e7e34; }
+    .result_iframe { width:99%; height:200px; margin-top: 1em;  resize: both;border:1px solid #ccc;}        
+</style>
+</head>
+<body> 
+
+  <div class="container">
+    <div class = "chapter-navi-section">
+<a href="javascript-object-oriented-programming-encapsulation-and-data-privacy.htm" class="nav-button prev">←</a>
+<a href='javascript-object-oriented-programming.htm#polymorphism-in-javascript' class="nav-button toc-link">Index</a>
+<a href="javascript-object-oriented-programming-mixins-and-multiple-inheritance-patterns.htm" class="nav-button next">→</a>
+</div>
+
+    <h1 class="book-title-chapter" id = 'top'>Polymorphism in JavaScript</h1>
+    <h3 class="book-subtitle-chapter">JavaScript Object-Oriented Programming</h3>   
+    <!-- <h1 class ="chapter-title"></h1> -->
+    <h2 id='understanding-polymorphism'>8.1 Understanding Polymorphism</h2><p><strong>Polymorphism</strong> is a core concept in object-oriented programming (OOP) that allows objects of different types to be treated through a common interface. The term literally means "many forms," reflecting how different objects can respond to the same method call in their own unique way.</p><h3 id="what-is-polymorphism">What is Polymorphism?</h3><p>Imagine you have different animals — a dog, a cat, and a bird. Each animal can <strong>make a sound</strong>, but the sound they make is different:</p><ul>
+ <li>A dog <strong>barks</strong>.</li>
+ <li>A cat <strong>meows</strong>.</li>
+ <li>A bird <strong>chirps</strong>.</li>
+</ul><p>Despite these differences, you can call the same method, like <code>makeSound()</code>, on any of these animals without worrying about their specific types. This is polymorphism in action: <strong>one interface, multiple behaviors</strong>.</p><h3 id="why-is-polymorphism-important">Why Is Polymorphism Important?</h3><p>Polymorphism allows for:</p><ul>
+ <li><strong>Flexibility:</strong> Code that works with a general type or interface can handle new specific types without changes.</li>
+ <li><strong>Extensibility:</strong> New object types can be introduced without rewriting existing code, as long as they follow the expected interface.</li>
+ <li><strong>Simpler Code:</strong> Developers can write generic code that works with different objects, improving maintainability and reducing duplication.</li>
+</ul><p>For example, a drawing application might call <code>draw()</code> on various shape objects — circles, rectangles, triangles — and each shape knows how to draw itself correctly.</p><h3 id="how-does-javascript-achieve-polymorphism">How Does JavaScript Achieve Polymorphism?</h3><p>JavaScript is a <strong>dynamically typed language</strong>, meaning variables don’t have fixed types. While it doesn’t have classical interfaces like some statically typed languages, polymorphism is naturally achieved through <strong>shared method names</strong> and <strong>duck typing</strong> — "If it looks like a duck and quacks like a duck, it’s a duck."</p><p>As long as different objects implement methods with the same name, you can treat them interchangeably:</p><div>
+ <div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+  <pre><code class="language-js">class Dog {
+  makeSound() {
+    console.log("Bark!");
+  }
+}
+
+class Cat {
+  makeSound() {
+    console.log("Meow!");
+  }
+}
+
+function animalSound(animal) {
+  animal.makeSound();  // Works with any object that has makeSound()
+}
+
+const dog = new Dog();
+const cat = new Cat();
+
+animalSound(dog);  // Bark!
+animalSound(cat);  // Meow!</code></pre>
+ </div>
+ <div class="snippet-container" id="8460X">
+  <div class="snippet-header" onclick="toggleSnippetAndRefresh('8460X','ocjJv')">
+   Try it in editor
+  </div>
+  <div class="snippet-body"><textarea id="ocjJv">class Dog {
+  makeSound() {
+    console.log("Bark!");
+  }
+}
+
+class Cat {
+  makeSound() {
+    console.log("Meow!");
+  }
+}
+
+function animalSound(animal) {
+  animal.makeSound();  // Works with any object that has makeSound()
+}
+
+const dog = new Dog();
+const cat = new Cat();
+
+animalSound(dog);  // Bark!
+animalSound(cat);  // Meow!</textarea> <br> <button onclick="renderIframeForClientJavascript('ocjJv','0MbrL')">Run</button> <iframe id="0MbrL" class="result_iframe" style="display: none;"></iframe>
+   <script>
+  {let editor1 = CodeMirror.fromTextArea(document.getElementById("ocjJv"), {
+    mode: "javascript",
+    lineNumbers:false,
+    tabSize: 2
+  });
+   codeMirrorMap.set("ocjJv", editor1);}
+  </script>
+  </div>
+ </div>
+</div><h3 id="summary">Summary</h3><p>Polymorphism enables objects of different types to be handled through a unified interface, promoting code reuse and extensibility. In JavaScript, this flexibility arises from its dynamic nature and the ability of different objects to implement methods with the same names. Understanding polymorphism empowers you to design systems where diverse objects can work together seamlessly.</p><div class = "chapter-navi-section">
+<a href="#top" class="nav-button prev">↑</a>
+<a href='javascript-object-oriented-programming.htm#polymorphism-in-javascript' class="nav-button toc-link">Index</a>
+<a href="#bottom" class="nav-button next">↓</a>
+</div>
+<h2 id='method-overriding-and-dynamic-dispatch'>8.2 Method Overriding and Dynamic Dispatch</h2><p>In object-oriented programming, <strong>method overriding</strong> and <strong>dynamic dispatch</strong> are key mechanisms that enable polymorphism — allowing derived classes to customize or extend the behavior of methods defined in their parent classes.</p><h3 id="what-is-method-overriding">What is Method Overriding?</h3><p><strong>Method overriding</strong> happens when a subclass (derived class) provides its own implementation of a method that is already defined in its parent class. This lets the subclass tailor or completely replace the behavior inherited from the parent.</p><p>For example, suppose you have a general <code>Animal</code> class with a method <code>speak()</code>. Different animals might override this method to produce their unique sounds:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-js">class Animal {
+  speak() {
+    console.log("Animal makes a sound");
+  }
+}
+
+class Dog extends Animal {
+  speak() {
+    console.log("Bark!");
+  }
+}
+
+class Cat extends Animal {
+  speak() {
+    console.log("Meow!");
+  }
+}</code></pre>
+</div><p>Here, <code>Dog</code> and <code>Cat</code> override the <code>speak()</code> method to provide specific implementations.</p><h3 id="what-is-dynamic-dispatch">What is Dynamic Dispatch?</h3><p><strong>Dynamic dispatch</strong> is the runtime process that determines <strong>which version of an overridden method to invoke</strong> when a method call is made on an object. It means the program decides at execution time which method implementation to run based on the <strong>actual type</strong> of the object, not the type of the reference.</p><p>Consider this code:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-js">function makeAnimalSpeak(animal) {
+  animal.speak();  // Which speak() runs depends on the object passed in
+}
+
+const dog = new Dog();
+const cat = new Cat();
+
+makeAnimalSpeak(dog);  // Bark!
+makeAnimalSpeak(cat);  // Meow!</code></pre>
+</div><p>Even though the parameter <code>animal</code> is generic, the call to <code>speak()</code> invokes the appropriate method defined in the specific subclass (<code>Dog</code> or <code>Cat</code>) due to dynamic dispatch.</p><div class="snippet-container" id="3ZAcL">
+ <div class="snippet-header" onclick="toggleSnippet('3ZAcL')">
+  Click to view full runnable Code
+ </div>
+ <div class="snippet-body">
+  <div class="code-block"><button class="copy-button" onclick="copyCode(this)">📋</button>
+   <pre><code class="language-js">
+class Animal {
+  speak() {
+    console.log("Animal makes a sound");
+  }
+}
+
+class Dog extends Animal {
+  speak() {
+    console.log("Bark!");
+  }
+}
+
+class Cat extends Animal {
+  speak() {
+    console.log("Meow!");
+  }
+}
+function makeAnimalSpeak(animal) {
+  animal.speak();  // Which speak() runs depends on the object passed in
+}
+
+const dog = new Dog();
+const cat = new Cat();
+
+makeAnimalSpeak(dog);  // Bark!
+makeAnimalSpeak(cat);  // Meow! 
+</code></pre>
+  </div>
+ </div>
+</div><h3 id="how-javascript-enables-method-overriding-and-dynamic-dispatch">How JavaScript Enables Method Overriding and Dynamic Dispatch</h3><p>JavaScript achieves method overriding and dynamic dispatch through its <strong>prototype chain</strong>:</p><ul>
+ <li>When a method is called on an object, JavaScript first looks for that method directly on the object.</li>
+ <li>If not found, it walks up the prototype chain, checking parent objects until it finds the method or reaches the end.</li>
+ <li>This means subclasses can override methods simply by defining a method with the same name on their own prototype.</li>
+ <li>At runtime, the method belonging to the actual object instance is called — enabling polymorphism.</li>
+</ul><p>Example:</p><div>
+ <div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+  <pre><code class="language-js">function Animal() {}
+
+Animal.prototype.speak = function() {
+  console.log("Animal makes a sound");
+};
+
+function Dog() {}
+Dog.prototype = Object.create(Animal.prototype);
+Dog.prototype.constructor = Dog;
+
+// Override speak method
+Dog.prototype.speak = function() {
+  console.log("Bark!");
+};
+
+const dog = new Dog();
+dog.speak();  // Bark!</code></pre>
+ </div>
+ <div class="snippet-container" id="bKXa0">
+  <div class="snippet-header" onclick="toggleSnippetAndRefresh('bKXa0','BxUHJ')">
+   Try it in editor
+  </div>
+  <div class="snippet-body"><textarea id="BxUHJ">function Animal() {}
+
+Animal.prototype.speak = function() {
+  console.log("Animal makes a sound");
+};
+
+function Dog() {}
+Dog.prototype = Object.create(Animal.prototype);
+Dog.prototype.constructor = Dog;
+
+// Override speak method
+Dog.prototype.speak = function() {
+  console.log("Bark!");
+};
+
+const dog = new Dog();
+dog.speak();  // Bark!</textarea> <br> <button onclick="renderIframeForClientJavascript('BxUHJ','vkxCR')">Run</button> <iframe id="vkxCR" class="result_iframe" style="display: none;"></iframe>
+   <script>
+  {let editor1 = CodeMirror.fromTextArea(document.getElementById("BxUHJ"), {
+    mode: "javascript",
+    lineNumbers:false,
+    tabSize: 2
+  });
+   codeMirrorMap.set("BxUHJ", editor1);}
+  </script>
+  </div>
+ </div>
+</div><h3 id="summary">Summary</h3><ul>
+ <li><strong>Method overriding</strong> allows subclasses to replace or extend parent class methods with their own versions.</li>
+ <li><strong>Dynamic dispatch</strong> ensures that when a method is called, the correct overridden method is selected based on the actual object type at runtime.</li>
+ <li>JavaScript’s prototype-based inheritance naturally supports this behavior, enabling flexible and polymorphic object-oriented designs.</li>
+</ul><p>Understanding these concepts is essential for building extensible systems where objects can behave differently while sharing a common interface.</p><div class = "chapter-navi-section">
+<a href="#top" class="nav-button prev">↑</a>
+<a href='javascript-object-oriented-programming.htm#polymorphism-in-javascript' class="nav-button toc-link">Index</a>
+<a href="#bottom" class="nav-button next">↓</a>
+</div>
+<h2 id='practical-shape-drawing-example-with-polymorphism'>8.3 Practical: Shape Drawing Example with Polymorphism</h2><p>To illustrate polymorphism in action, let's create a simple example involving shapes. We’ll define a base class <code>Shape</code> with a generic <code>draw()</code> method, then create derived classes <code>Circle</code> and <code>Rectangle</code> that override <code>draw()</code> to provide specific drawing behavior.</p><h3 id="defining-the-base-and-derived-classes">Defining the Base and Derived Classes</h3><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-js">// Base class
+class Shape {
+  draw() {
+    console.log("Drawing a generic shape.");
+  }
+}
+
+// Derived class: Circle
+class Circle extends Shape {
+  constructor(radius) {
+    super();
+    this.radius = radius;
+  }
+
+  draw() {
+    console.log(`Drawing a circle with radius ${this.radius}.`);
+  }
+}
+
+// Derived class: Rectangle
+class Rectangle extends Shape {
+  constructor(width, height) {
+    super();
+    this.width = width;
+    this.height = height;
+  }
+
+  draw() {
+    console.log(`Drawing a rectangle ${this.width}x${this.height}.`);
+  }
+}</code></pre>
+</div><h3 id="using-polymorphism-to-draw-shapes">Using Polymorphism to Draw Shapes</h3><p>Now, let's create an array of various shapes and call their <code>draw()</code> methods in a loop:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-js">const shapes = [
+  new Circle(10),
+  new Rectangle(20, 15),
+  new Shape()  // Generic shape
+];
+
+shapes.forEach(shape =&gt; {
+  shape.draw();  // Calls the appropriate draw() based on the actual object type
+});</code></pre>
+</div><p><strong>Output:</strong></p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-bash">Drawing a circle with radius 10.
+Drawing a rectangle 20x15.
+Drawing a generic shape.</code></pre>
+</div><div class="snippet-container" id="eBz1Z">
+ <div class="snippet-header" onclick="toggleSnippet('eBz1Z')">
+  Click to view full runnable Code
+ </div>
+ <div class="snippet-body">
+  <div class="code-block"><button class="copy-button" onclick="copyCode(this)">📋</button>
+   <pre><code class="language-js">
+// Base class
+class Shape {
+  draw() {
+    console.log("Drawing a generic shape.");
+  }
+}
+
+// Derived class: Circle
+class Circle extends Shape {
+  constructor(radius) {
+    super();
+    this.radius = radius;
+  }
+
+  draw() {
+    console.log(`Drawing a circle with radius ${this.radius}.`);
+  }
+}
+
+// Derived class: Rectangle
+class Rectangle extends Shape {
+  constructor(width, height) {
+    super();
+    this.width = width;
+    this.height = height;
+  }
+
+  draw() {
+    console.log(`Drawing a rectangle ${this.width}x${this.height}.`);
+  }
+}
+const shapes = [
+  new Circle(10),
+  new Rectangle(20, 15),
+  new Shape()  // Generic shape
+];
+
+shapes.forEach(shape =&gt; {
+  shape.draw();  // Calls the appropriate draw() based on the actual object type
+}); 
+</code></pre>
+  </div>
+ </div>
+</div><h3 id="explanation">Explanation</h3><ul>
+ <li>Each class defines a <code>draw()</code> method. The derived classes override the base <code>Shape</code> method with specific implementations.</li>
+ <li>When we iterate over the <code>shapes</code> array and call <code>draw()</code>, <strong>dynamic dispatch</strong> ensures the correct method runs for each object.</li>
+ <li>The loop treats all objects as generic <code>Shape</code> instances, yet the behavior varies depending on the actual object — that’s polymorphism.</li>
+ <li>This approach promotes <strong>flexibility</strong>: new shapes can be added without changing the code that calls <code>draw()</code>.</li>
+ <li>It also enhances <strong>code reuse</strong> by allowing shared interfaces (<code>draw()</code> method) while enabling customized behavior.</li>
+</ul><h3 id="summary">Summary</h3><p>This example shows how polymorphism allows a collection of different objects to be processed uniformly while retaining their unique behaviors. This pattern is powerful for building scalable, maintainable applications that handle diverse object types seamlessly.</p><div class = "chapter-navi-section">
+<a href="javascript-object-oriented-programming-encapsulation-and-data-privacy.htm" class="nav-button prev">←</a>
+<a href='javascript-object-oriented-programming.htm#polymorphism-in-javascript' class="nav-button toc-link">Index</a>
+<a href="javascript-object-oriented-programming-mixins-and-multiple-inheritance-patterns.htm" class="nav-button next">→</a>
+</div>
+<section class="download-section">
+  <div class="book-cover" style="background-image: url('data:image/jpg;base64,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');">
+<div class="series-name">Introduction</div>
+<div class="book-title">JavaScript Object-Oriented Programming</div>
+<div class="book-subtitle">From Basics to Advanced Design</div>
+<div class="book-footer">readbytes.github.io</div>
+</div>
+  <div class="download-info">
+    <h2 id='bottom'>Download This Ebook</h2>
+    <p class="format-label">Available formats:</p>
+    <div class="download-buttons">
+      <a href="javascript-object-oriented-programming.pdf" class="download-button">📄 PDF</a>
+      <a href="javascript-object-oriented-programming.epub" class="download-button">📘 EPUB</a>
+    </div>
+  </div>
+</section><div class='related-books'>
+<h2>Java Introduction Books</h2>
+<div class='related-book-list'>
+<a href="javascript-object-oriented-programming.htm"><div class="book-cover" style="background-image: url('data:image/jpg;base64,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');">
+<div class="series-name">Introduction</div>
+<div class="book-title">JavaScript Object-Oriented Programming</div>
+<div class="book-subtitle">From Basics to Advanced Design</div>
+<div class="book-footer">readbytes.github.io</div>
+</div></a>
+
+
+
+<a href='java.htm'><div class='book-cover'>More Java Books</div></a>
+</div>
+</div>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+    <script>
+  function toggleSnippet(id) {
+      const box = document.getElementById(id);
+      box.classList.toggle("open");
+  }  
+  </script>
+  <script>
+    function copyCode(button) {
+      const code = button.nextElementSibling.innerText;
+      navigator.clipboard.writeText(code).then(() => {
+        button.textContent = 'Copied!';
+        setTimeout(() => { button.textContent = 'Copy'; }, 1500);
+      });
+    }
+  </script>  
+
+<footer class="page-footer">
+    <nav>
+      <a href="https://readbytes.github.io">Home</a> | 
+      Email:<script language="JavaScript" type="text/javascript">
+var part1 = 'yinpeng';var part6 = '263';var part2 = Math.pow(2,6);var part3 = String.fromCharCode(part2);var part4 = 'hotmail dot com';var part5 = part1 + String.fromCharCode(part2) + part4;document.write(part1 + part6 + part3 + part4);
+</script>
+    </nav>
+  <p>© 2025 — All rights reserved.</p>    
+  </footer>
+
+</body>
+</html>

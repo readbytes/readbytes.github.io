@@ -1,0 +1,1323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>JavaScript Object-Oriented Programming Design Patterns in JavaScript OOP</title>
+<link rel='shortcut icon' href='https://java2s.com/style/favicon.ico'>
+<link href="https://fonts.googleapis.com/css2?family=Merriweather&display=swap" rel="stylesheet" />
+<link href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.css" />
+<script src="https://cdn.jsdelivr.net/npm/typescript@5/lib/typescript.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/htmlmixed/htmlmixed.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/xml/xml.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/css/css.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/javascript/javascript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/javascript/typescript.min.js"></script>
+<script>
+  const codeMirrorMap = new Map();
+  function renderIframe(textarea_id, iframe_id) {
+      const html = codeMirrorMap.get(textarea_id).getValue();
+      const iframe = document.getElementById(iframe_id);
+      iframe.style.display = "block";
+      iframe.srcdoc = html;  
+  }
+  function renderIframeForClientTypescript(textarea_id, iframe_id) {
+      let code = codeMirrorMap.get(textarea_id).getValue();
+      code = ts.transpile(code);
+      const iframe = document.getElementById(iframe_id);
+      const doc = iframe.contentDocument || iframe.contentWindow.document;
+
+const html = `
+  <!DOCTYPE html>
+  <html>
+    <head>
+      <title>Output</title>
+      <style>
+        body { font-family: monospace; padding: 1em; background: #f4f4f4; color: #222; }
+        pre { white-space: pre-wrap; word-break: break-word; }
+        .error { color: red; }
+      </style>
+    </head>
+    <body>
+      <pre id="log"></pre>
+      <script>
+        (function(){
+          const logEl = document.getElementById('log');
+          const origLog = console.log;
+          const origError = console.error;
+
+          console.log = (...args) => {
+            logEl.textContent += args.join(' ') + '\\n';
+            origLog.apply(console, args);
+          };
+          console.table = (...args) => {
+            logEl.textContent += args.join(' ') + '\\n';
+            origLog.apply(console, args);
+          };
+
+          console.error = (...args) => {
+            logEl.innerHTML +='<span class="error">' + args.join(' ') + '</span>';
+            origError.apply(console, args);
+          };
+          window.addEventListener("error", function (event) {
+              console.error("Caught by event listener:", event.message);
+          });    
+          try {             
+              ${code};
+          } catch (err) {
+            console.error(err.stack || err.message);
+          }
+        })();
+      <\/script>
+    </body>
+  </html>
+`;
+      iframe.style.display = "block";
+      iframe.srcdoc = html;  
+  }
+
+    function renderIframeForClientJavascript(textarea_id, iframe_id) {
+        const code = codeMirrorMap.get(textarea_id).getValue();
+        const iframe = document.getElementById(iframe_id);
+        const doc = iframe.contentDocument || iframe.contentWindow.document;
+
+  const html = `
+    <!DOCTYPE html>
+    <html>
+      <head>
+        <title>Output</title>
+        <style>
+          body { font-family: monospace; padding: 1em; background: #f4f4f4; color: #222; }
+          pre { white-space: pre-wrap; word-break: break-word; }
+          .error { color: red; }
+        </style>
+      </head>
+      <body>
+        <pre id="log"></pre>
+        <script>
+          (function(){
+            const logEl = document.getElementById('log');
+            const origLog = console.log;
+            const origError = console.error;
+
+            console.log = (...args) => {
+              logEl.textContent += args.join(' ') + '\\n';
+              origLog.apply(console, args);
+            };
+            console.table = (...args) => {
+              logEl.textContent += args.join(' ') + '\\n';
+              origLog.apply(console, args);
+            };
+
+            console.error = (...args) => {
+              logEl.innerHTML +='<span class="error">' + args.join(' ') + '</span>';
+              origError.apply(console, args);
+            };
+            window.addEventListener("error", function (event) {
+                console.error("Caught by event listener:", event.message);
+            });    
+            try {
+             ${code}; 
+            } catch (err) {
+              console.error(err.stack || err.message);
+            }
+          })();
+        <\/script>
+      </body>
+    </html>
+  `;
+    
+        iframe.style.display = "block";
+        iframe.srcdoc = html;  
+    }
+
+    function toggleSnippetAndRefresh(id, textarea_id) {
+      const box = document.getElementById(id);
+      box.classList.toggle("open");
+      codeMirrorMap.get(textarea_id).refresh();
+    }
+
+  </script>
+<style>
+body {
+  background: #f8f7f5;
+  font-family: 'Merriweather', serif;
+  color: #333;
+  margin: 0;
+  padding: 2rem 1rem;
+  font-size: 15px; /* smaller body font */
+  line-height: 1.5;
+}
+
+.container {
+  max-width: 700px;
+  margin: 0 auto;
+  background: white;
+  padding: 1rem 2rem;
+  box-shadow: 0 0 15px rgba(0,0,0,0.1);
+}
+.book-title-chapter {
+  font-family: 'Merriweather', serif;
+  font-size: 2rem;
+  font-weight: bold;
+  text-align: center;
+  margin-bottom: 2rem;
+  border-bottom: 2px solid #ccc;
+  padding-bottom: 0.5rem;
+  color: #2c3e50;
+}
+
+.book-subtitle-chapter {
+  text-align: center;
+  font-size: 1rem;
+  color: #666;
+  margin-top: -1rem;
+  margin-bottom: 2rem;
+}
+
+    .related-books {
+      margin-top: 40px;
+    }
+
+    .related-books h2 {
+      font-size: 22px;
+      margin-bottom: 20px;
+      border-bottom: 2px solid #eee;
+      padding-bottom: 8px;
+      color: #333;
+    }
+    .related-book-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+h1, h2, h3 {
+  font-weight: 600;
+  margin-top: 2.5rem;
+  margin-bottom: 1rem;
+  line-height: 1.2;
+}
+
+h1 {
+  font-size: 1.8rem; /* smaller heading */
+}
+
+h2 {
+  font-size: 1.4rem;
+}
+
+h3 {
+  font-size: 1.2rem;
+}
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-family: sans-serif;
+      font-size: 1em;
+      margin: 1em 0;
+    }
+
+    th, td {
+      border: 1px solid #cccccc;
+      padding: 0.6em 1em;
+      text-align: left;
+    }
+
+    th {
+      background-color: #f2f2f2;
+      font-weight: bold;
+    }
+
+    tr:nth-child(even) {
+      background-color: #fafafa;
+    }
+
+    /* Optional hover effect */
+    tr:hover {
+      background-color: #e6f7ff;
+    }
+ 
+a {
+  color: #555;
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+
+
+.code-block {
+    position: relative;
+    margin-bottom: 1em;
+}
+.copy-button {
+    background: transparent; 
+    color: white;
+
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    border: none;
+    padding: 4px 8px;
+    font-size: 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    z-index: 1;
+}
+
+.copy-button:hover {
+background-color: #0056b3;
+}
+.page-footer {
+  margin-top: 4rem;
+  padding: 1rem 0;
+  text-align: center;
+  font-size: 0.85rem;
+  color: #666;
+  border-top: 1px solid #ccc;
+  background-color: #fafafa;
+}
+.page-footer a {
+     color: #555;
+    text-decoration: none;
+  }
+  .page-footer a:hover {
+    text-decoration: underline;
+  }
+.chapter-navi-section {
+display: flex;
+justify-content: space-between;
+align-items: center;
+padding-bottom: 10px;
+}  
+
+.nav-link {
+  color: inherit;
+  text-decoration: none;
+  opacity: 0.5;
+  transition: opacity 0.3s ease, text-decoration 0.3s ease;
+}
+
+.nav-link:hover {
+  opacity: 0.9;
+  text-decoration: underline;
+}
+
+.prev {
+  text-align: left;
+}
+.toc-link {
+  text-align: center;
+}
+.next {
+  text-align: right;
+}
+.download-section {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2rem;
+  padding: 2rem 1rem;
+  max-width: 600px;
+  margin: 3rem auto;
+  background-color: #f9f9f9;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+}
+
+    .book-cover {
+      width: 130px;
+      height: 180px;
+      
+      background-size: cover; /* Ensures the image covers the entire div */
+      background-position: center; /* Centers the image */
+            
+      background: linear-gradient(145deg, #e0dede, #f9f9f9);
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 10px;
+      box-sizing: border-box;
+      position: relative;
+      font-family: 'Roboto', sans-serif;
+    }
+
+    .book-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 16px;
+      font-weight: 600;
+      color: #fff;
+      margin-bottom: 4px;
+    }
+
+    .book-subtitle {
+      font-size: 12px;
+      color: #aaa;
+      margin-bottom: 10px;
+    }
+
+    .series-name {
+      position: absolute;
+      top: 8px;
+      left: 8px;
+      font-size: 10px;
+      color: #fff;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-weight: bold;
+    }
+
+    .book-footer {
+      position: absolute;
+      bottom: 8px;
+      font-size: 10px;
+      color: #aaa;
+    }
+
+.download-info h2 {
+  margin: 0 0 0.5rem;
+  font-size: 1.2rem;
+}
+
+.format-label {
+  margin: 0 0 0.5rem;
+  font-size: 0.95rem;
+  color: #555;
+}
+
+.download-buttons {
+  display: flex;
+  gap: 1rem;
+}
+
+.download-button {
+  background-color: #4A90E2;
+  color: white;
+  padding: 0.5em 1.2em;
+  text-decoration: none;
+  border-radius: 25px;
+  font-size: 0.95rem;
+  transition: background-color 0.3s ease;
+}
+
+.download-button:hover {
+  background-color: #357ABD;
+}
+
+    code {
+ 
+      color: #d35400; 
+    }
+html {
+    scroll-behavior: smooth;
+}
+    .snippet-container {
+      overflow: hidden;    
+    }
+
+    .snippet-header {
+      background: #f0f0f0;
+      color: #333;
+      padding: 0.75rem 1rem;
+      cursor: pointer;
+      font-size: 1rem;
+    }
+
+    .snippet-body {
+      display: none;
+      font-family: monospace;
+    }
+
+    .snippet-container.open .snippet-body {
+      display: block;
+    }
+
+.CodeMirror {
+  border: 2px solid #ccc;
+  border-radius: 4px;
+  resize: vertical;
+}
+
+    button { padding: 0.5em 1em; background: green; color: white; border: none; cursor: pointer; }
+    button:hover { background: #1e7e34; }
+    .result_iframe { width:99%; height:200px; margin-top: 1em;  resize: both;border:1px solid #ccc;}        
+</style>
+</head>
+<body> 
+
+  <div class="container">
+    <div class = "chapter-navi-section">
+<a href="javascript-object-oriented-programming-asynchronous-programming-and-oop.htm" class="nav-button prev">←</a>
+<a href='javascript-object-oriented-programming.htm#design-patterns-in-javascript-oop' class="nav-button toc-link">Index</a>
+<a href="javascript-object-oriented-programming-testing-object-oriented-javascript.htm" class="nav-button next">→</a>
+</div>
+
+    <h1 class="book-title-chapter" id = 'top'>Design Patterns in JavaScript OOP</h1>
+    <h3 class="book-subtitle-chapter">JavaScript Object-Oriented Programming</h3>   
+    <!-- <h1 class ="chapter-title"></h1> -->
+    <h2 id='singleton-pattern'>16.1 Singleton Pattern</h2><p>The <strong>Singleton</strong> pattern is a design principle that ensures a class has only <strong>one single instance</strong> throughout the entire application. Moreover, it provides a <strong>global access point</strong> to that instance, allowing consistent and centralized management of shared resources or state.</p><p>Think of a Singleton like a <strong>single control tower</strong> at an airport — no matter how many flights there are, all communication passes through one central entity to keep everything coordinated.</p><h3 id="why-use-the-singleton-pattern">Why Use the Singleton Pattern?</h3><p>Singletons are especially useful when you need to:</p><ul>
+ <li><strong>Manage shared resources</strong> like database connections, logging services, or caches, ensuring there aren’t multiple conflicting instances.</li>
+ <li>Maintain <strong>application-wide configuration</strong> or state that must be consistent and accessible from various parts of your app.</li>
+ <li>Provide a <strong>centralized point of control</strong> without resorting to global variables, which can pollute the global namespace.</li>
+</ul><h3 id="implementing-singletons-in-javascript">Implementing Singletons in JavaScript</h3><p>JavaScript’s module system and closures naturally support the Singleton pattern because:</p><ul>
+ <li>Modules are <strong>evaluated once</strong> and cached, so exporting a single instance inherently acts like a singleton.</li>
+ <li>Closures allow private state and control over instance creation.</li>
+</ul><p>Here is a simple Singleton implemented using a class and an immediately-invoked function expression (IIFE):</p><div>
+ <div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+  <pre><code class="language-js">const Logger = (function () {
+  let instance;
+
+  function createInstance() {
+    return {
+      log: (msg) =&gt; console.log(`[LOG]: ${msg}`),
+      error: (msg) =&gt; console.error(`[ERROR]: ${msg}`),
+    };
+  }
+
+  return {
+    getInstance() {
+      if (!instance) {
+        instance = createInstance();
+      }
+      return instance;
+    }
+  };
+})();
+
+// Usage:
+const logger1 = Logger.getInstance();
+const logger2 = Logger.getInstance();
+
+console.log(logger1 === logger2); // true, both are the same instance
+
+logger1.log("Singleton pattern in action!");</code></pre>
+ </div>
+ <div class="snippet-container" id="KZtgj">
+  <div class="snippet-header" onclick="toggleSnippetAndRefresh('KZtgj','jX989')">
+   Try it in editor
+  </div>
+  <div class="snippet-body"><textarea id="jX989">const Logger = (function () {
+  let instance;
+
+  function createInstance() {
+    return {
+      log: (msg) =&gt; console.log(`[LOG]: ${msg}`),
+      error: (msg) =&gt; console.error(`[ERROR]: ${msg}`),
+    };
+  }
+
+  return {
+    getInstance() {
+      if (!instance) {
+        instance = createInstance();
+      }
+      return instance;
+    }
+  };
+})();
+
+// Usage:
+const logger1 = Logger.getInstance();
+const logger2 = Logger.getInstance();
+
+console.log(logger1 === logger2); // true, both are the same instance
+
+logger1.log("Singleton pattern in action!");</textarea> <br> <button onclick="renderIframeForClientJavascript('jX989','5ORGv')">Run</button> <iframe id="5ORGv" class="result_iframe" style="display: none;"></iframe>
+   <script>
+  {let editor1 = CodeMirror.fromTextArea(document.getElementById("jX989"), {
+    mode: "javascript",
+    lineNumbers:false,
+    tabSize: 2
+  });
+   codeMirrorMap.set("jX989", editor1);}
+  </script>
+  </div>
+ </div>
+</div><p>In this example:</p><ul>
+ <li>The <code>Logger</code> module keeps a private <code>instance</code> variable.</li>
+ <li>The first call to <code>getInstance()</code> creates and returns the single instance.</li>
+ <li>Subsequent calls return the same instance, guaranteeing only one logger exists.</li>
+</ul><h3 id="singleton-with-es6-modules">Singleton with ES6 Modules</h3><p>Thanks to the ES6 module system, you can create singletons simply by exporting an instance directly:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-js">// config.js
+class Config {
+  constructor() {
+    this.settings = {};
+  }
+  set(key, value) {
+    this.settings[key] = value;
+  }
+  get(key) {
+    return this.settings[key];
+  }
+}
+
+const config = new Config();
+export default config;</code></pre>
+</div><p>Now, importing <code>config</code> anywhere in your app refers to the <strong>same instance</strong>, naturally enforcing singleton behavior.</p><h3 id="cautions-when-using-singletons">Cautions When Using Singletons</h3><p>While singletons can be useful, overusing them or using them inappropriately can cause problems:</p><ul>
+ <li><strong>Hidden dependencies:</strong> Global singletons may introduce implicit dependencies, making code harder to understand and maintain.</li>
+ <li><strong>Testing challenges:</strong> Because singletons maintain shared state, tests may interfere with each other unless carefully isolated or reset.</li>
+ <li><strong>Reduced flexibility:</strong> Relying heavily on a single instance can limit your app’s ability to scale or support multiple configurations.</li>
+</ul><p>Use singletons <strong>sparingly</strong> and document their roles clearly to avoid pitfalls.</p><h3 id="summary">Summary</h3><p>The Singleton pattern is a foundational design approach in JavaScript OOP that restricts instantiation to a single object and provides a global access point. Leveraging closures or modules makes it straightforward to implement. When applied judiciously, singletons simplify resource management and state sharing, but they should be used carefully to maintain clean, testable code.</p><p>In the next section, we will explore the <strong>Factory Pattern</strong>, another versatile way to create objects flexibly.</p><div class = "chapter-navi-section">
+<a href="#top" class="nav-button prev">↑</a>
+<a href='javascript-object-oriented-programming.htm#design-patterns-in-javascript-oop' class="nav-button toc-link">Index</a>
+<a href="#bottom" class="nav-button next">↓</a>
+</div>
+<h2 id='factory-pattern'>16.2 Factory Pattern</h2><h3 id="what-is-the-factory-pattern">What is the Factory Pattern?</h3><p>The <strong>Factory pattern</strong> is a creational design pattern that <strong>abstracts the process of object creation</strong>, allowing you to produce instances of different classes based on input parameters or logic, without exposing the creation details to the client code.</p><p>Rather than directly instantiating objects with <code>new</code>, you use a <strong>factory function or class</strong> to centralize and manage object creation. This approach promotes <strong>loose coupling</strong> and makes your codebase easier to extend and maintain.</p><p>Think of a factory like a <strong>car factory</strong>: depending on the model selected, it produces the appropriate car without the buyer needing to know the assembly details.</p><h3 id="why-use-the-factory-pattern">Why Use the Factory Pattern?</h3><ul>
+ <li><strong>Encapsulation of instantiation logic:</strong> You keep the <code>new</code> operator and construction logic in one place, not scattered throughout your code.</li>
+ <li><strong>Simplifies client code:</strong> Consumers simply ask the factory for an object of a certain type without worrying about class details.</li>
+ <li><strong>Supports scalability:</strong> Adding new product types only requires updating the factory, not all the client code that creates objects.</li>
+ <li><strong>Improves code maintainability:</strong> Changes to construction logic happen in one centralized location.</li>
+</ul><h3 id="factory-pattern-implementation-in-javascript">Factory Pattern Implementation in JavaScript</h3><p>Factories can be implemented as simple functions or classes that return new instances based on input parameters.</p><h4 id="example-a-shape-factory">Example: A Shape Factory</h4><div>
+ <div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+  <pre><code class="language-js">// Base classes
+class Circle {
+  draw() {
+    console.log("Drawing a Circle");
+  }
+}
+
+class Square {
+  draw() {
+    console.log("Drawing a Square");
+  }
+}
+
+// Factory function
+function shapeFactory(type) {
+  switch (type.toLowerCase()) {
+    case 'circle':
+      return new Circle();
+    case 'square':
+      return new Square();
+    default:
+      throw new Error('Unknown shape type');
+  }
+}
+
+// Usage:
+const shapes = [
+  shapeFactory('circle'),
+  shapeFactory('square'),
+  shapeFactory('circle'),
+];
+
+shapes.forEach(shape =&gt; shape.draw());
+// Output:
+// Drawing a Circle
+// Drawing a Square
+// Drawing a Circle</code></pre>
+ </div>
+ <div class="snippet-container" id="lGDkn">
+  <div class="snippet-header" onclick="toggleSnippetAndRefresh('lGDkn','l9VjU')">
+   Try it in editor
+  </div>
+  <div class="snippet-body"><textarea id="l9VjU">// Base classes
+class Circle {
+  draw() {
+    console.log("Drawing a Circle");
+  }
+}
+
+class Square {
+  draw() {
+    console.log("Drawing a Square");
+  }
+}
+
+// Factory function
+function shapeFactory(type) {
+  switch (type.toLowerCase()) {
+    case 'circle':
+      return new Circle();
+    case 'square':
+      return new Square();
+    default:
+      throw new Error('Unknown shape type');
+  }
+}
+
+// Usage:
+const shapes = [
+  shapeFactory('circle'),
+  shapeFactory('square'),
+  shapeFactory('circle'),
+];
+
+shapes.forEach(shape =&gt; shape.draw());
+// Output:
+// Drawing a Circle
+// Drawing a Square
+// Drawing a Circle</textarea> <br> <button onclick="renderIframeForClientJavascript('l9VjU','my8Zt')">Run</button> <iframe id="my8Zt" class="result_iframe" style="display: none;"></iframe>
+   <script>
+  {let editor1 = CodeMirror.fromTextArea(document.getElementById("l9VjU"), {
+    mode: "javascript",
+    lineNumbers:false,
+    tabSize: 2
+  });
+   codeMirrorMap.set("l9VjU", editor1);}
+  </script>
+  </div>
+ </div>
+</div><p>In this example:</p><ul>
+ <li>The <code>shapeFactory</code> function encapsulates the logic deciding which shape to create.</li>
+ <li>The client code simply calls <code>shapeFactory</code> with the desired type and works with the returned object polymorphically.</li>
+ <li>Adding a new shape requires only adding a new class and extending the factory logic.</li>
+</ul><h3 id="using-factory-classes">Using Factory Classes</h3><p>You can also create a dedicated factory class to manage object creation:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-js">class ShapeFactory {
+  createShape(type) {
+    switch (type.toLowerCase()) {
+      case 'circle':
+        return new Circle();
+      case 'square':
+        return new Square();
+      default:
+        throw new Error('Unknown shape type');
+    }
+  }
+}
+
+// Usage:
+const factory = new ShapeFactory();
+const shape1 = factory.createShape('circle');
+const shape2 = factory.createShape('square');
+
+shape1.draw(); // Drawing a Circle
+shape2.draw(); // Drawing a Square</code></pre>
+</div><p>This approach is helpful when your factory needs to maintain internal state or more complex creation logic.</p><h3 id="benefits-of-the-factory-pattern">Benefits of the Factory Pattern</h3><ul>
+ <li><strong>Loose coupling:</strong> Client code depends only on abstract interfaces or base classes, not concrete implementations.</li>
+ <li><strong>Single responsibility:</strong> Creation logic is separated from business logic.</li>
+ <li><strong>Extensibility:</strong> You can introduce new product types without changing existing client code.</li>
+ <li><strong>Improved testing:</strong> Factories can be mocked or stubbed during tests for easier isolation.</li>
+</ul><h3 id="summary">Summary</h3><p>The Factory pattern is a powerful way to centralize and abstract object creation in JavaScript. By using factory functions or classes, you decouple your code from concrete implementations and simplify the instantiation process. This pattern is especially useful in applications where multiple related objects need to be created dynamically based on runtime conditions.</p><div class = "chapter-navi-section">
+<a href="#top" class="nav-button prev">↑</a>
+<a href='javascript-object-oriented-programming.htm#design-patterns-in-javascript-oop' class="nav-button toc-link">Index</a>
+<a href="#bottom" class="nav-button next">↓</a>
+</div>
+<h2 id='observer-pattern'>16.3 Observer Pattern</h2><h3 id="what-is-the-observer-pattern">What is the Observer Pattern?</h3><p>The <strong>Observer pattern</strong> is a behavioral design pattern used to implement <strong>event-driven architectures</strong>. It allows one object, called the <strong>subject</strong> (or observable), to maintain a list of dependent objects, called <strong>observers</strong>, and notify them automatically of any state changes or events.</p><p>In this pattern, observers <strong>subscribe</strong> to the subject to receive updates or notifications. When the subject's state changes, it <strong>broadcasts</strong> those changes to all subscribed observers, allowing them to react accordingly.</p><h3 id="why-use-the-observer-pattern">Why Use the Observer Pattern?</h3><ul>
+ <li><strong>Decouples components:</strong> Subjects and observers are loosely connected — the subject doesn't need to know the internal details of observers, only that they implement a certain interface (e.g., a callback function).</li>
+ <li><strong>Enables dynamic behavior:</strong> Observers can be added or removed at runtime, allowing flexible reactions to events.</li>
+ <li><strong>Promotes scalability:</strong> Many parts of an application can react to a single event without the subject managing those reactions explicitly.</li>
+</ul><h3 id="the-observer-pattern-in-javascript">The Observer Pattern in JavaScript</h3><p>JavaScript naturally lends itself to this pattern through its event-driven nature. The DOM event system, Node.js’s <code>EventEmitter</code>, and custom event systems are real-world examples of the Observer pattern.</p><h3 id="key-components">Key Components</h3><ul>
+ <li><strong>Subject:</strong> The source of events or state changes. It maintains a list of observers and provides methods to add, remove, and notify them.</li>
+ <li><strong>Observers:</strong> Objects or functions that subscribe to the subject to receive notifications.</li>
+</ul><h3 id="conceptual-example">Conceptual Example</h3><div>
+ <div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+  <pre><code class="language-js">// Subject class
+class Subject {
+  constructor() {
+    this.observers = [];
+  }
+  
+  // Add observer (subscribe)
+  subscribe(observer) {
+    this.observers.push(observer);
+  }
+  
+  // Remove observer (unsubscribe)
+  unsubscribe(observer) {
+    this.observers = this.observers.filter(obs =&gt; obs !== observer);
+  }
+  
+  // Notify all observers
+  notify(data) {
+    this.observers.forEach(observer =&gt; observer.update(data));
+  }
+}
+
+// Observer interface (just an object with update method)
+class Observer {
+  constructor(name) {
+    this.name = name;
+  }
+  
+  update(data) {
+    console.log(`${this.name} received data:`, data);
+  }
+}
+
+// Usage:
+const subject = new Subject();
+
+const observer1 = new Observer('Observer 1');
+const observer2 = new Observer('Observer 2');
+
+subject.subscribe(observer1);
+subject.subscribe(observer2);
+
+// Trigger notifications
+subject.notify('Event A'); 
+// Output:
+// Observer 1 received data: Event A
+// Observer 2 received data: Event A
+
+subject.unsubscribe(observer1);
+
+subject.notify('Event B'); 
+// Output:
+// Observer 2 received data: Event B</code></pre>
+ </div>
+ <div class="snippet-container" id="DRNmJ">
+  <div class="snippet-header" onclick="toggleSnippetAndRefresh('DRNmJ','fJgad')">
+   Try it in editor
+  </div>
+  <div class="snippet-body"><textarea id="fJgad">// Subject class
+class Subject {
+  constructor() {
+    this.observers = [];
+  }
+  
+  // Add observer (subscribe)
+  subscribe(observer) {
+    this.observers.push(observer);
+  }
+  
+  // Remove observer (unsubscribe)
+  unsubscribe(observer) {
+    this.observers = this.observers.filter(obs =&gt; obs !== observer);
+  }
+  
+  // Notify all observers
+  notify(data) {
+    this.observers.forEach(observer =&gt; observer.update(data));
+  }
+}
+
+// Observer interface (just an object with update method)
+class Observer {
+  constructor(name) {
+    this.name = name;
+  }
+  
+  update(data) {
+    console.log(`${this.name} received data:`, data);
+  }
+}
+
+// Usage:
+const subject = new Subject();
+
+const observer1 = new Observer('Observer 1');
+const observer2 = new Observer('Observer 2');
+
+subject.subscribe(observer1);
+subject.subscribe(observer2);
+
+// Trigger notifications
+subject.notify('Event A'); 
+// Output:
+// Observer 1 received data: Event A
+// Observer 2 received data: Event A
+
+subject.unsubscribe(observer1);
+
+subject.notify('Event B'); 
+// Output:
+// Observer 2 received data: Event B</textarea> <br> <button onclick="renderIframeForClientJavascript('fJgad','ukqHb')">Run</button> <iframe id="ukqHb" class="result_iframe" style="display: none;"></iframe>
+   <script>
+  {let editor1 = CodeMirror.fromTextArea(document.getElementById("fJgad"), {
+    mode: "javascript",
+    lineNumbers:false,
+    tabSize: 2
+  });
+   codeMirrorMap.set("fJgad", editor1);}
+  </script>
+  </div>
+ </div>
+</div><h3 id="relation-to-javascripts-native-event-systems">Relation to JavaScripts Native Event Systems</h3><ul>
+ <li>The <strong>DOM event system</strong> follows the Observer pattern where event listeners subscribe to DOM elements, waiting for events like clicks or keypresses.</li>
+ <li>Node.js’s <code>EventEmitter</code> class provides methods like <code>.on()</code>, <code>.emit()</code>, and <code>.off()</code> that implement observer subscription, notification, and unsubscription.</li>
+ <li>Custom event emitter implementations mirror the same pattern to enable modular and decoupled components.</li>
+</ul><h3 id="benefits-of-using-the-observer-pattern">Benefits of Using the Observer Pattern</h3><ul>
+ <li>Promotes <strong>loose coupling</strong> by separating event producers and consumers.</li>
+ <li>Supports <strong>flexible and dynamic</strong> event handling by allowing observers to subscribe or unsubscribe at any time.</li>
+ <li>Encourages <strong>reusable components</strong> that can interact without direct dependencies.</li>
+</ul><h3 id="summary">Summary</h3><p>The Observer pattern is a fundamental design principle for building scalable, event-driven applications. It allows objects to communicate changes efficiently without tight coupling. JavaScript’s event systems are practical realizations of this pattern, and understanding it is key to mastering modular and reactive programming.</p><p>Next, we will dive into the <strong>Decorator Pattern</strong>, a powerful technique for enhancing object behavior dynamically.</p><div class = "chapter-navi-section">
+<a href="#top" class="nav-button prev">↑</a>
+<a href='javascript-object-oriented-programming.htm#design-patterns-in-javascript-oop' class="nav-button toc-link">Index</a>
+<a href="#bottom" class="nav-button next">↓</a>
+</div>
+<h2 id='decorator-pattern'>16.4 Decorator Pattern</h2><h3 id="what-is-the-decorator-pattern">What is the Decorator Pattern?</h3><p>The <strong>Decorator pattern</strong> is a structural design pattern used to <strong>dynamically add new behavior or responsibilities to objects without modifying their original structure</strong>. Instead of changing the object itself, decorators <strong>wrap</strong> the original object, extending or overriding its functionality in a flexible and reusable way.</p><p>This pattern allows behavior to be added transparently and composed at runtime, avoiding the pitfalls of subclassing for every possible combination of features.</p><h3 id="why-use-the-decorator-pattern">Why Use the Decorator Pattern?</h3><ul>
+ <li><strong>Extends behavior without inheritance:</strong> Instead of creating complex inheritance hierarchies, decorators wrap objects to add new capabilities.</li>
+ <li><strong>Promotes single responsibility:</strong> Each decorator can focus on a specific enhancement, making code modular and maintainable.</li>
+ <li><strong>Enables runtime flexibility:</strong> Behaviors can be added or removed dynamically, based on runtime conditions.</li>
+ <li><strong>Supports cross-cutting concerns:</strong> Common features like logging, validation, or caching can be applied cleanly without cluttering core logic.</li>
+</ul><h3 id="how-decorators-work">How Decorators Work</h3><p>A decorator typically holds a reference to the original object and implements the same interface or API. When a method is called on the decorator, it can perform additional actions before or after delegating the call to the original object.</p><h3 id="simple-example-decorating-a-method-for-logging">Simple Example: Decorating a Method for Logging</h3><div>
+ <div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+  <pre><code class="language-js">// Original class
+class Calculator {
+  add(a, b) {
+    return a + b;
+  }
+}
+
+// Decorator function that adds logging to any method
+function logDecorator(originalObj, methodName) {
+  const originalMethod = originalObj[methodName];
+  
+  originalObj[methodName] = function(...args) {
+    console.log(`Calling ${methodName} with arguments:`, args);
+    const result = originalMethod.apply(this, args);
+    console.log(`Result of ${methodName}:`, result);
+    return result;
+  };
+  
+  return originalObj;
+}
+
+// Usage
+const calc = new Calculator();
+logDecorator(calc, 'add');
+
+calc.add(2, 3);
+// Output:
+// Calling add with arguments: [2, 3]
+// Result of add: 5</code></pre>
+ </div>
+ <div class="snippet-container" id="QPEQl">
+  <div class="snippet-header" onclick="toggleSnippetAndRefresh('QPEQl','88ZZq')">
+   Try it in editor
+  </div>
+  <div class="snippet-body"><textarea id="88ZZq">// Original class
+class Calculator {
+  add(a, b) {
+    return a + b;
+  }
+}
+
+// Decorator function that adds logging to any method
+function logDecorator(originalObj, methodName) {
+  const originalMethod = originalObj[methodName];
+  
+  originalObj[methodName] = function(...args) {
+    console.log(`Calling ${methodName} with arguments:`, args);
+    const result = originalMethod.apply(this, args);
+    console.log(`Result of ${methodName}:`, result);
+    return result;
+  };
+  
+  return originalObj;
+}
+
+// Usage
+const calc = new Calculator();
+logDecorator(calc, 'add');
+
+calc.add(2, 3);
+// Output:
+// Calling add with arguments: [2, 3]
+// Result of add: 5</textarea> <br> <button onclick="renderIframeForClientJavascript('88ZZq','grPlh')">Run</button> <iframe id="grPlh" class="result_iframe" style="display: none;"></iframe>
+   <script>
+  {let editor1 = CodeMirror.fromTextArea(document.getElementById("88ZZq"), {
+    mode: "javascript",
+    lineNumbers:false,
+    tabSize: 2
+  });
+   codeMirrorMap.set("88ZZq", editor1);}
+  </script>
+  </div>
+ </div>
+</div><p>In this example, the <code>logDecorator</code> wraps the <code>add</code> method of <code>Calculator</code> to inject logging behavior without modifying the class’s code.</p><h3 id="decorating-properties-and-validations">Decorating Properties and Validations</h3><p>Decorators can also be used to enhance properties, such as adding validation before setting a value:</p><div>
+ <div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+  <pre><code class="language-js">function validatePositiveDecorator(obj, propertyName) {
+  let value = obj[propertyName];
+
+  Object.defineProperty(obj, propertyName, {
+    get() {
+      return value;
+    },
+    set(newVal) {
+      if (newVal &lt; 0) {
+        throw new Error(`${propertyName} must be positive`);
+      }
+      value = newVal;
+    },
+    configurable: true,
+    enumerable: true
+  });
+
+  return obj;
+}
+
+const product = { price: 10 };
+validatePositiveDecorator(product, 'price');
+
+product.price = 20;  // Works fine
+product.price = -5;  // Throws Error: price must be positive</code></pre>
+ </div>
+ <div class="snippet-container" id="BGNku">
+  <div class="snippet-header" onclick="toggleSnippetAndRefresh('BGNku','aXvNF')">
+   Try it in editor
+  </div>
+  <div class="snippet-body"><textarea id="aXvNF">function validatePositiveDecorator(obj, propertyName) {
+  let value = obj[propertyName];
+
+  Object.defineProperty(obj, propertyName, {
+    get() {
+      return value;
+    },
+    set(newVal) {
+      if (newVal &lt; 0) {
+        throw new Error(`${propertyName} must be positive`);
+      }
+      value = newVal;
+    },
+    configurable: true,
+    enumerable: true
+  });
+
+  return obj;
+}
+
+const product = { price: 10 };
+validatePositiveDecorator(product, 'price');
+
+product.price = 20;  // Works fine
+product.price = -5;  // Throws Error: price must be positive</textarea> <br> <button onclick="renderIframeForClientJavascript('aXvNF','MFCCc')">Run</button> <iframe id="MFCCc" class="result_iframe" style="display: none;"></iframe>
+   <script>
+  {let editor1 = CodeMirror.fromTextArea(document.getElementById("aXvNF"), {
+    mode: "javascript",
+    lineNumbers:false,
+    tabSize: 2
+  });
+   codeMirrorMap.set("aXvNF", editor1);}
+  </script>
+  </div>
+ </div>
+</div><h3 id="decorators-vs-subclassing">Decorators vs. Subclassing</h3><p>While subclassing adds behavior statically at design time, decorators add behavior dynamically at runtime and can be composed or stacked to combine multiple enhancements.</p><h3 id="summary">Summary</h3><p>The Decorator pattern is a powerful technique to <strong>augment objects flexibly without modifying their core implementations</strong>. By wrapping objects, decorators enable the addition of cross-cutting concerns like logging, validation, caching, or more, promoting modular, maintainable, and reusable code.</p><p>Next, we will apply these design patterns in a practical chat application example.</p><div class = "chapter-navi-section">
+<a href="#top" class="nav-button prev">↑</a>
+<a href='javascript-object-oriented-programming.htm#design-patterns-in-javascript-oop' class="nav-button toc-link">Index</a>
+<a href="#bottom" class="nav-button next">↓</a>
+</div>
+<h2 id='practical-applying-patterns-in-a-chat-application'>16.5 Practical: Applying Patterns in a Chat Application</h2><p>In this section, we'll build a simplified chat application demonstrating how several design patterns can work together seamlessly:</p><ul>
+ <li><strong>Singleton</strong>: Manage global app state</li>
+ <li><strong>Factory</strong>: Create different types of messages (text, image)</li>
+ <li><strong>Observer</strong>: Notify UI components about new messages</li>
+ <li><strong>Decorator</strong>: Enhance messages with additional behavior (e.g., formatting or encryption)</li>
+</ul><h3 id="step-1-singleton-chatapp-state-manager">Step 1: Singleton ChatApp State Manager</h3><p>We want a single shared instance managing the chat state (messages, users, etc.). This prevents conflicting data and ensures centralized access.</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-js">class ChatApp {
+  constructor() {
+    if (ChatApp.instance) {
+      return ChatApp.instance;
+    }
+    this.messages = [];
+    this.listeners = [];
+    ChatApp.instance = this;
+  }
+
+  addMessage(message) {
+    this.messages.push(message);
+    this.notify(message);
+  }
+
+  subscribe(listener) {
+    this.listeners.push(listener);
+  }
+
+  unsubscribe(listener) {
+    this.listeners = this.listeners.filter(l =&gt; l !== listener);
+  }
+
+  notify(message) {
+    this.listeners.forEach(listener =&gt; listener.update(message));
+  }
+}
+
+// Usage: always get the same instance
+const chatApp = new ChatApp();
+const chatApp2 = new ChatApp();
+console.log(chatApp === chatApp2);  // true</code></pre>
+</div><h3 id="step-2-factory-message-creation">Step 2: Factory Message Creation</h3><p>We need a flexible way to create different message types without cluttering the client code.</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-js">// Base Message class
+class Message {
+  constructor(sender, content) {
+    this.sender = sender;
+    this.content = content;
+    this.timestamp = new Date();
+  }
+
+  display() {
+    return `[${this.timestamp.toLocaleTimeString()}] ${this.sender}: ${this.content}`;
+  }
+}
+
+// TextMessage subclass
+class TextMessage extends Message {
+  constructor(sender, content) {
+    super(sender, content);
+  }
+}
+
+// ImageMessage subclass
+class ImageMessage extends Message {
+  constructor(sender, imageUrl) {
+    super(sender, `[Image: ${imageUrl}]`);
+    this.imageUrl = imageUrl;
+  }
+}
+
+// Factory function
+function MessageFactory(type, sender, content) {
+  switch(type) {
+    case 'text':
+      return new TextMessage(sender, content);
+    case 'image':
+      return new ImageMessage(sender, content);
+    default:
+      throw new Error(`Unknown message type: ${type}`);
+  }
+}</code></pre>
+</div><h3 id="step-3-observer-ui-listener-for-new-messages">Step 3: Observer UI Listener for New Messages</h3><p>Our UI components can subscribe to new messages and update automatically when notified.</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-js">class MessageListView {
+  update(message) {
+    console.log('New message received: ', message.display());
+    // In a real app, update DOM here instead of console.log
+  }
+}
+
+// Subscribe to chat app notifications
+const messageListView = new MessageListView();
+chatApp.subscribe(messageListView);</code></pre>
+</div><h3 id="step-4-decorator-enhancing-messages">Step 4: Decorator Enhancing Messages</h3><p>Decorators let us extend messages dynamically, e.g., add encryption or formatting.</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-js">// Decorator to add emoji to text messages
+function emojiDecorator(message) {
+  const originalDisplay = message.display.bind(message);
+  message.display = function() {
+    return originalDisplay() + ' 😊';
+  };
+  return message;
+}
+
+// Decorator to simulate encryption by scrambling content
+function encryptDecorator(message) {
+  const originalContent = message.content;
+  message.content = originalContent.split('').reverse().join('');
+  
+  const originalDisplay = message.display.bind(message);
+  message.display = function() {
+    return originalDisplay() + ' 🔒';
+  };
+  return message;
+}</code></pre>
+</div><h3 id="step-5-putting-it-all-together">Step 5: Putting It All Together</h3><p>Here’s how the patterns integrate into real usage:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-js">// Get the singleton app instance
+const app = new ChatApp();
+
+// Subscribe UI component
+const ui = new MessageListView();
+app.subscribe(ui);
+
+// Create messages via factory
+let msg1 = MessageFactory('text', 'Alice', 'Hello!');
+let msg2 = MessageFactory('image', 'Bob', 'http://image.url/pic.jpg');
+
+// Decorate messages dynamically
+msg1 = emojiDecorator(msg1);
+msg2 = encryptDecorator(msg2);
+
+// Add messages to app, which notifies observers
+app.addMessage(msg1);
+app.addMessage(msg2);</code></pre>
+</div><p><strong>Console output:</strong></p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-bash">New message received:  [12:00:00 PM] Alice: Hello! 😊
+New message received:  [12:00:01 PM] Bob: ]gpj.cip/lru.egami//:ptth[ 🔒</code></pre>
+</div><div class="snippet-container" id="eFIX7">
+ <div class="snippet-header" onclick="toggleSnippet('eFIX7')">
+  Click to view full runnable Code
+ </div>
+ <div class="snippet-body">
+  <div class="code-block"><button class="copy-button" onclick="copyCode(this)">📋</button>
+   <pre><code class="language-js">
+// chat-app.js
+
+// Step 1: Singleton - ChatApp State Manager
+class ChatApp {
+  constructor() {
+    if (ChatApp.instance) {
+      return ChatApp.instance;
+    }
+    this.messages = [];
+    this.listeners = [];
+    ChatApp.instance = this;
+  }
+
+  addMessage(message) {
+    this.messages.push(message);
+    this.notify(message);
+  }
+
+  subscribe(listener) {
+    this.listeners.push(listener);
+  }
+
+  unsubscribe(listener) {
+    this.listeners = this.listeners.filter(l =&gt; l !== listener);
+  }
+
+  notify(message) {
+    this.listeners.forEach(listener =&gt; listener.update(message));
+  }
+}
+
+// Step 2: Factory - Message Creation
+class Message {
+  constructor(sender, content) {
+    this.sender = sender;
+    this.content = content;
+    this.timestamp = new Date();
+  }
+
+  display() {
+    return `[${this.timestamp.toLocaleTimeString()}] ${this.sender}: ${this.content}`;
+  }
+}
+
+class TextMessage extends Message {
+  constructor(sender, content) {
+    super(sender, content);
+  }
+}
+
+class ImageMessage extends Message {
+  constructor(sender, imageUrl) {
+    super(sender, `[Image: ${imageUrl}]`);
+    this.imageUrl = imageUrl;
+  }
+}
+
+function MessageFactory(type, sender, content) {
+  switch (type) {
+    case 'text':
+      return new TextMessage(sender, content);
+    case 'image':
+      return new ImageMessage(sender, content);
+    default:
+      throw new Error(`Unknown message type: ${type}`);
+  }
+}
+
+// Step 3: Observer - UI Listener
+class MessageListView {
+  update(message) {
+    console.log('New message received:', message.display());
+  }
+}
+
+// Step 4: Decorator - Enhancing Messages
+function emojiDecorator(message) {
+  const originalDisplay = message.display.bind(message);
+  message.display = function () {
+    return originalDisplay() + ' 😊';
+  };
+  return message;
+}
+
+function encryptDecorator(message) {
+  const originalContent = message.content;
+  message.content = originalContent.split('').reverse().join('');
+  const originalDisplay = message.display.bind(message);
+  message.display = function () {
+    return originalDisplay() + ' 🔒';
+  };
+  return message;
+}
+
+// Step 5: Putting It All Together
+function runChatAppDemo() {
+  const app = new ChatApp();
+  const ui = new MessageListView();
+  app.subscribe(ui);
+
+  let msg1 = MessageFactory('text', 'Alice', 'Hello!');
+  let msg2 = MessageFactory('image', 'Bob', 'http://image.url/pic.jpg');
+
+  msg1 = emojiDecorator(msg1);
+  msg2 = encryptDecorator(msg2);
+
+  app.addMessage(msg1);
+  app.addMessage(msg2);
+}
+
+runChatAppDemo(); 
+</code></pre>
+  </div>
+ </div>
+</div><h3 id="summary">Summary</h3><p>This example shows how combining design patterns helps build modular, maintainable applications:</p><ul>
+ <li>The <strong>Singleton</strong> ensures a consistent shared chat state.</li>
+ <li>The <strong>Factory</strong> abstracts message creation, allowing easy extension for new types.</li>
+ <li>The <strong>Observer</strong> pattern keeps the UI in sync without tight coupling.</li>
+ <li>The <strong>Decorator</strong> pattern provides flexible runtime enhancements.</li>
+</ul><p>Together, these patterns form a robust foundation for scalable, feature-rich chat apps or similar event-driven applications.</p><p>Next, you can extend this app by adding user authentication, message persistence, or real-time networking, all while leveraging these patterns for clean code architecture.</p><div class = "chapter-navi-section">
+<a href="javascript-object-oriented-programming-asynchronous-programming-and-oop.htm" class="nav-button prev">←</a>
+<a href='javascript-object-oriented-programming.htm#design-patterns-in-javascript-oop' class="nav-button toc-link">Index</a>
+<a href="javascript-object-oriented-programming-testing-object-oriented-javascript.htm" class="nav-button next">→</a>
+</div>
+<section class="download-section">
+  <div class="book-cover" style="background-image: url('data:image/jpg;base64,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');">
+<div class="series-name">Introduction</div>
+<div class="book-title">JavaScript Object-Oriented Programming</div>
+<div class="book-subtitle">From Basics to Advanced Design</div>
+<div class="book-footer">readbytes.github.io</div>
+</div>
+  <div class="download-info">
+    <h2 id='bottom'>Download This Ebook</h2>
+    <p class="format-label">Available formats:</p>
+    <div class="download-buttons">
+      <a href="javascript-object-oriented-programming.pdf" class="download-button">📄 PDF</a>
+      <a href="javascript-object-oriented-programming.epub" class="download-button">📘 EPUB</a>
+    </div>
+  </div>
+</section><div class='related-books'>
+<h2>Java Introduction Books</h2>
+<div class='related-book-list'>
+<a href="javascript-object-oriented-programming.htm"><div class="book-cover" style="background-image: url('data:image/jpg;base64,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');">
+<div class="series-name">Introduction</div>
+<div class="book-title">JavaScript Object-Oriented Programming</div>
+<div class="book-subtitle">From Basics to Advanced Design</div>
+<div class="book-footer">readbytes.github.io</div>
+</div></a>
+
+
+
+<a href='java.htm'><div class='book-cover'>More Java Books</div></a>
+</div>
+</div>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+    <script>
+  function toggleSnippet(id) {
+      const box = document.getElementById(id);
+      box.classList.toggle("open");
+  }  
+  </script>
+  <script>
+    function copyCode(button) {
+      const code = button.nextElementSibling.innerText;
+      navigator.clipboard.writeText(code).then(() => {
+        button.textContent = 'Copied!';
+        setTimeout(() => { button.textContent = 'Copy'; }, 1500);
+      });
+    }
+  </script>  
+
+<footer class="page-footer">
+    <nav>
+      <a href="https://readbytes.github.io">Home</a> | 
+      Email:<script language="JavaScript" type="text/javascript">
+var part1 = 'yinpeng';var part6 = '263';var part2 = Math.pow(2,6);var part3 = String.fromCharCode(part2);var part4 = 'hotmail dot com';var part5 = part1 + String.fromCharCode(part2) + part4;document.write(part1 + part6 + part3 + part4);
+</script>
+    </nav>
+  <p>© 2025 — All rights reserved.</p>    
+  </footer>
+
+</body>
+</html>

@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>Java Object-Oriented Design DRY, KISS, YAGNI, and Other Principles</title>
+<link rel='shortcut icon' href='https://java2s.com/style/favicon.ico'>
+<link href="https://fonts.googleapis.com/css2?family=Merriweather&display=swap" rel="stylesheet" />
+<link href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+
+
+<style>
+body {
+  background: #f8f7f5;
+  font-family: 'Merriweather', serif;
+  color: #333;
+  margin: 0;
+  padding: 2rem 1rem;
+  font-size: 15px; /* smaller body font */
+  line-height: 1.5;
+}
+
+.container {
+  max-width: 700px;
+  margin: 0 auto;
+  background: white;
+  padding: 1rem 2rem;
+  box-shadow: 0 0 15px rgba(0,0,0,0.1);
+}
+.book-title-chapter {
+  font-family: 'Merriweather', serif;
+  font-size: 2rem;
+  font-weight: bold;
+  text-align: center;
+  margin-bottom: 2rem;
+  border-bottom: 2px solid #ccc;
+  padding-bottom: 0.5rem;
+  color: #2c3e50;
+}
+
+.book-subtitle-chapter {
+  text-align: center;
+  font-size: 1rem;
+  color: #666;
+  margin-top: -1rem;
+  margin-bottom: 2rem;
+}
+
+    .related-books {
+      margin-top: 40px;
+    }
+
+    .related-books h2 {
+      font-size: 22px;
+      margin-bottom: 20px;
+      border-bottom: 2px solid #eee;
+      padding-bottom: 8px;
+      color: #333;
+    }
+    .related-book-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+h1, h2, h3 {
+  font-weight: 600;
+  margin-top: 2.5rem;
+  margin-bottom: 1rem;
+  line-height: 1.2;
+}
+
+h1 {
+  font-size: 1.8rem; /* smaller heading */
+}
+
+h2 {
+  font-size: 1.4rem;
+}
+
+h3 {
+  font-size: 1.2rem;
+}
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-family: sans-serif;
+      font-size: 1em;
+      margin: 1em 0;
+    }
+
+    th, td {
+      border: 1px solid #cccccc;
+      padding: 0.6em 1em;
+      text-align: left;
+    }
+
+    th {
+      background-color: #f2f2f2;
+      font-weight: bold;
+    }
+
+    tr:nth-child(even) {
+      background-color: #fafafa;
+    }
+
+    /* Optional hover effect */
+    tr:hover {
+      background-color: #e6f7ff;
+    }
+ 
+a {
+  color: #555;
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+
+
+.code-block {
+    position: relative;
+    margin-bottom: 1em;
+}
+.copy-button {
+    background: transparent; 
+    color: white;
+
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    border: none;
+    padding: 4px 8px;
+    font-size: 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    z-index: 1;
+}
+
+.copy-button:hover {
+background-color: #0056b3;
+}
+.page-footer {
+  margin-top: 4rem;
+  padding: 1rem 0;
+  text-align: center;
+  font-size: 0.85rem;
+  color: #666;
+  border-top: 1px solid #ccc;
+  background-color: #fafafa;
+}
+.page-footer a {
+     color: #555;
+    text-decoration: none;
+  }
+  .page-footer a:hover {
+    text-decoration: underline;
+  }
+.chapter-navi-section {
+display: flex;
+justify-content: space-between;
+align-items: center;
+padding-bottom: 10px;
+}  
+
+.nav-link {
+  color: inherit;
+  text-decoration: none;
+  opacity: 0.5;
+  transition: opacity 0.3s ease, text-decoration 0.3s ease;
+}
+
+.nav-link:hover {
+  opacity: 0.9;
+  text-decoration: underline;
+}
+
+.prev {
+  text-align: left;
+}
+.toc-link {
+  text-align: center;
+}
+.next {
+  text-align: right;
+}
+.download-section {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2rem;
+  padding: 2rem 1rem;
+  max-width: 600px;
+  margin: 3rem auto;
+  background-color: #f9f9f9;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+}
+
+    .book-cover {
+      width: 130px;
+      height: 180px;
+      
+      background-size: cover; /* Ensures the image covers the entire div */
+      background-position: center; /* Centers the image */
+            
+      background: linear-gradient(145deg, #e0dede, #f9f9f9);
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 10px;
+      box-sizing: border-box;
+      position: relative;
+      font-family: 'Roboto', sans-serif;
+    }
+
+    .book-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 16px;
+      font-weight: 600;
+      color: #fff;
+      margin-bottom: 4px;
+    }
+
+    .book-subtitle {
+      font-size: 12px;
+      color: #aaa;
+      margin-bottom: 10px;
+    }
+
+    .series-name {
+      position: absolute;
+      top: 8px;
+      left: 8px;
+      font-size: 10px;
+      color: #fff;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-weight: bold;
+    }
+
+    .book-footer {
+      position: absolute;
+      bottom: 8px;
+      font-size: 10px;
+      color: #aaa;
+    }
+
+.download-info h2 {
+  margin: 0 0 0.5rem;
+  font-size: 1.2rem;
+}
+
+.format-label {
+  margin: 0 0 0.5rem;
+  font-size: 0.95rem;
+  color: #555;
+}
+
+.download-buttons {
+  display: flex;
+  gap: 1rem;
+}
+
+.download-button {
+  background-color: #4A90E2;
+  color: white;
+  padding: 0.5em 1.2em;
+  text-decoration: none;
+  border-radius: 25px;
+  font-size: 0.95rem;
+  transition: background-color 0.3s ease;
+}
+
+.download-button:hover {
+  background-color: #357ABD;
+}
+
+    code {
+ 
+      color: #d35400; 
+    }
+html {
+    scroll-behavior: smooth;
+}
+    .snippet-container {
+      overflow: hidden;    
+    }
+
+    .snippet-header {
+      background: #f0f0f0;
+      color: #333;
+      padding: 0.75rem 1rem;
+      cursor: pointer;
+      font-size: 1rem;
+    }
+
+    .snippet-body {
+      display: none;
+      font-family: monospace;
+    }
+
+    .snippet-container.open .snippet-body {
+      display: block;
+    }
+
+.CodeMirror {
+  border: 2px solid #ccc;
+  border-radius: 4px;
+  resize: vertical;
+}
+
+    button { padding: 0.5em 1em; background: green; color: white; border: none; cursor: pointer; }
+    button:hover { background: #1e7e34; }
+    .result_iframe { width:99%; height:200px; margin-top: 1em;  resize: both;border:1px solid #ccc;}        
+</style>
+</head>
+<body> 
+
+  <div class="container">
+    <div class = "chapter-navi-section">
+<a href="java-object-oriented-design-solid-principles-in-java.htm" class="nav-button prev">←</a>
+<a href='java-object-oriented-design.htm#dry-kiss-yagni-and-other-principles' class="nav-button toc-link">Index</a>
+<a href="java-object-oriented-design-design-by-contract-and-defensive-programming.htm" class="nav-button next">→</a>
+</div>
+
+    <h1 class="book-title-chapter" id = 'top'>DRY, KISS, YAGNI, and Other Principles</h1>
+    <h3 class="book-subtitle-chapter">Java Object-Oriented Design</h3>   
+    <!-- <h1 class ="chapter-title"></h1> -->
+    <h2 id='avoiding-code-duplication-dry'>12.1 Avoiding Code Duplication (DRY)</h2><p>One of the most fundamental principles in software engineering is <strong>DRY</strong>, which stands for <strong>Don't Repeat Yourself</strong>. Coined by Andy Hunt and Dave Thomas in <em>The Pragmatic Programmer</em>, the DRY principle emphasizes that <em>"every piece of knowledge must have a single, unambiguous, authoritative representation within a system."</em> In simpler terms, <strong>avoid code duplication</strong>—not just in lines of code, but in logic, knowledge, and behavior.</p><h3 id="why-duplication-is-harmful">Why Duplication Is Harmful</h3><p>Duplication increases the risk of bugs, bloated codebases, and inconsistent behavior. If the same logic is copied across multiple classes or methods, any change to that logic must be applied consistently in all places. Miss just one, and you’ve introduced a potential bug. Duplication also makes code harder to read, maintain, and extend.</p><p>For example, consider the following duplicate code across two methods:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-java">public double calculateDiscountedPrice(double price) {
+    double discount = price * 0.1;
+    return price - discount;
+}
+
+public double calculateLoyaltyPrice(double price) {
+    double discount = price * 0.1;
+    return price - discount;
+}</code></pre>
+</div><p>Both methods apply the same discount logic. If business rules change tomorrow (e.g., the discount becomes 15%), both methods would need to be updated. This is inefficient and error-prone.</p><h3 id="common-causes-of-duplication">Common Causes of Duplication</h3><p>Duplication can sneak into codebases through:</p><ul>
+ <li><strong>Copy-pasting code</strong> between classes or methods</li>
+ <li><strong>Similar algorithms</strong> written independently</li>
+ <li><strong>Poor abstraction</strong> or overuse of procedural patterns</li>
+ <li><strong>Lack of refactoring</strong> after implementing features quickly</li>
+</ul><p>In object-oriented systems, it's especially common to find the same method logic implemented in multiple classes due to improper use of inheritance or composition.</p><h3 id="refactoring-to-eliminate-duplication">Refactoring to Eliminate Duplication</h3><p>There are several strategies to remove duplication effectively:</p><h4 id="extract-common-logic-into-methods">Extract Common Logic into Methods</h4><p>Refactor repeated logic into a reusable method:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-java">private double applyDiscount(double price) {
+    return price - (price * 0.1);
+}
+
+public double calculateDiscountedPrice(double price) {
+    return applyDiscount(price);
+}
+
+public double calculateLoyaltyPrice(double price) {
+    return applyDiscount(price);
+}</code></pre>
+</div><h4 id="use-inheritance-for-shared-behavior">Use Inheritance for Shared Behavior</h4><p>If multiple classes share behavior, move it to a superclass:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-java">public class Product {
+    protected double applyDiscount(double price) {
+        return price - (price * 0.1);
+    }
+}
+
+public class Electronics extends Product {
+    public double getPriceAfterDiscount(double price) {
+        return applyDiscount(price);
+    }
+}
+
+public class Clothing extends Product {
+    public double getPriceAfterDiscount(double price) {
+        return applyDiscount(price);
+    }
+}</code></pre>
+</div><p>Inheritance helps promote reuse, but use it judiciously to avoid the fragile base class problem.</p><h4 id="prefer-composition-for-reusable-logic">Prefer Composition for Reusable Logic</h4><p>When behavior doesn’t belong to a hierarchy, create a helper or utility class:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-java">public class DiscountCalculator {
+    public double applyDiscount(double price) {
+        return price - (price * 0.1);
+    }
+}
+
+public class Order {
+    private DiscountCalculator calculator = new DiscountCalculator();
+
+    public double getFinalPrice(double price) {
+        return calculator.applyDiscount(price);
+    }
+}</code></pre>
+</div><p>Composition allows you to <strong>share behavior across unrelated classes</strong> without tying them into a rigid inheritance chain.</p><h3 id="when-dry-can-go-too-far">When DRY Can Go Too Far</h3><p>While DRY is important, <strong>overzealous abstraction can lead to confusion</strong>. Sometimes what <em>looks</em> like duplication is actually <strong>similar but contextually distinct logic</strong>. If you try to unify two seemingly duplicated methods that serve different purposes, the resulting abstraction may be awkward, harder to maintain, and violate other principles like the <strong>Single Responsibility Principle (SRP)</strong>.</p><blockquote>
+ <p><strong>Rule of Thumb</strong>: Only refactor duplication when the logic and intent are truly the same and likely to evolve together.</p>
+</blockquote><p>For example, trying to generalize two discount formulas that behave differently based on customer type may obscure business logic.</p><h3 id="summary">Summary</h3><p>The DRY principle helps build cleaner, more maintainable Java code by reducing redundancy and centralizing logic. By identifying duplicated code early—whether through manual review or static analysis tools—you can refactor into smaller, reusable components using methods, inheritance, or composition. However, always balance DRY with clarity and intent. A smart developer knows not only <em>how</em> to eliminate duplication but also <em>when</em> to leave it alone.</p><p><strong>Reflective Tip</strong>: As you review your codebase, ask: <em>If this logic changes, how many places do I have to update?</em> If the answer is more than one, you likely have a DRY violation.</p><div class = "chapter-navi-section">
+<a href="#top" class="nav-button prev">↑</a>
+<a href='java-object-oriented-design.htm#dry-kiss-yagni-and-other-principles' class="nav-button toc-link">Index</a>
+<a href="#bottom" class="nav-button next">↓</a>
+</div>
+<h2 id='keeping-it-simple-and-modular-kiss'>12.2 Keeping It Simple and Modular (KISS)</h2><p>In software design, simplicity is not a luxury—it's a necessity. The <strong>KISS principle</strong>, which stands for <strong>Keep It Simple, Stupid</strong>, is a timeless design philosophy that encourages developers to <strong>avoid unnecessary complexity</strong>. The core idea is that most systems work best when they are kept simple rather than made complicated. Therefore, simplicity should be a primary goal in design, and unnecessary complexity should be avoided.</p><h3 id="why-simplicity-leads-to-maintainability">Why Simplicity Leads to Maintainability</h3><p>Simple code is <strong>easier to read, understand, test, and maintain</strong>. It reduces the cognitive load on developers who must work with the code weeks, months, or years after it was written. Complex code, on the other hand, can lead to bugs, misunderstandings, and costly rework.</p><p>Take the following two Java methods for checking if a number is even:</p><p><strong>Overengineered version:</strong></p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-java">public boolean isEven(int number) {
+    return ((number / 2) * 2 == number) ? true : false;
+}</code></pre>
+</div><p><strong>Simple version:</strong></p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-java">public boolean isEven(int number) {
+    return number % 2 == 0;
+}</code></pre>
+</div><p>Both methods perform the same task, but the latter is cleaner and more intuitive. The complex version adds no value—only confusion.</p><h3 id="modular-design-simplicity-through-separation">Modular Design: Simplicity through Separation</h3><p>Keeping it simple often goes hand-in-hand with <strong>modular design</strong>. Modular code divides responsibilities among <strong>small, focused classes</strong> that communicate through <strong>clear interfaces</strong>. This separation of concerns makes code easier to understand and evolve.</p><p>Consider a payment processing system. A non-modular design might cram all logic into a single class:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-java">public class PaymentProcessor {
+    public void processPayment(String method, double amount) {
+        if (method.equals("credit")) {
+            // credit payment logic
+        } else if (method.equals("paypal")) {
+            // PayPal logic
+        } else if (method.equals("bank")) {
+            // bank transfer logic
+        }
+    }
+}</code></pre>
+</div><p>This class is <strong>hard to test, extend, or maintain</strong>. Now compare it to a modular version:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-java">public interface PaymentMethod {
+    void pay(double amount);
+}
+
+public class CreditCardPayment implements PaymentMethod {
+    public void pay(double amount) {
+        // credit card logic
+    }
+}
+
+public class PayPalPayment implements PaymentMethod {
+    public void pay(double amount) {
+        // PayPal logic
+    }
+}
+
+public class PaymentProcessor {
+    public void process(PaymentMethod method, double amount) {
+        method.pay(amount);
+    }
+}</code></pre>
+</div><p>This design is simpler <strong>because it's modular</strong>. Each class has one responsibility, and new payment methods can be added without changing existing code.</p><h3 id="simplicity-vs-functionality-finding-the-balance">Simplicity vs Functionality: Finding the Balance</h3><p>Keeping things simple doesn’t mean stripping out essential functionality or avoiding abstraction. Simplicity means writing the <strong>most direct, clear, and logical solution</strong> to a problem. Over-abstraction—adding unnecessary design layers or generalization—can violate KISS.</p><p>For instance, wrapping a single method call in five classes of delegation adds complexity without benefit. Likewise, introducing a full-blown strategy pattern for toggling a boolean flag is often overkill. Use patterns and principles wisely, not dogmatically.</p><h3 id="best-practices-for-kiss-and-modularity">Best Practices for KISS and Modularity</h3><ul>
+ <li><strong>Write small methods and classes</strong>: Each should do one thing well.</li>
+ <li><strong>Use meaningful names</strong>: Clear naming reduces the need for comments or extra logic.</li>
+ <li><strong>Avoid clever code</strong>: Code that’s tricky to understand today will become unmaintainable tomorrow.</li>
+ <li><strong>Refactor regularly</strong>: As systems evolve, refactor to keep code readable and manageable.</li>
+ <li><strong>Design APIs with clarity</strong>: Simple, well-defined interfaces make modular code easier to plug together.</li>
+</ul><h3 id="conclusion">Conclusion</h3><p>The KISS principle reminds us that <strong>clarity is better than cleverness</strong>. By choosing straightforward solutions and designing modular systems, developers produce code that is easier to understand, test, and evolve. In Java and object-oriented design, this often means composing systems with <strong>clear interfaces, small focused classes, and predictable behaviors</strong>. Simplicity doesn't mean less power—it means more control and reliability in the long run.</p><blockquote>
+ <p><strong>Thought Prompt:</strong> When you write code, ask yourself: “Would another developer understand this in 30 seconds?” If the answer is no, it's time to simplify.</p>
+</blockquote><div class = "chapter-navi-section">
+<a href="#top" class="nav-button prev">↑</a>
+<a href='java-object-oriented-design.htm#dry-kiss-yagni-and-other-principles' class="nav-button toc-link">Index</a>
+<a href="#bottom" class="nav-button next">↓</a>
+</div>
+<h2 id='avoiding-premature-optimization-yagni'>12.3 Avoiding Premature Optimization (YAGNI)</h2><p>In software development, it’s tempting to think ahead—to imagine every possible feature, every potential performance bottleneck, and to begin writing code for situations that may never happen. But a key principle in agile, pragmatic programming is <strong>YAGNI</strong>, which stands for <strong>“You Aren’t Gonna Need It.”</strong></p><h3 id="what-is-yagni">What Is YAGNI?</h3><p>YAGNI is a design principle that reminds developers <strong>not to implement something until it is actually necessary.</strong> It was popularized in the context of agile development and extreme programming (XP), where quick iteration, customer feedback, and adaptability are core values. YAGNI encourages developers to <strong>resist the urge to build features or abstractions “just in case.”</strong></p><blockquote>
+ <p><strong>Definition</strong>: <em>"You Aren’t Gonna Need It"</em> means <em>don’t add functionality until it is absolutely required.</em></p>
+</blockquote><p>The principle advocates for focusing on what the system needs <strong>right now</strong>, not what it might need later.</p><h3 id="the-cost-of-premature-optimization">The Cost of Premature Optimization</h3><p>One of the most common violations of YAGNI occurs during <strong>premature optimization</strong>—when developers try to improve performance or scalability before there's any evidence that it’s needed.</p><p>Consider the classic advice from Donald Knuth:</p><blockquote>
+ <p>“Premature optimization is the root of all evil.”</p>
+</blockquote><p>Why is this a problem? Because early optimization often introduces:</p><ul>
+ <li><strong>Complex code</strong> that’s harder to understand and maintain.</li>
+ <li><strong>Wasted development time</strong> on features or improvements that may never be used.</li>
+ <li><strong>Inflexibility</strong>, making it harder to change or extend the system later.</li>
+ <li><strong>Incorrect assumptions</strong> about performance bottlenecks.</li>
+</ul><p>Let’s look at a simple example:</p><h3 id="example-of-premature-optimization">Example of Premature Optimization</h3><p>Suppose you’re writing a feature to store and retrieve user comments. A basic, clear implementation might store comments in a <code>List&lt;String&gt;</code>.</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-java">List&lt;String&gt; comments = new ArrayList&lt;&gt;();
+comments.add("Nice article!");</code></pre>
+</div><p>But you preemptively decide that users might leave millions of comments, and build a caching system, a database connection pool, and asynchronous message queues. This not only bloats your codebase but also <strong>delays delivery</strong> and introduces new points of failure—<strong>before any real performance problem exists.</strong></p><h3 id="prioritize-simplicity-and-correctness-first">Prioritize Simplicity and Correctness First</h3><p>A better approach is to:</p><ol>
+ <li><strong>Implement the simplest solution</strong> that works correctly.</li>
+ <li><strong>Measure performance</strong> under realistic loads.</li>
+ <li><strong>Optimize only when benchmarks show actual problems.</strong></li>
+</ol><p>In the previous example, the simple <code>ArrayList</code> may be sufficient for months. If performance issues arise later, profiling tools can help identify exactly where the bottlenecks are—maybe it’s not the comment storage at all.</p><h3 id="strategies-to-delay-optimization-wisely">Strategies to Delay Optimization Wisely</h3><p>Here are ways to follow YAGNI without sacrificing long-term quality:</p><ul>
+ <li><strong>Write clean, modular code</strong>: Good structure makes it easier to optimize later.</li>
+ <li><strong>Avoid speculative features</strong>: Only add capabilities when there’s a real need.</li>
+ <li><strong>Measure, don’t guess</strong>: Use profiling tools to validate performance assumptions.</li>
+ <li><strong>Keep code adaptable</strong>: Favor flexibility and readability over clever tricks.</li>
+ <li><strong>Focus on delivering value</strong>: Working software today is more valuable than hypothetical speed later.</li>
+</ul><p>For instance, if you're worried about slow sorting in large datasets, use Java’s built-in <code>Collections.sort()</code> for now. If the list grows and slows down the application, you can then refactor to a more performant data structure or algorithm—<strong>when it’s justified</strong>.</p><h3 id="conclusion">Conclusion</h3><p>YAGNI is not about ignoring future concerns—it’s about <strong>not solving problems you don’t have yet</strong>. In modern Java development, it means <strong>prioritizing simplicity and correctness</strong>, especially during early iterations. When performance or complexity becomes a real concern, you’ll have the tools, code clarity, and context to optimize effectively.</p><blockquote>
+ <p><strong>Thought Prompt</strong>: The next time you consider adding a feature “just in case,” ask yourself: “Is this solving a real, immediate problem?” If not, you probably aren’t gonna need it—yet.</p>
+</blockquote><div class = "chapter-navi-section">
+<a href="java-object-oriented-design-solid-principles-in-java.htm" class="nav-button prev">←</a>
+<a href='java-object-oriented-design.htm#dry-kiss-yagni-and-other-principles' class="nav-button toc-link">Index</a>
+<a href="java-object-oriented-design-design-by-contract-and-defensive-programming.htm" class="nav-button next">→</a>
+</div>
+<section class="download-section">
+  <div class="book-cover" style="background-image: url('data:image/jpg;base64,/9j/4AAQSkZJRgABAgAAAQABAAD/2wBDAAgGBgcGBQgHBwcJCQgKDBQNDAsLDBkSEw8UHRofHh0aHBwgJC4nICIsIxwcKDcpLDAxNDQ0Hyc5PTgyPC4zNDL/2wBDAQkJCQwLDBgNDRgyIRwhMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjL/wAARCAC0AIIDASIAAhEBAxEB/8QAHwAAAQUBAQEBAQEAAAAAAAAAAAECAwQFBgcICQoL/8QAtRAAAgEDAwIEAwUFBAQAAAF9AQIDAAQRBRIhMUEGE1FhByJxFDKBkaEII0KxwRVS0fAkM2JyggkKFhcYGRolJicoKSo0NTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uHi4+Tl5ufo6erx8vP09fb3+Pn6/8QAHwEAAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoL/8QAtREAAgECBAQDBAcFBAQAAQJ3AAECAxEEBSExBhJBUQdhcRMiMoEIFEKRobHBCSMzUvAVYnLRChYkNOEl8RcYGRomJygpKjU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6goOEhYaHiImKkpOUlZaXmJmaoqOkpaanqKmqsrO0tba3uLm6wsPExcbHyMnK0tPU1dbX2Nna4uPk5ebn6Onq8vP09fb3+Pn6/9oADAMBAAIRAxEAPwDy2iiiuE7gooooAKxdY/4+1/65j+ZrarF1j/j7T/cH8zWlH4jOr8Jn0tIMUo6V2pHIT24bf8siofViAOoqKrFoqG4QSQtKn8Sp1x7VBitHsgHK7wyb43ZHHRlOCKveZOUkt7m0ZjP/AKQHMZ3qCMl1HGRgE+nA9KolWZnIUkLyxA6DOP5kVvO8jaHEx1exvYLZVZrKQsjgtxtGQrOBxnacfIOwUm4Xs7Eyaur7GQbYyTKLLfLuyFVRlzgAk4A9z69DycZqu7byDtUHAHyjrjv9atRNDNFOJpVVhGzoZEYkvuHAZe5UfxcdeBnNWDKyImnu8csbMr4JjO1jt4WXsNoXOcAHgjip0ZryaaGXzinIsbFhIzLwdpVc5PYHkce/6VKIFEuyVmjHllwSOvy5Xrjg8fn3pLi1ntX2zRMvAIPUMDnBB6EHBwRwaXLoR1sVyhzRRzRUWQHU0UUV5p3hRRRQAVi6v/x9p/uD+ZrarG1f/j6T/cH8zWtD4zOt8JnjpS0UV2nIWbRit1Gyy+UwOQ5Gecf16c8etQGrNjxdJ/o4uOv7o/xcVCACefQ/yq+iAVGZZTtkMe7KlsnoeDnHbFaN68kzWyzm3xJ/rL0hnMjMQ7F2G4ll3AHHOB055ys1s3Oh6j5VjImjzwQT24kSVycOM/NIzHCqMnvgBSpOc7jcZe60Tb31YLS2un0OeaPU4Ywo3G33nfsw46jO0Es42nAO4Z+8ucuW1uIFVpYXRWVWBKnBDDKn8RzU7aeBpovPtMW3cU2YbJYEfKDjBODuODgAjJyQKdMdStXuBIZ0dZGSd8nO9gykMw65AcYJ5+b3rNM6JLRXRTSRkJxg5BByARyMdD3569u1KWi8jaI2Eu/Ibf8ALtx0xjrnvn8KZmkJ7UzK5IJkAANvCfcluf8Ax6ios0UriOooooryzvCiiigArH1Uf6Uv+4P5mtisjVf+Ppf9wfzNbUPjM63wmeaKXFJiu05CxbSNDOsizPCygkSRkhgcdsVGDgE/UfpToWKyK+1W2ndtYcHHODTf4Cfcf1p9AEjiklLeXG7lVLttBOAOpPtXQfaLG50WGGHXb6zNpD5osrvfJG9wCTmIoMLkFvvAYJAyQSw56IKZVDuUUnDMBnA78d624tcl06KGxjuVuNOTc22GJYnbcDkMxQnrjPXO1f7q7bjblbFa843diNLmRNERopNNt3g2srov+lSkyMRhgCVK7Sc5XgqOcgVShurrTLyFjCEmt5BKqyx4IbggnucYBAPH5nKF7BrOH93Mt0hCyAEbZFyxLZP3TgqoGCPlz3xUFxJHLMzxQLChAAjUkgYGOpOcnqfrwAOKyRtKT0aZoPqNndw4vrR2uPLx9ojcKxYCTBICgHJaPcTkkIectxlvtDsEJKZOCRg4pDQetMiUnLcM0UmKKLknU0UUV5h3hRRRQAVZjOpS2b21poEN9DNuh+0G1Lsski4AD9ARjI9CT61WqKbX9U0wx29ndtFEJUuQgUH94pOG5H6dDXRhWlU1Mq3wnPn0ptONNrrOUli2AjzAxXnhTg0OV+cLnbu4z1xzT7RHeZUjmWFmyN7vtA47mkui5upt7pIxc5dPusc9R7U+lwID6V0NyJJtHtoIpdB2SorZjREmyAi7GZwCp+QsTkAktydyg4MUMk5YRqCVQuRkDgDJ+vFdNeaRc6Zo0cmo6FbMwRoYLmK8XDMzHDMqMS7jJ24I+6MhguKuEW4SdtCHJKcV1KupWlpYadZPBpV1Iu8M97cqY1mzkhNqsQBjByGyRyMDmsm8htYZFFtciZTEhJQMcPgbgdyr3yeAewyetPvFUW8ciaeLeNyIw5kZmLxqA/U8ZLA9OMADoc03VkdkZSrKcFSMEGsEdNSSva39fgT3NobaGJ2ngdpRuCRyByq4BBbGQM56ZyMHIHGa1Jmii5k7N6C0UlFFxHVUUUV553hRRRQAVkar/wAfK/7g/ma16t2d54YtRnW9Ovbq6WaJ4zDIAhiBO9WGR2yfcgDK8mt8OrzMq3wnHnpTadTa7DlLVng3UIaEz7nA8oHG/npUU67biRdmzDEbSc7eemaltWCTxM0jRqDlmQ4bHt71HOVe4kZC7KWJBc5YjPGfen9kXUjjZUlVmQOoIJUkjcPTird3CnlJttpLeQJ5jCV8BkO3ay5wTnOeO3PTpSxXVS2caaXZXllo+rvLHb757i5thJAMLncqkEEdBk8BQDgnkVBPllYTa543OftrO/e7gtoIJTNcAGNCvEi5yDg8FcjPPHHtU+pQatNMgu7NlMSvEnlW6omIyxfGwBTg7iSPfmotTkmmlSV7P7PGwG390qbuAc/Kqg8MDwOhHXqaOfT9K59TdtL3dSZLO4cSMImCxqCzt8qjILDk8ZIBwO/bNV6kaaVyS0rsSoQ5YnKjGB9BgfkKZQQ7dAopKKBHV0UUVwncFFFFABVqDUZtPgkmGg2V/bxK5kmuoCwXdtUDcCOhIIwc/NmqtTXTa7L4Yu4reX/iSwSLLcR70HzsQoOPvHonTjoa6MM7TMq3wnKE9eKTvS/SkrrOUs2SGS5jVZViIORIzbQuOc59fT3pLssbycvIJWMjEyDoxz1/Gp9KjMl9GotxcE5xEWChjg9zx7++KqzsHnd1jCBmJCD+H2qn8HzF1GAK2dxYccYGcn0rfnvtNmtFs01LWdjAqRcyARKoBMa7V3EgHHb3AFYPKgEdua1p7UT28QWe7uMxCUObcrFFnHmMSMlgpGCQOTk54w1wdoSX9fmK15xM+7+zpOQjtcAKP3gkOG591B4HGPXnOOKk1CbTHt7VbCCRJBEq3DSZ5kGcsvzEYOemBjaPU1ZTToU1F0ktLt7aKBmmZFZiDs++AQhABZDg/qDVNLiOC3YG2hLyRbUkBDEfMQSQ2cHHHG0jCke/Kzpate9ilikxVsXsgspbYKoErqzuMhmCjheuMd+nXHpUM00lxPJPM5eWRi7sepJOSaDJ26EXNFLRTEdTRRRXAdwUUUUAFOktNDksLi5vtUkiv40cRWQgYibK/IQ44XDZyD2FNqK4utLt4nW5097q7kidFZpiixZHyOMdSG3Eg5B46Y53w3xmVb4Tnz6UnajNJmuw5S5YLE90izJM8fO4QffIx2qGRf37KAyjdwrdQPenW8hjkV1YowzhgMkHHB/+v2oCr5vyMSox94Y54z3qugCN0HHYfyFbupXUV5pFsr6re3v2e0jxBFBsiiYAKNx45XcFzht3HzDOBgn5lz6f/WrX1DxBrGqiCSe7kuBaqXK+SoRMtg5AGGByBlhzux35uLtGX9fr+jIcbyj/AF+n6oy/IlLyuYZNyRrIxdgcZK/McjkHcMf7w691vrZrW6eCRo/NjZkdIwQEKkrjpyeM59xznNPMF59meNy6wogufLydpBIUMAOP4gM/hSTW9tAswFwZHAj8vaBhtwyTnJwB0wcHkZAIIHOdDj5FPFJV26nt2knW1t1SFnOwt97buJGck4OCBwe3fk1UqkiJJLqMop2360UrEnT0UUV5x3hRRRQAVmaxbSKsF0QPKkLRqc85XBPH/AxWnWZrEZAgk85CG3L5QY7lxj5iPQ5wP90+lbUPjMq3wmXR3pDQK7TlJUPFSyKIpHUMrYUcrjGeOOOvPeoUG7CgEknoOpqa4iaG4aNgisoUMEOcHA/X1981XS4DI/vj6/1ranuZf7Bito9SlvFgi3i2igJgt1YsCZCwGZA0hGdpA3jD9qxFOGBHatC51AtZxQJcSAGIRypHEsSFQQRkL/rDkAlm5OB1wDTi/dYvtKxWvQ6yCGQGMwJ5fltJuIIPzD2+bcccde/UxTweRcSRFZFKMVxIm1uvcdj7VPaJc3CS2tjazTPLF+9EYLEgNuyAo4HA4ORkZ64xLJbMl/cLqDKkkch86OMoCDuAYDHHc8DPTpjJGSZty82pn45pMVKWQR4AJY45PbrwPXtTMc/WqIaGYop3+etFArHSUUUV5h3BRRRQAVBcy2sew/2dJc3YYbXJygyRsBXBDZIfjuD7VPVbUdQvLSyFvESlvO2WJGQzLjGMjgjPUc8/St8NpMyrfCVdbtb2Nluby2gtDJJJGtvEgTy8YbBA7YkGMkkj2wTldqeVmnbexZzj7zHPA4qZLUYy7fgK7bOTujkuRRqXdVVS5YgBQOT7VZ1AFb2Rfs4t9uF8sHO3Ax17+ue+c0KEW4gEW7Icf6r73Xt71XfbvO0HbnjPXFU1aIwHXpWssazaNAjPOVXzmVpEVI42ABIjYsC5PyZH8OThWJrJHFaVgbR7e4hmgV5mikMcksxSONgFYEAdXIV1AJwSy+nKi9GgSu0MvnhjxBayxyJyXeFXVTk52jdyyjAwWAOeOQAahuYpPtVwXnWdldt0wfIkOeWBPJznPr3og8mKWOSc+ai7W8lf4uVJUn+EYLcjJyOnepBJ9ohSOR1hgiOQqgsSTtViM9ScbuSB16ZAqVsavVlQjmkIqyXiiSRUBd3AG5gMAZOccZzwpzxjkc5qBqZLRHkDtRT9vtRRYR0NFFFeWdoUUUUAFZmosonXdjheM/WtOsXV/wDj7T/cH8zW1B2ncyrfCQtdAD5FyfU1A8rv1bg9qZRXW5tnLYlj+8uH2HI+Y9vfjmny+WZD5SuqYGA7ZPTnkAd81GmM8kj3HWl9PemtgJreb7PMsvlxyFckLIMrnHBx3x1weOOQRxUrgPb2+1ZsjchZ3+TOc4X0xuyee+arLWrpiRrp97dPdwW7xjYv3mmk3pIuxFzt2n+Jj90Yxkna1p6NBpe7JVW1sDDNbM0108abYnQNl2wSQMEjHzLjhvuspIPGZK0kkrvK5eRmyzFtxY9znv8AWlEsgg8lWKxEhnUE4ZhuwxHTIDED6+5ppOOhqdjWUr+gAe1IR1o5zS5oTJTTG49M0U7aPSimFjdoooryzsCiiigArE1j/j7X/rmP5mtusvUpI4rqNzF5kgAOH5TGT1Fa0VeZnW+EyKWnSO8z7m5Y4HA9BgU2ulnKOWpMcLweR3FRDrip2IBUF2YBcDI6fT2rSOwh8AjaX98xWPknaMk+wqee3+zgrLvSU7HRMBgUZdwJYHg4K8Y7npjBZDFHIs26eNH4VEYcuSfU8KB3JIpUt5GSRgUKxoGbEi5wcY78nJGQOlaOyiu4lrKyBFyrEsBgcAg/McjgYHXnPPpU8lsluqGSWOSVgriJG3AKRnlgcA4I4GSOQcEYpVuJmuBIjsZ1dDHOWKtGF4UA5wB936bRgju6Qw26mOFknZhHIJ8MrRnbllAyBwTgkg/dyDg8x0NV5lcoscYZ/vnBVMcEc5zzkHgcY5zn6sRcnk44J5qZCry7rh5MEE5UbiTg46nucc9uuD0MLNwNxwvAJoSF5iZGOooqt5tFLmFc6WiiivNO0KKKKACsnUyXvIYTjY2M8DPUjrRRWtH4zOr8JHcj+zxD5H3nQsXYZI6jj8Kz6KK7qu9jkQq1PKzNKCzEkgHn6Z/rRRUx2AsaXClzqtvDKMo7gMM4yPSog5KIpAwowMDHfPPr1oorZpezT83+go/G/l+pq61FHaX621vGI4xBEWwSS5aNWJOT6np09qr2tus9veuxYGCESLjuTIi8/gxoorE3qfG0Vcmqsrkn2xRRQ9iHsR4oooqCT//Z');">
+<div class="series-name">Introduction</div>
+<div class="book-title">Java Object-Oriented Design</div>
+<div class="book-subtitle">Principles, Patterns, and Practices</div>
+<div class="book-footer">readbytes.github.io</div>
+</div>
+  <div class="download-info">
+    <h2 id='bottom'>Download This Ebook</h2>
+    <p class="format-label">Available formats:</p>
+    <div class="download-buttons">
+      <a href="java-object-oriented-design.pdf" class="download-button">📄 PDF</a>
+      <a href="java-object-oriented-design.epub" class="download-button">📘 EPUB</a>
+    </div>
+  </div>
+</section><div class='related-books'>
+<h2>Java Introduction Books</h2>
+<div class='related-book-list'>
+<a href="java-for-beginners.htm"><div class="book-cover" style="background-image: url('data:image/jpg;base64,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');">
+<div class="series-name">Introduction</div>
+<div class="book-title">Java for Beginners</div>
+<div class="book-subtitle">Learn to Code from Scratch</div>
+<div class="book-footer">readbytes.github.io</div>
+</div></a>
+
+
+<a href="java-syntax.htm"><div class="book-cover" style="background-image: url('data:image/jpg;base64,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');">
+<div class="series-name">Introduction</div>
+<div class="book-title">Java Syntax</div>
+<div class="book-subtitle">From Beginner to Expert</div>
+<div class="book-footer">readbytes.github.io</div>
+</div></a>
+
+
+<a href="java-date-and-time.htm"><div class="book-cover" style="background-image: url('data:image/jpg;base64,/9j/4AAQSkZJRgABAgAAAQABAAD/2wBDAAgGBgcGBQgHBwcJCQgKDBQNDAsLDBkSEw8UHRofHh0aHBwgJC4nICIsIxwcKDcpLDAxNDQ0Hyc5PTgyPC4zNDL/2wBDAQkJCQwLDBgNDRgyIRwhMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjL/wAARCAC0AIIDASIAAhEBAxEB/8QAHwAAAQUBAQEBAQEAAAAAAAAAAAECAwQFBgcICQoL/8QAtRAAAgEDAwIEAwUFBAQAAAF9AQIDAAQRBRIhMUEGE1FhByJxFDKBkaEII0KxwRVS0fAkM2JyggkKFhcYGRolJicoKSo0NTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uHi4+Tl5ufo6erx8vP09fb3+Pn6/8QAHwEAAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoL/8QAtREAAgECBAQDBAcFBAQAAQJ3AAECAxEEBSExBhJBUQdhcRMiMoEIFEKRobHBCSMzUvAVYnLRChYkNOEl8RcYGRomJygpKjU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6goOEhYaHiImKkpOUlZaXmJmaoqOkpaanqKmqsrO0tba3uLm6wsPExcbHyMnK0tPU1dbX2Nna4uPk5ebn6Onq8vP09fb3+Pn6/9oADAMBAAIRAxEAPwDkqKKK+YPQCiiigArR084gb/e/oKzqu2TbYz9a7su/j/ImWxpD8qUNVcN2pwbjvX0FjPmLG/B6ilEnvVfdjoaUPk5xTsHMWhJ+lOD5FVA9O3UrD5iwZKYx3c+tM3ZAp6jjmkO9xpjyaaUA6mpd2BUDyc0IHZD8iiq5lXPOKKdiecxqKKK+RNgooooAKs2/+rP1qtU8P3Pxrvy3+P8AJmdT4S1v5zTgxqD/ACKkUmvojnuTA+9Ozzn+VQhqXfmgdyXORnilBHf0qIN6U4EgZ7e9A7k6tx2FO3AHrVcMcZo38GlYfMStIfWoXbnNNLdetNJosJyH5PqaKj3j/a/OimK5nUUUV8cdYUUUUAFTRfc/GoamhHyGu/Lf4/yZnV+ElB4p/GKYCQeKdk4r6I5h2cDGKMj8aZk0e1AEihmJCjJ64Hp3pS4pbb5pmwB/q36tj+E9/wCnfpUP060w6Epl7d6QycVEfpSZ44p2FceXzTS5zjNNJxzTT+tArj959qKjyfaikK5DRRRXxp6AUUUUAFWrZN0RPvVWr9kuYCcfxH+Qruy7+OTNXQ7yj1J4pRF1zUpBzSqpI5r6C5hyjRbB+QcfWpDZkLnBNSxrtPAq0pO0iolNo1jTi9zOSNbaUtKdoKMoJB6lSAPzIqoVrZvAjwLn/nog/wDHhUElovO0041L7kzo9EZhzj6U01algKngE1AUbGK1TMHFoiOaTFPKnHSkxxTJsN2j/Iop+Pc0UBYq0UUV8ad4UUUUAFaenKTbtjpu/oKzK3NHGbF/lJ/eHp9BXZgHasDVx23GRSqDnmp3THakVM9q965HKNVc1OkTN0xmpIoARz9KvRQqo6VlOpY2hAytQguTZ+TBBHMZMl1aYxnAIIwQCG55x14GM84mtbS4ms4JJEKO8asysMEEjuKi8VRKujxk5IEwJ/75at9nx8oUAeuKzdR8qsVGn77uZR0suuS3NQyaMDkh+fTHWteR2UDA+tQ+YSDSVSp3LdOm90c7LZNGelVXjxxzW9Ou8npVVrQNnjP0FdUKumpyToa+6Y+xqK1vsZ7IMUVftYmXsJHOUUUV8kdAUUUUAFdL4ex/Z8nH/LU/yFc1XV+GYHl0yRl6CYj9FrpwjSqXZcE27IvOi45qIRJ6VbkhbpyKh+ztnvXsKa7luLvsCYHQVOmT2qMQyLxtNPWOT04pNp9RpPsZHiw50QYOP3g/9BaugUhRyc1geK0f+xQWBx5o9v4Wrd2scAcUpW5UKN+d/IbIwboKgPA9KsiNzxtNRSRMOxqU1sW0yqY1JzShVFO2Mecc0jI+eFNXv1J2EyKKj8mQ84FFFl3Hd9ji6KKK+fOcKKKKACu88FRl9Em/6+D/AOgrXB16F4GZI/D9zJIyoi3DFmY4AAReSaqG50YZ2qGybLJyaRbJRz/SrEmoWkcaSeejI4BVlYEEHoQenNU21pAGYW820HHKtn69K7qdHETV4o6J4mhB2k9Sx9lUdqPswGelPt7y2uDhX2t/db/Pv061zg8VXE3ia105YIo7dpHUuJC7S44A+78pB5IPbHOCNwqNbVW2G8TR0d9yj49YxWFrbhcrI7OT6FVwP/QjXV+Rg89a5z4gwCSCyyxXbvbjvygI/ImuhgupJPDkV+wUym0ExGOC2zP5Vcr+xg/UiDXtpr0GvG2fT6Cq5tW3bixNYeheNILuRbXUTIs8rny5YrcuhBxhcLklskjA9uc8nXg8R6PPKiC+XLjKs0TxqR/vMMD8TQ41Ke6HCpTqbMmNuMcCozCOeKoat4nSwlliS1Zih2bnYD58kDjPIzjuD16YzXPf8JLfX9nFHJMLe7e4dFS3icCRMKF556sSOD/KtYUaj30MZ4mktFqzq/JGfu0Vwsvj/VLWZ7fy7C58pinn7HHm443feHXr0HXoKK2+rVTH67R8ylRRRXgkBRRRQAVrwassHhi50sxvmabzBKGwFwUIx6/d/UVkVetoriezKRJblVk3AvhWB4zyBu9Mc4B7da68Ek6yuTNyUfdOztdUs7PT5GnsLppFuJwrxW48tcykkBi3bIHftzUlvr1jeW5CWGqyzsdsYhgDBm2k465zgE49B7VxrwXIguUe3097qVw7Xsh8ybI6nLEjJOTkD0znAIdameKNhcAS4dZINuoSxrAw+8UCvwWxyeuCQNua+gjNpWRwum+x01t4itXjfEdzhWG4yIqxqCcZZiwCjJAya5jWtXeWZZLOa7t9obCpMAMk7zwR8pyOcMMn0PJrKuqxxvGtxEyyKm5QyqjMvHKqApBGQQwb7zdc0xbWSW5nkvd8jsvytBhGc5AGTghcDJ4ByeoOcgk3LdBGm4u6FbV7rUdHSS8vbieSGMKwuUChCCBlSOWzgZJAPHfrUejzDS1u0tUkF9dQyQzSrIhQIzKAenOdsqnn+IEHjmskF/atB9unmvIlJDwz58uSPIIQd1+bcSQf4ug5zYNvIsLmGy8mQ7tjgcICxbAXGMfMeO2eMdKFCNrNaFOUr36mXf2iX08d5DYrNb7wrKu9wAoBKqVJ5578gEdetWZLWP7JAI2Uuo2DKBghXHBQ5O3BU5JHUjnBJn0+G4061mEETJeSTI4nXcoRVzwoXBBz33cYxjvVhEhWWGRtPeTYsgMckh2ZIOwjaobK56liSO44IHe4IyLXUD9l+zzSq1sdmLSXf5O8ZBfCkBSAeOvXr2rQtfEFstxbzNBEWWBYiyW4Zvl3begByFxyc8Dr2ElqtvZuyjTpzGJfMWZLgrMoAO1c7NnBwc7c8YzirNhqyWGp3l2mmxrFcROggCo2xmXbkO8ZOOTx1PAJIzlJPexO3U5ObULpp5DHdXGwsSuHxxnjjtRWu13qTsWZrAsTk/8AEth6/wDfNFXeXYmy7k9FFFfJHpBRRRQAVfsr+e1gMcRG0tnBH0/wqhWtpduk1qzNjhz/ACFdmAt7bUmV7e6PfWbqQsXPU5J2/wD16hOpXLH77D6D/wCvV9raIE+uf7tJ5MA5PJ9699KPRGD5+rM83d23HmN+VR7rhm+8fritiOOEt93pSCOMt90flRdLoHK3uzBuEkOCxzUscMhQZbA7VoX8SbVCrjmrNvCPJA2dqHPS5Kp+81cxDAxb3HcCke2K49D61tLb5bhPWmtbeq5NHOP2Rgtb5JBx+IqIw+vHvW3Ja5/hGBUDWxq1IydMyfKorT8kelFPmJ5CjRRRXyB6IUUUUAFbWkD/AEVuP+Wh/kKxa6HQUDWT55/en+QrswH8YT2JHznhf0pEjYnGPer7ItIqrg9B+le+noYOOpWRG445x2pEjbd3P1q9GAe3TvmhVG6obLUTK1BTheKtwRP5I47UapjZGPer8AxByB0pSfuoIr32UURg3T8Ka6vuPar8YG71/rTCMHpx3qblpGW0b89/wqFoXzj+dab4yagf6ZNaJmMoooeWcdKKt7M9h+tFVcnlOaooor5Q6gooooAK6HQmxYuP+mh5/AVz1bejSbbRx3Lnv7Cu3AK9YmTsjVdzjmmggjk5qs86k9aQTe9e+o6HM5amgje3405Dk9aprOADTkm59u9S4mkZCamclASM5q7G4EGOM4x1rIvZN0qDng1cRx5Y+lJx0QRl7zLKynrUbsc5zUAlx3prTAZ65oURuYO+CeajLDgHJqJ5eT/KovM9a0UTF1CbzOen8qKg38//AFqKfKTzmLRRRXyJ3BRRRQAVoWLFbdsf3j/IUUV35d/H+RnV+ElMjYpQx45oor6I4iQMfXvT0kNFFSy4kN0xEi896tK7eWOaKKT2BbsYZGx9ajLn9aKKEJkBY5PNNyeKKKsyGlmz1NFFFMR//9k=');">
+<div class="series-name">Introduction</div>
+<div class="book-title">Java Date and Time</div>
+<div class="book-subtitle">A Systematic Approach</div>
+<div class="book-footer">readbytes.github.io</div>
+</div></a>
+
+
+<a href="java-object-oriented-design.htm"><div class="book-cover" style="background-image: url('data:image/jpg;base64,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');">
+<div class="series-name">Introduction</div>
+<div class="book-title">Java Object-Oriented Design</div>
+<div class="book-subtitle">Principles, Patterns, and Practices</div>
+<div class="book-footer">readbytes.github.io</div>
+</div></a>
+
+
+
+<a href='java.htm'><div class='book-cover'>More Java Books</div></a>
+</div>
+</div>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+  
+  <script>
+    function copyCode(button) {
+      const code = button.nextElementSibling.innerText;
+      navigator.clipboard.writeText(code).then(() => {
+        button.textContent = 'Copied!';
+        setTimeout(() => { button.textContent = 'Copy'; }, 1500);
+      });
+    }
+  </script>  
+
+<footer class="page-footer">
+    <nav>
+      <a href="https://readbytes.github.io">Home</a> | 
+      Email:<script language="JavaScript" type="text/javascript">
+var part1 = 'yinpeng';var part6 = '263';var part2 = Math.pow(2,6);var part3 = String.fromCharCode(part2);var part4 = 'hotmail dot com';var part5 = part1 + String.fromCharCode(part2) + part4;document.write(part1 + part6 + part3 + part4);
+</script>
+    </nav>
+  <p>© 2025 — All rights reserved.</p>    
+  </footer>
+
+</body>
+</html>

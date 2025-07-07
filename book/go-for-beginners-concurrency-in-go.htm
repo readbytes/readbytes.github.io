@@ -1,0 +1,797 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>Go for Beginners Concurrency in Go</title>
+<link rel='shortcut icon' href='https://java2s.com/style/favicon.ico'>
+<link href="https://fonts.googleapis.com/css2?family=Merriweather&display=swap" rel="stylesheet" />
+<link href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+
+
+<style>
+body {
+  background: #f8f7f5;
+  font-family: 'Merriweather', serif;
+  color: #333;
+  margin: 0;
+  padding: 2rem 1rem;
+  font-size: 15px; /* smaller body font */
+  line-height: 1.5;
+}
+
+.container {
+  max-width: 700px;
+  margin: 0 auto;
+  background: white;
+  padding: 1rem 2rem;
+  box-shadow: 0 0 15px rgba(0,0,0,0.1);
+}
+.book-title-chapter {
+  font-family: 'Merriweather', serif;
+  font-size: 2rem;
+  font-weight: bold;
+  text-align: center;
+  margin-bottom: 2rem;
+  border-bottom: 2px solid #ccc;
+  padding-bottom: 0.5rem;
+  color: #2c3e50;
+}
+
+.book-subtitle-chapter {
+  text-align: center;
+  font-size: 1rem;
+  color: #666;
+  margin-top: -1rem;
+  margin-bottom: 2rem;
+}
+
+    .related-books {
+      margin-top: 40px;
+    }
+
+    .related-books h2 {
+      font-size: 22px;
+      margin-bottom: 20px;
+      border-bottom: 2px solid #eee;
+      padding-bottom: 8px;
+      color: #333;
+    }
+    .related-book-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+h1, h2, h3 {
+  font-weight: 600;
+  margin-top: 2.5rem;
+  margin-bottom: 1rem;
+  line-height: 1.2;
+}
+
+h1 {
+  font-size: 1.8rem; /* smaller heading */
+}
+
+h2 {
+  font-size: 1.4rem;
+}
+
+h3 {
+  font-size: 1.2rem;
+}
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-family: sans-serif;
+      font-size: 1em;
+      margin: 1em 0;
+    }
+
+    th, td {
+      border: 1px solid #cccccc;
+      padding: 0.6em 1em;
+      text-align: left;
+    }
+
+    th {
+      background-color: #f2f2f2;
+      font-weight: bold;
+    }
+
+    tr:nth-child(even) {
+      background-color: #fafafa;
+    }
+
+    /* Optional hover effect */
+    tr:hover {
+      background-color: #e6f7ff;
+    }
+ 
+a {
+  color: #555;
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+
+
+.code-block {
+    position: relative;
+    margin-bottom: 1em;
+}
+.copy-button {
+    background: transparent; 
+    color: white;
+
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    border: none;
+    padding: 4px 8px;
+    font-size: 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    z-index: 1;
+}
+
+.copy-button:hover {
+background-color: #0056b3;
+}
+.page-footer {
+  margin-top: 4rem;
+  padding: 1rem 0;
+  text-align: center;
+  font-size: 0.85rem;
+  color: #666;
+  border-top: 1px solid #ccc;
+  background-color: #fafafa;
+}
+.page-footer a {
+     color: #555;
+    text-decoration: none;
+  }
+  .page-footer a:hover {
+    text-decoration: underline;
+  }
+.chapter-navi-section {
+display: flex;
+justify-content: space-between;
+align-items: center;
+padding-bottom: 10px;
+}  
+
+.nav-link {
+  color: inherit;
+  text-decoration: none;
+  opacity: 0.5;
+  transition: opacity 0.3s ease, text-decoration 0.3s ease;
+}
+
+.nav-link:hover {
+  opacity: 0.9;
+  text-decoration: underline;
+}
+
+.prev {
+  text-align: left;
+}
+.toc-link {
+  text-align: center;
+}
+.next {
+  text-align: right;
+}
+.download-section {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2rem;
+  padding: 2rem 1rem;
+  max-width: 600px;
+  margin: 3rem auto;
+  background-color: #f9f9f9;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+}
+
+    .book-cover {
+      width: 130px;
+      height: 180px;
+      
+      background-size: cover; /* Ensures the image covers the entire div */
+      background-position: center; /* Centers the image */
+            
+      background: linear-gradient(145deg, #e0dede, #f9f9f9);
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 10px;
+      box-sizing: border-box;
+      position: relative;
+      font-family: 'Roboto', sans-serif;
+    }
+
+    .book-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 16px;
+      font-weight: 600;
+      color: #fff;
+      margin-bottom: 4px;
+    }
+
+    .book-subtitle {
+      font-size: 12px;
+      color: #aaa;
+      margin-bottom: 10px;
+    }
+
+    .series-name {
+      position: absolute;
+      top: 8px;
+      left: 8px;
+      font-size: 10px;
+      color: #fff;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-weight: bold;
+    }
+
+    .book-footer {
+      position: absolute;
+      bottom: 8px;
+      font-size: 10px;
+      color: #aaa;
+    }
+
+.download-info h2 {
+  margin: 0 0 0.5rem;
+  font-size: 1.2rem;
+}
+
+.format-label {
+  margin: 0 0 0.5rem;
+  font-size: 0.95rem;
+  color: #555;
+}
+
+.download-buttons {
+  display: flex;
+  gap: 1rem;
+}
+
+.download-button {
+  background-color: #4A90E2;
+  color: white;
+  padding: 0.5em 1.2em;
+  text-decoration: none;
+  border-radius: 25px;
+  font-size: 0.95rem;
+  transition: background-color 0.3s ease;
+}
+
+.download-button:hover {
+  background-color: #357ABD;
+}
+
+    code {
+ 
+      color: #d35400; 
+    }
+html {
+    scroll-behavior: smooth;
+}
+    .snippet-container {
+      overflow: hidden;    
+    }
+
+    .snippet-header {
+      background: #f0f0f0;
+      color: #333;
+      padding: 0.75rem 1rem;
+      cursor: pointer;
+      font-size: 1rem;
+    }
+
+    .snippet-body {
+      display: none;
+      font-family: monospace;
+    }
+
+    .snippet-container.open .snippet-body {
+      display: block;
+    }
+
+.CodeMirror {
+  border: 2px solid #ccc;
+  border-radius: 4px;
+  resize: vertical;
+}
+
+    button { padding: 0.5em 1em; background: green; color: white; border: none; cursor: pointer; }
+    button:hover { background: #1e7e34; }
+    .result_iframe { width:99%; height:200px; margin-top: 1em;  resize: both;border:1px solid #ccc;}        
+</style>
+</head>
+<body> 
+
+  <div class="container">
+    <div class = "chapter-navi-section">
+<a href="go-for-beginners-interfaces-and-polymorphism.htm" class="nav-button prev">←</a>
+<a href='go-for-beginners.htm#concurrency-in-go' class="nav-button toc-link">Index</a>
+<a href="go-for-beginners-packages-and-modules.htm" class="nav-button next">→</a>
+</div>
+
+    <h1 class="book-title-chapter" id = 'top'>Concurrency in Go</h1>
+    <h3 class="book-subtitle-chapter">Go for Beginners</h3>   
+    <!-- <h1 class ="chapter-title"></h1> -->
+    <h2 id='introduction-to-goroutines'>8.1 Introduction to Goroutines</h2><p>One of Go’s standout features is its built-in support for <strong>concurrency</strong>, which allows programs to perform multiple tasks simultaneously. At the heart of Go’s concurrency model are <strong>goroutines</strong>—a powerful but simple mechanism for running functions concurrently.</p><h3 id="what-are-goroutines">What Are Goroutines?</h3><p>A <strong>goroutine</strong> is a <strong>lightweight thread</strong> managed by the Go runtime. Unlike operating system threads, goroutines are much cheaper to create and manage in terms of memory and scheduling. You can create thousands (even millions) of goroutines in a single Go program without exhausting system resources.</p><p>Goroutines are <strong>not</strong> actual OS threads. Instead, the Go scheduler multiplexes many goroutines onto a small number of OS threads behind the scenes.</p><h3 id="starting-a-goroutine">Starting a Goroutine</h3><p>To launch a goroutine, you simply prefix a function call with the <code>go</code> keyword:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-go">go myFunction()</code></pre>
+</div><p>This runs <code>myFunction()</code> concurrently—<strong>asynchronously</strong>—with the rest of the program.</p><h3 id="example-concurrent-print-function">Example: Concurrent Print Function</h3><p>Here’s a simple program that starts multiple goroutines:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">📋</button>
+ <pre><code class="language-go">package main
+
+import (
+    "fmt"
+    "time"
+)
+
+func say(message string) {
+    for i := 0; i &lt; 3; i++ {
+        fmt.Println(message)
+        time.Sleep(100 * time.Millisecond)
+    }
+}
+
+func main() {
+    go say("Hello from goroutine 1")
+    go say("Hello from goroutine 2")
+    say("Hello from main function")
+}</code></pre>
+</div><h4 id="output-order-may-vary">Output (order may vary):</h4><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-bash">Hello from main function
+Hello from goroutine 1
+Hello from goroutine 2
+Hello from main function
+Hello from goroutine 2
+Hello from main function
+Hello from goroutine 1
+Hello from goroutine 2
+Hello from goroutine 1</code></pre>
+</div><blockquote>
+ <p>Because goroutines run concurrently, the exact order of output is <strong>not guaranteed</strong>.</p>
+</blockquote><h3 id="why-use-goroutines">Why Use Goroutines?</h3><ul>
+ <li><strong>Performance</strong>: Ideal for I/O-bound or parallelizable tasks.</li>
+ <li><strong>Simplicity</strong>: <code>go</code> keyword makes concurrent code easy to write.</li>
+ <li><strong>Efficiency</strong>: Goroutines consume far less memory than OS threads (just a few KB).</li>
+</ul><h3 id="important-note-program-may-exit-early">Important Note: Program May Exit Early</h3><p>If the main function exits before goroutines complete, the program ends. You’ll learn how to synchronize and coordinate goroutines using <strong>channels</strong>, <strong>WaitGroups</strong>, and other tools in upcoming sections.</p><h3 id="summary">Summary</h3><ul>
+ <li><strong>Goroutines</strong> are lightweight, concurrent threads managed by Go’s runtime.</li>
+ <li>Use the <code>go</code> keyword to launch a function as a goroutine.</li>
+ <li>Goroutines are great for parallel tasks like network calls, file processing, or timers.</li>
+ <li>Concurrency with goroutines is easy to write and highly performant.</li>
+</ul><div class = "chapter-navi-section">
+<a href="#top" class="nav-button prev">↑</a>
+<a href='go-for-beginners.htm#concurrency-in-go' class="nav-button toc-link">Index</a>
+<a href="#bottom" class="nav-button next">↓</a>
+</div>
+<h2 id='channels-basics-and-usage'>8.2 Channels: Basics and Usage</h2><p>In Go, <strong>channels</strong> provide a powerful and elegant way for <strong>goroutines to communicate and synchronize</strong> with each other. Think of a channel as a <strong>typed pipe</strong> through which you can send and receive values, enabling safe data exchange without explicit locking.</p><h3 id="what-are-channels">What Are Channels?</h3><ul>
+ <li>A <strong>channel</strong> is a typed conduit — it carries values of a specified type.</li>
+ <li>Channels allow <strong>goroutines to synchronize</strong> by sending and receiving values.</li>
+ <li>This mechanism helps avoid common concurrency problems such as <strong>race conditions</strong>.</li>
+</ul><h3 id="creating-channels">Creating Channels</h3><p>Use the built-in <code>make</code> function to create a channel:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-go">ch := make(chan int)  // creates a channel of type int</code></pre>
+</div><h3 id="sending-and-receiving">Sending and Receiving</h3><ul>
+ <li><p>To <strong>send</strong> a value into a channel:</p>
+  <div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+   <pre><code class="language-go">ch &lt;- 42</code></pre>
+  </div></li>
+ <li><p>To <strong>receive</strong> a value from a channel:</p>
+  <div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+   <pre><code class="language-go">val := &lt;-ch</code></pre>
+  </div></li>
+</ul><p>The <code>&lt;-</code> operator indicates the direction of data flow.</p><h3 id="channels-block-until-ready">Channels Block Until Ready</h3><p>Channels <strong>block</strong> the sending goroutine until another goroutine receives the value, and vice versa. This behavior provides natural synchronization.</p><h3 id="practical-example-one-goroutine-sends-another-receives">Practical Example: One Goroutine Sends, Another Receives</h3><div class="code-block"><button class="copy-button" onclick="copyCode(this)">📋</button>
+ <pre><code class="language-go">package main
+
+import (
+    "fmt"
+    "time"
+)
+
+func sender(ch chan int) {
+    for i := 1; i &lt;= 5; i++ {
+        fmt.Println("Sending:", i)
+        ch &lt;- i  // send data into channel
+        time.Sleep(100 * time.Millisecond)
+    }
+    close(ch) // close channel when done sending
+}
+
+func receiver(ch chan int) {
+    for val := range ch { // receive values until channel is closed
+        fmt.Println("Received:", val)
+    }
+}
+
+func main() {
+    ch := make(chan int)
+
+    go sender(ch)
+    receiver(ch)
+}</code></pre>
+</div><h4 id="output">Output:</h4><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-bash">Sending: 1
+Received: 1
+Sending: 2
+Received: 2
+Sending: 3
+Received: 3
+Sending: 4
+Received: 4
+Sending: 5
+Received: 5</code></pre>
+</div><h3 id="key-points">Key Points</h3><ul>
+ <li>The sender goroutine writes to the channel.</li>
+ <li>The receiver goroutine reads from the channel.</li>
+ <li>Because sends and receives <strong>block</strong>, the sender waits until the receiver is ready, and vice versa.</li>
+ <li>Closing the channel signals no more values will be sent, allowing the receiver to stop looping.</li>
+</ul><h3 id="summary">Summary</h3><ul>
+ <li>Channels are typed communication pipes between goroutines.</li>
+ <li>Use <code>make</code> to create a channel for a specific type.</li>
+ <li>Send values using <code>ch &lt;- value</code>, receive with <code>val := &lt;-ch</code>.</li>
+ <li>Channels synchronize goroutines by blocking sends and receives.</li>
+ <li>Closing a channel signals completion to receivers.</li>
+</ul><div class = "chapter-navi-section">
+<a href="#top" class="nav-button prev">↑</a>
+<a href='go-for-beginners.htm#concurrency-in-go' class="nav-button toc-link">Index</a>
+<a href="#bottom" class="nav-button next">↓</a>
+</div>
+<h2 id='buffered-vs-unbuffered-channels'>8.3 Buffered vs Unbuffered Channels</h2><p>Channels in Go come in two flavors: <strong>unbuffered</strong> and <strong>buffered</strong>. Understanding their differences is key to writing effective concurrent programs and controlling synchronization between goroutines.</p><h3 id="unbuffered-channels">Unbuffered Channels</h3><ul>
+ <li><p>Created without a buffer size:</p>
+  <div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+   <pre><code class="language-go">ch := make(chan int)</code></pre>
+  </div></li>
+ <li><p>Operations on unbuffered channels <strong>block until the other side is ready</strong>:</p>
+  <ul>
+   <li>A <strong>send blocks</strong> until a receiver is ready to receive.</li>
+   <li>A <strong>receive blocks</strong> until a sender sends a value.</li>
+  </ul></li>
+ <li><p>This behavior means unbuffered channels provide <strong>synchronous communication</strong>, naturally synchronizing goroutines.</p></li>
+</ul><h3 id="buffered-channels">Buffered Channels</h3><ul>
+ <li><p>Created with a specified buffer size:</p>
+  <div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+   <pre><code class="language-go">ch := make(chan int, 3)  // buffer size 3</code></pre>
+  </div></li>
+ <li><p>Sends block only when the buffer is <strong>full</strong>.</p></li>
+ <li><p>Receives block only when the buffer is <strong>empty</strong>.</p></li>
+ <li><p>Buffered channels provide <strong>asynchronous communication</strong> up to the buffer capacity, allowing senders to proceed without immediate receivers (up to a limit).</p></li>
+</ul><h3 id="example-unbuffered-channel">Example: Unbuffered Channel</h3><div class="code-block"><button class="copy-button" onclick="copyCode(this)">📋</button>
+ <pre><code class="language-go">package main
+
+import (
+    "fmt"
+    "time"
+)
+
+func main() {
+    ch := make(chan int) // unbuffered channel
+
+    go func() {
+        fmt.Println("Goroutine: Sending 1")
+        ch &lt;- 1  // blocks until main receives
+        fmt.Println("Goroutine: Sent 1")
+    }()
+
+    time.Sleep(1 * time.Second) // simulate work in main
+
+    fmt.Println("Main: Receiving")
+    val := &lt;-ch  // unblocks goroutine send
+    fmt.Println("Main: Received", val)
+}</code></pre>
+</div><h4 id="output">Output:</h4><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-bash">Goroutine: Sending 1
+(Main blocks here for 1 second)
+Main: Receiving
+Goroutine: Sent 1
+Main: Received 1</code></pre>
+</div><p><em>Notice:</em> The goroutine <strong>blocks immediately</strong> on sending until the main function receives from the channel.</p><h3 id="example-buffered-channel">Example: Buffered Channel</h3><div class="code-block"><button class="copy-button" onclick="copyCode(this)">📋</button>
+ <pre><code class="language-go">package main
+
+import (
+    "fmt"
+    "time"
+)
+
+func main() {
+    ch := make(chan int, 2) // buffered channel with capacity 2
+
+    ch &lt;- 1  // does not block (buffer not full)
+    fmt.Println("Sent 1")
+    ch &lt;- 2  // does not block (buffer not full)
+    fmt.Println("Sent 2")
+
+    go func() {
+        fmt.Println("Goroutine: Sending 3")
+        ch &lt;- 3  // blocks because buffer full
+        fmt.Println("Goroutine: Sent 3")
+    }()
+
+    time.Sleep(1 * time.Second)
+
+    fmt.Println("Main: Receiving", &lt;-ch)  // frees buffer space, unblocks goroutine
+    time.Sleep(1 * time.Second)
+    fmt.Println("Main: Receiving", &lt;-ch)
+    fmt.Println("Main: Receiving", &lt;-ch)
+}</code></pre>
+</div><h4 id="output">Output:</h4><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-bash">Sent 1
+Sent 2
+Goroutine: Sending 3
+(Main sleeps here)
+Main: Receiving 1
+Goroutine: Sent 3
+(Main sleeps again)
+Main: Receiving 2
+Main: Receiving 3</code></pre>
+</div><p><em>Notice:</em> The first two sends do <strong>not block</strong> because the buffer has space. The third send blocks until a value is received from the channel.</p><h3 id="summary-of-behavior">Summary of Behavior</h3><table>
+ <thead>
+  <tr>
+   <th>Channel Type</th>
+   <th>Send Blocks Until</th>
+   <th>Receive Blocks Until</th>
+   <th>Communication Style</th>
+  </tr>
+ </thead>
+ <tbody>
+  <tr>
+   <td>Unbuffered</td>
+   <td>Receiver is ready</td>
+   <td>Sender sends a value</td>
+   <td>Synchronous</td>
+  </tr>
+  <tr>
+   <td>Buffered (n&gt;0)</td>
+   <td>Buffer has space</td>
+   <td>Buffer has data</td>
+   <td>Asynchronous (up to buffer capacity)</td>
+  </tr>
+ </tbody>
+</table><h3 id="when-to-use-which">When to Use Which?</h3><ul>
+ <li>Use <strong>unbuffered channels</strong> when you want strict synchronization between goroutines.</li>
+ <li>Use <strong>buffered channels</strong> to allow some level of asynchronous execution, which can improve throughput and reduce blocking.</li>
+ <li>Be careful with large buffers — they can hide synchronization issues and cause subtle bugs.</li>
+</ul><div class = "chapter-navi-section">
+<a href="#top" class="nav-button prev">↑</a>
+<a href='go-for-beginners.htm#concurrency-in-go' class="nav-button toc-link">Index</a>
+<a href="#bottom" class="nav-button next">↓</a>
+</div>
+<h2 id='select-statement'>8.4 Select Statement</h2><p>When working with multiple channels, Go provides the powerful <code>select</code> statement to <strong>wait on multiple channel operations simultaneously</strong>. It allows a goroutine to <strong>react to whichever channel is ready first</strong>, enabling efficient multiplexing and timeout handling.</p><h3 id="what-is-the-select-statement">What Is the <code>select</code> Statement?</h3><ul>
+ <li>Similar to a <code>switch</code> but for <strong>channel communications</strong>.</li>
+ <li>Waits until <strong>one of its case channels is ready</strong> to proceed.</li>
+ <li>If multiple channels are ready, one is chosen <strong>randomly</strong>.</li>
+ <li>If none are ready, the <code>select</code> <strong>blocks</strong> (unless a <code>default</code> case is provided).</li>
+</ul><h3 id="basic-syntax">Basic Syntax</h3><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-go">select {
+case val := &lt;-ch1:
+    // handle value from ch1
+case ch2 &lt;- data:
+    // send data to ch2
+default:
+    // non-blocking fallback if no channel is ready
+}</code></pre>
+</div><h3 id="common-use-cases">Common Use Cases</h3><ul>
+ <li><strong>Multiplexing</strong>: Receiving from multiple channels without blocking on any single one.</li>
+ <li><strong>Timeouts</strong>: Using a timer channel to avoid waiting indefinitely.</li>
+ <li><strong>Non-blocking channel operations</strong>: Using <code>default</code> case to continue execution if no channels are ready.</li>
+</ul><h3 id="example-reading-from-multiple-channels-with-timeout">Example: Reading from Multiple Channels with Timeout</h3><div class="code-block"><button class="copy-button" onclick="copyCode(this)">📋</button>
+ <pre><code class="language-go">package main
+
+import (
+    "fmt"
+    "time"
+)
+
+func main() {
+    ch1 := make(chan string)
+    ch2 := make(chan string)
+
+    // Simulate sending data after some delay
+    go func() {
+        time.Sleep(500 * time.Millisecond)
+        ch1 &lt;- "Message from ch1"
+    }()
+
+    go func() {
+        time.Sleep(1 * time.Second)
+        ch2 &lt;- "Message from ch2"
+    }()
+
+    timeout := time.After(800 * time.Millisecond)
+
+    for i := 0; i &lt; 2; i++ {
+        select {
+        case msg1 := &lt;-ch1:
+            fmt.Println("Received:", msg1)
+        case msg2 := &lt;-ch2:
+            fmt.Println("Received:", msg2)
+        case &lt;-timeout:
+            fmt.Println("Timeout! No message received.")
+            return
+        }
+    }
+}</code></pre>
+</div><h4 id="possible-output">Possible Output:</h4><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-bash">Received: Message from ch1
+Timeout! No message received.</code></pre>
+</div><p><em>Explanation:</em></p><ul>
+ <li>The program waits to receive from <code>ch1</code> and <code>ch2</code>.</li>
+ <li>Since <code>ch1</code> sends first (after 500ms), it’s received successfully.</li>
+ <li>The timeout triggers after 800ms, stopping the wait before <code>ch2</code> sends.</li>
+</ul><h3 id="key-points">Key Points</h3><ul>
+ <li><code>select</code> blocks until a <strong>channel operation can proceed</strong>.</li>
+ <li>Use <code>default</code> case for <strong>non-blocking</strong> behavior.</li>
+ <li>Can be used to implement <strong>timeouts</strong> and <strong>cancellations</strong>.</li>
+ <li>Enables <strong>clean, concise handling</strong> of multiple concurrent channel operations.</li>
+</ul><h3 id="summary">Summary</h3><ul>
+ <li>Use <code>select</code> to wait on multiple channel operations.</li>
+ <li>Helps write efficient, responsive concurrent programs.</li>
+ <li>Key tool for managing timeouts, multiplexing, and non-blocking channel communication.</li>
+</ul><div class = "chapter-navi-section">
+<a href="#top" class="nav-button prev">↑</a>
+<a href='go-for-beginners.htm#concurrency-in-go' class="nav-button toc-link">Index</a>
+<a href="#bottom" class="nav-button next">↓</a>
+</div>
+<h2 id='synchronization-waitgroups-mutexes'>8.5 Synchronization (WaitGroups, Mutexes)</h2><p>In concurrent programming, coordinating goroutines and protecting shared data are crucial tasks. Go’s <code>sync</code> package offers powerful <strong>synchronization primitives</strong> to help manage these challenges safely and efficiently.</p><h3 id="waitgroup-waiting-for-multiple-goroutines">WaitGroup: Waiting for Multiple Goroutines</h3><p>A <strong>WaitGroup</strong> lets your program <strong>wait for a collection of goroutines to finish</strong> executing before continuing.</p><h4 id="how-to-use-sync-waitgroup">How to Use <code>sync.WaitGroup</code></h4><ol>
+ <li>Create a <code>WaitGroup</code> variable.</li>
+ <li>Call <code>Add(n)</code> to set the number of goroutines to wait for.</li>
+ <li>Each goroutine calls <code>Done()</code> when finished.</li>
+ <li>The main goroutine calls <code>Wait()</code> to block until all goroutines complete.</li>
+</ol><h4 id="example-using-waitgroup-to-wait-for-goroutines">Example: Using WaitGroup to Wait for Goroutines</h4><div class="code-block"><button class="copy-button" onclick="copyCode(this)">📋</button>
+ <pre><code class="language-go">package main
+
+import (
+    "fmt"
+    "sync"
+    "time"
+)
+
+func worker(id int, wg *sync.WaitGroup) {
+    defer wg.Done()  // signal when done
+    fmt.Printf("Worker %d starting", id)
+    time.Sleep(time.Second)
+    fmt.Printf("Worker %d done", id)
+}
+
+func main() {
+    var wg sync.WaitGroup
+
+    for i := 1; i &lt;= 3; i++ {
+        wg.Add(1)  // increment WaitGroup counter
+        go worker(i, &amp;wg)
+    }
+
+    wg.Wait()  // wait for all goroutines to finish
+    fmt.Println("All workers completed")
+}</code></pre>
+</div><h3 id="mutex-protecting-shared-resources">Mutex: Protecting Shared Resources</h3><p>A <strong>Mutex</strong> (short for <em>mutual exclusion</em>) protects shared variables from <strong>simultaneous access</strong> by multiple goroutines, preventing <strong>race conditions</strong>.</p><h4 id="how-to-use-sync-mutex">How to Use <code>sync.Mutex</code></h4><ul>
+ <li>Lock the mutex before accessing the shared resource.</li>
+ <li>Unlock it when done.</li>
+ <li>Only one goroutine can hold the lock at a time.</li>
+</ul><h4 id="example-using-mutex-to-safely-update-shared-data">Example: Using Mutex to Safely Update Shared Data</h4><div class="code-block"><button class="copy-button" onclick="copyCode(this)">📋</button>
+ <pre><code class="language-go">package main
+
+import (
+    "fmt"
+    "sync"
+)
+
+func main() {
+    var mu sync.Mutex
+    counter := 0
+    var wg sync.WaitGroup
+
+    increment := func() {
+        defer wg.Done()
+        mu.Lock()         // lock before updating
+        counter++
+        mu.Unlock()       // unlock after updating
+    }
+
+    for i := 0; i &lt; 1000; i++ {
+        wg.Add(1)
+        go increment()
+    }
+
+    wg.Wait()
+    fmt.Println("Final counter value:", counter)
+}</code></pre>
+</div><p>Without the mutex, concurrent increments could interfere, causing an incorrect final count.</p><h3 id="summary">Summary</h3><table>
+ <thead>
+  <tr>
+   <th>Primitive</th>
+   <th>Purpose</th>
+   <th>Key Methods</th>
+  </tr>
+ </thead>
+ <tbody>
+  <tr>
+   <td>WaitGroup</td>
+   <td>Waits for multiple goroutines to complete</td>
+   <td><code>Add()</code>, <code>Done()</code>, <code>Wait()</code></td>
+  </tr>
+  <tr>
+   <td>Mutex</td>
+   <td>Ensures exclusive access to shared data</td>
+   <td><code>Lock()</code>, <code>Unlock()</code></td>
+  </tr>
+ </tbody>
+</table><h3 id="takeaway">Takeaway</h3><ul>
+ <li>Use <strong>WaitGroups</strong> to wait for goroutines, ensuring orderly execution.</li>
+ <li>Use <strong>Mutexes</strong> to protect shared variables and prevent race conditions.</li>
+ <li>Combining these primitives helps build robust concurrent programs.</li>
+</ul><div class = "chapter-navi-section">
+<a href="go-for-beginners-interfaces-and-polymorphism.htm" class="nav-button prev">←</a>
+<a href='go-for-beginners.htm#concurrency-in-go' class="nav-button toc-link">Index</a>
+<a href="go-for-beginners-packages-and-modules.htm" class="nav-button next">→</a>
+</div>
+<section class="download-section">
+  <div class="book-cover" style="background-image: url('data:image/jpg;base64,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');">
+<div class="series-name">Introduction</div>
+<div class="book-title">Go for Beginners</div>
+<div class="book-subtitle">Essential concepts, practical examples, and foundational topics</div>
+<div class="book-footer">readbytes.github.io</div>
+</div>
+  <div class="download-info">
+    <h2 id='bottom'>Download This Ebook</h2>
+    <p class="format-label">Available formats:</p>
+    <div class="download-buttons">
+      <a href="go-for-beginners.pdf" class="download-button">📄 PDF</a>
+      <a href="go-for-beginners.epub" class="download-button">📘 EPUB</a>
+    </div>
+  </div>
+</section><div class='related-books'>
+<h2>Go Introduction Books</h2>
+<div class='related-book-list'>
+<a href="go-for-beginners.htm"><div class="book-cover" style="background-image: url('data:image/jpg;base64,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');">
+<div class="series-name">Introduction</div>
+<div class="book-title">Go for Beginners</div>
+<div class="book-subtitle">Essential concepts, practical examples, and foundational topics</div>
+<div class="book-footer">readbytes.github.io</div>
+</div></a>
+
+
+
+<a href='go.htm'><div class='book-cover'>More Go Books</div></a>
+</div>
+</div>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+  
+  <script>
+    function copyCode(button) {
+      const code = button.nextElementSibling.innerText;
+      navigator.clipboard.writeText(code).then(() => {
+        button.textContent = 'Copied!';
+        setTimeout(() => { button.textContent = 'Copy'; }, 1500);
+      });
+    }
+  </script>  
+
+<footer class="page-footer">
+    <nav>
+      <a href="https://readbytes.github.io">Home</a> | 
+      Email:<script language="JavaScript" type="text/javascript">
+var part1 = 'yinpeng';var part6 = '263';var part2 = Math.pow(2,6);var part3 = String.fromCharCode(part2);var part4 = 'hotmail dot com';var part5 = part1 + String.fromCharCode(part2) + part4;document.write(part1 + part6 + part3 + part4);
+</script>
+    </nav>
+  <p>© 2025 — All rights reserved.</p>    
+  </footer>
+
+</body>
+</html>

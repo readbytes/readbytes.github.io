@@ -1,0 +1,691 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>Java Object-Oriented Design Lambda Expressions and Functional Interfaces</title>
+<link rel='shortcut icon' href='https://java2s.com/style/favicon.ico'>
+<link href="https://fonts.googleapis.com/css2?family=Merriweather&display=swap" rel="stylesheet" />
+<link href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+
+
+<style>
+body {
+  background: #f8f7f5;
+  font-family: 'Merriweather', serif;
+  color: #333;
+  margin: 0;
+  padding: 2rem 1rem;
+  font-size: 15px; /* smaller body font */
+  line-height: 1.5;
+}
+
+.container {
+  max-width: 700px;
+  margin: 0 auto;
+  background: white;
+  padding: 1rem 2rem;
+  box-shadow: 0 0 15px rgba(0,0,0,0.1);
+}
+.book-title-chapter {
+  font-family: 'Merriweather', serif;
+  font-size: 2rem;
+  font-weight: bold;
+  text-align: center;
+  margin-bottom: 2rem;
+  border-bottom: 2px solid #ccc;
+  padding-bottom: 0.5rem;
+  color: #2c3e50;
+}
+
+.book-subtitle-chapter {
+  text-align: center;
+  font-size: 1rem;
+  color: #666;
+  margin-top: -1rem;
+  margin-bottom: 2rem;
+}
+
+    .related-books {
+      margin-top: 40px;
+    }
+
+    .related-books h2 {
+      font-size: 22px;
+      margin-bottom: 20px;
+      border-bottom: 2px solid #eee;
+      padding-bottom: 8px;
+      color: #333;
+    }
+    .related-book-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+h1, h2, h3 {
+  font-weight: 600;
+  margin-top: 2.5rem;
+  margin-bottom: 1rem;
+  line-height: 1.2;
+}
+
+h1 {
+  font-size: 1.8rem; /* smaller heading */
+}
+
+h2 {
+  font-size: 1.4rem;
+}
+
+h3 {
+  font-size: 1.2rem;
+}
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-family: sans-serif;
+      font-size: 1em;
+      margin: 1em 0;
+    }
+
+    th, td {
+      border: 1px solid #cccccc;
+      padding: 0.6em 1em;
+      text-align: left;
+    }
+
+    th {
+      background-color: #f2f2f2;
+      font-weight: bold;
+    }
+
+    tr:nth-child(even) {
+      background-color: #fafafa;
+    }
+
+    /* Optional hover effect */
+    tr:hover {
+      background-color: #e6f7ff;
+    }
+ 
+a {
+  color: #555;
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+
+
+.code-block {
+    position: relative;
+    margin-bottom: 1em;
+}
+.copy-button {
+    background: transparent; 
+    color: white;
+
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    border: none;
+    padding: 4px 8px;
+    font-size: 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    z-index: 1;
+}
+
+.copy-button:hover {
+background-color: #0056b3;
+}
+.page-footer {
+  margin-top: 4rem;
+  padding: 1rem 0;
+  text-align: center;
+  font-size: 0.85rem;
+  color: #666;
+  border-top: 1px solid #ccc;
+  background-color: #fafafa;
+}
+.page-footer a {
+     color: #555;
+    text-decoration: none;
+  }
+  .page-footer a:hover {
+    text-decoration: underline;
+  }
+.chapter-navi-section {
+display: flex;
+justify-content: space-between;
+align-items: center;
+padding-bottom: 10px;
+}  
+
+.nav-link {
+  color: inherit;
+  text-decoration: none;
+  opacity: 0.5;
+  transition: opacity 0.3s ease, text-decoration 0.3s ease;
+}
+
+.nav-link:hover {
+  opacity: 0.9;
+  text-decoration: underline;
+}
+
+.prev {
+  text-align: left;
+}
+.toc-link {
+  text-align: center;
+}
+.next {
+  text-align: right;
+}
+.download-section {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2rem;
+  padding: 2rem 1rem;
+  max-width: 600px;
+  margin: 3rem auto;
+  background-color: #f9f9f9;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+}
+
+    .book-cover {
+      width: 130px;
+      height: 180px;
+      
+      background-size: cover; /* Ensures the image covers the entire div */
+      background-position: center; /* Centers the image */
+            
+      background: linear-gradient(145deg, #e0dede, #f9f9f9);
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 10px;
+      box-sizing: border-box;
+      position: relative;
+      font-family: 'Roboto', sans-serif;
+    }
+
+    .book-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 16px;
+      font-weight: 600;
+      color: #fff;
+      margin-bottom: 4px;
+    }
+
+    .book-subtitle {
+      font-size: 12px;
+      color: #aaa;
+      margin-bottom: 10px;
+    }
+
+    .series-name {
+      position: absolute;
+      top: 8px;
+      left: 8px;
+      font-size: 10px;
+      color: #fff;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-weight: bold;
+    }
+
+    .book-footer {
+      position: absolute;
+      bottom: 8px;
+      font-size: 10px;
+      color: #aaa;
+    }
+
+.download-info h2 {
+  margin: 0 0 0.5rem;
+  font-size: 1.2rem;
+}
+
+.format-label {
+  margin: 0 0 0.5rem;
+  font-size: 0.95rem;
+  color: #555;
+}
+
+.download-buttons {
+  display: flex;
+  gap: 1rem;
+}
+
+.download-button {
+  background-color: #4A90E2;
+  color: white;
+  padding: 0.5em 1.2em;
+  text-decoration: none;
+  border-radius: 25px;
+  font-size: 0.95rem;
+  transition: background-color 0.3s ease;
+}
+
+.download-button:hover {
+  background-color: #357ABD;
+}
+
+    code {
+ 
+      color: #d35400; 
+    }
+html {
+    scroll-behavior: smooth;
+}
+    .snippet-container {
+      overflow: hidden;    
+    }
+
+    .snippet-header {
+      background: #f0f0f0;
+      color: #333;
+      padding: 0.75rem 1rem;
+      cursor: pointer;
+      font-size: 1rem;
+    }
+
+    .snippet-body {
+      display: none;
+      font-family: monospace;
+    }
+
+    .snippet-container.open .snippet-body {
+      display: block;
+    }
+
+.CodeMirror {
+  border: 2px solid #ccc;
+  border-radius: 4px;
+  resize: vertical;
+}
+
+    button { padding: 0.5em 1em; background: green; color: white; border: none; cursor: pointer; }
+    button:hover { background: #1e7e34; }
+    .result_iframe { width:99%; height:200px; margin-top: 1em;  resize: both;border:1px solid #ccc;}        
+</style>
+</head>
+<body> 
+
+  <div class="container">
+    <div class = "chapter-navi-section">
+<a href="java-object-oriented-design-enums-records-and-sealed-classes.htm" class="nav-button prev">←</a>
+<a href='java-object-oriented-design.htm#lambda-expressions-and-functional-interfaces' class="nav-button toc-link">Index</a>
+<a href="java-object-oriented-design-case-study-1-designing-a-library-system.htm" class="nav-button next">→</a>
+</div>
+
+    <h1 class="book-title-chapter" id = 'top'>Lambda Expressions and Functional Interfaces</h1>
+    <h3 class="book-subtitle-chapter">Java Object-Oriented Design</h3>   
+    <!-- <h1 class ="chapter-title"></h1> -->
+    <h2 id='what-is-functional-programming-in-java'>18.1 What is Functional Programming in Java?</h2><h3 id="introduction-to-functional-programming-in-java">Introduction to Functional Programming in Java</h3><p>Functional programming (FP) is a paradigm that treats computation as the evaluation of mathematical functions and avoids changing state or mutable data. While Java has historically been an imperative, object-oriented language, Java 8 introduced powerful support for functional programming concepts, enabling developers to write more expressive, concise, and maintainable code.</p><p>This shift was made possible through the introduction of <strong>lambda expressions</strong>, <strong>functional interfaces</strong>, and <strong>streams</strong>, allowing Java to embrace many benefits of FP while remaining object-oriented at its core.</p><h3 id="core-concepts-of-functional-programming">Core Concepts of Functional Programming</h3><p>Functional programming focuses on a few key principles:</p><ol>
+ <li><strong>Immutability</strong> – Data is not changed after it is created. Instead, new data is derived from existing data.</li>
+ <li><strong>First-Class Functions</strong> – Functions can be assigned to variables, passed as arguments, and returned from other functions.</li>
+ <li><strong>Higher-Order Functions</strong> – Functions that take other functions as parameters or return them.</li>
+ <li><strong>Pure Functions</strong> – Functions without side effects; the output depends only on the input.</li>
+ <li><strong>Declarative Style</strong> – Code describes <em>what</em> should be done, not <em>how</em> to do it.</li>
+</ol><p>Java supports many of these features, especially from version 8 onward, making it easier to write clear and concise logic.</p><h3 id="javas-functional-programming-support">Javas Functional Programming Support</h3><p>Java introduced the following key elements to support functional programming:</p><ul>
+ <li><strong>Lambda Expressions</strong> – Compact syntax for writing anonymous functions.</li>
+ <li><strong>Functional Interfaces</strong> – Interfaces with a single abstract method, used as function types.</li>
+ <li><strong>Stream API</strong> – Enables processing of collections in a functional style.</li>
+ <li><strong>Optional</strong> – A container object used to avoid null values, encouraging safer and more predictable code.</li>
+</ul><h3 id="imperative-vs-functional-a-simple-comparison">Imperative vs Functional: A Simple Comparison</h3><p>To understand the impact of functional programming in Java, consider the task of filtering a list of names that start with "A".</p><p><strong>Imperative style:</strong></p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-java">List&lt;String&gt; names = List.of("Alice", "Bob", "Alex", "Brian");
+List&lt;String&gt; result = new ArrayList&lt;&gt;();
+
+for (String name : names) {
+    if (name.startsWith("A")) {
+        result.add(name);
+    }
+}
+System.out.println(result);</code></pre>
+</div><p><strong>Functional style:</strong></p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-java">List&lt;String&gt; names = List.of("Alice", "Bob", "Alex", "Brian");
+List&lt;String&gt; result = names.stream()
+                           .filter(name -&gt; name.startsWith("A"))
+                           .collect(Collectors.toList());
+
+System.out.println(result);</code></pre>
+</div><p>In the functional version, the code is more concise, expressive, and easier to reason about. It avoids mutability and abstracts away iteration logic.</p><h3 id="functions-as-first-class-citizens">Functions as First-Class Citizens</h3><p>Java does not have true first-class functions like purely functional languages, but <strong>functional interfaces and lambdas</strong> simulate this capability effectively.</p><p>Consider a method that takes a function as a parameter:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-java">public static int operate(int a, int b, BiFunction&lt;Integer, Integer, Integer&gt; operation) {
+    return operation.apply(a, b);
+}</code></pre>
+</div><p>We can pass different lambda expressions:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-java">int sum = operate(5, 3, (x, y) -&gt; x + y);
+int product = operate(5, 3, (x, y) -&gt; x * y);
+
+System.out.println(sum);     // 8
+System.out.println(product); // 15</code></pre>
+</div><p>Here, <code>BiFunction</code> is a functional interface, and the lambda expressions are passed as values—demonstrating functions as first-class citizens.</p><h3 id="benefits-of-functional-style-in-java">Benefits of Functional Style in Java</h3><ul>
+ <li><strong>Concise Code</strong> – Lambdas and streams reduce boilerplate, especially when working with collections.</li>
+ <li><strong>Improved Readability</strong> – Declarative style describes intent rather than control flow.</li>
+ <li><strong>Safer Code</strong> – Immutability reduces bugs related to shared mutable state.</li>
+ <li><strong>Parallelization</strong> – Stream API makes it easier to parallelize data operations safely.</li>
+</ul><h3 id="caution-and-balance">Caution and Balance</h3><p>Functional programming is powerful, but overusing it in Java can lead to less readable code, especially when chaining complex lambda expressions. It’s important to balance FP with OOP principles and not force FP where traditional OOP solutions are more intuitive.</p><h3 id="conclusion">Conclusion</h3><p>Functional programming in Java empowers developers with new ways to write clearer, more maintainable code. By leveraging lambdas, functional interfaces, and streams, Java code can become more expressive while maintaining the strengths of object-oriented design. As you continue through this chapter, you’ll see how these features integrate with traditional Java architecture to enhance modularity, flexibility, and clarity in software design.</p><div class = "chapter-navi-section">
+<a href="#top" class="nav-button prev">↑</a>
+<a href='java-object-oriented-design.htm#lambda-expressions-and-functional-interfaces' class="nav-button toc-link">Index</a>
+<a href="#bottom" class="nav-button next">↓</a>
+</div>
+<h2 id='lambdas-in-oop-design'>18.2 Lambdas in OOP Design</h2><h3 id="introduction">Introduction</h3><p>Lambda expressions, introduced in Java 8, brought functional programming concepts to the object-oriented Java language. They offer a concise way to represent instances of functional interfaces—interfaces with a single abstract method—allowing developers to treat behavior as a first-class value. In object-oriented design (OOD), lambdas enhance expressiveness, reduce boilerplate code, and improve modularity when behavior needs to be passed around dynamically.</p><p>This section explores how lambda expressions integrate with OOP practices, simplify common patterns such as callbacks and event handling, and improve code readability and maintainability.</p><h3 id="syntax-and-structure-of-lambda-expressions">Syntax and Structure of Lambda Expressions</h3><p>Lambda expressions have a compact syntax:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-java">(parameters) -&gt; expression</code></pre>
+</div><p>Or with a block body:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-java">(parameters) -&gt; {
+    // statements
+    return result;
+}</code></pre>
+</div><p>If the lambda has one parameter, parentheses are optional:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-java">x -&gt; x * x</code></pre>
+</div><p>For example, using a <code>Comparator&lt;String&gt;</code> to sort a list alphabetically in reverse order:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-java">List&lt;String&gt; names = Arrays.asList("Alice", "Bob", "Charlie");
+Collections.sort(names, (a, b) -&gt; b.compareTo(a));</code></pre>
+</div><p>This replaces the more verbose anonymous inner class:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-java">Collections.sort(names, new Comparator&lt;String&gt;() {
+    @Override
+    public int compare(String a, String b) {
+        return b.compareTo(a);
+    }
+});</code></pre>
+</div><p>The lambda expression eliminates unnecessary boilerplate and focuses on the logic itself.</p><h3 id="lambdas-and-anonymous-classes">Lambdas and Anonymous Classes</h3><p>Before Java 8, implementing short-lived behaviors like event handlers required anonymous inner classes. Lambdas offer a simpler, more expressive alternative.</p><p><strong>Anonymous Class Example (pre-Java 8):</strong></p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-java">button.addActionListener(new ActionListener() {
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        System.out.println("Button clicked!");
+    }
+});</code></pre>
+</div><p><strong>With Lambda Expression:</strong></p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-java">button.addActionListener(e -&gt; System.out.println("Button clicked!"));</code></pre>
+</div><p>This reduces verbosity while keeping the intent clear. Lambdas are particularly useful in GUI event handling, stream processing, and anywhere a functional interface is expected.</p><h3 id="integrating-lambdas-with-object-oriented-principles">Integrating Lambdas with Object-Oriented Principles</h3><p>Lambdas don’t replace OOP—they complement it. In fact, they allow better modularity and encapsulation by enabling behavior injection. This aligns well with design principles such as the <strong>Strategy Pattern</strong>, where a behavior is selected at runtime.</p><p><strong>Without Lambda (Strategy via Interface):</strong></p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-java">interface PaymentStrategy {
+    void pay(double amount);
+}
+
+class CreditCardPayment implements PaymentStrategy {
+    public void pay(double amount) {
+        System.out.println("Paid $" + amount + " with credit card");
+    }
+}</code></pre>
+</div><p><strong>With Lambda:</strong></p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-java">PaymentStrategy creditCard = amount -&gt; 
+    System.out.println("Paid $" + amount + " with credit card");</code></pre>
+</div><p>By defining the strategy behavior inline, you avoid creating a dedicated class unless the behavior is reused. This encourages simpler, more flexible designs while adhering to polymorphism.</p><h3 id="practical-example-filtering-with-lambdas">Practical Example: Filtering with Lambdas</h3><p>Consider a list of products. You want to filter those under a certain price:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-java">List&lt;Product&gt; products = getInventory();
+List&lt;Product&gt; cheapProducts = products.stream()
+    .filter(p -&gt; p.getPrice() &lt; 50)
+    .collect(Collectors.toList());</code></pre>
+</div><p>Here, the <code>filter</code> method accepts a <code>Predicate&lt;Product&gt;</code>—a functional interface. The lambda <code>p -&gt; p.getPrice() &lt; 50</code> provides that behavior. The same task with anonymous classes would require several lines of boilerplate code.</p><h3 id="readability-and-maintainability">Readability and Maintainability</h3><p>Lambda expressions often make code easier to read and maintain by expressing intent more directly and reducing clutter. They focus on the “what” rather than the “how.” This leads to:</p><ul>
+ <li><strong>Shorter, cleaner code</strong>: Especially beneficial for inline operations like sorting or filtering.</li>
+ <li><strong>Improved modularity</strong>: Lambdas make it easy to pass behavior without creating separate classes.</li>
+ <li><strong>Reduced duplication</strong>: Less boilerplate leads to more focused, DRY-compliant code.</li>
+</ul><p>However, overuse or misuse—especially with deeply nested or complex lambdas—can hurt readability. When a lambda grows beyond a few lines, it’s often better to extract it into a method or named class.</p><h3 id="conclusion">Conclusion</h3><p>Lambda expressions provide a bridge between object-oriented and functional paradigms in Java. They simplify event handling, enhance behavioral design patterns, and reduce verbosity without sacrificing the clarity of OOP principles. When used thoughtfully, lambdas lead to more expressive, maintainable, and modular Java applications—especially in systems where behavior needs to be passed, varied, or executed in response to events.</p><div class = "chapter-navi-section">
+<a href="#top" class="nav-button prev">↑</a>
+<a href='java-object-oriented-design.htm#lambda-expressions-and-functional-interfaces' class="nav-button toc-link">Index</a>
+<a href="#bottom" class="nav-button next">↓</a>
+</div>
+<h2 id='function-predicate-consumer-interfaces'>18.3 <code>Function</code>, <code>Predicate</code>, <code>Consumer</code> Interfaces</h2><h3 id="introduction">Introduction</h3><p>Java 8 introduced a set of standard functional interfaces in the <code>java.util.function</code> package to support lambda expressions and method references. Among the most commonly used are <code>Function&lt;T, R&gt;</code>, <code>Predicate&lt;T&gt;</code>, and <code>Consumer&lt;T&gt;</code>. These interfaces form the foundation for functional-style operations in Java, particularly when working with collections, streams, or behavior injection.</p><p>This section explores these interfaces in detail, showing how they help developers pass logic as parameters, compose operations, and write concise, expressive code.</p><h3 id="functiont-r-mapping-and-transformation"><code>FunctionT, R</code> Mapping and Transformation</h3><p>The <code>Function</code> interface represents a function that accepts one argument and returns a result:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-java">@FunctionalInterface
+public interface Function&lt;T, R&gt; {
+    R apply(T t);
+}</code></pre>
+</div><h4 id="example-transforming-strings-to-their-length">Example: Transforming Strings to Their Length</h4><div class="code-block"><button class="copy-button" onclick="copyCode(this)">📋</button>
+ <pre><code class="language-java">import java.util.function.Function;
+
+public class FunctionExample {
+    public static void main(String[] args) {
+        Function&lt;String, Integer&gt; stringLength = s -&gt; s.length();
+
+        System.out.println(stringLength.apply("Hello"));  // Output: 5
+    }
+}</code></pre>
+</div><p><code>Function</code> is widely used in mapping operations, such as transforming data from one type to another in <code>Stream.map()</code>.</p><h4 id="composition-with-andthen-and-compose">Composition with <code>andThen()</code> and <code>compose()</code></h4><p>You can chain <code>Function</code> instances to build pipelines:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-java">Function&lt;String, String&gt; trim = String::trim;
+Function&lt;String, Integer&gt; toLength = String::length;
+Function&lt;String, Integer&gt; trimThenLength = trim.andThen(toLength);
+
+System.out.println(trimThenLength.apply("  Java  ")); // Output: 4</code></pre>
+</div><p><code>compose()</code> performs the opposite order of <code>andThen()</code>.</p><h3 id="predicatet-testing-and-filtering"><code>PredicateT</code> Testing and Filtering</h3><p>The <code>Predicate</code> interface represents a boolean-valued function of one argument:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-java">@FunctionalInterface
+public interface Predicate&lt;T&gt; {
+    boolean test(T t);
+}</code></pre>
+</div><h4 id="example-filtering-even-numbers">Example: Filtering Even Numbers</h4><div class="code-block"><button class="copy-button" onclick="copyCode(this)">📋</button>
+ <pre><code class="language-java">import java.util.function.Predicate;
+import java.util.Arrays;
+import java.util.List;
+
+public class PredicateExample {
+    public static void main(String[] args) {
+        Predicate&lt;Integer&gt; isEven = n -&gt; n % 2 == 0;
+
+        List&lt;Integer&gt; numbers = Arrays.asList(1, 2, 3, 4, 5, 6);
+        numbers.stream()
+               .filter(isEven)
+               .forEach(System.out::println); // Output: 2 4 6
+    }
+}</code></pre>
+</div><h4 id="chaining-with-and-or-and-negate">Chaining with <code>and()</code>, <code>or()</code>, and <code>negate()</code></h4><p>Predicates can be composed for complex logic:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-java">Predicate&lt;String&gt; nonEmpty = s -&gt; !s.isEmpty();
+Predicate&lt;String&gt; startsWithA = s -&gt; s.startsWith("A");
+Predicate&lt;String&gt; complexCheck = nonEmpty.and(startsWithA);
+
+System.out.println(complexCheck.test("Apple"));  // true
+System.out.println(complexCheck.test(""));       // false</code></pre>
+</div><p>This makes <code>Predicate</code> especially useful for filtering collections.</p><h3 id="consumert-performing-actions"><code>ConsumerT</code> Performing Actions</h3><p>The <code>Consumer</code> interface represents an operation that accepts a single input and returns no result:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-java">@FunctionalInterface
+public interface Consumer&lt;T&gt; {
+    void accept(T t);
+}</code></pre>
+</div><p>It is typically used to perform actions such as printing or modifying objects.</p><h4 id="example-printing-elements">Example: Printing Elements</h4><div class="code-block"><button class="copy-button" onclick="copyCode(this)">📋</button>
+ <pre><code class="language-java">import java.util.function.Consumer;
+import java.util.Arrays;
+import java.util.List;
+
+public class ConsumerExample {
+    public static void main(String[] args) {
+        Consumer&lt;String&gt; printUpperCase = s -&gt; System.out.println(s.toUpperCase());
+
+        List&lt;String&gt; names = Arrays.asList("alice", "bob", "charlie");
+        names.forEach(printUpperCase);
+        // Output: ALICE BOB CHARLIE
+    }
+}</code></pre>
+</div><h4 id="chaining-with-andthen">Chaining with <code>andThen()</code></h4><p>Multiple actions can be chained using <code>andThen()</code>:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-java">Consumer&lt;String&gt; greet = s -&gt; System.out.print("Hello, ");
+Consumer&lt;String&gt; printName = s -&gt; System.out.println(s);
+Consumer&lt;String&gt; greetAndPrint = greet.andThen(printName);
+
+greetAndPrint.accept("Sam"); // Output: Hello, Sam</code></pre>
+</div><h3 id="composition-and-use-in-streams">Composition and Use in Streams</h3><p>These functional interfaces are often used together in streams to create readable and concise code pipelines:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">📋</button>
+ <pre><code class="language-java">import java.util.function.*;
+import java.util.*;
+
+public class StreamExample {
+    public static void main(String[] args) {
+        List&lt;String&gt; names = Arrays.asList("Alice", "", "Bob", "Anna");
+
+        Predicate&lt;String&gt; nonEmpty = s -&gt; !s.isEmpty();
+        Function&lt;String, Integer&gt; length = String::length;
+        Consumer&lt;Integer&gt; print = System.out::println;
+
+        names.stream()
+             .filter(nonEmpty)
+             .map(length)
+             .forEach(print);
+        // Output: 5 3 4
+    }
+}</code></pre>
+</div><p>This demonstrates the combined power of <code>Predicate</code>, <code>Function</code>, and <code>Consumer</code> in a processing pipeline.</p><h3 id="conclusion">Conclusion</h3><p><code>Function&lt;T, R&gt;</code>, <code>Predicate&lt;T&gt;</code>, and <code>Consumer&lt;T&gt;</code> are essential tools in Java's functional programming toolbox. They allow behavior to be abstracted, composed, and reused, leading to cleaner, more expressive, and modular code. By understanding how to apply and combine these interfaces, developers can write Java that’s both object-oriented and functionally fluent, enhancing code readability, flexibility, and testability across modern applications.</p><div class = "chapter-navi-section">
+<a href="#top" class="nav-button prev">↑</a>
+<a href='java-object-oriented-design.htm#lambda-expressions-and-functional-interfaces' class="nav-button toc-link">Index</a>
+<a href="#bottom" class="nav-button next">↓</a>
+</div>
+<h2 id='stream-api-and-composition'>18.4 Stream API and Composition</h2><h3 id="introduction-to-the-stream-api">Introduction to the Stream API</h3><p>Java’s Stream API, introduced in Java 8, revolutionized how developers process collections by providing a functional, declarative approach to data manipulation. Instead of writing verbose, imperative loops and conditional code, streams enable a pipeline-style syntax to describe <strong>what</strong> should be done, not <strong>how</strong> it is done.</p><p>Streams process sequences of elements (like collections, arrays, or I/O channels) and support <strong>functional-style operations</strong> such as filtering, mapping, and reduction. This leads to more readable, maintainable code and opens up possibilities for parallel execution and lazy evaluation.</p><h3 id="declarative-parallel-and-efficient-processing">Declarative, Parallel, and Efficient Processing</h3><h4 id="declarative-approach">Declarative Approach</h4><p>With streams, you express operations on collections declaratively. For example, rather than manually iterating through a list to filter and transform elements, you describe the pipeline of operations succinctly:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-java">List&lt;String&gt; names = List.of("Alice", "Bob", "Charlie", "David");
+
+List&lt;String&gt; filteredNames = names.stream()
+                                  .filter(name -&gt; name.startsWith("A"))
+                                  .map(String::toUpperCase)
+                                  .collect(Collectors.toList());
+
+System.out.println(filteredNames); // Output: [ALICE]</code></pre>
+</div><p>The code states <strong>what</strong> is done — filter names starting with “A” and convert them to uppercase — without specifying iteration mechanics.</p><h4 id="parallel-processing">Parallel Processing</h4><p>Streams make it simple to leverage multi-core processors by switching to parallel mode:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-java">List&lt;String&gt; largeList = /* large dataset */;
+long count = largeList.parallelStream()
+                      .filter(s -&gt; s.length() &gt; 5)
+                      .count();</code></pre>
+</div><p>This parallelizes operations internally, improving performance on large datasets without additional threading code.</p><h4 id="lazy-evaluation">Lazy Evaluation</h4><p>Stream operations are <strong>lazy</strong> — intermediate operations (like <code>filter</code> and <code>map</code>) are not executed until a terminal operation (like <code>collect</code> or <code>reduce</code>) is invoked. This enables optimizations such as short-circuiting and efficient chaining.</p><h3 id="core-stream-operations">Core Stream Operations</h3><p>The Stream API provides a rich set of operations classified as <strong>intermediate</strong> and <strong>terminal</strong>:</p><ul>
+ <li><strong>Intermediate operations</strong> return a new stream, allowing chaining (e.g., <code>filter</code>, <code>map</code>, <code>sorted</code>).</li>
+ <li><strong>Terminal operations</strong> produce a result or side effect and end the stream pipeline (e.g., <code>collect</code>, <code>forEach</code>, <code>reduce</code>).</li>
+</ul><h4 id="example-filtering-mapping-and-reducing">Example: Filtering, Mapping, and Reducing</h4><p>Let’s explore a pipeline that filters, transforms, and aggregates:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">📋</button>
+ <pre><code class="language-java">import java.util.Arrays;
+import java.util.List;
+
+public class StreamExample {
+    public static void main(String[] args) {
+        List&lt;Integer&gt; numbers = Arrays.asList(2, 3, 5, 8, 10, 12);
+
+        // Sum of squares of even numbers
+        int sum = numbers.stream()
+                         .filter(n -&gt; n % 2 == 0)      // Keep even numbers
+                         .map(n -&gt; n * n)              // Square each number
+                         .reduce(0, Integer::sum);     // Sum the squares
+
+        System.out.println("Sum of squares of even numbers: " + sum);
+        // Output: 4 + 64 + 100 + 144 = 312
+    }
+}</code></pre>
+</div><ul>
+ <li><strong><code>filter</code></strong>: selects elements based on a predicate.</li>
+ <li><strong><code>map</code></strong>: transforms elements via a function.</li>
+ <li><strong><code>reduce</code></strong>: aggregates elements into a single result.</li>
+</ul><p>This pipeline illustrates a clear, concise way to express data processing.</p><h3 id="composing-streams-with-lambdas-and-functional-interfaces">Composing Streams with Lambdas and Functional Interfaces</h3><p>Streams integrate seamlessly with lambda expressions and functional interfaces like <code>Predicate</code>, <code>Function</code>, and <code>Consumer</code>. This combination promotes a <strong>clean separation of concerns</strong> and <strong>reusability</strong>.</p><p>For example, you can extract predicates and functions as reusable components:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">📋</button>
+ <pre><code class="language-java">import java.util.function.Predicate;
+import java.util.function.Function;
+import java.util.List;
+import java.util.stream.Collectors;
+
+public class StreamComposition {
+    public static void main(String[] args) {
+        List&lt;String&gt; fruits = List.of("apple", "banana", "pear", "avocado", "blueberry");
+
+        Predicate&lt;String&gt; startsWithA = s -&gt; s.startsWith("a");
+        Function&lt;String, String&gt; capitalize = s -&gt; s.substring(0, 1).toUpperCase() + s.substring(1);
+
+        List&lt;String&gt; result = fruits.stream()
+                                    .filter(startsWithA)
+                                    .map(capitalize)
+                                    .collect(Collectors.toList());
+
+        System.out.println(result); // Output: [Apple, Avocado]
+    }
+}</code></pre>
+</div><p>By composing streams with well-defined functional interfaces, you keep each operation modular, readable, and testable.</p><h3 id="advanced-composition-chaining-and-lazy-evaluation">Advanced Composition: Chaining and Lazy Evaluation</h3><p>You can chain multiple operations for complex pipelines without clutter:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-java">numbers.stream()
+       .filter(n -&gt; n &gt; 5)
+       .map(n -&gt; n * 3)
+       .sorted()
+       .forEach(System.out::println);</code></pre>
+</div><p>Each intermediate operation produces a new stream, enabling flexible combinations.</p><p>Since streams are lazy, no computation happens until a terminal operation (like <code>forEach</code>) triggers execution. This means you can compose intricate pipelines without performance penalties.</p><h3 id="benefits-for-clean-design">Benefits for Clean Design</h3><ul>
+ <li><strong>Readability</strong>: Declarative pipelines closely match business logic and domain language.</li>
+ <li><strong>Maintainability</strong>: Modular, composable lambdas and streams simplify understanding and modifications.</li>
+ <li><strong>Reusability</strong>: Functional interfaces extracted from stream operations can be reused and tested independently.</li>
+ <li><strong>Parallelism</strong>: Easy switch to parallel streams improves scalability.</li>
+ <li><strong>Reduced Boilerplate</strong>: No explicit loops or temporary collections needed.</li>
+</ul><h3 id="summary">Summary</h3><p>The Stream API in Java provides a powerful, expressive way to process data collections by combining functional interfaces, lambda expressions, and declarative pipelines. Its support for lazy and parallel evaluation enhances performance and scalability while maintaining clean, readable code.</p><p>By mastering stream composition and common operations like <code>filter</code>, <code>map</code>, and <code>reduce</code>, Java developers can write concise, maintainable, and efficient code that aligns perfectly with modern object-oriented and functional programming principles.</p><div class = "chapter-navi-section">
+<a href="java-object-oriented-design-enums-records-and-sealed-classes.htm" class="nav-button prev">←</a>
+<a href='java-object-oriented-design.htm#lambda-expressions-and-functional-interfaces' class="nav-button toc-link">Index</a>
+<a href="java-object-oriented-design-case-study-1-designing-a-library-system.htm" class="nav-button next">→</a>
+</div>
+<section class="download-section">
+  <div class="book-cover" style="background-image: url('data:image/jpg;base64,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');">
+<div class="series-name">Introduction</div>
+<div class="book-title">Java Object-Oriented Design</div>
+<div class="book-subtitle">Principles, Patterns, and Practices</div>
+<div class="book-footer">readbytes.github.io</div>
+</div>
+  <div class="download-info">
+    <h2 id='bottom'>Download This Ebook</h2>
+    <p class="format-label">Available formats:</p>
+    <div class="download-buttons">
+      <a href="java-object-oriented-design.pdf" class="download-button">📄 PDF</a>
+      <a href="java-object-oriented-design.epub" class="download-button">📘 EPUB</a>
+    </div>
+  </div>
+</section><div class='related-books'>
+<h2>Java Introduction Books</h2>
+<div class='related-book-list'>
+<a href="java-for-beginners.htm"><div class="book-cover" style="background-image: url('data:image/jpg;base64,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');">
+<div class="series-name">Introduction</div>
+<div class="book-title">Java for Beginners</div>
+<div class="book-subtitle">Learn to Code from Scratch</div>
+<div class="book-footer">readbytes.github.io</div>
+</div></a>
+
+
+<a href="java-syntax.htm"><div class="book-cover" style="background-image: url('data:image/jpg;base64,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');">
+<div class="series-name">Introduction</div>
+<div class="book-title">Java Syntax</div>
+<div class="book-subtitle">From Beginner to Expert</div>
+<div class="book-footer">readbytes.github.io</div>
+</div></a>
+
+
+<a href="java-date-and-time.htm"><div class="book-cover" style="background-image: url('data:image/jpg;base64,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');">
+<div class="series-name">Introduction</div>
+<div class="book-title">Java Date and Time</div>
+<div class="book-subtitle">A Systematic Approach</div>
+<div class="book-footer">readbytes.github.io</div>
+</div></a>
+
+
+<a href="java-object-oriented-design.htm"><div class="book-cover" style="background-image: url('data:image/jpg;base64,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');">
+<div class="series-name">Introduction</div>
+<div class="book-title">Java Object-Oriented Design</div>
+<div class="book-subtitle">Principles, Patterns, and Practices</div>
+<div class="book-footer">readbytes.github.io</div>
+</div></a>
+
+
+
+<a href='java.htm'><div class='book-cover'>More Java Books</div></a>
+</div>
+</div>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+  
+  <script>
+    function copyCode(button) {
+      const code = button.nextElementSibling.innerText;
+      navigator.clipboard.writeText(code).then(() => {
+        button.textContent = 'Copied!';
+        setTimeout(() => { button.textContent = 'Copy'; }, 1500);
+      });
+    }
+  </script>  
+
+<footer class="page-footer">
+    <nav>
+      <a href="https://readbytes.github.io">Home</a> | 
+      Email:<script language="JavaScript" type="text/javascript">
+var part1 = 'yinpeng';var part6 = '263';var part2 = Math.pow(2,6);var part3 = String.fromCharCode(part2);var part4 = 'hotmail dot com';var part5 = part1 + String.fromCharCode(part2) + part4;document.write(part1 + part6 + part3 + part4);
+</script>
+    </nav>
+  <p>© 2025 — All rights reserved.</p>    
+  </footer>
+
+</body>
+</html>

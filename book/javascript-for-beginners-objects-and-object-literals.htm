@@ -1,0 +1,1168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>JavaScript for Beginners Objects and Object Literals</title>
+<link rel='shortcut icon' href='https://java2s.com/style/favicon.ico'>
+<link href="https://fonts.googleapis.com/css2?family=Merriweather&display=swap" rel="stylesheet" />
+<link href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.css" />
+<script src="https://cdn.jsdelivr.net/npm/typescript@5/lib/typescript.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/htmlmixed/htmlmixed.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/xml/xml.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/css/css.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/javascript/javascript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/javascript/typescript.min.js"></script>
+<script>
+  const codeMirrorMap = new Map();
+  function renderIframe(textarea_id, iframe_id) {
+      const html = codeMirrorMap.get(textarea_id).getValue();
+      const iframe = document.getElementById(iframe_id);
+      iframe.style.display = "block";
+      iframe.srcdoc = html;  
+  }
+  function renderIframeForClientTypescript(textarea_id, iframe_id) {
+      let code = codeMirrorMap.get(textarea_id).getValue();
+      code = ts.transpile(code);
+      const iframe = document.getElementById(iframe_id);
+      const doc = iframe.contentDocument || iframe.contentWindow.document;
+
+const html = `
+  <!DOCTYPE html>
+  <html>
+    <head>
+      <title>Output</title>
+      <style>
+        body { font-family: monospace; padding: 1em; background: #f4f4f4; color: #222; }
+        pre { white-space: pre-wrap; word-break: break-word; }
+        .error { color: red; }
+      </style>
+    </head>
+    <body>
+      <pre id="log"></pre>
+      <script>
+        (function(){
+          const logEl = document.getElementById('log');
+          const origLog = console.log;
+          const origError = console.error;
+
+          console.log = (...args) => {
+            logEl.textContent += args.join(' ') + '\\n';
+            origLog.apply(console, args);
+          };
+          console.table = (...args) => {
+            logEl.textContent += args.join(' ') + '\\n';
+            origLog.apply(console, args);
+          };
+
+          console.error = (...args) => {
+            logEl.innerHTML +='<span class="error">' + args.join(' ') + '</span>';
+            origError.apply(console, args);
+          };
+          window.addEventListener("error", function (event) {
+              console.error("Caught by event listener:", event.message);
+          });    
+          try {             
+              ${code};
+          } catch (err) {
+            console.error(err.stack || err.message);
+          }
+        })();
+      <\/script>
+    </body>
+  </html>
+`;
+      iframe.style.display = "block";
+      iframe.srcdoc = html;  
+  }
+
+    function renderIframeForClientJavascript(textarea_id, iframe_id) {
+        const code = codeMirrorMap.get(textarea_id).getValue();
+        const iframe = document.getElementById(iframe_id);
+        const doc = iframe.contentDocument || iframe.contentWindow.document;
+
+  const html = `
+    <!DOCTYPE html>
+    <html>
+      <head>
+        <title>Output</title>
+        <style>
+          body { font-family: monospace; padding: 1em; background: #f4f4f4; color: #222; }
+          pre { white-space: pre-wrap; word-break: break-word; }
+          .error { color: red; }
+        </style>
+      </head>
+      <body>
+        <pre id="log"></pre>
+        <script>
+          (function(){
+            const logEl = document.getElementById('log');
+            const origLog = console.log;
+            const origError = console.error;
+
+            console.log = (...args) => {
+              logEl.textContent += args.join(' ') + '\\n';
+              origLog.apply(console, args);
+            };
+            console.table = (...args) => {
+              logEl.textContent += args.join(' ') + '\\n';
+              origLog.apply(console, args);
+            };
+
+            console.error = (...args) => {
+              logEl.innerHTML +='<span class="error">' + args.join(' ') + '</span>';
+              origError.apply(console, args);
+            };
+            window.addEventListener("error", function (event) {
+                console.error("Caught by event listener:", event.message);
+            });    
+            try {
+             ${code}; 
+            } catch (err) {
+              console.error(err.stack || err.message);
+            }
+          })();
+        <\/script>
+      </body>
+    </html>
+  `;
+    
+        iframe.style.display = "block";
+        iframe.srcdoc = html;  
+    }
+
+    function toggleSnippetAndRefresh(id, textarea_id) {
+      const box = document.getElementById(id);
+      box.classList.toggle("open");
+      codeMirrorMap.get(textarea_id).refresh();
+    }
+
+  </script>
+<style>
+body {
+  background: #f8f7f5;
+  font-family: 'Merriweather', serif;
+  color: #333;
+  margin: 0;
+  padding: 2rem 1rem;
+  font-size: 15px; /* smaller body font */
+  line-height: 1.5;
+}
+
+.container {
+  max-width: 700px;
+  margin: 0 auto;
+  background: white;
+  padding: 1rem 2rem;
+  box-shadow: 0 0 15px rgba(0,0,0,0.1);
+}
+.book-title-chapter {
+  font-family: 'Merriweather', serif;
+  font-size: 2rem;
+  font-weight: bold;
+  text-align: center;
+  margin-bottom: 2rem;
+  border-bottom: 2px solid #ccc;
+  padding-bottom: 0.5rem;
+  color: #2c3e50;
+}
+
+.book-subtitle-chapter {
+  text-align: center;
+  font-size: 1rem;
+  color: #666;
+  margin-top: -1rem;
+  margin-bottom: 2rem;
+}
+
+    .related-books {
+      margin-top: 40px;
+    }
+
+    .related-books h2 {
+      font-size: 22px;
+      margin-bottom: 20px;
+      border-bottom: 2px solid #eee;
+      padding-bottom: 8px;
+      color: #333;
+    }
+    .related-book-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+h1, h2, h3 {
+  font-weight: 600;
+  margin-top: 2.5rem;
+  margin-bottom: 1rem;
+  line-height: 1.2;
+}
+
+h1 {
+  font-size: 1.8rem; /* smaller heading */
+}
+
+h2 {
+  font-size: 1.4rem;
+}
+
+h3 {
+  font-size: 1.2rem;
+}
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-family: sans-serif;
+      font-size: 1em;
+      margin: 1em 0;
+    }
+
+    th, td {
+      border: 1px solid #cccccc;
+      padding: 0.6em 1em;
+      text-align: left;
+    }
+
+    th {
+      background-color: #f2f2f2;
+      font-weight: bold;
+    }
+
+    tr:nth-child(even) {
+      background-color: #fafafa;
+    }
+
+    /* Optional hover effect */
+    tr:hover {
+      background-color: #e6f7ff;
+    }
+ 
+a {
+  color: #555;
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+
+
+.code-block {
+    position: relative;
+    margin-bottom: 1em;
+}
+.copy-button {
+    background: transparent; 
+    color: white;
+
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    border: none;
+    padding: 4px 8px;
+    font-size: 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    z-index: 1;
+}
+
+.copy-button:hover {
+background-color: #0056b3;
+}
+.page-footer {
+  margin-top: 4rem;
+  padding: 1rem 0;
+  text-align: center;
+  font-size: 0.85rem;
+  color: #666;
+  border-top: 1px solid #ccc;
+  background-color: #fafafa;
+}
+.page-footer a {
+     color: #555;
+    text-decoration: none;
+  }
+  .page-footer a:hover {
+    text-decoration: underline;
+  }
+.chapter-navi-section {
+display: flex;
+justify-content: space-between;
+align-items: center;
+padding-bottom: 10px;
+}  
+
+.nav-link {
+  color: inherit;
+  text-decoration: none;
+  opacity: 0.5;
+  transition: opacity 0.3s ease, text-decoration 0.3s ease;
+}
+
+.nav-link:hover {
+  opacity: 0.9;
+  text-decoration: underline;
+}
+
+.prev {
+  text-align: left;
+}
+.toc-link {
+  text-align: center;
+}
+.next {
+  text-align: right;
+}
+.download-section {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2rem;
+  padding: 2rem 1rem;
+  max-width: 600px;
+  margin: 3rem auto;
+  background-color: #f9f9f9;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+}
+
+    .book-cover {
+      width: 130px;
+      height: 180px;
+      
+      background-size: cover; /* Ensures the image covers the entire div */
+      background-position: center; /* Centers the image */
+            
+      background: linear-gradient(145deg, #e0dede, #f9f9f9);
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 10px;
+      box-sizing: border-box;
+      position: relative;
+      font-family: 'Roboto', sans-serif;
+    }
+
+    .book-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 16px;
+      font-weight: 600;
+      color: #fff;
+      margin-bottom: 4px;
+    }
+
+    .book-subtitle {
+      font-size: 12px;
+      color: #aaa;
+      margin-bottom: 10px;
+    }
+
+    .series-name {
+      position: absolute;
+      top: 8px;
+      left: 8px;
+      font-size: 10px;
+      color: #fff;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-weight: bold;
+    }
+
+    .book-footer {
+      position: absolute;
+      bottom: 8px;
+      font-size: 10px;
+      color: #aaa;
+    }
+
+.download-info h2 {
+  margin: 0 0 0.5rem;
+  font-size: 1.2rem;
+}
+
+.format-label {
+  margin: 0 0 0.5rem;
+  font-size: 0.95rem;
+  color: #555;
+}
+
+.download-buttons {
+  display: flex;
+  gap: 1rem;
+}
+
+.download-button {
+  background-color: #4A90E2;
+  color: white;
+  padding: 0.5em 1.2em;
+  text-decoration: none;
+  border-radius: 25px;
+  font-size: 0.95rem;
+  transition: background-color 0.3s ease;
+}
+
+.download-button:hover {
+  background-color: #357ABD;
+}
+
+    code {
+ 
+      color: #d35400; 
+    }
+html {
+    scroll-behavior: smooth;
+}
+    .snippet-container {
+      overflow: hidden;    
+    }
+
+    .snippet-header {
+      background: #f0f0f0;
+      color: #333;
+      padding: 0.75rem 1rem;
+      cursor: pointer;
+      font-size: 1rem;
+    }
+
+    .snippet-body {
+      display: none;
+      font-family: monospace;
+    }
+
+    .snippet-container.open .snippet-body {
+      display: block;
+    }
+
+.CodeMirror {
+  border: 2px solid #ccc;
+  border-radius: 4px;
+  resize: vertical;
+}
+
+    button { padding: 0.5em 1em; background: green; color: white; border: none; cursor: pointer; }
+    button:hover { background: #1e7e34; }
+    .result_iframe { width:99%; height:200px; margin-top: 1em;  resize: both;border:1px solid #ccc;}        
+</style>
+</head>
+<body> 
+
+  <div class="container">
+    <div class = "chapter-navi-section">
+<a href="javascript-for-beginners-arrays-and-array-methods.htm" class="nav-button prev">←</a>
+<a href='javascript-for-beginners.htm#objects-and-object-literals' class="nav-button toc-link">Index</a>
+<a href="javascript-for-beginners-functions-and-scope.htm" class="nav-button next">→</a>
+</div>
+
+    <h1 class="book-title-chapter" id = 'top'>Objects and Object Literals</h1>
+    <h3 class="book-subtitle-chapter">JavaScript for Beginners</h3>   
+    <!-- <h1 class ="chapter-title"></h1> -->
+    <h2 id='creating-objects'>8.1 Creating Objects</h2><p>In JavaScript, <strong>objects</strong> are one of the most powerful and flexible data structures. They allow you to group related data and behavior together using a <strong>key-value</strong> format.</p><p>Where arrays are ideal for <strong>ordered lists</strong> of items (like a list of names or scores), objects are best used when you want to represent <strong>structured data</strong> — like a person, a car, or a product — where each piece of data is identified by a descriptive name (a key).</p><h3 id="what-is-an-object">What Is an Object?</h3><p>An object is a <strong>collection of properties</strong>, where each property has a <strong>key (or property name)</strong> and a <strong>value</strong>. These keys are always strings (or symbols), and values can be <strong>any type of data</strong>, including strings, numbers, arrays, other objects, or functions.</p><h3 id="creating-objects-with-object-literals-preferred">Creating Objects with Object Literals (Preferred)</h3><p>The most common and readable way to create an object is by using <strong>object literal syntax</strong> — simply wrap the key-value pairs inside curly braces <code>{}</code>.</p><p><strong>Example – Creating a Person Object:</strong></p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-js">let person = {
+  name: 'Alice',
+  age: 30,
+  isStudent: false
+};</code></pre>
+</div><p>Here:</p><ul>
+ <li><code>name</code>, <code>age</code>, and <code>isStudent</code> are <strong>keys (or property names)</strong></li>
+ <li><code>'Alice'</code>, <code>30</code>, and <code>false</code> are the corresponding <strong>values</strong></li>
+</ul><p>You can also create an empty object and add properties later:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-js">let book = {};
+book.title = 'JavaScript Basics';
+book.pages = 250;</code></pre>
+</div><h3 id="creating-objects-with-new-object-constructor">Creating Objects with <code>new Object()</code> Constructor</h3><p>JavaScript also allows you to create objects using the <code>new Object()</code> constructor. This approach is more verbose and rarely used today in favor of object literals.</p><p><strong>Example – Using Constructor:</strong></p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-js">let car = new Object();
+car.make = 'Toyota';
+car.model = 'Camry';
+car.year = 2022;</code></pre>
+</div><p>This produces the same result as:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-js">let car = {
+  make: 'Toyota',
+  model: 'Camry',
+  year: 2022
+};</code></pre>
+</div><h3 id="when-to-use-objects-vs-arrays">When to Use Objects vs. Arrays</h3><table>
+ <thead>
+  <tr>
+   <th>Use Case</th>
+   <th>Choose...</th>
+   <th>Example</th>
+  </tr>
+ </thead>
+ <tbody>
+  <tr>
+   <td>Ordered list of values</td>
+   <td><strong>Array</strong></td>
+   <td><code>['apple', 'banana', 'cherry']</code></td>
+  </tr>
+  <tr>
+   <td>Named pieces of related data</td>
+   <td><strong>Object</strong></td>
+   <td><code>{ name: 'Alice', age: 30 }</code></td>
+  </tr>
+  <tr>
+   <td>Need to access items by position</td>
+   <td><strong>Array</strong></td>
+   <td><code>colors[0]</code></td>
+  </tr>
+  <tr>
+   <td>Need to access items by name</td>
+   <td><strong>Object</strong></td>
+   <td><code>person.name</code></td>
+  </tr>
+ </tbody>
+</table><p>Objects shine when you want to <strong>group and label data</strong>, especially when that data describes attributes or characteristics of a thing.</p><h3 id="summary">Summary</h3><ul>
+ <li><strong>Objects</strong> store data as <strong>key-value pairs</strong>.</li>
+ <li>The <strong>object literal syntax</strong> (<code>{}</code>) is the most common and readable way to create objects.</li>
+ <li>The <strong><code>new Object()</code></strong> method is less common and usually avoided in modern code.</li>
+ <li>Use <strong>objects</strong> when your data is structured and best represented by named properties.</li>
+</ul><p>As you continue building JavaScript programs, you’ll use objects frequently to represent real-world entities and store flexible, descriptive data.</p><div class = "chapter-navi-section">
+<a href="#top" class="nav-button prev">↑</a>
+<a href='javascript-for-beginners.htm#objects-and-object-literals' class="nav-button toc-link">Index</a>
+<a href="#bottom" class="nav-button next">↓</a>
+</div>
+<h2 id='accessing-and-updating-properties'>8.2 Accessing and Updating Properties</h2><p>Once you've created an object, you'll often need to <strong>read</strong>, <strong>update</strong>, <strong>add</strong>, or even <strong>delete</strong> its properties. JavaScript provides two main ways to access and modify object properties: <strong>dot notation</strong> and <strong>bracket notation</strong>.</p><h3 id="accessing-properties">Accessing Properties</h3><h4 id="dot-notation-recommended-for-known-property-names">Dot Notation (Recommended for Known Property Names)</h4><p><strong>Syntax:</strong></p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-js">object.propertyName</code></pre>
+</div><p><strong>Example:</strong></p><div>
+ <div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+  <pre><code class="language-js">let person = {
+  name: 'Alice',
+  age: 30
+};
+
+console.log(person.name); // 'Alice'
+console.log(person.age);  // 30</code></pre>
+ </div>
+ <div class="snippet-container" id="EfiOO">
+  <div class="snippet-header" onclick="toggleSnippetAndRefresh('EfiOO','AL1Pp')">
+   Try it in editor
+  </div>
+  <div class="snippet-body"><textarea id="AL1Pp">let person = {
+  name: 'Alice',
+  age: 30
+};
+
+console.log(person.name); // 'Alice'
+console.log(person.age);  // 30</textarea> <br> <button onclick="renderIframeForClientJavascript('AL1Pp','Tu1ug')">Run</button> <iframe id="Tu1ug" class="result_iframe" style="display: none;"></iframe>
+   <script>
+  {let editor1 = CodeMirror.fromTextArea(document.getElementById("AL1Pp"), {
+    mode: "javascript",
+    lineNumbers:false,
+    tabSize: 2
+  });
+   codeMirrorMap.set("AL1Pp", editor1);}
+  </script>
+  </div>
+ </div>
+</div><p>Dot notation is simple and readable, but it only works when:</p><ul>
+ <li>The property name is a valid identifier (no spaces or special characters)</li>
+ <li>You know the property name ahead of time</li>
+</ul><h4 id="bracket-notation-for-dynamic-or-unusual-keys">Bracket Notation (For Dynamic or Unusual Keys)</h4><p><strong>Syntax:</strong></p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-js">object['propertyName']</code></pre>
+</div><p><strong>Example with space in key:</strong></p><div>
+ <div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+  <pre><code class="language-js">let book = {
+  title: 'JavaScript Guide',
+  'page count': 300
+};
+
+console.log(book['page count']); // 300</code></pre>
+ </div>
+ <div class="snippet-container" id="FMWoW">
+  <div class="snippet-header" onclick="toggleSnippetAndRefresh('FMWoW','GLB4M')">
+   Try it in editor
+  </div>
+  <div class="snippet-body"><textarea id="GLB4M">let book = {
+  title: 'JavaScript Guide',
+  'page count': 300
+};
+
+console.log(book['page count']); // 300</textarea> <br> <button onclick="renderIframeForClientJavascript('GLB4M','gPz43')">Run</button> <iframe id="gPz43" class="result_iframe" style="display: none;"></iframe>
+   <script>
+  {let editor1 = CodeMirror.fromTextArea(document.getElementById("GLB4M"), {
+    mode: "javascript",
+    lineNumbers:false,
+    tabSize: 2
+  });
+   codeMirrorMap.set("GLB4M", editor1);}
+  </script>
+  </div>
+ </div>
+</div><p><strong>Example with a dynamic key:</strong></p><div>
+ <div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+  <pre><code class="language-js">let key = 'name';
+let person = { name: 'Bob' };
+
+console.log(person[key]); // 'Bob'</code></pre>
+ </div>
+ <div class="snippet-container" id="hxENt">
+  <div class="snippet-header" onclick="toggleSnippetAndRefresh('hxENt','4L1Gb')">
+   Try it in editor
+  </div>
+  <div class="snippet-body"><textarea id="4L1Gb">let key = 'name';
+let person = { name: 'Bob' };
+
+console.log(person[key]); // 'Bob'</textarea> <br> <button onclick="renderIframeForClientJavascript('4L1Gb','uZT84')">Run</button> <iframe id="uZT84" class="result_iframe" style="display: none;"></iframe>
+   <script>
+  {let editor1 = CodeMirror.fromTextArea(document.getElementById("4L1Gb"), {
+    mode: "javascript",
+    lineNumbers:false,
+    tabSize: 2
+  });
+   codeMirrorMap.set("4L1Gb", editor1);}
+  </script>
+  </div>
+ </div>
+</div><blockquote>
+ <p>💡 Use bracket notation when the property name is stored in a variable or contains spaces/special characters.</p>
+</blockquote><h3 id="updating-properties">Updating Properties</h3><p>You can change the value of an existing property using either dot or bracket notation.</p><p><strong>Example – Updating a Property:</strong></p><div>
+ <div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+  <pre><code class="language-js">let car = {
+  make: 'Toyota',
+  year: 2020
+};
+
+car.year = 2023;
+car['make'] = 'Honda';
+
+console.log(JSON.stringify(car,null,2)); // { make: 'Honda', year: 2023 }</code></pre>
+ </div>
+ <div class="snippet-container" id="Uc9Z6">
+  <div class="snippet-header" onclick="toggleSnippetAndRefresh('Uc9Z6','Y1x1N')">
+   Try it in editor
+  </div>
+  <div class="snippet-body"><textarea id="Y1x1N">let car = {
+  make: 'Toyota',
+  year: 2020
+};
+
+car.year = 2023;
+car['make'] = 'Honda';
+
+console.log(JSON.stringify(car,null,2)); // { make: 'Honda', year: 2023 }</textarea> <br> <button onclick="renderIframeForClientJavascript('Y1x1N','6Mpta')">Run</button> <iframe id="6Mpta" class="result_iframe" style="display: none;"></iframe>
+   <script>
+  {let editor1 = CodeMirror.fromTextArea(document.getElementById("Y1x1N"), {
+    mode: "javascript",
+    lineNumbers:false,
+    tabSize: 2
+  });
+   codeMirrorMap.set("Y1x1N", editor1);}
+  </script>
+  </div>
+ </div>
+</div><h3 id="adding-new-properties">Adding New Properties</h3><p>If the property doesn’t exist, assigning a value will <strong>create</strong> it:</p><div>
+ <div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+  <pre><code class="language-js">let user = { username: 'jsLearner' };
+
+user.age = 25;
+user['email'] = 'user@example.com';
+
+console.log(JSON.stringify(user,null,2));
+// { username: 'jsLearner', age: 25, email: 'user@example.com' }</code></pre>
+ </div>
+ <div class="snippet-container" id="wpkpW">
+  <div class="snippet-header" onclick="toggleSnippetAndRefresh('wpkpW','Qg8eK')">
+   Try it in editor
+  </div>
+  <div class="snippet-body"><textarea id="Qg8eK">let user = { username: 'jsLearner' };
+
+user.age = 25;
+user['email'] = 'user@example.com';
+
+console.log(JSON.stringify(user,null,2));
+// { username: 'jsLearner', age: 25, email: 'user@example.com' }</textarea> <br> <button onclick="renderIframeForClientJavascript('Qg8eK','T3xFX')">Run</button> <iframe id="T3xFX" class="result_iframe" style="display: none;"></iframe>
+   <script>
+  {let editor1 = CodeMirror.fromTextArea(document.getElementById("Qg8eK"), {
+    mode: "javascript",
+    lineNumbers:false,
+    tabSize: 2
+  });
+   codeMirrorMap.set("Qg8eK", editor1);}
+  </script>
+  </div>
+ </div>
+</div><h3 id="deleting-properties">Deleting Properties</h3><p>You can remove a property using the <code>delete</code> operator:</p><div>
+ <div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+  <pre><code class="language-js">let profile = {
+  name: 'Charlie',
+  location: 'Canada'
+};
+
+delete profile.location;
+
+console.log(JSON.stringify(profile,null,2)); // { name: 'Charlie' }</code></pre>
+ </div>
+ <div class="snippet-container" id="F69so">
+  <div class="snippet-header" onclick="toggleSnippetAndRefresh('F69so','iicQ7')">
+   Try it in editor
+  </div>
+  <div class="snippet-body"><textarea id="iicQ7">let profile = {
+  name: 'Charlie',
+  location: 'Canada'
+};
+
+delete profile.location;
+
+console.log(JSON.stringify(profile,null,2)); // { name: 'Charlie' }</textarea> <br> <button onclick="renderIframeForClientJavascript('iicQ7','yDk9m')">Run</button> <iframe id="yDk9m" class="result_iframe" style="display: none;"></iframe>
+   <script>
+  {let editor1 = CodeMirror.fromTextArea(document.getElementById("iicQ7"), {
+    mode: "javascript",
+    lineNumbers:false,
+    tabSize: 2
+  });
+   codeMirrorMap.set("iicQ7", editor1);}
+  </script>
+  </div>
+ </div>
+</div><blockquote>
+ <p>⚠️ Note: <code>delete</code> only removes the property from the object; it doesn't affect the prototype.</p>
+</blockquote><h3 id="summary">Summary</h3><table>
+ <thead>
+  <tr>
+   <th>Task</th>
+   <th>Preferred Notation</th>
+   <th>Example</th>
+  </tr>
+ </thead>
+ <tbody>
+  <tr>
+   <td>Read known property</td>
+   <td>Dot notation</td>
+   <td><code>obj.name</code></td>
+  </tr>
+  <tr>
+   <td>Read dynamic/odd key</td>
+   <td>Bracket notation</td>
+   <td><code>obj['full name']</code> or <code>obj[key]</code></td>
+  </tr>
+  <tr>
+   <td>Update property</td>
+   <td>Dot or bracket</td>
+   <td><code>obj.age = 30</code></td>
+  </tr>
+  <tr>
+   <td>Add new property</td>
+   <td>Dot or bracket</td>
+   <td><code>obj.city = 'Paris'</code></td>
+  </tr>
+  <tr>
+   <td>Delete property</td>
+   <td><code>delete</code> operator</td>
+   <td><code>delete obj.city</code></td>
+  </tr>
+ </tbody>
+</table><p>Understanding how to access and update properties is fundamental when working with objects. These skills allow you to build and manipulate data structures that represent real-world entities and change over time.</p><div class = "chapter-navi-section">
+<a href="#top" class="nav-button prev">↑</a>
+<a href='javascript-for-beginners.htm#objects-and-object-literals' class="nav-button toc-link">Index</a>
+<a href="#bottom" class="nav-button next">↓</a>
+</div>
+<h2 id='nesting-objects'>8.3 Nesting Objects</h2><p>In JavaScript, objects can contain other <strong>objects</strong> or <strong>arrays</strong> as property values. This is called <strong>nesting</strong>, and it's a powerful way to model <strong>complex, structured data</strong> — like user profiles, product catalogs, or app settings.</p><p>Nested objects help you organize related data in a way that mirrors real-world relationships.</p><h3 id="example-a-user-profile-object">Example: A User Profile Object</h3><p>Let’s say we want to model a user with personal info, an address, and preferences. We can nest objects to represent each section:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-js">let user = {
+  name: 'Emily',
+  age: 28,
+  address: {
+    street: '123 Main St',
+    city: 'New York',
+    zip: '10001'
+  },
+  preferences: {
+    theme: 'dark',
+    notifications: true
+  }
+};</code></pre>
+</div><p>Here:</p><ul>
+ <li><code>address</code> and <code>preferences</code> are objects <strong>inside</strong> the main <code>user</code> object.</li>
+ <li>Each nested object has its own set of key-value pairs.</li>
+</ul><h3 id="accessing-nested-properties">Accessing Nested Properties</h3><p>You can use <strong>dot notation</strong> or <strong>bracket notation</strong> to reach properties inside nested objects.</p><p><strong>Examples:</strong></p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-js">console.log(user.address.city);          // 'New York'
+console.log(user.preferences.theme);     // 'dark'</code></pre>
+</div><p>If a key has spaces or is stored in a variable, use bracket notation:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-js">console.log(user['address']['zip']);     // '10001'</code></pre>
+</div><h3 id="updating-nested-properties">Updating Nested Properties</h3><p>You can assign new values to nested properties just like top-level ones:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-js">user.address.city = 'Los Angeles';
+user.preferences.theme = 'light';
+
+console.log(user.address.city);          // 'Los Angeles'
+console.log(user.preferences.theme);     // 'light'</code></pre>
+</div><h3 id="adding-properties-to-nested-objects">Adding Properties to Nested Objects</h3><p>You can also add new properties at any level:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-js">user.address.country = 'USA';
+user.preferences.language = 'English';
+
+console.log(user.address.country);       // 'USA'
+console.log(user.preferences.language);  // 'English'</code></pre>
+</div><h3 id="nested-arrays-in-objects">Nested Arrays in Objects</h3><p>It’s also common to store arrays inside objects:</p><div>
+ <div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+  <pre><code class="language-js">let product = {
+  name: 'Laptop',
+  price: 999,
+  features: ['touchscreen', 'backlit keyboard', 'USB-C']
+};
+
+console.log(product.features[1]); // 'backlit keyboard'</code></pre>
+ </div>
+ <div class="snippet-container" id="O1aUg">
+  <div class="snippet-header" onclick="toggleSnippetAndRefresh('O1aUg','HPI4J')">
+   Try it in editor
+  </div>
+  <div class="snippet-body"><textarea id="HPI4J">let product = {
+  name: 'Laptop',
+  price: 999,
+  features: ['touchscreen', 'backlit keyboard', 'USB-C']
+};
+
+console.log(product.features[1]); // 'backlit keyboard'</textarea> <br> <button onclick="renderIframeForClientJavascript('HPI4J','ZIWzR')">Run</button> <iframe id="ZIWzR" class="result_iframe" style="display: none;"></iframe>
+   <script>
+  {let editor1 = CodeMirror.fromTextArea(document.getElementById("HPI4J"), {
+    mode: "javascript",
+    lineNumbers:false,
+    tabSize: 2
+  });
+   codeMirrorMap.set("HPI4J", editor1);}
+  </script>
+  </div>
+ </div>
+</div><p>Or even objects <strong>inside arrays</strong>:</p><div>
+ <div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+  <pre><code class="language-js">let order = {
+  id: 1234,
+  items: [
+    { name: 'Phone', quantity: 1 },
+    { name: 'Charger', quantity: 2 }
+  ]
+};
+
+console.log(order.items[1].name); // 'Charger'</code></pre>
+ </div>
+ <div class="snippet-container" id="rKwrx">
+  <div class="snippet-header" onclick="toggleSnippetAndRefresh('rKwrx','KGuJ4')">
+   Try it in editor
+  </div>
+  <div class="snippet-body"><textarea id="KGuJ4">let order = {
+  id: 1234,
+  items: [
+    { name: 'Phone', quantity: 1 },
+    { name: 'Charger', quantity: 2 }
+  ]
+};
+
+console.log(order.items[1].name); // 'Charger'</textarea> <br> <button onclick="renderIframeForClientJavascript('KGuJ4','6l6XJ')">Run</button> <iframe id="6l6XJ" class="result_iframe" style="display: none;"></iframe>
+   <script>
+  {let editor1 = CodeMirror.fromTextArea(document.getElementById("KGuJ4"), {
+    mode: "javascript",
+    lineNumbers:false,
+    tabSize: 2
+  });
+   codeMirrorMap.set("KGuJ4", editor1);}
+  </script>
+  </div>
+ </div>
+</div><h3 id="summary">Summary</h3><ul>
+ <li>Objects can contain <strong>other objects or arrays</strong> to model real-world structures.</li>
+ <li>Use <strong>dot or bracket notation</strong> to access and update deeply nested properties.</li>
+ <li>Nesting improves organization and scalability for complex data.</li>
+</ul><p>By mastering nested structures, you’ll be able to represent rich data models and work confidently with modern APIs, user data, or configuration objects in your applications.</p><div class = "chapter-navi-section">
+<a href="#top" class="nav-button prev">↑</a>
+<a href='javascript-for-beginners.htm#objects-and-object-literals' class="nav-button toc-link">Index</a>
+<a href="#bottom" class="nav-button next">↓</a>
+</div>
+<h2 id='iterating-over-objects'>8.4 Iterating Over Objects</h2><p>In JavaScript, iterating over an object means going through its <strong>keys and values</strong>—a common task when you need to inspect, transform, or manipulate data dynamically. Unlike arrays, objects don’t have a built-in index-based loop, but JavaScript provides several ways to loop through object properties.</p><p>In this section, we’ll explore:</p><ul>
+ <li><code>for...in</code> loops</li>
+ <li><code>Object.keys()</code></li>
+ <li><code>Object.values()</code></li>
+ <li><code>Object.entries()</code></li>
+</ul><h3 id="for-in-looping-over-keys"><code>for...in</code>: Looping Over Keys</h3><p>The <code>for...in</code> loop lets you iterate over all <strong>enumerable properties</strong> of an object.</p><p><strong>Syntax:</strong></p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-js">for (let key in object) {
+  // Use key and object[key]
+}</code></pre>
+</div><p><strong>Example – Print all key-value pairs:</strong></p><div>
+ <div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+  <pre><code class="language-js">let person = {
+  name: 'Alice',
+  age: 30,
+  country: 'Canada'
+};
+
+for (let key in person) {
+  console.log(key + ': ' + person[key]);
+}
+// Output:
+// name: Alice
+// age: 30
+// country: Canada</code></pre>
+ </div>
+ <div class="snippet-container" id="l8K2B">
+  <div class="snippet-header" onclick="toggleSnippetAndRefresh('l8K2B','jUpVp')">
+   Try it in editor
+  </div>
+  <div class="snippet-body"><textarea id="jUpVp">let person = {
+  name: 'Alice',
+  age: 30,
+  country: 'Canada'
+};
+
+for (let key in person) {
+  console.log(key + ': ' + person[key]);
+}
+// Output:
+// name: Alice
+// age: 30
+// country: Canada</textarea> <br> <button onclick="renderIframeForClientJavascript('jUpVp','8q17D')">Run</button> <iframe id="8q17D" class="result_iframe" style="display: none;"></iframe>
+   <script>
+  {let editor1 = CodeMirror.fromTextArea(document.getElementById("jUpVp"), {
+    mode: "javascript",
+    lineNumbers:false,
+    tabSize: 2
+  });
+   codeMirrorMap.set("jUpVp", editor1);}
+  </script>
+  </div>
+ </div>
+</div><blockquote>
+ <p>⚠️ Note: <code>for...in</code> loops also iterate over inherited properties, so it’s good practice to check ownership with <code>hasOwnProperty()</code> if needed.</p>
+</blockquote><h3 id="object-keys-getting-all-keys"><code>Object.keys()</code>: Getting All Keys</h3><p><code>Object.keys()</code> returns an <strong>array of property names</strong> (keys) from the object.</p><p><strong>Example:</strong></p><div>
+ <div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+  <pre><code class="language-js">let car = {
+  make: 'Honda',
+  model: 'Civic',
+  year: 2022
+};
+
+let keys = Object.keys(car);
+console.log(keys); // ['make', 'model', 'year']</code></pre>
+ </div>
+ <div class="snippet-container" id="6HoZ8">
+  <div class="snippet-header" onclick="toggleSnippetAndRefresh('6HoZ8','4oY7e')">
+   Try it in editor
+  </div>
+  <div class="snippet-body"><textarea id="4oY7e">let car = {
+  make: 'Honda',
+  model: 'Civic',
+  year: 2022
+};
+
+let keys = Object.keys(car);
+console.log(keys); // ['make', 'model', 'year']</textarea> <br> <button onclick="renderIframeForClientJavascript('4oY7e','5UWTy')">Run</button> <iframe id="5UWTy" class="result_iframe" style="display: none;"></iframe>
+   <script>
+  {let editor1 = CodeMirror.fromTextArea(document.getElementById("4oY7e"), {
+    mode: "javascript",
+    lineNumbers:false,
+    tabSize: 2
+  });
+   codeMirrorMap.set("4oY7e", editor1);}
+  </script>
+  </div>
+ </div>
+</div><p>You can combine this with a <code>for</code> or <code>forEach()</code> loop:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-js">Object.keys(car).forEach(key =&gt; {
+  console.log(`${key}: ${car[key]}`);
+});</code></pre>
+</div><h3 id="object-values-getting-all-values"><code>Object.values()</code>: Getting All Values</h3><p><code>Object.values()</code> returns an array of the object's values only.</p><p><strong>Example:</strong></p><div>
+ <div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+  <pre><code class="language-js">let scores = {
+  math: 90,
+  english: 85,
+  science: 95
+};
+
+let values = Object.values(scores);
+console.log(values); // [90, 85, 95]</code></pre>
+ </div>
+ <div class="snippet-container" id="Ayi4h">
+  <div class="snippet-header" onclick="toggleSnippetAndRefresh('Ayi4h','vaPnj')">
+   Try it in editor
+  </div>
+  <div class="snippet-body"><textarea id="vaPnj">let scores = {
+  math: 90,
+  english: 85,
+  science: 95
+};
+
+let values = Object.values(scores);
+console.log(values); // [90, 85, 95]</textarea> <br> <button onclick="renderIframeForClientJavascript('vaPnj','ZLqxR')">Run</button> <iframe id="ZLqxR" class="result_iframe" style="display: none;"></iframe>
+   <script>
+  {let editor1 = CodeMirror.fromTextArea(document.getElementById("vaPnj"), {
+    mode: "javascript",
+    lineNumbers:false,
+    tabSize: 2
+  });
+   codeMirrorMap.set("vaPnj", editor1);}
+  </script>
+  </div>
+ </div>
+</div><p>You can sum the values:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-js">let total = Object.values(scores).reduce((sum, score) =&gt; sum + score, 0);
+console.log(total); // 270</code></pre>
+</div><h3 id="object-entries-getting-key-value-pairs"><code>Object.entries()</code>: Getting Key-Value Pairs</h3><p><code>Object.entries()</code> returns an array of <code>[key, value]</code> pairs, making it ideal for looping with <code>for...of</code>.</p><p><strong>Example – Loop with <code>for...of</code>:</strong></p><div>
+ <div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+  <pre><code class="language-js">let user = {
+  username: 'coder123',
+  level: 'beginner',
+  active: true
+};
+
+for (let [key, value] of Object.entries(user)) {
+  console.log(`${key} =&gt; ${value}`);
+}
+// Output:
+// username =&gt; coder123
+// level =&gt; beginner
+// active =&gt; true</code></pre>
+ </div>
+ <div class="snippet-container" id="p2UpE">
+  <div class="snippet-header" onclick="toggleSnippetAndRefresh('p2UpE','RKcsU')">
+   Try it in editor
+  </div>
+  <div class="snippet-body"><textarea id="RKcsU">let user = {
+  username: 'coder123',
+  level: 'beginner',
+  active: true
+};
+
+for (let [key, value] of Object.entries(user)) {
+  console.log(`${key} =&gt; ${value}`);
+}
+// Output:
+// username =&gt; coder123
+// level =&gt; beginner
+// active =&gt; true</textarea> <br> <button onclick="renderIframeForClientJavascript('RKcsU','TfBRE')">Run</button> <iframe id="TfBRE" class="result_iframe" style="display: none;"></iframe>
+   <script>
+  {let editor1 = CodeMirror.fromTextArea(document.getElementById("RKcsU"), {
+    mode: "javascript",
+    lineNumbers:false,
+    tabSize: 2
+  });
+   codeMirrorMap.set("RKcsU", editor1);}
+  </script>
+  </div>
+ </div>
+</div><h3 id="use-cases">Use Cases</h3><table>
+ <thead>
+  <tr>
+   <th>Task</th>
+   <th>Recommended Method</th>
+  </tr>
+ </thead>
+ <tbody>
+  <tr>
+   <td>List keys</td>
+   <td><code>Object.keys()</code> or <code>for...in</code></td>
+  </tr>
+  <tr>
+   <td>List values</td>
+   <td><code>Object.values()</code></td>
+  </tr>
+  <tr>
+   <td>Loop through key-value pairs</td>
+   <td><code>Object.entries()</code></td>
+  </tr>
+  <tr>
+   <td>Copy or transform properties</td>
+   <td>Combine <code>Object.keys()</code> with mapping logic</td>
+  </tr>
+ </tbody>
+</table><h3 id="summary">Summary</h3><table>
+ <thead>
+  <tr>
+   <th>Method</th>
+   <th>Returns</th>
+   <th>Ideal For</th>
+  </tr>
+ </thead>
+ <tbody>
+  <tr>
+   <td><code>for...in</code></td>
+   <td>Each key (one at a time)</td>
+   <td>Simple loops (use with caution)</td>
+  </tr>
+  <tr>
+   <td><code>Object.keys(obj)</code></td>
+   <td>Array of keys</td>
+   <td>Accessing all property names</td>
+  </tr>
+  <tr>
+   <td><code>Object.values(obj)</code></td>
+   <td>Array of values</td>
+   <td>Summing or listing values</td>
+  </tr>
+  <tr>
+   <td><code>Object.entries(obj)</code></td>
+   <td>Array of <code>[key, value]</code> pairs</td>
+   <td>Full key-value iteration</td>
+  </tr>
+ </tbody>
+</table><p>Mastering these object iteration techniques enables you to dynamically inspect, transform, or display structured data—an essential skill when working with user profiles, configuration settings, API responses, or any real-world data structure.</p><div class = "chapter-navi-section">
+<a href="javascript-for-beginners-arrays-and-array-methods.htm" class="nav-button prev">←</a>
+<a href='javascript-for-beginners.htm#objects-and-object-literals' class="nav-button toc-link">Index</a>
+<a href="javascript-for-beginners-functions-and-scope.htm" class="nav-button next">→</a>
+</div>
+<section class="download-section">
+  <div class="book-cover" style="background-image: url('data:image/jpg;base64,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');">
+<div class="series-name">Introduction</div>
+<div class="book-title">JavaScript for Beginners</div>
+<div class="book-subtitle">From Basics to Advanced Programming</div>
+<div class="book-footer">readbytes.github.io</div>
+</div>
+  <div class="download-info">
+    <h2 id='bottom'>Download This Ebook</h2>
+    <p class="format-label">Available formats:</p>
+    <div class="download-buttons">
+      <a href="javascript-for-beginners.pdf" class="download-button">📄 PDF</a>
+      <a href="javascript-for-beginners.epub" class="download-button">📘 EPUB</a>
+    </div>
+  </div>
+</section><div class='related-books'>
+<h2>Javascript Introduction Books</h2>
+<div class='related-book-list'>
+<a href="javascript-for-beginners.htm"><div class="book-cover" style="background-image: url('data:image/jpg;base64,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');">
+<div class="series-name">Introduction</div>
+<div class="book-title">JavaScript for Beginners</div>
+<div class="book-subtitle">From Basics to Advanced Programming</div>
+<div class="book-footer">readbytes.github.io</div>
+</div></a>
+
+
+<a href="javascript-syntax.htm"><div class="book-cover" style="background-image: url('data:image/jpg;base64,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');">
+<div class="series-name">Introduction</div>
+<div class="book-title">JavaScript Syntax</div>
+<div class="book-subtitle">From Fundamentals to Advanced Patterns</div>
+<div class="book-footer">readbytes.github.io</div>
+</div></a>
+
+
+
+<a href='javascript.htm'><div class='book-cover'>More Javascript Books</div></a>
+</div>
+</div>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+  
+  <script>
+    function copyCode(button) {
+      const code = button.nextElementSibling.innerText;
+      navigator.clipboard.writeText(code).then(() => {
+        button.textContent = 'Copied!';
+        setTimeout(() => { button.textContent = 'Copy'; }, 1500);
+      });
+    }
+  </script>  
+
+<footer class="page-footer">
+    <nav>
+      <a href="https://readbytes.github.io">Home</a> | 
+      Email:<script language="JavaScript" type="text/javascript">
+var part1 = 'yinpeng';var part6 = '263';var part2 = Math.pow(2,6);var part3 = String.fromCharCode(part2);var part4 = 'hotmail dot com';var part5 = part1 + String.fromCharCode(part2) + part4;document.write(part1 + part6 + part3 + part4);
+</script>
+    </nav>
+  <p>© 2025 — All rights reserved.</p>    
+  </footer>
+
+</body>
+</html>

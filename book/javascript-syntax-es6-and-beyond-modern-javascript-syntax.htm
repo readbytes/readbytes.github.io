@@ -1,0 +1,1541 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>JavaScript Syntax ES6 and Beyond: Modern JavaScript Syntax</title>
+<link rel='shortcut icon' href='https://java2s.com/style/favicon.ico'>
+<link href="https://fonts.googleapis.com/css2?family=Merriweather&display=swap" rel="stylesheet" />
+<link href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.css" />
+<script src="https://cdn.jsdelivr.net/npm/typescript@5/lib/typescript.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/htmlmixed/htmlmixed.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/xml/xml.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/css/css.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/javascript/javascript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/javascript/typescript.min.js"></script>
+<script>
+  const codeMirrorMap = new Map();
+  function renderIframe(textarea_id, iframe_id) {
+      const html = codeMirrorMap.get(textarea_id).getValue();
+      const iframe = document.getElementById(iframe_id);
+      iframe.style.display = "block";
+      iframe.srcdoc = html;  
+  }
+  function renderIframeForClientTypescript(textarea_id, iframe_id) {
+      let code = codeMirrorMap.get(textarea_id).getValue();
+      code = ts.transpile(code);
+      const iframe = document.getElementById(iframe_id);
+      const doc = iframe.contentDocument || iframe.contentWindow.document;
+
+const html = `
+  <!DOCTYPE html>
+  <html>
+    <head>
+      <title>Output</title>
+      <style>
+        body { font-family: monospace; padding: 1em; background: #f4f4f4; color: #222; }
+        pre { white-space: pre-wrap; word-break: break-word; }
+        .error { color: red; }
+      </style>
+    </head>
+    <body>
+      <pre id="log"></pre>
+      <script>
+        (function(){
+          const logEl = document.getElementById('log');
+          const origLog = console.log;
+          const origError = console.error;
+
+          console.log = (...args) => {
+            logEl.textContent += args.join(' ') + '\\n';
+            origLog.apply(console, args);
+          };
+          console.table = (...args) => {
+            logEl.textContent += args.join(' ') + '\\n';
+            origLog.apply(console, args);
+          };
+
+          console.error = (...args) => {
+            logEl.innerHTML +='<span class="error">' + args.join(' ') + '</span>';
+            origError.apply(console, args);
+          };
+          window.addEventListener("error", function (event) {
+              console.error("Caught by event listener:", event.message);
+          });    
+          try {             
+              ${code};
+          } catch (err) {
+            console.error(err.stack || err.message);
+          }
+        })();
+      <\/script>
+    </body>
+  </html>
+`;
+      iframe.style.display = "block";
+      iframe.srcdoc = html;  
+  }
+
+    function renderIframeForClientJavascript(textarea_id, iframe_id) {
+        const code = codeMirrorMap.get(textarea_id).getValue();
+        const iframe = document.getElementById(iframe_id);
+        const doc = iframe.contentDocument || iframe.contentWindow.document;
+
+  const html = `
+    <!DOCTYPE html>
+    <html>
+      <head>
+        <title>Output</title>
+        <style>
+          body { font-family: monospace; padding: 1em; background: #f4f4f4; color: #222; }
+          pre { white-space: pre-wrap; word-break: break-word; }
+          .error { color: red; }
+        </style>
+      </head>
+      <body>
+        <pre id="log"></pre>
+        <script>
+          (function(){
+            const logEl = document.getElementById('log');
+            const origLog = console.log;
+            const origError = console.error;
+
+            console.log = (...args) => {
+              logEl.textContent += args.join(' ') + '\\n';
+              origLog.apply(console, args);
+            };
+            console.table = (...args) => {
+              logEl.textContent += args.join(' ') + '\\n';
+              origLog.apply(console, args);
+            };
+
+            console.error = (...args) => {
+              logEl.innerHTML +='<span class="error">' + args.join(' ') + '</span>';
+              origError.apply(console, args);
+            };
+            window.addEventListener("error", function (event) {
+                console.error("Caught by event listener:", event.message);
+            });    
+            try {
+             ${code}; 
+            } catch (err) {
+              console.error(err.stack || err.message);
+            }
+          })();
+        <\/script>
+      </body>
+    </html>
+  `;
+    
+        iframe.style.display = "block";
+        iframe.srcdoc = html;  
+    }
+
+    function toggleSnippetAndRefresh(id, textarea_id) {
+      const box = document.getElementById(id);
+      box.classList.toggle("open");
+      codeMirrorMap.get(textarea_id).refresh();
+    }
+
+  </script>
+<style>
+body {
+  background: #f8f7f5;
+  font-family: 'Merriweather', serif;
+  color: #333;
+  margin: 0;
+  padding: 2rem 1rem;
+  font-size: 15px; /* smaller body font */
+  line-height: 1.5;
+}
+
+.container {
+  max-width: 700px;
+  margin: 0 auto;
+  background: white;
+  padding: 1rem 2rem;
+  box-shadow: 0 0 15px rgba(0,0,0,0.1);
+}
+.book-title-chapter {
+  font-family: 'Merriweather', serif;
+  font-size: 2rem;
+  font-weight: bold;
+  text-align: center;
+  margin-bottom: 2rem;
+  border-bottom: 2px solid #ccc;
+  padding-bottom: 0.5rem;
+  color: #2c3e50;
+}
+
+.book-subtitle-chapter {
+  text-align: center;
+  font-size: 1rem;
+  color: #666;
+  margin-top: -1rem;
+  margin-bottom: 2rem;
+}
+
+    .related-books {
+      margin-top: 40px;
+    }
+
+    .related-books h2 {
+      font-size: 22px;
+      margin-bottom: 20px;
+      border-bottom: 2px solid #eee;
+      padding-bottom: 8px;
+      color: #333;
+    }
+    .related-book-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+h1, h2, h3 {
+  font-weight: 600;
+  margin-top: 2.5rem;
+  margin-bottom: 1rem;
+  line-height: 1.2;
+}
+
+h1 {
+  font-size: 1.8rem; /* smaller heading */
+}
+
+h2 {
+  font-size: 1.4rem;
+}
+
+h3 {
+  font-size: 1.2rem;
+}
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-family: sans-serif;
+      font-size: 1em;
+      margin: 1em 0;
+    }
+
+    th, td {
+      border: 1px solid #cccccc;
+      padding: 0.6em 1em;
+      text-align: left;
+    }
+
+    th {
+      background-color: #f2f2f2;
+      font-weight: bold;
+    }
+
+    tr:nth-child(even) {
+      background-color: #fafafa;
+    }
+
+    /* Optional hover effect */
+    tr:hover {
+      background-color: #e6f7ff;
+    }
+ 
+a {
+  color: #555;
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+
+
+.code-block {
+    position: relative;
+    margin-bottom: 1em;
+}
+.copy-button {
+    background: transparent; 
+    color: white;
+
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    border: none;
+    padding: 4px 8px;
+    font-size: 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    z-index: 1;
+}
+
+.copy-button:hover {
+background-color: #0056b3;
+}
+.page-footer {
+  margin-top: 4rem;
+  padding: 1rem 0;
+  text-align: center;
+  font-size: 0.85rem;
+  color: #666;
+  border-top: 1px solid #ccc;
+  background-color: #fafafa;
+}
+.page-footer a {
+     color: #555;
+    text-decoration: none;
+  }
+  .page-footer a:hover {
+    text-decoration: underline;
+  }
+.chapter-navi-section {
+display: flex;
+justify-content: space-between;
+align-items: center;
+padding-bottom: 10px;
+}  
+
+.nav-link {
+  color: inherit;
+  text-decoration: none;
+  opacity: 0.5;
+  transition: opacity 0.3s ease, text-decoration 0.3s ease;
+}
+
+.nav-link:hover {
+  opacity: 0.9;
+  text-decoration: underline;
+}
+
+.prev {
+  text-align: left;
+}
+.toc-link {
+  text-align: center;
+}
+.next {
+  text-align: right;
+}
+.download-section {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2rem;
+  padding: 2rem 1rem;
+  max-width: 600px;
+  margin: 3rem auto;
+  background-color: #f9f9f9;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+}
+
+    .book-cover {
+      width: 130px;
+      height: 180px;
+      
+      background-size: cover; /* Ensures the image covers the entire div */
+      background-position: center; /* Centers the image */
+            
+      background: linear-gradient(145deg, #e0dede, #f9f9f9);
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 10px;
+      box-sizing: border-box;
+      position: relative;
+      font-family: 'Roboto', sans-serif;
+    }
+
+    .book-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 16px;
+      font-weight: 600;
+      color: #fff;
+      margin-bottom: 4px;
+    }
+
+    .book-subtitle {
+      font-size: 12px;
+      color: #aaa;
+      margin-bottom: 10px;
+    }
+
+    .series-name {
+      position: absolute;
+      top: 8px;
+      left: 8px;
+      font-size: 10px;
+      color: #fff;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-weight: bold;
+    }
+
+    .book-footer {
+      position: absolute;
+      bottom: 8px;
+      font-size: 10px;
+      color: #aaa;
+    }
+
+.download-info h2 {
+  margin: 0 0 0.5rem;
+  font-size: 1.2rem;
+}
+
+.format-label {
+  margin: 0 0 0.5rem;
+  font-size: 0.95rem;
+  color: #555;
+}
+
+.download-buttons {
+  display: flex;
+  gap: 1rem;
+}
+
+.download-button {
+  background-color: #4A90E2;
+  color: white;
+  padding: 0.5em 1.2em;
+  text-decoration: none;
+  border-radius: 25px;
+  font-size: 0.95rem;
+  transition: background-color 0.3s ease;
+}
+
+.download-button:hover {
+  background-color: #357ABD;
+}
+
+    code {
+ 
+      color: #d35400; 
+    }
+html {
+    scroll-behavior: smooth;
+}
+    .snippet-container {
+      overflow: hidden;    
+    }
+
+    .snippet-header {
+      background: #f0f0f0;
+      color: #333;
+      padding: 0.75rem 1rem;
+      cursor: pointer;
+      font-size: 1rem;
+    }
+
+    .snippet-body {
+      display: none;
+      font-family: monospace;
+    }
+
+    .snippet-container.open .snippet-body {
+      display: block;
+    }
+
+.CodeMirror {
+  border: 2px solid #ccc;
+  border-radius: 4px;
+  resize: vertical;
+}
+
+    button { padding: 0.5em 1em; background: green; color: white; border: none; cursor: pointer; }
+    button:hover { background: #1e7e34; }
+    .result_iframe { width:99%; height:200px; margin-top: 1em;  resize: both;border:1px solid #ccc;}        
+</style>
+</head>
+<body> 
+
+  <div class="container">
+    <div class = "chapter-navi-section">
+<a href="javascript-syntax-working-with-strings-and-regular-expressions.htm" class="nav-button prev">←</a>
+<a href='javascript-syntax.htm#es6-and-beyond-modern-javascript-syntax' class="nav-button toc-link">Index</a>
+<a href="javascript-syntax-classes-and-prototypes.htm" class="nav-button next">→</a>
+</div>
+
+    <h1 class="book-title-chapter" id = 'top'>ES6 and Beyond: Modern JavaScript Syntax</h1>
+    <h3 class="book-subtitle-chapter">JavaScript Syntax</h3>   
+    <!-- <h1 class ="chapter-title"></h1> -->
+    <h2 id='let-and-const-revisited'>10.1 Let and Const Revisited</h2><p>In modern JavaScript, <code>let</code> and <code>const</code> provide better ways to declare variables compared to the older <code>var</code>. Understanding their differences is key to writing clean, predictable code.</p><h4 id="scope-block-vs-function">Scope: Block vs. Function</h4><ul>
+ <li><strong><code>var</code></strong> is <em>function-scoped</em>, meaning a variable declared with <code>var</code> is accessible throughout the entire function it’s declared in, regardless of block boundaries like <code>if</code> or <code>for</code>.</li>
+ <li><strong><code>let</code></strong> and <strong><code>const</code></strong> are <em>block-scoped</em>, limited to the <code>{}</code> block where they are declared.</li>
+</ul><div>
+ <div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+  <pre><code class="language-js">if (true) {
+  var x = 1;
+  let y = 2;
+}
+console.log(x); // 1 (var leaks outside block)
+console.log(y); // ReferenceError: y is not defined</code></pre>
+ </div>
+ <div class="snippet-container" id="SvOVa">
+  <div class="snippet-header" onclick="toggleSnippetAndRefresh('SvOVa','lnQ0J')">
+   Try it in editor
+  </div>
+  <div class="snippet-body"><textarea id="lnQ0J">if (true) {
+  var x = 1;
+  let y = 2;
+}
+console.log(x); // 1 (var leaks outside block)
+console.log(y); // ReferenceError: y is not defined</textarea> <br> <button onclick="renderIframeForClientJavascript('lnQ0J','tpiRr')">Run</button> <iframe id="tpiRr" class="result_iframe" style="display: none;"></iframe>
+   <script>
+  {let editor1 = CodeMirror.fromTextArea(document.getElementById("lnQ0J"), {
+    mode: "javascript",
+    lineNumbers:false,
+    tabSize: 2
+  });
+   codeMirrorMap.set("lnQ0J", editor1);}
+  </script>
+  </div>
+ </div>
+</div><h4 id="hoisting-and-temporal-dead-zone-tdz">Hoisting and Temporal Dead Zone (TDZ)</h4><p>All declarations are <em>hoisted</em> (moved to the top), but:</p><ul>
+ <li><strong><code>var</code></strong> is initialized with <code>undefined</code> immediately during hoisting, so you can access it before declaration (though it’s undefined).</li>
+ <li><strong><code>let</code></strong> and <strong><code>const</code></strong> are hoisted but not initialized. Accessing them before declaration causes a <em>Temporal Dead Zone</em> error.</li>
+</ul><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-js">console.log(aVar);  // undefined
+console.log(aLet);  // ReferenceError: Cannot access 'aLet' before initialization
+
+var aVar = 10;
+let aLet = 20;</code></pre>
+</div><h4 id="mutability-and-reassignment">Mutability and Reassignment</h4><ul>
+ <li><strong><code>let</code></strong> allows reassignment:</li>
+</ul><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-js">let count = 1;
+count = 2; // OK</code></pre>
+</div><ul>
+ <li><strong><code>const</code></strong> prohibits reassignment:</li>
+</ul><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-js">const name = "Alice";
+name = "Bob"; // TypeError: Assignment to constant variable.</code></pre>
+</div><p>However, <strong><code>const</code> does NOT make objects immutable</strong>—you can still modify properties:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-js">const obj = { age: 30 };
+obj.age = 31; // Allowed</code></pre>
+</div><h4 id="best-practices">Best Practices</h4><ul>
+ <li>Use <strong><code>const</code> by default</strong> to declare variables that should not be reassigned. This signals intent and reduces bugs.</li>
+ <li>Use <strong><code>let</code></strong> only when you need to reassign values (e.g., loop counters).</li>
+ <li>Avoid <strong><code>var</code></strong> due to its confusing hoisting and scoping behavior.</li>
+</ul><h3 id="summary-example">Summary Example</h3><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-js">function example() {
+  if (true) {
+    var x = 5;     // Function-scoped
+    let y = 10;    // Block-scoped
+    const z = 15;  // Block-scoped, no reassignment
+  }
+  console.log(x); // 5
+  console.log(y); // ReferenceError
+  console.log(z); // ReferenceError
+}</code></pre>
+</div><p>Using <code>let</code> and <code>const</code> improves readability, scope control, and reduces bugs related to variable hoisting and reassignment in modern JavaScript development.</p><div class = "chapter-navi-section">
+<a href="#top" class="nav-button prev">↑</a>
+<a href='javascript-syntax.htm#es6-and-beyond-modern-javascript-syntax' class="nav-button toc-link">Index</a>
+<a href="#bottom" class="nav-button next">↓</a>
+</div>
+<h2 id='destructuring-assignment-arrays-and-objects'>10.2 Destructuring Assignment (Arrays and Objects)</h2><p>Destructuring assignment is a concise way to extract values from arrays or properties from objects into distinct variables. It makes your code cleaner and easier to read by reducing repetitive access.</p><h4 id="array-destructuring">Array Destructuring</h4><p>Basic syntax extracts values by position:</p><div>
+ <div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+  <pre><code class="language-js">const numbers = [10, 20, 30];
+const [a, b, c] = numbers;
+console.log(a, b, c); // 10 20 30</code></pre>
+ </div>
+ <div class="snippet-container" id="8i7zL">
+  <div class="snippet-header" onclick="toggleSnippetAndRefresh('8i7zL','w7yyG')">
+   Try it in editor
+  </div>
+  <div class="snippet-body"><textarea id="w7yyG">const numbers = [10, 20, 30];
+const [a, b, c] = numbers;
+console.log(a, b, c); // 10 20 30</textarea> <br> <button onclick="renderIframeForClientJavascript('w7yyG','k9JA8')">Run</button> <iframe id="k9JA8" class="result_iframe" style="display: none;"></iframe>
+   <script>
+  {let editor1 = CodeMirror.fromTextArea(document.getElementById("w7yyG"), {
+    mode: "javascript",
+    lineNumbers:false,
+    tabSize: 2
+  });
+   codeMirrorMap.set("w7yyG", editor1);}
+  </script>
+  </div>
+ </div>
+</div><p>You can skip elements using commas:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-js">const [first, , third] = numbers;
+console.log(first, third); // 10 30</code></pre>
+</div><h4 id="default-values">Default Values</h4><p>If the extracted value is <code>undefined</code>, you can assign a default:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-js">const [x = 1, y = 2] = [undefined];
+console.log(x, y); // 1 2</code></pre>
+</div><h4 id="nested-destructuring">Nested Destructuring</h4><p>Arrays can be nested, and destructuring can follow the structure:</p><div>
+ <div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+  <pre><code class="language-js">const nested = [1, [2, 3]];
+const [i, [j, k]] = nested;
+console.log(i, j, k); // 1 2 3</code></pre>
+ </div>
+ <div class="snippet-container" id="KL5zp">
+  <div class="snippet-header" onclick="toggleSnippetAndRefresh('KL5zp','QpWHZ')">
+   Try it in editor
+  </div>
+  <div class="snippet-body"><textarea id="QpWHZ">const nested = [1, [2, 3]];
+const [i, [j, k]] = nested;
+console.log(i, j, k); // 1 2 3</textarea> <br> <button onclick="renderIframeForClientJavascript('QpWHZ','F18hB')">Run</button> <iframe id="F18hB" class="result_iframe" style="display: none;"></iframe>
+   <script>
+  {let editor1 = CodeMirror.fromTextArea(document.getElementById("QpWHZ"), {
+    mode: "javascript",
+    lineNumbers:false,
+    tabSize: 2
+  });
+   codeMirrorMap.set("QpWHZ", editor1);}
+  </script>
+  </div>
+ </div>
+</div><h4 id="rest-syntax-in-arrays">Rest Syntax in Arrays</h4><p>Collect remaining elements into an array:</p><div>
+ <div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+  <pre><code class="language-js">const [head, ...tail] = [5, 6, 7, 8];
+console.log(head); // 5
+console.log(tail); // [6, 7, 8]</code></pre>
+ </div>
+ <div class="snippet-container" id="3hOBH">
+  <div class="snippet-header" onclick="toggleSnippetAndRefresh('3hOBH','f2Deq')">
+   Try it in editor
+  </div>
+  <div class="snippet-body"><textarea id="f2Deq">const [head, ...tail] = [5, 6, 7, 8];
+console.log(head); // 5
+console.log(tail); // [6, 7, 8]</textarea> <br> <button onclick="renderIframeForClientJavascript('f2Deq','fovB3')">Run</button> <iframe id="fovB3" class="result_iframe" style="display: none;"></iframe>
+   <script>
+  {let editor1 = CodeMirror.fromTextArea(document.getElementById("f2Deq"), {
+    mode: "javascript",
+    lineNumbers:false,
+    tabSize: 2
+  });
+   codeMirrorMap.set("f2Deq", editor1);}
+  </script>
+  </div>
+ </div>
+</div><h4 id="object-destructuring">Object Destructuring</h4><p>Extract properties by matching names:</p><div>
+ <div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+  <pre><code class="language-js">const person = { name: "Alice", age: 30 };
+const { name, age } = person;
+console.log(name, age); // Alice 30</code></pre>
+ </div>
+ <div class="snippet-container" id="t6mUL">
+  <div class="snippet-header" onclick="toggleSnippetAndRefresh('t6mUL','L0ZAq')">
+   Try it in editor
+  </div>
+  <div class="snippet-body"><textarea id="L0ZAq">const person = { name: "Alice", age: 30 };
+const { name, age } = person;
+console.log(name, age); // Alice 30</textarea> <br> <button onclick="renderIframeForClientJavascript('L0ZAq','wBE78')">Run</button> <iframe id="wBE78" class="result_iframe" style="display: none;"></iframe>
+   <script>
+  {let editor1 = CodeMirror.fromTextArea(document.getElementById("L0ZAq"), {
+    mode: "javascript",
+    lineNumbers:false,
+    tabSize: 2
+  });
+   codeMirrorMap.set("L0ZAq", editor1);}
+  </script>
+  </div>
+ </div>
+</div><p>You can assign to variables with different names:</p><div>
+ <div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+  <pre><code class="language-js">const person = { name: "Alice", age: 30 };
+const { name: firstName, age: years } = person;
+console.log(firstName, years); // Alice 30</code></pre>
+ </div>
+ <div class="snippet-container" id="K8LJM">
+  <div class="snippet-header" onclick="toggleSnippetAndRefresh('K8LJM','Wm0RW')">
+   Try it in editor
+  </div>
+  <div class="snippet-body"><textarea id="Wm0RW">const person = { name: "Alice", age: 30 };
+const { name: firstName, age: years } = person;
+console.log(firstName, years); // Alice 30</textarea> <br> <button onclick="renderIframeForClientJavascript('Wm0RW','CfBde')">Run</button> <iframe id="CfBde" class="result_iframe" style="display: none;"></iframe>
+   <script>
+  {let editor1 = CodeMirror.fromTextArea(document.getElementById("Wm0RW"), {
+    mode: "javascript",
+    lineNumbers:false,
+    tabSize: 2
+  });
+   codeMirrorMap.set("Wm0RW", editor1);}
+  </script>
+  </div>
+ </div>
+</div><h4 id="default-values-and-nested-objects">Default Values and Nested Objects</h4><div>
+ <div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+  <pre><code class="language-js">const user = { id: 1, profile: { email: "user@example.com" } };
+const { profile: { email, phone = "N/A" } } = user;
+console.log(email, phone); // user@example.com N/A</code></pre>
+ </div>
+ <div class="snippet-container" id="QsxLQ">
+  <div class="snippet-header" onclick="toggleSnippetAndRefresh('QsxLQ','FwVDB')">
+   Try it in editor
+  </div>
+  <div class="snippet-body"><textarea id="FwVDB">const user = { id: 1, profile: { email: "user@example.com" } };
+const { profile: { email, phone = "N/A" } } = user;
+console.log(email, phone); // user@example.com N/A</textarea> <br> <button onclick="renderIframeForClientJavascript('FwVDB','35a9D')">Run</button> <iframe id="35a9D" class="result_iframe" style="display: none;"></iframe>
+   <script>
+  {let editor1 = CodeMirror.fromTextArea(document.getElementById("FwVDB"), {
+    mode: "javascript",
+    lineNumbers:false,
+    tabSize: 2
+  });
+   codeMirrorMap.set("FwVDB", editor1);}
+  </script>
+  </div>
+ </div>
+</div><h4 id="rest-syntax-in-objects">Rest Syntax in Objects</h4><p>Gather remaining properties into a new object:</p><div>
+ <div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+  <pre><code class="language-js">const person = { name: "Alice", age: 30 };
+const { name, ...rest } = person;
+console.log(name); // Alice
+console.log(JSON.stringify(rest,null,2)); // { age: 30 }</code></pre>
+ </div>
+ <div class="snippet-container" id="iPUie">
+  <div class="snippet-header" onclick="toggleSnippetAndRefresh('iPUie','SJBLT')">
+   Try it in editor
+  </div>
+  <div class="snippet-body"><textarea id="SJBLT">const person = { name: "Alice", age: 30 };
+const { name, ...rest } = person;
+console.log(name); // Alice
+console.log(JSON.stringify(rest,null,2)); // { age: 30 }</textarea> <br> <button onclick="renderIframeForClientJavascript('SJBLT','qeh0D')">Run</button> <iframe id="qeh0D" class="result_iframe" style="display: none;"></iframe>
+   <script>
+  {let editor1 = CodeMirror.fromTextArea(document.getElementById("SJBLT"), {
+    mode: "javascript",
+    lineNumbers:false,
+    tabSize: 2
+  });
+   codeMirrorMap.set("SJBLT", editor1);}
+  </script>
+  </div>
+ </div>
+</div><h4 id="common-use-cases">Common Use Cases</h4><p><strong>Swapping variables without a temp variable:</strong></p><div>
+ <div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+  <pre><code class="language-js">let a = 1, b = 2;
+[a, b] = [b, a];
+console.log(a, b); // 2 1</code></pre>
+ </div>
+ <div class="snippet-container" id="5sKKL">
+  <div class="snippet-header" onclick="toggleSnippetAndRefresh('5sKKL','XEnaV')">
+   Try it in editor
+  </div>
+  <div class="snippet-body"><textarea id="XEnaV">let a = 1, b = 2;
+[a, b] = [b, a];
+console.log(a, b); // 2 1</textarea> <br> <button onclick="renderIframeForClientJavascript('XEnaV','FWzFt')">Run</button> <iframe id="FWzFt" class="result_iframe" style="display: none;"></iframe>
+   <script>
+  {let editor1 = CodeMirror.fromTextArea(document.getElementById("XEnaV"), {
+    mode: "javascript",
+    lineNumbers:false,
+    tabSize: 2
+  });
+   codeMirrorMap.set("XEnaV", editor1);}
+  </script>
+  </div>
+ </div>
+</div><p><strong>Destructuring function parameters:</strong></p><div>
+ <div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+  <pre><code class="language-js">function greet({ name, age }) {
+  console.log(`Hello, ${name}. You are ${age} years old.`);
+}
+greet(person); // Hello, Alice. You are 30 years old.</code></pre>
+ </div>
+ <div class="snippet-container" id="sZ74Z">
+  <div class="snippet-header" onclick="toggleSnippetAndRefresh('sZ74Z','M62Ln')">
+   Try it in editor
+  </div>
+  <div class="snippet-body"><textarea id="M62Ln">function greet({ name, age }) {
+  console.log(`Hello, ${name}. You are ${age} years old.`);
+}
+greet(person); // Hello, Alice. You are 30 years old.</textarea> <br> <button onclick="renderIframeForClientJavascript('M62Ln','gAKmV')">Run</button> <iframe id="gAKmV" class="result_iframe" style="display: none;"></iframe>
+   <script>
+  {let editor1 = CodeMirror.fromTextArea(document.getElementById("M62Ln"), {
+    mode: "javascript",
+    lineNumbers:false,
+    tabSize: 2
+  });
+   codeMirrorMap.set("M62Ln", editor1);}
+  </script>
+  </div>
+ </div>
+</div><h3 id="summary">Summary</h3><p>Destructuring assignment allows elegant extraction from arrays and objects with support for default values, nesting, and rest syntax. It simplifies variable assignment, parameter handling, and improves code readability in modern JavaScript.</p><div class = "chapter-navi-section">
+<a href="#top" class="nav-button prev">↑</a>
+<a href='javascript-syntax.htm#es6-and-beyond-modern-javascript-syntax' class="nav-button toc-link">Index</a>
+<a href="#bottom" class="nav-button next">↓</a>
+</div>
+<h2 id='template-strings-and-tagged-templates'>10.3 Template Strings and Tagged Templates</h2><p>Template literals are a powerful ES6 feature that allow you to create multi-line strings and embed expressions easily. They use backticks (`) instead of quotes, improving readability and flexibility compared to traditional string concatenation.</p><h4 id="template-strings-basics">Template Strings Basics</h4><p>You can embed variables and expressions inside <code>${}</code>:</p><div>
+ <div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+  <pre><code class="language-js">const name = "Alice";
+const age = 30;
+
+const greeting = `Hello, my name is ${name} and I am ${age} years old.`;
+console.log(greeting);
+// Output: Hello, my name is Alice and I am 30 years old.</code></pre>
+ </div>
+ <div class="snippet-container" id="uVqzY">
+  <div class="snippet-header" onclick="toggleSnippetAndRefresh('uVqzY','LyLIy')">
+   Try it in editor
+  </div>
+  <div class="snippet-body"><textarea id="LyLIy">const name = "Alice";
+const age = 30;
+
+const greeting = `Hello, my name is ${name} and I am ${age} years old.`;
+console.log(greeting);
+// Output: Hello, my name is Alice and I am 30 years old.</textarea> <br> <button onclick="renderIframeForClientJavascript('LyLIy','nM9Hu')">Run</button> <iframe id="nM9Hu" class="result_iframe" style="display: none;"></iframe>
+   <script>
+  {let editor1 = CodeMirror.fromTextArea(document.getElementById("LyLIy"), {
+    mode: "javascript",
+    lineNumbers:false,
+    tabSize: 2
+  });
+   codeMirrorMap.set("LyLIy", editor1);}
+  </script>
+  </div>
+ </div>
+</div><p>They also support multi-line strings naturally, without needing escape characters:</p><div>
+ <div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+  <pre><code class="language-js">const poem = `Roses are red,
+Violets are blue,
+JavaScript rocks,
+And so do you.`;
+console.log(poem);</code></pre>
+ </div>
+ <div class="snippet-container" id="LrjqQ">
+  <div class="snippet-header" onclick="toggleSnippetAndRefresh('LrjqQ','pg11E')">
+   Try it in editor
+  </div>
+  <div class="snippet-body"><textarea id="pg11E">const poem = `Roses are red,
+Violets are blue,
+JavaScript rocks,
+And so do you.`;
+console.log(poem);</textarea> <br> <button onclick="renderIframeForClientJavascript('pg11E','JRS8U')">Run</button> <iframe id="JRS8U" class="result_iframe" style="display: none;"></iframe>
+   <script>
+  {let editor1 = CodeMirror.fromTextArea(document.getElementById("pg11E"), {
+    mode: "javascript",
+    lineNumbers:false,
+    tabSize: 2
+  });
+   codeMirrorMap.set("pg11E", editor1);}
+  </script>
+  </div>
+ </div>
+</div><h4 id="tagged-template-literals">Tagged Template Literals</h4><p>Tagged templates extend template literals by letting you process the string and interpolated values through a custom <em>tag function</em>. This function receives the literal parts of the string and the expressions separately, allowing advanced manipulation like formatting, localization, or sanitization.</p><p>Syntax:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-js">tagFunction`string text ${expression} more text`;</code></pre>
+</div><h4 id="how-tag-functions-work">How Tag Functions Work</h4><p>A tag function takes two main arguments:</p><ul>
+ <li>An array of string literals (the parts between expressions).</li>
+ <li>The evaluated expressions as additional arguments.</li>
+</ul><p>Example:</p><div>
+ <div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+  <pre><code class="language-js">function simpleTag(strings, ...values) {
+  console.log(strings); // ["Hello, ", " is ", " years old."]
+  console.log(values);  // ["Alice", 30]
+  return strings[0] + values.map((v, i) =&gt; v + strings[i + 1]).join("");
+}
+
+const result = simpleTag`Hello, ${name} is ${age} years old.`;
+console.log(result);
+// Output: Hello, Alice is 30 years old.</code></pre>
+ </div>
+ <div class="snippet-container" id="Je5Pl">
+  <div class="snippet-header" onclick="toggleSnippetAndRefresh('Je5Pl','5q2mf')">
+   Try it in editor
+  </div>
+  <div class="snippet-body"><textarea id="5q2mf">function simpleTag(strings, ...values) {
+  console.log(strings); // ["Hello, ", " is ", " years old."]
+  console.log(values);  // ["Alice", 30]
+  return strings[0] + values.map((v, i) =&gt; v + strings[i + 1]).join("");
+}
+
+const result = simpleTag`Hello, ${name} is ${age} years old.`;
+console.log(result);
+// Output: Hello, Alice is 30 years old.</textarea> <br> <button onclick="renderIframeForClientJavascript('5q2mf','kP3P2')">Run</button> <iframe id="kP3P2" class="result_iframe" style="display: none;"></iframe>
+   <script>
+  {let editor1 = CodeMirror.fromTextArea(document.getElementById("5q2mf"), {
+    mode: "javascript",
+    lineNumbers:false,
+    tabSize: 2
+  });
+   codeMirrorMap.set("5q2mf", editor1);}
+  </script>
+  </div>
+ </div>
+</div><h4 id="practical-tagged-template-use-sanitization">Practical Tagged Template Use: Sanitization</h4><p>Prevent unsafe input by escaping special characters:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-js">function sanitize(strings, ...values) {
+  return strings.reduce((acc, str, i) =&gt; {
+    const safe = values[i - 1]
+      ? String(values[i - 1]).replace(/&amp;/g, "&amp;amp;").replace(/&lt;/g, "&amp;lt;").replace(/&gt;/g, "&amp;gt;")
+      : "";
+    return acc + safe + str;
+  });
+}
+
+const userInput = "&lt;script&gt;alert('xss')&lt;/script&gt;";
+const safeString = sanitize`User input: ${userInput}`;
+console.log(safeString);
+// Output: User input: &amp;lt;script&amp;gt;alert('xss')&amp;lt;/script&amp;gt;</code></pre>
+</div><h3 id="summary">Summary</h3><p>Template strings simplify embedding expressions and multi-line strings. Tagged templates add a layer of customization by letting functions process templates before producing the final string, enabling use cases like input sanitization, formatting, or localization—making your string handling both powerful and safe.</p><div class = "chapter-navi-section">
+<a href="#top" class="nav-button prev">↑</a>
+<a href='javascript-syntax.htm#es6-and-beyond-modern-javascript-syntax' class="nav-button toc-link">Index</a>
+<a href="#bottom" class="nav-button next">↓</a>
+</div>
+<h2 id='enhanced-object-literals-shorthand-properties-computed-property-names'>10.4 Enhanced Object Literals (shorthand properties, computed property names)</h2><p>ES6 introduced enhancements to object literal syntax that simplify object creation and increase flexibility. Two key features are <strong>shorthand property names</strong> and <strong>computed property names</strong>.</p><h4 id="shorthand-property-names">Shorthand Property Names</h4><p>When creating an object, if a property name matches the variable name holding its value, you can use the shorthand syntax instead of repeating the name and value.</p><p><strong>Traditional syntax:</strong></p><div>
+ <div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+  <pre><code class="language-js">const name = "Alice";
+const age = 30;
+
+const person = {
+  name: name,
+  age: age,
+};
+console.log(JSON.stringify(person,null,2)); // { name: "Alice", age: 30 }</code></pre>
+ </div>
+ <div class="snippet-container" id="2H1M1">
+  <div class="snippet-header" onclick="toggleSnippetAndRefresh('2H1M1','hPGPQ')">
+   Try it in editor
+  </div>
+  <div class="snippet-body"><textarea id="hPGPQ">const name = "Alice";
+const age = 30;
+
+const person = {
+  name: name,
+  age: age,
+};
+console.log(JSON.stringify(person,null,2)); // { name: "Alice", age: 30 }</textarea> <br> <button onclick="renderIframeForClientJavascript('hPGPQ','6GJXg')">Run</button> <iframe id="6GJXg" class="result_iframe" style="display: none;"></iframe>
+   <script>
+  {let editor1 = CodeMirror.fromTextArea(document.getElementById("hPGPQ"), {
+    mode: "javascript",
+    lineNumbers:false,
+    tabSize: 2
+  });
+   codeMirrorMap.set("hPGPQ", editor1);}
+  </script>
+  </div>
+ </div>
+</div><p><strong>With shorthand:</strong></p><div>
+ <div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+  <pre><code class="language-js">const name = "Alice";
+const age = 30;
+
+const person = { name, age };
+console.log(JSON.stringify(person,null,2)); // { name: "Alice", age: 30 }</code></pre>
+ </div>
+ <div class="snippet-container" id="Hu6Tv">
+  <div class="snippet-header" onclick="toggleSnippetAndRefresh('Hu6Tv','4TBAf')">
+   Try it in editor
+  </div>
+  <div class="snippet-body"><textarea id="4TBAf">const name = "Alice";
+const age = 30;
+
+const person = { name, age };
+console.log(JSON.stringify(person,null,2)); // { name: "Alice", age: 30 }</textarea> <br> <button onclick="renderIframeForClientJavascript('4TBAf','UiY3B')">Run</button> <iframe id="UiY3B" class="result_iframe" style="display: none;"></iframe>
+   <script>
+  {let editor1 = CodeMirror.fromTextArea(document.getElementById("4TBAf"), {
+    mode: "javascript",
+    lineNumbers:false,
+    tabSize: 2
+  });
+   codeMirrorMap.set("4TBAf", editor1);}
+  </script>
+  </div>
+ </div>
+</div><p>This reduces redundancy and makes the code cleaner.</p><h4 id="shorthand-method-definitions">Shorthand Method Definitions</h4><p>Instead of assigning functions as properties, you can define methods directly inside object literals without the <code>function</code> keyword.</p><p><strong>Traditional:</strong></p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-js">const obj = {
+  greet: function() {
+    console.log("Hello!");
+  }
+};
+obj.greet(); // Hello!</code></pre>
+</div><p><strong>Shorthand:</strong></p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-js">const obj = {
+  greet() {
+    console.log("Hello!");
+  }
+};
+obj.greet(); // Hello!</code></pre>
+</div><h4 id="computed-property-names">Computed Property Names</h4><p>Computed property names let you use expressions inside square brackets <code>[]</code> to dynamically set property keys in object literals.</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-js">const propName = "score";
+const user = {
+  [propName]: 100,
+};
+console.log(user.score); // 100</code></pre>
+</div><p>You can use any expression inside the brackets:</p><div>
+ <div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+  <pre><code class="language-js">const prefix = "user";
+const id = 42;
+
+const obj = {
+  [`${prefix}_${id}`]: "value",
+};
+console.log(obj.user_42); // value</code></pre>
+ </div>
+ <div class="snippet-container" id="AVEK6">
+  <div class="snippet-header" onclick="toggleSnippetAndRefresh('AVEK6','NbbY2')">
+   Try it in editor
+  </div>
+  <div class="snippet-body"><textarea id="NbbY2">const prefix = "user";
+const id = 42;
+
+const obj = {
+  [`${prefix}_${id}`]: "value",
+};
+console.log(obj.user_42); // value</textarea> <br> <button onclick="renderIframeForClientJavascript('NbbY2','CjXea')">Run</button> <iframe id="CjXea" class="result_iframe" style="display: none;"></iframe>
+   <script>
+  {let editor1 = CodeMirror.fromTextArea(document.getElementById("NbbY2"), {
+    mode: "javascript",
+    lineNumbers:false,
+    tabSize: 2
+  });
+   codeMirrorMap.set("NbbY2", editor1);}
+  </script>
+  </div>
+ </div>
+</div><h3 id="summary">Summary</h3><p>Enhanced object literals make object creation more concise and dynamic. Shorthand properties and methods reduce boilerplate, improving readability, while computed property names enable dynamic keys, boosting flexibility.</p><div>
+ <div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+  <pre><code class="language-js">const x = 10;
+const y = 20;
+
+const point = {
+  x,          // shorthand property
+  y,
+  move(dx, dy) {   // shorthand method
+    this.x += dx;
+    this.y += dy;
+  },
+  [`distance_${x}_${y}`]: Math.sqrt(x*x + y*y) // computed property
+};
+
+console.log(point.distance_10_20); // 22.360679774997898
+point.move(5, 5);
+console.log(JSON.stringify(point,null,2)); // { x: 15, y: 25, move: [Function: move], distance_10_20: 22.360679774997898 }</code></pre>
+ </div>
+ <div class="snippet-container" id="ysBFK">
+  <div class="snippet-header" onclick="toggleSnippetAndRefresh('ysBFK','2mD8t')">
+   Try it in editor
+  </div>
+  <div class="snippet-body"><textarea id="2mD8t">const x = 10;
+const y = 20;
+
+const point = {
+  x,          // shorthand property
+  y,
+  move(dx, dy) {   // shorthand method
+    this.x += dx;
+    this.y += dy;
+  },
+  [`distance_${x}_${y}`]: Math.sqrt(x*x + y*y) // computed property
+};
+
+console.log(point.distance_10_20); // 22.360679774997898
+point.move(5, 5);
+console.log(JSON.stringify(point,null,2)); // { x: 15, y: 25, move: [Function: move], distance_10_20: 22.360679774997898 }</textarea> <br> <button onclick="renderIframeForClientJavascript('2mD8t','skRh4')">Run</button> <iframe id="skRh4" class="result_iframe" style="display: none;"></iframe>
+   <script>
+  {let editor1 = CodeMirror.fromTextArea(document.getElementById("2mD8t"), {
+    mode: "javascript",
+    lineNumbers:false,
+    tabSize: 2
+  });
+   codeMirrorMap.set("2mD8t", editor1);}
+  </script>
+  </div>
+ </div>
+</div><p>This syntax keeps your code clean and expressive in modern JavaScript development.</p><div class = "chapter-navi-section">
+<a href="#top" class="nav-button prev">↑</a>
+<a href='javascript-syntax.htm#es6-and-beyond-modern-javascript-syntax' class="nav-button toc-link">Index</a>
+<a href="#bottom" class="nav-button next">↓</a>
+</div>
+<h2 id='default-rest-and-spread-operators'>10.5 Default, Rest, and Spread Operators</h2><p>Modern JavaScript introduces several powerful syntactic features that simplify working with functions, arrays, and objects: <strong>default parameters</strong>, <strong>rest parameters</strong>, and <strong>spread syntax</strong>.</p><h4 id="default-parameters">Default Parameters</h4><p>Default parameters allow you to assign default values to function parameters if no argument or <code>undefined</code> is passed:</p><div>
+ <div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+  <pre><code class="language-js">function greet(name = "Guest") {
+  console.log(`Hello, ${name}!`);
+}
+
+greet("Alice"); // Hello, Alice!
+greet();        // Hello, Guest!</code></pre>
+ </div>
+ <div class="snippet-container" id="ONZkF">
+  <div class="snippet-header" onclick="toggleSnippetAndRefresh('ONZkF','KLWat')">
+   Try it in editor
+  </div>
+  <div class="snippet-body"><textarea id="KLWat">function greet(name = "Guest") {
+  console.log(`Hello, ${name}!`);
+}
+
+greet("Alice"); // Hello, Alice!
+greet();        // Hello, Guest!</textarea> <br> <button onclick="renderIframeForClientJavascript('KLWat','Tp38O')">Run</button> <iframe id="Tp38O" class="result_iframe" style="display: none;"></iframe>
+   <script>
+  {let editor1 = CodeMirror.fromTextArea(document.getElementById("KLWat"), {
+    mode: "javascript",
+    lineNumbers:false,
+    tabSize: 2
+  });
+   codeMirrorMap.set("KLWat", editor1);}
+  </script>
+  </div>
+ </div>
+</div><p>You can even use previous parameters as defaults:</p><div>
+ <div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+  <pre><code class="language-js">function multiply(a, b = a) {
+  return a * b;
+}
+
+console.log(multiply(5));    // 25 (b defaults to 5)
+console.log(multiply(5, 2)); // 10</code></pre>
+ </div>
+ <div class="snippet-container" id="0gVg8">
+  <div class="snippet-header" onclick="toggleSnippetAndRefresh('0gVg8','tQy7e')">
+   Try it in editor
+  </div>
+  <div class="snippet-body"><textarea id="tQy7e">function multiply(a, b = a) {
+  return a * b;
+}
+
+console.log(multiply(5));    // 25 (b defaults to 5)
+console.log(multiply(5, 2)); // 10</textarea> <br> <button onclick="renderIframeForClientJavascript('tQy7e','SgmVP')">Run</button> <iframe id="SgmVP" class="result_iframe" style="display: none;"></iframe>
+   <script>
+  {let editor1 = CodeMirror.fromTextArea(document.getElementById("tQy7e"), {
+    mode: "javascript",
+    lineNumbers:false,
+    tabSize: 2
+  });
+   codeMirrorMap.set("tQy7e", editor1);}
+  </script>
+  </div>
+ </div>
+</div><h4 id="rest-parameters">Rest Parameters</h4><p>Rest parameters collect multiple arguments into a single array, useful for functions with variable numbers of arguments:</p><div>
+ <div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+  <pre><code class="language-js">function sum(...numbers) {
+  return numbers.reduce((total, n) =&gt; total + n, 0);
+}
+
+console.log(sum(1, 2, 3));    // 6
+console.log(sum(4, 5, 6, 7)); // 22</code></pre>
+ </div>
+ <div class="snippet-container" id="tiKtX">
+  <div class="snippet-header" onclick="toggleSnippetAndRefresh('tiKtX','nKz6I')">
+   Try it in editor
+  </div>
+  <div class="snippet-body"><textarea id="nKz6I">function sum(...numbers) {
+  return numbers.reduce((total, n) =&gt; total + n, 0);
+}
+
+console.log(sum(1, 2, 3));    // 6
+console.log(sum(4, 5, 6, 7)); // 22</textarea> <br> <button onclick="renderIframeForClientJavascript('nKz6I','ZZdxe')">Run</button> <iframe id="ZZdxe" class="result_iframe" style="display: none;"></iframe>
+   <script>
+  {let editor1 = CodeMirror.fromTextArea(document.getElementById("nKz6I"), {
+    mode: "javascript",
+    lineNumbers:false,
+    tabSize: 2
+  });
+   codeMirrorMap.set("nKz6I", editor1);}
+  </script>
+  </div>
+ </div>
+</div><p>Rest parameters must be the last parameter in the function.</p><h4 id="spread-syntax">Spread Syntax</h4><p>The spread syntax (<code>...</code>) expands iterable values (like arrays or strings) or object properties into individual elements or key-value pairs.</p><p><strong>In function calls:</strong></p><div>
+ <div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+  <pre><code class="language-js">const nums = [1, 2, 3];
+console.log(Math.max(...nums)); // 3</code></pre>
+ </div>
+ <div class="snippet-container" id="CWMcs">
+  <div class="snippet-header" onclick="toggleSnippetAndRefresh('CWMcs','rdeY2')">
+   Try it in editor
+  </div>
+  <div class="snippet-body"><textarea id="rdeY2">const nums = [1, 2, 3];
+console.log(Math.max(...nums)); // 3</textarea> <br> <button onclick="renderIframeForClientJavascript('rdeY2','q9lTd')">Run</button> <iframe id="q9lTd" class="result_iframe" style="display: none;"></iframe>
+   <script>
+  {let editor1 = CodeMirror.fromTextArea(document.getElementById("rdeY2"), {
+    mode: "javascript",
+    lineNumbers:false,
+    tabSize: 2
+  });
+   codeMirrorMap.set("rdeY2", editor1);}
+  </script>
+  </div>
+ </div>
+</div><p><strong>In arrays:</strong></p><div>
+ <div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+  <pre><code class="language-js">const arr1 = [1, 2];
+const arr2 = [3, 4];
+const combined = [...arr1, ...arr2];
+console.log(combined); // [1, 2, 3, 4]</code></pre>
+ </div>
+ <div class="snippet-container" id="Vvs99">
+  <div class="snippet-header" onclick="toggleSnippetAndRefresh('Vvs99','vKhPc')">
+   Try it in editor
+  </div>
+  <div class="snippet-body"><textarea id="vKhPc">const arr1 = [1, 2];
+const arr2 = [3, 4];
+const combined = [...arr1, ...arr2];
+console.log(combined); // [1, 2, 3, 4]</textarea> <br> <button onclick="renderIframeForClientJavascript('vKhPc','wGmQQ')">Run</button> <iframe id="wGmQQ" class="result_iframe" style="display: none;"></iframe>
+   <script>
+  {let editor1 = CodeMirror.fromTextArea(document.getElementById("vKhPc"), {
+    mode: "javascript",
+    lineNumbers:false,
+    tabSize: 2
+  });
+   codeMirrorMap.set("vKhPc", editor1);}
+  </script>
+  </div>
+ </div>
+</div><p><strong>In objects:</strong></p><div>
+ <div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+  <pre><code class="language-js">const obj1 = { a: 1, b: 2 };
+const obj2 = { b: 3, c: 4 };
+const merged = { ...obj1, ...obj2 };
+console.log(JSON.stringify(merged,null,2)); // { a: 1, b: 3, c: 4 }</code></pre>
+ </div>
+ <div class="snippet-container" id="m9f5z">
+  <div class="snippet-header" onclick="toggleSnippetAndRefresh('m9f5z','wXmVz')">
+   Try it in editor
+  </div>
+  <div class="snippet-body"><textarea id="wXmVz">const obj1 = { a: 1, b: 2 };
+const obj2 = { b: 3, c: 4 };
+const merged = { ...obj1, ...obj2 };
+console.log(JSON.stringify(merged,null,2)); // { a: 1, b: 3, c: 4 }</textarea> <br> <button onclick="renderIframeForClientJavascript('wXmVz','bGRTQ')">Run</button> <iframe id="bGRTQ" class="result_iframe" style="display: none;"></iframe>
+   <script>
+  {let editor1 = CodeMirror.fromTextArea(document.getElementById("wXmVz"), {
+    mode: "javascript",
+    lineNumbers:false,
+    tabSize: 2
+  });
+   codeMirrorMap.set("wXmVz", editor1);}
+  </script>
+  </div>
+ </div>
+</div><p>Note: Properties in later objects overwrite earlier ones.</p><h3 id="practical-example-combining-these-features">Practical Example Combining These Features</h3><div>
+ <div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+  <pre><code class="language-js">function createUser(name = "Anonymous", ...roles) {
+  return {
+    name,
+    roles,
+    info() {
+      console.log(`${this.name} has roles: ${this.roles.join(", ")}`);
+    }
+  };
+}
+
+const user1 = createUser("Alice", "admin", "editor");
+user1.info(); // Alice has roles: admin, editor
+
+const user2 = createUser();
+user2.info(); // Anonymous has roles:</code></pre>
+ </div>
+ <div class="snippet-container" id="WMrJe">
+  <div class="snippet-header" onclick="toggleSnippetAndRefresh('WMrJe','0dHBf')">
+   Try it in editor
+  </div>
+  <div class="snippet-body"><textarea id="0dHBf">function createUser(name = "Anonymous", ...roles) {
+  return {
+    name,
+    roles,
+    info() {
+      console.log(`${this.name} has roles: ${this.roles.join(", ")}`);
+    }
+  };
+}
+
+const user1 = createUser("Alice", "admin", "editor");
+user1.info(); // Alice has roles: admin, editor
+
+const user2 = createUser();
+user2.info(); // Anonymous has roles:</textarea> <br> <button onclick="renderIframeForClientJavascript('0dHBf','M2E8y')">Run</button> <iframe id="M2E8y" class="result_iframe" style="display: none;"></iframe>
+   <script>
+  {let editor1 = CodeMirror.fromTextArea(document.getElementById("0dHBf"), {
+    mode: "javascript",
+    lineNumbers:false,
+    tabSize: 2
+  });
+   codeMirrorMap.set("0dHBf", editor1);}
+  </script>
+  </div>
+ </div>
+</div><h3 id="summary">Summary</h3><ul>
+ <li><strong>Default parameters</strong> provide fallback values for missing arguments.</li>
+ <li><strong>Rest parameters</strong> gather remaining arguments into arrays.</li>
+ <li><strong>Spread syntax</strong> expands arrays or objects in calls and literals.</li>
+</ul><p>Together, they offer flexible, concise ways to manage function arguments and data structures in modern JavaScript.</p><div class = "chapter-navi-section">
+<a href="#top" class="nav-button prev">↑</a>
+<a href='javascript-syntax.htm#es6-and-beyond-modern-javascript-syntax' class="nav-button toc-link">Index</a>
+<a href="#bottom" class="nav-button next">↓</a>
+</div>
+<h2 id='optional-chaining-and-nullish-coalescing'>10.6 Optional Chaining (<code>?.</code>) and Nullish Coalescing (<code>??</code>)</h2><p>Modern JavaScript introduces two handy operators — <strong>optional chaining (<code>?.</code>)</strong> and <strong>nullish coalescing (<code>??</code>)</strong> — that simplify handling <code>null</code> or <code>undefined</code> values safely and concisely.</p><h4 id="optional-chaining">Optional Chaining (<code>?.</code>)</h4><p>Optional chaining lets you safely access deeply nested properties or call methods on objects that might be <code>null</code> or <code>undefined</code> without causing runtime errors.</p><p>Instead of:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-js">if (user &amp;&amp; user.address &amp;&amp; user.address.street) {
+  console.log(user.address.street);
+}</code></pre>
+</div><p>You can write:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-js">console.log(user?.address?.street);</code></pre>
+</div><p>If any part of the chain (<code>user</code>, <code>user.address</code>) is <code>null</code> or <code>undefined</code>, the expression short-circuits and returns <code>undefined</code> instead of throwing an error.</p><p>You can also safely call methods:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-js">user?.getName?.();</code></pre>
+</div><p>If <code>getName</code> exists, it will be called; otherwise, it returns <code>undefined</code>.</p><h4 id="nullish-coalescing">Nullish Coalescing (<code>??</code>)</h4><p>Nullish coalescing provides a way to assign default values <strong>only when a value is <code>null</code> or <code>undefined</code></strong>, unlike the logical OR (<code>||</code>) which treats other falsy values like <code>0</code>, <code>""</code>, or <code>false</code> as default triggers.</p><p>Example with <code>||</code>:</p><div>
+ <div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+  <pre><code class="language-js">const count = 0;
+const value = count || 10;
+console.log(value); // 10 — but 0 is a valid value!</code></pre>
+ </div>
+ <div class="snippet-container" id="8mzZt">
+  <div class="snippet-header" onclick="toggleSnippetAndRefresh('8mzZt','CYvLT')">
+   Try it in editor
+  </div>
+  <div class="snippet-body"><textarea id="CYvLT">const count = 0;
+const value = count || 10;
+console.log(value); // 10 — but 0 is a valid value!</textarea> <br> <button onclick="renderIframeForClientJavascript('CYvLT','f3let')">Run</button> <iframe id="f3let" class="result_iframe" style="display: none;"></iframe>
+   <script>
+  {let editor1 = CodeMirror.fromTextArea(document.getElementById("CYvLT"), {
+    mode: "javascript",
+    lineNumbers:false,
+    tabSize: 2
+  });
+   codeMirrorMap.set("CYvLT", editor1);}
+  </script>
+  </div>
+ </div>
+</div><p>With <code>??</code>:</p><div>
+ <div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+  <pre><code class="language-js">const count = 0;
+const value = count ?? 10;
+console.log(value); // 0 — correctly keeps zero</code></pre>
+ </div>
+ <div class="snippet-container" id="DagNl">
+  <div class="snippet-header" onclick="toggleSnippetAndRefresh('DagNl','Ziqju')">
+   Try it in editor
+  </div>
+  <div class="snippet-body"><textarea id="Ziqju">const count = 0;
+const value = count ?? 10;
+console.log(value); // 0 — correctly keeps zero</textarea> <br> <button onclick="renderIframeForClientJavascript('Ziqju','EaauG')">Run</button> <iframe id="EaauG" class="result_iframe" style="display: none;"></iframe>
+   <script>
+  {let editor1 = CodeMirror.fromTextArea(document.getElementById("Ziqju"), {
+    mode: "javascript",
+    lineNumbers:false,
+    tabSize: 2
+  });
+   codeMirrorMap.set("Ziqju", editor1);}
+  </script>
+  </div>
+ </div>
+</div><h4 id="combined-usage-example">Combined Usage Example</h4><div>
+ <div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+  <pre><code class="language-js">const config = {
+  theme: null,
+  user: {
+    name: "Alice",
+    getAddress() {
+      return null;
+    }
+  }
+};
+
+const theme = config.theme ?? "default";       // "default" since theme is null
+const street = config.user?.getAddress()?.street ?? "No address"; // "No address"
+
+console.log(theme);  // default
+console.log(street); // No address</code></pre>
+ </div>
+ <div class="snippet-container" id="dczli">
+  <div class="snippet-header" onclick="toggleSnippetAndRefresh('dczli','1zlOP')">
+   Try it in editor
+  </div>
+  <div class="snippet-body"><textarea id="1zlOP">const config = {
+  theme: null,
+  user: {
+    name: "Alice",
+    getAddress() {
+      return null;
+    }
+  }
+};
+
+const theme = config.theme ?? "default";       // "default" since theme is null
+const street = config.user?.getAddress()?.street ?? "No address"; // "No address"
+
+console.log(theme);  // default
+console.log(street); // No address</textarea> <br> <button onclick="renderIframeForClientJavascript('1zlOP','c5Oa6')">Run</button> <iframe id="c5Oa6" class="result_iframe" style="display: none;"></iframe>
+   <script>
+  {let editor1 = CodeMirror.fromTextArea(document.getElementById("1zlOP"), {
+    mode: "javascript",
+    lineNumbers:false,
+    tabSize: 2
+  });
+   codeMirrorMap.set("1zlOP", editor1);}
+  </script>
+  </div>
+ </div>
+</div><h3 id="summary">Summary</h3><ul>
+ <li>Use <strong>optional chaining (<code>?.</code>)</strong> to safely access nested properties or call methods without risk of errors when intermediate values are missing.</li>
+ <li>Use <strong>nullish coalescing (<code>??</code>)</strong> to provide defaults only when dealing with <code>null</code> or <code>undefined</code>, preserving other falsy but valid values.</li>
+</ul><p>Together, they make your code safer, cleaner, and easier to maintain.</p><div class = "chapter-navi-section">
+<a href="#top" class="nav-button prev">↑</a>
+<a href='javascript-syntax.htm#es6-and-beyond-modern-javascript-syntax' class="nav-button toc-link">Index</a>
+<a href="#bottom" class="nav-button next">↓</a>
+</div>
+<h2 id='bigint-syntax-and-usage'>10.7 BigInt Syntax and Usage</h2><p>JavaScript's <code>BigInt</code> is a primitive type designed to represent integers larger than the safe integer limit of the standard <code>Number</code> type (<code>Number.MAX_SAFE_INTEGER</code>, which is 2^53 - 1). It allows you to work safely with arbitrarily large integers without losing precision.</p><h4 id="creating-bigints">Creating BigInts</h4><p>You can create a <code>BigInt</code> in two ways:</p><ul>
+ <li><strong>Literal syntax:</strong> Append <code>n</code> to the end of an integer literal.</li>
+</ul><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-js">const bigNum = 9007199254740991n;  // Number.MAX_SAFE_INTEGER as BigInt
+const hugeNum = 123456789012345678901234567890n;</code></pre>
+</div><ul>
+ <li><strong>Constructor:</strong> Use the <code>BigInt()</code> function with a string or number.</li>
+</ul><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-js">const bigFromString = BigInt("9007199254740991999999");</code></pre>
+</div><h4 id="arithmetic-operations">Arithmetic Operations</h4><p>You can perform most standard arithmetic operations with <code>BigInt</code> values:</p><div>
+ <div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+  <pre><code class="language-js">const a = 1000000000000000000000n;
+const b = 900000000000000000000n;
+
+console.log(a + b);  // 1900000000000000000000n
+console.log(a * 2n); // 2000000000000000000000n
+console.log(a / 3n); // 333333333333333333333n (integer division)</code></pre>
+ </div>
+ <div class="snippet-container" id="PXjSd">
+  <div class="snippet-header" onclick="toggleSnippetAndRefresh('PXjSd','MYVOF')">
+   Try it in editor
+  </div>
+  <div class="snippet-body"><textarea id="MYVOF">const a = 1000000000000000000000n;
+const b = 900000000000000000000n;
+
+console.log(a + b);  // 1900000000000000000000n
+console.log(a * 2n); // 2000000000000000000000n
+console.log(a / 3n); // 333333333333333333333n (integer division)</textarea> <br> <button onclick="renderIframeForClientJavascript('MYVOF','Afqii')">Run</button> <iframe id="Afqii" class="result_iframe" style="display: none;"></iframe>
+   <script>
+  {let editor1 = CodeMirror.fromTextArea(document.getElementById("MYVOF"), {
+    mode: "javascript",
+    lineNumbers:false,
+    tabSize: 2
+  });
+   codeMirrorMap.set("MYVOF", editor1);}
+  </script>
+  </div>
+ </div>
+</div><h4 id="comparisons-and-limitations">Comparisons and Limitations</h4><p><code>BigInt</code> values can be compared using standard comparison operators:</p><div>
+ <div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+  <pre><code class="language-js">console.log(10n &gt; 5n);  // true
+console.log(10n === 10); // false (different types)</code></pre>
+ </div>
+ <div class="snippet-container" id="bA5cl">
+  <div class="snippet-header" onclick="toggleSnippetAndRefresh('bA5cl','IM5E8')">
+   Try it in editor
+  </div>
+  <div class="snippet-body"><textarea id="IM5E8">console.log(10n &gt; 5n);  // true
+console.log(10n === 10); // false (different types)</textarea> <br> <button onclick="renderIframeForClientJavascript('IM5E8','yXN7t')">Run</button> <iframe id="yXN7t" class="result_iframe" style="display: none;"></iframe>
+   <script>
+  {let editor1 = CodeMirror.fromTextArea(document.getElementById("IM5E8"), {
+    mode: "javascript",
+    lineNumbers:false,
+    tabSize: 2
+  });
+   codeMirrorMap.set("IM5E8", editor1);}
+  </script>
+  </div>
+ </div>
+</div><p><strong>Important:</strong> You cannot mix <code>BigInt</code> and <code>Number</code> types directly in arithmetic without explicit conversion:</p><div>
+ <div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+  <pre><code class="language-js">const num = 10;
+const big = 10n;
+
+console.log(big + BigInt(num)); // 20n (works)
+console.log(big + num);          // TypeError: Cannot mix BigInt and other types</code></pre>
+ </div>
+ <div class="snippet-container" id="wMypo">
+  <div class="snippet-header" onclick="toggleSnippetAndRefresh('wMypo','ZTYv2')">
+   Try it in editor
+  </div>
+  <div class="snippet-body"><textarea id="ZTYv2">const num = 10;
+const big = 10n;
+
+console.log(big + BigInt(num)); // 20n (works)
+console.log(big + num);          // TypeError: Cannot mix BigInt and other types</textarea> <br> <button onclick="renderIframeForClientJavascript('ZTYv2','Vioxl')">Run</button> <iframe id="Vioxl" class="result_iframe" style="display: none;"></iframe>
+   <script>
+  {let editor1 = CodeMirror.fromTextArea(document.getElementById("ZTYv2"), {
+    mode: "javascript",
+    lineNumbers:false,
+    tabSize: 2
+  });
+   codeMirrorMap.set("ZTYv2", editor1);}
+  </script>
+  </div>
+ </div>
+</div><p>Use <code>BigInt()</code> or <code>Number()</code> conversions to handle this.</p><h3 id="summary">Summary</h3><p><code>BigInt</code> extends JavaScript’s numeric capabilities to safely handle very large integers beyond the limitations of <code>Number</code>. Use the <code>n</code> literal or <code>BigInt()</code> constructor to create values, and keep in mind that arithmetic must be between values of the same type. This powerful feature is essential for applications dealing with cryptography, large IDs, or high-precision calculations.</p><div>
+ <div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+  <pre><code class="language-js">const bigValue = 9007199254740993n;
+console.log(bigValue + 1n);  // 9007199254740994n</code></pre>
+ </div>
+ <div class="snippet-container" id="bTYlf">
+  <div class="snippet-header" onclick="toggleSnippetAndRefresh('bTYlf','sWqPw')">
+   Try it in editor
+  </div>
+  <div class="snippet-body"><textarea id="sWqPw">const bigValue = 9007199254740993n;
+console.log(bigValue + 1n);  // 9007199254740994n</textarea> <br> <button onclick="renderIframeForClientJavascript('sWqPw','wpK6F')">Run</button> <iframe id="wpK6F" class="result_iframe" style="display: none;"></iframe>
+   <script>
+  {let editor1 = CodeMirror.fromTextArea(document.getElementById("sWqPw"), {
+    mode: "javascript",
+    lineNumbers:false,
+    tabSize: 2
+  });
+   codeMirrorMap.set("sWqPw", editor1);}
+  </script>
+  </div>
+ </div>
+</div><div class = "chapter-navi-section">
+<a href="javascript-syntax-working-with-strings-and-regular-expressions.htm" class="nav-button prev">←</a>
+<a href='javascript-syntax.htm#es6-and-beyond-modern-javascript-syntax' class="nav-button toc-link">Index</a>
+<a href="javascript-syntax-classes-and-prototypes.htm" class="nav-button next">→</a>
+</div>
+<section class="download-section">
+  <div class="book-cover" style="background-image: url('data:image/jpg;base64,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');">
+<div class="series-name">Introduction</div>
+<div class="book-title">JavaScript Syntax</div>
+<div class="book-subtitle">From Fundamentals to Advanced Patterns</div>
+<div class="book-footer">readbytes.github.io</div>
+</div>
+  <div class="download-info">
+    <h2 id='bottom'>Download This Ebook</h2>
+    <p class="format-label">Available formats:</p>
+    <div class="download-buttons">
+      <a href="javascript-syntax.pdf" class="download-button">📄 PDF</a>
+      <a href="javascript-syntax.epub" class="download-button">📘 EPUB</a>
+    </div>
+  </div>
+</section><div class='related-books'>
+<h2>Javascript Introduction Books</h2>
+<div class='related-book-list'>
+<a href="javascript-for-beginners.htm"><div class="book-cover" style="background-image: url('data:image/jpg;base64,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');">
+<div class="series-name">Introduction</div>
+<div class="book-title">JavaScript for Beginners</div>
+<div class="book-subtitle">From Basics to Advanced Programming</div>
+<div class="book-footer">readbytes.github.io</div>
+</div></a>
+
+
+<a href="javascript-syntax.htm"><div class="book-cover" style="background-image: url('data:image/jpg;base64,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');">
+<div class="series-name">Introduction</div>
+<div class="book-title">JavaScript Syntax</div>
+<div class="book-subtitle">From Fundamentals to Advanced Patterns</div>
+<div class="book-footer">readbytes.github.io</div>
+</div></a>
+
+
+
+<a href='javascript.htm'><div class='book-cover'>More Javascript Books</div></a>
+</div>
+</div>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+  
+  <script>
+    function copyCode(button) {
+      const code = button.nextElementSibling.innerText;
+      navigator.clipboard.writeText(code).then(() => {
+        button.textContent = 'Copied!';
+        setTimeout(() => { button.textContent = 'Copy'; }, 1500);
+      });
+    }
+  </script>  
+
+<footer class="page-footer">
+    <nav>
+      <a href="https://readbytes.github.io">Home</a> | 
+      Email:<script language="JavaScript" type="text/javascript">
+var part1 = 'yinpeng';var part6 = '263';var part2 = Math.pow(2,6);var part3 = String.fromCharCode(part2);var part4 = 'hotmail dot com';var part5 = part1 + String.fromCharCode(part2) + part4;document.write(part1 + part6 + part3 + part4);
+</script>
+    </nav>
+  <p>© 2025 — All rights reserved.</p>    
+  </footer>
+
+</body>
+</html>

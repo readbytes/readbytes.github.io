@@ -1,0 +1,693 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>Go for Beginners Functions</title>
+<link rel='shortcut icon' href='https://java2s.com/style/favicon.ico'>
+<link href="https://fonts.googleapis.com/css2?family=Merriweather&display=swap" rel="stylesheet" />
+<link href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+
+
+<style>
+body {
+  background: #f8f7f5;
+  font-family: 'Merriweather', serif;
+  color: #333;
+  margin: 0;
+  padding: 2rem 1rem;
+  font-size: 15px; /* smaller body font */
+  line-height: 1.5;
+}
+
+.container {
+  max-width: 700px;
+  margin: 0 auto;
+  background: white;
+  padding: 1rem 2rem;
+  box-shadow: 0 0 15px rgba(0,0,0,0.1);
+}
+.book-title-chapter {
+  font-family: 'Merriweather', serif;
+  font-size: 2rem;
+  font-weight: bold;
+  text-align: center;
+  margin-bottom: 2rem;
+  border-bottom: 2px solid #ccc;
+  padding-bottom: 0.5rem;
+  color: #2c3e50;
+}
+
+.book-subtitle-chapter {
+  text-align: center;
+  font-size: 1rem;
+  color: #666;
+  margin-top: -1rem;
+  margin-bottom: 2rem;
+}
+
+    .related-books {
+      margin-top: 40px;
+    }
+
+    .related-books h2 {
+      font-size: 22px;
+      margin-bottom: 20px;
+      border-bottom: 2px solid #eee;
+      padding-bottom: 8px;
+      color: #333;
+    }
+    .related-book-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+h1, h2, h3 {
+  font-weight: 600;
+  margin-top: 2.5rem;
+  margin-bottom: 1rem;
+  line-height: 1.2;
+}
+
+h1 {
+  font-size: 1.8rem; /* smaller heading */
+}
+
+h2 {
+  font-size: 1.4rem;
+}
+
+h3 {
+  font-size: 1.2rem;
+}
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-family: sans-serif;
+      font-size: 1em;
+      margin: 1em 0;
+    }
+
+    th, td {
+      border: 1px solid #cccccc;
+      padding: 0.6em 1em;
+      text-align: left;
+    }
+
+    th {
+      background-color: #f2f2f2;
+      font-weight: bold;
+    }
+
+    tr:nth-child(even) {
+      background-color: #fafafa;
+    }
+
+    /* Optional hover effect */
+    tr:hover {
+      background-color: #e6f7ff;
+    }
+ 
+a {
+  color: #555;
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+
+
+.code-block {
+    position: relative;
+    margin-bottom: 1em;
+}
+.copy-button {
+    background: transparent; 
+    color: white;
+
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    border: none;
+    padding: 4px 8px;
+    font-size: 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    z-index: 1;
+}
+
+.copy-button:hover {
+background-color: #0056b3;
+}
+.page-footer {
+  margin-top: 4rem;
+  padding: 1rem 0;
+  text-align: center;
+  font-size: 0.85rem;
+  color: #666;
+  border-top: 1px solid #ccc;
+  background-color: #fafafa;
+}
+.page-footer a {
+     color: #555;
+    text-decoration: none;
+  }
+  .page-footer a:hover {
+    text-decoration: underline;
+  }
+.chapter-navi-section {
+display: flex;
+justify-content: space-between;
+align-items: center;
+padding-bottom: 10px;
+}  
+
+.nav-link {
+  color: inherit;
+  text-decoration: none;
+  opacity: 0.5;
+  transition: opacity 0.3s ease, text-decoration 0.3s ease;
+}
+
+.nav-link:hover {
+  opacity: 0.9;
+  text-decoration: underline;
+}
+
+.prev {
+  text-align: left;
+}
+.toc-link {
+  text-align: center;
+}
+.next {
+  text-align: right;
+}
+.download-section {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2rem;
+  padding: 2rem 1rem;
+  max-width: 600px;
+  margin: 3rem auto;
+  background-color: #f9f9f9;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+}
+
+    .book-cover {
+      width: 130px;
+      height: 180px;
+      
+      background-size: cover; /* Ensures the image covers the entire div */
+      background-position: center; /* Centers the image */
+            
+      background: linear-gradient(145deg, #e0dede, #f9f9f9);
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 10px;
+      box-sizing: border-box;
+      position: relative;
+      font-family: 'Roboto', sans-serif;
+    }
+
+    .book-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 16px;
+      font-weight: 600;
+      color: #fff;
+      margin-bottom: 4px;
+    }
+
+    .book-subtitle {
+      font-size: 12px;
+      color: #aaa;
+      margin-bottom: 10px;
+    }
+
+    .series-name {
+      position: absolute;
+      top: 8px;
+      left: 8px;
+      font-size: 10px;
+      color: #fff;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-weight: bold;
+    }
+
+    .book-footer {
+      position: absolute;
+      bottom: 8px;
+      font-size: 10px;
+      color: #aaa;
+    }
+
+.download-info h2 {
+  margin: 0 0 0.5rem;
+  font-size: 1.2rem;
+}
+
+.format-label {
+  margin: 0 0 0.5rem;
+  font-size: 0.95rem;
+  color: #555;
+}
+
+.download-buttons {
+  display: flex;
+  gap: 1rem;
+}
+
+.download-button {
+  background-color: #4A90E2;
+  color: white;
+  padding: 0.5em 1.2em;
+  text-decoration: none;
+  border-radius: 25px;
+  font-size: 0.95rem;
+  transition: background-color 0.3s ease;
+}
+
+.download-button:hover {
+  background-color: #357ABD;
+}
+
+    code {
+ 
+      color: #d35400; 
+    }
+html {
+    scroll-behavior: smooth;
+}
+    .snippet-container {
+      overflow: hidden;    
+    }
+
+    .snippet-header {
+      background: #f0f0f0;
+      color: #333;
+      padding: 0.75rem 1rem;
+      cursor: pointer;
+      font-size: 1rem;
+    }
+
+    .snippet-body {
+      display: none;
+      font-family: monospace;
+    }
+
+    .snippet-container.open .snippet-body {
+      display: block;
+    }
+
+.CodeMirror {
+  border: 2px solid #ccc;
+  border-radius: 4px;
+  resize: vertical;
+}
+
+    button { padding: 0.5em 1em; background: green; color: white; border: none; cursor: pointer; }
+    button:hover { background: #1e7e34; }
+    .result_iframe { width:99%; height:200px; margin-top: 1em;  resize: both;border:1px solid #ccc;}        
+</style>
+</head>
+<body> 
+
+  <div class="container">
+    <div class = "chapter-navi-section">
+<a href="go-for-beginners-control-structures.htm" class="nav-button prev">←</a>
+<a href='go-for-beginners.htm#functions' class="nav-button toc-link">Index</a>
+<a href="go-for-beginners-arrays-slices-and-maps.htm" class="nav-button next">→</a>
+</div>
+
+    <h1 class="book-title-chapter" id = 'top'>Functions</h1>
+    <h3 class="book-subtitle-chapter">Go for Beginners</h3>   
+    <!-- <h1 class ="chapter-title"></h1> -->
+    <h2 id='defining-and-calling-functions'>4.1 Defining and Calling Functions</h2><p>Functions are fundamental building blocks in Go programs. They allow you to group related code into reusable units, making your programs modular and easier to maintain.</p><h3 id="function-definition-syntax">Function Definition Syntax</h3><p>In Go, you define a function using the <code>func</code> keyword, followed by the function name, a list of parameters enclosed in parentheses, and the return type (if any).</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-go">func functionName(parameterList) returnType {
+    // function body
+}</code></pre>
+</div><ul>
+ <li><strong><code>func</code></strong>: keyword to declare a function.</li>
+ <li><strong><code>functionName</code></strong>: the identifier you choose for your function.</li>
+ <li><strong><code>parameterList</code></strong>: comma-separated list of parameters, each with a name and type.</li>
+ <li><strong><code>returnType</code></strong>: the type of value the function returns; optional if the function does not return anything.</li>
+</ul><h3 id="calling-functions">Calling Functions</h3><p>You call a function by using its name followed by parentheses containing the arguments.</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-go">result := functionName(arg1, arg2)</code></pre>
+</div><h3 id="example-adding-two-numbers">Example: Adding Two Numbers</h3><p>Let’s define a simple function named <code>add</code> that takes two integers as parameters and returns their sum.</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">📋</button>
+ <pre><code class="language-go">package main
+
+import "fmt"
+
+// add takes two integers and returns their sum
+func add(a int, b int) int {
+    return a + b
+}
+
+func main() {
+    sum := add(5, 7)
+    fmt.Println("Sum:", sum) // Output: Sum: 12
+}</code></pre>
+</div><h3 id="explanation">Explanation</h3><ul>
+ <li>The <code>add</code> function takes two parameters <code>a</code> and <code>b</code>, both of type <code>int</code>.</li>
+ <li>It returns a single <code>int</code> value, which is the sum of <code>a</code> and <code>b</code>.</li>
+ <li>In <code>main()</code>, we call <code>add</code> with the arguments <code>5</code> and <code>7</code>.</li>
+ <li>The returned result is stored in the variable <code>sum</code> and then printed.</li>
+</ul><h3 id="summary">Summary</h3><ul>
+ <li>Use the <code>func</code> keyword to define functions in Go.</li>
+ <li>Functions have a name, optional parameters, and an optional return type.</li>
+ <li>Call functions by passing arguments matching the parameter types.</li>
+ <li>Functions help keep code organized and reusable.</li>
+</ul><div class = "chapter-navi-section">
+<a href="#top" class="nav-button prev">↑</a>
+<a href='go-for-beginners.htm#functions' class="nav-button toc-link">Index</a>
+<a href="#bottom" class="nav-button next">↓</a>
+</div>
+<h2 id='function-parameters-and-return-values'>4.2 Function Parameters and Return Values</h2><p>Functions in Go can accept parameters and return values, allowing you to pass data into functions and receive results back.</p><h3 id="passing-parameters-by-value">Passing Parameters by Value</h3><p>In Go, function parameters are <strong>passed by value</strong>. This means the function receives a <strong>copy</strong> of the argument's value. Modifying the parameter inside the function does not affect the original variable outside the function.</p><h3 id="typed-parameters">Typed Parameters</h3><p>Each parameter in a function must have a specified type. When multiple consecutive parameters share the same type, you can list their names followed by a single type.</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-go">func example(a int, b int) { ... }
+// can be simplified to
+func example(a, b int) { ... }</code></pre>
+</div><h3 id="multiple-parameters">Multiple Parameters</h3><p>Functions can accept multiple parameters of different types, enabling flexible input.</p><h3 id="returning-values">Returning Values</h3><p>Functions specify the type of the value they return after the parameter list. A function can return a single value or multiple values (covered in the next section).</p><h3 id="example-1-convert-celsius-to-fahrenheit">Example 1: Convert Celsius to Fahrenheit</h3><p>Here’s a function that takes a temperature in Celsius as a <code>float64</code> and returns the equivalent Fahrenheit temperature as a <code>float64</code>.</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">📋</button>
+ <pre><code class="language-go">package main
+
+import "fmt"
+
+// celsiusToFahrenheit converts Celsius to Fahrenheit
+func celsiusToFahrenheit(c float64) float64 {
+    return (c * 9 / 5) + 32
+}
+
+func main() {
+    tempC := 25.0
+    tempF := celsiusToFahrenheit(tempC)
+    fmt.Printf("%.2f°C is %.2f°F", tempC, tempF)
+}</code></pre>
+</div><h4 id="output">Output:</h4><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-bash">25.00°C is 77.00°F</code></pre>
+</div><h3 id="example-2-function-with-multiple-parameters">Example 2: Function with Multiple Parameters</h3><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-go">// greet generates a greeting message for a person of a certain age
+func greet(name string, age int) string {
+    return fmt.Sprintf("Hello %s, you are %d years old.", name, age)
+}</code></pre>
+</div><p>You call it like:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-go">message := greet("Alice", 30)
+fmt.Println(message)</code></pre>
+</div><div class="snippet-container" id="qOA0Y">
+ <div class="snippet-header" onclick="toggleSnippet('qOA0Y')">
+  Click to view full runnable Code
+ </div>
+ <div class="snippet-body">
+  <div class="code-block"><button class="copy-button" onclick="copyCode(this)">📋</button>
+   <pre><code class="language-go">
+package main
+
+import (
+    "fmt"
+)
+
+// greet generates a greeting message for a person of a certain age
+func greet(name string, age int) string {
+    return fmt.Sprintf("Hello %s, you are %d years old.", name, age)
+}
+
+func main() {
+    message := greet("Alice", 30)
+    fmt.Println(message)
+} 
+</code></pre>
+  </div>
+ </div>
+</div><h3 id="summary">Summary</h3><ul>
+ <li>Function parameters in Go are <strong>passed by value</strong> — functions receive copies of the arguments.</li>
+ <li>Parameters must be <strong>typed</strong>, and multiple parameters of the same type can share a type declaration.</li>
+ <li>Functions can take <strong>multiple parameters</strong> of different types.</li>
+ <li>Functions specify <strong>return types</strong> after the parameters and return values using the <code>return</code> statement.</li>
+ <li>Use parameters and return values to make your functions flexible and reusable.</li>
+</ul><div class = "chapter-navi-section">
+<a href="#top" class="nav-button prev">↑</a>
+<a href='go-for-beginners.htm#functions' class="nav-button toc-link">Index</a>
+<a href="#bottom" class="nav-button next">↓</a>
+</div>
+<h2 id='multiple-return-values'>4.3 Multiple Return Values</h2><p>One of Go’s distinctive features is its ability to return <strong>multiple values</strong> from a function. Unlike many languages where a function can only return a single value, Go lets you return two or more values simultaneously, making your functions more expressive and useful.</p><h3 id="why-multiple-return-values-are-useful">Why Multiple Return Values Are Useful</h3><p>Returning multiple values is especially handy when you want to return:</p><ul>
+ <li>A <strong>result</strong> along with an <strong>error</strong> or status indicator.</li>
+ <li>Additional information such as a value and a flag indicating success or failure.</li>
+ <li>More than one related result from a calculation or operation.</li>
+</ul><p>This approach reduces the need for complex error handling mechanisms like exceptions and makes your code clearer and more explicit.</p><h3 id="syntax">Syntax</h3><p>To return multiple values, list the return types in parentheses:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-go">func functionName(params) (type1, type2) {
+    // function body
+    return value1, value2
+}</code></pre>
+</div><h3 id="example-division-function-returning-quotient-and-success-flag">Example: Division Function Returning Quotient and Success Flag</h3><p>Here is a function that divides two floats and returns both the quotient and a boolean indicating whether the division was successful (i.e., denominator not zero):</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">📋</button>
+ <pre><code class="language-go">package main
+
+import "fmt"
+
+// divide returns the quotient and a boolean indicating success
+func divide(a, b float64) (float64, bool) {
+    if b == 0 {
+        return 0, false // division by zero not allowed
+    }
+    return a / b, true
+}
+
+func main() {
+    result, ok := divide(10, 2)
+    if ok {
+        fmt.Println("Result:", result)
+    } else {
+        fmt.Println("Cannot divide by zero")
+    }
+
+    // Try dividing by zero
+    result, ok = divide(10, 0)
+    if !ok {
+        fmt.Println("Cannot divide by zero")
+    }
+}</code></pre>
+</div><h4 id="output">Output:</h4><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-bash">Result: 5
+Cannot divide by zero</code></pre>
+</div><h3 id="summary">Summary</h3><ul>
+ <li>Go functions can return <strong>multiple values</strong> by specifying multiple return types.</li>
+ <li>This enables returning <strong>results along with error or status information</strong> cleanly.</li>
+ <li>Use multiple return values to make your functions more robust and expressive.</li>
+ <li>Handle the returned values appropriately when calling the function.</li>
+</ul><div class = "chapter-navi-section">
+<a href="#top" class="nav-button prev">↑</a>
+<a href='go-for-beginners.htm#functions' class="nav-button toc-link">Index</a>
+<a href="#bottom" class="nav-button next">↓</a>
+</div>
+<h2 id='named-return-values'>4.4 Named Return Values</h2><p>Go allows you to name the return values directly in the function signature. These are called <strong>named return values</strong>, and they act like variables declared at the top of the function. This feature can simplify your code by reducing the need to explicitly declare return variables and allows for a cleaner <code>return</code> statement.</p><h3 id="how-named-return-values-work">How Named Return Values Work</h3><p>When you name the return values:</p><ul>
+ <li>The named variables are automatically declared and initialized to their zero values.</li>
+ <li>You can assign values to these variables anywhere in the function.</li>
+ <li>A plain <code>return</code> statement returns the current values of the named return variables.</li>
+</ul><h3 id="syntax">Syntax</h3><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-go">func functionName(params) (name1 type1, name2 type2) {
+    // function body assigns values to name1, name2
+    return // returns current values of name1 and name2
+}</code></pre>
+</div><h3 id="example-computing-area-and-perimeter-of-a-rectangle">Example: Computing Area and Perimeter of a Rectangle</h3><p>Here’s a function that takes the width and height of a rectangle and returns both the area and perimeter using named return values:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">📋</button>
+ <pre><code class="language-go">package main
+
+import "fmt"
+
+// calculate returns the area and perimeter of a rectangle
+func calculate(width, height float64) (area float64, perimeter float64) {
+    area = width * height
+    perimeter = 2 * (width + height)
+    return // returns area and perimeter implicitly
+}
+
+func main() {
+    a, p := calculate(5, 3)
+    fmt.Printf("Area: %.2f, Perimeter: %.2f", a, p)
+}</code></pre>
+</div><h4 id="output">Output:</h4><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-bash">Area: 15.00, Perimeter: 16.00</code></pre>
+</div><h3 id="benefits-of-named-return-values">Benefits of Named Return Values</h3><ul>
+ <li><strong>Improved readability:</strong> Return variables are clearly named in the signature.</li>
+ <li><strong>Less boilerplate:</strong> You don’t have to declare return variables inside the function.</li>
+ <li><strong>Simplified return:</strong> A bare <code>return</code> returns the named variables.</li>
+ <li><strong>Useful for longer functions:</strong> When multiple points assign to return variables.</li>
+</ul><h3 id="summary">Summary</h3><ul>
+ <li>Named return values are variables declared in the function signature.</li>
+ <li>They allow implicit returns without explicitly specifying values in the <code>return</code> statement.</li>
+ <li>This feature enhances code readability and reduces clutter.</li>
+ <li>Use named returns when you want to document the meaning of returned values clearly.</li>
+</ul><div class = "chapter-navi-section">
+<a href="#top" class="nav-button prev">↑</a>
+<a href='go-for-beginners.htm#functions' class="nav-button toc-link">Index</a>
+<a href="#bottom" class="nav-button next">↓</a>
+</div>
+<h2 id='variadic-functions'>4.5 Variadic Functions</h2><p>Sometimes, you want a function to accept <strong>a variable number of arguments</strong> rather than a fixed number. Go makes this easy with <strong>variadic functions</strong>, which can take zero or more arguments of the same type.</p><h3 id="declaring-variadic-functions">Declaring Variadic Functions</h3><p>To declare a variadic function, use <code>...</code> before the parameter type. This tells Go the function accepts any number of arguments of that type, which are treated as a slice inside the function.</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-go">func functionName(params ...type) {
+    // params is a slice of type
+}</code></pre>
+</div><h3 id="calling-variadic-functions">Calling Variadic Functions</h3><p>You can call a variadic function by passing any number of arguments, including zero. You can also pass a slice by expanding it with <code>...</code>.</p><h3 id="example-sum-of-integers">Example: Sum of Integers</h3><p>Here's a function named <code>sum</code> that accepts any number of integers and returns their total:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">📋</button>
+ <pre><code class="language-go">package main
+
+import "fmt"
+
+// sum calculates the sum of integers
+func sum(nums ...int) int {
+    total := 0
+    for _, num := range nums {
+        total += num
+    }
+    return total
+}
+
+func main() {
+    fmt.Println(sum(1, 2, 3))          // Output: 6
+    fmt.Println(sum(10, 20, 30, 40))   // Output: 100
+
+    numbers := []int{5, 10, 15}
+    fmt.Println(sum(numbers...))        // Output: 30
+}</code></pre>
+</div><h3 id="explanation">Explanation</h3><ul>
+ <li>The parameter <code>nums ...int</code> means <code>sum</code> can accept any number of integers.</li>
+ <li>Inside <code>sum</code>, <code>nums</code> behaves like a slice of integers (<code>[]int</code>).</li>
+ <li>You can iterate over <code>nums</code> with a <code>for</code> loop to calculate the sum.</li>
+ <li>To pass a slice to a variadic function, use the <code>...</code> operator to expand it.</li>
+</ul><h3 id="summary">Summary</h3><ul>
+ <li>Variadic functions accept a variable number of arguments of the same type using <code>...</code>.</li>
+ <li>Inside the function, the variadic parameter behaves like a slice.</li>
+ <li>You can call variadic functions with any number of arguments or pass an existing slice expanded with <code>...</code>.</li>
+ <li>Variadic functions are useful for flexible APIs, such as summing numbers or formatting strings.</li>
+</ul><div class = "chapter-navi-section">
+<a href="#top" class="nav-button prev">↑</a>
+<a href='go-for-beginners.htm#functions' class="nav-button toc-link">Index</a>
+<a href="#bottom" class="nav-button next">↓</a>
+</div>
+<h2 id='anonymous-functions-and-closures'>4.6 Anonymous Functions and Closures</h2><p>In Go, functions are <strong>first-class citizens</strong>—meaning you can treat them like any other value. This enables powerful programming techniques such as <strong>anonymous functions</strong> and <strong>closures</strong>.</p><h3 id="anonymous-functions">Anonymous Functions</h3><p>An <strong>anonymous function</strong> is a function without a name. You can define it inline and assign it to a variable or pass it as an argument to other functions. This is useful for short, one-off pieces of functionality or callbacks.</p><h4 id="example-assigning-an-anonymous-function-to-a-variable">Example: Assigning an Anonymous Function to a Variable</h4><div class="code-block"><button class="copy-button" onclick="copyCode(this)">📋</button>
+ <pre><code class="language-go">package main
+
+import "fmt"
+
+func main() {
+    greet := func(name string) {
+        fmt.Println("Hello,", name)
+    }
+
+    greet("Alice") // Call the anonymous function via variable
+}</code></pre>
+</div><p>Here, <code>greet</code> holds the anonymous function, which you call like any regular function.</p><h4 id="example-using-an-anonymous-function-inline-as-a-callback">Example: Using an Anonymous Function Inline as a Callback</h4><div class="code-block"><button class="copy-button" onclick="copyCode(this)">📋</button>
+ <pre><code class="language-go">package main
+
+import "fmt"
+
+func applyOperation(a, b int, op func(int, int) int) int {
+    return op(a, b)
+}
+
+func main() {
+    sum := applyOperation(5, 3, func(x, y int) int {
+        return x + y
+    })
+
+    fmt.Println("Sum:", sum) // Output: Sum: 8
+}</code></pre>
+</div><h3 id="closures">Closures</h3><p>A <strong>closure</strong> is a special kind of anonymous function that <strong>captures variables from its surrounding scope</strong>. This means the function retains access to those variables even after the outer function has finished executing.</p><h4 id="example-closure-that-increments-a-counter">Example: Closure that Increments a Counter</h4><div class="code-block"><button class="copy-button" onclick="copyCode(this)">📋</button>
+ <pre><code class="language-go">package main
+
+import "fmt"
+
+func counter() func() int {
+    count := 0
+    return func() int {
+        count++
+        return count
+    }
+}
+
+func main() {
+    inc := counter()
+
+    fmt.Println(inc()) // Output: 1
+    fmt.Println(inc()) // Output: 2
+    fmt.Println(inc()) // Output: 3
+}</code></pre>
+</div><ul>
+ <li>The <code>counter</code> function returns an anonymous function that increments and returns <code>count</code>.</li>
+ <li>Each call to <code>inc()</code> updates and remembers the <code>count</code> variable from the enclosing scope.</li>
+ <li>This is a simple example of a closure maintaining state.</li>
+</ul><h3 id="summary">Summary</h3><ul>
+ <li><strong>Anonymous functions</strong> are functions without names, useful for short-lived or inline logic.</li>
+ <li>They can be assigned to variables or passed as arguments (callbacks).</li>
+ <li><strong>Closures</strong> capture and remember variables from their surrounding scope, allowing you to maintain state between calls.</li>
+ <li>Together, anonymous functions and closures enable flexible and expressive code patterns.</li>
+</ul><div class = "chapter-navi-section">
+<a href="go-for-beginners-control-structures.htm" class="nav-button prev">←</a>
+<a href='go-for-beginners.htm#functions' class="nav-button toc-link">Index</a>
+<a href="go-for-beginners-arrays-slices-and-maps.htm" class="nav-button next">→</a>
+</div>
+<section class="download-section">
+  <div class="book-cover" style="background-image: url('data:image/jpg;base64,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');">
+<div class="series-name">Introduction</div>
+<div class="book-title">Go for Beginners</div>
+<div class="book-subtitle">Essential concepts, practical examples, and foundational topics</div>
+<div class="book-footer">readbytes.github.io</div>
+</div>
+  <div class="download-info">
+    <h2 id='bottom'>Download This Ebook</h2>
+    <p class="format-label">Available formats:</p>
+    <div class="download-buttons">
+      <a href="go-for-beginners.pdf" class="download-button">📄 PDF</a>
+      <a href="go-for-beginners.epub" class="download-button">📘 EPUB</a>
+    </div>
+  </div>
+</section><div class='related-books'>
+<h2>Go Introduction Books</h2>
+<div class='related-book-list'>
+<a href="go-for-beginners.htm"><div class="book-cover" style="background-image: url('data:image/jpg;base64,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');">
+<div class="series-name">Introduction</div>
+<div class="book-title">Go for Beginners</div>
+<div class="book-subtitle">Essential concepts, practical examples, and foundational topics</div>
+<div class="book-footer">readbytes.github.io</div>
+</div></a>
+
+
+
+<a href='go.htm'><div class='book-cover'>More Go Books</div></a>
+</div>
+</div>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+    <script>
+  function toggleSnippet(id) {
+      const box = document.getElementById(id);
+      box.classList.toggle("open");
+  }  
+  </script>
+  <script>
+    function copyCode(button) {
+      const code = button.nextElementSibling.innerText;
+      navigator.clipboard.writeText(code).then(() => {
+        button.textContent = 'Copied!';
+        setTimeout(() => { button.textContent = 'Copy'; }, 1500);
+      });
+    }
+  </script>  
+
+<footer class="page-footer">
+    <nav>
+      <a href="https://readbytes.github.io">Home</a> | 
+      Email:<script language="JavaScript" type="text/javascript">
+var part1 = 'yinpeng';var part6 = '263';var part2 = Math.pow(2,6);var part3 = String.fromCharCode(part2);var part4 = 'hotmail dot com';var part5 = part1 + String.fromCharCode(part2) + part4;document.write(part1 + part6 + part3 + part4);
+</script>
+    </nav>
+  <p>© 2025 — All rights reserved.</p>    
+  </footer>
+
+</body>
+</html>

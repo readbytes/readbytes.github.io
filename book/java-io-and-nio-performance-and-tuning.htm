@@ -1,0 +1,899 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>Java IO and NIO Performance and Tuning</title>
+<link rel='shortcut icon' href='https://java2s.com/style/favicon.ico'>
+<link href="https://fonts.googleapis.com/css2?family=Merriweather&display=swap" rel="stylesheet" />
+<link href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+
+
+<style>
+body {
+  background: #f8f7f5;
+  font-family: 'Merriweather', serif;
+  color: #333;
+  margin: 0;
+  padding: 2rem 1rem;
+  font-size: 15px; /* smaller body font */
+  line-height: 1.5;
+}
+
+.container {
+  max-width: 700px;
+  margin: 0 auto;
+  background: white;
+  padding: 1rem 2rem;
+  box-shadow: 0 0 15px rgba(0,0,0,0.1);
+}
+.book-title-chapter {
+  font-family: 'Merriweather', serif;
+  font-size: 2rem;
+  font-weight: bold;
+  text-align: center;
+  margin-bottom: 2rem;
+  border-bottom: 2px solid #ccc;
+  padding-bottom: 0.5rem;
+  color: #2c3e50;
+}
+
+.book-subtitle-chapter {
+  text-align: center;
+  font-size: 1rem;
+  color: #666;
+  margin-top: -1rem;
+  margin-bottom: 2rem;
+}
+
+    .related-books {
+      margin-top: 40px;
+    }
+
+    .related-books h2 {
+      font-size: 22px;
+      margin-bottom: 20px;
+      border-bottom: 2px solid #eee;
+      padding-bottom: 8px;
+      color: #333;
+    }
+    .related-book-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+h1, h2, h3 {
+  font-weight: 600;
+  margin-top: 2.5rem;
+  margin-bottom: 1rem;
+  line-height: 1.2;
+}
+
+h1 {
+  font-size: 1.8rem; /* smaller heading */
+}
+
+h2 {
+  font-size: 1.4rem;
+}
+
+h3 {
+  font-size: 1.2rem;
+}
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-family: sans-serif;
+      font-size: 1em;
+      margin: 1em 0;
+    }
+
+    th, td {
+      border: 1px solid #cccccc;
+      padding: 0.6em 1em;
+      text-align: left;
+    }
+
+    th {
+      background-color: #f2f2f2;
+      font-weight: bold;
+    }
+
+    tr:nth-child(even) {
+      background-color: #fafafa;
+    }
+
+    /* Optional hover effect */
+    tr:hover {
+      background-color: #e6f7ff;
+    }
+ 
+a {
+  color: #555;
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+
+
+.code-block {
+    position: relative;
+    margin-bottom: 1em;
+}
+.copy-button {
+    background: transparent; 
+    color: white;
+
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    border: none;
+    padding: 4px 8px;
+    font-size: 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    z-index: 1;
+}
+
+.copy-button:hover {
+background-color: #0056b3;
+}
+.page-footer {
+  margin-top: 4rem;
+  padding: 1rem 0;
+  text-align: center;
+  font-size: 0.85rem;
+  color: #666;
+  border-top: 1px solid #ccc;
+  background-color: #fafafa;
+}
+.page-footer a {
+     color: #555;
+    text-decoration: none;
+  }
+  .page-footer a:hover {
+    text-decoration: underline;
+  }
+.chapter-navi-section {
+display: flex;
+justify-content: space-between;
+align-items: center;
+padding-bottom: 10px;
+}  
+
+.nav-link {
+  color: inherit;
+  text-decoration: none;
+  opacity: 0.5;
+  transition: opacity 0.3s ease, text-decoration 0.3s ease;
+}
+
+.nav-link:hover {
+  opacity: 0.9;
+  text-decoration: underline;
+}
+
+.prev {
+  text-align: left;
+}
+.toc-link {
+  text-align: center;
+}
+.next {
+  text-align: right;
+}
+.download-section {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2rem;
+  padding: 2rem 1rem;
+  max-width: 600px;
+  margin: 3rem auto;
+  background-color: #f9f9f9;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+}
+
+    .book-cover {
+      width: 130px;
+      height: 180px;
+      
+      background-size: cover; /* Ensures the image covers the entire div */
+      background-position: center; /* Centers the image */
+            
+      background: linear-gradient(145deg, #e0dede, #f9f9f9);
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 10px;
+      box-sizing: border-box;
+      position: relative;
+      font-family: 'Roboto', sans-serif;
+    }
+
+    .book-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 16px;
+      font-weight: 600;
+      color: #fff;
+      margin-bottom: 4px;
+    }
+
+    .book-subtitle {
+      font-size: 12px;
+      color: #aaa;
+      margin-bottom: 10px;
+    }
+
+    .series-name {
+      position: absolute;
+      top: 8px;
+      left: 8px;
+      font-size: 10px;
+      color: #fff;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-weight: bold;
+    }
+
+    .book-footer {
+      position: absolute;
+      bottom: 8px;
+      font-size: 10px;
+      color: #aaa;
+    }
+
+.download-info h2 {
+  margin: 0 0 0.5rem;
+  font-size: 1.2rem;
+}
+
+.format-label {
+  margin: 0 0 0.5rem;
+  font-size: 0.95rem;
+  color: #555;
+}
+
+.download-buttons {
+  display: flex;
+  gap: 1rem;
+}
+
+.download-button {
+  background-color: #4A90E2;
+  color: white;
+  padding: 0.5em 1.2em;
+  text-decoration: none;
+  border-radius: 25px;
+  font-size: 0.95rem;
+  transition: background-color 0.3s ease;
+}
+
+.download-button:hover {
+  background-color: #357ABD;
+}
+
+    code {
+ 
+      color: #d35400; 
+    }
+html {
+    scroll-behavior: smooth;
+}
+    .snippet-container {
+      overflow: hidden;    
+    }
+
+    .snippet-header {
+      background: #f0f0f0;
+      color: #333;
+      padding: 0.75rem 1rem;
+      cursor: pointer;
+      font-size: 1rem;
+    }
+
+    .snippet-body {
+      display: none;
+      font-family: monospace;
+    }
+
+    .snippet-container.open .snippet-body {
+      display: block;
+    }
+
+.CodeMirror {
+  border: 2px solid #ccc;
+  border-radius: 4px;
+  resize: vertical;
+}
+
+    button { padding: 0.5em 1em; background: green; color: white; border: none; cursor: pointer; }
+    button:hover { background: #1e7e34; }
+    .result_iframe { width:99%; height:200px; margin-top: 1em;  resize: both;border:1px solid #ccc;}        
+</style>
+</head>
+<body> 
+
+  <div class="container">
+    <div class = "chapter-navi-section">
+<a href="java-io-and-nio-practical-java-io-and-nio-examples.htm" class="nav-button prev">←</a>
+<a href='java-io-and-nio.htm#performance-and-tuning' class="nav-button toc-link">Index</a>
+<a href="java-io-and-nio-security-and-io.htm" class="nav-button next">→</a>
+</div>
+
+    <h1 class="book-title-chapter" id = 'top'>Performance and Tuning</h1>
+    <h3 class="book-subtitle-chapter">Java IO and NIO</h3>   
+    <!-- <h1 class ="chapter-title"></h1> -->
+    <h2 id='buffer-sizes-and-their-impact'>11.1 Buffer Sizes and Their Impact</h2><p>Buffering is a fundamental concept in IO programming, and the size of the buffer you choose can have a significant impact on the performance of your Java applications. Whether you’re reading from files, writing to sockets, or streaming data, understanding how buffer size influences throughput, latency, and resource utilization is key to building efficient IO solutions.</p><p>This explanation dives into the trade-offs of small vs large buffers, how buffer size affects IO performance metrics, and practical guidance to determine the best buffer sizes for various scenarios.</p><h3 id="the-role-of-buffers-in-io">The Role of Buffers in IO</h3><p>When Java programs read or write data, buffers serve as temporary storage areas holding chunks of bytes or characters. Instead of interacting with the underlying system one byte at a time (which is extremely costly), data is transferred in blocks. This batching:</p><ul>
+ <li>Reduces the number of system calls.</li>
+ <li>Decreases context switches between user and kernel space.</li>
+ <li>Improves CPU efficiency.</li>
+</ul><p>Buffers are used in both traditional IO (<code>BufferedInputStream</code>, <code>BufferedReader</code>, etc.) and in Java NIO’s <code>ByteBuffer</code>.</p><h3 id="small-buffers-low-latency-but-lower-throughput">Small Buffers: Low Latency but Lower Throughput</h3><h4 id="characteristics">Characteristics</h4><ul>
+ <li><p><strong>Size:</strong> Often 1–512 bytes.</p></li>
+ <li><p><strong>Advantages:</strong></p>
+  <ul>
+   <li>Lower latency for applications requiring immediate processing of data, such as interactive programs or real-time systems.</li>
+   <li>Reduced memory footprint.</li>
+  </ul></li>
+ <li><p><strong>Disadvantages:</strong></p>
+  <ul>
+   <li>Increased number of IO calls, leading to higher overhead.</li>
+   <li>Poor throughput because many small system calls create performance bottlenecks.</li>
+  </ul></li>
+</ul><h4 id="impact">Impact</h4><p>For example, reading a large file one byte at a time results in thousands or millions of system calls, each incurring kernel/user mode transitions and associated costs. This drastically reduces throughput and wastes CPU cycles.</p><p><strong>Scenario:</strong> Reading a file with a 128-byte buffer may cause hundreds of thousands of read operations for a multi-megabyte file, limiting throughput.</p><h3 id="large-buffers-high-throughput-but-potentially-higher-latency">Large Buffers: High Throughput but Potentially Higher Latency</h3><h4 id="characteristics">Characteristics</h4><ul>
+ <li><p><strong>Size:</strong> Typically 8 KB (8192 bytes) up to 64 KB or more.</p></li>
+ <li><p><strong>Advantages:</strong></p>
+  <ul>
+   <li>Fewer, larger IO operations mean less overhead and higher data throughput.</li>
+   <li>Reduced CPU usage per byte transferred.</li>
+  </ul></li>
+ <li><p><strong>Disadvantages:</strong></p>
+  <ul>
+   <li>Higher latency per individual IO operation because more data must be accumulated or flushed.</li>
+   <li>Increased memory usage, which can affect heap pressure and garbage collection.</li>
+   <li>For latency-sensitive applications, buffering too much data may delay processing.</li>
+  </ul></li>
+</ul><h4 id="impact">Impact</h4><p>Large buffers can read or write tens of thousands of bytes per system call, dramatically improving IO throughput. For instance, a file copy operation using a 64 KB buffer can be orders of magnitude faster than one using a 512-byte buffer.</p><p><strong>Scenario:</strong> Copying a 100 MB file with a 64 KB buffer performs approximately 1,600 read/write calls compared to over 200,000 calls with a 512-byte buffer.</p><h3 id="buffer-size-and-io-performance-metrics">Buffer Size and IO Performance Metrics</h3><h4 id="throughput">Throughput</h4><p>Throughput is the amount of data processed per unit time (e.g., MB/s). Large buffers improve throughput by amortizing system call overhead across many bytes.</p><h4 id="latency">Latency</h4><p>Latency is the delay between requesting data and receiving it. Smaller buffers reduce the wait to fill a buffer before processing, lowering latency. Larger buffers might increase latency since the system waits to fill or flush the buffer.</p><h4 id="cpu-utilization">CPU Utilization</h4><p>Smaller buffers cause the CPU to spend more time managing system calls and context switches. Larger buffers improve CPU efficiency but can increase memory usage and possibly cause GC pauses if many large buffers are allocated frequently.</p><h4 id="practical-benchmark-example">Practical Benchmark Example</h4><p>Consider a simple benchmark copying a large file with different buffer sizes:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">📋</button>
+ <pre><code class="language-java">import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+
+public class Test {
+    public static void copyFile(File src, File dest, int bufferSize) throws IOException {
+        try (BufferedInputStream bis = new BufferedInputStream(new FileInputStream(src), bufferSize);
+                BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(dest), bufferSize)) {
+
+            byte[] buffer = new byte[bufferSize];
+            int read;
+            long start = System.currentTimeMillis();
+
+            while ((read = bis.read(buffer)) != -1) {
+                bos.write(buffer, 0, read);
+            }
+
+            long duration = System.currentTimeMillis() - start;
+            System.out.println("Buffer size: " + bufferSize + " bytes, Time taken: " + duration + " ms");
+        }
+    }
+}</code></pre>
+</div><h3 id="hypothetical-results">Hypothetical Results</h3><table>
+ <thead>
+  <tr>
+   <th>Buffer Size (bytes)</th>
+   <th>Time Taken (ms)</th>
+  </tr>
+ </thead>
+ <tbody>
+  <tr>
+   <td>256</td>
+   <td>1200</td>
+  </tr>
+  <tr>
+   <td>1024</td>
+   <td>600</td>
+  </tr>
+  <tr>
+   <td>8192 (8 KB)</td>
+   <td>220</td>
+  </tr>
+  <tr>
+   <td>65536 (64 KB)</td>
+   <td>180</td>
+  </tr>
+  <tr>
+   <td>262144 (256 KB)</td>
+   <td>175</td>
+  </tr>
+ </tbody>
+</table><h3 id="interpretation">Interpretation</h3><ul>
+ <li>Increasing from 256 bytes to 8 KB yields significant performance gains.</li>
+ <li>Beyond 64 KB, returns diminish—large buffers may not improve much further.</li>
+ <li>Extremely large buffers (256 KB+) increase memory usage with little added benefit.</li>
+ <li>This plateau suggests an optimal buffer size around 8 KB to 64 KB for disk IO on typical systems.</li>
+</ul><h3 id="guidelines-to-determine-optimal-buffer-size">Guidelines to Determine Optimal Buffer Size</h3><ol>
+ <li><p><strong>Start with 8 KB (8192 bytes):</strong> This is the default buffer size for many Java IO classes and works well in most cases.</p></li>
+ <li><p><strong>Consider the IO medium:</strong></p>
+  <ul>
+   <li><strong>Disk IO:</strong> Use 8 KB to 64 KB buffers, aligned with filesystem block sizes.</li>
+   <li><strong>Network IO:</strong> Use smaller buffers (4 KB to 16 KB) to reduce latency.</li>
+   <li><strong>Memory-mapped IO:</strong> Buffer size depends on system page size (often 4 KB or 8 KB).</li>
+  </ul></li>
+ <li><p><strong>Profile and Benchmark:</strong> Measure your application’s throughput and latency using different buffer sizes under realistic workloads.</p></li>
+ <li><p><strong>Adjust Based on Latency Sensitivity:</strong> For real-time or interactive applications, smaller buffers might be justified even at throughput cost.</p></li>
+ <li><p><strong>Beware of JVM and OS tuning:</strong> Sometimes buffer sizes are less impactful if underlying OS or JVM buffers dominate performance.</p></li>
+</ol><h3 id="buffer-size-considerations-in-java-nio">Buffer Size Considerations in Java NIO</h3><p>In Java NIO, <code>ByteBuffer</code> size controls how much data is read or written per operation. While NIO supports non-blocking IO, inefficient buffer sizes still degrade performance:</p><ul>
+ <li><strong>Too small:</strong> Frequent <code>read()</code> or <code>write()</code> calls that may return zero bytes and waste CPU.</li>
+ <li><strong>Too large:</strong> Increased heap memory usage, slower garbage collection, and possible memory fragmentation.</li>
+</ul><p>Use direct buffers (<code>ByteBuffer.allocateDirect</code>) wisely, as they are more expensive to allocate but can reduce copies between Java and OS.</p><h3 id="summary-and-best-practices">Summary and Best Practices</h3><ul>
+ <li><strong>Buffering is essential for performance</strong> — never read or write one byte at a time.</li>
+ <li><strong>Small buffers reduce latency but hurt throughput and CPU efficiency.</strong></li>
+ <li><strong>Large buffers improve throughput by batching IO, but increase latency and memory use.</strong></li>
+ <li><strong>8 KB to 64 KB is a practical range for most disk IO tasks.</strong></li>
+ <li><strong>Benchmark your application with your actual workload and hardware</strong> to find the best buffer size.</li>
+ <li><strong>Consider the trade-offs between latency and throughput</strong> depending on your application needs.</li>
+ <li><strong>Monitor memory usage</strong> to avoid over-allocating buffers causing GC issues.</li>
+ <li><strong>In network programming, smaller buffers may reduce latency but consider protocol behavior.</strong></li>
+</ul><p>By understanding and tuning buffer sizes thoughtfully, you can optimize your Java applications to achieve the best balance of performance and resource usage in your IO operations.</p><div class = "chapter-navi-section">
+<a href="#top" class="nav-button prev">↑</a>
+<a href='java-io-and-nio.htm#performance-and-tuning' class="nav-button toc-link">Index</a>
+<a href="#bottom" class="nav-button next">↓</a>
+</div>
+<h2 id='direct-buffers-vs-heap-buffers'>11.2 Direct Buffers vs Heap Buffers</h2><p>Java NIO introduced the <code>ByteBuffer</code> class and related buffer types to enable efficient, flexible data handling for IO operations. Among <code>ByteBuffer</code>s, two main categories exist based on memory allocation and management: <strong>heap buffers</strong> and <strong>direct buffers</strong>. Understanding the differences between these buffer types is crucial for writing high-performance Java applications, especially when working with files, networks, or native code.</p><h3 id="what-are-heap-buffers">What Are Heap Buffers?</h3><p>Heap buffers are <code>ByteBuffer</code>s backed by regular Java heap memory arrays. When you create a heap buffer, Java allocates a byte array inside the JVM heap, and the buffer’s API methods operate on this array.</p><h3 id="allocation-and-management">Allocation and Management</h3><p>Heap buffers are allocated via:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-Java">ByteBuffer heapBuffer = ByteBuffer.allocate(int capacity);</code></pre>
+</div><p>This allocates a <code>byte[]</code> internally on the heap. The JVM’s garbage collector (GC) manages this memory automatically. Accessing the buffer’s content is essentially array access, which is fast and straightforward.</p><h3 id="access">Access</h3><p>Heap buffers expose their backing array, so you can retrieve it with:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-Java">byte[] array = heapBuffer.array();</code></pre>
+</div><p>This is convenient for interoperability with legacy code or APIs requiring arrays.</p><h3 id="what-are-direct-buffers">What Are Direct Buffers?</h3><p>Direct buffers are allocated outside the JVM heap, in <strong>native memory</strong> managed by the operating system. They are intended to provide a buffer that can be passed more efficiently to native IO operations, such as OS-level read/write or DMA transfers.</p><h3 id="allocation-and-management">Allocation and Management</h3><p>You allocate a direct buffer using:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-java">ByteBuffer directBuffer = ByteBuffer.allocateDirect(int capacity);</code></pre>
+</div><p>This creates a buffer whose memory is outside the heap. The JVM manages the buffer's lifecycle, but the actual memory is allocated by native OS calls (e.g., <code>malloc</code>).</p><p>Direct buffers don’t have an accessible backing array. Access is done through JNI (Java Native Interface) or direct memory pointers internally.</p><p>The JVM periodically frees direct buffers via finalization or uses explicit cleaner mechanisms, but you cannot rely on immediate reclamation, which can lead to higher native memory usage if not carefully managed.</p><h3 id="performance-characteristics">Performance Characteristics</h3><p><strong>Heap Buffers</strong></p><ul>
+ <li><p><strong>Pros:</strong></p>
+  <ul>
+   <li>Fast access within Java since data is stored in the heap array.</li>
+   <li>Efficient for frequent, small read/write operations inside JVM.</li>
+   <li>Easy to use and compatible with any Java API requiring arrays.</li>
+   <li>Garbage-collected automatically with low overhead.</li>
+  </ul></li>
+ <li><p><strong>Cons:</strong></p>
+  <ul>
+   <li>When passed to native IO operations, the JVM must copy data between heap memory and native buffers. This copy incurs overhead, reducing performance in IO-heavy applications.</li>
+   <li>Limited for zero-copy or direct OS IO optimizations.</li>
+  </ul></li>
+</ul><h3 id="direct-buffers">Direct Buffers</h3><ul>
+ <li><p><strong>Pros:</strong></p>
+  <ul>
+   <li>Bypasses copying to native buffers, enabling <strong>zero-copy</strong> IO operations on supported platforms.</li>
+   <li>Improved throughput for large, frequent IO operations, such as network servers or file channels.</li>
+   <li>Preferred when interfacing with native libraries or performing high-performance networking.</li>
+  </ul></li>
+ <li><p><strong>Cons:</strong></p>
+  <ul>
+   <li>Allocating and deallocating direct buffers is more expensive than heap buffers.</li>
+   <li>Native memory is not managed by GC, so improper use can cause native memory leaks.</li>
+   <li>Accessing data is slower within Java code due to JNI overhead and no backing array access.</li>
+   <li>Requires more careful memory management and sometimes explicit cleanup.</li>
+  </ul></li>
+</ul><h3 id="use-cases">Use Cases</h3><table>
+ <thead>
+  <tr>
+   <th>Buffer Type</th>
+   <th>Recommended For</th>
+  </tr>
+ </thead>
+ <tbody>
+  <tr>
+   <td><strong>Heap Buffer</strong></td>
+   <td>Short-lived buffers, small to medium data, frequent JVM-side manipulation, legacy code needing arrays</td>
+  </tr>
+  <tr>
+   <td><strong>Direct Buffer</strong></td>
+   <td>Large buffers, long-lived, IO-heavy applications, network servers, file channels, zero-copy requirements</td>
+  </tr>
+ </tbody>
+</table><h3 id="example-code-allocating-and-using-both-buffers">Example Code: Allocating and Using Both Buffers</h3><div class="code-block"><button class="copy-button" onclick="copyCode(this)">📋</button>
+ <pre><code class="language-java">import java.nio.ByteBuffer;
+
+public class BufferExample {
+    public static void main(String[] args) {
+        // Heap Buffer allocation
+        ByteBuffer heapBuffer = ByteBuffer.allocate(1024);
+        System.out.println("Heap Buffer: isDirect = " + heapBuffer.isDirect());
+
+        // Put some data
+        heapBuffer.put("Hello Heap Buffer".getBytes());
+        heapBuffer.flip();  // Prepare for reading
+
+        byte[] heapData = new byte[heapBuffer.remaining()];
+        heapBuffer.get(heapData);
+        System.out.println("Heap Buffer content: " + new String(heapData));
+
+        // Access backing array (only for heap buffers)
+        if (heapBuffer.hasArray()) {
+            byte[] backingArray = heapBuffer.array();
+            System.out.println("Backing array length: " + backingArray.length);
+        }
+
+        // Direct Buffer allocation
+        ByteBuffer directBuffer = ByteBuffer.allocateDirect(1024);
+        System.out.println("Direct Buffer: isDirect = " + directBuffer.isDirect());
+
+        directBuffer.put("Hello Direct Buffer".getBytes());
+        directBuffer.flip();
+
+        byte[] directData = new byte[directBuffer.remaining()];
+        directBuffer.get(directData);
+        System.out.println("Direct Buffer content: " + new String(directData));
+
+        // Direct buffers do NOT expose a backing array
+        System.out.println("Direct Buffer has array? " + directBuffer.hasArray());
+    }
+}</code></pre>
+</div><h3 id="output">Output:</h3><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-bash">Heap Buffer: isDirect = false
+Heap Buffer content: Hello Heap Buffer
+Backing array length: 1024
+Direct Buffer: isDirect = true
+Direct Buffer content: Hello Direct Buffer
+Direct Buffer has array? false</code></pre>
+</div><h3 id="key-points-to-remember">Key Points to Remember</h3><ul>
+ <li><strong><code>isDirect()</code> method:</strong> Use this to check if a buffer is direct or heap-backed.</li>
+ <li><strong><code>hasArray()</code> and <code>array()</code>:</strong> Available only for heap buffers.</li>
+ <li><strong>Performance tuning:</strong> For network and file IO where large volumes of data are transferred, prefer direct buffers for efficiency.</li>
+ <li><strong>Garbage collection:</strong> Heap buffers are managed naturally by the JVM GC, while direct buffers rely on less predictable native memory cleanup.</li>
+ <li><strong>Resource management:</strong> If you allocate many large direct buffers, consider explicit cleanup strategies or reuse buffers to avoid native memory exhaustion.</li>
+</ul><h3 id="summary">Summary</h3><table>
+ <thead>
+  <tr>
+   <th>Aspect</th>
+   <th>Heap Buffers</th>
+   <th>Direct Buffers</th>
+  </tr>
+ </thead>
+ <tbody>
+  <tr>
+   <td><strong>Memory location</strong></td>
+   <td>JVM heap</td>
+   <td>Native OS memory</td>
+  </tr>
+  <tr>
+   <td><strong>Allocation</strong></td>
+   <td>Fast, low overhead</td>
+   <td>Slower, more expensive</td>
+  </tr>
+  <tr>
+   <td><strong>Access speed</strong></td>
+   <td>Fast JVM access</td>
+   <td>Slower JVM access, faster native IO</td>
+  </tr>
+  <tr>
+   <td><strong>Backed by array?</strong></td>
+   <td>Yes</td>
+   <td>No</td>
+  </tr>
+  <tr>
+   <td><strong>Garbage collection</strong></td>
+   <td>Managed by JVM GC</td>
+   <td>Managed outside JVM, less predictable</td>
+  </tr>
+  <tr>
+   <td><strong>Use case</strong></td>
+   <td>Frequent JVM-side data manipulation, small buffers</td>
+   <td>High throughput network/file IO, zero-copy needs</td>
+  </tr>
+  <tr>
+   <td><strong>Risks</strong></td>
+   <td>None significant</td>
+   <td>Native memory leaks if mismanaged</td>
+  </tr>
+ </tbody>
+</table><p>Understanding these differences lets you choose the right buffer type depending on your IO patterns, data size, and performance requirements. For typical Java applications, heap buffers suffice, but when optimizing network servers or large file transfers, direct buffers often unlock better performance.</p><div class = "chapter-navi-section">
+<a href="#top" class="nav-button prev">↑</a>
+<a href='java-io-and-nio.htm#performance-and-tuning' class="nav-button toc-link">Index</a>
+<a href="#bottom" class="nav-button next">↓</a>
+</div>
+<h2 id='reducing-garbage-collection-overhead'>11.3 Reducing Garbage Collection Overhead</h2><p>Java’s automatic memory management via Garbage Collection (GC) simplifies development but can introduce unpredictable pauses—especially problematic in IO-heavy applications where low latency and high throughput are critical. Excessive object allocation during IO leads to frequent GC cycles, increasing pause times and reducing overall performance.</p><p>This discussion explores practical techniques to reduce GC overhead during IO operations by minimizing object creation, reusing buffers, leveraging direct memory, and employing object pooling. Understanding and applying these approaches helps maintain smoother application performance and lower latency.</p><h3 id="why-garbage-collection-overhead-matters-in-io-heavy-applications">Why Garbage Collection Overhead Matters in IO-Heavy Applications</h3><p>IO-intensive Java programs often perform many short-lived operations—reading and writing data chunks, creating temporary objects for buffers or wrappers, and handling protocol parsing. Each allocation adds pressure on the JVM heap and triggers GC cycles when memory runs low.</p><h3 id="effects-of-gc-overhead">Effects of GC Overhead:</h3><ul>
+ <li><strong>Stop-the-world pauses:</strong> JVM suspends all application threads to reclaim memory, causing latency spikes.</li>
+ <li><strong>Throughput reduction:</strong> Frequent GC consumes CPU cycles that could otherwise serve business logic.</li>
+ <li><strong>Unpredictable performance:</strong> Makes tuning latency-sensitive systems (network servers, real-time apps) difficult.</li>
+</ul><p>Reducing GC pressure helps maintain consistent response times and improves scalability.</p><h3 id="technique-1-minimize-object-allocation-in-io-paths">Technique 1: Minimize Object Allocation in IO Paths</h3><p>Avoid creating new objects inside tight IO loops or per-request processing. Common culprits include:</p><ul>
+ <li>Creating new byte arrays or buffers every time data is read or written.</li>
+ <li>Constructing temporary wrappers like <code>ByteArrayInputStream</code> or strings unnecessarily.</li>
+ <li>Instantiating small immutable objects repeatedly (e.g., wrapper classes, protocol headers).</li>
+</ul><h3 id="how-to-minimize-allocations">How to Minimize Allocations:</h3><ul>
+ <li><strong>Use reusable buffers:</strong> Allocate byte buffers once and reuse them for multiple read/write cycles.</li>
+ <li><strong>Avoid unnecessary boxing/unboxing:</strong> Prefer primitive arrays or <code>ByteBuffer</code> over wrapper classes.</li>
+ <li><strong>Prefer streaming APIs:</strong> For example, use <code>InputStream</code> and <code>OutputStream</code> directly rather than converting data back and forth to strings or objects.</li>
+ <li><strong>Use <code>StringBuilder</code> for string concatenations instead of repeated <code>String</code> creation.</strong></li>
+</ul><h3 id="technique-2-reuse-buffers-to-avoid-allocation-overhead">Technique 2: Reuse Buffers to Avoid Allocation Overhead</h3><p>IO operations frequently require byte or char buffers to hold data temporarily. Allocating a new buffer per operation leads to many short-lived objects.</p><h3 id="buffer-reuse-strategies">Buffer Reuse Strategies:</h3><ul>
+ <li><strong>Thread-local buffers:</strong> Each thread holds its own reusable buffer, avoiding contention and repeated allocation.</li>
+</ul><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-java">private static final ThreadLocal&lt;byte[]&gt; threadLocalBuffer =
+    ThreadLocal.withInitial(() -&gt; new byte[8192]);
+
+public void readData(InputStream in) throws IOException {
+    byte[] buffer = threadLocalBuffer.get();
+    int bytesRead;
+    while ((bytesRead = in.read(buffer)) != -1) {
+        // Process bytesRead from buffer
+    }
+}</code></pre>
+</div><ul>
+ <li><p><strong>Buffer pools:</strong> Maintain a pool of preallocated buffers shared across threads, checked out and returned after use.</p></li>
+ <li><p><strong>Avoid resizing:</strong> Use fixed-size buffers when possible to prevent costly reallocations.</p></li>
+</ul><h3 id="technique-3-use-direct-buffers-to-reduce-gc-impact">Technique 3: Use Direct Buffers to Reduce GC Impact</h3><p>Java NIO direct buffers allocate memory outside the Java heap, managed by the OS. This means their allocation and deallocation do not directly contribute to GC pressure.</p><h3 id="benefits-of-direct-buffers-for-io">Benefits of Direct Buffers for IO:</h3><ul>
+ <li><strong>Reduced heap footprint:</strong> Less memory pressure on the JVM heap reduces GC frequency.</li>
+ <li><strong>Zero-copy IO:</strong> Native OS calls can access buffers directly without copying, improving throughput.</li>
+ <li><strong>Long-lived buffers:</strong> Holding on to direct buffers minimizes frequent allocations.</li>
+</ul><h3 id="caveats">Caveats:</h3><ul>
+ <li>Direct buffers are more expensive to create and reclaim.</li>
+ <li>Native memory is not managed by GC, so excessive direct buffer allocation without release risks native memory leaks.</li>
+</ul><h3 id="example">Example:</h3><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-java">ByteBuffer directBuffer = ByteBuffer.allocateDirect(8192);</code></pre>
+</div><p>Reuse this buffer across IO calls to maximize benefit.</p><h3 id="technique-4-employ-object-and-buffer-pooling">Technique 4: Employ Object and Buffer Pooling</h3><p>Pooling reuses objects instead of creating new instances, reducing GC overhead and allocation costs.</p><h3 id="common-pooling-patterns">Common Pooling Patterns:</h3><ul>
+ <li><strong>Buffer Pools:</strong> Implemented with <code>BlockingQueue&lt;ByteBuffer&gt;</code> or specialized libraries like Netty’s <code>ByteBuf</code> allocator.</li>
+ <li><strong>Object Pools:</strong> For frequently created objects, such as protocol parsers, message objects, or event wrappers.</li>
+</ul><h3 id="pool-implementation-example">Pool Implementation Example:</h3><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-java">import java.util.concurrent.ArrayBlockingQueue;
+
+public class BufferPool {
+    private final ArrayBlockingQueue&lt;byte[]&gt; pool;
+
+    public BufferPool(int size, int bufferSize) {
+        pool = new ArrayBlockingQueue&lt;&gt;(size);
+        for (int i = 0; i &lt; size; i++) {
+            pool.offer(new byte[bufferSize]);
+        }
+    }
+
+    public byte[] acquire() throws InterruptedException {
+        return pool.take();
+    }
+
+    public void release(byte[] buffer) {
+        pool.offer(buffer);
+    }
+}</code></pre>
+</div><h3 id="advantages">Advantages:</h3><ul>
+ <li>Reduces GC by avoiding repeated allocations.</li>
+ <li>Can improve cache locality by reusing warm objects.</li>
+ <li>Helps control maximum memory usage by bounding the pool size.</li>
+</ul><h3 id="performance-tips-and-best-practices">Performance Tips and Best Practices</h3><ul>
+ <li><strong>Avoid premature optimization:</strong> Measure allocation rates and GC behavior using profilers (e.g., VisualVM, Java Flight Recorder).</li>
+ <li><strong>Prefer off-heap buffers for large, long-lived data:</strong> Large heap buffers increase GC pause times due to longer marking and sweeping.</li>
+ <li><strong>Combine pooling with thread-local buffers:</strong> Minimizes synchronization overhead on pools.</li>
+ <li><strong>Avoid global mutable state:</strong> Pools must be thread-safe to avoid concurrency bugs.</li>
+ <li><strong>Monitor native memory usage:</strong> When using direct buffers or off-heap memory, track native allocations to prevent leaks.</li>
+</ul><h3 id="how-these-techniques-help-reduce-gc-pauses">How These Techniques Help Reduce GC Pauses</h3><ul>
+ <li><strong>Lower allocation rate:</strong> Fewer objects created means less frequent garbage collection.</li>
+ <li><strong>Less heap fragmentation:</strong> Reusing buffers reduces heap churn and fragmentation, which improves GC efficiency.</li>
+ <li><strong>Reduced GC pause duration:</strong> Smaller heaps or heaps with fewer live objects enable faster GC cycles.</li>
+ <li><strong>Better predictability:</strong> Applications with stable object usage patterns have more predictable latency.</li>
+</ul><h3 id="summary">Summary</h3><table>
+ <thead>
+  <tr>
+   <th>Technique</th>
+   <th>What It Does</th>
+   <th>GC Impact</th>
+  </tr>
+ </thead>
+ <tbody>
+  <tr>
+   <td>Minimize object allocation</td>
+   <td>Avoid unnecessary temporary objects</td>
+   <td>Lower allocation rate</td>
+  </tr>
+  <tr>
+   <td>Buffer reuse</td>
+   <td>Reuse pre-allocated byte arrays or buffers</td>
+   <td>Reduce short-lived objects</td>
+  </tr>
+  <tr>
+   <td>Use direct buffers</td>
+   <td>Allocate buffers off-heap for native IO</td>
+   <td>Reduces heap usage and GC load</td>
+  </tr>
+  <tr>
+   <td>Pooling</td>
+   <td>Maintain reusable buffer/object pools</td>
+   <td>Limits new allocations</td>
+  </tr>
+ </tbody>
+</table><h3 id="conclusion">Conclusion</h3><p>GC overhead is a major performance factor in IO-heavy Java applications, but it can be significantly mitigated by conscious programming techniques:</p><ul>
+ <li>Minimize object creation during IO.</li>
+ <li>Reuse buffers aggressively.</li>
+ <li>Use direct buffers to reduce heap pressure.</li>
+ <li>Implement pooling strategies for buffers and frequently created objects.</li>
+</ul><p>These methods reduce GC frequency and pause times, leading to smoother, more responsive, and scalable applications. Careful profiling and tuning are essential to strike the right balance between memory usage and performance.</p><div class = "chapter-navi-section">
+<a href="#top" class="nav-button prev">↑</a>
+<a href='java-io-and-nio.htm#performance-and-tuning' class="nav-button toc-link">Index</a>
+<a href="#bottom" class="nav-button next">↓</a>
+</div>
+<h2 id='profiling-and-monitoring-io-performance'>11.4 Profiling and Monitoring IO Performance</h2><p>Efficient IO operations are critical for Java applications, especially those dealing with files, databases, or networks. However, IO performance problems—such as bottlenecks, excessive garbage collection (GC), or slow disk/network access—can be difficult to detect and diagnose without the right tools and methodology.</p><p>This guide introduces popular Java profiling and monitoring tools, explains how to spot IO-related issues, and provides step-by-step instructions to set up basic IO performance tracking and analyze results effectively.</p><h3 id="why-profile-io-performance">Why Profile IO Performance?</h3><p>IO performance issues often manifest as:</p><ul>
+ <li>Increased latency or slow response times.</li>
+ <li>High CPU utilization with little throughput gain.</li>
+ <li>Excessive garbage collection due to temporary object churn.</li>
+ <li>Thread contention or blocking on IO operations.</li>
+</ul><p>Profiling helps to:</p><ul>
+ <li>Understand where your application spends time.</li>
+ <li>Identify hotspots related to IO calls.</li>
+ <li>Detect inefficient buffer usage or frequent allocations.</li>
+ <li>Pinpoint slow external systems (disks, networks).</li>
+ <li>Correlate GC activity with IO workloads.</li>
+</ul><h3 id="key-profiling-and-monitoring-tools-for-java-io">Key Profiling and Monitoring Tools for Java IO</h3><h4 id="java-flight-recorder-jfr">Java Flight Recorder (JFR)</h4><p><strong>Overview:</strong></p><p>JFR is a low-overhead profiling and event collection framework built into the JVM (Oracle JDK and OpenJDK 11+). It captures detailed runtime data, including thread states, IO events, allocations, and GC activity.</p><p><strong>Why use JFR?</strong></p><ul>
+ <li>Minimal performance impact, suitable for production environments.</li>
+ <li>Rich event data tailored for IO operations (e.g., file read/write, socket events).</li>
+ <li>Integrated with tools like Java Mission Control (JMC) for visual analysis.</li>
+</ul><p><strong>Basic Setup:</strong></p><p>Enable JFR when launching your app:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-bash">java -XX:StartFlightRecording=filename=recording.jfr,duration=60s,settings=profile -jar yourapp.jar</code></pre>
+</div><p>After the recording completes, open the <code>.jfr</code> file with Java Mission Control to analyze IO events, thread states, and GC behavior.</p><h4 id="visualvm">VisualVM</h4><p><strong>Overview:</strong></p><p>VisualVM is a free visual profiling tool bundled with the JDK (or available standalone). It supports heap dumps, CPU profiling, thread analysis, and monitoring.</p><p><strong>Why use VisualVM?</strong></p><ul>
+ <li>Easy setup with a GUI interface.</li>
+ <li>Real-time monitoring of memory, CPU, and threads.</li>
+ <li>Plugins available for advanced profiling.</li>
+</ul><p><strong>Using VisualVM for IO profiling:</strong></p><ul>
+ <li>Start your Java application.</li>
+ <li>Launch VisualVM and connect to the running JVM.</li>
+ <li>Use the <strong>Sampler</strong> or <strong>Profiler</strong> tab to record CPU usage and allocations.</li>
+ <li>Observe which methods dominate CPU time—look for IO methods such as <code>FileInputStream.read()</code>, <code>SocketChannel.write()</code>.</li>
+ <li>Monitor memory usage and GC activity in the <strong>Monitor</strong> tab.</li>
+</ul><h3 id="async-profiler">async-profiler</h3><p><strong>Overview:</strong></p><p><code>async-profiler</code> is a low-overhead, sampling-based profiler for Linux and macOS that supports CPU, allocation, and lock profiling. It can capture detailed stack traces without stopping your application.</p><p><strong>Why use async-profiler?</strong></p><ul>
+ <li>Extremely low overhead (1-2% CPU).</li>
+ <li>Supports native and Java stacks for IO syscall analysis.</li>
+ <li>Flame graphs and other visualizations help locate bottlenecks quickly.</li>
+</ul><p><strong>Basic usage:</strong></p><p>Download and build from <a href="https://github.com/jvm-profiling-tools/async-profiler">async-profiler GitHub</a>, then attach to a running JVM:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-bash">./profiler.sh -d 30 -f profile.html &lt;pid&gt;</code></pre>
+</div><p>Open <code>profile.html</code> in a browser and examine hotspots related to IO syscalls or Java IO APIs.</p><h3 id="identifying-io-bottlenecks-and-gc-pressure">Identifying IO Bottlenecks and GC Pressure</h3><h4 id="step-1-detect-high-io-latency-or-blocking">Step 1: Detect High IO Latency or Blocking</h4><ul>
+ <li>Use thread analysis in VisualVM or JFR to find threads blocked in IO calls (<code>read()</code>, <code>write()</code>, <code>select()</code>, <code>poll()</code>).</li>
+ <li>Look for thread states like <code>WAITING</code> or <code>BLOCKED</code> on IO-related system calls.</li>
+ <li>Identify if threads spend excessive time waiting on slow disks or network.</li>
+</ul><h4 id="step-2-analyze-io-method-hotspots">Step 2: Analyze IO Method Hotspots</h4><ul>
+ <li>Profile CPU usage to see which IO methods consume the most time.</li>
+ <li>In async-profiler or VisualVM, look for repeated calls to inefficient buffer handling or blocking IO methods.</li>
+ <li>Confirm if small buffer sizes or frequent system calls contribute to overhead.</li>
+</ul><h4 id="step-3-monitor-gc-activity-related-to-io">Step 3: Monitor GC Activity Related to IO</h4><ul>
+ <li>In JFR or VisualVM, monitor allocation rates and GC pause durations.</li>
+ <li>High allocation rates in IO threads suggest excessive temporary object creation (e.g., creating new buffers every read).</li>
+ <li>Look for Full GCs that coincide with IO bursts, indicating memory pressure caused by IO buffers.</li>
+</ul><h4 id="step-4-measure-disk-and-network-throughput">Step 4: Measure Disk and Network Throughput</h4><ul>
+ <li>JFR records OS-level IO events including bytes read/written and IO wait times.</li>
+ <li>Identify if IO throughput is low due to slow disks, network latency, or contention.</li>
+ <li>Compare IO throughput against CPU usage—high CPU but low throughput may indicate IO bottlenecks.</li>
+</ul><h3 id="setting-up-basic-io-performance-tracking">Setting Up Basic IO Performance Tracking</h3><h4 id="using-java-flight-recorder">Using Java Flight Recorder</h4><ol>
+ <li>Start JFR recording with profiling enabled:</li>
+</ol><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-bash">java -XX:StartFlightRecording=filename=myapp.jfr,duration=2m,settings=profile -jar myapp.jar</code></pre>
+</div><ol start="2">
+ <li><p>Perform your typical IO workload.</p></li>
+ <li><p>Open <code>myapp.jfr</code> with Java Mission Control.</p></li>
+ <li><p>Navigate to the <strong>IO</strong> tab:</p>
+  <ul>
+   <li>Review <strong>File I/O</strong> and <strong>Socket I/O</strong> events.</li>
+   <li>Examine average latency and bytes transferred.</li>
+   <li>Look for long-running IO operations.</li>
+  </ul></li>
+ <li><p>Check the <strong>Threads</strong> tab for blocked or waiting threads.</p></li>
+ <li><p>Inspect <strong>GC</strong> statistics to understand allocation impact.</p></li>
+</ol><h3 id="using-visualvm-for-real-time-monitoring">Using VisualVM for Real-Time Monitoring</h3><ol>
+ <li><p>Launch VisualVM and attach to the JVM process.</p></li>
+ <li><p>Select the <strong>Monitor</strong> tab to watch CPU, memory, and thread states live.</p></li>
+ <li><p>Use the <strong>Profiler</strong> tab to start CPU profiling.</p></li>
+ <li><p>Run your IO scenario, then stop profiling.</p></li>
+ <li><p>Analyze call trees for IO hotspots.</p></li>
+ <li><p>Monitor memory allocations and GC frequency under the <strong>Sampler</strong> tab.</p></li>
+</ol><h3 id="interpreting-profiling-results">Interpreting Profiling Results</h3><ul>
+ <li><strong>High CPU in IO methods:</strong> Indicates heavy IO processing or inefficient buffer handling.</li>
+ <li><strong>Many threads blocked on IO:</strong> May suggest slow external devices or insufficient concurrency.</li>
+ <li><strong>Frequent GC during IO:</strong> Implies excessive temporary object creation during data read/write.</li>
+ <li><strong>Long IO latency in JFR:</strong> Points to disk/network bottlenecks or contention.</li>
+ <li><strong>Low throughput with high CPU:</strong> Indicates CPU-bound processing around IO, possibly due to data transformations or inefficient code.</li>
+</ul><h3 id="summary-and-next-steps">Summary and Next Steps</h3><p>Profiling IO performance requires correlating multiple metrics—CPU, memory, thread states, and system IO events. Using tools like Java Flight Recorder, VisualVM, and async-profiler, you can pinpoint:</p><ul>
+ <li>Where IO is slowing down your app.</li>
+ <li>How GC impacts IO responsiveness.</li>
+ <li>Whether your buffers and threading strategy are efficient.</li>
+</ul><p>Start by enabling lightweight JFR profiles in production or use VisualVM for quick local debugging. When deeper insight is needed, async-profiler’s flame graphs give a low-overhead, detailed view.</p><p>After identifying bottlenecks, optimize by:</p><ul>
+ <li>Reusing buffers to reduce allocations.</li>
+ <li>Increasing buffer sizes to reduce syscall overhead.</li>
+ <li>Using direct buffers or async IO.</li>
+ <li>Adjusting thread pools for IO concurrency.</li>
+ <li>Improving external device throughput.</li>
+</ul><p>Monitoring and profiling should be a continuous part of your development and operations process to maintain optimal IO performance.</p><div class = "chapter-navi-section">
+<a href="java-io-and-nio-practical-java-io-and-nio-examples.htm" class="nav-button prev">←</a>
+<a href='java-io-and-nio.htm#performance-and-tuning' class="nav-button toc-link">Index</a>
+<a href="java-io-and-nio-security-and-io.htm" class="nav-button next">→</a>
+</div>
+<section class="download-section">
+  <div class="book-cover" style="background-image: url('data:image/jpg;base64,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');">
+<div class="series-name">In-Depth</div>
+<div class="book-title">Java IO and NIO</div>
+<div class="book-subtitle">Guide for Beginner to Advanced Programmers</div>
+<div class="book-footer">readbytes.github.io</div>
+</div>
+  <div class="download-info">
+    <h2 id='bottom'>Download This Ebook</h2>
+    <p class="format-label">Available formats:</p>
+    <div class="download-buttons">
+      <a href="java-io-and-nio.pdf" class="download-button">📄 PDF</a>
+      <a href="java-io-and-nio.epub" class="download-button">📘 EPUB</a>
+    </div>
+  </div>
+</section><div class='related-books'>
+<h2>Java In-Depth Books</h2>
+<div class='related-book-list'>
+<a href="java-io-and-nio.htm"><div class="book-cover" style="background-image: url('data:image/jpg;base64,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');">
+<div class="series-name">In-Depth</div>
+<div class="book-title">Java IO and NIO</div>
+<div class="book-subtitle">Guide for Beginner to Advanced Programmers</div>
+<div class="book-footer">readbytes.github.io</div>
+</div></a>
+
+
+<a href="java-collections.htm"><div class="book-cover" style="background-image: url('data:image/jpg;base64,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');">
+<div class="series-name">In-Depth</div>
+<div class="book-title">Java Collections</div>
+<div class="book-subtitle">From Fundamentals to Advanced Applications</div>
+<div class="book-footer">readbytes.github.io</div>
+</div></a>
+
+
+<a href="java-regex.htm"><div class="book-cover" style="background-image: url('data:image/jpg;base64,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');">
+<div class="series-name">In-Depth</div>
+<div class="book-title">Java Regex</div>
+<div class="book-subtitle">From Basics to Advanced</div>
+<div class="book-footer">readbytes.github.io</div>
+</div></a>
+
+
+<a href="java-functional-programming.htm"><div class="book-cover" style="background-image: url('data:image/jpg;base64,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');">
+<div class="series-name">In-Depth</div>
+<div class="book-title">Java Functional Programming</div>
+<div class="book-subtitle">From Lambdas to Reactive Streams</div>
+<div class="book-footer">readbytes.github.io</div>
+</div></a>
+
+
+<a href="java-streams.htm"><div class="book-cover" style="background-image: url('data:image/jpg;base64,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');">
+<div class="series-name">In-Depth</div>
+<div class="book-title">Java Streams</div>
+<div class="book-subtitle">From Fundamentals to Advanced Data Processing</div>
+<div class="book-footer">readbytes.github.io</div>
+</div></a>
+
+
+
+<a href='java.htm'><div class='book-cover'>More Java Books</div></a>
+</div>
+</div>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+  
+  <script>
+    function copyCode(button) {
+      const code = button.nextElementSibling.innerText;
+      navigator.clipboard.writeText(code).then(() => {
+        button.textContent = 'Copied!';
+        setTimeout(() => { button.textContent = 'Copy'; }, 1500);
+      });
+    }
+  </script>  
+
+<footer class="page-footer">
+    <nav>
+      <a href="https://readbytes.github.io">Home</a> | 
+      Email:<script language="JavaScript" type="text/javascript">
+var part1 = 'yinpeng';var part6 = '263';var part2 = Math.pow(2,6);var part3 = String.fromCharCode(part2);var part4 = 'hotmail dot com';var part5 = part1 + String.fromCharCode(part2) + part4;document.write(part1 + part6 + part3 + part4);
+</script>
+    </nav>
+  <p>© 2025 — All rights reserved.</p>    
+  </footer>
+
+</body>
+</html>

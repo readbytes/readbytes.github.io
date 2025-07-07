@@ -1,0 +1,689 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>Go for Beginners Building and Deploying Go Programs</title>
+<link rel='shortcut icon' href='https://java2s.com/style/favicon.ico'>
+<link href="https://fonts.googleapis.com/css2?family=Merriweather&display=swap" rel="stylesheet" />
+<link href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+
+
+<style>
+body {
+  background: #f8f7f5;
+  font-family: 'Merriweather', serif;
+  color: #333;
+  margin: 0;
+  padding: 2rem 1rem;
+  font-size: 15px; /* smaller body font */
+  line-height: 1.5;
+}
+
+.container {
+  max-width: 700px;
+  margin: 0 auto;
+  background: white;
+  padding: 1rem 2rem;
+  box-shadow: 0 0 15px rgba(0,0,0,0.1);
+}
+.book-title-chapter {
+  font-family: 'Merriweather', serif;
+  font-size: 2rem;
+  font-weight: bold;
+  text-align: center;
+  margin-bottom: 2rem;
+  border-bottom: 2px solid #ccc;
+  padding-bottom: 0.5rem;
+  color: #2c3e50;
+}
+
+.book-subtitle-chapter {
+  text-align: center;
+  font-size: 1rem;
+  color: #666;
+  margin-top: -1rem;
+  margin-bottom: 2rem;
+}
+
+    .related-books {
+      margin-top: 40px;
+    }
+
+    .related-books h2 {
+      font-size: 22px;
+      margin-bottom: 20px;
+      border-bottom: 2px solid #eee;
+      padding-bottom: 8px;
+      color: #333;
+    }
+    .related-book-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+h1, h2, h3 {
+  font-weight: 600;
+  margin-top: 2.5rem;
+  margin-bottom: 1rem;
+  line-height: 1.2;
+}
+
+h1 {
+  font-size: 1.8rem; /* smaller heading */
+}
+
+h2 {
+  font-size: 1.4rem;
+}
+
+h3 {
+  font-size: 1.2rem;
+}
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-family: sans-serif;
+      font-size: 1em;
+      margin: 1em 0;
+    }
+
+    th, td {
+      border: 1px solid #cccccc;
+      padding: 0.6em 1em;
+      text-align: left;
+    }
+
+    th {
+      background-color: #f2f2f2;
+      font-weight: bold;
+    }
+
+    tr:nth-child(even) {
+      background-color: #fafafa;
+    }
+
+    /* Optional hover effect */
+    tr:hover {
+      background-color: #e6f7ff;
+    }
+ 
+a {
+  color: #555;
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+
+
+.code-block {
+    position: relative;
+    margin-bottom: 1em;
+}
+.copy-button {
+    background: transparent; 
+    color: white;
+
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    border: none;
+    padding: 4px 8px;
+    font-size: 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    z-index: 1;
+}
+
+.copy-button:hover {
+background-color: #0056b3;
+}
+.page-footer {
+  margin-top: 4rem;
+  padding: 1rem 0;
+  text-align: center;
+  font-size: 0.85rem;
+  color: #666;
+  border-top: 1px solid #ccc;
+  background-color: #fafafa;
+}
+.page-footer a {
+     color: #555;
+    text-decoration: none;
+  }
+  .page-footer a:hover {
+    text-decoration: underline;
+  }
+.chapter-navi-section {
+display: flex;
+justify-content: space-between;
+align-items: center;
+padding-bottom: 10px;
+}  
+
+.nav-link {
+  color: inherit;
+  text-decoration: none;
+  opacity: 0.5;
+  transition: opacity 0.3s ease, text-decoration 0.3s ease;
+}
+
+.nav-link:hover {
+  opacity: 0.9;
+  text-decoration: underline;
+}
+
+.prev {
+  text-align: left;
+}
+.toc-link {
+  text-align: center;
+}
+.next {
+  text-align: right;
+}
+.download-section {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2rem;
+  padding: 2rem 1rem;
+  max-width: 600px;
+  margin: 3rem auto;
+  background-color: #f9f9f9;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+}
+
+    .book-cover {
+      width: 130px;
+      height: 180px;
+      
+      background-size: cover; /* Ensures the image covers the entire div */
+      background-position: center; /* Centers the image */
+            
+      background: linear-gradient(145deg, #e0dede, #f9f9f9);
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 10px;
+      box-sizing: border-box;
+      position: relative;
+      font-family: 'Roboto', sans-serif;
+    }
+
+    .book-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 16px;
+      font-weight: 600;
+      color: #fff;
+      margin-bottom: 4px;
+    }
+
+    .book-subtitle {
+      font-size: 12px;
+      color: #aaa;
+      margin-bottom: 10px;
+    }
+
+    .series-name {
+      position: absolute;
+      top: 8px;
+      left: 8px;
+      font-size: 10px;
+      color: #fff;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-weight: bold;
+    }
+
+    .book-footer {
+      position: absolute;
+      bottom: 8px;
+      font-size: 10px;
+      color: #aaa;
+    }
+
+.download-info h2 {
+  margin: 0 0 0.5rem;
+  font-size: 1.2rem;
+}
+
+.format-label {
+  margin: 0 0 0.5rem;
+  font-size: 0.95rem;
+  color: #555;
+}
+
+.download-buttons {
+  display: flex;
+  gap: 1rem;
+}
+
+.download-button {
+  background-color: #4A90E2;
+  color: white;
+  padding: 0.5em 1.2em;
+  text-decoration: none;
+  border-radius: 25px;
+  font-size: 0.95rem;
+  transition: background-color 0.3s ease;
+}
+
+.download-button:hover {
+  background-color: #357ABD;
+}
+
+    code {
+ 
+      color: #d35400; 
+    }
+html {
+    scroll-behavior: smooth;
+}
+    .snippet-container {
+      overflow: hidden;    
+    }
+
+    .snippet-header {
+      background: #f0f0f0;
+      color: #333;
+      padding: 0.75rem 1rem;
+      cursor: pointer;
+      font-size: 1rem;
+    }
+
+    .snippet-body {
+      display: none;
+      font-family: monospace;
+    }
+
+    .snippet-container.open .snippet-body {
+      display: block;
+    }
+
+.CodeMirror {
+  border: 2px solid #ccc;
+  border-radius: 4px;
+  resize: vertical;
+}
+
+    button { padding: 0.5em 1em; background: green; color: white; border: none; cursor: pointer; }
+    button:hover { background: #1e7e34; }
+    .result_iframe { width:99%; height:200px; margin-top: 1em;  resize: both;border:1px solid #ccc;}        
+</style>
+</head>
+<body> 
+
+  <div class="container">
+    <div class = "chapter-navi-section">
+<a href="go-for-beginners-tools-and-best-practices.htm" class="nav-button prev">←</a>
+<a href='go-for-beginners.htm#building-and-deploying-go-programs' class="nav-button toc-link">Index</a>
+<a href="go-for-beginners-appendix.htm" class="nav-button next">→</a>
+</div>
+
+    <h1 class="book-title-chapter" id = 'top'>Building and Deploying Go Programs</h1>
+    <h3 class="book-subtitle-chapter">Go for Beginners</h3>   
+    <!-- <h1 class ="chapter-title"></h1> -->
+    <h2 id='cross-compilation'>14.1 Cross-Compilation</h2><p>One of Go’s most powerful features is its ability to <strong>cross-compile</strong> programs—build executables for different operating systems and architectures from a single development machine. Thanks to Go's <strong>static linking</strong> and simple toolchain, cross-compilation is straightforward and built into the standard <code>go</code> command.</p><h3 id="why-cross-compile">Why Cross-Compile?</h3><p>Cross-compilation is useful when:</p><ul>
+ <li>You develop on one OS but need to deploy on another (e.g., develop on macOS but deploy on Linux).</li>
+ <li>You want to produce builds for multiple platforms (e.g., Windows, Linux, macOS) without setting up separate environments.</li>
+ <li>You’re targeting embedded systems or containers with specific architectures.</li>
+</ul><h3 id="gos-cross-compilation-model">Gos Cross-Compilation Model</h3><p>Go allows setting two key environment variables to control the build target:</p><ul>
+ <li><code>GOOS</code>: The target operating system (e.g., <code>linux</code>, <code>windows</code>, <code>darwin</code>).</li>
+ <li><code>GOARCH</code>: The target architecture (e.g., <code>amd64</code>, <code>arm64</code>, <code>386</code>).</li>
+</ul><p>Together, these tell the Go compiler what platform to build for.</p><h3 id="supported-goos-and-goarch-values">Supported GOOS and GOARCH Values</h3><table>
+ <thead>
+  <tr>
+   <th>GOOS</th>
+   <th>Description</th>
+   <th>GOARCH Values</th>
+  </tr>
+ </thead>
+ <tbody>
+  <tr>
+   <td><code>linux</code></td>
+   <td>Linux OS</td>
+   <td><code>amd64</code>, <code>arm</code>, <code>arm64</code>, <code>386</code></td>
+  </tr>
+  <tr>
+   <td><code>windows</code></td>
+   <td>Windows OS</td>
+   <td><code>amd64</code>, <code>386</code></td>
+  </tr>
+  <tr>
+   <td><code>darwin</code></td>
+   <td>macOS</td>
+   <td><code>amd64</code>, <code>arm64</code></td>
+  </tr>
+ </tbody>
+</table><blockquote>
+ <p>Run <code>go tool dist list</code> to see the full list of supported OS/architecture combinations.</p>
+</blockquote><h3 id="setting-goos-and-goarch">Setting GOOS and GOARCH</h3><p>To build a binary for another platform, set these variables inline when running <code>go build</code>:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-bash">GOOS=&lt;target-os&gt; GOARCH=&lt;target-arch&gt; go build -o &lt;output-binary&gt; &lt;package&gt;</code></pre>
+</div><h3 id="cross-compilation-examples">Cross-Compilation Examples</h3><p>Assuming you're working on a macOS or Linux machine, and your Go program is in a file named <code>main.go</code>:</p><h4 id="build-for-linux-64-bit">Build for Linux (64-bit)</h4><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-bash">GOOS=linux GOARCH=amd64 go build -o app-linux main.go</code></pre>
+</div><h4 id="build-for-windows-64-bit">Build for Windows (64-bit)</h4><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-bash">GOOS=windows GOARCH=amd64 go build -o app-windows.exe main.go</code></pre>
+</div><h4 id="build-for-macos-apple-silicon-m1-m2">Build for macOS (Apple Silicon M1/M2)</h4><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-bash">GOOS=darwin GOARCH=arm64 go build -o app-macos-arm64 main.go</code></pre>
+</div><h4 id="build-for-32-bit-windows">Build for 32-bit Windows</h4><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-bash">GOOS=windows GOARCH=386 go build -o app-windows-386.exe main.go</code></pre>
+</div><h4 id="build-for-linux-on-arm-e-g-raspberry-pi">Build for Linux on ARM (e.g., Raspberry Pi)</h4><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-bash">GOOS=linux GOARCH=arm go build -o app-linux-arm main.go</code></pre>
+</div><h3 id="example-hello-world-cross-build">Example: Hello World Cross-Build</h3><p><code>main.go</code>:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-go">package main
+
+import "fmt"
+
+func main() {
+	fmt.Println("Hello from Go!")
+}</code></pre>
+</div><p>Compile for Windows on a Linux/macOS machine:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-bash">GOOS=windows GOARCH=amd64 go build -o hello.exe main.go</code></pre>
+</div><p>Then copy <code>hello.exe</code> to a Windows machine and run it—no Go installation required!</p><h3 id="important-notes">Important Notes</h3><ul>
+ <li>Go binaries are <strong>statically linked</strong> by default (except on Windows/macOS where dynamic linking may apply with Cgo), meaning no external dependencies are needed on the target machine.</li>
+ <li>If your code uses <strong>Cgo</strong>, cross-compilation becomes more complex, as Cgo depends on a native compiler for the target platform. You may need a cross-compiler toolchain installed.</li>
+ <li>You can automate building for multiple platforms using shell scripts or tools like <a href="https://goreleaser.com/">Goreleaser</a>.</li>
+</ul><h3 id="summary">Summary</h3><p>Cross-compilation in Go is seamless and built into the toolchain:</p><ul>
+ <li>Use <code>GOOS</code> and <code>GOARCH</code> to target different platforms.</li>
+ <li>Build once and run anywhere—no external dependencies.</li>
+ <li>Easily distribute binaries across Windows, Linux, and macOS.</li>
+</ul><p>In the next section, we’ll see how to use <code>go build</code> to create standalone executables suitable for deployment.</p><div class = "chapter-navi-section">
+<a href="#top" class="nav-button prev">↑</a>
+<a href='go-for-beginners.htm#building-and-deploying-go-programs' class="nav-button toc-link">Index</a>
+<a href="#bottom" class="nav-button next">↓</a>
+</div>
+<h2 id='creating-executables'>14.2 Creating Executables</h2><p>Go has a powerful and simple build system that compiles programs into <strong>standalone executables</strong>. These binaries include all necessary dependencies (thanks to Go's static linking, in most cases), allowing you to run them on target systems without needing a Go installation.</p><p>This is one of the reasons why Go is so popular for backend services, CLI tools, and deployment in containerized or cloud-native environments.</p><h3 id="using-go-build">Using <code>go build</code></h3><p>The primary command used to compile Go programs is:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-bash">go build [options] [packages]</code></pre>
+</div><p>This command compiles Go source files into an executable binary.</p><h4 id="basic-example">Basic Example</h4><p>Assume you have a file <code>main.go</code>:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-go">package main
+
+import "fmt"
+
+func main() {
+	fmt.Println("Hello, Go executable!")
+}</code></pre>
+</div><p>To build an executable from this source file:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-bash">go build main.go</code></pre>
+</div><p>This creates an executable named <code>main</code> (or <code>main.exe</code> on Windows) in the current directory.</p><h3 id="customizing-the-output-name">Customizing the Output Name</h3><p>You can use the <code>-o</code> flag to set the name of the output binary:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-bash">go build -o hello main.go</code></pre>
+</div><p>This creates a binary named <code>hello</code>.</p><p>You can also specify a relative or absolute path:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-bash">go build -o ./bin/hello main.go</code></pre>
+</div><p>This places the output in a subdirectory called <code>bin</code>.</p><h3 id="building-from-a-package">Building from a Package</h3><p>If you're working inside a Go module with a proper package structure (i.e., with a <code>go.mod</code> file), you can build the entire module:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-bash">go build</code></pre>
+</div><p>This compiles the package in the current directory.</p><p>To build a specific package (e.g., a subdirectory containing a <code>main</code> package):</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-bash">go build ./cmd/mytool</code></pre>
+</div><h3 id="running-the-executable">Running the Executable</h3><p>Once compiled, you can run the resulting executable directly:</p><p>On Linux/macOS:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-bash">./hello</code></pre>
+</div><p>On Windows:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-powershell">.\hello.exe</code></pre>
+</div><p>Output:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-bash">Hello, Go executable!</code></pre>
+</div><h3 id="creating-a-release-ready-build">Creating a Release-Ready Build</h3><p>You can build for release by disabling debug information with <code>-ldflags</code>:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-bash">go build -ldflags="-s -w" -o hello main.go</code></pre>
+</div><ul>
+ <li><code>-s</code>: Omit the symbol table.</li>
+ <li><code>-w</code>: Omit DWARF debugging information.</li>
+ <li>This reduces binary size.</li>
+</ul><h3 id="file-permissions-linux-macos">File Permissions (Linux/macOS)</h3><p>After building, ensure the binary has execute permissions:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-bash">chmod +x hello</code></pre>
+</div><h3 id="recap">Recap</h3><ul>
+ <li>Use <code>go build</code> to compile Go code into standalone executables.</li>
+ <li>Use <code>-o</code> to specify the output name or path.</li>
+ <li>Executables can run directly without Go installed on the target system.</li>
+ <li>Cross-compilation (covered earlier) lets you build for other OS/architectures.</li>
+</ul><div class = "chapter-navi-section">
+<a href="#top" class="nav-button prev">↑</a>
+<a href='go-for-beginners.htm#building-and-deploying-go-programs' class="nav-button toc-link">Index</a>
+<a href="#bottom" class="nav-button next">↓</a>
+</div>
+<h2 id='basic-deployment-strategies'>14.3 Basic Deployment Strategies</h2><p>Once you've compiled your Go application into a standalone binary, the next step is <strong>deployment</strong>—getting it running in a production or test environment. Go’s simplicity and static binary output make deployment straightforward, but it's still important to follow best practices for configuration, packaging, and service management.</p><h3 id="copying-binaries-to-servers">Copying Binaries to Servers</h3><p>Since Go builds static executables, deploying a Go program can be as simple as:</p><ul>
+ <li>Compiling the binary locally or in a build environment</li>
+ <li>Copying it to a remote server using <code>scp</code>, <code>rsync</code>, or another file transfer method</li>
+ <li>Running the binary on the server</li>
+</ul><p><strong>Example:</strong></p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-bash"># Build the binary
+go build -o myserver main.go
+
+# Copy to remote server
+scp myserver user@remote-server:/usr/local/bin/</code></pre>
+</div><p>Once on the server, you can run it:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-bash">/usr/local/bin/myserver</code></pre>
+</div><h3 id="using-configuration-files">Using Configuration Files</h3><p>Configuration files allow changing runtime settings without modifying code. Common formats include:</p><ul>
+ <li>JSON</li>
+ <li>YAML (via third-party libraries)</li>
+ <li>INI</li>
+ <li><code>.env</code> files</li>
+</ul><p><strong>Example (config.json):</strong></p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-json">{
+  "port": 8080,
+  "env": "production"
+}</code></pre>
+</div><p>Read config in Go:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-go">type Config struct {
+	Port int    `json:"port"`
+	Env  string `json:"env"`
+}
+
+data, _ := os.ReadFile("config.json")
+var cfg Config
+json.Unmarshal(data, &amp;cfg)</code></pre>
+</div><h3 id="environment-variables">Environment Variables</h3><p>Environment variables are another popular approach, especially for cloud-native apps and 12-factor apps.</p><p><strong>Setting variables:</strong></p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-bash">export PORT=8080
+export ENV=production</code></pre>
+</div><p><strong>Reading in Go:</strong></p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-go">port := os.Getenv("PORT")
+env := os.Getenv("ENV")</code></pre>
+</div><p>This method is ideal for containerized or CI/CD deployments.</p><h3 id="packaging-considerations">Packaging Considerations</h3><p>Some tips for packaging Go applications:</p><ul>
+ <li>Place your binary in <code>/usr/local/bin</code> or another standard directory</li>
+ <li>Store configs in <code>/etc/yourapp/</code> or provide <code>--config</code> flags</li>
+ <li>Use versioning in filenames or folders</li>
+ <li>Use scripts or Makefiles for automation</li>
+</ul><p><strong>Example Makefile snippet:</strong></p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-makefile">build:
+	go build -o bin/myserver main.go
+
+deploy:
+	scp bin/myserver user@server:/usr/local/bin/</code></pre>
+</div><h3 id="managing-services-with-systemd">Managing Services with systemd</h3><p>On Linux, you can use <code>systemd</code> to manage your Go server as a background service.</p><p><strong>Example <code>/etc/systemd/system/myserver.service</code>:</strong></p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-ini">[Unit]
+Description=My Go Web Server
+After=network.target
+
+[Service]
+ExecStart=/usr/local/bin/myserver
+Restart=on-failure
+EnvironmentFile=/etc/myserver.env
+
+[Install]
+WantedBy=multi-user.target</code></pre>
+</div><p><strong>Steps:</strong></p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-bash">sudo systemctl daemon-reexec
+sudo systemctl start myserver
+sudo systemctl enable myserver</code></pre>
+</div><p>This makes your Go program behave like any other system service.</p><h3 id="practical-example-deploying-a-simple-go-web-server">Practical Example: Deploying a Simple Go Web Server</h3><p>Here’s a complete flow to deploy a basic Go HTTP server.</p><p><strong>1. Create the server (<code>main.go</code>):</strong></p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-go">package main
+
+import (
+	"fmt"
+	"net/http"
+	"os"
+)
+
+func handler(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprintln(w, "Hello, Go Deployment!")
+}
+
+func main() {
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "8080"
+	}
+	http.HandleFunc("/", handler)
+	http.ListenAndServe(":"+port, nil)
+}</code></pre>
+</div><p><strong>2. Build and copy:</strong></p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-bash">go build -o webserver main.go
+scp webserver user@yourserver:/usr/local/bin/</code></pre>
+</div><p><strong>3. Set environment and run:</strong></p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-bash">export PORT=8080
+/usr/local/bin/webserver</code></pre>
+</div><p>Visit <code>http://yourserver:8080</code> to see the message.</p><h3 id="summary">Summary</h3><p>Go’s compiled binaries simplify deployment. Key strategies include:</p><ul>
+ <li>Directly copying binaries to target machines</li>
+ <li>Using configuration files and environment variables for flexibility</li>
+ <li>Managing long-running programs with <code>systemd</code> on Linux</li>
+ <li>Structuring files for automation and maintainability</li>
+</ul><div class = "chapter-navi-section">
+<a href="#top" class="nav-button prev">↑</a>
+<a href='go-for-beginners.htm#building-and-deploying-go-programs' class="nav-button toc-link">Index</a>
+<a href="#bottom" class="nav-button next">↓</a>
+</div>
+<h2 id='introduction-to-dockerizing-go-applications'>14.4 Introduction to Dockerizing Go Applications</h2><p>Modern software development increasingly uses <strong>containerization</strong> to package applications along with their dependencies in lightweight, portable units. Docker is the most popular container platform, and Go is particularly well-suited for containerization due to its statically compiled binaries.</p><p>This section introduces Docker and shows how to containerize a Go application with a focus on portability, scalability, and image optimization.</p><h3 id="what-is-docker">What is Docker?</h3><p><strong>Docker</strong> is a platform that allows you to package an application and its environment into a single unit called a <strong>container</strong>. Containers run the same way regardless of where they are deployed—your laptop, a server, or the cloud.</p><h4 id="key-benefits-for-go-developers">Key Benefits for Go Developers:</h4><ul>
+ <li><strong>Portability</strong>: Run anywhere Docker is supported.</li>
+ <li><strong>Consistency</strong>: Avoid "it works on my machine" problems.</li>
+ <li><strong>Efficiency</strong>: Containers are faster and lighter than virtual machines.</li>
+ <li><strong>Scalability</strong>: Easily replicate containers across environments.</li>
+</ul><h3 id="step-by-step-dockerizing-a-go-application">Step-by-Step: Dockerizing a Go Application</h3><p>Let’s walk through containerizing a simple Go web server.</p><h3 id="sample-go-web-server-main-go">Sample Go Web Server (<code>main.go</code>)</h3><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-go">package main
+
+import (
+	"fmt"
+	"net/http"
+)
+
+func handler(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprintln(w, "Hello from Dockerized Go!")
+}
+
+func main() {
+	http.HandleFunc("/", handler)
+	http.ListenAndServe(":8080", nil)
+}</code></pre>
+</div><h3 id="create-a-basic-dockerfile">Create a Basic Dockerfile</h3><p>A <strong>Dockerfile</strong> is a script that tells Docker how to build your image.</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-Dockerfile"># Start from the official Go base image
+FROM golang:1.22 AS builder
+
+# Set the working directory
+WORKDIR /app
+
+# Copy source code
+COPY . .
+
+# Build the Go binary
+RUN go build -o myapp
+
+# Use a minimal base image for the final container
+FROM alpine:latest
+
+# Copy binary from builder stage
+COPY --from=builder /app/myapp /usr/local/bin/myapp
+
+# Expose port
+EXPOSE 8080
+
+# Set the entrypoint
+ENTRYPOINT ["myapp"]</code></pre>
+</div><h3 id="build-the-docker-image">Build the Docker Image</h3><p>In the same directory as your <code>main.go</code> and <code>Dockerfile</code>, run:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-bash">docker build -t go-docker-app .</code></pre>
+</div><p>This builds an image named <code>go-docker-app</code>.</p><h3 id="run-the-container">Run the Container</h3><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-bash">docker run -p 8080:8080 go-docker-app</code></pre>
+</div><p>Now visit <code>http://localhost:8080</code> in your browser. You’ll see:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-bash">Hello from Dockerized Go!</code></pre>
+</div><h3 id="understanding-multi-stage-builds">Understanding Multi-Stage Builds</h3><p>The Dockerfile above uses a <strong>multi-stage build</strong> to reduce the final image size:</p><ul>
+ <li>First stage (<code>golang:1.22</code>) compiles the app.</li>
+ <li>Second stage (<code>alpine:latest</code>) is a minimal Linux image that only contains the final binary.</li>
+</ul><p>This keeps your Docker image small and secure—no compiler or source files are included in the final image.</p><h3 id="image-size-comparison">Image Size Comparison</h3><table>
+ <thead>
+  <tr>
+   <th>Build Type</th>
+   <th>Approximate Size</th>
+  </tr>
+ </thead>
+ <tbody>
+  <tr>
+   <td>Without multi-stage</td>
+   <td>~800MB (with Go toolchain)</td>
+  </tr>
+  <tr>
+   <td>With multi-stage</td>
+   <td>~10MB (just the binary)</td>
+  </tr>
+ </tbody>
+</table><h3 id="best-practices-for-dockerized-go-apps">Best Practices for Dockerized Go Apps</h3><ul>
+ <li><strong>Use multi-stage builds</strong> to slim down your images.</li>
+ <li><strong>Avoid hardcoding config values</strong>—use environment variables instead.</li>
+ <li><strong>Use <code>.dockerignore</code></strong> to exclude files like <code>node_modules</code>, <code>.git</code>, or <code>*.log</code> from the image build context.</li>
+ <li><strong>Tag images with versions</strong> (<code>go-docker-app:v1.0</code>) for better control in deployments.</li>
+</ul><h3 id="summary">Summary</h3><p>Docker allows you to bundle your Go application and all its dependencies into a self-contained unit, simplifying deployment and improving consistency across environments.</p><p>In this section, you learned:</p><ul>
+ <li>The value of containerizing Go programs</li>
+ <li>How to write a Dockerfile</li>
+ <li>How to build, run, and optimize Docker images using multi-stage builds</li>
+</ul><p>This foundational knowledge sets the stage for more advanced topics like Kubernetes or CI/CD workflows in future learning.</p><div class = "chapter-navi-section">
+<a href="go-for-beginners-tools-and-best-practices.htm" class="nav-button prev">←</a>
+<a href='go-for-beginners.htm#building-and-deploying-go-programs' class="nav-button toc-link">Index</a>
+<a href="go-for-beginners-appendix.htm" class="nav-button next">→</a>
+</div>
+<section class="download-section">
+  <div class="book-cover" style="background-image: url('data:image/jpg;base64,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');">
+<div class="series-name">Introduction</div>
+<div class="book-title">Go for Beginners</div>
+<div class="book-subtitle">Essential concepts, practical examples, and foundational topics</div>
+<div class="book-footer">readbytes.github.io</div>
+</div>
+  <div class="download-info">
+    <h2 id='bottom'>Download This Ebook</h2>
+    <p class="format-label">Available formats:</p>
+    <div class="download-buttons">
+      <a href="go-for-beginners.pdf" class="download-button">📄 PDF</a>
+      <a href="go-for-beginners.epub" class="download-button">📘 EPUB</a>
+    </div>
+  </div>
+</section><div class='related-books'>
+<h2>Go Introduction Books</h2>
+<div class='related-book-list'>
+<a href="go-for-beginners.htm"><div class="book-cover" style="background-image: url('data:image/jpg;base64,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');">
+<div class="series-name">Introduction</div>
+<div class="book-title">Go for Beginners</div>
+<div class="book-subtitle">Essential concepts, practical examples, and foundational topics</div>
+<div class="book-footer">readbytes.github.io</div>
+</div></a>
+
+
+
+<a href='go.htm'><div class='book-cover'>More Go Books</div></a>
+</div>
+</div>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+  
+  <script>
+    function copyCode(button) {
+      const code = button.nextElementSibling.innerText;
+      navigator.clipboard.writeText(code).then(() => {
+        button.textContent = 'Copied!';
+        setTimeout(() => { button.textContent = 'Copy'; }, 1500);
+      });
+    }
+  </script>  
+
+<footer class="page-footer">
+    <nav>
+      <a href="https://readbytes.github.io">Home</a> | 
+      Email:<script language="JavaScript" type="text/javascript">
+var part1 = 'yinpeng';var part6 = '263';var part2 = Math.pow(2,6);var part3 = String.fromCharCode(part2);var part4 = 'hotmail dot com';var part5 = part1 + String.fromCharCode(part2) + part4;document.write(part1 + part6 + part3 + part4);
+</script>
+    </nav>
+  <p>© 2025 — All rights reserved.</p>    
+  </footer>
+
+</body>
+</html>

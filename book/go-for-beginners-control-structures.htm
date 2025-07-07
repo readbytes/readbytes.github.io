@@ -1,0 +1,743 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>Go for Beginners Control Structures</title>
+<link rel='shortcut icon' href='https://java2s.com/style/favicon.ico'>
+<link href="https://fonts.googleapis.com/css2?family=Merriweather&display=swap" rel="stylesheet" />
+<link href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+
+
+<style>
+body {
+  background: #f8f7f5;
+  font-family: 'Merriweather', serif;
+  color: #333;
+  margin: 0;
+  padding: 2rem 1rem;
+  font-size: 15px; /* smaller body font */
+  line-height: 1.5;
+}
+
+.container {
+  max-width: 700px;
+  margin: 0 auto;
+  background: white;
+  padding: 1rem 2rem;
+  box-shadow: 0 0 15px rgba(0,0,0,0.1);
+}
+.book-title-chapter {
+  font-family: 'Merriweather', serif;
+  font-size: 2rem;
+  font-weight: bold;
+  text-align: center;
+  margin-bottom: 2rem;
+  border-bottom: 2px solid #ccc;
+  padding-bottom: 0.5rem;
+  color: #2c3e50;
+}
+
+.book-subtitle-chapter {
+  text-align: center;
+  font-size: 1rem;
+  color: #666;
+  margin-top: -1rem;
+  margin-bottom: 2rem;
+}
+
+    .related-books {
+      margin-top: 40px;
+    }
+
+    .related-books h2 {
+      font-size: 22px;
+      margin-bottom: 20px;
+      border-bottom: 2px solid #eee;
+      padding-bottom: 8px;
+      color: #333;
+    }
+    .related-book-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+h1, h2, h3 {
+  font-weight: 600;
+  margin-top: 2.5rem;
+  margin-bottom: 1rem;
+  line-height: 1.2;
+}
+
+h1 {
+  font-size: 1.8rem; /* smaller heading */
+}
+
+h2 {
+  font-size: 1.4rem;
+}
+
+h3 {
+  font-size: 1.2rem;
+}
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-family: sans-serif;
+      font-size: 1em;
+      margin: 1em 0;
+    }
+
+    th, td {
+      border: 1px solid #cccccc;
+      padding: 0.6em 1em;
+      text-align: left;
+    }
+
+    th {
+      background-color: #f2f2f2;
+      font-weight: bold;
+    }
+
+    tr:nth-child(even) {
+      background-color: #fafafa;
+    }
+
+    /* Optional hover effect */
+    tr:hover {
+      background-color: #e6f7ff;
+    }
+ 
+a {
+  color: #555;
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+
+
+.code-block {
+    position: relative;
+    margin-bottom: 1em;
+}
+.copy-button {
+    background: transparent; 
+    color: white;
+
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    border: none;
+    padding: 4px 8px;
+    font-size: 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    z-index: 1;
+}
+
+.copy-button:hover {
+background-color: #0056b3;
+}
+.page-footer {
+  margin-top: 4rem;
+  padding: 1rem 0;
+  text-align: center;
+  font-size: 0.85rem;
+  color: #666;
+  border-top: 1px solid #ccc;
+  background-color: #fafafa;
+}
+.page-footer a {
+     color: #555;
+    text-decoration: none;
+  }
+  .page-footer a:hover {
+    text-decoration: underline;
+  }
+.chapter-navi-section {
+display: flex;
+justify-content: space-between;
+align-items: center;
+padding-bottom: 10px;
+}  
+
+.nav-link {
+  color: inherit;
+  text-decoration: none;
+  opacity: 0.5;
+  transition: opacity 0.3s ease, text-decoration 0.3s ease;
+}
+
+.nav-link:hover {
+  opacity: 0.9;
+  text-decoration: underline;
+}
+
+.prev {
+  text-align: left;
+}
+.toc-link {
+  text-align: center;
+}
+.next {
+  text-align: right;
+}
+.download-section {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2rem;
+  padding: 2rem 1rem;
+  max-width: 600px;
+  margin: 3rem auto;
+  background-color: #f9f9f9;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+}
+
+    .book-cover {
+      width: 130px;
+      height: 180px;
+      
+      background-size: cover; /* Ensures the image covers the entire div */
+      background-position: center; /* Centers the image */
+            
+      background: linear-gradient(145deg, #e0dede, #f9f9f9);
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 10px;
+      box-sizing: border-box;
+      position: relative;
+      font-family: 'Roboto', sans-serif;
+    }
+
+    .book-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 16px;
+      font-weight: 600;
+      color: #fff;
+      margin-bottom: 4px;
+    }
+
+    .book-subtitle {
+      font-size: 12px;
+      color: #aaa;
+      margin-bottom: 10px;
+    }
+
+    .series-name {
+      position: absolute;
+      top: 8px;
+      left: 8px;
+      font-size: 10px;
+      color: #fff;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-weight: bold;
+    }
+
+    .book-footer {
+      position: absolute;
+      bottom: 8px;
+      font-size: 10px;
+      color: #aaa;
+    }
+
+.download-info h2 {
+  margin: 0 0 0.5rem;
+  font-size: 1.2rem;
+}
+
+.format-label {
+  margin: 0 0 0.5rem;
+  font-size: 0.95rem;
+  color: #555;
+}
+
+.download-buttons {
+  display: flex;
+  gap: 1rem;
+}
+
+.download-button {
+  background-color: #4A90E2;
+  color: white;
+  padding: 0.5em 1.2em;
+  text-decoration: none;
+  border-radius: 25px;
+  font-size: 0.95rem;
+  transition: background-color 0.3s ease;
+}
+
+.download-button:hover {
+  background-color: #357ABD;
+}
+
+    code {
+ 
+      color: #d35400; 
+    }
+html {
+    scroll-behavior: smooth;
+}
+    .snippet-container {
+      overflow: hidden;    
+    }
+
+    .snippet-header {
+      background: #f0f0f0;
+      color: #333;
+      padding: 0.75rem 1rem;
+      cursor: pointer;
+      font-size: 1rem;
+    }
+
+    .snippet-body {
+      display: none;
+      font-family: monospace;
+    }
+
+    .snippet-container.open .snippet-body {
+      display: block;
+    }
+
+.CodeMirror {
+  border: 2px solid #ccc;
+  border-radius: 4px;
+  resize: vertical;
+}
+
+    button { padding: 0.5em 1em; background: green; color: white; border: none; cursor: pointer; }
+    button:hover { background: #1e7e34; }
+    .result_iframe { width:99%; height:200px; margin-top: 1em;  resize: both;border:1px solid #ccc;}        
+</style>
+</head>
+<body> 
+
+  <div class="container">
+    <div class = "chapter-navi-section">
+<a href="go-for-beginners-go-basics-syntax-and-data-types.htm" class="nav-button prev">←</a>
+<a href='go-for-beginners.htm#control-structures' class="nav-button toc-link">Index</a>
+<a href="go-for-beginners-functions.htm" class="nav-button next">→</a>
+</div>
+
+    <h1 class="book-title-chapter" id = 'top'>Control Structures</h1>
+    <h3 class="book-subtitle-chapter">Go for Beginners</h3>   
+    <!-- <h1 class ="chapter-title"></h1> -->
+    <h2 id='conditional-statements-if-else-switch'>3.1 Conditional Statements (<code>if</code>, <code>else</code>, <code>switch</code>)</h2><p>Control structures let you make decisions in your programs by executing code conditionally. In Go, the primary ways to control flow based on conditions are with the <code>if</code>, <code>else if</code>, and <code>else</code> statements, as well as the <code>switch</code> statement for handling multiple discrete cases cleanly.</p><h3 id="using-if-else-if-and-else">Using <code>if</code>, <code>else if</code>, and <code>else</code></h3><p>The <code>if</code> statement evaluates a boolean expression and executes the associated block if the condition is true. You can chain multiple conditions using <code>else if</code> and provide a fallback with <code>else</code>.</p><h4 id="syntax">Syntax:</h4><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-go">if condition {
+    // code runs if condition is true
+} else if anotherCondition {
+    // code runs if anotherCondition is true
+} else {
+    // code runs if none of the above conditions are true
+}</code></pre>
+</div><h3 id="example-grading-system-using-if-else">Example: Grading System Using <code>if-else</code></h3><div class="code-block"><button class="copy-button" onclick="copyCode(this)">📋</button>
+ <pre><code class="language-go">package main
+
+import "fmt"
+
+func main() {
+    score := 85
+
+    if score &gt;= 90 {
+        fmt.Println("Grade: A")
+    } else if score &gt;= 80 {
+        fmt.Println("Grade: B")
+    } else if score &gt;= 70 {
+        fmt.Println("Grade: C")
+    } else if score &gt;= 60 {
+        fmt.Println("Grade: D")
+    } else {
+        fmt.Println("Grade: F")
+    }
+}</code></pre>
+</div><h3 id="short-variable-declaration-in-if">Short Variable Declaration in <code>if</code></h3><p>Go lets you declare and initialize a variable in the <code>if</code> statement itself, limiting its scope to the <code>if-else</code> blocks.</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-go">if err := doSomething(); err != nil {
+    fmt.Println("Error:", err)
+} else {
+    fmt.Println("Success")
+}</code></pre>
+</div><h3 id="using-switch-statements">Using <code>switch</code> Statements</h3><p>A <code>switch</code> statement evaluates an expression and compares it against multiple <code>case</code> values. It’s cleaner and more readable than long chains of <code>if-else if</code> when checking a variable against many discrete values.</p><h4 id="syntax">Syntax:</h4><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-go">switch expression {
+case value1:
+    // code for value1
+case value2:
+    // code for value2
+default:
+    // code if no cases match
+}</code></pre>
+</div><h3 id="example-command-line-argument-parsing">Example: Command-Line Argument Parsing</h3><div class="code-block"><button class="copy-button" onclick="copyCode(this)">📋</button>
+ <pre><code class="language-go">package main
+
+import (
+    "fmt"
+    "os"
+)
+
+func main() {
+    if len(os.Args) &lt; 2 {
+        fmt.Println("Please provide a command")
+        return
+    }
+
+    cmd := os.Args[1]
+
+    switch cmd {
+    case "start":
+        fmt.Println("Starting the server...")
+    case "stop":
+        fmt.Println("Stopping the server...")
+    case "status":
+        fmt.Println("Server status: Running")
+    default:
+        fmt.Println("Unknown command:", cmd)
+    }
+}</code></pre>
+</div><h3 id="summary">Summary</h3><ul>
+ <li>Use <code>if</code>, <code>else if</code>, and <code>else</code> for simple and compound conditional logic.</li>
+ <li>You can declare variables within the <code>if</code> statement, limiting their scope.</li>
+ <li><code>switch</code> is a clean alternative to multiple <code>if-else if</code> conditions when checking discrete values.</li>
+ <li>Always include a <code>default</code> case in <code>switch</code> to handle unexpected values.</li>
+</ul><div class = "chapter-navi-section">
+<a href="#top" class="nav-button prev">↑</a>
+<a href='go-for-beginners.htm#control-structures' class="nav-button toc-link">Index</a>
+<a href="#bottom" class="nav-button next">↓</a>
+</div>
+<h2 id='loops-for'>3.2 Loops (<code>for</code>)</h2><p>Unlike many programming languages that have multiple loop constructs (<code>for</code>, <code>while</code>, <code>do-while</code>), Go has <strong>only one looping construct:</strong> the <code>for</code> loop. This simplicity reflects Go’s philosophy of keeping the language clean and minimal while still expressive.</p><p>In this section, you’ll learn the different ways to use the <code>for</code> loop in Go, along with practical examples.</p><h3 id="traditional-for-loop">Traditional For Loop</h3><p>This form looks similar to loops in languages like C, Java, or JavaScript. It consists of three parts inside parentheses: initialization, condition, and post statement.</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-go">for i := 0; i &lt; 5; i++ {
+    fmt.Println(i)
+}</code></pre>
+</div><ul>
+ <li><code>i := 0</code>: Initializes the loop variable.</li>
+ <li><code>i &lt; 5</code>: Condition that keeps the loop running while true.</li>
+ <li><code>i++</code>: Post statement executed after each iteration (increment here).</li>
+</ul><h3 id="while-style-loop">While-Style Loop</h3><p>If you omit the initialization and post statements, the <code>for</code> loop behaves like a traditional <code>while</code> loop, running until the condition becomes false.</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-go">count := 0
+for count &lt; 5 {
+    fmt.Println(count)
+    count++
+}</code></pre>
+</div><h3 id="infinite-loop">Infinite Loop</h3><p>When you omit all three components of the <code>for</code> statement, you create an infinite loop. Use <code>break</code> or <code>return</code> to exit such loops.</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-go">for {
+    fmt.Println("Looping forever!")
+    break // to avoid actual infinite loop
+}</code></pre>
+</div><h3 id="practical-examples">Practical Examples</h3><h4 id="looping-through-an-array">Looping Through an Array</h4><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-go">numbers := [5]int{1, 2, 3, 4, 5}
+
+for i := 0; i &lt; len(numbers); i++ {
+    fmt.Println("Index", i, "Value", numbers[i])
+}</code></pre>
+</div><h4 id="summing-numbers-using-a-while-style-loop">Summing Numbers Using a While-Style Loop</h4><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-go">sum := 0
+n := 1
+
+for n &lt;= 100 {
+    sum += n
+    n++
+}
+
+fmt.Println("Sum of numbers from 1 to 100 is:", sum)</code></pre>
+</div><h4 id="generating-fibonacci-numbers">Generating Fibonacci Numbers</h4><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-go">a, b := 0, 1
+for i := 0; i &lt; 10; i++ {
+    fmt.Println(a)
+    a, b = b, a+b
+}</code></pre>
+</div><div class="snippet-container" id="myZCR">
+ <div class="snippet-header" onclick="toggleSnippet('myZCR')">
+  Click to view full runnable Code
+ </div>
+ <div class="snippet-body">
+  <div class="code-block"><button class="copy-button" onclick="copyCode(this)">📋</button>
+   <pre><code class="language-go">
+package main
+
+import "fmt"
+
+func main() {
+    fmt.Println("Traditional for loop:")
+    for i := 0; i &lt; 5; i++ {
+        fmt.Println(i)
+    }
+
+    fmt.Println("While-style loop:")
+    count := 0
+    for count &lt; 5 {
+        fmt.Println(count)
+        count++
+    }
+
+    fmt.Println("Infinite loop with break:")
+    for {
+        fmt.Println("Looping forever!")
+        break // to avoid actual infinite loop
+    }
+
+    fmt.Println("Looping through an array:")
+    numbers := [5]int{1, 2, 3, 4, 5}
+    for i := 0; i &lt; len(numbers); i++ {
+        fmt.Printf("Index %d Value %d", i, numbers[i])
+    }
+
+    fmt.Println("Summing numbers using while-style loop:")
+    sum := 0
+    n := 1
+    for n &lt;= 100 {
+        sum += n
+        n++
+    }
+    fmt.Println("Sum of numbers from 1 to 100 is:", sum)
+
+    fmt.Println("Generating Fibonacci numbers:")
+    a, b := 0, 1
+    for i := 0; i &lt; 10; i++ {
+        fmt.Println(a)
+        a, b = b, a+b
+    }
+} 
+</code></pre>
+  </div>
+ </div>
+</div><h3 id="summary">Summary</h3><ul>
+ <li>Go has a <strong>single loop keyword <code>for</code></strong> with versatile forms.</li>
+ <li>Traditional for loop includes initialization, condition, and post statements.</li>
+ <li>The <code>for</code> loop can act like a <code>while</code> loop when init and post are omitted.</li>
+ <li>Omitting all parts creates an infinite loop.</li>
+ <li>The <code>for</code> loop is commonly used to iterate over arrays, slices, or generate sequences.</li>
+</ul><div class = "chapter-navi-section">
+<a href="#top" class="nav-button prev">↑</a>
+<a href='go-for-beginners.htm#control-structures' class="nav-button toc-link">Index</a>
+<a href="#bottom" class="nav-button next">↓</a>
+</div>
+<h2 id='using-defer-for-delayed-execution'>3.3 Using <code>defer</code> for delayed execution</h2><p>In Go, the <code>defer</code> keyword is a powerful feature that schedules a function call to be executed <strong>just before the surrounding function returns</strong>. This allows you to ensure important cleanup tasks always run, even if the function exits early due to an error or return statement.</p><h3 id="how-defer-works">How <code>defer</code> Works</h3><p>When you write:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-go">defer someFunction()</code></pre>
+</div><p>the call to <code>someFunction()</code> is <strong>postponed</strong> until the surrounding function completes, regardless of where the return happens. This is extremely useful for resource management.</p><h3 id="common-use-cases-for-defer">Common Use Cases for <code>defer</code></h3><ul>
+ <li><strong>Closing files</strong> after opening them.</li>
+ <li><strong>Unlocking mutexes</strong> after locking.</li>
+ <li>Printing <strong>cleanup or log messages</strong>.</li>
+ <li>Releasing <strong>network connections or other resources</strong>.</li>
+</ul><h3 id="example-1-closing-a-file">Example 1: Closing a File</h3><div class="code-block"><button class="copy-button" onclick="copyCode(this)">📋</button>
+ <pre><code class="language-go">package main
+
+import (
+    "fmt"
+    "os"
+)
+
+func main() {
+    file, err := os.Open("example.txt")
+    if err != nil {
+        fmt.Println("Error opening file:", err)
+        return
+    }
+    defer file.Close() // Ensure file is closed when main returns
+
+    // Perform file operations here
+    fmt.Println("File opened successfully")
+}</code></pre>
+</div><p>Here, <code>file.Close()</code> will run automatically when <code>main</code> finishes, even if the function returns early.</p><h3 id="example-2-unlocking-a-mutex">Example 2: Unlocking a Mutex</h3><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-go">package main
+
+import (
+    "fmt"
+    "sync"
+)
+
+var mu sync.Mutex
+
+func criticalSection() {
+    mu.Lock()
+    defer mu.Unlock() // Unlock when criticalSection returns
+
+    fmt.Println("Inside critical section")
+    // Do thread-safe work here
+}</code></pre>
+</div><p>Using <code>defer</code> guarantees the mutex is unlocked properly, preventing deadlocks even if the function panics or returns early.</p><h3 id="example-3-multiple-defer-calls-execute-in-lifo-order">Example 3: Multiple <code>defer</code> Calls Execute in LIFO Order</h3><p>If you have multiple deferred calls, Go executes them <strong>last-in, first-out (LIFO)</strong> — meaning the most recently deferred call runs first.</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-go">func demoDefer() {
+    defer fmt.Println("First deferred")
+    defer fmt.Println("Second deferred")
+    defer fmt.Println("Third deferred")
+
+    fmt.Println("Function body")
+}</code></pre>
+</div><h4 id="output">Output:</h4><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-bash">Function body
+Third deferred
+Second deferred
+First deferred</code></pre>
+</div><div class="snippet-container" id="7eEsA">
+ <div class="snippet-header" onclick="toggleSnippet('7eEsA')">
+  Click to view full runnable Code
+ </div>
+ <div class="snippet-body">
+  <div class="code-block"><button class="copy-button" onclick="copyCode(this)">📋</button>
+   <pre><code class="language-go">
+package main
+
+import (
+    "fmt"
+    "sync"
+)
+
+var mu sync.Mutex
+
+func criticalSection() {
+    mu.Lock()
+    defer mu.Unlock() // Unlock when criticalSection returns
+
+    fmt.Println("Inside critical section")
+    // Do thread-safe work here
+}
+
+func demoDefer() {
+    defer fmt.Println("First deferred")
+    defer fmt.Println("Second deferred")
+    defer fmt.Println("Third deferred")
+
+    fmt.Println("Function body")
+}
+
+func main() {
+    fmt.Println("Running criticalSection:")
+    criticalSection()
+
+    fmt.Println("Running demoDefer:")
+    demoDefer()
+} 
+</code></pre>
+  </div>
+ </div>
+</div><h3 id="summary">Summary</h3><ul>
+ <li><code>defer</code> schedules a function to run <strong>after the surrounding function returns</strong>.</li>
+ <li>It is often used for <strong>cleanup tasks</strong> such as closing files and releasing locks.</li>
+ <li>Deferred calls are executed in <strong>LIFO order</strong> (last deferred, first executed).</li>
+ <li><code>defer</code> enhances safety by ensuring cleanup code runs even if the function exits early or panics.</li>
+</ul><div class = "chapter-navi-section">
+<a href="#top" class="nav-button prev">↑</a>
+<a href='go-for-beginners.htm#control-structures' class="nav-button toc-link">Index</a>
+<a href="#bottom" class="nav-button next">↓</a>
+</div>
+<h2 id='error-handling-basics-panic-and-recover-overview'>3.4 Error handling basics (<code>panic</code> and <code>recover</code> overview)</h2><p>Go takes a distinctive approach to error handling, favoring explicit error checks rather than exceptions. However, Go provides two special built-in functions—<code>panic</code> and <code>recover</code>—for handling unexpected, unrecoverable errors in a controlled way.</p><h3 id="gos-error-handling-philosophy">Gos Error Handling Philosophy</h3><ul>
+ <li>The idiomatic way to handle errors in Go is by returning error values and checking them explicitly.</li>
+ <li><code>panic</code> and <code>recover</code> are reserved for truly exceptional situations—such as program bugs or unrecoverable conditions—that require immediate attention.</li>
+ <li>Use <code>panic</code> sparingly; it abruptly stops normal execution and unwinds the stack.</li>
+</ul><h3 id="what-is-panic">What is <code>panic</code>?</h3><ul>
+ <li>Calling <code>panic</code> immediately stops the normal flow of a program.</li>
+ <li>It starts <strong>panicking</strong>, unwinding the stack and running deferred functions.</li>
+ <li>After all deferred functions run, the program terminates and prints the panic message.</li>
+</ul><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-go">panic("something went terribly wrong")</code></pre>
+</div><p>Common causes of panic include:</p><ul>
+ <li>Accessing an out-of-range array index</li>
+ <li>Dereferencing a nil pointer</li>
+ <li>Explicit calls to <code>panic</code> to signal unrecoverable errors</li>
+</ul><h3 id="what-is-recover">What is <code>recover</code>?</h3><ul>
+ <li><code>recover</code> is a built-in function that can regain control after a panic.</li>
+ <li>It only works inside deferred functions.</li>
+ <li>If <code>recover</code> is called during a panic, it stops the unwinding and returns the panic value, allowing the program to continue safely.</li>
+</ul><h3 id="example-panic-and-recover">Example: Panic and Recover</h3><div class="code-block"><button class="copy-button" onclick="copyCode(this)">📋</button>
+ <pre><code class="language-go">package main
+
+import "fmt"
+
+func mayPanic() {
+    defer func() {
+        if r := recover(); r != nil {
+            fmt.Println("Recovered from panic:", r)
+        }
+    }()
+
+    fmt.Println("About to panic!")
+    panic("something bad happened")
+    fmt.Println("This line will not execute")
+}
+
+func main() {
+    mayPanic()
+    fmt.Println("Program continues after recovery")
+}</code></pre>
+</div><h4 id="output">Output:</h4><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-bash">About to panic!
+Recovered from panic: something bad happened
+Program continues after recovery</code></pre>
+</div><h3 id="summary">Summary</h3><ul>
+ <li><code>panic</code> causes a program to stop normal execution and begin stack unwinding.</li>
+ <li><code>recover</code> can only be used inside deferred functions to catch a panic and prevent the program from crashing.</li>
+ <li>Use <code>panic</code> and <code>recover</code> <strong>sparingly</strong> and prefer returning errors in normal situations.</li>
+ <li>They are useful for handling truly unexpected errors or during cleanup.</li>
+</ul><div class = "chapter-navi-section">
+<a href="go-for-beginners-go-basics-syntax-and-data-types.htm" class="nav-button prev">←</a>
+<a href='go-for-beginners.htm#control-structures' class="nav-button toc-link">Index</a>
+<a href="go-for-beginners-functions.htm" class="nav-button next">→</a>
+</div>
+<section class="download-section">
+  <div class="book-cover" style="background-image: url('data:image/jpg;base64,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');">
+<div class="series-name">Introduction</div>
+<div class="book-title">Go for Beginners</div>
+<div class="book-subtitle">Essential concepts, practical examples, and foundational topics</div>
+<div class="book-footer">readbytes.github.io</div>
+</div>
+  <div class="download-info">
+    <h2 id='bottom'>Download This Ebook</h2>
+    <p class="format-label">Available formats:</p>
+    <div class="download-buttons">
+      <a href="go-for-beginners.pdf" class="download-button">📄 PDF</a>
+      <a href="go-for-beginners.epub" class="download-button">📘 EPUB</a>
+    </div>
+  </div>
+</section><div class='related-books'>
+<h2>Go Introduction Books</h2>
+<div class='related-book-list'>
+<a href="go-for-beginners.htm"><div class="book-cover" style="background-image: url('data:image/jpg;base64,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');">
+<div class="series-name">Introduction</div>
+<div class="book-title">Go for Beginners</div>
+<div class="book-subtitle">Essential concepts, practical examples, and foundational topics</div>
+<div class="book-footer">readbytes.github.io</div>
+</div></a>
+
+
+
+<a href='go.htm'><div class='book-cover'>More Go Books</div></a>
+</div>
+</div>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+    <script>
+  function toggleSnippet(id) {
+      const box = document.getElementById(id);
+      box.classList.toggle("open");
+  }  
+  </script>
+  <script>
+    function copyCode(button) {
+      const code = button.nextElementSibling.innerText;
+      navigator.clipboard.writeText(code).then(() => {
+        button.textContent = 'Copied!';
+        setTimeout(() => { button.textContent = 'Copy'; }, 1500);
+      });
+    }
+  </script>  
+
+<footer class="page-footer">
+    <nav>
+      <a href="https://readbytes.github.io">Home</a> | 
+      Email:<script language="JavaScript" type="text/javascript">
+var part1 = 'yinpeng';var part6 = '263';var part2 = Math.pow(2,6);var part3 = String.fromCharCode(part2);var part4 = 'hotmail dot com';var part5 = part1 + String.fromCharCode(part2) + part4;document.write(part1 + part6 + part3 + part4);
+</script>
+    </nav>
+  <p>© 2025 — All rights reserved.</p>    
+  </footer>
+
+</body>
+</html>

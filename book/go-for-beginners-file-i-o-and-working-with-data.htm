@@ -1,0 +1,1006 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>Go for Beginners File I/O and Working with Data</title>
+<link rel='shortcut icon' href='https://java2s.com/style/favicon.ico'>
+<link href="https://fonts.googleapis.com/css2?family=Merriweather&display=swap" rel="stylesheet" />
+<link href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+
+
+<style>
+body {
+  background: #f8f7f5;
+  font-family: 'Merriweather', serif;
+  color: #333;
+  margin: 0;
+  padding: 2rem 1rem;
+  font-size: 15px; /* smaller body font */
+  line-height: 1.5;
+}
+
+.container {
+  max-width: 700px;
+  margin: 0 auto;
+  background: white;
+  padding: 1rem 2rem;
+  box-shadow: 0 0 15px rgba(0,0,0,0.1);
+}
+.book-title-chapter {
+  font-family: 'Merriweather', serif;
+  font-size: 2rem;
+  font-weight: bold;
+  text-align: center;
+  margin-bottom: 2rem;
+  border-bottom: 2px solid #ccc;
+  padding-bottom: 0.5rem;
+  color: #2c3e50;
+}
+
+.book-subtitle-chapter {
+  text-align: center;
+  font-size: 1rem;
+  color: #666;
+  margin-top: -1rem;
+  margin-bottom: 2rem;
+}
+
+    .related-books {
+      margin-top: 40px;
+    }
+
+    .related-books h2 {
+      font-size: 22px;
+      margin-bottom: 20px;
+      border-bottom: 2px solid #eee;
+      padding-bottom: 8px;
+      color: #333;
+    }
+    .related-book-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+h1, h2, h3 {
+  font-weight: 600;
+  margin-top: 2.5rem;
+  margin-bottom: 1rem;
+  line-height: 1.2;
+}
+
+h1 {
+  font-size: 1.8rem; /* smaller heading */
+}
+
+h2 {
+  font-size: 1.4rem;
+}
+
+h3 {
+  font-size: 1.2rem;
+}
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-family: sans-serif;
+      font-size: 1em;
+      margin: 1em 0;
+    }
+
+    th, td {
+      border: 1px solid #cccccc;
+      padding: 0.6em 1em;
+      text-align: left;
+    }
+
+    th {
+      background-color: #f2f2f2;
+      font-weight: bold;
+    }
+
+    tr:nth-child(even) {
+      background-color: #fafafa;
+    }
+
+    /* Optional hover effect */
+    tr:hover {
+      background-color: #e6f7ff;
+    }
+ 
+a {
+  color: #555;
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+
+
+.code-block {
+    position: relative;
+    margin-bottom: 1em;
+}
+.copy-button {
+    background: transparent; 
+    color: white;
+
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    border: none;
+    padding: 4px 8px;
+    font-size: 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    z-index: 1;
+}
+
+.copy-button:hover {
+background-color: #0056b3;
+}
+.page-footer {
+  margin-top: 4rem;
+  padding: 1rem 0;
+  text-align: center;
+  font-size: 0.85rem;
+  color: #666;
+  border-top: 1px solid #ccc;
+  background-color: #fafafa;
+}
+.page-footer a {
+     color: #555;
+    text-decoration: none;
+  }
+  .page-footer a:hover {
+    text-decoration: underline;
+  }
+.chapter-navi-section {
+display: flex;
+justify-content: space-between;
+align-items: center;
+padding-bottom: 10px;
+}  
+
+.nav-link {
+  color: inherit;
+  text-decoration: none;
+  opacity: 0.5;
+  transition: opacity 0.3s ease, text-decoration 0.3s ease;
+}
+
+.nav-link:hover {
+  opacity: 0.9;
+  text-decoration: underline;
+}
+
+.prev {
+  text-align: left;
+}
+.toc-link {
+  text-align: center;
+}
+.next {
+  text-align: right;
+}
+.download-section {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2rem;
+  padding: 2rem 1rem;
+  max-width: 600px;
+  margin: 3rem auto;
+  background-color: #f9f9f9;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+}
+
+    .book-cover {
+      width: 130px;
+      height: 180px;
+      
+      background-size: cover; /* Ensures the image covers the entire div */
+      background-position: center; /* Centers the image */
+            
+      background: linear-gradient(145deg, #e0dede, #f9f9f9);
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 10px;
+      box-sizing: border-box;
+      position: relative;
+      font-family: 'Roboto', sans-serif;
+    }
+
+    .book-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 16px;
+      font-weight: 600;
+      color: #fff;
+      margin-bottom: 4px;
+    }
+
+    .book-subtitle {
+      font-size: 12px;
+      color: #aaa;
+      margin-bottom: 10px;
+    }
+
+    .series-name {
+      position: absolute;
+      top: 8px;
+      left: 8px;
+      font-size: 10px;
+      color: #fff;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-weight: bold;
+    }
+
+    .book-footer {
+      position: absolute;
+      bottom: 8px;
+      font-size: 10px;
+      color: #aaa;
+    }
+
+.download-info h2 {
+  margin: 0 0 0.5rem;
+  font-size: 1.2rem;
+}
+
+.format-label {
+  margin: 0 0 0.5rem;
+  font-size: 0.95rem;
+  color: #555;
+}
+
+.download-buttons {
+  display: flex;
+  gap: 1rem;
+}
+
+.download-button {
+  background-color: #4A90E2;
+  color: white;
+  padding: 0.5em 1.2em;
+  text-decoration: none;
+  border-radius: 25px;
+  font-size: 0.95rem;
+  transition: background-color 0.3s ease;
+}
+
+.download-button:hover {
+  background-color: #357ABD;
+}
+
+    code {
+ 
+      color: #d35400; 
+    }
+html {
+    scroll-behavior: smooth;
+}
+    .snippet-container {
+      overflow: hidden;    
+    }
+
+    .snippet-header {
+      background: #f0f0f0;
+      color: #333;
+      padding: 0.75rem 1rem;
+      cursor: pointer;
+      font-size: 1rem;
+    }
+
+    .snippet-body {
+      display: none;
+      font-family: monospace;
+    }
+
+    .snippet-container.open .snippet-body {
+      display: block;
+    }
+
+.CodeMirror {
+  border: 2px solid #ccc;
+  border-radius: 4px;
+  resize: vertical;
+}
+
+    button { padding: 0.5em 1em; background: green; color: white; border: none; cursor: pointer; }
+    button:hover { background: #1e7e34; }
+    .result_iframe { width:99%; height:200px; margin-top: 1em;  resize: both;border:1px solid #ccc;}        
+</style>
+</head>
+<body> 
+
+  <div class="container">
+    <div class = "chapter-navi-section">
+<a href="go-for-beginners-error-handling.htm" class="nav-button prev">←</a>
+<a href='go-for-beginners.htm#file-i-o-and-working-with-data' class="nav-button toc-link">Index</a>
+<a href="go-for-beginners-testing-in-go.htm" class="nav-button next">→</a>
+</div>
+
+    <h1 class="book-title-chapter" id = 'top'>File I/O and Working with Data</h1>
+    <h3 class="book-subtitle-chapter">Go for Beginners</h3>   
+    <!-- <h1 class ="chapter-title"></h1> -->
+    <h2 id='reading-and-writing-files'>11.1 Reading and Writing Files</h2><p>Working with files is a fundamental part of many Go programs. Go’s standard library provides powerful and straightforward tools for file I/O, primarily through the <code>os</code> and <code>io/ioutil</code> packages. In this section, you’ll learn how to open, read, write, and close files safely while handling errors effectively.</p><h3 id="opening-files-with-os-open-and-os-create">Opening Files with <code>os.Open</code> and <code>os.Create</code></h3><p>To work with files, you first need to open them:</p><ul>
+ <li><strong><code>os.Open(filename)</code></strong> opens an existing file for reading.</li>
+ <li><strong><code>os.Create(filename)</code></strong> creates or truncates a file for writing.</li>
+</ul><p>Both return a pointer to an <code>os.File</code> and an error value.</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-go">file, err := os.Open("example.txt")
+if err != nil {
+    log.Fatal(err)
+}
+defer file.Close()</code></pre>
+</div><p>Similarly, to create or overwrite a file:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-go">file, err := os.Create("output.txt")
+if err != nil {
+    log.Fatal(err)
+}
+defer file.Close()</code></pre>
+</div><p>Remember to <strong>defer <code>file.Close()</code></strong> to ensure the file is closed properly once you finish.</p><h3 id="reading-file-contents">Reading File Contents</h3><p>You can read file contents in multiple ways. The simplest is to use <code>io/ioutil.ReadFile</code> which reads the entire file into memory:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-go">data, err := ioutil.ReadFile("example.txt")
+if err != nil {
+    log.Fatal(err)
+}
+fmt.Println(string(data))</code></pre>
+</div><p>For large files or streaming reads, you can read chunks with <code>file.Read</code> or use a <code>bufio.Reader</code>.</p><h3 id="writing-to-files">Writing to Files</h3><p>To write data to a file, use the <code>Write</code> or <code>WriteString</code> methods on the <code>os.File</code> object:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-go">file, err := os.Create("output.txt")
+if err != nil {
+    log.Fatal(err)
+}
+defer file.Close()
+
+n, err := file.WriteString("Hello, Go file I/O!")
+if err != nil {
+    log.Fatal(err)
+}
+fmt.Printf("Wrote %d bytes", n)</code></pre>
+</div><p>Alternatively, to write a byte slice:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-go">data := []byte("Some byte data")
+_, err = file.Write(data)
+if err != nil {
+    log.Fatal(err)
+}</code></pre>
+</div><h3 id="handling-errors">Handling Errors</h3><p>Always check for errors returned from file operations. Failure to open, read, or write files should be handled appropriately, typically by logging or returning the error.</p><h3 id="full-example-reading-and-writing-files">Full Example: Reading and Writing Files</h3><div class="code-block"><button class="copy-button" onclick="copyCode(this)">📋</button>
+ <pre><code class="language-go">package main
+
+import (
+    "fmt"
+    "io/ioutil"
+    "log"
+    "os"
+)
+
+func main() {
+    // Read file contents
+    content, err := ioutil.ReadFile("input.txt")
+    if err != nil {
+        log.Fatalf("Failed to read file: %v", err)
+    }
+    fmt.Println("File Contents:")
+    fmt.Println(string(content))
+
+    // Write to a new file
+    outputFile, err := os.Create("output.txt")
+    if err != nil {
+        log.Fatalf("Failed to create file: %v", err)
+    }
+    defer outputFile.Close()
+
+    message := "This is a sample output."
+    _, err = outputFile.WriteString(message)
+    if err != nil {
+        log.Fatalf("Failed to write to file: %v", err)
+    }
+    fmt.Println("Successfully wrote to output.txt")
+}</code></pre>
+</div><h3 id="summary">Summary</h3><ul>
+ <li>Use <code>os.Open</code> to open files for reading.</li>
+ <li>Use <code>os.Create</code> to create or truncate files for writing.</li>
+ <li>Use <code>ioutil.ReadFile</code> for quick file reads.</li>
+ <li>Write data with <code>WriteString</code> or <code>Write</code>.</li>
+ <li>Always check and handle errors.</li>
+ <li>Close files using <code>defer</code> to ensure resources are released.</li>
+</ul><div class = "chapter-navi-section">
+<a href="#top" class="nav-button prev">↑</a>
+<a href='go-for-beginners.htm#file-i-o-and-working-with-data' class="nav-button toc-link">Index</a>
+<a href="#bottom" class="nav-button next">↓</a>
+</div>
+<h2 id='working-with-json-and-xml'>11.2 Working with JSON and XML</h2><p>In modern software development, <strong>data interchange formats</strong> like JSON (JavaScript Object Notation) and XML (Extensible Markup Language) play a vital role in enabling communication between systems. Go’s standard library includes powerful packages for working with both formats: <code>encoding/json</code> and <code>encoding/xml</code>. These packages allow you to <strong>marshal</strong> (encode) Go data structures into JSON or XML strings, and <strong>unmarshal</strong> (decode) JSON or XML back into Go structs.</p><h3 id="json-and-xml-overview">JSON and XML: Overview</h3><ul>
+ <li><strong>JSON</strong> is a lightweight, text-based, language-independent data format widely used in web APIs and configuration files. It uses key-value pairs and arrays with a simple syntax.</li>
+ <li><strong>XML</strong> is a more verbose markup language that supports nested elements and attributes, commonly used in legacy systems, configuration, and document storage.</li>
+</ul><h3 id="marshaling-and-unmarshaling-with-go">Marshaling and Unmarshaling with Go</h3><p>The process of converting Go structs into JSON or XML strings is called <strong>marshaling</strong>. The reverse—parsing JSON/XML data into Go structs—is called <strong>unmarshaling</strong>.</p><p>Both <code>encoding/json</code> and <code>encoding/xml</code> provide similar functions:</p><ul>
+ <li><code>json.Marshal()</code> / <code>xml.Marshal()</code>: Convert Go values to JSON/XML byte slices.</li>
+ <li><code>json.Unmarshal()</code> / <code>xml.Unmarshal()</code>: Parse JSON/XML byte slices into Go values.</li>
+</ul><h3 id="example-json-marshaling-and-unmarshaling">Example: JSON Marshaling and Unmarshaling</h3><div class="code-block"><button class="copy-button" onclick="copyCode(this)">📋</button>
+ <pre><code class="language-go">package main
+
+import (
+    "encoding/json"
+    "fmt"
+    "log"
+)
+
+type Person struct {
+    Name    string `json:"name"`
+    Age     int    `json:"age"`
+    Email   string `json:"email"`
+}
+
+func main() {
+    // Create an instance of Person
+    p := Person{Name: "Alice", Age: 30, Email: "alice@example.com"}
+
+    // Marshal struct to JSON
+    jsonData, err := json.Marshal(p)
+    if err != nil {
+        log.Fatal(err)
+    }
+    fmt.Println("JSON output:", string(jsonData))
+
+    // JSON string to unmarshal
+    inputJSON := `{"name":"Bob","age":25,"email":"bob@example.com"}`
+
+    var p2 Person
+    err = json.Unmarshal([]byte(inputJSON), &amp;p2)
+    if err != nil {
+        log.Fatal(err)
+    }
+    fmt.Printf("Unmarshaled struct: %+v", p2)
+}</code></pre>
+</div><p><strong>Output:</strong></p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-bash">JSON output: {"name":"Alice","age":30,"email":"alice@example.com"}
+Unmarshaled struct: {Name:Bob Age:25 Email:bob@example.com}</code></pre>
+</div><ul>
+ <li>Note the use of struct tags (e.g., <code>json:"name"</code>) to specify JSON field names.</li>
+ <li>Marshaling returns JSON bytes; convert to string for printing.</li>
+ <li>Unmarshal requires a pointer to the struct.</li>
+</ul><h3 id="example-xml-marshaling-and-unmarshaling">Example: XML Marshaling and Unmarshaling</h3><div class="code-block"><button class="copy-button" onclick="copyCode(this)">📋</button>
+ <pre><code class="language-go">package main
+
+import (
+    "encoding/xml"
+    "fmt"
+    "log"
+)
+
+type Person struct {
+    XMLName xml.Name `xml:"person"`
+    Name    string   `xml:"name"`
+    Age     int      `xml:"age"`
+    Email   string   `xml:"email"`
+}
+
+func main() {
+    p := Person{Name: "Alice", Age: 30, Email: "alice@example.com"}
+
+    // Marshal struct to XML
+    xmlData, err := xml.MarshalIndent(p, "", "  ")
+    if err != nil {
+        log.Fatal(err)
+    }
+    fmt.Println("XML output:", string(xmlData))
+
+    // XML string to unmarshal
+    inputXML := `&lt;person&gt;&lt;name&gt;Bob&lt;/name&gt;&lt;age&gt;25&lt;/age&gt;&lt;email&gt;bob@example.com&lt;/email&gt;&lt;/person&gt;`
+
+    var p2 Person
+    err = xml.Unmarshal([]byte(inputXML), &amp;p2)
+    if err != nil {
+        log.Fatal(err)
+    }
+    fmt.Printf("Unmarshaled struct: %+v", p2)
+}</code></pre>
+</div><p><strong>Output:</strong></p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-bash">XML output:
+ &lt;person&gt;
+   &lt;name&gt;Alice&lt;/name&gt;
+   &lt;age&gt;30&lt;/age&gt;
+   &lt;email&gt;alice@example.com&lt;/email&gt;
+&lt;/person&gt;
+Unmarshaled struct: {XMLName:{Space: Local:person} Name:Bob Age:25 Email:bob@example.com}</code></pre>
+</div><ul>
+ <li>Struct tags like <code>xml:"name"</code> specify element names.</li>
+ <li><code>xml.MarshalIndent</code> produces pretty-printed XML.</li>
+ <li>The <code>XMLName</code> field captures the root element’s name.</li>
+</ul><h3 id="summary">Summary</h3><ul>
+ <li>Use <code>encoding/json</code> and <code>encoding/xml</code> to encode/decode data to/from JSON and XML.</li>
+ <li>Struct tags define field names in output.</li>
+ <li>Marshaling converts structs to text formats; unmarshaling parses text to structs.</li>
+ <li>These packages simplify working with data interchange in Go programs.</li>
+</ul><div class = "chapter-navi-section">
+<a href="#top" class="nav-button prev">↑</a>
+<a href='go-for-beginners.htm#file-i-o-and-working-with-data' class="nav-button toc-link">Index</a>
+<a href="#bottom" class="nav-button next">↓</a>
+</div>
+<h2 id='using-encoding-json-package'>11.3 Using <code>encoding/json</code> Package</h2><p>The <code>encoding/json</code> package in Go provides a powerful and flexible way to encode (marshal) and decode (unmarshal) JSON data. Beyond the basics of marshaling and unmarshaling, it also allows you to control how JSON fields map to Go struct fields using <strong>struct tags</strong>, handle optional or omitted fields, and parse complex JSON structures such as arrays and nested objects.</p><h3 id="struct-tags-for-json-field-control">Struct Tags for JSON Field Control</h3><p>Struct tags allow you to customize the JSON key names, decide whether to omit empty or zero-value fields, and more.</p><p>Syntax for JSON struct tags:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-go">type Person struct {
+    Name     string `json:"name"`               // maps to "name"
+    Age      int    `json:"age,omitempty"`      // omit if zero value (0)
+    Email    string `json:"email,omitempty"`    // omit if empty string
+    Password string `json:"-"`                  // exclude from JSON
+}</code></pre>
+</div><ul>
+ <li><code>json:"fieldname"</code> — rename the field key in JSON.</li>
+ <li><code>omitempty</code> — omit this field if it holds the zero value (e.g., 0, "", nil).</li>
+ <li><code>"-"</code> — exclude this field from JSON entirely.</li>
+</ul><h3 id="handling-optional-fields-and-omitting-empty-values">Handling Optional Fields and Omitting Empty Values</h3><p>When decoding JSON, Go will set missing fields to their zero values. Using <code>omitempty</code> in struct tags affects marshaling by excluding zero-valued fields from the output.</p><p>Example:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-go">type Product struct {
+    ID          int     `json:"id"`
+    Name        string  `json:"name"`
+    Description string  `json:"description,omitempty"` // optional
+    Price       float64 `json:"price,omitempty"`
+}</code></pre>
+</div><p>If <code>Description</code> or <code>Price</code> are empty or zero, they will not appear in the marshaled JSON.</p><h3 id="parsing-json-arrays-and-nested-objects">Parsing JSON Arrays and Nested Objects</h3><p>JSON often includes arrays or nested objects. You can model these with slices and nested structs.</p><p>Example JSON:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-json">{
+  "title": "Bookstore",
+  "books": [
+    {"title": "Go Programming", "author": "John Doe", "pages": 300},
+    {"title": "Python 101", "author": "Jane Smith", "pages": 250}
+  ]
+}</code></pre>
+</div><p>Corresponding Go structs:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-go">type Book struct {
+    Title  string `json:"title"`
+    Author string `json:"author"`
+    Pages  int    `json:"pages"`
+}
+
+type Bookstore struct {
+    Title string `json:"title"`
+    Books []Book `json:"books"`
+}</code></pre>
+</div><h3 id="comprehensive-example-parsing-json-api-response">Comprehensive Example: Parsing JSON API Response</h3><p>Imagine you receive the following JSON response from a web API describing a user and their posts:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-json">{
+  "user": {
+    "id": 123,
+    "name": "Alice",
+    "email": "alice@example.com"
+  },
+  "posts": [
+    {
+      "id": 1,
+      "title": "Introduction to Go",
+      "published": true
+    },
+    {
+      "id": 2,
+      "title": "Advanced Go Tips",
+      "published": false
+    }
+  ]
+}</code></pre>
+</div><p>You can define Go structs and parse this data as follows:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">📋</button>
+ <pre><code class="language-go">package main
+
+import (
+    "encoding/json"
+    "fmt"
+    "log"
+)
+
+type User struct {
+    ID    int    `json:"id"`
+    Name  string `json:"name"`
+    Email string `json:"email,omitempty"` // optional field
+}
+
+type Post struct {
+    ID        int    `json:"id"`
+    Title     string `json:"title"`
+    Published bool   `json:"published"`
+}
+
+type ApiResponse struct {
+    User  User   `json:"user"`
+    Posts []Post `json:"posts"`
+}
+
+func main() {
+    jsonData := `
+    {
+      "user": {
+        "id": 123,
+        "name": "Alice",
+        "email": "alice@example.com"
+      },
+      "posts": [
+        {
+          "id": 1,
+          "title": "Introduction to Go",
+          "published": true
+        },
+        {
+          "id": 2,
+          "title": "Advanced Go Tips",
+          "published": false
+        }
+      ]
+    }
+    `
+
+    var response ApiResponse
+    err := json.Unmarshal([]byte(jsonData), &amp;response)
+    if err != nil {
+        log.Fatal(err)
+    }
+
+    fmt.Printf("User: %s (ID: %d)", response.User.Name, response.User.ID)
+    fmt.Println("Posts:")
+    for _, post := range response.Posts {
+        status := "Draft"
+        if post.Published {
+            status = "Published"
+        }
+        fmt.Printf("- %s [%s]", post.Title, status)
+    }
+}</code></pre>
+</div><p><strong>Output:</strong></p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-bash">User: Alice (ID: 123)
+Posts:
+- Introduction to Go [Published]
+- Advanced Go Tips [Draft]</code></pre>
+</div><h3 id="summary">Summary</h3><ul>
+ <li>Use <strong>struct tags</strong> to control JSON key names, omit empty fields, or exclude fields.</li>
+ <li>Go treats missing fields as zero values during unmarshaling.</li>
+ <li>Complex JSON data with arrays and nested objects can be modeled with slices and nested structs.</li>
+ <li>The <code>encoding/json</code> package is a powerful tool to interact with JSON APIs, configuration files, and more.</li>
+</ul><div class = "chapter-navi-section">
+<a href="#top" class="nav-button prev">↑</a>
+<a href='go-for-beginners.htm#file-i-o-and-working-with-data' class="nav-button toc-link">Index</a>
+<a href="#bottom" class="nav-button next">↓</a>
+</div>
+<h2 id='basic-networking-with-net-http'>11.4 Basic Networking with <code>net/http</code></h2><p>Go's standard library includes the powerful <code>net/http</code> package, which provides everything you need to build HTTP clients and servers. Whether you're fetching data from web APIs or creating your own web services, <code>net/http</code> makes it straightforward.</p><h3 id="making-http-requests-client-side">Making HTTP Requests (Client Side)</h3><p>You can use <code>http.Get</code> for quick GET requests, or create a more customizable client for other HTTP methods like POST.</p><p><strong>Example: Simple GET request</strong></p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">📋</button>
+ <pre><code class="language-go">package main
+
+import (
+    "fmt"
+    "io"
+    "log"
+    "net/http"
+)
+
+func main() {
+    resp, err := http.Get("https://api.github.com")
+    if err != nil {
+        log.Fatalf("Failed to make GET request: %v", err)
+    }
+    defer resp.Body.Close()
+
+    body, err := io.ReadAll(resp.Body)
+    if err != nil {
+        log.Fatalf("Failed to read response body: %v", err)
+    }
+
+    fmt.Printf("Response status: %s", resp.Status)
+    fmt.Printf("Response body: %s", string(body))
+}</code></pre>
+</div><p><strong>Example: POST request with form data</strong></p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">📋</button>
+ <pre><code class="language-go">package main
+
+import (
+    "bytes"
+    "fmt"
+    "io"
+    "log"
+    "net/http"
+)
+
+func main() {
+    data := []byte(`{"name":"Alice","message":"Hello"}`)
+    resp, err := http.Post("https://httpbin.org/post", "application/json", bytes.NewBuffer(data))
+    if err != nil {
+        log.Fatalf("Failed to make POST request: %v", err)
+    }
+    defer resp.Body.Close()
+
+    body, err := io.ReadAll(resp.Body)
+    if err != nil {
+        log.Fatalf("Failed to read response body: %v", err)
+    }
+
+    fmt.Printf("Response status: %s", resp.Status)
+    fmt.Printf("Response body: %s", string(body))
+}</code></pre>
+</div><h3 id="writing-a-minimal-http-server">Writing a Minimal HTTP Server</h3><p>Creating an HTTP server is simple with <code>net/http</code>. Define handler functions that respond to requests, then start the server.</p><p><strong>Example: Basic server responding with "Hello, World!"</strong></p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">📋</button>
+ <pre><code class="language-go">package main
+
+import (
+    "fmt"
+    "log"
+    "net/http"
+)
+
+func helloHandler(w http.ResponseWriter, r *http.Request) {
+    fmt.Fprintln(w, "Hello, World!")
+}
+
+func main() {
+    http.HandleFunc("/", helloHandler) // set route and handler
+
+    fmt.Println("Starting server on :8080")
+    err := http.ListenAndServe(":8080", nil)
+    if err != nil {
+        log.Fatalf("Server failed: %v", err)
+    }
+}</code></pre>
+</div><ul>
+ <li>Run this program, then visit <code>http://localhost:8080</code> in your browser or use <code>curl</code> to see the response.</li>
+</ul><h3 id="summary">Summary</h3><ul>
+ <li>Use <code>http.Get</code> and <code>http.Post</code> for quick client-side HTTP calls.</li>
+ <li>Customize requests with <code>http.Client</code> and <code>http.NewRequest</code> for advanced use cases.</li>
+ <li>Create HTTP servers by writing handler functions and starting a listener with <code>http.ListenAndServe</code>.</li>
+ <li>The <code>net/http</code> package makes networking tasks in Go both simple and powerful.</li>
+</ul><p>Here are some <strong>advanced examples</strong> to deepen the understanding of the <code>net/http</code> package, covering:</p><ul>
+ <li>Custom HTTP client with headers and timeout</li>
+ <li>Handling URL parameters and POST form data</li>
+ <li>Writing JSON responses in an HTTP server</li>
+ <li>Middleware pattern example</li>
+ <li>Graceful server shutdown</li>
+</ul><h3 id="advanced-net-http-examples">Advanced <code>net/http</code> Examples</h3><h4 id="custom-http-client-with-headers-and-timeout">Custom HTTP Client with Headers and Timeout</h4><p>Create a client with a timeout and add custom headers to your requests.</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">📋</button>
+ <pre><code class="language-go">package main
+
+import (
+    "fmt"
+    "io"
+    "log"
+    "net/http"
+    "time"
+)
+
+func main() {
+    client := &amp;http.Client{
+        Timeout: 5 * time.Second,
+    }
+
+    req, err := http.NewRequest("GET", "https://api.github.com/repos/golang/go", nil)
+    if err != nil {
+        log.Fatal(err)
+    }
+    req.Header.Set("User-Agent", "Go-Book-Client")
+
+    resp, err := client.Do(req)
+    if err != nil {
+        log.Fatal(err)
+    }
+    defer resp.Body.Close()
+
+    body, err := io.ReadAll(resp.Body)
+    if err != nil {
+        log.Fatal(err)
+    }
+
+    fmt.Printf("Status: %s", resp.Status)
+    fmt.Println("Body snippet:", string(body)[:200]) // print first 200 chars
+}</code></pre>
+</div><h4 id="handling-url-query-parameters-and-post-form-data">Handling URL Query Parameters and POST Form Data</h4><p><strong>URL Query Parameters</strong></p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">📋</button>
+ <pre><code class="language-go">package main
+
+import (
+    "fmt"
+    "log"
+    "net/http"
+)
+
+func main() {
+    baseURL := "https://httpbin.org/get"
+    req, err := http.NewRequest("GET", baseURL, nil)
+    if err != nil {
+        log.Fatal(err)
+    }
+
+    // Add query params
+    q := req.URL.Query()
+    q.Add("search", "golang")
+    q.Add("page", "1")
+    req.URL.RawQuery = q.Encode()
+
+    resp, err := http.DefaultClient.Do(req)
+    if err != nil {
+        log.Fatal(err)
+    }
+    defer resp.Body.Close()
+
+    fmt.Println("Request URL:", req.URL.String())
+}</code></pre>
+</div><p><strong>POST Form Data</strong></p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">📋</button>
+ <pre><code class="language-go">package main
+
+import (
+    "fmt"
+    "log"
+    "net/http"
+    "net/url"
+    "strings"
+)
+
+func main() {
+    form := url.Values{}
+    form.Add("username", "alice")
+    form.Add("password", "secret")
+
+    resp, err := http.Post(
+        "https://httpbin.org/post",
+        "application/x-www-form-urlencoded",
+        strings.NewReader(form.Encode()),
+    )
+    if err != nil {
+        log.Fatal(err)
+    }
+    defer resp.Body.Close()
+
+    fmt.Println("Status:", resp.Status)
+}</code></pre>
+</div><h4 id="writing-json-responses-in-an-http-server">Writing JSON Responses in an HTTP Server</h4><p>Respond with JSON-encoded data using <code>encoding/json</code>.</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">📋</button>
+ <pre><code class="language-go">package main
+
+import (
+    "encoding/json"
+    "log"
+    "net/http"
+)
+
+type Person struct {
+    Name string `json:"name"`
+    Age  int    `json:"age"`
+}
+
+func jsonHandler(w http.ResponseWriter, r *http.Request) {
+    p := Person{Name: "Alice", Age: 30}
+
+    w.Header().Set("Content-Type", "application/json")
+    err := json.NewEncoder(w).Encode(p)
+    if err != nil {
+        http.Error(w, err.Error(), http.StatusInternalServerError)
+    }
+}
+
+func main() {
+    http.HandleFunc("/person", jsonHandler)
+
+    log.Println("Starting server at :8080")
+    log.Fatal(http.ListenAndServe(":8080", nil))
+}</code></pre>
+</div><p>Visit <code>http://localhost:8080/person</code> to see the JSON response.</p><h4 id="middleware-pattern-example">Middleware Pattern Example</h4><p>Middleware wraps HTTP handlers to add functionality like logging.</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">📋</button>
+ <pre><code class="language-go">package main
+
+import (
+    "log"
+    "net/http"
+    "time"
+)
+
+// Logging middleware
+func loggingMiddleware(next http.Handler) http.Handler {
+    return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+        start := time.Now()
+        next.ServeHTTP(w, r)
+        log.Printf("%s %s took %v", r.Method, r.URL.Path, time.Since(start))
+    })
+}
+
+func helloHandler(w http.ResponseWriter, r *http.Request) {
+    w.Write([]byte("Hello Middleware!"))
+}
+
+func main() {
+    mux := http.NewServeMux()
+    mux.HandleFunc("/", helloHandler)
+
+    loggedMux := loggingMiddleware(mux)
+
+    log.Println("Server listening on :8080")
+    log.Fatal(http.ListenAndServe(":8080", loggedMux))
+}</code></pre>
+</div><h4 id="graceful-server-shutdown">Graceful Server Shutdown</h4><p>Handle OS signals to gracefully stop the server and wait for ongoing requests.</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">📋</button>
+ <pre><code class="language-go">package main
+
+import (
+    "context"
+    "log"
+    "net/http"
+    "os"
+    "os/signal"
+    "syscall"
+    "time"
+)
+
+func main() {
+    srv := &amp;http.Server{Addr: ":8080"}
+
+    http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+        w.Write([]byte("Hello, Graceful Shutdown!"))
+    })
+
+    go func() {
+        if err := srv.ListenAndServe(); err != nil &amp;&amp; err != http.ErrServerClosed {
+            log.Fatalf("ListenAndServe(): %v", err)
+        }
+    }()
+    log.Println("Server started on :8080")
+
+    // Wait for interrupt signal
+    quit := make(chan os.Signal, 1)
+    signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
+    &lt;-quit
+    log.Println("Shutting down server...")
+
+    ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+    defer cancel()
+    if err := srv.Shutdown(ctx); err != nil {
+        log.Fatalf("Server forced to shutdown: %v", err)
+    }
+
+    log.Println("Server exiting")
+}</code></pre>
+</div><div class = "chapter-navi-section">
+<a href="go-for-beginners-error-handling.htm" class="nav-button prev">←</a>
+<a href='go-for-beginners.htm#file-i-o-and-working-with-data' class="nav-button toc-link">Index</a>
+<a href="go-for-beginners-testing-in-go.htm" class="nav-button next">→</a>
+</div>
+<section class="download-section">
+  <div class="book-cover" style="background-image: url('data:image/jpg;base64,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');">
+<div class="series-name">Introduction</div>
+<div class="book-title">Go for Beginners</div>
+<div class="book-subtitle">Essential concepts, practical examples, and foundational topics</div>
+<div class="book-footer">readbytes.github.io</div>
+</div>
+  <div class="download-info">
+    <h2 id='bottom'>Download This Ebook</h2>
+    <p class="format-label">Available formats:</p>
+    <div class="download-buttons">
+      <a href="go-for-beginners.pdf" class="download-button">📄 PDF</a>
+      <a href="go-for-beginners.epub" class="download-button">📘 EPUB</a>
+    </div>
+  </div>
+</section><div class='related-books'>
+<h2>Go Introduction Books</h2>
+<div class='related-book-list'>
+<a href="go-for-beginners.htm"><div class="book-cover" style="background-image: url('data:image/jpg;base64,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');">
+<div class="series-name">Introduction</div>
+<div class="book-title">Go for Beginners</div>
+<div class="book-subtitle">Essential concepts, practical examples, and foundational topics</div>
+<div class="book-footer">readbytes.github.io</div>
+</div></a>
+
+
+
+<a href='go.htm'><div class='book-cover'>More Go Books</div></a>
+</div>
+</div>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+  
+  <script>
+    function copyCode(button) {
+      const code = button.nextElementSibling.innerText;
+      navigator.clipboard.writeText(code).then(() => {
+        button.textContent = 'Copied!';
+        setTimeout(() => { button.textContent = 'Copy'; }, 1500);
+      });
+    }
+  </script>  
+
+<footer class="page-footer">
+    <nav>
+      <a href="https://readbytes.github.io">Home</a> | 
+      Email:<script language="JavaScript" type="text/javascript">
+var part1 = 'yinpeng';var part6 = '263';var part2 = Math.pow(2,6);var part3 = String.fromCharCode(part2);var part4 = 'hotmail dot com';var part5 = part1 + String.fromCharCode(part2) + part4;document.write(part1 + part6 + part3 + part4);
+</script>
+    </nav>
+  <p>© 2025 — All rights reserved.</p>    
+  </footer>
+
+</body>
+</html>

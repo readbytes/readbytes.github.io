@@ -1,0 +1,1025 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>JavaScript Object-Oriented Programming Prototypes and Inheritance Fundamentals</title>
+<link rel='shortcut icon' href='https://java2s.com/style/favicon.ico'>
+<link href="https://fonts.googleapis.com/css2?family=Merriweather&display=swap" rel="stylesheet" />
+<link href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.css" />
+<script src="https://cdn.jsdelivr.net/npm/typescript@5/lib/typescript.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/htmlmixed/htmlmixed.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/xml/xml.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/css/css.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/javascript/javascript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/javascript/typescript.min.js"></script>
+<script>
+  const codeMirrorMap = new Map();
+  function renderIframe(textarea_id, iframe_id) {
+      const html = codeMirrorMap.get(textarea_id).getValue();
+      const iframe = document.getElementById(iframe_id);
+      iframe.style.display = "block";
+      iframe.srcdoc = html;  
+  }
+  function renderIframeForClientTypescript(textarea_id, iframe_id) {
+      let code = codeMirrorMap.get(textarea_id).getValue();
+      code = ts.transpile(code);
+      const iframe = document.getElementById(iframe_id);
+      const doc = iframe.contentDocument || iframe.contentWindow.document;
+
+const html = `
+  <!DOCTYPE html>
+  <html>
+    <head>
+      <title>Output</title>
+      <style>
+        body { font-family: monospace; padding: 1em; background: #f4f4f4; color: #222; }
+        pre { white-space: pre-wrap; word-break: break-word; }
+        .error { color: red; }
+      </style>
+    </head>
+    <body>
+      <pre id="log"></pre>
+      <script>
+        (function(){
+          const logEl = document.getElementById('log');
+          const origLog = console.log;
+          const origError = console.error;
+
+          console.log = (...args) => {
+            logEl.textContent += args.join(' ') + '\\n';
+            origLog.apply(console, args);
+          };
+          console.table = (...args) => {
+            logEl.textContent += args.join(' ') + '\\n';
+            origLog.apply(console, args);
+          };
+
+          console.error = (...args) => {
+            logEl.innerHTML +='<span class="error">' + args.join(' ') + '</span>';
+            origError.apply(console, args);
+          };
+          window.addEventListener("error", function (event) {
+              console.error("Caught by event listener:", event.message);
+          });    
+          try {             
+              ${code};
+          } catch (err) {
+            console.error(err.stack || err.message);
+          }
+        })();
+      <\/script>
+    </body>
+  </html>
+`;
+      iframe.style.display = "block";
+      iframe.srcdoc = html;  
+  }
+
+    function renderIframeForClientJavascript(textarea_id, iframe_id) {
+        const code = codeMirrorMap.get(textarea_id).getValue();
+        const iframe = document.getElementById(iframe_id);
+        const doc = iframe.contentDocument || iframe.contentWindow.document;
+
+  const html = `
+    <!DOCTYPE html>
+    <html>
+      <head>
+        <title>Output</title>
+        <style>
+          body { font-family: monospace; padding: 1em; background: #f4f4f4; color: #222; }
+          pre { white-space: pre-wrap; word-break: break-word; }
+          .error { color: red; }
+        </style>
+      </head>
+      <body>
+        <pre id="log"></pre>
+        <script>
+          (function(){
+            const logEl = document.getElementById('log');
+            const origLog = console.log;
+            const origError = console.error;
+
+            console.log = (...args) => {
+              logEl.textContent += args.join(' ') + '\\n';
+              origLog.apply(console, args);
+            };
+            console.table = (...args) => {
+              logEl.textContent += args.join(' ') + '\\n';
+              origLog.apply(console, args);
+            };
+
+            console.error = (...args) => {
+              logEl.innerHTML +='<span class="error">' + args.join(' ') + '</span>';
+              origError.apply(console, args);
+            };
+            window.addEventListener("error", function (event) {
+                console.error("Caught by event listener:", event.message);
+            });    
+            try {
+             ${code}; 
+            } catch (err) {
+              console.error(err.stack || err.message);
+            }
+          })();
+        <\/script>
+      </body>
+    </html>
+  `;
+    
+        iframe.style.display = "block";
+        iframe.srcdoc = html;  
+    }
+
+    function toggleSnippetAndRefresh(id, textarea_id) {
+      const box = document.getElementById(id);
+      box.classList.toggle("open");
+      codeMirrorMap.get(textarea_id).refresh();
+    }
+
+  </script>
+<style>
+body {
+  background: #f8f7f5;
+  font-family: 'Merriweather', serif;
+  color: #333;
+  margin: 0;
+  padding: 2rem 1rem;
+  font-size: 15px; /* smaller body font */
+  line-height: 1.5;
+}
+
+.container {
+  max-width: 700px;
+  margin: 0 auto;
+  background: white;
+  padding: 1rem 2rem;
+  box-shadow: 0 0 15px rgba(0,0,0,0.1);
+}
+.book-title-chapter {
+  font-family: 'Merriweather', serif;
+  font-size: 2rem;
+  font-weight: bold;
+  text-align: center;
+  margin-bottom: 2rem;
+  border-bottom: 2px solid #ccc;
+  padding-bottom: 0.5rem;
+  color: #2c3e50;
+}
+
+.book-subtitle-chapter {
+  text-align: center;
+  font-size: 1rem;
+  color: #666;
+  margin-top: -1rem;
+  margin-bottom: 2rem;
+}
+
+    .related-books {
+      margin-top: 40px;
+    }
+
+    .related-books h2 {
+      font-size: 22px;
+      margin-bottom: 20px;
+      border-bottom: 2px solid #eee;
+      padding-bottom: 8px;
+      color: #333;
+    }
+    .related-book-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+h1, h2, h3 {
+  font-weight: 600;
+  margin-top: 2.5rem;
+  margin-bottom: 1rem;
+  line-height: 1.2;
+}
+
+h1 {
+  font-size: 1.8rem; /* smaller heading */
+}
+
+h2 {
+  font-size: 1.4rem;
+}
+
+h3 {
+  font-size: 1.2rem;
+}
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-family: sans-serif;
+      font-size: 1em;
+      margin: 1em 0;
+    }
+
+    th, td {
+      border: 1px solid #cccccc;
+      padding: 0.6em 1em;
+      text-align: left;
+    }
+
+    th {
+      background-color: #f2f2f2;
+      font-weight: bold;
+    }
+
+    tr:nth-child(even) {
+      background-color: #fafafa;
+    }
+
+    /* Optional hover effect */
+    tr:hover {
+      background-color: #e6f7ff;
+    }
+ 
+a {
+  color: #555;
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+
+
+.code-block {
+    position: relative;
+    margin-bottom: 1em;
+}
+.copy-button {
+    background: transparent; 
+    color: white;
+
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    border: none;
+    padding: 4px 8px;
+    font-size: 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    z-index: 1;
+}
+
+.copy-button:hover {
+background-color: #0056b3;
+}
+.page-footer {
+  margin-top: 4rem;
+  padding: 1rem 0;
+  text-align: center;
+  font-size: 0.85rem;
+  color: #666;
+  border-top: 1px solid #ccc;
+  background-color: #fafafa;
+}
+.page-footer a {
+     color: #555;
+    text-decoration: none;
+  }
+  .page-footer a:hover {
+    text-decoration: underline;
+  }
+.chapter-navi-section {
+display: flex;
+justify-content: space-between;
+align-items: center;
+padding-bottom: 10px;
+}  
+
+.nav-link {
+  color: inherit;
+  text-decoration: none;
+  opacity: 0.5;
+  transition: opacity 0.3s ease, text-decoration 0.3s ease;
+}
+
+.nav-link:hover {
+  opacity: 0.9;
+  text-decoration: underline;
+}
+
+.prev {
+  text-align: left;
+}
+.toc-link {
+  text-align: center;
+}
+.next {
+  text-align: right;
+}
+.download-section {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2rem;
+  padding: 2rem 1rem;
+  max-width: 600px;
+  margin: 3rem auto;
+  background-color: #f9f9f9;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+}
+
+    .book-cover {
+      width: 130px;
+      height: 180px;
+      
+      background-size: cover; /* Ensures the image covers the entire div */
+      background-position: center; /* Centers the image */
+            
+      background: linear-gradient(145deg, #e0dede, #f9f9f9);
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 10px;
+      box-sizing: border-box;
+      position: relative;
+      font-family: 'Roboto', sans-serif;
+    }
+
+    .book-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 16px;
+      font-weight: 600;
+      color: #fff;
+      margin-bottom: 4px;
+    }
+
+    .book-subtitle {
+      font-size: 12px;
+      color: #aaa;
+      margin-bottom: 10px;
+    }
+
+    .series-name {
+      position: absolute;
+      top: 8px;
+      left: 8px;
+      font-size: 10px;
+      color: #fff;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-weight: bold;
+    }
+
+    .book-footer {
+      position: absolute;
+      bottom: 8px;
+      font-size: 10px;
+      color: #aaa;
+    }
+
+.download-info h2 {
+  margin: 0 0 0.5rem;
+  font-size: 1.2rem;
+}
+
+.format-label {
+  margin: 0 0 0.5rem;
+  font-size: 0.95rem;
+  color: #555;
+}
+
+.download-buttons {
+  display: flex;
+  gap: 1rem;
+}
+
+.download-button {
+  background-color: #4A90E2;
+  color: white;
+  padding: 0.5em 1.2em;
+  text-decoration: none;
+  border-radius: 25px;
+  font-size: 0.95rem;
+  transition: background-color 0.3s ease;
+}
+
+.download-button:hover {
+  background-color: #357ABD;
+}
+
+    code {
+ 
+      color: #d35400; 
+    }
+html {
+    scroll-behavior: smooth;
+}
+    .snippet-container {
+      overflow: hidden;    
+    }
+
+    .snippet-header {
+      background: #f0f0f0;
+      color: #333;
+      padding: 0.75rem 1rem;
+      cursor: pointer;
+      font-size: 1rem;
+    }
+
+    .snippet-body {
+      display: none;
+      font-family: monospace;
+    }
+
+    .snippet-container.open .snippet-body {
+      display: block;
+    }
+
+.CodeMirror {
+  border: 2px solid #ccc;
+  border-radius: 4px;
+  resize: vertical;
+}
+
+    button { padding: 0.5em 1em; background: green; color: white; border: none; cursor: pointer; }
+    button:hover { background: #1e7e34; }
+    .result_iframe { width:99%; height:200px; margin-top: 1em;  resize: both;border:1px solid #ccc;}        
+</style>
+</head>
+<body> 
+
+  <div class="container">
+    <div class = "chapter-navi-section">
+<a href="javascript-object-oriented-programming-javascript-objects-basics.htm" class="nav-button prev">←</a>
+<a href='javascript-object-oriented-programming.htm#prototypes-and-inheritance-fundamentals' class="nav-button toc-link">Index</a>
+<a href="javascript-object-oriented-programming-constructors-and-the-new-keyword.htm" class="nav-button next">→</a>
+</div>
+
+    <h1 class="book-title-chapter" id = 'top'>Prototypes and Inheritance Fundamentals</h1>
+    <h3 class="book-subtitle-chapter">JavaScript Object-Oriented Programming</h3>   
+    <!-- <h1 class ="chapter-title"></h1> -->
+    <h2 id='what-is-a-prototype'>3.1 What is a Prototype?</h2><p>In JavaScript, <strong>prototypes</strong> are a fundamental concept in how objects work and inherit behavior. At a basic level, a prototype is just another object that serves as a <strong>template</strong> from which other objects can inherit properties and methods.</p><p>Think of a prototype like a <strong>recipe card</strong> in a kitchen. If you create multiple dishes using the same recipe, each dish is different, but they all share the same underlying instructions. In JavaScript, when you create an object, it can automatically follow a “recipe” from another object—its prototype.</p><h3 id="every-object-has-a-prototype">Every Object Has a Prototype</h3><p>Behind the scenes, <strong>every JavaScript object</strong> has an internal link to another object called its <strong>prototype</strong>. This prototype object acts as a shared source of properties and methods. If you try to access a property or method on an object and it doesn’t exist there, JavaScript automatically looks for it in the object’s prototype.</p><p>Here’s a simple example:</p><div>
+ <div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+  <pre><code class="language-js">const person = {
+  greet: function() {
+    console.log("Hello!");
+  }
+};
+
+const student = Object.create(person);
+
+student.greet(); // Output: Hello!</code></pre>
+ </div>
+ <div class="snippet-container" id="frNWR">
+  <div class="snippet-header" onclick="toggleSnippetAndRefresh('frNWR','TNTcT')">
+   Try it in editor
+  </div>
+  <div class="snippet-body"><textarea id="TNTcT">const person = {
+  greet: function() {
+    console.log("Hello!");
+  }
+};
+
+const student = Object.create(person);
+
+student.greet(); // Output: Hello!</textarea> <br> <button onclick="renderIframeForClientJavascript('TNTcT','6yAd5')">Run</button> <iframe id="6yAd5" class="result_iframe" style="display: none;"></iframe>
+   <script>
+  {let editor1 = CodeMirror.fromTextArea(document.getElementById("TNTcT"), {
+    mode: "javascript",
+    lineNumbers:false,
+    tabSize: 2
+  });
+   codeMirrorMap.set("TNTcT", editor1);}
+  </script>
+  </div>
+ </div>
+</div><ul>
+ <li>The <code>student</code> object was created using <code>Object.create(person)</code>, which means <code>person</code> becomes the prototype of <code>student</code>.</li>
+ <li>Even though <code>greet</code> is not directly defined on <code>student</code>, JavaScript finds it in <code>person</code> (its prototype) and runs it.</li>
+</ul><h3 id="prototype-as-a-shared-template">Prototype as a Shared Template</h3><p>Using prototypes helps JavaScript objects share behavior <strong>without duplicating code</strong>. Instead of giving every object its own copy of a method, we can define the method once on a prototype, and let multiple objects use it.</p><p>This model is different from many other languages (like Java or C++) that use <strong>class-based inheritance</strong>, where classes are the primary way to define templates for objects. In JavaScript, <strong>prototypes are the original way</strong> to achieve inheritance—though newer syntax (like <code>class</code>) still relies on prototypes behind the scenes.</p><h3 id="summary">Summary</h3><ul>
+ <li>A <strong>prototype</strong> is an object from which other objects inherit properties and methods.</li>
+ <li>Every JavaScript object has an internal reference to a prototype object.</li>
+ <li>If a property or method isn’t found directly on an object, JavaScript looks for it on the prototype.</li>
+ <li>Prototypes provide a powerful and memory-efficient way to share behavior between objects.</li>
+</ul><p>Understanding prototypes gives you insight into how JavaScript truly handles inheritance and sets the foundation for deeper object-oriented techniques.</p><div class = "chapter-navi-section">
+<a href="#top" class="nav-button prev">↑</a>
+<a href='javascript-object-oriented-programming.htm#prototypes-and-inheritance-fundamentals' class="nav-button toc-link">Index</a>
+<a href="#bottom" class="nav-button next">↓</a>
+</div>
+<h2 id='prototype-chain-explained'>3.2 Prototype Chain Explained</h2><p>In JavaScript, inheritance is made possible through a mechanism called the <strong>prototype chain</strong>. This chain defines how objects can inherit properties and methods from other objects.</p><h3 id="what-is-the-prototype-chain">What Is the Prototype Chain?</h3><p>When you access a property or method on an object, JavaScript first looks for that property directly <strong>on the object itself</strong>. If it doesn’t find it there, it follows an internal link to the object’s <strong>prototype</strong> and searches there. If the property still isn’t found, the search continues up the chain until it reaches the end—usually an object called <code>Object.prototype</code>, which is the root of most JavaScript objects.</p><p>If the property is not found anywhere along the chain, the result is <code>undefined</code>.</p><h3 id="step-by-step-example">Step-by-Step Example</h3><p>Let’s walk through an example that shows how this lookup works:</p><div>
+ <div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+  <pre><code class="language-js">function Animal() {
+  this.type = "animal";
+}
+
+Animal.prototype.sound = function() {
+  return "Some generic sound";
+};
+
+const dog = new Animal();
+
+console.log(dog.type);     // "animal" - found on the instance itself
+console.log(dog.sound());  // "Some generic sound" - found on Animal.prototype
+console.log(dog.toString()); // Found on Object.prototype</code></pre>
+ </div>
+ <div class="snippet-container" id="T7eBv">
+  <div class="snippet-header" onclick="toggleSnippetAndRefresh('T7eBv','Qh9ZX')">
+   Try it in editor
+  </div>
+  <div class="snippet-body"><textarea id="Qh9ZX">function Animal() {
+  this.type = "animal";
+}
+
+Animal.prototype.sound = function() {
+  return "Some generic sound";
+};
+
+const dog = new Animal();
+
+console.log(dog.type);     // "animal" - found on the instance itself
+console.log(dog.sound());  // "Some generic sound" - found on Animal.prototype
+console.log(dog.toString()); // Found on Object.prototype</textarea> <br> <button onclick="renderIframeForClientJavascript('Qh9ZX','uU2oO')">Run</button> <iframe id="uU2oO" class="result_iframe" style="display: none;"></iframe>
+   <script>
+  {let editor1 = CodeMirror.fromTextArea(document.getElementById("Qh9ZX"), {
+    mode: "javascript",
+    lineNumbers:false,
+    tabSize: 2
+  });
+   codeMirrorMap.set("Qh9ZX", editor1);}
+  </script>
+  </div>
+ </div>
+</div><h4 id="property-lookup-path">Property Lookup Path:</h4><ol>
+ <li>Look for <code>sound</code> on <code>dog</code> → not found.</li>
+ <li>Look on <code>dog.__proto__</code> (which is <code>Animal.prototype</code>) → found.</li>
+ <li>Look for <code>toString</code> on <code>dog</code> → not found.</li>
+ <li>Look on <code>Animal.prototype</code> → not found.</li>
+ <li>Look on <code>Object.prototype</code> → found.</li>
+ <li>If not found here, return <code>undefined</code>.</li>
+</ol><h3 id="visualizing-the-prototype-chain">Visualizing the Prototype Chain</h3><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-bash">dog → Animal.prototype → Object.prototype → null</code></pre>
+</div><p>Each arrow (<code>→</code>) represents the internal prototype link (<code>[[Prototype]]</code>).</p><p>In most environments, this internal link can be accessed with the special <code>__proto__</code> property (though it's better to use <code>Object.getPrototypeOf()</code>):</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-js">console.log(Object.getPrototypeOf(dog) === Animal.prototype); // true
+console.log(Object.getPrototypeOf(Animal.prototype) === Object.prototype); // true</code></pre>
+</div><h3 id="why-the-prototype-chain-matters">Why the Prototype Chain Matters</h3><ul>
+ <li>It <strong>enables inheritance</strong>: Methods and properties shared across many objects can be placed on a prototype, allowing all instances to reuse them.</li>
+ <li>It <strong>saves memory</strong>: Shared methods aren’t duplicated for each object.</li>
+ <li>It <strong>provides fallback behavior</strong>: Objects can delegate behavior to their prototypes if something isn’t defined directly on them.</li>
+</ul><h3 id="summary">Summary</h3><p>The prototype chain is JavaScript’s way of handling inheritance. When accessing a property, JavaScript checks the object itself, then follows the chain of prototypes until it finds the property or reaches the end. This elegant system makes inheritance flexible and efficient—and understanding it is key to mastering JavaScript OOP.</p><div class = "chapter-navi-section">
+<a href="#top" class="nav-button prev">↑</a>
+<a href='javascript-object-oriented-programming.htm#prototypes-and-inheritance-fundamentals' class="nav-button toc-link">Index</a>
+<a href="#bottom" class="nav-button next">↓</a>
+</div>
+<h2 id='adding-properties-and-methods-to-prototypes'>3.3 Adding Properties and Methods to Prototypes</h2><p>One of the most powerful features of JavaScript's object-oriented model is the ability to <strong>add shared properties and methods to a constructor function’s prototype</strong>. This approach ensures that <strong>all instances</strong> created from that constructor can access the same functionality without duplicating it in memory.</p><h3 id="why-use-prototypes">Why Use Prototypes?</h3><p>By default, properties defined inside a constructor function (using <code>this</code>) are created for <strong>each individual instance</strong>, which can lead to redundant memory usage. In contrast, methods and shared values placed on the prototype are <strong>shared across all instances</strong>, making your code more <strong>memory-efficient</strong> and easier to maintain.</p><h3 id="basic-example-adding-to-a-prototype">Basic Example: Adding to a Prototype</h3><div>
+ <div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+  <pre><code class="language-js">function Person(name, age) {
+  this.name = name;
+  this.age = age;
+}
+
+// Add method to the prototype
+Person.prototype.greet = function() {
+  console.log(`Hi, I'm ${this.name} and I'm ${this.age} years old.`);
+};
+
+const alice = new Person("Alice", 30);
+const bob = new Person("Bob", 25);
+
+alice.greet();  // Output: Hi, I'm Alice and I'm 30 years old.
+bob.greet();    // Output: Hi, I'm Bob and I'm 25 years old.</code></pre>
+ </div>
+ <div class="snippet-container" id="SUAO8">
+  <div class="snippet-header" onclick="toggleSnippetAndRefresh('SUAO8','hjqxN')">
+   Try it in editor
+  </div>
+  <div class="snippet-body"><textarea id="hjqxN">function Person(name, age) {
+  this.name = name;
+  this.age = age;
+}
+
+// Add method to the prototype
+Person.prototype.greet = function() {
+  console.log(`Hi, I'm ${this.name} and I'm ${this.age} years old.`);
+};
+
+const alice = new Person("Alice", 30);
+const bob = new Person("Bob", 25);
+
+alice.greet();  // Output: Hi, I'm Alice and I'm 30 years old.
+bob.greet();    // Output: Hi, I'm Bob and I'm 25 years old.</textarea> <br> <button onclick="renderIframeForClientJavascript('hjqxN','YxxT5')">Run</button> <iframe id="YxxT5" class="result_iframe" style="display: none;"></iframe>
+   <script>
+  {let editor1 = CodeMirror.fromTextArea(document.getElementById("hjqxN"), {
+    mode: "javascript",
+    lineNumbers:false,
+    tabSize: 2
+  });
+   codeMirrorMap.set("hjqxN", editor1);}
+  </script>
+  </div>
+ </div>
+</div><ul>
+ <li>The <code>greet</code> method is <strong>not copied</strong> to each instance.</li>
+ <li>Instead, both <code>alice</code> and <code>bob</code> <strong>share</strong> the same <code>greet</code> function via the prototype.</li>
+</ul><h3 id="adding-properties-after-instances-are-created">Adding Properties After Instances Are Created</h3><p>You can modify the prototype <strong>even after</strong> instances are created, and all instances will have access to the new methods or properties:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-js">// Add a new method later
+Person.prototype.sayGoodbye = function() {
+  console.log(`${this.name} says goodbye!`);
+};
+
+alice.sayGoodbye();  // Output: Alice says goodbye!
+bob.sayGoodbye();    // Output: Bob says goodbye!</code></pre>
+</div><p>This dynamic behavior is possible because JavaScript looks up the prototype <strong>at the time the property or method is accessed</strong>, not when the object is created.</p><h3 id="memory-efficiency-benefits">Memory Efficiency Benefits</h3><p>If you were to define methods inside the constructor, each instance would get its <strong>own copy</strong>:</p><div>
+ <div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+  <pre><code class="language-js">function Person(name) {
+  this.name = name;
+  this.greet = function() {
+    console.log("Hello, I'm " + this.name);
+  };
+}
+
+const a = new Person("Anna");
+const b = new Person("Ben");
+
+console.log(a.greet === b.greet);  // false (two different functions)</code></pre>
+ </div>
+ <div class="snippet-container" id="snSvP">
+  <div class="snippet-header" onclick="toggleSnippetAndRefresh('snSvP','Z417B')">
+   Try it in editor
+  </div>
+  <div class="snippet-body"><textarea id="Z417B">function Person(name) {
+  this.name = name;
+  this.greet = function() {
+    console.log("Hello, I'm " + this.name);
+  };
+}
+
+const a = new Person("Anna");
+const b = new Person("Ben");
+
+console.log(a.greet === b.greet);  // false (two different functions)</textarea> <br> <button onclick="renderIframeForClientJavascript('Z417B','AfcPF')">Run</button> <iframe id="AfcPF" class="result_iframe" style="display: none;"></iframe>
+   <script>
+  {let editor1 = CodeMirror.fromTextArea(document.getElementById("Z417B"), {
+    mode: "javascript",
+    lineNumbers:false,
+    tabSize: 2
+  });
+   codeMirrorMap.set("Z417B", editor1);}
+  </script>
+  </div>
+ </div>
+</div><p>Compare this to using the prototype:</p><div>
+ <div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+  <pre><code class="language-js">function Person(name) {
+  this.name = name;
+}
+
+Person.prototype.greet = function() {
+  console.log("Hello, I'm " + this.name);
+};
+
+const a = new Person("Anna");
+const b = new Person("Ben");
+
+console.log(a.greet === b.greet);  // true (shared function)</code></pre>
+ </div>
+ <div class="snippet-container" id="C0uGn">
+  <div class="snippet-header" onclick="toggleSnippetAndRefresh('C0uGn','eLxnq')">
+   Try it in editor
+  </div>
+  <div class="snippet-body"><textarea id="eLxnq">function Person(name) {
+  this.name = name;
+}
+
+Person.prototype.greet = function() {
+  console.log("Hello, I'm " + this.name);
+};
+
+const a = new Person("Anna");
+const b = new Person("Ben");
+
+console.log(a.greet === b.greet);  // true (shared function)</textarea> <br> <button onclick="renderIframeForClientJavascript('eLxnq','vPRY6')">Run</button> <iframe id="vPRY6" class="result_iframe" style="display: none;"></iframe>
+   <script>
+  {let editor1 = CodeMirror.fromTextArea(document.getElementById("eLxnq"), {
+    mode: "javascript",
+    lineNumbers:false,
+    tabSize: 2
+  });
+   codeMirrorMap.set("eLxnq", editor1);}
+  </script>
+  </div>
+ </div>
+</div><p>Sharing methods via the prototype avoids creating multiple copies in memory—especially important when creating many instances.</p><h3 id="summary">Summary</h3><ul>
+ <li>Adding properties or methods to a constructor’s prototype lets <strong>all instances share</strong> them.</li>
+ <li>This practice improves <strong>memory efficiency</strong> and <strong>performance</strong>.</li>
+ <li>You can modify prototypes at any time, and changes are reflected across all existing and future instances.</li>
+ <li>Prototype-based sharing is a fundamental part of JavaScript's object system and a cornerstone of effective object-oriented design in the language.</li>
+</ul><div class = "chapter-navi-section">
+<a href="#top" class="nav-button prev">↑</a>
+<a href='javascript-object-oriented-programming.htm#prototypes-and-inheritance-fundamentals' class="nav-button toc-link">Index</a>
+<a href="#bottom" class="nav-button next">↓</a>
+</div>
+<h2 id='inheriting-from-prototypes'>3.4 Inheriting from Prototypes</h2><p>In JavaScript, <strong>inheritance</strong> allows one object to reuse the properties and methods of another. Before the introduction of ES6 classes, JavaScript implemented inheritance using <strong>constructor functions</strong> and their associated <strong>prototypes</strong>. This system is known as <strong>prototype-based inheritance</strong>.</p><h3 id="how-inheritance-works">How Inheritance Works</h3><p>Every function in JavaScript has a <code>prototype</code> property. When you use a constructor function to create an object, that object gets linked to the constructor’s prototype. To set up inheritance, you link one constructor's prototype to an instance (or copy) of another constructor’s prototype.</p><h3 id="example-inheriting-from-a-parent-constructor">Example: Inheriting from a Parent Constructor</h3><p>Let’s walk through an example where a <code>Dog</code> constructor inherits from an <code>Animal</code> constructor:</p><div>
+ <div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+  <pre><code class="language-js">// Parent constructor
+function Animal(name) {
+  this.name = name;
+}
+
+Animal.prototype.speak = function() {
+  console.log(`${this.name} makes a noise.`);
+};
+
+// Child constructor
+function Dog(name, breed) {
+  Animal.call(this, name); // Call parent constructor
+  this.breed = breed;
+}
+
+// Set up prototype inheritance
+Dog.prototype = Object.create(Animal.prototype);
+
+// Correct the constructor reference
+Dog.prototype.constructor = Dog;
+
+// Add method specific to Dog
+Dog.prototype.bark = function() {
+  console.log(`${this.name} barks!`);
+};
+
+// Create a Dog instance
+const myDog = new Dog("Rex", "German Shepherd");
+
+myDog.speak(); // Output: Rex makes a noise.
+myDog.bark();  // Output: Rex barks!</code></pre>
+ </div>
+ <div class="snippet-container" id="TBr5g">
+  <div class="snippet-header" onclick="toggleSnippetAndRefresh('TBr5g','nhiZR')">
+   Try it in editor
+  </div>
+  <div class="snippet-body"><textarea id="nhiZR">// Parent constructor
+function Animal(name) {
+  this.name = name;
+}
+
+Animal.prototype.speak = function() {
+  console.log(`${this.name} makes a noise.`);
+};
+
+// Child constructor
+function Dog(name, breed) {
+  Animal.call(this, name); // Call parent constructor
+  this.breed = breed;
+}
+
+// Set up prototype inheritance
+Dog.prototype = Object.create(Animal.prototype);
+
+// Correct the constructor reference
+Dog.prototype.constructor = Dog;
+
+// Add method specific to Dog
+Dog.prototype.bark = function() {
+  console.log(`${this.name} barks!`);
+};
+
+// Create a Dog instance
+const myDog = new Dog("Rex", "German Shepherd");
+
+myDog.speak(); // Output: Rex makes a noise.
+myDog.bark();  // Output: Rex barks!</textarea> <br> <button onclick="renderIframeForClientJavascript('nhiZR','QaaJy')">Run</button> <iframe id="QaaJy" class="result_iframe" style="display: none;"></iframe>
+   <script>
+  {let editor1 = CodeMirror.fromTextArea(document.getElementById("nhiZR"), {
+    mode: "javascript",
+    lineNumbers:false,
+    tabSize: 2
+  });
+   codeMirrorMap.set("nhiZR", editor1);}
+  </script>
+  </div>
+ </div>
+</div><h3 id="step-by-step-explanation">Step-by-Step Explanation</h3><ol>
+ <li><p><strong>Animal Constructor</strong> Defines a shared property <code>name</code> and a method <code>speak()</code> on its prototype.</p></li>
+ <li><p><strong>Dog Constructor</strong> Calls the <code>Animal</code> constructor using <code>Animal.call(this, name)</code> to initialize <code>name</code> on the child instance.</p></li>
+ <li><p><strong>Inheritance Setup</strong></p>
+  <ul>
+   <li><code>Dog.prototype = Object.create(Animal.prototype)</code> This sets <code>Dog.prototype</code> to a new object that inherits from <code>Animal.prototype</code>.</li>
+   <li><code>Dog.prototype.constructor = Dog</code> Restores the correct constructor reference (it otherwise points to <code>Animal</code>).</li>
+  </ul></li>
+ <li><p><strong>Creating an Instance</strong> When <code>new Dog()</code> is called:</p>
+  <ul>
+   <li>The instance gets its own <code>name</code> and <code>breed</code> properties.</li>
+   <li>The prototype chain allows it to access methods from both <code>Dog.prototype</code> and <code>Animal.prototype</code>.</li>
+  </ul></li>
+</ol><h3 id="visualizing-the-inheritance-chain">Visualizing the Inheritance Chain</h3><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-bash">myDog → Dog.prototype → Animal.prototype → Object.prototype → null</code></pre>
+</div><ul>
+ <li><code>myDog.bark()</code> → found on <code>Dog.prototype</code></li>
+ <li><code>myDog.speak()</code> → not found on <code>Dog.prototype</code>, but found on <code>Animal.prototype</code></li>
+</ul><h3 id="why-use-prototype-inheritance">Why Use Prototype Inheritance?</h3><ul>
+ <li><strong>Reusability</strong>: Common methods like <code>speak()</code> can be written once and shared across many types of animals.</li>
+ <li><strong>Extendability</strong>: Subtypes like <code>Dog</code>, <code>Cat</code>, etc., can have specialized methods while still reusing base functionality.</li>
+ <li><strong>Performance</strong>: Shared methods are stored once on the prototype, rather than duplicated per instance.</li>
+</ul><h3 id="summary">Summary</h3><p>Prototype-based inheritance allows objects to inherit from other objects by linking their prototypes. Using constructor functions and <code>Object.create()</code>, you can build a classic inheritance hierarchy where child constructors reuse and extend the behavior of their parents. This system, though replaced in modern code by <code>class</code> syntax, remains fundamental to understanding how JavaScript handles inheritance under the hood.</p><div class = "chapter-navi-section">
+<a href="#top" class="nav-button prev">↑</a>
+<a href='javascript-object-oriented-programming.htm#prototypes-and-inheritance-fundamentals' class="nav-button toc-link">Index</a>
+<a href="#bottom" class="nav-button next">↓</a>
+</div>
+<h2 id='practical-prototype-based-inheritance-example'>3.5 Practical: Prototype-Based Inheritance Example</h2><p>Now that you understand how prototype-based inheritance works in theory, let's build a practical example step by step. We'll create a small inheritance hierarchy with a base <code>Animal</code> constructor and two derived constructors: <code>Dog</code> and <code>Cat</code>. This example will demonstrate shared methods, inheritance setup, method overriding, and how instances interact with the prototype chain.</p><h3 id="step-1-define-the-base-constructor-animal">Step 1: Define the Base Constructor <code>Animal</code></h3><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-js">function Animal(name) {
+  this.name = name;
+}
+
+Animal.prototype.speak = function() {
+  console.log(`${this.name} makes a generic animal sound.`);
+};</code></pre>
+</div><ul>
+ <li><code>Animal</code> is our base constructor function.</li>
+ <li>It sets the <code>name</code> property and provides a shared method <code>speak()</code> on the prototype.</li>
+</ul><h3 id="step-2-define-the-dog-constructor-and-inherit-from-animal">Step 2: Define the <code>Dog</code> Constructor and Inherit from <code>Animal</code></h3><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-js">function Dog(name, breed) {
+  Animal.call(this, name); // Call the parent constructor
+  this.breed = breed;
+}
+
+// Set up inheritance
+Dog.prototype = Object.create(Animal.prototype);
+Dog.prototype.constructor = Dog;
+
+// Add or override methods
+Dog.prototype.speak = function() {
+  console.log(`${this.name} the ${this.breed} barks.`);
+};</code></pre>
+</div><ul>
+ <li><code>Dog</code> calls <code>Animal</code> to inherit the <code>name</code> property.</li>
+ <li><code>Dog.prototype</code> is linked to <code>Animal.prototype</code> for method inheritance.</li>
+ <li>The <code>speak()</code> method is overridden to provide dog-specific behavior.</li>
+</ul><h3 id="step-3-define-the-cat-constructor-and-inherit-from-animal">Step 3: Define the <code>Cat</code> Constructor and Inherit from <code>Animal</code></h3><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-js">function Cat(name, color) {
+  Animal.call(this, name); // Call the parent constructor
+  this.color = color;
+}
+
+// Set up inheritance
+Cat.prototype = Object.create(Animal.prototype);
+Cat.prototype.constructor = Cat;
+
+// Add a new method without overriding
+Cat.prototype.purr = function() {
+  console.log(`${this.name} the ${this.color} cat purrs softly.`);
+};</code></pre>
+</div><ul>
+ <li><code>Cat</code> also inherits from <code>Animal</code> and adds a new method <code>purr()</code> instead of overriding <code>speak()</code>.</li>
+</ul><h3 id="step-4-create-instances-and-test-behavior">Step 4: Create Instances and Test Behavior</h3><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-js">const rex = new Dog("Rex", "Labrador");
+const luna = new Cat("Luna", "gray");
+
+rex.speak();   // Output: Rex the Labrador barks.
+luna.speak();  // Output: Luna makes a generic animal sound.
+luna.purr();   // Output: Luna the gray cat purrs softly.</code></pre>
+</div><h3 id="step-5-verify-the-prototype-chain">Step 5: Verify the Prototype Chain</h3><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-js">console.log(rex instanceof Dog);     // true
+console.log(rex instanceof Animal);  // true
+console.log(luna instanceof Cat);    // true
+console.log(luna instanceof Animal); // true</code></pre>
+</div><ul>
+ <li>These checks confirm that <code>rex</code> and <code>luna</code> are instances of both their own constructors and the base <code>Animal</code> constructor.</li>
+</ul><div class="snippet-container" id="uQKnm">
+ <div class="snippet-header" onclick="toggleSnippet('uQKnm')">
+  Click to view full runnable Code
+ </div>
+ <div class="snippet-body">
+  <div class="code-block"><button class="copy-button" onclick="copyCode(this)">📋</button>
+   <pre><code class="language-js">
+// Step 1: Define the Base Constructor `Animal`
+function Animal(name) {
+  this.name = name;
+}
+
+Animal.prototype.speak = function() {
+  console.log(`${this.name} makes a generic animal sound.`);
+};
+
+// Step 2: Define the `Dog` Constructor and Inherit from `Animal`
+function Dog(name, breed) {
+  Animal.call(this, name); // Call the parent constructor
+  this.breed = breed;
+}
+
+// Set up inheritance
+Dog.prototype = Object.create(Animal.prototype);
+Dog.prototype.constructor = Dog;
+
+// Override speak method
+Dog.prototype.speak = function() {
+  console.log(`${this.name} the ${this.breed} barks.`);
+};
+
+// Step 3: Define the `Cat` Constructor and Inherit from `Animal`
+function Cat(name, color) {
+  Animal.call(this, name); // Call the parent constructor
+  this.color = color;
+}
+
+// Set up inheritance
+Cat.prototype = Object.create(Animal.prototype);
+Cat.prototype.constructor = Cat;
+
+// Add a new method
+Cat.prototype.purr = function() {
+  console.log(`${this.name} the ${this.color} cat purrs softly.`);
+};
+
+// Step 4: Create Instances and Test Behavior
+const rex = new Dog("Rex", "Labrador");
+const luna = new Cat("Luna", "gray");
+
+rex.speak();   // Output: Rex the Labrador barks.
+luna.speak();  // Output: Luna makes a generic animal sound.
+luna.purr();   // Output: Luna the gray cat purrs softly.
+
+// Step 5: Verify the Prototype Chain
+console.log(rex instanceof Dog);     // true
+console.log(rex instanceof Animal);  // true
+console.log(luna instanceof Cat);    // true
+console.log(luna instanceof Animal); // true 
+</code></pre>
+  </div>
+ </div>
+</div><h3 id="summary">Summary</h3><p>This example demonstrates how to:</p><ul>
+ <li>Use <code>Animal.call(this, ...)</code> to inherit constructor logic.</li>
+ <li>Use <code>Object.create()</code> to inherit from a prototype.</li>
+ <li>Override inherited methods (like <code>Dog.prototype.speak</code>).</li>
+ <li>Add unique methods to subclasses (like <code>Cat.prototype.purr</code>).</li>
+ <li>Leverage the prototype chain to reuse and organize shared behavior.</li>
+</ul><p>Prototype-based inheritance is a core part of JavaScript’s OOP capabilities. This pattern forms the foundation for more advanced patterns, including ES6 <code>class</code> syntax, which builds directly on this system.</p><div class = "chapter-navi-section">
+<a href="javascript-object-oriented-programming-javascript-objects-basics.htm" class="nav-button prev">←</a>
+<a href='javascript-object-oriented-programming.htm#prototypes-and-inheritance-fundamentals' class="nav-button toc-link">Index</a>
+<a href="javascript-object-oriented-programming-constructors-and-the-new-keyword.htm" class="nav-button next">→</a>
+</div>
+<section class="download-section">
+  <div class="book-cover" style="background-image: url('data:image/jpg;base64,/9j/4AAQSkZJRgABAgAAAQABAAD/2wBDAAgGBgcGBQgHBwcJCQgKDBQNDAsLDBkSEw8UHRofHh0aHBwgJC4nICIsIxwcKDcpLDAxNDQ0Hyc5PTgyPC4zNDL/2wBDAQkJCQwLDBgNDRgyIRwhMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjL/wAARCAC0AIIDASIAAhEBAxEB/8QAHwAAAQUBAQEBAQEAAAAAAAAAAAECAwQFBgcICQoL/8QAtRAAAgEDAwIEAwUFBAQAAAF9AQIDAAQRBRIhMUEGE1FhByJxFDKBkaEII0KxwRVS0fAkM2JyggkKFhcYGRolJicoKSo0NTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uHi4+Tl5ufo6erx8vP09fb3+Pn6/8QAHwEAAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoL/8QAtREAAgECBAQDBAcFBAQAAQJ3AAECAxEEBSExBhJBUQdhcRMiMoEIFEKRobHBCSMzUvAVYnLRChYkNOEl8RcYGRomJygpKjU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6goOEhYaHiImKkpOUlZaXmJmaoqOkpaanqKmqsrO0tba3uLm6wsPExcbHyMnK0tPU1dbX2Nna4uPk5ebn6Onq8vP09fb3+Pn6/9oADAMBAAIRAxEAPwDy+iiiuA9cKKKKAComvBazDOGUjLRseG9PUdz1B796lqSCGITrcSNs4MfmMxCoT0PHXv059BmtKTtK6OTGq9ILN7KFWU2amRYwp8w7suSDkcgqBgjIPQ80n/Hn5WWV1YCaMspDSHdhWxzg4GeDg8detPiOYYpLmFnEa7AzH+HjtwSDknHA578YZJcRs5lkj8x+5x93OM8Y/X1rphTu+aR5DdtBPMEckyLEwSTawBxnHAH6Z59T260lvcNKj+cF8uTjaeQPX6/h0qnI0qlyQVVvlKgkgnryec9uP8KGvAs3yMcEbcE/Lj36+447VpJRauiItliZ1RStsAjLjevQ4zjB/wAKqSTSPdCPcQhIYpjAzjA49cf1qUNg+axPyD7uBknoM55/DGBn8KqWvzXLseuT2xWlO1wlpFs0egpM+1KaaabZxCE0ZopCcVDZSQ7d7UUzJ9aKLjsWKKKK8w+vCiiigAq3bXQgi2lxtLHdGGO5sjjHXH1xmqlZ9+7CVVBOAM4zW1CPNOxy4x2pFl9UdzuB4OSSzbWJ654wMjgfh0qqWGQ5J6jOT155yfzNVwMZ556ClLbWJJzjIx1/z9a7notDxXdscXO4EAFRzzwDxyP5UkaFQ7FG2rkDjjd6Zx+OKQknO5+gPIcEj/GgyKwKQiMjZ1K4Ixyfrn/OKz22KSHyuyW5HGZCOhB6f5x2/KpbCIrEXbqary2rJOkbRyKzICykA4OP5dOe3vjNaYVYyqKBhR271pT2uZV3Zco402lbrSUNnIIaQmnGmGoZaD8P0opMH1/SikUWaKKK88+tCiiigArOvwTMuDzgDHr1rRqjdrI91GsQO4jII7e/tW1B2mcuM1pFZcBwSQVGTznH049f84qOKOS4cxwIztjOB2Hqa17TQprtylxcRxxRsMLvGG9xznJCntzj8utstDi2lbeS3ATAk+dcr1OCB06k+vX8eidZLQ4qOElPV6I5Sx0Aspa4UnaeRnj16iuhtrKKCMQrGQvJ+UYIPr254Hp0rbh0a5QFApmZnyHBAQDp1znpz+B9gW3AFhpk7TQsu4ALtyxU/Udc569DgmuWU3I740YU0cRciKPULmUBSCxKFTnB6H9f1J9OIFz36mo3wJXUMThiWOc5bJPXA6Z/n06VKg5rujpE+dry5ptinrRjijvUVzJsiwOrcUbmCV3YeCCOKaRVeF9rbSeM1aPNKWhbjZkdFGfeioHYtUUUVwn1oUUUUAFaOmwwlTcSof3TBlk4IX+HkEjqWAznuCelZ1df4WtbafTd9wpZVuSCGbahyqgAnvknGPw7nJewmri2Gni+CNLKY/vOsZjAyQ2RyVPsDkddw+bJroLXS9oXzTI8uxArvydw7sPXABJzyRV2OAByxReDhyy7eP8AZzxtwOg9STyTUxiltrdTDb4jQA8ZBH4Dt079PTAzm53KSsZr2dss4LuyyOcqSmQGzlS2Ou3GOvQnOBzXFeJrsrBImArTALlWycnOeqr1+Y5I7npgV2erzC3s9kEhgBGwn0XjkHHGNoxzjn6V5nqUgudSkRCwiwGkG0YXHXBJI5IGcf3e5zWtLWRyYyfLDlXUpsnkoIiQWJycVIowOaicgz43bgMdvarSx7rZ5vMjGx1XyyfmOQeQPQbefqPWu++h87UWpGO9U7qT96F6jr1q0xwpNZkpJuCT0xVRCjG7uOVgsny8jrV1GDJVBeGxg1bjOBRLYuoiSijJorIzLVFFFcR9aFFFFABXfeBlLaPKNz4+0nCqDydq8kjt7d64Gu78E3JXR5oEALNcHdk9AVUDjrzg/wD16mWw0dWpCRpIcqzqAjNnLDvleo69znr0qpd3QlijdZGe2yr+YACCuRjg54OR82MjB5FV5b8Dbcyoyqu7YN3Mhx0x6gjHpyPw4XxP4rheM2OmCWKPcfni24dgRgqVOQBhQPr2xgxCDk7IirVjTV2O1zUpmjntLV2ugqqHZ5S2w7vuFlOST6E8nIBOQBgwSyxxAGczkEFUY7dq8ZGTnrngdM5z0xT7Kxa0mtmNv+7kdl851Lq4yVYYXjAOThuoXqOlWL9cR28vluyPGMHHHTIO7nBJyMf4V1xSj7qPMrSc/eZlrGQ56ccnBqwGOzFRKxYksGHbB60/Ix6V0XPHnqxrsFWq21ZQWAPPSkuXfgDualh4XBrRaIpKyuVgjAkH8Kmj4pXUhqROlJspu6JMfWijiisyS5RRRXEfVhRRRQAVqafeQWNm7yAxs7ECbDdVAIAx1IJJweueOmDl1Wuopbgbdm+GIbtu4LlmOMA9c8DHrg475aipaMyrTcI3QXGpsIzaxSxqihWyinLNt4GeehLDK4HcYGKt6Jo0zMbiYcH7jFsAOdvAGOc5wT06+gp+n6XcpZ7JhFby3PyLDIQruAFYh2yMD5c9jn8jsSXccMflWVzaxXcsxWGeBywxuDICiqc5MhH4E4NU5292BxKH2pluKwDXEztIhheNUSIEARkgEjA6565/TgEYOoqUuWDOW3BmY7l3H5hg8DpwTgdM84ya628YwQRR7o5DH8qlCiZxu+UBunAx16Z6AZri9QaeWe4YxvGgY5D8bW69SPm4C8g4GMdwTNG7ZWJilGyKSr8nXIznNDEiM4oT7ozTXxgAdQcgeo712I8RrUpPI3nBc8dKuRj5AaZJCqnp9D9akTAAwO1W2VJppWEPIpnQ05zjoaaPcVIkSZoptFSBeooorjPqgooooAKs2YhRnncDz0RjE20nYONzng8Aegz1z0FVqpXWDcqr8Iy7dwYjaTu9Ox47Hp+bUebQwxMuWnc0L3W7p4mjguhBHHM67odyk5Y4HIB4BHHbjngAZ0UzWkTxwyoFBEqHbvZSPuggjjt+PPPFVRG8hL/M0fK7lPXggt+hPfp2FTsiRxRgFskjndyegzg55x3reMElZHjym27tnd6BqAu7NbaS6E1yqNMXjdiSM4DEsPmyeemFxg45U83qlpJbvKCGJ3ZdlT5cc4AGWCjBHUg/Me3FL4VaEalcRz+WGS3Em9lAOQy/KNwIPGOxPBxzjE9+luLE/Y2iEETMwwrfKT0xnGF4YZ9sZrJLlm7HXOXPSuxnh+3s72G/gukXzvspa2Yz+WRICNoAP3ic4xgnnt94YyxESFic88ewq3pl3JZalFdIGSSJ9ykEAqR0PTscUy6gltZ5beVds0TlHUEHDA4IyPcV1X0PLZDIPm5pDxQx5zSE55ouSNOSaXFOWg0XAbRRmipGX6KKK5D6kKKKKACq9y5QoRII+/TJJBGMZOM/h357VYqrfbBASHcSEjjbwR7H15P5c9aqG5y4z+EM252kbhACVjVmD7VPPUjrgjOAM4Jx6oUxKqs3mNt5O75gMdDz1/PqfoIrfc7ZIAWRchGHDEAk89P/ANfTinGZwjqPLKNnOSATz246nkfh+FdXQ8d3ubXhl3nmvVYK0UUOwIM7ssRu+UnBJCfNxlto9eXXtyk1kkxtoYQTmP5hjYAeFB5C/KDwBx2zyTwpPBbvfREklk8xn4IIBG35epY72xz1xw2KS9s3jkECZkkVdrOpUbMMvReMfLg88njHqOVv94zsTvS0KSymO5WZAC6tuXcocfKRjOQQR7EY/OpdXEJnjlt2YpNCjtvYE+ZjD5wTjLAnBxwRxjBNNZFMUahvmVSMNwQMDn9KvXRup9LtJZSHhQsiNtGU6HaW6+4B464710I8+S1M08qDSGl7EU3vVEDloNItK2ccUmIb+NFNxRQBpUUUVyH1QUUUUAFULx9tyBtD5TLLnHAOf/rfn+F+qF6cXCfKCNp6tgZ5/pmrp/EcuL/hBGJDbqCxjUhWTgsSOvI9OPbofemSIFZEEqkHGTxkjOep5x1Of0pkjmeRis0caMcBS2VTJ+vr35PGeaY5ZCUMo2pnPyjOCOOOO305xW7PIsXLWc2dsZFh/eq6yRthg6bQxHqMbsE8A4UYIyas2Op3mpEC4yyAsTOFOFI3N8zHtkrjkYA7YzWYHXB/eSFH+aRVzl+e+MdQf1NJaXJ+1SpZtOiSSfuk3GSVB0UZG0E4OO2T2FQ43WprTbs0aV4qJIEgBALZLgEZPXg9O/8ALnipIozJYysJlQRcmM5+bJxlcDHHfke1D7ZIlmKbS65ZSrYPvluTnPqRxS28Il8yMOFYKSAxwpAUsfx4wB6n8yLOeqrMpZ5x2qM/ep5BDH1ppHNaIyFFBPFJQaGA3mijiikBpUUUVyn1IUUUUAFZ98VS5jyxVnXbk42j+f8AL8a0KztRhMkoZY2YquSNo245/i9fb3q6fxHNi/4YK0cNxGssIEZ6sBkA/wB5exzgc+/Wo5VkLEo3lxK7FHRMZ7HnHbC9eBn3yWI+1ERhkMuBng4z054PQ+lDSfaVSPyiMLgHOT167cf5/EVueTuyUASKGZlDqqynOWIGc5ODzwcn27+tV7cIOJPmOTnAC57jB5HQnj245FWLdYioM0bM4JKgMSFAxxj1z2+nFNnHl2jZnkDBg6LvyBx14GewHbqD0pLcIv3rFrz4p9PjVURXQ4LqThgq4yM9M8ccdRVu2O6RVMiKrrtLE/KM9z1OB1/CseEvmJiinAUZyMsDjgED6cdR09a1oJGt5IpImKOjZR16j0IpNWM625Vk4kIprVLdrsunBUKQTlfT2qJjmrRiJnijNJnigU2AYoo4oqQNKiiiuU+pCiiigAqhqEYJQmM7mIAfIwBznPp1H+RV+qF/jzFI5IUkrjjHPOfzq6fxHNi/4RVkzJbHlgQNpUZ559D7nHtUkXlSRiSVVckrubOByemO59s+/biGXDFWgyGx2PX6H65FS4MbbJHyh2YJyuV5BGcdMZ45Pp0rfoeT0EYBo3ICGIsFG0/dHcr+IIz+XBpbg+XEis5kwykgsPwxnpxjnB6fWljIjyWJ3MMNkAnknLYI9h9OtQXbOkQQhlIGQAemRggjrjg89KOoLeyEtZTFCCrlWDHcpYheBkZAxz179q08YkDZ4bBwOKyLf5UZGG1/v5xk+3f0z+ZrSil8yKMkHONpz7YokiayJrzO6MsRynbHqetVye1TXbKfLwOcHNQE8fhRHYwE70opuc0oqmIXB9KKXiioA0aKKK5j6kKKKKACs+9/4+AMA7gqHI7Emiirhuc2L/hFQFWZ3EaL8uQAOmNv496ers828k7hKVJznJJ+8c9/mPtRRWy2PKLVrAkiTM43bIUIyOu7AOf89+c1Udi6yFtuNrjAUADGenFFFV1GVLYbyykkDC9PqP8AGtG2A8kHpyePwFFFOWxFYmuj8ie9Qn/GiiojsYDacKKKbEx2BRRRSEf/2Q==');">
+<div class="series-name">Introduction</div>
+<div class="book-title">JavaScript Object-Oriented Programming</div>
+<div class="book-subtitle">From Basics to Advanced Design</div>
+<div class="book-footer">readbytes.github.io</div>
+</div>
+  <div class="download-info">
+    <h2 id='bottom'>Download This Ebook</h2>
+    <p class="format-label">Available formats:</p>
+    <div class="download-buttons">
+      <a href="javascript-object-oriented-programming.pdf" class="download-button">📄 PDF</a>
+      <a href="javascript-object-oriented-programming.epub" class="download-button">📘 EPUB</a>
+    </div>
+  </div>
+</section><div class='related-books'>
+<h2>Java Introduction Books</h2>
+<div class='related-book-list'>
+<a href="javascript-object-oriented-programming.htm"><div class="book-cover" style="background-image: url('data:image/jpg;base64,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');">
+<div class="series-name">Introduction</div>
+<div class="book-title">JavaScript Object-Oriented Programming</div>
+<div class="book-subtitle">From Basics to Advanced Design</div>
+<div class="book-footer">readbytes.github.io</div>
+</div></a>
+
+
+
+<a href='java.htm'><div class='book-cover'>More Java Books</div></a>
+</div>
+</div>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+    <script>
+  function toggleSnippet(id) {
+      const box = document.getElementById(id);
+      box.classList.toggle("open");
+  }  
+  </script>
+  <script>
+    function copyCode(button) {
+      const code = button.nextElementSibling.innerText;
+      navigator.clipboard.writeText(code).then(() => {
+        button.textContent = 'Copied!';
+        setTimeout(() => { button.textContent = 'Copy'; }, 1500);
+      });
+    }
+  </script>  
+
+<footer class="page-footer">
+    <nav>
+      <a href="https://readbytes.github.io">Home</a> | 
+      Email:<script language="JavaScript" type="text/javascript">
+var part1 = 'yinpeng';var part6 = '263';var part2 = Math.pow(2,6);var part3 = String.fromCharCode(part2);var part4 = 'hotmail dot com';var part5 = part1 + String.fromCharCode(part2) + part4;document.write(part1 + part6 + part3 + part4);
+</script>
+    </nav>
+  <p>© 2025 — All rights reserved.</p>    
+  </footer>
+
+</body>
+</html>

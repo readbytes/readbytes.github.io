@@ -1,0 +1,1307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>JavaScript Syntax Basic Syntax and Statements</title>
+<link rel='shortcut icon' href='https://java2s.com/style/favicon.ico'>
+<link href="https://fonts.googleapis.com/css2?family=Merriweather&display=swap" rel="stylesheet" />
+<link href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.css" />
+<script src="https://cdn.jsdelivr.net/npm/typescript@5/lib/typescript.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/htmlmixed/htmlmixed.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/xml/xml.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/css/css.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/javascript/javascript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/javascript/typescript.min.js"></script>
+<script>
+  const codeMirrorMap = new Map();
+  function renderIframe(textarea_id, iframe_id) {
+      const html = codeMirrorMap.get(textarea_id).getValue();
+      const iframe = document.getElementById(iframe_id);
+      iframe.style.display = "block";
+      iframe.srcdoc = html;  
+  }
+  function renderIframeForClientTypescript(textarea_id, iframe_id) {
+      let code = codeMirrorMap.get(textarea_id).getValue();
+      code = ts.transpile(code);
+      const iframe = document.getElementById(iframe_id);
+      const doc = iframe.contentDocument || iframe.contentWindow.document;
+
+const html = `
+  <!DOCTYPE html>
+  <html>
+    <head>
+      <title>Output</title>
+      <style>
+        body { font-family: monospace; padding: 1em; background: #f4f4f4; color: #222; }
+        pre { white-space: pre-wrap; word-break: break-word; }
+        .error { color: red; }
+      </style>
+    </head>
+    <body>
+      <pre id="log"></pre>
+      <script>
+        (function(){
+          const logEl = document.getElementById('log');
+          const origLog = console.log;
+          const origError = console.error;
+
+          console.log = (...args) => {
+            logEl.textContent += args.join(' ') + '\\n';
+            origLog.apply(console, args);
+          };
+          console.table = (...args) => {
+            logEl.textContent += args.join(' ') + '\\n';
+            origLog.apply(console, args);
+          };
+
+          console.error = (...args) => {
+            logEl.innerHTML +='<span class="error">' + args.join(' ') + '</span>';
+            origError.apply(console, args);
+          };
+          window.addEventListener("error", function (event) {
+              console.error("Caught by event listener:", event.message);
+          });    
+          try {             
+              ${code};
+          } catch (err) {
+            console.error(err.stack || err.message);
+          }
+        })();
+      <\/script>
+    </body>
+  </html>
+`;
+      iframe.style.display = "block";
+      iframe.srcdoc = html;  
+  }
+
+    function renderIframeForClientJavascript(textarea_id, iframe_id) {
+        const code = codeMirrorMap.get(textarea_id).getValue();
+        const iframe = document.getElementById(iframe_id);
+        const doc = iframe.contentDocument || iframe.contentWindow.document;
+
+  const html = `
+    <!DOCTYPE html>
+    <html>
+      <head>
+        <title>Output</title>
+        <style>
+          body { font-family: monospace; padding: 1em; background: #f4f4f4; color: #222; }
+          pre { white-space: pre-wrap; word-break: break-word; }
+          .error { color: red; }
+        </style>
+      </head>
+      <body>
+        <pre id="log"></pre>
+        <script>
+          (function(){
+            const logEl = document.getElementById('log');
+            const origLog = console.log;
+            const origError = console.error;
+
+            console.log = (...args) => {
+              logEl.textContent += args.join(' ') + '\\n';
+              origLog.apply(console, args);
+            };
+            console.table = (...args) => {
+              logEl.textContent += args.join(' ') + '\\n';
+              origLog.apply(console, args);
+            };
+
+            console.error = (...args) => {
+              logEl.innerHTML +='<span class="error">' + args.join(' ') + '</span>';
+              origError.apply(console, args);
+            };
+            window.addEventListener("error", function (event) {
+                console.error("Caught by event listener:", event.message);
+            });    
+            try {
+             ${code}; 
+            } catch (err) {
+              console.error(err.stack || err.message);
+            }
+          })();
+        <\/script>
+      </body>
+    </html>
+  `;
+    
+        iframe.style.display = "block";
+        iframe.srcdoc = html;  
+    }
+
+    function toggleSnippetAndRefresh(id, textarea_id) {
+      const box = document.getElementById(id);
+      box.classList.toggle("open");
+      codeMirrorMap.get(textarea_id).refresh();
+    }
+
+  </script>
+<style>
+body {
+  background: #f8f7f5;
+  font-family: 'Merriweather', serif;
+  color: #333;
+  margin: 0;
+  padding: 2rem 1rem;
+  font-size: 15px; /* smaller body font */
+  line-height: 1.5;
+}
+
+.container {
+  max-width: 700px;
+  margin: 0 auto;
+  background: white;
+  padding: 1rem 2rem;
+  box-shadow: 0 0 15px rgba(0,0,0,0.1);
+}
+.book-title-chapter {
+  font-family: 'Merriweather', serif;
+  font-size: 2rem;
+  font-weight: bold;
+  text-align: center;
+  margin-bottom: 2rem;
+  border-bottom: 2px solid #ccc;
+  padding-bottom: 0.5rem;
+  color: #2c3e50;
+}
+
+.book-subtitle-chapter {
+  text-align: center;
+  font-size: 1rem;
+  color: #666;
+  margin-top: -1rem;
+  margin-bottom: 2rem;
+}
+
+    .related-books {
+      margin-top: 40px;
+    }
+
+    .related-books h2 {
+      font-size: 22px;
+      margin-bottom: 20px;
+      border-bottom: 2px solid #eee;
+      padding-bottom: 8px;
+      color: #333;
+    }
+    .related-book-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+h1, h2, h3 {
+  font-weight: 600;
+  margin-top: 2.5rem;
+  margin-bottom: 1rem;
+  line-height: 1.2;
+}
+
+h1 {
+  font-size: 1.8rem; /* smaller heading */
+}
+
+h2 {
+  font-size: 1.4rem;
+}
+
+h3 {
+  font-size: 1.2rem;
+}
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-family: sans-serif;
+      font-size: 1em;
+      margin: 1em 0;
+    }
+
+    th, td {
+      border: 1px solid #cccccc;
+      padding: 0.6em 1em;
+      text-align: left;
+    }
+
+    th {
+      background-color: #f2f2f2;
+      font-weight: bold;
+    }
+
+    tr:nth-child(even) {
+      background-color: #fafafa;
+    }
+
+    /* Optional hover effect */
+    tr:hover {
+      background-color: #e6f7ff;
+    }
+ 
+a {
+  color: #555;
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+
+
+.code-block {
+    position: relative;
+    margin-bottom: 1em;
+}
+.copy-button {
+    background: transparent; 
+    color: white;
+
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    border: none;
+    padding: 4px 8px;
+    font-size: 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    z-index: 1;
+}
+
+.copy-button:hover {
+background-color: #0056b3;
+}
+.page-footer {
+  margin-top: 4rem;
+  padding: 1rem 0;
+  text-align: center;
+  font-size: 0.85rem;
+  color: #666;
+  border-top: 1px solid #ccc;
+  background-color: #fafafa;
+}
+.page-footer a {
+     color: #555;
+    text-decoration: none;
+  }
+  .page-footer a:hover {
+    text-decoration: underline;
+  }
+.chapter-navi-section {
+display: flex;
+justify-content: space-between;
+align-items: center;
+padding-bottom: 10px;
+}  
+
+.nav-link {
+  color: inherit;
+  text-decoration: none;
+  opacity: 0.5;
+  transition: opacity 0.3s ease, text-decoration 0.3s ease;
+}
+
+.nav-link:hover {
+  opacity: 0.9;
+  text-decoration: underline;
+}
+
+.prev {
+  text-align: left;
+}
+.toc-link {
+  text-align: center;
+}
+.next {
+  text-align: right;
+}
+.download-section {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2rem;
+  padding: 2rem 1rem;
+  max-width: 600px;
+  margin: 3rem auto;
+  background-color: #f9f9f9;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+}
+
+    .book-cover {
+      width: 130px;
+      height: 180px;
+      
+      background-size: cover; /* Ensures the image covers the entire div */
+      background-position: center; /* Centers the image */
+            
+      background: linear-gradient(145deg, #e0dede, #f9f9f9);
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 10px;
+      box-sizing: border-box;
+      position: relative;
+      font-family: 'Roboto', sans-serif;
+    }
+
+    .book-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 16px;
+      font-weight: 600;
+      color: #fff;
+      margin-bottom: 4px;
+    }
+
+    .book-subtitle {
+      font-size: 12px;
+      color: #aaa;
+      margin-bottom: 10px;
+    }
+
+    .series-name {
+      position: absolute;
+      top: 8px;
+      left: 8px;
+      font-size: 10px;
+      color: #fff;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-weight: bold;
+    }
+
+    .book-footer {
+      position: absolute;
+      bottom: 8px;
+      font-size: 10px;
+      color: #aaa;
+    }
+
+.download-info h2 {
+  margin: 0 0 0.5rem;
+  font-size: 1.2rem;
+}
+
+.format-label {
+  margin: 0 0 0.5rem;
+  font-size: 0.95rem;
+  color: #555;
+}
+
+.download-buttons {
+  display: flex;
+  gap: 1rem;
+}
+
+.download-button {
+  background-color: #4A90E2;
+  color: white;
+  padding: 0.5em 1.2em;
+  text-decoration: none;
+  border-radius: 25px;
+  font-size: 0.95rem;
+  transition: background-color 0.3s ease;
+}
+
+.download-button:hover {
+  background-color: #357ABD;
+}
+
+    code {
+ 
+      color: #d35400; 
+    }
+html {
+    scroll-behavior: smooth;
+}
+    .snippet-container {
+      overflow: hidden;    
+    }
+
+    .snippet-header {
+      background: #f0f0f0;
+      color: #333;
+      padding: 0.75rem 1rem;
+      cursor: pointer;
+      font-size: 1rem;
+    }
+
+    .snippet-body {
+      display: none;
+      font-family: monospace;
+    }
+
+    .snippet-container.open .snippet-body {
+      display: block;
+    }
+
+.CodeMirror {
+  border: 2px solid #ccc;
+  border-radius: 4px;
+  resize: vertical;
+}
+
+    button { padding: 0.5em 1em; background: green; color: white; border: none; cursor: pointer; }
+    button:hover { background: #1e7e34; }
+    .result_iframe { width:99%; height:200px; margin-top: 1em;  resize: both;border:1px solid #ccc;}        
+</style>
+</head>
+<body> 
+
+  <div class="container">
+    <div class = "chapter-navi-section">
+<a href="javascript-syntax-introduction-to-javascript.htm" class="nav-button prev">←</a>
+<a href='javascript-syntax.htm#basic-syntax-and-statements' class="nav-button toc-link">Index</a>
+<a href="javascript-syntax-control-flow.htm" class="nav-button next">→</a>
+</div>
+
+    <h1 class="book-title-chapter" id = 'top'>Basic Syntax and Statements</h1>
+    <h3 class="book-subtitle-chapter">JavaScript Syntax</h3>   
+    <!-- <h1 class ="chapter-title"></h1> -->
+    <h2 id='javascript-syntax-rules'>2.1 JavaScript Syntax Rules</h2><p>Understanding JavaScript’s syntax rules is essential to writing code that runs correctly and predictably. JavaScript has a flexible and forgiving syntax, but there are important conventions and rules that every developer should know.</p><h4 id="case-sensitivity">Case Sensitivity</h4><p>JavaScript is <strong>case-sensitive</strong>, meaning that variable and function names must match exactly in spelling and capitalization.</p><div>
+ <div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+  <pre><code class="language-js">let userName = "Alice";
+console.log(username); // ❌ ReferenceError: username is not defined</code></pre>
+ </div>
+ <div class="snippet-container" id="pGJHO">
+  <div class="snippet-header" onclick="toggleSnippetAndRefresh('pGJHO','s9E1C')">
+   Try it in editor
+  </div>
+  <div class="snippet-body"><textarea id="s9E1C">let userName = "Alice";
+console.log(username); // ❌ ReferenceError: username is not defined</textarea> <br> <button onclick="renderIframeForClientJavascript('s9E1C','cUbM4')">Run</button> <iframe id="cUbM4" class="result_iframe" style="display: none;"></iframe>
+   <script>
+  {let editor1 = CodeMirror.fromTextArea(document.getElementById("s9E1C"), {
+    mode: "javascript",
+    lineNumbers:false,
+    tabSize: 2
+  });
+   codeMirrorMap.set("s9E1C", editor1);}
+  </script>
+  </div>
+ </div>
+</div><p>In the example above, <code>userName</code> and <code>username</code> are treated as different identifiers.</p><h4 id="statement-termination-and-semicolons">Statement Termination and Semicolons</h4><p>In JavaScript, statements are usually ended with a <strong>semicolon (<code>;</code>)</strong>. While JavaScript supports <strong>automatic semicolon insertion (ASI)</strong>, relying on it can lead to confusing bugs.</p><p>Correct usage:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-js">let name = "Alice";
+console.log(name);</code></pre>
+</div><p>JavaScript will often insert semicolons for you when they're missing, but this behavior isn't always predictable:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-js">// ❌ Unexpected behavior due to ASI
+const getValue = () =&gt; 
+{
+  return
+  {
+    value: 1
+  };
+};
+
+console.log(getValue()); // → undefined</code></pre>
+</div><p>In the example above, JavaScript inserts a semicolon after <code>return</code>, causing it to return <code>undefined</code>. To avoid such issues, it’s best to <strong>use semicolons consistently</strong>.</p><h4 id="whitespace-and-line-breaks">Whitespace and Line Breaks</h4><p>JavaScript ignores extra spaces, tabs, and line breaks, which makes formatting flexible. However, good indentation and spacing improve readability.</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-js">let x = 10;
+let y = 5;
+let sum = x + y;</code></pre>
+</div><p>The following is also valid but hard to read:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-js">let x=10;let y=5;let sum=x+y;</code></pre>
+</div><h4 id="code-blocks">Code Blocks</h4><p>A <strong>code block</strong> is a group of statements wrapped in curly braces <code>{}</code>. They're used in functions, conditionals, loops, and other structures.</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-js">if (true) {
+  console.log("This is inside a block.");
+}</code></pre>
+</div><p>Blocks help define <strong>scope</strong>, especially when using <code>let</code> or <code>const</code>.</p><p>Understanding and following these basic syntax rules will help you avoid common errors and write clean, readable JavaScript code.</p><div class = "chapter-navi-section">
+<a href="#top" class="nav-button prev">↑</a>
+<a href='javascript-syntax.htm#basic-syntax-and-statements' class="nav-button toc-link">Index</a>
+<a href="#bottom" class="nav-button next">↓</a>
+</div>
+<h2 id='comments-in-javascript'>2.2 Comments in JavaScript</h2><p>Comments are lines in your code that are <strong>ignored by the JavaScript engine</strong>. They're used to explain code, add notes, or temporarily disable parts of a script during debugging. Writing clear comments is a best practice that improves code readability and collaboration.</p><h4 id="single-line-comments">Single-Line Comments</h4><p>Use <code>//</code> for single-line comments. Everything after <code>//</code> on that line is ignored.</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-js">// This is a single-line comment
+let age = 30; // This sets the user's age</code></pre>
+</div><h4 id="multi-line-comments">Multi-Line Comments</h4><p>Use <code>/* */</code> to write comments that span multiple lines.</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-js">/* 
+  This function calculates 
+  the sum of two numbers 
+*/
+function add(a, b) {
+  return a + b;
+}</code></pre>
+</div><h4 id="using-comments-for-debugging">Using Comments for Debugging</h4><p>You can also comment out lines of code to temporarily disable them:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-js">// console.log("This line won't run");
+console.log("This line will run");</code></pre>
+</div><h4 id="best-practices">Best Practices</h4><ul>
+ <li>Use comments to explain complex logic.</li>
+ <li>Avoid obvious comments (e.g., <code>// add 2 + 2</code> before <code>2 + 2</code>).</li>
+ <li>Keep comments up-to-date with code changes.</li>
+</ul><p>Comments don’t affect performance and are crucial for long-term maintenance and understanding of your code.</p><div class = "chapter-navi-section">
+<a href="#top" class="nav-button prev">↑</a>
+<a href='javascript-syntax.htm#basic-syntax-and-statements' class="nav-button toc-link">Index</a>
+<a href="#bottom" class="nav-button next">↓</a>
+</div>
+<h2 id='variables-and-constants-var-let-const'>2.3 Variables and Constants (<code>var</code>, <code>let</code>, <code>const</code>)</h2><p>In JavaScript, variables are used to store data that can be used and manipulated throughout your program. There are three ways to declare variables: <code>var</code>, <code>let</code>, and <code>const</code>. While they may seem similar at first, they differ in important ways—especially in terms of <strong>scope</strong>, <strong>hoisting</strong>, and <strong>mutability</strong>.</p><h4 id="var-function-scoped-and-hoisted"><code>var</code> Function Scoped and Hoisted</h4><p>The <code>var</code> keyword was traditionally used to declare variables in JavaScript. It is <strong>function-scoped</strong>, meaning it's only limited to the function in which it’s declared, not block-scoped (like inside <code>if</code> or <code>for</code> blocks). Variables declared with <code>var</code> are <strong>hoisted</strong>, meaning they are moved to the top of their scope and initialized as <code>undefined</code>.</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-js">function example() {
+  console.log(x); // undefined (hoisted)
+  var x = 10;
+  console.log(x); // 10
+}
+example();</code></pre>
+</div><h4 id="let-block-scoped-and-hoisted-but-not-initialized"><code>let</code> Block Scoped and Hoisted (But Not Initialized)</h4><p>Introduced in ES6, <code>let</code> is <strong>block-scoped</strong>, which means it is only accessible within the nearest pair of curly braces (<code>{}</code>), like in loops or conditional blocks. While <code>let</code> is also hoisted, it is not initialized until the line where it’s declared, leading to a <strong>temporal dead zone</strong> where accessing it before declaration throws an error.</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-js">{
+  let y = 20;
+  console.log(y); // 20
+}
+// console.log(y); // ❌ ReferenceError: y is not defined</code></pre>
+</div><h4 id="const-block-scoped-and-immutable-binding"><code>const</code> Block Scoped and Immutable (Binding)</h4><p>Like <code>let</code>, <code>const</code> is also <strong>block-scoped</strong> and not initialized during hoisting. The key difference is that variables declared with <code>const</code> <strong>cannot be reassigned</strong> after their initial assignment.</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-js">const pi = 3.14;
+// pi = 3.1415; // ❌ TypeError: Assignment to constant variable</code></pre>
+</div><p>However, <code>const</code> does <strong>not</strong> make objects or arrays immutable—it only prevents reassignment of the variable itself.</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-js">const person = { name: "Alice" };
+person.name = "Bob"; // ✅ allowed</code></pre>
+</div><h4 id="best-practices">Best Practices</h4><ul>
+ <li>Use <code>**const**</code> by default for values that won’t change.</li>
+ <li>Use <code>**let**</code> when you expect the value to change (e.g., counters, loop indices).</li>
+ <li><strong>Avoid using <code>var</code></strong> in modern JavaScript—it has confusing scoping and hoisting behavior that often leads to bugs.</li>
+</ul><h3 id="summary">Summary</h3><table>
+ <thead>
+  <tr>
+   <th>Keyword</th>
+   <th>Scope</th>
+   <th>Reassignable</th>
+   <th>Hoisted</th>
+   <th>Common Use Case</th>
+  </tr>
+ </thead>
+ <tbody>
+  <tr>
+   <td><code>var</code></td>
+   <td>Function</td>
+   <td>Yes</td>
+   <td>Yes</td>
+   <td>Legacy code</td>
+  </tr>
+  <tr>
+   <td><code>let</code></td>
+   <td>Block</td>
+   <td>Yes</td>
+   <td>Yes</td>
+   <td>Changing values</td>
+  </tr>
+  <tr>
+   <td><code>const</code></td>
+   <td>Block</td>
+   <td>No</td>
+   <td>Yes</td>
+   <td>Fixed bindings and constants</td>
+  </tr>
+ </tbody>
+</table><p>Understanding when and how to use <code>var</code>, <code>let</code>, and <code>const</code> is foundational to writing safe and maintainable JavaScript code.</p><div class = "chapter-navi-section">
+<a href="#top" class="nav-button prev">↑</a>
+<a href='javascript-syntax.htm#basic-syntax-and-statements' class="nav-button toc-link">Index</a>
+<a href="#bottom" class="nav-button next">↓</a>
+</div>
+<h2 id='data-types-overview-string-number-boolean-null-undefined-symbol-bigint'>2.4 Data Types Overview (String, Number, Boolean, Null, Undefined, Symbol, BigInt)</h2><p>JavaScript has <strong>seven primitive data types</strong>, each representing a single, immutable value. Understanding these types is fundamental to writing reliable code.</p><h4 id="string">String</h4><p>A <code>string</code> represents text and is enclosed in single (<code>'</code>), double (<code>"</code>), or backtick (`) quotes.</p><div>
+ <div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+  <pre><code class="language-js">let name = "Alice";
+console.log(typeof name); // "string"</code></pre>
+ </div>
+ <div class="snippet-container" id="X4ahw">
+  <div class="snippet-header" onclick="toggleSnippetAndRefresh('X4ahw','uGtN4')">
+   Try it in editor
+  </div>
+  <div class="snippet-body"><textarea id="uGtN4">let name = "Alice";
+console.log(typeof name); // "string"</textarea> <br> <button onclick="renderIframeForClientJavascript('uGtN4','4b0cY')">Run</button> <iframe id="4b0cY" class="result_iframe" style="display: none;"></iframe>
+   <script>
+  {let editor1 = CodeMirror.fromTextArea(document.getElementById("uGtN4"), {
+    mode: "javascript",
+    lineNumbers:false,
+    tabSize: 2
+  });
+   codeMirrorMap.set("uGtN4", editor1);}
+  </script>
+  </div>
+ </div>
+</div><p>Use strings for names, messages, and any text-based content.</p><h4 id="number">Number</h4><p>The <code>number</code> type includes both integers and floating-point values.</p><div>
+ <div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+  <pre><code class="language-js">let age = 30;
+let price = 19.99;
+console.log(typeof age);   // "number"
+console.log(typeof price); // "number"</code></pre>
+ </div>
+ <div class="snippet-container" id="D8gcm">
+  <div class="snippet-header" onclick="toggleSnippetAndRefresh('D8gcm','aTj64')">
+   Try it in editor
+  </div>
+  <div class="snippet-body"><textarea id="aTj64">let age = 30;
+let price = 19.99;
+console.log(typeof age);   // "number"
+console.log(typeof price); // "number"</textarea> <br> <button onclick="renderIframeForClientJavascript('aTj64','Kp0Fe')">Run</button> <iframe id="Kp0Fe" class="result_iframe" style="display: none;"></iframe>
+   <script>
+  {let editor1 = CodeMirror.fromTextArea(document.getElementById("aTj64"), {
+    mode: "javascript",
+    lineNumbers:false,
+    tabSize: 2
+  });
+   codeMirrorMap.set("aTj64", editor1);}
+  </script>
+  </div>
+ </div>
+</div><p>JavaScript does <strong>not</strong> distinguish between integers and floats.</p><h4 id="boolean">Boolean</h4><p>Booleans have only two values: <code>true</code> and <code>false</code>. They're often used in conditions and logic.</p><div>
+ <div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+  <pre><code class="language-js">let isLoggedIn = true;
+console.log(typeof isLoggedIn); // "boolean"</code></pre>
+ </div>
+ <div class="snippet-container" id="iZcYk">
+  <div class="snippet-header" onclick="toggleSnippetAndRefresh('iZcYk','Nh4VO')">
+   Try it in editor
+  </div>
+  <div class="snippet-body"><textarea id="Nh4VO">let isLoggedIn = true;
+console.log(typeof isLoggedIn); // "boolean"</textarea> <br> <button onclick="renderIframeForClientJavascript('Nh4VO','mI2oH')">Run</button> <iframe id="mI2oH" class="result_iframe" style="display: none;"></iframe>
+   <script>
+  {let editor1 = CodeMirror.fromTextArea(document.getElementById("Nh4VO"), {
+    mode: "javascript",
+    lineNumbers:false,
+    tabSize: 2
+  });
+   codeMirrorMap.set("Nh4VO", editor1);}
+  </script>
+  </div>
+ </div>
+</div><h4 id="null">Null</h4><p><code>null</code> represents an <strong>intentional absence</strong> of any value. It’s often used to reset variables or indicate “no value.”</p><div>
+ <div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+  <pre><code class="language-js">let data = null;
+console.log(typeof data); // "object" ← known quirk in JavaScript</code></pre>
+ </div>
+ <div class="snippet-container" id="OHoRC">
+  <div class="snippet-header" onclick="toggleSnippetAndRefresh('OHoRC','u0ioj')">
+   Try it in editor
+  </div>
+  <div class="snippet-body"><textarea id="u0ioj">let data = null;
+console.log(typeof data); // "object" ← known quirk in JavaScript</textarea> <br> <button onclick="renderIframeForClientJavascript('u0ioj','idqIB')">Run</button> <iframe id="idqIB" class="result_iframe" style="display: none;"></iframe>
+   <script>
+  {let editor1 = CodeMirror.fromTextArea(document.getElementById("u0ioj"), {
+    mode: "javascript",
+    lineNumbers:false,
+    tabSize: 2
+  });
+   codeMirrorMap.set("u0ioj", editor1);}
+  </script>
+  </div>
+ </div>
+</div><blockquote>
+ <p>Note: <code>typeof null</code> returns <code>"object"</code> due to a legacy bug, but <code>null</code> is still a primitive.</p>
+</blockquote><h4 id="undefined">Undefined</h4><p><code>undefined</code> means a variable has been declared but <strong>not assigned a value</strong> yet.</p><div>
+ <div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+  <pre><code class="language-js">let score;
+console.log(score);         // undefined
+console.log(typeof score);  // "undefined"</code></pre>
+ </div>
+ <div class="snippet-container" id="vrFPU">
+  <div class="snippet-header" onclick="toggleSnippetAndRefresh('vrFPU','S887x')">
+   Try it in editor
+  </div>
+  <div class="snippet-body"><textarea id="S887x">let score;
+console.log(score);         // undefined
+console.log(typeof score);  // "undefined"</textarea> <br> <button onclick="renderIframeForClientJavascript('S887x','baHy0')">Run</button> <iframe id="baHy0" class="result_iframe" style="display: none;"></iframe>
+   <script>
+  {let editor1 = CodeMirror.fromTextArea(document.getElementById("S887x"), {
+    mode: "javascript",
+    lineNumbers:false,
+    tabSize: 2
+  });
+   codeMirrorMap.set("S887x", editor1);}
+  </script>
+  </div>
+ </div>
+</div><p>It also appears when accessing non-existent object properties or missing function returns.</p><h4 id="symbol">Symbol</h4><p>Introduced in ES6, <code>Symbol</code> is used to create unique identifiers—often for object property keys to avoid naming collisions.</p><div>
+ <div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+  <pre><code class="language-js">let sym = Symbol("id");
+console.log(typeof sym); // "symbol"</code></pre>
+ </div>
+ <div class="snippet-container" id="7QT3T">
+  <div class="snippet-header" onclick="toggleSnippetAndRefresh('7QT3T','bH6KS')">
+   Try it in editor
+  </div>
+  <div class="snippet-body"><textarea id="bH6KS">let sym = Symbol("id");
+console.log(typeof sym); // "symbol"</textarea> <br> <button onclick="renderIframeForClientJavascript('bH6KS','unkok')">Run</button> <iframe id="unkok" class="result_iframe" style="display: none;"></iframe>
+   <script>
+  {let editor1 = CodeMirror.fromTextArea(document.getElementById("bH6KS"), {
+    mode: "javascript",
+    lineNumbers:false,
+    tabSize: 2
+  });
+   codeMirrorMap.set("bH6KS", editor1);}
+  </script>
+  </div>
+ </div>
+</div><p>Symbols are not enumerable and are useful in metaprogramming.</p><h4 id="bigint">BigInt</h4><p><code>BigInt</code> allows representation of integers larger than the safe limit for regular numbers (<code>2^53 - 1</code>).</p><div>
+ <div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+  <pre><code class="language-js">let bigNumber = 1234567890123456789012345678901234567890n;
+console.log(typeof bigNumber); // "bigint"</code></pre>
+ </div>
+ <div class="snippet-container" id="5o1YO">
+  <div class="snippet-header" onclick="toggleSnippetAndRefresh('5o1YO','lKHmv')">
+   Try it in editor
+  </div>
+  <div class="snippet-body"><textarea id="lKHmv">let bigNumber = 1234567890123456789012345678901234567890n;
+console.log(typeof bigNumber); // "bigint"</textarea> <br> <button onclick="renderIframeForClientJavascript('lKHmv','jNu0Z')">Run</button> <iframe id="jNu0Z" class="result_iframe" style="display: none;"></iframe>
+   <script>
+  {let editor1 = CodeMirror.fromTextArea(document.getElementById("lKHmv"), {
+    mode: "javascript",
+    lineNumbers:false,
+    tabSize: 2
+  });
+   codeMirrorMap.set("lKHmv", editor1);}
+  </script>
+  </div>
+ </div>
+</div><p>BigInt values are created by appending an <code>n</code> to the end of the number.</p><h3 id="summary-table">Summary Table</h3><table>
+ <thead>
+  <tr>
+   <th>Data Type</th>
+   <th>Example Value</th>
+   <th><code>typeof</code> Result</th>
+  </tr>
+ </thead>
+ <tbody>
+  <tr>
+   <td>String</td>
+   <td><code>"Hello"</code></td>
+   <td><code>"string"</code></td>
+  </tr>
+  <tr>
+   <td>Number</td>
+   <td><code>42</code>, <code>3.14</code></td>
+   <td><code>"number"</code></td>
+  </tr>
+  <tr>
+   <td>Boolean</td>
+   <td><code>true</code>, <code>false</code></td>
+   <td><code>"boolean"</code></td>
+  </tr>
+  <tr>
+   <td>Null</td>
+   <td><code>null</code></td>
+   <td><code>"object"</code></td>
+  </tr>
+  <tr>
+   <td>Undefined</td>
+   <td><code>undefined</code></td>
+   <td><code>"undefined"</code></td>
+  </tr>
+  <tr>
+   <td>Symbol</td>
+   <td><code>Symbol("id")</code></td>
+   <td><code>"symbol"</code></td>
+  </tr>
+  <tr>
+   <td>BigInt</td>
+   <td><code>9007199254740991n</code></td>
+   <td><code>"bigint"</code></td>
+  </tr>
+ </tbody>
+</table><p>Understanding these types helps avoid common bugs and ensures proper handling of values across your programs.</p><div class = "chapter-navi-section">
+<a href="#top" class="nav-button prev">↑</a>
+<a href='javascript-syntax.htm#basic-syntax-and-statements' class="nav-button toc-link">Index</a>
+<a href="#bottom" class="nav-button next">↓</a>
+</div>
+<h2 id='basic-operators-arithmetic-assignment-comparison-bitwise'>2.5 Basic Operators (Arithmetic, Assignment, Comparison, Bitwise)</h2><p>Operators in JavaScript are symbols used to perform operations on values and variables. This section covers the most commonly used categories: arithmetic, assignment, comparison, and bitwise operators.</p><h4 id="arithmetic-operators">Arithmetic Operators</h4><p>Arithmetic operators are used to perform basic math operations:</p><div>
+ <div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+  <pre><code class="language-js">let x = 10;
+let y = 3;
+
+console.log(x + y); // 13 (addition)
+console.log(x - y); // 7  (subtraction)
+console.log(x * y); // 30 (multiplication)
+console.log(x / y); // 3.333... (division)
+console.log(x % y); // 1  (modulo/remainder)</code></pre>
+ </div>
+ <div class="snippet-container" id="2r8pz">
+  <div class="snippet-header" onclick="toggleSnippetAndRefresh('2r8pz','ntojK')">
+   Try it in editor
+  </div>
+  <div class="snippet-body"><textarea id="ntojK">let x = 10;
+let y = 3;
+
+console.log(x + y); // 13 (addition)
+console.log(x - y); // 7  (subtraction)
+console.log(x * y); // 30 (multiplication)
+console.log(x / y); // 3.333... (division)
+console.log(x % y); // 1  (modulo/remainder)</textarea> <br> <button onclick="renderIframeForClientJavascript('ntojK','szQg2')">Run</button> <iframe id="szQg2" class="result_iframe" style="display: none;"></iframe>
+   <script>
+  {let editor1 = CodeMirror.fromTextArea(document.getElementById("ntojK"), {
+    mode: "javascript",
+    lineNumbers:false,
+    tabSize: 2
+  });
+   codeMirrorMap.set("ntojK", editor1);}
+  </script>
+  </div>
+ </div>
+</div><p>These work with both integers and floating-point numbers.</p><h4 id="assignment-operators">Assignment Operators</h4><p>Assignment operators assign values to variables. The most basic one is <code>=</code>, but there are shorthand forms for arithmetic operations:</p><div>
+ <div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+  <pre><code class="language-js">let a = 5;
+a += 2;  // a = a + 2 → 7
+a -= 1;  // a = a - 1 → 6
+a *= 3;  // a = a * 3 → 18
+a /= 2;  // a = a / 2 → 9
+a %= 4;  // a = a % 4 → 1
+
+console.log(a); // 1</code></pre>
+ </div>
+ <div class="snippet-container" id="AMUvU">
+  <div class="snippet-header" onclick="toggleSnippetAndRefresh('AMUvU','HBw3F')">
+   Try it in editor
+  </div>
+  <div class="snippet-body"><textarea id="HBw3F">let a = 5;
+a += 2;  // a = a + 2 → 7
+a -= 1;  // a = a - 1 → 6
+a *= 3;  // a = a * 3 → 18
+a /= 2;  // a = a / 2 → 9
+a %= 4;  // a = a % 4 → 1
+
+console.log(a); // 1</textarea> <br> <button onclick="renderIframeForClientJavascript('HBw3F','a9n6R')">Run</button> <iframe id="a9n6R" class="result_iframe" style="display: none;"></iframe>
+   <script>
+  {let editor1 = CodeMirror.fromTextArea(document.getElementById("HBw3F"), {
+    mode: "javascript",
+    lineNumbers:false,
+    tabSize: 2
+  });
+   codeMirrorMap.set("HBw3F", editor1);}
+  </script>
+  </div>
+ </div>
+</div><p>These are useful for compact and readable code.</p><h4 id="comparison-operators">Comparison Operators</h4><p>Comparison operators are used to compare two values and return a Boolean (<code>true</code> or <code>false</code>):</p><div>
+ <div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+  <pre><code class="language-js">console.log(5 &gt; 3);     // true
+console.log(5 &lt; 3);     // false
+console.log(5 &gt;= 5);    // true
+console.log(3 &lt;= 2);    // false</code></pre>
+ </div>
+ <div class="snippet-container" id="SXuPN">
+  <div class="snippet-header" onclick="toggleSnippetAndRefresh('SXuPN','XrEnQ')">
+   Try it in editor
+  </div>
+  <div class="snippet-body"><textarea id="XrEnQ">console.log(5 &gt; 3);     // true
+console.log(5 &lt; 3);     // false
+console.log(5 &gt;= 5);    // true
+console.log(3 &lt;= 2);    // false</textarea> <br> <button onclick="renderIframeForClientJavascript('XrEnQ','NQ8se')">Run</button> <iframe id="NQ8se" class="result_iframe" style="display: none;"></iframe>
+   <script>
+  {let editor1 = CodeMirror.fromTextArea(document.getElementById("XrEnQ"), {
+    mode: "javascript",
+    lineNumbers:false,
+    tabSize: 2
+  });
+   codeMirrorMap.set("XrEnQ", editor1);}
+  </script>
+  </div>
+ </div>
+</div><h5><code>==</code> vs. <code>===</code></h5><ul>
+ <li><p><code>==</code> checks for <strong>equality after type coercion</strong>:</p>
+  <div>
+   <div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+    <pre><code class="language-js">console.log("5" == 5);  // true</code></pre>
+   </div>
+   <div class="snippet-container" id="tGmKz">
+    <div class="snippet-header" onclick="toggleSnippetAndRefresh('tGmKz','77Wbj')">
+     Try it in editor
+    </div>
+    <div class="snippet-body"><textarea id="77Wbj">console.log("5" == 5);  // true</textarea> <br> <button onclick="renderIframeForClientJavascript('77Wbj','6UTyf')">Run</button> <iframe id="6UTyf" class="result_iframe" style="display: none;"></iframe>
+     <script>
+  {let editor1 = CodeMirror.fromTextArea(document.getElementById("77Wbj"), {
+    mode: "javascript",
+    lineNumbers:false,
+    tabSize: 2
+  });
+   codeMirrorMap.set("77Wbj", editor1);}
+  </script>
+    </div>
+   </div>
+  </div></li>
+ <li><p><code>===</code> checks for <strong>strict equality</strong>, meaning <strong>both value and type must match</strong>:</p>
+  <div>
+   <div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+    <pre><code class="language-js">console.log("5" === 5); // false</code></pre>
+   </div>
+   <div class="snippet-container" id="7d6Cc">
+    <div class="snippet-header" onclick="toggleSnippetAndRefresh('7d6Cc','KIgJe')">
+     Try it in editor
+    </div>
+    <div class="snippet-body"><textarea id="KIgJe">console.log("5" === 5); // false</textarea> <br> <button onclick="renderIframeForClientJavascript('KIgJe','XzEy8')">Run</button> <iframe id="XzEy8" class="result_iframe" style="display: none;"></iframe>
+     <script>
+  {let editor1 = CodeMirror.fromTextArea(document.getElementById("KIgJe"), {
+    mode: "javascript",
+    lineNumbers:false,
+    tabSize: 2
+  });
+   codeMirrorMap.set("KIgJe", editor1);}
+  </script>
+    </div>
+   </div>
+  </div></li>
+</ul><p>It’s recommended to use <code>===</code> and <code>!==</code> in most cases to avoid unexpected results due to implicit type conversion.</p><h4 id="bitwise-operators">Bitwise Operators</h4><p>Bitwise operators work at the binary level. While they are used less often in typical web development, they are important in low-level tasks like graphics, cryptography, or performance optimization.</p><div>
+ <div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+  <pre><code class="language-js">console.log(5 &amp; 1); // 1 (AND)
+console.log(5 | 1); // 5 (OR)
+console.log(5 ^ 1); // 4 (XOR)
+console.log(~5);    // -6 (NOT)
+console.log(5 &lt;&lt; 1); // 10 (Left shift)
+console.log(5 &gt;&gt; 1); // 2  (Right shift)</code></pre>
+ </div>
+ <div class="snippet-container" id="Je1PE">
+  <div class="snippet-header" onclick="toggleSnippetAndRefresh('Je1PE','frYV5')">
+   Try it in editor
+  </div>
+  <div class="snippet-body"><textarea id="frYV5">console.log(5 &amp; 1); // 1 (AND)
+console.log(5 | 1); // 5 (OR)
+console.log(5 ^ 1); // 4 (XOR)
+console.log(~5);    // -6 (NOT)
+console.log(5 &lt;&lt; 1); // 10 (Left shift)
+console.log(5 &gt;&gt; 1); // 2  (Right shift)</textarea> <br> <button onclick="renderIframeForClientJavascript('frYV5','uAEkr')">Run</button> <iframe id="uAEkr" class="result_iframe" style="display: none;"></iframe>
+   <script>
+  {let editor1 = CodeMirror.fromTextArea(document.getElementById("frYV5"), {
+    mode: "javascript",
+    lineNumbers:false,
+    tabSize: 2
+  });
+   codeMirrorMap.set("frYV5", editor1);}
+  </script>
+  </div>
+ </div>
+</div><p>These operate on 32-bit binary representations of numbers.</p><h3 id="summary">Summary</h3><table>
+ <thead>
+  <tr>
+   <th>Type</th>
+   <th>Operator Examples</th>
+   <th>Description</th>
+  </tr>
+ </thead>
+ <tbody>
+  <tr>
+   <td>Arithmetic</td>
+   <td><code>+</code>, <code>-</code>, <code>*</code>, <code>/</code>, <code>%</code></td>
+   <td>Basic math</td>
+  </tr>
+  <tr>
+   <td>Assignment</td>
+   <td><code>=</code>, <code>+=</code>, <code>-=</code>, <code>*=</code>, <code>/=</code>, <code>%=</code></td>
+   <td>Assign and update values</td>
+  </tr>
+  <tr>
+   <td>Comparison</td>
+   <td><code>==</code>, <code>===</code>, <code>!=</code>, <code>!==</code>, <code>&lt;</code>, <code>&gt;</code>, <code>&lt;=</code>, <code>&gt;=</code></td>
+   <td>Compare values</td>
+  </tr>
+  <tr>
+   <td>Bitwise</td>
+   <td><code>&amp;</code>, | , <code>^</code>, <code>\~</code>, <code>&lt;&lt;</code>, <code>&gt;&gt;\</code></td>
+   <td>Binary-level manipulation</td>
+  </tr>
+ </tbody>
+</table><p>Mastering these basic operators lays the foundation for writing logical and expressive JavaScript code.</p><div class = "chapter-navi-section">
+<a href="#top" class="nav-button prev">↑</a>
+<a href='javascript-syntax.htm#basic-syntax-and-statements' class="nav-button toc-link">Index</a>
+<a href="#bottom" class="nav-button next">↓</a>
+</div>
+<h2 id='expressions-and-statements'>2.6 Expressions and Statements</h2><p>Understanding the difference between <strong>expressions</strong> and <strong>statements</strong> is key to writing clear and predictable JavaScript code. These two building blocks define how the language runs code and evaluates results.</p><h4 id="what-is-an-expression">What is an Expression?</h4><p>An <strong>expression</strong> is any piece of code that produces a value. It can be as simple as a number or as complex as a function call. Expressions can be assigned to variables, used in comparisons, or passed to functions.</p><p><strong>Examples of expressions:</strong></p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-js">5 + 3           // 8
+"Hello" + " World"  // "Hello World"
+x = 10          // Assignment expression
+x * 2           // Multiplication (evaluates to 20 if x is 10)
+greet("Alice")  // Function call</code></pre>
+</div><p>Each of these returns a value when executed.</p><h4 id="what-is-a-statement">What is a Statement?</h4><p>A <strong>statement</strong> is a complete instruction that performs an action. It may contain expressions, but it doesn’t necessarily return a value by itself. JavaScript programs are composed of many statements.</p><p><strong>Examples of statements:</strong></p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-js">let x = 5;            // Variable declaration (with assignment expression)
+if (x &gt; 3) {          // if statement (with condition expression)
+  console.log(x);     // function call (another statement)
+}</code></pre>
+</div><p>Statements <strong>control the flow</strong> and structure of the program, such as conditionals (<code>if</code>, <code>else</code>), loops (<code>for</code>, <code>while</code>), and declarations (<code>let</code>, <code>const</code>).</p><h4 id="combining-expressions-and-statements">Combining Expressions and Statements</h4><p>In real-world code, expressions are often part of statements. For example:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-js">let total = price * quantity;</code></pre>
+</div><p>Here:</p><ul>
+ <li><code>price * quantity</code> is an <strong>expression</strong>.</li>
+ <li>The entire line (<code>let total = ...</code>) is a <strong>statement</strong>.</li>
+</ul><p>Another example:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-js">if (score &gt;= 50) {
+  console.log("You passed!");
+}</code></pre>
+</div><ul>
+ <li><code>score &gt;= 50</code> is a <strong>comparison expression</strong>.</li>
+ <li><code>if (...) { ... }</code> is a <strong>conditional statement</strong>.</li>
+ <li><code>console.log(...)</code> is an <strong>expression statement</strong>.</li>
+</ul><h3 id="summary">Summary</h3><table>
+ <thead>
+  <tr>
+   <th>Concept</th>
+   <th>Returns a Value</th>
+   <th>Example</th>
+  </tr>
+ </thead>
+ <tbody>
+  <tr>
+   <td>Expression</td>
+   <td>✅ Yes</td>
+   <td><code>5 + 2</code>, <code>"Hi"</code>, <code>x * y</code></td>
+  </tr>
+  <tr>
+   <td>Statement</td>
+   <td>❌ Not directly</td>
+   <td><code>let x = 5;</code>, <code>if (...) {}</code></td>
+  </tr>
+ </tbody>
+</table><p>Knowing the distinction helps you understand what your code is doing and where each construct fits in the flow of a JavaScript program.</p><div class = "chapter-navi-section">
+<a href="#top" class="nav-button prev">↑</a>
+<a href='javascript-syntax.htm#basic-syntax-and-statements' class="nav-button toc-link">Index</a>
+<a href="#bottom" class="nav-button next">↓</a>
+</div>
+<h2 id='type-conversion-and-coercion-implicit-and-explicit'>2.7 Type Conversion and Coercion (Implicit and Explicit)</h2><p>JavaScript is a <strong>loosely typed</strong> language, meaning it often converts values from one type to another automatically. This process is called <strong>type coercion</strong>. Understanding how and when JavaScript changes types is essential to avoid bugs and unexpected results.</p><h4 id="implicit-type-coercion">Implicit Type Coercion</h4><p>Implicit coercion happens automatically when JavaScript expects a certain type but receives a different one. It tries to convert values to make the operation work.</p><p><strong>Example 1: String concatenation</strong></p><div>
+ <div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+  <pre><code class="language-js">console.log("5" + 3);  // "53"</code></pre>
+ </div>
+ <div class="snippet-container" id="IFgiL">
+  <div class="snippet-header" onclick="toggleSnippetAndRefresh('IFgiL','r7RD8')">
+   Try it in editor
+  </div>
+  <div class="snippet-body"><textarea id="r7RD8">console.log("5" + 3);  // "53"</textarea> <br> <button onclick="renderIframeForClientJavascript('r7RD8','X8UsV')">Run</button> <iframe id="X8UsV" class="result_iframe" style="display: none;"></iframe>
+   <script>
+  {let editor1 = CodeMirror.fromTextArea(document.getElementById("r7RD8"), {
+    mode: "javascript",
+    lineNumbers:false,
+    tabSize: 2
+  });
+   codeMirrorMap.set("r7RD8", editor1);}
+  </script>
+  </div>
+ </div>
+</div><p>Here, <code>3</code> is coerced to a string <code>"3"</code> and concatenated with <code>"5"</code> resulting in <code>"53"</code>.</p><p><strong>Example 2: Numeric addition vs subtraction</strong></p><div>
+ <div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+  <pre><code class="language-js">console.log("5" - 2);  // 3</code></pre>
+ </div>
+ <div class="snippet-container" id="10zSO">
+  <div class="snippet-header" onclick="toggleSnippetAndRefresh('10zSO','oHQl5')">
+   Try it in editor
+  </div>
+  <div class="snippet-body"><textarea id="oHQl5">console.log("5" - 2);  // 3</textarea> <br> <button onclick="renderIframeForClientJavascript('oHQl5','eThof')">Run</button> <iframe id="eThof" class="result_iframe" style="display: none;"></iframe>
+   <script>
+  {let editor1 = CodeMirror.fromTextArea(document.getElementById("oHQl5"), {
+    mode: "javascript",
+    lineNumbers:false,
+    tabSize: 2
+  });
+   codeMirrorMap.set("oHQl5", editor1);}
+  </script>
+  </div>
+ </div>
+</div><p>The <code>-</code> operator forces both operands to be numbers, so <code>"5"</code> is converted to <code>5</code>, and the subtraction happens normally.</p><p><strong>Example 3: Boolean context</strong></p><div>
+ <div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+  <pre><code class="language-js">if ("") {
+  console.log("This won't run");
+} else {
+  console.log("Empty string is falsy");
+}</code></pre>
+ </div>
+ <div class="snippet-container" id="6thgl">
+  <div class="snippet-header" onclick="toggleSnippetAndRefresh('6thgl','ZxtD2')">
+   Try it in editor
+  </div>
+  <div class="snippet-body"><textarea id="ZxtD2">if ("") {
+  console.log("This won't run");
+} else {
+  console.log("Empty string is falsy");
+}</textarea> <br> <button onclick="renderIframeForClientJavascript('ZxtD2','CkIks')">Run</button> <iframe id="CkIks" class="result_iframe" style="display: none;"></iframe>
+   <script>
+  {let editor1 = CodeMirror.fromTextArea(document.getElementById("ZxtD2"), {
+    mode: "javascript",
+    lineNumbers:false,
+    tabSize: 2
+  });
+   codeMirrorMap.set("ZxtD2", editor1);}
+  </script>
+  </div>
+ </div>
+</div><p>An empty string <code>""</code> is coerced to <code>false</code> in conditions.</p><h4 id="explicit-type-conversion">Explicit Type Conversion</h4><p>Explicit conversion is when you manually convert values to a specific type using built-in functions:</p><ul>
+ <li><code>String(value)</code> converts to a string.</li>
+ <li><code>Number(value)</code> converts to a number.</li>
+ <li><code>Boolean(value)</code> converts to a boolean.</li>
+ <li><code>parseInt(string, radix)</code> converts a string to an integer with an optional base.</li>
+</ul><p><strong>Examples:</strong></p><div>
+ <div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+  <pre><code class="language-js">console.log(String(123));       // "123"
+console.log(Number("456"));     // 456
+console.log(Boolean(0));        // false
+console.log(parseInt("15px"));  // 15</code></pre>
+ </div>
+ <div class="snippet-container" id="rd3d0">
+  <div class="snippet-header" onclick="toggleSnippetAndRefresh('rd3d0','yMCVH')">
+   Try it in editor
+  </div>
+  <div class="snippet-body"><textarea id="yMCVH">console.log(String(123));       // "123"
+console.log(Number("456"));     // 456
+console.log(Boolean(0));        // false
+console.log(parseInt("15px"));  // 15</textarea> <br> <button onclick="renderIframeForClientJavascript('yMCVH','qg44V')">Run</button> <iframe id="qg44V" class="result_iframe" style="display: none;"></iframe>
+   <script>
+  {let editor1 = CodeMirror.fromTextArea(document.getElementById("yMCVH"), {
+    mode: "javascript",
+    lineNumbers:false,
+    tabSize: 2
+  });
+   codeMirrorMap.set("yMCVH", editor1);}
+  </script>
+  </div>
+ </div>
+</div><p>Explicit conversion is safer because you control when and how the conversion happens.</p><h4 id="common-pitfalls">Common Pitfalls</h4><ul>
+ <li><strong>Loose equality (<code>==</code>) with coercion:</strong></li>
+</ul><div>
+ <div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+  <pre><code class="language-js">console.log(0 == false);   // true (0 coerced to false)
+console.log("0" == 0);     // true ("0" coerced to number 0)</code></pre>
+ </div>
+ <div class="snippet-container" id="96G1X">
+  <div class="snippet-header" onclick="toggleSnippetAndRefresh('96G1X','9tHWY')">
+   Try it in editor
+  </div>
+  <div class="snippet-body"><textarea id="9tHWY">console.log(0 == false);   // true (0 coerced to false)
+console.log("0" == 0);     // true ("0" coerced to number 0)</textarea> <br> <button onclick="renderIframeForClientJavascript('9tHWY','28jnm')">Run</button> <iframe id="28jnm" class="result_iframe" style="display: none;"></iframe>
+   <script>
+  {let editor1 = CodeMirror.fromTextArea(document.getElementById("9tHWY"), {
+    mode: "javascript",
+    lineNumbers:false,
+    tabSize: 2
+  });
+   codeMirrorMap.set("9tHWY", editor1);}
+  </script>
+  </div>
+ </div>
+</div><ul>
+ <li><strong>Unexpected coercion in arithmetic:</strong></li>
+</ul><div>
+ <div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+  <pre><code class="language-js">console.log("5" * "4");    // 20 (strings coerced to numbers)
+console.log("5" + 4);      // "54" (number coerced to string)</code></pre>
+ </div>
+ <div class="snippet-container" id="07Ch1">
+  <div class="snippet-header" onclick="toggleSnippetAndRefresh('07Ch1','eXHyN')">
+   Try it in editor
+  </div>
+  <div class="snippet-body"><textarea id="eXHyN">console.log("5" * "4");    // 20 (strings coerced to numbers)
+console.log("5" + 4);      // "54" (number coerced to string)</textarea> <br> <button onclick="renderIframeForClientJavascript('eXHyN','gJ35X')">Run</button> <iframe id="gJ35X" class="result_iframe" style="display: none;"></iframe>
+   <script>
+  {let editor1 = CodeMirror.fromTextArea(document.getElementById("eXHyN"), {
+    mode: "javascript",
+    lineNumbers:false,
+    tabSize: 2
+  });
+   codeMirrorMap.set("eXHyN", editor1);}
+  </script>
+  </div>
+ </div>
+</div><ul>
+ <li><strong><code>parseInt</code> and non-numeric characters:</strong></li>
+</ul><div>
+ <div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+  <pre><code class="language-js">console.log(parseInt("10abc")); // 10
+console.log(parseInt("abc10")); // NaN (Not a Number)</code></pre>
+ </div>
+ <div class="snippet-container" id="rLGnJ">
+  <div class="snippet-header" onclick="toggleSnippetAndRefresh('rLGnJ','uBhea')">
+   Try it in editor
+  </div>
+  <div class="snippet-body"><textarea id="uBhea">console.log(parseInt("10abc")); // 10
+console.log(parseInt("abc10")); // NaN (Not a Number)</textarea> <br> <button onclick="renderIframeForClientJavascript('uBhea','IbvMs')">Run</button> <iframe id="IbvMs" class="result_iframe" style="display: none;"></iframe>
+   <script>
+  {let editor1 = CodeMirror.fromTextArea(document.getElementById("uBhea"), {
+    mode: "javascript",
+    lineNumbers:false,
+    tabSize: 2
+  });
+   codeMirrorMap.set("uBhea", editor1);}
+  </script>
+  </div>
+ </div>
+</div><ul>
+ <li><strong>Boolean conversion quirks:</strong></li>
+</ul><p>Falsy values (converted to <code>false</code>) include: <code>0</code>, <code>""</code>, <code>null</code>, <code>undefined</code>, <code>NaN</code>, and <code>false</code>.</p><h3 id="summary">Summary</h3><table>
+ <thead>
+  <tr>
+   <th>Conversion Type</th>
+   <th>When It Happens</th>
+   <th>Examples</th>
+  </tr>
+ </thead>
+ <tbody>
+  <tr>
+   <td>Implicit</td>
+   <td>Automatic, during operations</td>
+   <td><code>"5" + 2</code> → <code>"52"</code></td>
+  </tr>
+  <tr>
+   <td>Explicit</td>
+   <td>Manually using functions</td>
+   <td><code>Number("5")</code> → <code>5</code></td>
+  </tr>
+ </tbody>
+</table><p>Understanding and controlling type conversion is essential for writing reliable and predictable JavaScript code. When in doubt, prefer explicit conversion to avoid tricky bugs.</p><div class = "chapter-navi-section">
+<a href="javascript-syntax-introduction-to-javascript.htm" class="nav-button prev">←</a>
+<a href='javascript-syntax.htm#basic-syntax-and-statements' class="nav-button toc-link">Index</a>
+<a href="javascript-syntax-control-flow.htm" class="nav-button next">→</a>
+</div>
+<section class="download-section">
+  <div class="book-cover" style="background-image: url('data:image/jpg;base64,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');">
+<div class="series-name">Introduction</div>
+<div class="book-title">JavaScript Syntax</div>
+<div class="book-subtitle">From Fundamentals to Advanced Patterns</div>
+<div class="book-footer">readbytes.github.io</div>
+</div>
+  <div class="download-info">
+    <h2 id='bottom'>Download This Ebook</h2>
+    <p class="format-label">Available formats:</p>
+    <div class="download-buttons">
+      <a href="javascript-syntax.pdf" class="download-button">📄 PDF</a>
+      <a href="javascript-syntax.epub" class="download-button">📘 EPUB</a>
+    </div>
+  </div>
+</section><div class='related-books'>
+<h2>Javascript Introduction Books</h2>
+<div class='related-book-list'>
+<a href="javascript-for-beginners.htm"><div class="book-cover" style="background-image: url('data:image/jpg;base64,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');">
+<div class="series-name">Introduction</div>
+<div class="book-title">JavaScript for Beginners</div>
+<div class="book-subtitle">From Basics to Advanced Programming</div>
+<div class="book-footer">readbytes.github.io</div>
+</div></a>
+
+
+<a href="javascript-syntax.htm"><div class="book-cover" style="background-image: url('data:image/jpg;base64,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');">
+<div class="series-name">Introduction</div>
+<div class="book-title">JavaScript Syntax</div>
+<div class="book-subtitle">From Fundamentals to Advanced Patterns</div>
+<div class="book-footer">readbytes.github.io</div>
+</div></a>
+
+
+
+<a href='javascript.htm'><div class='book-cover'>More Javascript Books</div></a>
+</div>
+</div>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+  
+  <script>
+    function copyCode(button) {
+      const code = button.nextElementSibling.innerText;
+      navigator.clipboard.writeText(code).then(() => {
+        button.textContent = 'Copied!';
+        setTimeout(() => { button.textContent = 'Copy'; }, 1500);
+      });
+    }
+  </script>  
+
+<footer class="page-footer">
+    <nav>
+      <a href="https://readbytes.github.io">Home</a> | 
+      Email:<script language="JavaScript" type="text/javascript">
+var part1 = 'yinpeng';var part6 = '263';var part2 = Math.pow(2,6);var part3 = String.fromCharCode(part2);var part4 = 'hotmail dot com';var part5 = part1 + String.fromCharCode(part2) + part4;document.write(part1 + part6 + part3 + part4);
+</script>
+    </nav>
+  <p>© 2025 — All rights reserved.</p>    
+  </footer>
+
+</body>
+</html>

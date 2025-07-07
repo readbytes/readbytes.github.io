@@ -1,0 +1,970 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>JavaScript Object-Oriented Programming Constructors and the `new` Keyword</title>
+<link rel='shortcut icon' href='https://java2s.com/style/favicon.ico'>
+<link href="https://fonts.googleapis.com/css2?family=Merriweather&display=swap" rel="stylesheet" />
+<link href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.css" />
+<script src="https://cdn.jsdelivr.net/npm/typescript@5/lib/typescript.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/htmlmixed/htmlmixed.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/xml/xml.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/css/css.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/javascript/javascript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/javascript/typescript.min.js"></script>
+<script>
+  const codeMirrorMap = new Map();
+  function renderIframe(textarea_id, iframe_id) {
+      const html = codeMirrorMap.get(textarea_id).getValue();
+      const iframe = document.getElementById(iframe_id);
+      iframe.style.display = "block";
+      iframe.srcdoc = html;  
+  }
+  function renderIframeForClientTypescript(textarea_id, iframe_id) {
+      let code = codeMirrorMap.get(textarea_id).getValue();
+      code = ts.transpile(code);
+      const iframe = document.getElementById(iframe_id);
+      const doc = iframe.contentDocument || iframe.contentWindow.document;
+
+const html = `
+  <!DOCTYPE html>
+  <html>
+    <head>
+      <title>Output</title>
+      <style>
+        body { font-family: monospace; padding: 1em; background: #f4f4f4; color: #222; }
+        pre { white-space: pre-wrap; word-break: break-word; }
+        .error { color: red; }
+      </style>
+    </head>
+    <body>
+      <pre id="log"></pre>
+      <script>
+        (function(){
+          const logEl = document.getElementById('log');
+          const origLog = console.log;
+          const origError = console.error;
+
+          console.log = (...args) => {
+            logEl.textContent += args.join(' ') + '\\n';
+            origLog.apply(console, args);
+          };
+          console.table = (...args) => {
+            logEl.textContent += args.join(' ') + '\\n';
+            origLog.apply(console, args);
+          };
+
+          console.error = (...args) => {
+            logEl.innerHTML +='<span class="error">' + args.join(' ') + '</span>';
+            origError.apply(console, args);
+          };
+          window.addEventListener("error", function (event) {
+              console.error("Caught by event listener:", event.message);
+          });    
+          try {             
+              ${code};
+          } catch (err) {
+            console.error(err.stack || err.message);
+          }
+        })();
+      <\/script>
+    </body>
+  </html>
+`;
+      iframe.style.display = "block";
+      iframe.srcdoc = html;  
+  }
+
+    function renderIframeForClientJavascript(textarea_id, iframe_id) {
+        const code = codeMirrorMap.get(textarea_id).getValue();
+        const iframe = document.getElementById(iframe_id);
+        const doc = iframe.contentDocument || iframe.contentWindow.document;
+
+  const html = `
+    <!DOCTYPE html>
+    <html>
+      <head>
+        <title>Output</title>
+        <style>
+          body { font-family: monospace; padding: 1em; background: #f4f4f4; color: #222; }
+          pre { white-space: pre-wrap; word-break: break-word; }
+          .error { color: red; }
+        </style>
+      </head>
+      <body>
+        <pre id="log"></pre>
+        <script>
+          (function(){
+            const logEl = document.getElementById('log');
+            const origLog = console.log;
+            const origError = console.error;
+
+            console.log = (...args) => {
+              logEl.textContent += args.join(' ') + '\\n';
+              origLog.apply(console, args);
+            };
+            console.table = (...args) => {
+              logEl.textContent += args.join(' ') + '\\n';
+              origLog.apply(console, args);
+            };
+
+            console.error = (...args) => {
+              logEl.innerHTML +='<span class="error">' + args.join(' ') + '</span>';
+              origError.apply(console, args);
+            };
+            window.addEventListener("error", function (event) {
+                console.error("Caught by event listener:", event.message);
+            });    
+            try {
+             ${code}; 
+            } catch (err) {
+              console.error(err.stack || err.message);
+            }
+          })();
+        <\/script>
+      </body>
+    </html>
+  `;
+    
+        iframe.style.display = "block";
+        iframe.srcdoc = html;  
+    }
+
+    function toggleSnippetAndRefresh(id, textarea_id) {
+      const box = document.getElementById(id);
+      box.classList.toggle("open");
+      codeMirrorMap.get(textarea_id).refresh();
+    }
+
+  </script>
+<style>
+body {
+  background: #f8f7f5;
+  font-family: 'Merriweather', serif;
+  color: #333;
+  margin: 0;
+  padding: 2rem 1rem;
+  font-size: 15px; /* smaller body font */
+  line-height: 1.5;
+}
+
+.container {
+  max-width: 700px;
+  margin: 0 auto;
+  background: white;
+  padding: 1rem 2rem;
+  box-shadow: 0 0 15px rgba(0,0,0,0.1);
+}
+.book-title-chapter {
+  font-family: 'Merriweather', serif;
+  font-size: 2rem;
+  font-weight: bold;
+  text-align: center;
+  margin-bottom: 2rem;
+  border-bottom: 2px solid #ccc;
+  padding-bottom: 0.5rem;
+  color: #2c3e50;
+}
+
+.book-subtitle-chapter {
+  text-align: center;
+  font-size: 1rem;
+  color: #666;
+  margin-top: -1rem;
+  margin-bottom: 2rem;
+}
+
+    .related-books {
+      margin-top: 40px;
+    }
+
+    .related-books h2 {
+      font-size: 22px;
+      margin-bottom: 20px;
+      border-bottom: 2px solid #eee;
+      padding-bottom: 8px;
+      color: #333;
+    }
+    .related-book-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+h1, h2, h3 {
+  font-weight: 600;
+  margin-top: 2.5rem;
+  margin-bottom: 1rem;
+  line-height: 1.2;
+}
+
+h1 {
+  font-size: 1.8rem; /* smaller heading */
+}
+
+h2 {
+  font-size: 1.4rem;
+}
+
+h3 {
+  font-size: 1.2rem;
+}
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-family: sans-serif;
+      font-size: 1em;
+      margin: 1em 0;
+    }
+
+    th, td {
+      border: 1px solid #cccccc;
+      padding: 0.6em 1em;
+      text-align: left;
+    }
+
+    th {
+      background-color: #f2f2f2;
+      font-weight: bold;
+    }
+
+    tr:nth-child(even) {
+      background-color: #fafafa;
+    }
+
+    /* Optional hover effect */
+    tr:hover {
+      background-color: #e6f7ff;
+    }
+ 
+a {
+  color: #555;
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+
+
+.code-block {
+    position: relative;
+    margin-bottom: 1em;
+}
+.copy-button {
+    background: transparent; 
+    color: white;
+
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    border: none;
+    padding: 4px 8px;
+    font-size: 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    z-index: 1;
+}
+
+.copy-button:hover {
+background-color: #0056b3;
+}
+.page-footer {
+  margin-top: 4rem;
+  padding: 1rem 0;
+  text-align: center;
+  font-size: 0.85rem;
+  color: #666;
+  border-top: 1px solid #ccc;
+  background-color: #fafafa;
+}
+.page-footer a {
+     color: #555;
+    text-decoration: none;
+  }
+  .page-footer a:hover {
+    text-decoration: underline;
+  }
+.chapter-navi-section {
+display: flex;
+justify-content: space-between;
+align-items: center;
+padding-bottom: 10px;
+}  
+
+.nav-link {
+  color: inherit;
+  text-decoration: none;
+  opacity: 0.5;
+  transition: opacity 0.3s ease, text-decoration 0.3s ease;
+}
+
+.nav-link:hover {
+  opacity: 0.9;
+  text-decoration: underline;
+}
+
+.prev {
+  text-align: left;
+}
+.toc-link {
+  text-align: center;
+}
+.next {
+  text-align: right;
+}
+.download-section {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2rem;
+  padding: 2rem 1rem;
+  max-width: 600px;
+  margin: 3rem auto;
+  background-color: #f9f9f9;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+}
+
+    .book-cover {
+      width: 130px;
+      height: 180px;
+      
+      background-size: cover; /* Ensures the image covers the entire div */
+      background-position: center; /* Centers the image */
+            
+      background: linear-gradient(145deg, #e0dede, #f9f9f9);
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 10px;
+      box-sizing: border-box;
+      position: relative;
+      font-family: 'Roboto', sans-serif;
+    }
+
+    .book-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 16px;
+      font-weight: 600;
+      color: #fff;
+      margin-bottom: 4px;
+    }
+
+    .book-subtitle {
+      font-size: 12px;
+      color: #aaa;
+      margin-bottom: 10px;
+    }
+
+    .series-name {
+      position: absolute;
+      top: 8px;
+      left: 8px;
+      font-size: 10px;
+      color: #fff;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-weight: bold;
+    }
+
+    .book-footer {
+      position: absolute;
+      bottom: 8px;
+      font-size: 10px;
+      color: #aaa;
+    }
+
+.download-info h2 {
+  margin: 0 0 0.5rem;
+  font-size: 1.2rem;
+}
+
+.format-label {
+  margin: 0 0 0.5rem;
+  font-size: 0.95rem;
+  color: #555;
+}
+
+.download-buttons {
+  display: flex;
+  gap: 1rem;
+}
+
+.download-button {
+  background-color: #4A90E2;
+  color: white;
+  padding: 0.5em 1.2em;
+  text-decoration: none;
+  border-radius: 25px;
+  font-size: 0.95rem;
+  transition: background-color 0.3s ease;
+}
+
+.download-button:hover {
+  background-color: #357ABD;
+}
+
+    code {
+ 
+      color: #d35400; 
+    }
+html {
+    scroll-behavior: smooth;
+}
+    .snippet-container {
+      overflow: hidden;    
+    }
+
+    .snippet-header {
+      background: #f0f0f0;
+      color: #333;
+      padding: 0.75rem 1rem;
+      cursor: pointer;
+      font-size: 1rem;
+    }
+
+    .snippet-body {
+      display: none;
+      font-family: monospace;
+    }
+
+    .snippet-container.open .snippet-body {
+      display: block;
+    }
+
+.CodeMirror {
+  border: 2px solid #ccc;
+  border-radius: 4px;
+  resize: vertical;
+}
+
+    button { padding: 0.5em 1em; background: green; color: white; border: none; cursor: pointer; }
+    button:hover { background: #1e7e34; }
+    .result_iframe { width:99%; height:200px; margin-top: 1em;  resize: both;border:1px solid #ccc;}        
+</style>
+</head>
+<body> 
+
+  <div class="container">
+    <div class = "chapter-navi-section">
+<a href="javascript-object-oriented-programming-prototypes-and-inheritance-fundamentals.htm" class="nav-button prev">←</a>
+<a href='javascript-object-oriented-programming.htm#constructors-and-the-new-keyword' class="nav-button toc-link">Index</a>
+<a href="javascript-object-oriented-programming-es6-classes-syntax-and-concepts.htm" class="nav-button next">→</a>
+</div>
+
+    <h1 class="book-title-chapter" id = 'top'>Constructors and the <code>new</code> Keyword</h1>
+    <h3 class="book-subtitle-chapter">JavaScript Object-Oriented Programming</h3>   
+    <!-- <h1 class ="chapter-title"></h1> -->
+    <h2 id='constructor-functions-explained'>4.1 Constructor Functions Explained</h2><p>In JavaScript, <strong>constructor functions</strong> are special functions used to create and initialize new objects. Before the introduction of ES6 <code>class</code> syntax, constructor functions were the primary way to define reusable object templates.</p><h3 id="what-is-a-constructor-function">What Is a Constructor Function?</h3><p>A constructor function is a <strong>regular function</strong> designed to be used with the <code>new</code> keyword. When called with <code>new</code>, it performs three key actions:</p><ol>
+ <li>A new empty object is created.</li>
+ <li>The new object is linked to the constructor’s prototype.</li>
+ <li>The function body is executed with <code>this</code> bound to the new object.</li>
+ <li>The new object is returned automatically (unless another object is explicitly returned).</li>
+</ol><h3 id="example-basic-constructor-function">Example: Basic Constructor Function</h3><div>
+ <div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+  <pre><code class="language-js">function Person(name, age) {
+  this.name = name;
+  this.age = age;
+}
+
+const alice = new Person("Alice", 30);
+console.log(alice.name); // "Alice"
+console.log(alice.age);  // 30</code></pre>
+ </div>
+ <div class="snippet-container" id="nxSEm">
+  <div class="snippet-header" onclick="toggleSnippetAndRefresh('nxSEm','5eqem')">
+   Try it in editor
+  </div>
+  <div class="snippet-body"><textarea id="5eqem">function Person(name, age) {
+  this.name = name;
+  this.age = age;
+}
+
+const alice = new Person("Alice", 30);
+console.log(alice.name); // "Alice"
+console.log(alice.age);  // 30</textarea> <br> <button onclick="renderIframeForClientJavascript('5eqem','elqyJ')">Run</button> <iframe id="elqyJ" class="result_iframe" style="display: none;"></iframe>
+   <script>
+  {let editor1 = CodeMirror.fromTextArea(document.getElementById("5eqem"), {
+    mode: "javascript",
+    lineNumbers:false,
+    tabSize: 2
+  });
+   codeMirrorMap.set("5eqem", editor1);}
+  </script>
+  </div>
+ </div>
+</div><p>Here’s what happens under the hood when <code>new Person("Alice", 30)</code> is called:</p><ul>
+ <li>A new object is created.</li>
+ <li><code>this.name = name</code> sets <code>name</code> on the new object.</li>
+ <li>The object is returned and stored in <code>alice</code>.</li>
+</ul><h3 id="blueprint-for-objects">Blueprint for Objects</h3><p>Constructor functions act like <strong>blueprints</strong> for creating multiple objects with the same structure:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-js">const bob = new Person("Bob", 25);
+console.log(bob.name); // "Bob"</code></pre>
+</div><p>Each call to <code>new Person(...)</code> creates a new <code>Person</code> object with its own <code>name</code> and <code>age</code>.</p><h3 id="naming-convention">Naming Convention</h3><p>By convention, constructor function names are <strong>capitalized</strong> (e.g., <code>Person</code>, <code>Car</code>, <code>Animal</code>) to distinguish them from regular functions. This signals to other developers that the function is intended to be used with <code>new</code>.</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-js">function car(make, model) { // ❌ Not recommended
+  this.make = make;
+  this.model = model;
+}
+
+function Car(make, model) { // ✅ Preferred
+  this.make = make;
+  this.model = model;
+}</code></pre>
+</div><h3 id="how-constructor-functions-differ-from-regular-functions">How Constructor Functions Differ from Regular Functions</h3><table>
+ <thead>
+  <tr>
+   <th>Feature</th>
+   <th>Constructor Function (<code>new</code>)</th>
+   <th>Regular Function (without <code>new</code>)</th>
+  </tr>
+ </thead>
+ <tbody>
+  <tr>
+   <td>Called with <code>new</code>?</td>
+   <td>Yes</td>
+   <td>No</td>
+  </tr>
+  <tr>
+   <td>Creates a new object?</td>
+   <td>Yes</td>
+   <td>No</td>
+  </tr>
+  <tr>
+   <td>Sets <code>this</code> to object?</td>
+   <td>Yes</td>
+   <td>Usually global or <code>undefined</code></td>
+  </tr>
+  <tr>
+   <td>Returns object?</td>
+   <td>Yes (automatically)</td>
+   <td>Only if explicitly returned</td>
+  </tr>
+ </tbody>
+</table><h3 id="common-pitfalls">Common Pitfalls</h3><h4 id="forgetting-new">Forgetting <code>new</code></h4><p>If you call a constructor function without <code>new</code>, <code>this</code> will not refer to a new object. It may refer to the global object (non-strict mode) or <code>undefined</code> (strict mode), leading to unexpected bugs.</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-js">const badPerson = Person("Eve", 40); // ❌ No 'new' used
+console.log(badPerson); // undefined</code></pre>
+</div><p>To avoid this, always use <code>new</code> when calling a constructor.</p><h4 id="returning-a-different-object">Returning a Different Object</h4><p>If a constructor function explicitly returns an object, that object is returned instead of the one created by <code>new</code>:</p><div>
+ <div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+  <pre><code class="language-js">function WeirdPerson(name) {
+  this.name = name;
+  return { greeting: "Hi" }; // overrides the created object
+}
+
+const wp = new WeirdPerson("Sam");
+console.log(wp.name); // undefined
+console.log(wp.greeting); // "Hi"</code></pre>
+ </div>
+ <div class="snippet-container" id="0kZB1">
+  <div class="snippet-header" onclick="toggleSnippetAndRefresh('0kZB1','h0Yh3')">
+   Try it in editor
+  </div>
+  <div class="snippet-body"><textarea id="h0Yh3">function WeirdPerson(name) {
+  this.name = name;
+  return { greeting: "Hi" }; // overrides the created object
+}
+
+const wp = new WeirdPerson("Sam");
+console.log(wp.name); // undefined
+console.log(wp.greeting); // "Hi"</textarea> <br> <button onclick="renderIframeForClientJavascript('h0Yh3','D21my')">Run</button> <iframe id="D21my" class="result_iframe" style="display: none;"></iframe>
+   <script>
+  {let editor1 = CodeMirror.fromTextArea(document.getElementById("h0Yh3"), {
+    mode: "javascript",
+    lineNumbers:false,
+    tabSize: 2
+  });
+   codeMirrorMap.set("h0Yh3", editor1);}
+  </script>
+  </div>
+ </div>
+</div><p>Usually, you should avoid returning objects from constructors unless you intend to override the default return.</p><h3 id="summary">Summary</h3><ul>
+ <li>Constructor functions are reusable blueprints for creating similar objects.</li>
+ <li>They work in tandem with the <code>new</code> keyword to automate object creation.</li>
+ <li>Capitalize constructor names to follow convention and improve readability.</li>
+ <li>Constructors were the foundation of object creation in JavaScript before ES6 classes.</li>
+</ul><p>Understanding constructor functions is essential, as modern <code>class</code> syntax builds directly upon them. They also help clarify how JavaScript implements object creation and inheritance behind the scenes.</p><div class = "chapter-navi-section">
+<a href="#top" class="nav-button prev">↑</a>
+<a href='javascript-object-oriented-programming.htm#constructors-and-the-new-keyword' class="nav-button toc-link">Index</a>
+<a href="#bottom" class="nav-button next">↓</a>
+</div>
+<h2 id='using-new-to-create-object-instances'>4.2 Using <code>new</code> to Create Object Instances</h2><p>In JavaScript, the <code>new</code> keyword is essential when using <strong>constructor functions</strong> to create objects. It automates several behind-the-scenes steps that allow the function to behave like a class, producing consistent and properly-linked instances.</p><h3 id="what-does-new-do">What Does <code>new</code> Do?</h3><p>When you call a constructor function with <code>new</code>, JavaScript performs <strong>four key steps</strong>:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-js">const obj = new ConstructorFunction();</code></pre>
+</div><p>Here's what happens under the hood:</p><ol>
+ <li><p><strong>A new empty object is created</strong>:</p>
+  <div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+   <pre><code class="language-js">const obj = {};</code></pre>
+  </div></li>
+ <li><p><strong>The new object is linked to the constructor’s prototype</strong>:</p>
+  <div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+   <pre><code class="language-js">Object.setPrototypeOf(obj, ConstructorFunction.prototype);</code></pre>
+  </div></li>
+ <li><p><strong>The constructor function is called with <code>this</code> bound to the new object</strong>:</p>
+  <div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+   <pre><code class="language-js">ConstructorFunction.call(obj);</code></pre>
+  </div></li>
+ <li><p><strong>The new object is returned (unless another object is returned explicitly)</strong>:</p>
+  <div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+   <pre><code class="language-js">return obj;</code></pre>
+  </div></li>
+</ol><h3 id="example-creating-an-object-with-new">Example: Creating an Object with <code>new</code></h3><div>
+ <div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+  <pre><code class="language-js">function Person(name, age) {
+  this.name = name;
+  this.age = age;
+}
+
+const alice = new Person("Alice", 30);
+console.log(alice.name); // "Alice"
+console.log(alice.age);  // 30</code></pre>
+ </div>
+ <div class="snippet-container" id="xm79W">
+  <div class="snippet-header" onclick="toggleSnippetAndRefresh('xm79W','y4Has')">
+   Try it in editor
+  </div>
+  <div class="snippet-body"><textarea id="y4Has">function Person(name, age) {
+  this.name = name;
+  this.age = age;
+}
+
+const alice = new Person("Alice", 30);
+console.log(alice.name); // "Alice"
+console.log(alice.age);  // 30</textarea> <br> <button onclick="renderIframeForClientJavascript('y4Has','PkVf4')">Run</button> <iframe id="PkVf4" class="result_iframe" style="display: none;"></iframe>
+   <script>
+  {let editor1 = CodeMirror.fromTextArea(document.getElementById("y4Has"), {
+    mode: "javascript",
+    lineNumbers:false,
+    tabSize: 2
+  });
+   codeMirrorMap.set("y4Has", editor1);}
+  </script>
+  </div>
+ </div>
+</div><ul>
+ <li><code>Person</code> is called as a constructor.</li>
+ <li>A new object (<code>alice</code>) is created and initialized with <code>name</code> and <code>age</code>.</li>
+ <li><code>alice.__proto__</code> is set to <code>Person.prototype</code>.</li>
+</ul><h3 id="visual-breakdown">Visual Breakdown</h3><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-js">function Animal(type) {
+  this.type = type;
+}
+
+const dog = new Animal("Dog");</code></pre>
+</div><p>Behind the scenes:</p><ol>
+ <li><code>const dog = {};</code></li>
+ <li><code>dog.__proto__ = Animal.prototype;</code></li>
+ <li><code>Animal.call(dog, "Dog");</code></li>
+ <li><code>return dog;</code></li>
+</ol><h3 id="confirming-the-prototype-link">Confirming the Prototype Link</h3><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-js">console.log(dog instanceof Animal);            // true
+console.log(Object.getPrototypeOf(dog) === Animal.prototype); // true</code></pre>
+</div><p>This confirms that <code>dog</code> inherits from <code>Animal.prototype</code>.</p><h3 id="what-happens-if-you-forget-new">What Happens if You Forget <code>new</code>?</h3><p>If you call a constructor function without <code>new</code>, <code>this</code> will not refer to a new object:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-js">function User(name) {
+  this.name = name;
+}
+
+const wrongUser = User("Eve"); // ❌ no 'new'
+
+console.log(wrongUser);       // undefined
+console.log(global.name);     // "Eve" (in non-strict mode)</code></pre>
+</div><ul>
+ <li>In non-strict mode, <code>this</code> refers to the global object (e.g., <code>window</code> in browsers).</li>
+ <li>In strict mode, <code>this</code> is <code>undefined</code>, and assigning <code>this.name</code> throws an error.</li>
+</ul><p>✅ <strong>Best practice</strong>: Always use <code>new</code> with constructor functions to avoid subtle bugs.</p><h3 id="defensive-programming-tip">Defensive Programming Tip</h3><p>To prevent misuse, constructor functions can include a guard:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-js">function Product(name) {
+  if (!(this instanceof Product)) {
+    return new Product(name); // auto-correct if called without new
+  }
+  this.name = name;
+}</code></pre>
+</div><h3 id="summary">Summary</h3><ul>
+ <li>The <code>new</code> keyword automates object creation from constructor functions.</li>
+ <li>It links the new object to the prototype, binds <code>this</code>, and returns the instance.</li>
+ <li>Forgetting <code>new</code> can result in incorrect context and subtle bugs.</li>
+ <li>Constructor functions rely on <code>new</code> to behave properly—understanding its steps is essential for mastering JavaScript OOP.</li>
+</ul><div class = "chapter-navi-section">
+<a href="#top" class="nav-button prev">↑</a>
+<a href='javascript-object-oriented-programming.htm#constructors-and-the-new-keyword' class="nav-button toc-link">Index</a>
+<a href="#bottom" class="nav-button next">↓</a>
+</div>
+<h2 id='properties-and-methods-in-constructors'>4.3 Properties and Methods in Constructors</h2><p>Constructor functions in JavaScript allow you to define <strong>properties and methods</strong> for each object instance by assigning them directly to <code>this</code>. This approach is straightforward and ensures that every object has its own unique set of data and behavior.</p><h3 id="defining-properties-with-this">Defining Properties with <code>this</code></h3><p>To create instance-specific properties, assign values to <code>this</code> inside the constructor function:</p><div>
+ <div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+  <pre><code class="language-js">function Person(name, age) {
+  this.name = name;
+  this.age = age;
+}
+
+const alice = new Person("Alice", 30);
+console.log(alice.name); // "Alice"</code></pre>
+ </div>
+ <div class="snippet-container" id="xOBas">
+  <div class="snippet-header" onclick="toggleSnippetAndRefresh('xOBas','b4XPt')">
+   Try it in editor
+  </div>
+  <div class="snippet-body"><textarea id="b4XPt">function Person(name, age) {
+  this.name = name;
+  this.age = age;
+}
+
+const alice = new Person("Alice", 30);
+console.log(alice.name); // "Alice"</textarea> <br> <button onclick="renderIframeForClientJavascript('b4XPt','rhW6i')">Run</button> <iframe id="rhW6i" class="result_iframe" style="display: none;"></iframe>
+   <script>
+  {let editor1 = CodeMirror.fromTextArea(document.getElementById("b4XPt"), {
+    mode: "javascript",
+    lineNumbers:false,
+    tabSize: 2
+  });
+   codeMirrorMap.set("b4XPt", editor1);}
+  </script>
+  </div>
+ </div>
+</div><p>Each call to <code>new Person()</code> creates a <strong>new object</strong> with its own <code>name</code> and <code>age</code>.</p><h3 id="defining-methods-inside-constructors">Defining Methods Inside Constructors</h3><p>You can also define methods by assigning a function to <code>this</code>:</p><div>
+ <div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+  <pre><code class="language-js">function Person(name, age) {
+  this.name = name;
+  this.age = age;
+  this.greet = function() {
+    console.log(`Hi, I'm ${this.name} and I'm ${this.age} years old.`);
+  };
+}
+
+const bob = new Person("Bob", 25);
+bob.greet(); // "Hi, I'm Bob and I'm 25 years old."</code></pre>
+ </div>
+ <div class="snippet-container" id="WZc87">
+  <div class="snippet-header" onclick="toggleSnippetAndRefresh('WZc87','n9Y17')">
+   Try it in editor
+  </div>
+  <div class="snippet-body"><textarea id="n9Y17">function Person(name, age) {
+  this.name = name;
+  this.age = age;
+  this.greet = function() {
+    console.log(`Hi, I'm ${this.name} and I'm ${this.age} years old.`);
+  };
+}
+
+const bob = new Person("Bob", 25);
+bob.greet(); // "Hi, I'm Bob and I'm 25 years old."</textarea> <br> <button onclick="renderIframeForClientJavascript('n9Y17','bkGzr')">Run</button> <iframe id="bkGzr" class="result_iframe" style="display: none;"></iframe>
+   <script>
+  {let editor1 = CodeMirror.fromTextArea(document.getElementById("n9Y17"), {
+    mode: "javascript",
+    lineNumbers:false,
+    tabSize: 2
+  });
+   codeMirrorMap.set("n9Y17", editor1);}
+  </script>
+  </div>
+ </div>
+</div><h3 id="important-method-duplication">Important: Method Duplication</h3><p>While this works, defining methods inside constructors <strong>duplicates the function</strong> for each instance:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-js">const person1 = new Person("Amy", 40);
+const person2 = new Person("Tom", 22);
+
+console.log(person1.greet === person2.greet); // false</code></pre>
+</div><ul>
+ <li>Each instance gets its own copy of <code>greet</code>.</li>
+ <li>This uses more memory and is <strong>less efficient</strong>, especially when many objects are created.</li>
+</ul><h3 id="best-practice-use-the-prototype-for-shared-methods">Best Practice: Use the Prototype for Shared Methods</h3><p>Instead of defining methods in the constructor, place them on the prototype so all instances can share one copy:</p><div>
+ <div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+  <pre><code class="language-js">function Person(name, age) {
+  this.name = name;
+  this.age = age;
+}
+
+Person.prototype.greet = function() {
+  console.log(`Hi, I'm ${this.name} and I'm ${this.age} years old.`);
+};
+
+const person1 = new Person("Amy", 40);
+const person2 = new Person("Tom", 22);
+
+console.log(person1.greet === person2.greet); // true</code></pre>
+ </div>
+ <div class="snippet-container" id="0MIVJ">
+  <div class="snippet-header" onclick="toggleSnippetAndRefresh('0MIVJ','0pD2o')">
+   Try it in editor
+  </div>
+  <div class="snippet-body"><textarea id="0pD2o">function Person(name, age) {
+  this.name = name;
+  this.age = age;
+}
+
+Person.prototype.greet = function() {
+  console.log(`Hi, I'm ${this.name} and I'm ${this.age} years old.`);
+};
+
+const person1 = new Person("Amy", 40);
+const person2 = new Person("Tom", 22);
+
+console.log(person1.greet === person2.greet); // true</textarea> <br> <button onclick="renderIframeForClientJavascript('0pD2o','jb5dI')">Run</button> <iframe id="jb5dI" class="result_iframe" style="display: none;"></iframe>
+   <script>
+  {let editor1 = CodeMirror.fromTextArea(document.getElementById("0pD2o"), {
+    mode: "javascript",
+    lineNumbers:false,
+    tabSize: 2
+  });
+   codeMirrorMap.set("0pD2o", editor1);}
+  </script>
+  </div>
+ </div>
+</div><p>✅ <strong>More memory efficient</strong> and better for performance.</p><h3 id="when-to-use-in-constructor-methods">When to Use In-Constructor Methods</h3><p>While prototype methods are preferred for shared behavior, in-constructor methods may be useful when:</p><ul>
+ <li>You need a <strong>unique method</strong> per instance (e.g., closures or private data).</li>
+ <li>You’re creating only a few objects and performance isn't a concern.</li>
+</ul><h3 id="summary">Summary</h3><ul>
+ <li>Use <code>this.property = value</code> to assign instance-specific properties in constructors.</li>
+ <li>Defining methods with <code>this.method = function() {}</code> gives each instance a unique copy.</li>
+ <li>For shared behavior, <strong>prefer adding methods to the constructor’s prototype</strong>.</li>
+ <li>Understanding this distinction is key to writing optimized, scalable object-oriented JavaScript.</li>
+</ul><div class = "chapter-navi-section">
+<a href="#top" class="nav-button prev">↑</a>
+<a href='javascript-object-oriented-programming.htm#constructors-and-the-new-keyword' class="nav-button toc-link">Index</a>
+<a href="#bottom" class="nav-button next">↓</a>
+</div>
+<h2 id='practical-creating-multiple-instances-of-a-car-object'>4.4 Practical: Creating Multiple Instances of a Car Object</h2><p>Now that you understand how constructor functions and the <code>new</code> keyword work, let’s put it all together in a practical example. We’ll create a <code>Car</code> constructor that lets us build multiple car objects with their own properties, while efficiently sharing common methods.</p><h3 id="step-1-define-the-constructor-function">Step 1: Define the Constructor Function</h3><p>We'll define a <code>Car</code> constructor with <code>make</code>, <code>model</code>, and <code>year</code> as properties:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-js">function Car(make, model, year) {
+  this.make = make;
+  this.model = model;
+  this.year = year;
+}</code></pre>
+</div><p>Each new <code>Car</code> object will receive its own copy of these values.</p><h3 id="step-2-add-shared-methods-using-the-prototype">Step 2: Add Shared Methods Using the Prototype</h3><p>We want every car to be able to start and display its information, but we don’t want to duplicate the methods for every instance. So, we define the methods on the prototype:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-js">Car.prototype.start = function() {
+  console.log(`${this.make} ${this.model} is starting...`);
+};
+
+Car.prototype.displayInfo = function() {
+  console.log(`Make: ${this.make}, Model: ${this.model}, Year: ${this.year}`);
+};</code></pre>
+</div><p>These methods are shared across all car instances.</p><h3 id="step-3-create-multiple-car-instances">Step 3: Create Multiple Car Instances</h3><p>Let’s create a few different cars:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-js">const car1 = new Car("Toyota", "Corolla", 2020);
+const car2 = new Car("Ford", "Mustang", 2022);
+const car3 = new Car("Tesla", "Model 3", 2023);</code></pre>
+</div><p>Each object stores its own data, but they all use the same <code>start()</code> and <code>displayInfo()</code> methods from the prototype.</p><h3 id="step-4-use-the-methods">Step 4: Use the Methods</h3><p>Now let’s try out the methods:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-js">car1.start();         // Toyota Corolla is starting...
+car1.displayInfo();   // Make: Toyota, Model: Corolla, Year: 2020
+
+car2.start();         // Ford Mustang is starting...
+car2.displayInfo();   // Make: Ford, Model: Mustang, Year: 2022
+
+car3.start();         // Tesla Model 3 is starting...
+car3.displayInfo();   // Make: Tesla, Model: Model 3, Year: 2023</code></pre>
+</div><h3 id="step-5-check-shared-methods">Step 5: Check Shared Methods</h3><p>Let’s verify that the methods are shared:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-js">console.log(car1.start === car2.start); // true</code></pre>
+</div><p>This confirms that both instances use the <strong>same function</strong> for <code>start()</code>, which saves memory and improves performance.</p><div class="snippet-container" id="Eovqe">
+ <div class="snippet-header" onclick="toggleSnippet('Eovqe')">
+  Click to view full runnable Code
+ </div>
+ <div class="snippet-body">
+  <div class="code-block"><button class="copy-button" onclick="copyCode(this)">📋</button>
+   <pre><code class="language-js">
+// Step 1: Define the Constructor Function
+function Car(make, model, year) {
+  this.make = make;
+  this.model = model;
+  this.year = year;
+}
+
+// Step 2: Add Shared Methods Using the Prototype
+Car.prototype.start = function() {
+  console.log(`${this.make} ${this.model} is starting...`);
+};
+
+Car.prototype.displayInfo = function() {
+  console.log(`Make: ${this.make}, Model: ${this.model}, Year: ${this.year}`);
+};
+
+// Step 3: Create Multiple Car Instances
+const car1 = new Car("Toyota", "Corolla", 2020);
+const car2 = new Car("Ford", "Mustang", 2022);
+const car3 = new Car("Tesla", "Model 3", 2023);
+
+// Step 4: Use the Methods
+car1.start();         // Toyota Corolla is starting...
+car1.displayInfo();   // Make: Toyota, Model: Corolla, Year: 2020
+
+car2.start();         // Ford Mustang is starting...
+car2.displayInfo();   // Make: Ford, Model: Mustang, Year: 2022
+
+car3.start();         // Tesla Model 3 is starting...
+car3.displayInfo();   // Make: Tesla, Model: Model 3, Year: 2023
+
+// Step 5: Check Shared Methods
+console.log(car1.start === car2.start); // true 
+</code></pre>
+  </div>
+ </div>
+</div><h3 id="summary">Summary</h3><ul>
+ <li>The <code>Car</code> constructor creates new objects with their own <code>make</code>, <code>model</code>, and <code>year</code>.</li>
+ <li>Common methods like <code>start()</code> and <code>displayInfo()</code> are added to the prototype, so they are shared among all instances.</li>
+ <li>This approach balances <strong>customized data per object</strong> with <strong>efficient, reusable behavior</strong>, which is a key advantage of JavaScript’s object-oriented design.</li>
+</ul><p>By combining constructors with prototype methods, you create scalable, maintainable object models—perfect for real-world applications.</p><div class = "chapter-navi-section">
+<a href="javascript-object-oriented-programming-prototypes-and-inheritance-fundamentals.htm" class="nav-button prev">←</a>
+<a href='javascript-object-oriented-programming.htm#constructors-and-the-new-keyword' class="nav-button toc-link">Index</a>
+<a href="javascript-object-oriented-programming-es6-classes-syntax-and-concepts.htm" class="nav-button next">→</a>
+</div>
+<section class="download-section">
+  <div class="book-cover" style="background-image: url('data:image/jpg;base64,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');">
+<div class="series-name">Introduction</div>
+<div class="book-title">JavaScript Object-Oriented Programming</div>
+<div class="book-subtitle">From Basics to Advanced Design</div>
+<div class="book-footer">readbytes.github.io</div>
+</div>
+  <div class="download-info">
+    <h2 id='bottom'>Download This Ebook</h2>
+    <p class="format-label">Available formats:</p>
+    <div class="download-buttons">
+      <a href="javascript-object-oriented-programming.pdf" class="download-button">📄 PDF</a>
+      <a href="javascript-object-oriented-programming.epub" class="download-button">📘 EPUB</a>
+    </div>
+  </div>
+</section><div class='related-books'>
+<h2>Java Introduction Books</h2>
+<div class='related-book-list'>
+<a href="javascript-object-oriented-programming.htm"><div class="book-cover" style="background-image: url('data:image/jpg;base64,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');">
+<div class="series-name">Introduction</div>
+<div class="book-title">JavaScript Object-Oriented Programming</div>
+<div class="book-subtitle">From Basics to Advanced Design</div>
+<div class="book-footer">readbytes.github.io</div>
+</div></a>
+
+
+
+<a href='java.htm'><div class='book-cover'>More Java Books</div></a>
+</div>
+</div>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+    <script>
+  function toggleSnippet(id) {
+      const box = document.getElementById(id);
+      box.classList.toggle("open");
+  }  
+  </script>
+  <script>
+    function copyCode(button) {
+      const code = button.nextElementSibling.innerText;
+      navigator.clipboard.writeText(code).then(() => {
+        button.textContent = 'Copied!';
+        setTimeout(() => { button.textContent = 'Copy'; }, 1500);
+      });
+    }
+  </script>  
+
+<footer class="page-footer">
+    <nav>
+      <a href="https://readbytes.github.io">Home</a> | 
+      Email:<script language="JavaScript" type="text/javascript">
+var part1 = 'yinpeng';var part6 = '263';var part2 = Math.pow(2,6);var part3 = String.fromCharCode(part2);var part4 = 'hotmail dot com';var part5 = part1 + String.fromCharCode(part2) + part4;document.write(part1 + part6 + part3 + part4);
+</script>
+    </nav>
+  <p>© 2025 — All rights reserved.</p>    
+  </footer>
+
+</body>
+</html>
