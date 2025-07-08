@@ -1,0 +1,955 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>JavaScript Regex Debugging and Testing Regex</title>
+<link rel='shortcut icon' href='https://java2s.com/style/favicon.ico'>
+<link href="https://fonts.googleapis.com/css2?family=Merriweather&display=swap" rel="stylesheet" />
+<link href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.css" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/theme/material.css"> <!-- Dark theme -->
+<script src="https://cdn.jsdelivr.net/npm/typescript@5/lib/typescript.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/htmlmixed/htmlmixed.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/xml/xml.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/css/css.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/javascript/javascript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/javascript/typescript.min.js"></script>
+<script>
+  const codeMirrorMap = new Map();
+  function renderIframe(textarea_id, iframe_id) {
+      const html = codeMirrorMap.get(textarea_id).getValue();
+      const iframe = document.getElementById(iframe_id);
+      iframe.style.display = "block";
+      iframe.srcdoc = html;  
+  }
+  function renderIframeForClientTypescript(textarea_id, iframe_id) {
+      let code = codeMirrorMap.get(textarea_id).getValue();
+      code = ts.transpile(code);
+      const iframe = document.getElementById(iframe_id);
+      const doc = iframe.contentDocument || iframe.contentWindow.document;
+
+const html = `
+  <!DOCTYPE html>
+  <html>
+    <head>
+      <title>Output</title>
+      <style>
+        body { font-family: monospace; padding: 1em; background: #f4f4f4; color: #222; }
+        pre { white-space: pre-wrap; word-break: break-word; }
+        .error { color: red; }
+      </style>
+    </head>
+    <body>
+      <pre id="log"></pre>
+      <script>
+        (function(){
+          const logEl = document.getElementById('log');
+          const origLog = console.log;
+          const origError = console.error;
+
+          console.log = (...args) => {
+            logEl.textContent += args.join(' ') + '\\n';
+            origLog.apply(console, args);
+          };
+          console.table = (...args) => {
+            logEl.textContent += args.join(' ') + '\\n';
+            origLog.apply(console, args);
+          };
+
+          console.error = (...args) => {
+            logEl.innerHTML +='<span class="error">' + args.join(' ') + '</span>';
+            origError.apply(console, args);
+          };
+          window.addEventListener("error", function (event) {
+              console.error("Caught by event listener:", event.message);
+          });    
+          try {             
+              ${code};
+          } catch (err) {
+            console.error(err.stack || err.message);
+          }
+        })();
+      <\/script>
+    </body>
+  </html>
+`;
+
+      iframe.style.display = "block";
+      iframe.srcdoc = html;  
+  }
+
+    function renderIframeForClientJavascript(textarea_id, iframe_id) {
+        const code = codeMirrorMap.get(textarea_id).getValue();
+        const iframe = document.getElementById(iframe_id);
+        const doc = iframe.contentDocument || iframe.contentWindow.document;
+
+  const html = `
+    <!DOCTYPE html>
+    <html>
+      <head>
+        <title>Output</title>
+        <style>
+          body { font-family: monospace; padding: 1em; background: #1e1e1e; color: #eee; }
+          pre { white-space: pre-wrap; word-break: break-word; }
+          .error { color: red; }
+        </style>
+      </head>
+      <body>
+        <pre id="log"></pre>
+        <script>
+          (function(){
+            const logEl = document.getElementById('log');
+            const origLog = console.log;
+            const origError = console.error;
+
+            console.log = (...args) => {
+              logEl.textContent += args.join(' ') + '\\n';
+              origLog.apply(console, args);
+            };
+            console.table = (...args) => {
+              logEl.textContent += args.join(' ') + '\\n';
+              origLog.apply(console, args);
+            };
+
+            console.error = (...args) => {
+              logEl.innerHTML +='<span class="error">' + args.join(' ') + '</span>';
+              origError.apply(console, args);
+            };
+            window.addEventListener("error", function (event) {
+                console.error("Caught by event listener:", event.message);
+            });    
+            try {
+             ${code}; 
+            } catch (err) {
+              console.error(err.stack || err.message);
+            }
+          })();
+        <\/script>
+      </body>
+    </html>
+  `;
+    
+      
+        iframe.style.display = "block";
+        iframe.srcdoc = html;  
+    }
+
+    function toggleSnippetAndRefresh(id, textarea_id) {
+      const box = document.getElementById(id);
+      box.classList.toggle("open");
+      codeMirrorMap.get(textarea_id).refresh();
+    }
+
+  </script>
+  <script>
+  const mode = localStorage.getItem('mode') || 'light';
+  document.documentElement.classList.add(`${mode}-mode`);
+  </script>   
+<style> 
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: 'Merriweather', serif;
+  margin: 0;
+  padding: 2rem 1rem;
+  font-size: 15px;
+  line-height: 1.5;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+.container {
+  max-width: 700px;
+  margin: 0 auto;
+  padding: 1rem 2rem;
+  box-shadow: 0 0 15px rgba(0,0,0,0.1);
+}
+
+h1, h2, h3 {
+  font-weight: 600;
+  margin-top: 2.5rem;
+  margin-bottom: 1rem;
+  line-height: 1.2;
+}
+
+h1 { font-size: 1.8rem; }
+h2 { font-size: 1.4rem; }
+h3 { font-size: 1.2rem; }
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: sans-serif;
+  font-size: 1em;
+  margin: 1em 0;
+}
+
+th, td {
+  padding: 0.6em 1em;
+  text-align: left;
+  border: 1px solid;
+}
+
+tr:nth-child(even) {
+  background-color: inherit;
+}
+
+tr:hover {
+  background-color: inherit;
+}
+
+a {
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+code {
+  color: #d35400;
+}
+
+.book-title-chapter {
+  font-family: 'Merriweather', serif;
+  font-size: 2rem;
+  font-weight: bold;
+  text-align: center;
+  margin-bottom: 2rem;
+  border-bottom: 2px solid;
+  padding-bottom: 0.5rem;
+}
+
+.book-subtitle-chapter {
+  text-align: center;
+  font-size: 1rem;
+  margin-top: -1rem;
+  margin-bottom: 2rem;
+}
+
+.related-books {
+  margin-top: 40px;
+}
+
+.related-book-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.book-card {
+  width: 130px;
+  text-align: center;
+}
+
+.book-cover {
+  width: 130px;
+  height: 180px;
+  background-size: cover;
+  background-position: center;
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: center;
+  text-align: center;
+  padding: 10px;
+  box-sizing: border-box;
+  position: relative;
+  font-family: 'Roboto', sans-serif;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+.book-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.book-subtitle {
+  font-size: 12px;
+  margin-bottom: 10px;
+}
+
+.series-name {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  font-size: 10px;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-weight: bold;
+}
+
+.book-footer {
+  position: absolute;
+  bottom: 8px;
+  font-size: 10px;
+}
+
+.page-footer {
+  margin-top: 4rem;
+  padding: 1rem 0;
+  text-align: center;
+  font-size: 0.85rem;
+  border-top: 1px solid;
+}
+
+.chapter-navi-section {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 10px;
+}
+
+.nav-link {
+  color: inherit;
+  text-decoration: none;
+  opacity: 0.5;
+  transition: opacity 0.3s ease, text-decoration 0.3s ease;
+}
+
+.nav-link:hover {
+  opacity: 0.9;
+  text-decoration: underline;
+}
+
+.prev { text-align: left; }
+.toc-link { text-align: center; }
+.next { text-align: right; }
+
+.download-section {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2rem;
+  padding: 2rem 1rem;
+  max-width: 600px;
+  margin: 3rem auto;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+}
+
+.download-info h2 {
+  margin: 0 0 0.5rem;
+  font-size: 1.2rem;
+}
+
+.format-label {
+  margin: 0 0 0.5rem;
+  font-size: 0.95rem;
+}
+
+.download-buttons {
+  display: flex;
+  gap: 1rem;
+}
+
+.download-button {
+  background-color: #4A90E2;
+  color: white;
+  padding: 0.5em 1.2em;
+  border-radius: 25px;
+  font-size: 0.95rem;
+  text-decoration: none;
+  transition: background-color 0.3s ease;
+}
+
+.download-button:hover {
+  background-color: #357ABD;
+}
+
+.code-block {
+  position: relative;
+  margin-bottom: 1em;
+}
+
+.copy-button {
+  background: transparent;
+  color: white;
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  border: none;
+  padding: 4px 8px;
+  font-size: 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  z-index: 1;
+}
+
+.copy-button:hover {
+  background-color: #0056b3;
+}
+
+.snippet-container {
+  overflow: hidden;
+}
+
+.snippet-header {
+  padding: 0.75rem 1rem;
+  cursor: pointer;
+  font-size: 1rem;
+}
+
+.snippet-body {
+  display: none;
+  font-family: monospace;
+}
+
+.snippet-container.open .snippet-body {
+  display: block;
+}
+
+.CodeMirror {
+  border: 2px solid #ccc;
+  border-radius: 4px;
+  resize: vertical;
+}
+
+/* === Light Mode === */
+html.light-mode {
+  background-color: #f8f7f5;
+  color: #333;
+}
+
+html.light-mode .container {
+  background: white;
+}
+
+html.light-mode .book-title-chapter {
+  color: #2c3e50;
+  border-color: #ccc;
+}
+html.light-mode .book-subtitle-chapter{
+  color: #888;
+}
+
+html.light-mode .page-footer,
+html.light-mode .series-name,
+html.light-mode .book-subtitle,
+html.light-mode .book-footer,
+html.light-mode .format-label {
+  color: #ddd;
+}
+
+html.light-mode .related-books h2 {
+  color: #333;
+  border-bottom: 2px solid #eee;
+}
+
+html.light-mode .book-title {
+  color: #fff;
+}
+
+html.light-mode .book-cover {
+  background: linear-gradient(145deg, #e0dede, #f9f9f9);
+  border: 1px solid #ccc;
+}
+
+html.light-mode th {
+  background-color: #f2f2f2;
+}
+
+html.light-mode tr:nth-child(even) {
+  background-color: #fafafa;
+}
+
+html.light-mode tr:hover {
+  background-color: #e6f7ff;
+}
+
+html.light-mode a,
+html.light-mode .page-footer a {
+  color: #555;
+}
+
+/* === Dark Mode === */
+html.dark-mode {
+  background-color: #181818;
+  color: #e0e0e0;
+}
+
+html.dark-mode .container {
+  background: #222;
+}
+
+html.dark-mode .book-title-chapter {
+  color: #ddd;
+  border-color: #444;
+}
+
+html.dark-mode .book-subtitle-chapter,
+html.dark-mode .page-footer,
+html.dark-mode .series-name,
+html.dark-mode .book-subtitle,
+html.dark-mode .book-footer,
+html.dark-mode .format-label {
+  color: #aaa;
+}
+
+html.dark-mode .related-books h2 {
+  color: #ddd;
+  border-bottom: 2px solid #333;
+}
+
+html.dark-mode .book-title {
+  color: #fff;
+}
+
+html.dark-mode .book-cover {
+  background: linear-gradient(145deg, #1e1e1e, #2a2a2a);
+  border: 1px solid #555;
+}
+
+html.dark-mode th {
+  background-color: #333;
+  color: #fff;
+}
+
+html.dark-mode td {
+  border-color: #444;
+}
+
+html.dark-mode tr:nth-child(even) {
+  background-color: #2a2a2a;
+}
+
+html.dark-mode tr:hover {
+  background-color: #2c3e50;
+}
+
+html.dark-mode a,
+html.dark-mode .page-footer a {
+  color: #eee;
+}
+
+
+    button { padding: 0.5em 1em; background: green; color: white; border: none; cursor: pointer; }
+    button:hover { background: #1e7e34; }
+    .result_iframe { width:99%; height:200px; margin-top: 1em;  resize: both;border:1px solid #ccc;}        
+</style>
+</head>
+<body> 
+
+  <div class="container">
+    <div class = "chapter-navi-section">
+<a href="javascript-regex-regex-patterns-cookbook.htm" class="nav-button prev">←</a>
+<a href='javascript-regex.htm#debugging-and-testing-regex' class="nav-button toc-link">Index</a>
+<a href="javascript-regex-regex-challenges-beginner-to-advanced.htm" class="nav-button next">→</a>
+</div>
+
+    <h1 class="book-title-chapter" id = 'top'>Debugging and Testing Regex</h1>
+    <h3 class="book-subtitle-chapter">JavaScript Regex</h3>   
+    <!-- <h1 class ="chapter-title"></h1> -->
+    <h2 id='step-by-step-matching'>15.1 Step-by-Step Matching</h2><h3 id="step-by-step-matching">Step-by-Step Matching</h3><p>Understanding how a regex engine processes a pattern against a string step-by-step is essential for mastering regex debugging and optimization. By manually tracing the matching process, you learn how each part of the pattern behaves, which helps identify why a regex matches or fails.</p><h4 id="breaking-down-the-regex">Breaking Down the Regex</h4><p>Let's take a moderately complex regex that matches dates in the format <code>YYYY-MM-DD</code>:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-regex">/^(\d{4})-(\d{2})-(\d{2})$/</code></pre>
+</div><p><strong>Pattern Explanation:</strong></p><ul>
+ <li><code>^</code> — Anchors match to the <strong>start</strong> of the string.</li>
+ <li><code>(\d{4})</code> — Captures exactly <strong>4 digits</strong> (year).</li>
+ <li><code>-</code> — Matches a literal dash.</li>
+ <li><code>(\d{2})</code> — Captures exactly <strong>2 digits</strong> (month).</li>
+ <li><code>-</code> — Matches another literal dash.</li>
+ <li><code>(\d{2})</code> — Captures exactly <strong>2 digits</strong> (day).</li>
+ <li><code>$</code> — Anchors match to the <strong>end</strong> of the string.</li>
+</ul><h4 id="sample-string">Sample String</h4><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-bash">2023-06-25</code></pre>
+</div><h4 id="step-by-step-evaluation">Step-by-Step Evaluation</h4><ol>
+ <li><p><strong>Start at beginning (<code>^</code>):</strong> The engine confirms the match must start at the string's beginning.</p></li>
+ <li><p><strong>Match <code>(\d{4})</code>:</strong></p>
+  <ul>
+   <li>Checks if the next 4 characters are digits.</li>
+   <li>Matches <code>"2023"</code> — captures group 1 as <code>"2023"</code>.</li>
+  </ul></li>
+ <li><p><strong>Match <code>-</code>:</strong></p>
+  <ul>
+   <li>Next character must be a dash <code>-</code>.</li>
+   <li>Matches the dash after <code>"2023"</code>.</li>
+  </ul></li>
+ <li><p><strong>Match <code>(\d{2})</code>:</strong></p>
+  <ul>
+   <li>Next 2 characters must be digits.</li>
+   <li>Matches <code>"06"</code> — captures group 2 as <code>"06"</code>.</li>
+  </ul></li>
+ <li><p><strong>Match <code>-</code>:</strong></p>
+  <ul>
+   <li>Matches the dash after <code>"06"</code>.</li>
+  </ul></li>
+ <li><p><strong>Match <code>(\d{2})</code>:</strong></p>
+  <ul>
+   <li>Next 2 characters must be digits.</li>
+   <li>Matches <code>"25"</code> — captures group 3 as <code>"25"</code>.</li>
+  </ul></li>
+ <li><p><strong>Match end of string (<code>$</code>):</strong></p>
+  <ul>
+   <li>Confirms no more characters after <code>"25"</code>.</li>
+   <li>Match succeeds.</li>
+  </ul></li>
+</ol><h4 id="what-happens-on-mismatch">What Happens on Mismatch?</h4><p>If the string was <code>"2023-6-25"</code> (month has 1 digit):</p><ul>
+ <li>Step 4 would fail because it expects exactly 2 digits (<code>\d{2}</code>).</li>
+ <li>The engine backtracks but since quantifiers are exact here, no alternative paths exist.</li>
+ <li>The regex returns no match.</li>
+</ul><h4 id="visualizing-the-process">Visualizing the Process</h4><table>
+ <thead>
+  <tr>
+   <th>Pattern Part</th>
+   <th>String Portion</th>
+   <th>Matched?</th>
+   <th>Captured Group</th>
+  </tr>
+ </thead>
+ <tbody>
+  <tr>
+   <td><code>^</code></td>
+   <td>start</td>
+   <td>Yes</td>
+   <td>—</td>
+  </tr>
+  <tr>
+   <td><code>(\d{4})</code></td>
+   <td>"2023"</td>
+   <td>Yes</td>
+   <td>group 1 = "2023"</td>
+  </tr>
+  <tr>
+   <td><code>-</code></td>
+   <td>"-"</td>
+   <td>Yes</td>
+   <td>—</td>
+  </tr>
+  <tr>
+   <td><code>(\d{2})</code></td>
+   <td>"06"</td>
+   <td>Yes</td>
+   <td>group 2 = "06"</td>
+  </tr>
+  <tr>
+   <td><code>-</code></td>
+   <td>"-"</td>
+   <td>Yes</td>
+   <td>—</td>
+  </tr>
+  <tr>
+   <td><code>(\d{2})</code></td>
+   <td>"25"</td>
+   <td>Yes</td>
+   <td>group 3 = "25"</td>
+  </tr>
+  <tr>
+   <td><code>$</code></td>
+   <td>end</td>
+   <td>Yes</td>
+   <td>—</td>
+  </tr>
+ </tbody>
+</table><h4 id="why-manual-tracing-helps">Why Manual Tracing Helps</h4><ul>
+ <li><strong>Identifies precise failure points:</strong> You can tell which part fails or matches.</li>
+ <li><strong>Reveals backtracking behavior:</strong> Understanding where the engine may retry alternatives.</li>
+ <li><strong>Aids pattern optimization:</strong> By recognizing costly or redundant parts.</li>
+ <li><strong>Supports debugging complex patterns:</strong> Like URLs, emails, or nested groups.</li>
+</ul><h3 id="practice-trace-this-url-regex">Practice: Trace This URL Regex</h3><p>Try manually stepping through this pattern matching <code>"https://example.com/path"</code>:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-regex">/^(https?):\/\/([\w.-]+)(\/[\w\/.-]*)?$/</code></pre>
+</div><ul>
+ <li><code>(https?)</code> — matches "http" or "https".</li>
+ <li><code>:\/\/</code> — matches literal "://".</li>
+ <li><code>([\w.-]+)</code> — matches domain or subdomain.</li>
+ <li><code>(\/[\w\/.-]*)?</code> — optionally matches path starting with "/".</li>
+</ul><p>Walk character by character to see how each group captures parts of the URL.</p><h3 id="summary">Summary</h3><p>Manual step-by-step regex matching builds intuition about how patterns interact with strings. This foundational skill empowers you to design better regexes, debug efficiently, and optimize performance by thinking like the regex engine itself.</p><div class = "chapter-navi-section">
+<a href="#top" class="nav-button prev">↑</a>
+<a href='javascript-regex.htm#debugging-and-testing-regex' class="nav-button toc-link">Index</a>
+<a href="#bottom" class="nav-button next">↓</a>
+</div>
+<h2 id='using-regexp-prototype-exec-loop'>15.2 Using <code>RegExp.prototype.exec()</code> Loop</h2><h3 id="using-regexp-prototype-exec-loop">Using <code>RegExp.prototype.exec()</code> Loop</h3><p>When working with regex in JavaScript, the <code>exec()</code> method provides a powerful way to extract detailed information about matches — including capture groups. One of its key uses is iterating over multiple matches in a string using a loop. This section explains how to use <code>exec()</code> effectively with the global (<code>g</code>) flag, the importance of <code>lastIndex</code>, and differences from other methods like <code>matchAll()</code>.</p><h4 id="how-exec-works">How <code>exec()</code> Works</h4><ul>
+ <li><code>exec()</code> executes a search for a match in a string.</li>
+ <li>It returns an array with details about the <strong>first</strong> match, or <code>null</code> if no match is found.</li>
+ <li>The returned array includes the matched text as the first element and any capture groups as subsequent elements.</li>
+ <li>The regex object's <code>lastIndex</code> property stores the position to start the <strong>next</strong> match, but this is only used when the <code>g</code> (global) flag is set.</li>
+</ul><h4 id="using-exec-in-a-while-loop-for-multiple-matches">Using <code>exec()</code> in a <code>while</code> Loop for Multiple Matches</h4><p>To extract all matches from a string, you can repeatedly call <code>exec()</code> inside a loop. The key is to use a regex with the <code>g</code> flag, which updates <code>lastIndex</code> after each match, so the search continues from the last found position.</p><p><strong>Example: Extracting all words from a string</strong></p><div>
+ <div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+  <pre><code class="language-js">const text = "Hello world! Regex is fun.";
+const wordRegex = /\b\w+\b/g;  // global flag is essential here
+
+let match;
+while ((match = wordRegex.exec(text)) !== null) {
+  console.log(`Found '${match[0]}' at index ${match.index}`);
+}</code></pre>
+ </div>
+ <div class="snippet-container" id="hPfzY">
+  <div class="snippet-header" onclick="toggleSnippetAndRefresh('hPfzY','QDZOi')">
+   Try it in editor
+  </div>
+  <div class="snippet-body"><textarea id="QDZOi">const text = "Hello world! Regex is fun.";
+const wordRegex = /\b\w+\b/g;  // global flag is essential here
+
+let match;
+while ((match = wordRegex.exec(text)) !== null) {
+  console.log(`Found '${match[0]}' at index ${match.index}`);
+}</textarea> <br> <button onclick="renderIframeForClientJavascript('QDZOi','2hfXK')">Run</button> <iframe id="2hfXK" class="result_iframe" style="display: none;"></iframe>
+   <script>
+  {let editor1 = CodeMirror.fromTextArea(document.getElementById("QDZOi"), {
+    mode: "javascript",
+    lineNumbers:false,
+    tabSize: 2
+    });
+    const mode = localStorage.getItem("mode") || "light";  
+    const newTheme = mode === "dark" ? "material" : "default";
+    editor1.setOption("theme", newTheme);
+
+   codeMirrorMap.set("QDZOi", editor1);}
+  </script>
+  </div>
+ </div>
+</div><p><strong>Output:</strong></p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-bash">Found 'Hello' at index 0
+Found 'world' at index 6
+Found 'Regex' at index 13
+Found 'is' at index 19
+Found 'fun' at index 22</code></pre>
+</div><p><strong>How it works:</strong></p><ul>
+ <li>The loop calls <code>exec()</code> repeatedly.</li>
+ <li>Each call returns the next word and its index.</li>
+ <li><code>lastIndex</code> is automatically updated, so <code>exec()</code> continues from where it left off.</li>
+ <li>When no more matches exist, <code>exec()</code> returns <code>null</code> and the loop ends.</li>
+</ul><h4 id="importance-of-the-g-flag-and-lastindex">Importance of the <code>g</code> Flag and <code>lastIndex</code></h4><p>Without the <code>g</code> flag, <code>exec()</code> always searches from the start of the string and returns the <strong>same first match</strong> repeatedly, causing an infinite loop in the above pattern.</p><div>
+ <div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+  <pre><code class="language-js">const text = "Hello world! Regex is fun.";
+const wordRegexNoG = /\b\w+\b/;  // no global flag
+let match;
+while ((match = wordRegexNoG.exec(text)) !== null) {
+  console.log(match[0]);  // Will print 'Hello' forever
+}</code></pre>
+ </div>
+ <div class="snippet-container" id="msBMP">
+  <div class="snippet-header" onclick="toggleSnippetAndRefresh('msBMP','n8izn')">
+   Try it in editor
+  </div>
+  <div class="snippet-body"><textarea id="n8izn">const text = "Hello world! Regex is fun.";
+const wordRegexNoG = /\b\w+\b/;  // no global flag
+let match;
+while ((match = wordRegexNoG.exec(text)) !== null) {
+  console.log(match[0]);  // Will print 'Hello' forever
+}</textarea> <br> <button onclick="renderIframeForClientJavascript('n8izn','lhJGX')">Run</button> <iframe id="lhJGX" class="result_iframe" style="display: none;"></iframe>
+   <script>
+  {let editor1 = CodeMirror.fromTextArea(document.getElementById("n8izn"), {
+    mode: "javascript",
+    lineNumbers:false,
+    tabSize: 2
+    });
+    const mode = localStorage.getItem("mode") || "light";  
+    const newTheme = mode === "dark" ? "material" : "default";
+    editor1.setOption("theme", newTheme);
+
+   codeMirrorMap.set("n8izn", editor1);}
+  </script>
+  </div>
+ </div>
+</div><p>To avoid this, always include <code>g</code> when iterating with <code>exec()</code>.</p><h4 id="difference-between-exec-and-matchall">Difference Between <code>exec()</code> and <code>matchAll()</code></h4><ul>
+ <li><code>exec()</code> returns one match at a time with detailed info (including <code>index</code> and capture groups).</li>
+ <li><code>matchAll()</code> (ES2020+) returns an <strong>iterator</strong> for all matches at once, simplifying code.</li>
+</ul><p>Using <code>matchAll()</code> for the above example:</p><div>
+ <div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+  <pre><code class="language-js">const text = "Hello world! Regex is fun.";
+const matches = text.matchAll(/\b\w+\b/g);
+
+for (const match of matches) {
+  console.log(`Found '${match[0]}' at index ${match.index}`);
+}</code></pre>
+ </div>
+ <div class="snippet-container" id="ioNrr">
+  <div class="snippet-header" onclick="toggleSnippetAndRefresh('ioNrr','WgUkI')">
+   Try it in editor
+  </div>
+  <div class="snippet-body"><textarea id="WgUkI">const text = "Hello world! Regex is fun.";
+const matches = text.matchAll(/\b\w+\b/g);
+
+for (const match of matches) {
+  console.log(`Found '${match[0]}' at index ${match.index}`);
+}</textarea> <br> <button onclick="renderIframeForClientJavascript('WgUkI','g4nH6')">Run</button> <iframe id="g4nH6" class="result_iframe" style="display: none;"></iframe>
+   <script>
+  {let editor1 = CodeMirror.fromTextArea(document.getElementById("WgUkI"), {
+    mode: "javascript",
+    lineNumbers:false,
+    tabSize: 2
+    });
+    const mode = localStorage.getItem("mode") || "light";  
+    const newTheme = mode === "dark" ? "material" : "default";
+    editor1.setOption("theme", newTheme);
+
+   codeMirrorMap.set("WgUkI", editor1);}
+  </script>
+  </div>
+ </div>
+</div><p><code>matchAll()</code> internally uses <code>exec()</code> but provides a cleaner iteration syntax.</p><h3 id="summary">Summary</h3><ul>
+ <li>Use <code>RegExp.prototype.exec()</code> with the <code>g</code> flag inside a loop to extract multiple matches iteratively.</li>
+ <li>The regex’s <code>lastIndex</code> tracks where to continue searching.</li>
+ <li>Omitting <code>g</code> causes repeated matches at the same position.</li>
+ <li><code>matchAll()</code> offers a modern alternative returning all matches via an iterator.</li>
+</ul><p>Mastering the <code>exec()</code> loop pattern is essential for detailed regex extraction tasks, especially when you need index positions or capture groups for each match.</p><div class = "chapter-navi-section">
+<a href="#top" class="nav-button prev">↑</a>
+<a href='javascript-regex.htm#debugging-and-testing-regex' class="nav-button toc-link">Index</a>
+<a href="#bottom" class="nav-button next">↓</a>
+</div>
+<h2 id='writing-unit-tests-for-regex'>15.3 Writing Unit Tests for Regex</h2><h3 id="writing-unit-tests-for-regex">Writing Unit Tests for Regex</h3><p>Testing your regular expressions is crucial to ensure they work correctly across various inputs and edge cases. Writing unit tests helps catch bugs early, provides documentation for expected behavior, and supports a <strong>test-driven development (TDD)</strong> workflow where you define regex requirements before implementation.</p><p>In JavaScript, popular test frameworks like <strong>Jest</strong> or <strong>Mocha</strong> make it easy to write clear, maintainable regex tests.</p><h3 id="why-write-unit-tests-for-regex">Why Write Unit Tests for Regex?</h3><ul>
+ <li><strong>Verify correctness:</strong> Confirm your regex matches valid inputs and rejects invalid ones.</li>
+ <li><strong>Prevent regressions:</strong> Ensure future changes don't break existing behavior.</li>
+ <li><strong>Document intent:</strong> Tests serve as executable specs for what your regex should do.</li>
+ <li><strong>Facilitate refactoring:</strong> Safely improve or optimize regex patterns without fear.</li>
+</ul><h3 id="example-testing-a-username-validator-regex">Example: Testing a Username Validator Regex</h3><p>Suppose you have this regex to validate usernames:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-js">const usernameRegex = /^[a-zA-Z0-9](?:[a-zA-Z0-9_-]{1,14}[a-zA-Z0-9])?$/;</code></pre>
+</div><p>It matches usernames that:</p><ul>
+ <li>Start and end with an alphanumeric character.</li>
+ <li>Allow underscores or hyphens inside.</li>
+ <li>Have a length between 3 and 16 characters.</li>
+</ul><h3 id="using-jest">Using Jest</h3><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-js">describe('Username Validator Regex', () =&gt; {
+  test('matches valid usernames', () =&gt; {
+    const validUsernames = [
+      'john_doe',
+      'JaneDoe123',
+      'user-name',
+      'abc',
+      'a1_b2-c3',
+      'abc1234567890123', // 16 chars
+    ];
+    
+    validUsernames.forEach(username =&gt; {
+      expect(usernameRegex.test(username)).toBe(true);
+    });
+  });
+
+  test('rejects invalid usernames', () =&gt; {
+    const invalidUsernames = [
+      'ab',            // too short
+      '_username',     // starts with underscore
+      'username_',     // ends with underscore
+      '-user-',        // starts/ends with hyphen
+      'user@name',     // invalid character '@'
+      'thisusernameiswaytoolong', // &gt;16 chars
+      'user name',     // space not allowed
+    ];
+    
+    invalidUsernames.forEach(username =&gt; {
+      expect(usernameRegex.test(username)).toBe(false);
+    });
+  });
+
+  test('match returns expected groups (if any)', () =&gt; {
+    // This regex does not capture groups, but if you had groups, you could do:
+    // const match = usernameRegex.exec('john_doe');
+    // expect(match).not.toBeNull();
+    // expect(match[0]).toBe('john_doe');
+  });
+});</code></pre>
+</div><h3 id="validating-match-results">Validating Match Results</h3><p>Sometimes you want to test more than just <code>test()</code> returning <code>true</code> or <code>false</code>. You can check the exact matched text or captured groups using <code>match()</code> or <code>exec()</code>:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-js">const hashtagRegex = /#(\w+)/g;
+
+test('extracts hashtags correctly', () =&gt; {
+  const text = 'Hello #world! #JavaScript #regex101';
+  const matches = [...text.matchAll(hashtagRegex)];
+  
+  expect(matches.length).toBe(3);
+  expect(matches[0][1]).toBe('world');
+  expect(matches[1][1]).toBe('JavaScript');
+  expect(matches[2][1]).toBe('regex101');
+});</code></pre>
+</div><h3 id="tips-for-regex-unit-testing">Tips for Regex Unit Testing</h3><ul>
+ <li>Write <strong>positive tests</strong> for valid matches.</li>
+ <li>Write <strong>negative tests</strong> to ensure invalid inputs are rejected.</li>
+ <li>Cover <strong>edge cases</strong>: empty strings, unusual characters, minimum/maximum lengths.</li>
+ <li>Test the <strong>behavior with different flags</strong> (<code>g</code>, <code>i</code>, <code>m</code>) if relevant.</li>
+ <li>Use <strong>descriptive test names</strong> to document regex intent.</li>
+ <li>Integrate regex tests into your CI pipeline to catch regressions early.</li>
+</ul><h3 id="conclusion">Conclusion</h3><p>Treat your regex patterns as critical code components that deserve thorough testing. Writing unit tests with frameworks like Jest or Mocha:</p><ul>
+ <li>Builds confidence in your regex correctness.</li>
+ <li>Makes regex refactoring safer.</li>
+ <li>Supports a clean, maintainable codebase.</li>
+</ul><p>Regex is powerful but often tricky—testing is your safety net.</p><div class = "chapter-navi-section">
+<a href="javascript-regex-regex-patterns-cookbook.htm" class="nav-button prev">←</a>
+<a href='javascript-regex.htm#debugging-and-testing-regex' class="nav-button toc-link">Index</a>
+<a href="javascript-regex-regex-challenges-beginner-to-advanced.htm" class="nav-button next">→</a>
+</div>
+<section class="download-section">
+  <div class="book-cover" style="background-image: url('data:image/jpg;base64,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');">
+<div class="series-name">Introduction</div>
+<div class="book-title">JavaScript Regex</div>
+<div class="book-subtitle">From Basics to Advanced Patterns</div>
+<div class="book-footer">readbytes.github.io</div>
+</div>
+  <div class="download-info">
+    <h2 id='bottom'>Download This Ebook</h2>
+    <p class="format-label">Available formats:</p>
+    <div class="download-buttons">
+      <a href="javascript-regex.pdf" class="download-button">📄 PDF</a>
+      <a href="javascript-regex.epub" class="download-button">📘 EPUB</a>
+    </div>
+  </div>
+</section><div class='related-books'>
+<h2>Javascript Introduction Books</h2>
+<div class='related-book-list'>
+<a href="javascript-for-beginners.htm"><div class="book-cover" style="background-image: url('data:image/jpg;base64,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');">
+<div class="series-name">Introduction</div>
+<div class="book-title">JavaScript for Beginners</div>
+<!--  <div class="book-subtitle">From Basics to Advanced Programming</div> -->
+<!--  <div class="book-footer">readbytes.github.io</div>  -->
+</div></a>
+
+
+<a href="javascript-syntax.htm"><div class="book-cover" style="background-image: url('data:image/jpg;base64,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');">
+<div class="series-name">Introduction</div>
+<div class="book-title">JavaScript Syntax</div>
+<!--  <div class="book-subtitle">From Fundamentals to Advanced Patterns</div> -->
+<!--  <div class="book-footer">readbytes.github.io</div>  -->
+</div></a>
+
+
+<a href="javascript-object-oriented-programming.htm"><div class="book-cover" style="background-image: url('data:image/jpg;base64,iVBORw0KGgoAAAANSUhEUgAAAIIAAAC0CAYAAABYIPRNAAAaFElEQVR4Xu2deXxV1bXHNyjOM89Snq3l88HW2tf6nHlVxgRCSMjEIIQESBgEmUEUlcqkT4oTkIShWupQRMhMEB8qkIQo9lMFkUHIPM8JkIGElODvrbVvbkj2vhmueG/KPeeP7+ec87v77P25rHXWXmvvk4sYPHgwTEyEKpgYE6EKJsZEqIKJMRGqYGJMhCqYGBOhCibGRKiCiTERqmBiTIQqmBgToQomxkSogokxEapgYkyEKpgYE6EKJsZEqIKJMRGqYGJMhCqYGBOhCibGRKiCiTERqmBiTIQqmBgToQomxkSogokxEapgYkyEKpgYE6EKJsZEqIKJMRGqYGJMhCoYhekhE5C3cSrKIsbh9Dp/nAkfg6x3pmNy8HitrREQquDKeHh4oCRiPM6H+xB+qCNaHSN85HlduD/ywidg2LBhWh+uilAFV+XIm9PQEGYxen2Ef5PB26YmPAAI98T7r8zT+nJFhCq4IkXrg9BI4b86YrRmcFucI0c5Hz5SHhvomLlpmtanqyFUwdUoDB9PId+LDOyrGbwj6iNGymPtBj/khoVofbsSQhVcicNhM1C3ebxmYHs5HzYKdRtHYNeb87UxXAWhCq6Cu7s7zlElcCkB/HHUE1Ub/XFxHfczShvHVRCq4CpkhIeicb13K0eot2N6qKfK4VyE5ZyTzGqaHurDvCjKLNLGcgWEKrgKjdKAPtKYtREBsjzko2rwZpochtudD/eWxm+go+o85zY+qY3lCghVcAWCxo+VawW1lPGf2RyAhg2+qGfaiQjsMHxPQ4Qv3UeEjaTcwBPnN7WuNPhzT8/h2phXOkIVXIHdr81D1EJv1GygJG/zKFS9HYyzb08mQ/rINQQVaeQN/tLIZ9f74f0xfdC4YQw+XTqGHMTiCNZ29aSvfcn1pgehCq5A+vpgBA28H7MfvQ1vTPVBRODvkbNtGXI3TUH8yhnYtSoUG6YNRegTv8GKyYPx++sF+t4ocJMQWD62P6Y/dgNWjXsEyc97448/uwFPP3wzHv7lrbj9GoHBfW/HPzY9p415pSNUwRXIfGsswoIeluH+DzcJHH6VosKWyejVXSBl5RhUUHTIjJgGj191xx/IATaMfwhve/0Kd3QT+P0NAkseuQNpr/li73I/zHnoToz7dU/MdeuL+68WCA+4B0c3zdHGvNIRqtDVrFz+FIrSnkND2VNoLJ+MH8pCcKFsOk7nLcAHWxZo7W3x3bqplOH7U9VAecJaThh9cW5DAA4v80INz/1UDjaEeaPxL5RAhvniX+tG4izlE2FjHkb9pgm4EO4pE8W6DXQ/3cdlaD1dn+O8g/r9LGKpNuaVjlCFrqIwbQUaKqYAZPgfyqbih/JJNmmsmIra0vbX/998YTaq2fgRltJPTQwviwhvLJ4zXRvzSkeogrMZP24UGTgUP1SOk04ANnjFBM0BrFysnEBtJuBi2dNI3Puy1h/j5uaGC+s8yRl4QclbN+ZlUL/JSxvPFtM2xWDAzjwMis/CkLg8DI7Po2MOaUR8NgK3pmj3dCVCFZzJ62sWktGnEMFKFAjVHKDVZ02OgtIgZKf+SeuXqYmYQIbjrP/yVhZVysNHa2O1ZPLWZAyML8CA6FwMjiuQsAO4x7FD5JBDEDvTMXBnCYbvrIRP7JdaH12BUAVnMWnikxQBJtowtD2EUGSYjNQjq7X+33l54U8WDXiKkauM5FQvLZ6ljWXFa5flqeenv1OQkwyMzcLIhHx4+/ho/TkToQrOgEM3P9UXTwfbMK4dVAQ1nU9G8IQAbZzasADKESw7iJdDbcQoXFg/ApXhtlcVvf38MYCcYOCuUnrysyki2DB6GwyIy6djIdziihC84Fmtb2chVMEZnC+fTcbj8B6iG9cOOKdorJwM0PTSSI6ljuM9whM1m3mK0I1rF5R4nqHqYsiQIdoYrA0iBxhCxhwWk4P/2cVTgW5w2+Q0nw+kfMI9uhCjxgVqYzgDoQqOxt3dDaCEr/F0IBlSN+6P5SJNMx+9ryeP48aOQtUm3mvwxvmwdvYaWsBLzTVNK4q1RCNFgwC/kVrf8vtst879qpHtg52Hcwuf2FRtDGcgVMHRbH1/Bn4oCrEkfO1UB/bCjlBdGqKNx0ybOM6ymRQxQjO6LfjNpIvrPVBNieGFsBFaf1YWrQ5D/0+KZTRQDftjGEgVxaDYIgStWK+N5WiEKjiahtJFuEiZP8qDcbHC/qkBFTwVTNZ0hp1BHa8lORFTOvW+IjtCNVUc5ZvbD9Nusdlwj83D0FjdqPbC0YCjAkeXoTRNqGM5GqEKjqZlXoCyIKT9MwiNZVPwxafD0FBIxqyYhIzDAbhAxr5QGoqLldPQWDyZnGcmVQdj0LeXwIWyp8iRZuJ0ATvUUzJXkOsL1F4dT8XDYxhyIyajdr0vztFUUb9+uDR8PYV/uWUd7ouT69p3KCsD44opOeS1gQIMjaHIQE8zl4ZDZMmYJ3OGIfTZI7uy4BVFDhOXKbX+O4vIeaikjLWUloMpURyQkCX7GRKfBXdyCq+RtqciRyFUwdFcyvQnySXke+8SOPzVfKx+pR8e6Cuw7+PXETqpNz543w9Fmc8BFzbB49GbkXNyBqYH3oUhj9+GurNv4dDnL+Bsxeu4cHYxLOsOoTLnGD3aTxuzM9hKBNtj4avrMZDKPrf4fAyNz5VO8EdKFD3IiPx0P05VxKCdxXTMhTdVBsN35jc5QAk5RD4ZnI4xBRgQX4RhXEJGZ1HSmYb+8aWyrJy6OUEb05EIVXA0KL/kCHKKqFuMPz3zM+zZHkRP9AuYGXInlZVLcPyfM9FYFYpVc+9HTdVzWL/6EUSsfwyb1z6EpTP/gOpiqgYq56GuhKNGIH4onUOOEIzAwDHamB0xc1qIpnXE1L8nW4xGT/CNg8bi/uWRuHveavQeuxC/nL8BbmTkB196H3/cfABDN+6Fz9oEPPhqHH7zzFo8uHo7nngtCl4ffocha3fBY9sRPLR6G3woOgyLzaQ+yXk+OqWN6UiEKjgaULUgVxIpUUQZh3bLdCC15mmDQ32La/mZ5Sjb8rTS1M7ahnWUdy6kW5k3YwrqaIo4H+aP1HWTtM/bY1TUN/TEF8IzJh29BwZA3H4PJsV/j5+PX0xPdh7un7IS4qGh6DfhJbiTocd8eAT+9Lk/PfXd73kAt0+kz2/tjQdnrMG4j09A9P1viMdHU8JIUwxFj8cTcrQxHYlQBUdTXza/KZTzvsJlLigpoMI+R2CyKSEsi7B/Ohkf+TVNDYXkDGlk3KMI2FOIIf9XCs/PSvHErjK4UwUwLi4Nw3aTYeOoqqAcIoCeeL/o7+G1MxWjKR/wp3wh6GNypoRMeO46STlDKp6gvIEXmAYkZGhjOhKhCo5mT8IiNFY+ifb3E34ElHjWVczWxuuIz8IW4+BbT2l6R8z5S7RM9obG5sokTyITvmwZ2gfGlWIQ5Q9uMaWUM1BOEMv5AlcFlE/EZ8CdHMON8ooB8cUt+sgjJ+L7i+C79Z/amI5EqIKjGTrUHajkjaYJaKy4PGdorOSNp+kyR+A9h+gdq7Tx2sPHxwfTpk3DpEkTMWPGDO3z9hgbSKUllY/WCsGySshkyZJyMCWEfOTlZivcVu4vkKFbLkLx+aUdSk4y8zDvzb9oYzoSoQrO4FyFJTfgHEE1rl3IXCNY9sOOoI7TFldddRWEEBI+7969uzzv1q2bPPbu3Vu7xxacI9izr9B5SuR+jDqeIxGq4Ay8vEbIxaTGYp4ibBi4k/C6QSMllSh/Elvfe14b528ftN6V9PT0bDZ6e7BDcDuOFi3v9/dvvbE1bvshSux4k6nIhjF/PF5Rh7Xv4miEKjiLf+xfSmUiPclUTjZXDjaMrcPL09aKgu+fivqS1rlBeeEamn7Gw9v70vLwddddh6uvvrr5qW8PbmNtN3bs2FZ9D4ouwKI/vyHPee3BjaqG/vHlmjHtxRpZeJrwHd3+Ow+OQKiCMzl++Fn8ULIAjad53+HS+kJ7WCoNjgTsQEGoLtXfYzxTNJ+mi/FyxXL92mdkmO1MJLBFt27dyaG8Me/1TfCi+d09qhxz/rq7eazgd/fCY0eGZlh7cYvLlgnjqG3fat/HGQhVcDYRYbMtIb6TjnChkt9QGitfak07tkLrjxnuMUw+raXZq+Q1RwKrYVvmBGpuYItu3K5bD9mP946vMczDA0u2RLUab+T2VFn7M6qBO4s7VRrDqXpQv4uzEKrQFbDRqgqXUMIXIqcKTvxaOUDTghJvKnFu8a+SmRgxwlPrxxa33XirZtypU6ciICBAOoWXlxeCgoLg5+cntZbTgtURrr7+Kpoi2v8D2JE7TqC/jc2nlu8myPDPlYMNRxgSnab16UyEKnQ1H777JzSU8tvKVFmcmSRLTVAecKF8HPJOrKHyc6h2T3uoTnDttdfivvvuk07AyeA111zT3Nb6Uzk9e/bU7mPUvlWmb47FkIQK9E9oMjgxiJ70ZkfYyWViTtMeA29YZVL703hy61daX85GqIIrwb+ZpBqTCeQ1APq8Rw9LyOeIwEeOBFOmTJE5ha3pQu3fFhzd/MnAbvGl6B+Xj6Ef52JQ3CVnkJtUCYVw35MvX0LxGP7v8XeUQhVcieDg4OY1A6thrdfsBJwj8NFqaL5mrNOD9dweR2jJ3NVh8I85BTeKELxqyFPDyKiTWPjaRq1tVyNUwZVgR7Aak695WuCpwFpK8md8zs5hLS2vv/562ebOO+/EPffc02rxSe3flRCq4ErwGgAbmxNCNiQbm407YsQIGf6t7yCEhobKc04WJ06cKI3PeUSfPn0wmmr6X/ziF1JT+3clhCp0JeF/X4349EWIPD4PkekLEJU5C9GZC7Az/TnEf78Aq95cot3THpz8sSPce++98vqWW26Rx379+kmDD6f5mfMDbhcSEiKdg3Vuw5FCLhiR1qtXL9mP2r8rIVTB2fA/dsKRVxGV/iyiM+Z3SOTJudiWuErrpy2EsMz36rzfFpMmTdLaiO7dcN2112t9t8ek0CnY9sleJKYWITGzEvvSy/DXnZ9hyoyZWtt/B4QqOJOn54UgPvU5bM+ai7jUZzSj2yIqfSG2Z86nKLEIvn62/zqIn3Q+ctUQGhqiZf/20uOq7nI6UcdR4ciy//tsJBfWI6moHvuL+FhH19VNnENyQT0da/F5ZjFGdvFfN7VEqIKzWPXmYuzIZMPORTQZNzpjjmZ0W8RkzEJMOkWGtFnYkT4Hk6cGa33HH12JmONLEZO6WF6rhrWLbgJ33dkLgTSFBLSzB/Dx18eRUlCDJOkENc2w0ZMLa+RnfEwsOoek/Dq6pnbsGKfytb66AqEKzmB84JOISVuImMy5mqHtITJ7LmJPLdZePI1JexaRGbPx4T7L5hDvOrJRW5aCnYGnCGuSeLDwLBm2AbEHvta+T3JGiTSq/dTjQH4tknLOaH06G6EKziA+bTGishcgOnWRZlx72JlB00nmIsSfaL0FzQlezBdrWmm8itjZ3UfG2s7qZPy7jV/kn0NiflWrflOySixPuWbkznGg2BIZUvJPa/9OzkSogqNZ/sZCxGfTlJA5TzOs3aQ/Q/3MoeliDp5f0blfRWXjtlwbaAtrhWGFHSL8nS2ttOjPErGPDGkN83bD00ehJW/YT06250jX7TcIVXA0UeltOwDP/VEZDEWL9CZstLNF7KmF2lhtwRtMd999Nz31HP674eruPZp3JR944AGtvS046miGvSzqsJ/yCc5F1LGcgVAFRzJqdAAZrR3jptOUkTWtKXlkh2nbaTTS5mrjdQbexPrbB29rekekUNavG/PySKQq44ucrpkihCo4kq3Jy3QDtiAmczrlD88jNm0GoqisjMlc0Izl87adiCNJ+Lv/q43ZES8tfxEFNfa/MZxUXKcZ8nKR5WXReZmPqOM5GqEKjiT65GIZ/lUjWhHXCsQfXIZ9BeFIynwdd/xO4G97FuLWewTWxsxB8JLHtHuaoSiyLWWFNmZ7zHx6Jk7mHUJ+zbfYm/yJ9nlbTJ02HXsKzuAgzev7S+oksmxk56DScF/xOZk7JBWfl3piMZWOxbVIyavF53k1OFB4XiaYnFt8nlGJvWX1MhokFtTKvl5Ypf95v6MRquBIYqms68gRDmaupQz6PfhOexTr3luENe/MxojAR/Hm+4vQ7Xah3dOSmMMvaWN2hK+vDzLyT2h6e8Tu+xKPevph1sq1+LSEysqCamncvVwOFjbgCzJmChk/kUrOLwursb+gipLBGnxZUId5b2zCQXIC1ictXA7Royf25pbhQFE1kspr5X2R+w9qYzoaoQqOJPrUM+06QhQlfDuy5yLm5EIqDZ9G3KkF2JU1E7uzlyAudQG2n5il3dN8LyWhUV8v08Z0BJ+dzKXE8ia8Q1VDePROiBtux4atUQh94WVE7T1Ixr0Ovfv+Gjf1vBM33tEL2xO/xKkz9ejn4YNFL7+GTw8fQ4+eP8ND/Z6AuPoG9Lr3N/jlvffRfTdiqM8oJGeVaWM6GqEKjmT38VcQ2d4iUuYsxKRZl5rJsBkLWySO7ZecvEm1JeFVbUxbzF8wFxkl3yC/+rtmCqqOIafiO0S8/ZbWXmUfOYLocRuGTJyJqJRvIa7rSQYlx9i1j/RbIK65GTff/nP8j9+T6NnnPrz3caJs/9jwADy17M+W9jf8B0VAbnsL/vPBfuj7OBnj2tvw9MrXsT+9VBvT0QhVcCSbt9ETY08lYAccEZ6aFaKN2ZLEg7uRX0U5QdVhiwNQbmCLwtpjOJH9D+1+K3u+OY6DNP9zuOccILmkQSZ6n+VW44vSC/I65MXVSC6/INcH9pecx4GKRqSU/EvmAjJPKG7A5znVUttHuQMni3uLamX7xC5Ydhaq4Ei4VLNnbcAeOJKo41nhPKDo7AkyMjvAsSYnOKw4QMvrw8ijY0HNUax+fYXW38b3tmFfESeCnOlb9hBk5m/dY5DnZ+RCEV9zsmhFtm3eh2As9yUXVjUdz2HDBx9pYzoaoQqOJubYi+QMFBXSeXn58pwikohNXUTTzRxEHtH/0on5E5WH+dVHm5zgCBn3EAqqLec2HaFZ52tudxT7vrz0dwwMrzImcXIns/+6ZpKKLE/2AUoK9xfzOa848qYTa5bysGWpyItIzfcWNkHO4+vnr30PRyNUwdH4+HrLJWG5NNxO4tgZojIsS8zRlHeoG0/M1GmhKKhtewroLAW13yLpq09b9Z2Ud7bZqD8F7BiWkrL1XoazEKrgDD45sUZuFkWlLdaMaw/sUNspssQfsP0rZAU0BeTVqlOA/fA0wdFhcsilH9N4LWyjrPuT5dOsG/bHwPnDzmTnl46MUAVnkXByCaJyWryDIKsD3dg6PK1Y2sZm0VHZebRyKseyUNReUthZ8qpPSIcqrD7eaowUmtfZeC1D/uWQQtOH+j2chVAFZ7I780XK9pdgRxZPE52rJuLTLO22py5A7NEXtD6tyKRQSwgvn3nzL/2nHbzxlFLKc/yP233k5FGuPNL9vB0dGKy/ZOMshCo4m8hvliKSnCDWhtFtsT1tBiJPUXKY0vYq4ua/RlwynhIR8ihRZFQDd5biqtY/cvXs0peoBLRUEPZifVuJVyajPk3SvoczEarQFYwdNxqRx5d0XFrS55HfPd/8TmJb5Jw+js5Eg4JarhCs7azVglpNtCav6og2XmBQMPiVNEvmz0a2VA8dw9GkFi+usn+z7KdGqEJXM//5KfgocQWij78gX0OLOv4ctu5didnPdP4XUdQoIA0oS8bv0Pd3fXD3f92FEaPd8V3OPnrCv0fu6UM4lpuEkvoTOJaTgoT9H5EzsYNQuamWmdSHOp6VvcfTLAlkIUeIuqa1A35p1bpm0LTGIKnH599nO/2XUdpCqIIrYHnSdUfgpznpq924gAr4jvFEfuUJlFcV4+HHf4s+v+2J397fB0VVx/D5V3HkCJZowZWH2k9HxtsSvQsHC84iuYBXHwl+6STfYvyk3LOI3//v9b+3MEIVXIG2HIFXCivqMmX2n7DvXSx5ZSZFhFTklB/CW1uWobD2BLZ89BYq6zOQVXHIsgdR843Sz6EOHeFKRKiCK6A6QVuUnD+G0vPp0kE6n0A6//eNnIFQBVcgl8K6raigIcM+P/GddQJOFo9q47kCQhVcgYRPIjUD2saSQOp62xRUndTGcwWEKrgCvO/A4V4azk5D61gSxoJqy1LzipfbXr+4khGq4Crklv+EK4vWKaSd0vFKR6iCq8CZPW8h53WwQNQZ8mosUWXpMtv7Gq6AUAVXYn3EWyio4+nhiOWptmuaOCKdiDebOPE8mf+N1r8rIVTB1dgW+UHzNrJu7I6wvJySVuiaJWNLhCq4Iq+uebkpabTHGQ6jkCJCap7rOwEjVMFV4d9RKjjLm1GqwRXOfYtc+TrbUSxfafv/nXZFhCq4Oj4+I+Wycv7Zo/LdRS4L5TuMNbxGcAxFZ9IwOcT+/wnmSkeogokxEapgYkyEKpgYE6EKJsZEqIKJMRGqYGJMhCqYGBOhCibGRKiCiTERqmBiTIQqmBgToQomxkSogokxEapgYkyEKpgYE6EKJsZEqIKJMRGqYGJMhCqYGBOhCibGRKiCiTERqmBiTIQqmBgToQomxkSogokxEapgYkyEKpgYE6EKJsZEqIKJMRGqYGJMhCqYGBOhCibGRKiCiTERqmBiTIQqmBgToQomxkSogokxEapgYkyEKpgYE6EKJsZEqIKJMRGqYGJMhCqYGBOhCibGRKiCiTERqmBiTIQqmBgToQomxkSogokxEapgYkyEKpgYE6EKJsZEqIKJMRGqYGJMhCqYGBOhCibGRKiCiTERqmBiTIQqmBgToQomxkSogokxEapgYkyEKpgYE6EKJsZEqIKJMRGqYGJMhCqYGBOhCibGRKiCiTERqmBiTIQqmBgToQomxkSogokx+X9NwhnhvNpHKwAAAABJRU5ErkJggg==');">
+<div class="series-name">Introduction</div>
+<div class="book-title">JavaScript Object-Oriented Programming</div>
+<!--  <div class="book-subtitle">From Basics to Advanced Design</div> -->
+<!--  <div class="book-footer">readbytes.github.io</div>  -->
+</div></a>
+
+
+<a href="javascript-regex.htm"><div class="book-cover" style="background-image: url('data:image/jpg;base64,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');">
+<div class="series-name">Introduction</div>
+<div class="book-title">JavaScript Regex</div>
+<!--  <div class="book-subtitle">From Basics to Advanced Patterns</div> -->
+<!--  <div class="book-footer">readbytes.github.io</div>  -->
+</div></a>
+
+
+
+<a href='javascript.htm'><div class='book-cover'>More Javascript Books</div></a>
+</div>
+</div>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+  
+  <script>
+    function copyCode(button) {
+      const code = button.nextElementSibling.innerText;
+      navigator.clipboard.writeText(code).then(() => {
+        button.textContent = 'Copied!';
+        setTimeout(() => { button.textContent = 'Copy'; }, 1500);
+      });
+    }
+  </script>  
+
+<footer class="page-footer">
+    <nav>
+      <a href="https://readbytes.github.io">Home</a> | 
+      Email:<script language="JavaScript" type="text/javascript">
+var part1 = 'yinpeng';var part6 = '263';var part2 = Math.pow(2,6);var part3 = String.fromCharCode(part2);var part4 = 'hotmail dot com';var part5 = part1 + String.fromCharCode(part2) + part4;document.write(part1 + part6 + part3 + part4);
+</script>
+    </nav>
+  <p>© 2025 — All rights reserved.</p>    
+  </footer>
+
+</body>
+</html>
