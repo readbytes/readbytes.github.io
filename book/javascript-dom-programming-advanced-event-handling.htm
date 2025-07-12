@@ -1,0 +1,1544 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>JavaScript DOM Programming Advanced Event Handling</title>
+<link rel='shortcut icon' href='https://java2s.com/style/favicon.ico'>
+<link href="https://fonts.googleapis.com/css2?family=Merriweather&display=swap" rel="stylesheet" />
+<link href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.css" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/theme/material.css"> <!-- Dark theme -->
+<script src="https://cdn.jsdelivr.net/npm/typescript@5/lib/typescript.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/htmlmixed/htmlmixed.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/xml/xml.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/css/css.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/javascript/javascript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/javascript/typescript.min.js"></script>
+<style>
+    #floatingLog {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: rgba(20, 20, 20, 0.95);
+      color: white;
+      font-family: monospace;
+      font-size: 14px;
+      padding: 16px 20px;
+      border-radius: 8px;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+      max-width: 80%;
+      max-height: 200px;
+      overflow-y: auto;
+      display: none;
+      z-index: 9999;
+      pointer-events: none;
+      white-space: pre-wrap;
+      text-align: center;
+    }
+</style>
+<script>
+  const codeMirrorMap = new Map();
+  const iframeMap = new Map();
+  
+ 
+
+  let dismissTimer;
+  function showFloatingLog(message) {
+	const floatingLog = document.getElementById('floatingLog');
+
+    if (floatingLog.style.display !== 'block') {
+      floatingLog.textContent = '';
+      floatingLog.style.display = 'block'; 
+    }
+
+    floatingLog.textContent += message + '\n';
+    floatingLog.scrollTop = floatingLog.scrollHeight; 
+    clearTimeout(dismissTimer);
+    dismissTimer = setTimeout(() => {
+      floatingLog.style.display = 'none';
+      floatingLog.textContent = '';
+    }, 2000);
+  }
+  window.addEventListener('message', (event) => {
+	    if (!iframeMap.has(event.source)) return;
+
+	    if (event.data?.type === 'console-log') {
+	      showFloatingLog(event.data.message);
+	    }
+  });  
+  function renderIframe(button,textarea_id, iframe_id) {
+      const html = codeMirrorMap.get(textarea_id).getValue();
+      const iframe = document.getElementById(iframe_id);
+  
+      const oldIframe = iframe;
+      const newIframe = document.createElement('iframe');
+      newIframe.className ="result_iframe";
+      
+      newIframe.id = iframe_id;
+      oldIframe.replaceWith(newIframe);
+ 
+
+      // Track the iframe in the map
+      iframeMap.set(newIframe.contentWindow, button);
+
+      const overrideScript = `
+        <script>
+          (function() {
+            const originalLog = console.log;
+            console.log = function(...args) {
+              originalLog.apply(console, args);
+              window.parent.postMessage({
+                type: 'console-log',
+                message: args.map(a => {
+                  try { return JSON.stringify(a); }
+                  catch { return String(a); }
+                }).join(' ')
+              }, '*');
+            };
+          })();
+        <\/script>
+      `;
+
+      const iframeHTML = `
+        <!DOCTYPE html>
+        <html>
+        <body>
+          ${overrideScript}
+          ${html}
+        </body>
+        </html>
+      `;
+ 
+      const doc = newIframe.contentDocument || newIframe.contentWindow.document;
+      doc.open();
+      doc.write(iframeHTML);
+      doc.close();
+
+      
+  }
+  function renderIframeForClientTypescript(textarea_id, iframe_id) {
+      let code = codeMirrorMap.get(textarea_id).getValue();
+      code = ts.transpile(code);
+      const iframe = document.getElementById(iframe_id);
+      const doc = iframe.contentDocument || iframe.contentWindow.document;
+
+const html = `
+  <!DOCTYPE html>
+  <html>
+    <head>
+      <title>Output</title>
+      <style>
+        body { font-family: monospace; padding: 1em; background: #f4f4f4; color: #222; }
+        pre { white-space: pre-wrap; word-break: break-word; }
+        .error { color: red; }
+      </style>
+    </head>
+    <body>
+      <pre id="log"></pre>
+      <script>
+        (function(){
+          const logEl = document.getElementById('log');
+          const origLog = console.log;
+          const origError = console.error;
+
+          console.log = (...args) => {
+            logEl.textContent += args.join(' ') + '\\n';
+            origLog.apply(console, args);
+          };
+          console.table = (...args) => {
+            logEl.textContent += args.join(' ') + '\\n';
+            origLog.apply(console, args);
+          };
+
+          console.error = (...args) => {
+            logEl.innerHTML +='<span class="error">' + args.join(' ') + '</span>';
+            origError.apply(console, args);
+          };
+          window.addEventListener("error", function (event) {
+              console.error("Caught by event listener:", event.message);
+          });    
+          try {             
+              ${code};
+          } catch (err) {
+            console.error(err.stack || err.message);
+          }
+        })();
+      <\/script>
+    </body>
+  </html>
+`;
+
+      iframe.style.display = "block";
+      iframe.srcdoc = html;  
+  }
+
+    function renderIframeForClientJavascript(textarea_id, iframe_id) {
+        const code = codeMirrorMap.get(textarea_id).getValue();
+        const iframe = document.getElementById(iframe_id);
+        const doc = iframe.contentDocument || iframe.contentWindow.document;
+
+  const html = `
+    <!DOCTYPE html>
+    <html>
+      <head>
+        <title>Output</title>
+        <style>
+          body { font-family: monospace; padding: 1em; background: #1e1e1e; color: #eee; }
+          pre { white-space: pre-wrap; word-break: break-word; }
+          .error { color: red; }
+        </style>
+      </head>
+      <body>
+        <pre id="log"></pre>
+        <script>
+          (function(){
+            const logEl = document.getElementById('log');
+            const origLog = console.log;
+            const origError = console.error;
+
+            console.log = (...args) => {
+              logEl.textContent += args.join(' ') + '\\n';
+              origLog.apply(console, args);
+            };
+            console.table = (...args) => {
+              logEl.textContent += args.join(' ') + '\\n';
+              origLog.apply(console, args);
+            };
+
+            console.error = (...args) => {
+              logEl.innerHTML +='<span class="error">' + args.join(' ') + '</span>';
+              origError.apply(console, args);
+            };
+            window.addEventListener("error", function (event) {
+                console.error("Caught by event listener:", event.message);
+            });    
+            try {
+             ${code}; 
+            } catch (err) {
+              console.error(err.stack || err.message);
+            }
+          })();
+        <\/script>
+      </body>
+    </html>
+  `;
+    
+      
+        iframe.style.display = "block";
+        iframe.srcdoc = html;  
+    }
+
+    function toggleSnippetAndRefresh(id, textarea_id) {
+      const box = document.getElementById(id);
+      box.classList.toggle("open");
+      codeMirrorMap.get(textarea_id).refresh();
+    }
+
+  </script>
+  <script>
+  const mode = localStorage.getItem('mode') || 'light';
+  document.documentElement.classList.add(`${mode}-mode`);
+  </script>   
+<style> 
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: 'Merriweather', serif;
+  margin: 0;
+  padding: 2rem 1rem;
+  font-size: 15px;
+  line-height: 1.5;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+.container {
+  max-width: 700px;
+  margin: 0 auto;
+  padding: 1rem 2rem;
+  box-shadow: 0 0 15px rgba(0,0,0,0.1);
+}
+
+h1, h2, h3 {
+  font-weight: 600;
+  margin-top: 2.5rem;
+  margin-bottom: 1rem;
+  line-height: 1.2;
+}
+
+h1 { font-size: 1.8rem; }
+h2 { font-size: 1.4rem; }
+h3 { font-size: 1.2rem; }
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: sans-serif;
+  font-size: 1em;
+  margin: 1em 0;
+}
+
+th, td {
+  padding: 0.6em 1em;
+  text-align: left;
+  border: 1px solid;
+}
+
+tr:nth-child(even) {
+  background-color: inherit;
+}
+
+tr:hover {
+  background-color: inherit;
+}
+
+a {
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+code {
+  color: #d35400;
+}
+
+.book-title-chapter {
+  font-family: 'Merriweather', serif;
+  font-size: 2rem;
+  font-weight: bold;
+  text-align: center;
+  margin-bottom: 2rem;
+  border-bottom: 2px solid;
+  padding-bottom: 0.5rem;
+}
+
+.book-subtitle-chapter {
+  text-align: center;
+  font-size: 1rem;
+  margin-top: -1rem;
+  margin-bottom: 2rem;
+}
+
+.related-books {
+  margin-top: 40px;
+}
+
+.related-book-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+    .book-cover {
+      width: 130px;
+      height: 180px;
+      font-family: Arial, sans-serif;
+      position: relative;
+      overflow: hidden;      
+      line-height: normal;
+      box-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+    }
+    .book-cover-bottom-stripe {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      height: 5px;
+      width: 100%;
+    }
+    .book-cover-title {
+      position: absolute;
+      width: 100%;
+      text-align: center;
+      font-weight: bold;
+    }
+     
+    .book-cover-icon {
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      align-items: center;
+      justify-content: center; 
+    }
+
+    .book-cover-author {
+      position: absolute;
+      bottom: 10px;
+      width: 100%;
+      text-align: center;
+      font-size: 8px;
+      color: #333;
+    }
+
+.page-footer {
+  margin-top: 4rem;
+  padding: 1rem 0;
+  text-align: center;
+  font-size: 0.85rem;
+  border-top: 1px solid;
+}
+
+.chapter-navi-section {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 10px;
+}
+
+.nav-link {
+  color: inherit;
+  text-decoration: none;
+  opacity: 0.5;
+  transition: opacity 0.3s ease, text-decoration 0.3s ease;
+}
+
+.nav-link:hover {
+  opacity: 0.9;
+  text-decoration: underline;
+}
+
+.prev { text-align: left; }
+.toc-link { text-align: center; }
+.next { text-align: right; }
+
+.download-section {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2rem;
+  padding: 2rem 1rem;
+  max-width: 600px;
+  margin: 3rem auto;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+}
+
+.download-info h2 {
+  margin: 0 0 0.5rem;
+  font-size: 1.2rem;
+}
+
+.format-label {
+  margin: 0 0 0.5rem;
+  font-size: 0.95rem;
+}
+
+.download-buttons {
+  display: flex;
+  gap: 1rem;
+}
+
+.download-button {
+  background-color: #4A90E2;
+  color: white;
+  padding: 0.5em 1.2em;
+  border-radius: 25px;
+  font-size: 0.95rem;
+  text-decoration: none;
+  transition: background-color 0.3s ease;
+}
+
+.download-button:hover {
+  background-color: #357ABD;
+}
+
+.code-block {
+  position: relative;
+  margin-bottom: 1em;
+}
+
+.copy-button {
+  background: transparent;
+  color: white;
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  border: none;
+  padding: 4px 8px;
+  font-size: 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  z-index: 1;
+}
+
+.copy-button:hover {
+  background-color: #0056b3;
+}
+
+.snippet-container {
+  overflow: hidden;
+}
+
+.snippet-header {
+  padding: 0.75rem 1rem;
+  cursor: pointer;
+  font-size: 1rem;
+ 
+    background-color: #eeeeee;
+    color:  #111111; 
+    border-radius: 8px;
+    cursor: pointer;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);  
+}
+
+.snippet-body {
+  display: none;
+  font-family: monospace;
+}
+
+.snippet-container.open .snippet-body {
+  display: block;
+}
+
+.CodeMirror {
+  border: 2px solid #ccc;
+  border-radius: 4px;
+  resize: vertical;
+}
+
+/* === Light Mode === */
+html.light-mode {
+  background-color: #f8f7f5;
+  color: #333;
+}
+
+html.light-mode .container {
+  background: white;
+}
+
+html.light-mode .book-title-chapter {
+  color: #2c3e50;
+  border-color: #ccc;
+}
+html.light-mode .book-subtitle-chapter{
+  color: #888;
+}
+
+html.light-mode .page-footer,
+html.light-mode .series-name,
+html.light-mode .book-subtitle,
+html.light-mode .format-label {
+  color: #888;
+}
+
+html.light-mode .related-books h2 {
+  color: #333;
+  border-bottom: 2px solid #eee;
+}
+
+html.light-mode .book-title {
+  color: #fff;
+}
+
+html.light-mode .book-cover {
+  border: 1px solid #ccc;
+}
+
+html.light-mode th {
+  background-color: #f2f2f2;
+}
+
+html.light-mode tr:nth-child(even) {
+  background-color: #fafafa;
+}
+
+html.light-mode tr:hover {
+  background-color: #e6f7ff;
+}
+
+html.light-mode a,
+html.light-mode .page-footer a {
+  color: #000;
+}
+
+/* === Dark Mode === */
+html.dark-mode {
+  background-color: #181818;
+  color: #e0e0e0;
+}
+
+html.dark-mode .container {
+  background: #222;
+}
+
+html.dark-mode .book-title-chapter {
+  color: #ddd;
+  border-color: #444;
+}
+
+html.dark-mode .snippet-header {
+    background-color: #333;
+    color:  #ddd; 
+}
+
+
+html.dark-mode .book-subtitle-chapter,
+html.dark-mode .page-footer,
+html.dark-mode .series-name,
+html.dark-mode .book-subtitle,
+html.dark-mode .book-footer,
+html.dark-mode .format-label {
+  color: #aaa;
+}
+
+html.dark-mode .related-books h2 {
+  color: #ddd;
+  border-bottom: 2px solid #333;
+}
+
+html.dark-mode .book-title {
+  color: #fff;
+}
+
+html.dark-mode .book-cover {
+  border: 1px solid #555;
+}
+
+html.dark-mode th {
+  background-color: #333;
+  color: #fff;
+}
+
+html.dark-mode td {
+  border-color: #444;
+}
+
+html.dark-mode tr:nth-child(even) {
+  background-color: #2a2a2a;
+}
+
+html.dark-mode tr:hover {
+  background-color: #2c3e50;
+}
+
+html.dark-mode a,
+html.dark-mode .page-footer a {
+  color: #eee;
+}
+
+
+    button { padding: 0.5em 1em; background: green; color: white; border: none; cursor: pointer; }
+    button:hover { background: #1e7e34; }
+    .result_iframe { width:99%; height:200px; margin-top: 1em;  resize: both;border:1px solid #ccc;}        
+</style>
+</head>
+<body> 
+  <div class="container">
+    <div class = "chapter-navi-section">
+<a href="javascript-dom-programming-handling-dom-events.htm" class="nav-button prev">←</a>
+<a href='javascript-dom-programming.htm#advanced-event-handling' class="nav-button toc-link">Index</a>
+<a href="javascript-dom-programming-forms-and-user-input.htm" class="nav-button next">→</a>
+</div>
+
+    <h1 class="book-title-chapter" id = 'top'>Advanced Event Handling</h1>
+    <h3 class="book-subtitle-chapter">JavaScript DOM Programming</h3>   
+    <!-- <h1 class ="chapter-title"></h1> -->
+    <h2 id='event-delegation-techniques'>6.1 Event Delegation Techniques</h2><p>When building interactive web applications, you often need to handle events on many similar elements—like items in a list or cells in a table. Attaching individual event listeners to each child element can become inefficient and cumbersome, especially if the list changes dynamically. This is where <strong>event delegation</strong> shines.</p><h3 id="what-is-event-delegation">What Is Event Delegation?</h3><p><strong>Event delegation</strong> is a technique where a single event listener is attached to a <strong>common parent</strong> element instead of each individual child element. Because of <strong>event bubbling</strong>—where events propagate up from the target element through its ancestors—the parent can catch events triggered by any of its children.</p><p>Using <code>event.target</code>, the parent listener can identify exactly which child was interacted with and respond accordingly.</p><h3 id="why-use-event-delegation">Why Use Event Delegation?</h3><ul>
+ <li><strong>Performance:</strong> Only one event listener is needed, regardless of how many child elements exist. This reduces memory usage and speeds up event handling.</li>
+ <li><strong>Dynamic elements:</strong> If child elements are added or removed dynamically, the parent listener automatically manages events for new children without needing to attach or remove listeners.</li>
+ <li><strong>Cleaner code:</strong> Managing events in one place keeps your code simpler and easier to maintain.</li>
+</ul><h3 id="example-delegating-clicks-in-a-list">Example: Delegating Clicks in a List</h3><p>Let's look at a practical example of event delegation in action.</p><h3 id="html">HTML</h3><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-html">&lt;ul id="todoList"&gt;
+  &lt;li data-id="1"&gt;Learn JavaScript&lt;/li&gt;
+  &lt;li data-id="2"&gt;Build a project&lt;/li&gt;
+  &lt;li data-id="3"&gt;Read documentation&lt;/li&gt;
+&lt;/ul&gt;</code></pre>
+</div><h3 id="javascript-with-event-delegation">JavaScript with Event Delegation</h3><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-js">const list = document.getElementById('todoList');
+
+list.addEventListener('click', (event) =&gt; {
+  // event.target is the clicked element inside the list
+  const clickedItem = event.target;
+
+  // Check if the clicked element is an &lt;li&gt; (to avoid clicks on the &lt;ul&gt; itself)
+  if (clickedItem.tagName === 'LI') {
+    const itemId = clickedItem.getAttribute('data-id');
+    console.log(`Clicked on item with ID: ${itemId} and text: "${clickedItem.textContent}"`);
+  }
+});</code></pre>
+</div><div class="snippet-container" id="7Wduo">
+ <div class="snippet-header" onclick="toggleSnippetAndRefresh('7Wduo','rQvRE')">
+  Click to Try it
+ </div>
+ <div class="snippet-body"><textarea id="rQvRE">&lt;!DOCTYPE html&gt;
+&lt;html lang="en"&gt;
+&lt;head&gt;
+  &lt;meta charset="UTF-8" /&gt;
+  &lt;title&gt;Todo List Event Delegation&lt;/title&gt;
+  &lt;style&gt;
+    #todoList {
+      list-style-type: none;
+      padding: 0;
+      max-width: 300px;
+      font-family: Arial, sans-serif;
+    }
+    #todoList li {
+      padding: 10px;
+      margin-bottom: 5px;
+      background: #e0f7fa;
+      cursor: pointer;
+      border-radius: 4px;
+      transition: background-color 0.2s ease;
+    }
+    #todoList li:hover {
+      background-color: #b2ebf2;
+    }
+  &lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+  &lt;ul id="todoList"&gt;
+    &lt;li data-id="1"&gt;Learn JavaScript&lt;/li&gt;
+    &lt;li data-id="2"&gt;Build a project&lt;/li&gt;
+    &lt;li data-id="3"&gt;Read documentation&lt;/li&gt;
+  &lt;/ul&gt;
+
+  &lt;script&gt;
+    const list = document.getElementById('todoList');
+
+    list.addEventListener('click', (event) =&gt; {
+      const clickedItem = event.target;
+
+      // Make sure we clicked on an LI element
+      if (clickedItem.tagName === 'LI') {
+        const itemId = clickedItem.getAttribute('data-id');
+        console.log(`Clicked on item with ID: ${itemId} and text: "${clickedItem.textContent}"`);
+      }
+    });
+  &lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;</textarea> <br> <button onclick="renderIframe(this,'rQvRE','C5wKm')">Run</button>
+  <div id="C5wKm_FloatingLog" class="floatingLog" aria-live="polite" role="alert"></div> <iframe id="C5wKm" class="result_iframe" style="display: none;"></iframe>
+  <script>
+  { let editor = CodeMirror.fromTextArea(document.getElementById("rQvRE"), {
+    mode: "htmlmixed",
+    lineNumbers:false,
+    tabSize: 2
+  });
+   codeMirrorMap.set("rQvRE", editor);}
+  </script>
+ </div>
+</div><h3 id="how-this-works">How This Works:</h3><ul>
+ <li>We add a <strong>single</strong> click listener to the <code>&lt;ul&gt;</code> element.</li>
+ <li>When any <code>&lt;li&gt;</code> is clicked, the event bubbles up to the <code>&lt;ul&gt;</code>.</li>
+ <li>Inside the listener, <code>event.target</code> identifies the exact <code>&lt;li&gt;</code> clicked.</li>
+ <li>We check that the target is an <code>&lt;li&gt;</code> to prevent handling clicks on empty parts of the <code>&lt;ul&gt;</code>.</li>
+ <li>Then we retrieve the item's data and perform an action (here, showing an alert).</li>
+</ul><h3 id="handling-dynamic-children">Handling Dynamic Children</h3><p>If you later add new <code>&lt;li&gt;</code> items dynamically, this listener will <strong>automatically</strong> handle clicks on them without needing to attach new listeners:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-js">const newItem = document.createElement('li');
+newItem.textContent = "Practice event delegation";
+newItem.setAttribute('data-id', '4');
+list.appendChild(newItem);
+// No extra event listener needed for newItem!</code></pre>
+</div><h3 id="event-delegation-in-tables">Event Delegation in Tables</h3><p>The same concept applies to more complex structures like tables:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-html">&lt;table id="userTable"&gt;
+  &lt;tr&gt;&lt;td data-user="1"&gt;Alice&lt;/td&gt;&lt;/tr&gt;
+  &lt;tr&gt;&lt;td data-user="2"&gt;Bob&lt;/td&gt;&lt;/tr&gt;
+&lt;/table&gt;</code></pre>
+</div><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-js">const table = document.getElementById('userTable');
+
+table.addEventListener('click', (event) =&gt; {
+  if (event.target.tagName === 'TD') {
+    const userId = event.target.getAttribute('data-user');
+    console.log(`User ID clicked: ${userId}`);
+  }
+});</code></pre>
+</div><div class="snippet-container" id="x35so">
+ <div class="snippet-header" onclick="toggleSnippetAndRefresh('x35so','h0saj')">
+  Click to Try it
+ </div>
+ <div class="snippet-body"><textarea id="h0saj">&lt;!DOCTYPE html&gt;
+&lt;html lang="en"&gt;
+&lt;head&gt;
+  &lt;meta charset="UTF-8" /&gt;
+  &lt;title&gt;User Table Click&lt;/title&gt;
+  &lt;style&gt;
+    #userTable {
+      border-collapse: collapse;
+      width: 200px;
+      font-family: Arial, sans-serif;
+    }
+    #userTable td {
+      border: 1px solid #ccc;
+      padding: 10px;
+      cursor: pointer;
+      text-align: center;
+      transition: background-color 0.2s;
+    }
+    #userTable td:hover {
+      background-color: #f0f8ff;
+    }
+  &lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+
+  &lt;table id="userTable"&gt;
+    &lt;tr&gt;&lt;td data-user="1"&gt;Alice&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td data-user="2"&gt;Bob&lt;/td&gt;&lt;/tr&gt;
+  &lt;/table&gt;
+
+  &lt;script&gt;
+    const table = document.getElementById('userTable');
+
+    table.addEventListener('click', (event) =&gt; {
+      if (event.target.tagName === 'TD') {
+        const userId = event.target.getAttribute('data-user');
+        console.log(`User ID clicked: ${userId}`);
+      }
+    });
+  &lt;/script&gt;
+
+&lt;/body&gt;
+&lt;/html&gt;</textarea> <br> <button onclick="renderIframe(this,'h0saj','hFLtR')">Run</button>
+  <div id="hFLtR_FloatingLog" class="floatingLog" aria-live="polite" role="alert"></div> <iframe id="hFLtR" class="result_iframe" style="display: none;"></iframe>
+  <script>
+  { let editor = CodeMirror.fromTextArea(document.getElementById("h0saj"), {
+    mode: "htmlmixed",
+    lineNumbers:false,
+    tabSize: 2
+  });
+   codeMirrorMap.set("h0saj", editor);}
+  </script>
+ </div>
+</div><h3 id="summary-of-advantages">Summary of Advantages</h3><table>
+ <thead>
+  <tr>
+   <th>Advantage</th>
+   <th>Description</th>
+  </tr>
+ </thead>
+ <tbody>
+  <tr>
+   <td><strong>Reduced memory usage</strong></td>
+   <td>Fewer listeners, less overhead</td>
+  </tr>
+  <tr>
+   <td><strong>Automatic for new elements</strong></td>
+   <td>No need to attach/detach listeners dynamically</td>
+  </tr>
+  <tr>
+   <td><strong>Simplified codebase</strong></td>
+   <td>Centralized event handling logic</td>
+  </tr>
+  <tr>
+   <td><strong>Better performance</strong></td>
+   <td>Especially beneficial for large, dynamic lists</td>
+  </tr>
+ </tbody>
+</table><h3 id="key-points-to-remember">Key Points to Remember</h3><ul>
+ <li>Always verify the <code>event.target</code> inside the delegated listener to ensure you respond to the correct element.</li>
+ <li>Be mindful of event bubbling and how it affects which elements receive the event.</li>
+ <li>Delegation works best when the parent element wraps the child elements that generate events.</li>
+ <li>For very complex UI trees, sometimes combining delegation with direct listeners is appropriate.</li>
+</ul><p>Event delegation is a fundamental technique that leverages the DOM’s event bubbling mechanism to efficiently handle events on many child elements. Mastering it will make your event handling code more performant, scalable, and easier to maintain!</p><div class = "chapter-navi-section">
+<a href="#top" class="nav-button prev">↑</a>
+<a href='javascript-dom-programming.htm#advanced-event-handling' class="nav-button toc-link">Index</a>
+<a href="#bottom" class="nav-button next">↓</a>
+</div>
+<h2 id='preventing-default-actions-and-stopping-propagation'>6.2 Preventing Default Actions and Stopping Propagation</h2><h3 id="preventing-default-actions-and-stopping-propagation">Preventing Default Actions and Stopping Propagation</h3><p>When working with DOM events, understanding how to control the behavior of events is crucial. Sometimes, you need to prevent the browser’s default behavior or stop the event from bubbling further through the DOM. JavaScript provides methods to handle these scenarios: <code>event.preventDefault()</code>, <code>event.stopPropagation()</code>, and <code>event.stopImmediatePropagation()</code>.</p><h3 id="event-preventdefault"><code>event.preventDefault()</code></h3><p>By default, many HTML elements trigger browser actions when events occur. For example:</p><ul>
+ <li>Clicking a link navigates to another page.</li>
+ <li>Submitting a form reloads the page.</li>
+ <li>Pressing a key might trigger browser shortcuts.</li>
+</ul><p>If you need to <strong>prevent</strong> these default behaviors (for example, to handle navigation or form submission with JavaScript), you use:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-js">event.preventDefault();</code></pre>
+</div><h3 id="example-preventing-a-link-from-navigating">Example: Preventing a Link from Navigating</h3><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-html">&lt;a href="https://example.com" id="myLink"&gt;Go to Example.com&lt;/a&gt;</code></pre>
+</div><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-js">const link = document.getElementById('myLink');
+link.addEventListener('click', (event) =&gt; {
+  event.preventDefault(); // Stop the browser from navigating
+  console.log('Link clicked, but navigation prevented!');
+});</code></pre>
+</div><p>In this example, clicking the link triggers the alert, but the browser <strong>does not</strong> follow the URL.</p><div class="snippet-container" id="RWKOt">
+ <div class="snippet-header" onclick="toggleSnippetAndRefresh('RWKOt','5k8hp')">
+  Click to Try it
+ </div>
+ <div class="snippet-body"><textarea id="5k8hp">&lt;!DOCTYPE html&gt;
+&lt;html lang="en"&gt;
+&lt;head&gt;
+  &lt;meta charset="UTF-8" /&gt;
+  &lt;title&gt;Prevent Link Navigation&lt;/title&gt;
+  &lt;style&gt;
+    #myLink {
+      font-size: 18px;
+      color: blue;
+      text-decoration: underline;
+      cursor: pointer;
+    }
+  &lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+
+  &lt;a href="https://example.com" id="myLink"&gt;Go to Example.com&lt;/a&gt;
+
+  &lt;script&gt;
+    const link = document.getElementById('myLink');
+    link.addEventListener('click', (event) =&gt; {
+      event.preventDefault(); // Stop the browser from navigating
+      console.log('Link clicked, but navigation prevented!');
+    });
+  &lt;/script&gt;
+
+&lt;/body&gt;
+&lt;/html&gt;</textarea> <br> <button onclick="renderIframe(this,'5k8hp','YLUBE')">Run</button>
+  <div id="YLUBE_FloatingLog" class="floatingLog" aria-live="polite" role="alert"></div> <iframe id="YLUBE" class="result_iframe" style="display: none;"></iframe>
+  <script>
+  { let editor = CodeMirror.fromTextArea(document.getElementById("5k8hp"), {
+    mode: "htmlmixed",
+    lineNumbers:false,
+    tabSize: 2
+  });
+   codeMirrorMap.set("5k8hp", editor);}
+  </script>
+ </div>
+</div><h3 id="event-stoppropagation"><code>event.stopPropagation()</code></h3><p>Events bubble up the DOM tree by default, meaning that when an event is triggered on a child element, it also fires on all ancestor elements unless stopped.</p><p>Sometimes, you want to <strong>stop the event from propagating further up</strong>:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-js">event.stopPropagation();</code></pre>
+</div><p>This prevents parent elements from receiving the same event.</p><h3 id="example-stopping-propagation">Example: Stopping Propagation</h3><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-html">&lt;div id="parent" style="padding:20px; border: 1px solid black;"&gt;
+  Parent Div
+  &lt;button id="childBtn"&gt;Click Me&lt;/button&gt;
+&lt;/div&gt;</code></pre>
+</div><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-js">const parent = document.getElementById('parent');
+const childBtn = document.getElementById('childBtn');
+
+parent.addEventListener('click', () =&gt; {
+  console.log('Parent clicked');
+});
+
+childBtn.addEventListener('click', (event) =&gt; {
+  event.stopPropagation(); // Prevent parent listener from firing
+  console.log('Button clicked');
+});</code></pre>
+</div><p>Clicking the button shows only <strong>"Button clicked"</strong> alert because the event does <strong>not</strong> bubble to the parent.</p><div class="snippet-container" id="kfPyF">
+ <div class="snippet-header" onclick="toggleSnippetAndRefresh('kfPyF','Ymgxl')">
+  Click to Try it
+ </div>
+ <div class="snippet-body"><textarea id="Ymgxl">&lt;!DOCTYPE html&gt;
+&lt;html lang="en"&gt;
+&lt;head&gt;
+  &lt;meta charset="UTF-8" /&gt;
+  &lt;title&gt;Event Propagation Demo&lt;/title&gt;
+  &lt;style&gt;
+    #parent {
+      padding: 20px;
+      border: 1px solid black;
+      max-width: 200px;
+      font-family: Arial, sans-serif;
+    }
+    #childBtn {
+      margin-top: 10px;
+      padding: 8px 12px;
+      cursor: pointer;
+    }
+  &lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+
+  &lt;div id="parent"&gt;
+    Parent Div
+    &lt;button id="childBtn"&gt;Click Me&lt;/button&gt;
+  &lt;/div&gt;
+
+  &lt;script&gt;
+    const parent = document.getElementById('parent');
+    const childBtn = document.getElementById('childBtn');
+
+    parent.addEventListener('click', () =&gt; {
+      console.log('Parent clicked');
+    });
+
+    childBtn.addEventListener('click', (event) =&gt; {
+      event.stopPropagation(); // Prevent parent listener from firing
+      console.log('Button clicked');
+    });
+  &lt;/script&gt;
+
+&lt;/body&gt;
+&lt;/html&gt;</textarea> <br> <button onclick="renderIframe(this,'Ymgxl','bcs4C')">Run</button>
+  <div id="bcs4C_FloatingLog" class="floatingLog" aria-live="polite" role="alert"></div> <iframe id="bcs4C" class="result_iframe" style="display: none;"></iframe>
+  <script>
+  { let editor = CodeMirror.fromTextArea(document.getElementById("Ymgxl"), {
+    mode: "htmlmixed",
+    lineNumbers:false,
+    tabSize: 2
+  });
+   codeMirrorMap.set("Ymgxl", editor);}
+  </script>
+ </div>
+</div><h3 id="event-stopimmediatepropagation"><code>event.stopImmediatePropagation()</code></h3><p>This method does everything <code>stopPropagation()</code> does <strong>plus</strong> it prevents <strong>other listeners on the same element</strong> from running.</p><p>Use it when you want to ensure <strong>no other event listeners</strong>, even on the same element, are called.</p><h3 id="example-stopping-immediate-propagation">Example: Stopping Immediate Propagation</h3><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-js">button.addEventListener('click', (event) =&gt; {
+  console.log('First handler');
+  event.stopImmediatePropagation();
+});
+
+button.addEventListener('click', () =&gt; {
+  console.log('Second handler'); // This will NOT run
+});</code></pre>
+</div><p>Here, only the "First handler" alert will show because the propagation stops immediately.</p><h3 id="common-mistakes-and-consequences">Common Mistakes and Consequences</h3><ul>
+ <li><strong>Not calling <code>preventDefault()</code> when needed:</strong> You may get unexpected page reloads or navigations.</li>
+ <li><strong>Overusing <code>stopPropagation()</code> or <code>stopImmediatePropagation()</code>:</strong> It can break event delegation or interfere with other event handlers unexpectedly.</li>
+ <li><strong>Confusing <code>stopPropagation()</code> with <code>preventDefault()</code>:</strong> They control different things—one controls event flow, the other the browser’s default action.</li>
+ <li><strong>Not checking event targets:</strong> Sometimes you only want to prevent default or stop propagation for specific elements/events.</li>
+</ul><h3 id="summary-table">Summary Table</h3><table>
+ <thead>
+  <tr>
+   <th>Method</th>
+   <th>Purpose</th>
+   <th>When to Use</th>
+  </tr>
+ </thead>
+ <tbody>
+  <tr>
+   <td><code>event.preventDefault()</code></td>
+   <td>Prevent browser's default action for the event</td>
+   <td>Prevent link navigation, form submission, etc.</td>
+  </tr>
+  <tr>
+   <td><code>event.stopPropagation()</code></td>
+   <td>Stop event bubbling to parent elements</td>
+   <td>Prevent ancestor event handlers from firing</td>
+  </tr>
+  <tr>
+   <td><code>event.stopImmediatePropagation()</code></td>
+   <td>Stop bubbling and prevent other listeners on the same element</td>
+   <td>When you want exclusive control on an element</td>
+  </tr>
+ </tbody>
+</table><p>By mastering these methods, you can precisely control how events behave, creating rich, responsive interfaces without unintended side effects.</p><div class = "chapter-navi-section">
+<a href="#top" class="nav-button prev">↑</a>
+<a href='javascript-dom-programming.htm#advanced-event-handling' class="nav-button toc-link">Index</a>
+<a href="#bottom" class="nav-button next">↓</a>
+</div>
+<h2 id='throttling-and-debouncing-event-handlers'>6.3 Throttling and Debouncing Event Handlers</h2><p>When working with events that can fire very frequently—such as <code>mousemove</code>, <code>scroll</code>, or <code>resize</code>—executing an event handler on <strong>every</strong> event can cause serious performance issues. To improve efficiency and responsiveness, two common techniques are used to <strong>control how often</strong> event handlers run: <strong>throttling</strong> and <strong>debouncing</strong>.</p><h3 id="what-are-throttling-and-debouncing">What Are Throttling and Debouncing?</h3><p>Both throttling and debouncing limit the rate at which a function is called, but they do so in different ways:</p><table>
+ <thead>
+  <tr>
+   <th>Technique</th>
+   <th>Description</th>
+   <th>When to Use</th>
+  </tr>
+ </thead>
+ <tbody>
+  <tr>
+   <td><strong>Throttling</strong></td>
+   <td>Ensures a function runs at most once every specified interval (e.g., once per 200ms).</td>
+   <td>Use when you want to handle periodic updates regularly but limit frequency (e.g., scroll or resize).</td>
+  </tr>
+  <tr>
+   <td><strong>Debouncing</strong></td>
+   <td>Delays function execution until after a specified period of inactivity (e.g., wait 300ms after the last event).</td>
+   <td>Use when you want to trigger an action only after the user stops performing the event (e.g., search input).</td>
+  </tr>
+ </tbody>
+</table><h3 id="throttling-explained">Throttling Explained</h3><p>Throttling <strong>limits</strong> the number of times a function can execute over time. Even if an event fires continuously, throttling guarantees the handler runs at a controlled, steady pace.</p><h3 id="throttle-example">Throttle Example</h3><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-js">function throttle(fn, delay) {
+  let lastCall = 0;
+  return function (...args) {
+    const now = Date.now();
+    if (now - lastCall &gt;= delay) {
+      lastCall = now;
+      fn.apply(this, args);
+    }
+  };
+}
+
+// Usage: Log mouse position at most once every 200ms
+window.addEventListener('mousemove', throttle((event) =&gt; {
+  console.log(`Mouse at (${event.clientX}, ${event.clientY})`);
+}, 200));</code></pre>
+</div><p>Here, even though <code>mousemove</code> fires very rapidly, the logging happens at most once every 200 milliseconds.</p><h3 id="debouncing-explained">Debouncing Explained</h3><p>Debouncing <strong>delays</strong> execution until the event stops firing for a certain period. If the event keeps happening, the timer resets.</p><h3 id="debounce-example">Debounce Example</h3><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-js">function debounce(fn, delay) {
+  let timerId;
+  return function (...args) {
+    clearTimeout(timerId);
+    timerId = setTimeout(() =&gt; fn.apply(this, args), delay);
+  };
+}
+
+// Usage: Log window resize event after user finishes resizing (no resize for 300ms)
+window.addEventListener('resize', debounce(() =&gt; {
+  console.log('Resize event finished');
+}, 300));</code></pre>
+</div><p>This means the handler only runs <strong>once</strong> the user has stopped resizing the window for 300 milliseconds.</p><h3 id="choosing-between-throttle-and-debounce">Choosing Between Throttle and Debounce</h3><ul>
+ <li><p><strong>Throttle</strong> is ideal for events where you want to perform <strong>regular updates</strong> but not overload your application, such as:</p>
+  <ul>
+   <li>Updating scroll position indicators.</li>
+   <li>Animating elements on scroll.</li>
+   <li>Resizing layouts dynamically.</li>
+  </ul></li>
+ <li><p><strong>Debounce</strong> works best when you want to react <strong>after the user stops</strong> an action, such as:</p>
+  <ul>
+   <li>Waiting for text input to finish before sending a search request.</li>
+   <li>Reacting to window resizing once resizing stops.</li>
+   <li>Form validation after typing is complete.</li>
+  </ul></li>
+</ul><h3 id="summary">Summary</h3><table>
+ <thead>
+  <tr>
+   <th>Aspect</th>
+   <th>Throttling</th>
+   <th>Debouncing</th>
+  </tr>
+ </thead>
+ <tbody>
+  <tr>
+   <td>Execution pattern</td>
+   <td>Executes function at most once per interval</td>
+   <td>Executes function only after inactivity</td>
+  </tr>
+  <tr>
+   <td>Use cases</td>
+   <td>Scroll, resize, mousemove events</td>
+   <td>Search input, form validation, window resize</td>
+  </tr>
+  <tr>
+   <td>Effect</td>
+   <td>Limits function calls over time</td>
+   <td>Delays function call until quiet period</td>
+  </tr>
+ </tbody>
+</table><p>By applying throttling and debouncing, you can create smoother user experiences and avoid performance pitfalls associated with rapid event firing. Experiment with these patterns to find the right balance for your application’s needs.</p><div class = "chapter-navi-section">
+<a href="#top" class="nav-button prev">↑</a>
+<a href='javascript-dom-programming.htm#advanced-event-handling' class="nav-button toc-link">Index</a>
+<a href="#bottom" class="nav-button next">↓</a>
+</div>
+<h2 id='working-with-event-objects-and-targets'>6.4 Working with Event Objects and Targets</h2><p>When you add an event listener in JavaScript, the browser passes an <strong>event object</strong> to your event handler function. This object contains valuable information about the event and methods to control its behavior. Understanding the event object is key to writing effective and responsive event handlers.</p><h3 id="key-properties-of-the-event-object">Key Properties of the Event Object</h3><p>Here are some of the most commonly used properties and methods available on event objects:</p><ul>
+ <li><p><strong><code>type</code></strong> The type of event that occurred, such as <code>"click"</code>, <code>"keydown"</code>, <code>"submit"</code>, etc.</p></li>
+ <li><p><strong><code>target</code></strong> The actual DOM element on which the event originated — the element that was <strong>clicked</strong>, <strong>hovered</strong>, or interacted with.</p></li>
+ <li><p><strong><code>currentTarget</code></strong> The DOM element on which the event listener is currently invoked. This can differ from <code>target</code> in event delegation scenarios.</p></li>
+ <li><p><strong><code>preventDefault()</code></strong> A method that stops the browser’s default action related to the event, for example, preventing a link from navigating or a form from submitting.</p></li>
+ <li><p><strong><code>stopPropagation()</code></strong> Stops the event from bubbling up (or capturing down) to other listeners.</p></li>
+</ul><h3 id="understanding-event-target-vs-event-currenttarget">Understanding <code>event.target</code> vs. <code>event.currentTarget</code></h3><p>These two properties are often confused but serve distinct purposes:</p><ul>
+ <li><p><strong><code>event.target</code></strong> is the <strong>element that triggered the event</strong> — the deepest nested element that was actually interacted with.</p></li>
+ <li><p><strong><code>event.currentTarget</code></strong> is the <strong>element the event listener is attached to</strong> — the element handling the event at that moment during propagation.</p></li>
+</ul><h3 id="example-event-delegation-on-a-list">Example: Event Delegation on a List</h3><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-html">&lt;ul id="menu"&gt;
+  &lt;li&gt;&lt;button&gt;Home&lt;/button&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;button&gt;About&lt;/button&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;button&gt;Contact&lt;/button&gt;&lt;/li&gt;
+&lt;/ul&gt;</code></pre>
+</div><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-js">const menu = document.getElementById('menu');
+
+menu.addEventListener('click', (event) =&gt; {
+  console.log('target:', event.target.tagName);        // Element clicked, e.g., BUTTON
+  console.log('currentTarget:', event.currentTarget.id); // The UL element 'menu'
+});</code></pre>
+</div><p>If a user clicks the "About" button, <code>event.target</code> will be the <code>&lt;button&gt;</code> element, while <code>event.currentTarget</code> will always be the <code>&lt;ul id="menu"&gt;</code>, because the listener is attached to the <code>&lt;ul&gt;</code>.</p><div class="snippet-container" id="YeRPx">
+ <div class="snippet-header" onclick="toggleSnippetAndRefresh('YeRPx','KVJC1')">
+  Click to Try it
+ </div>
+ <div class="snippet-body"><textarea id="KVJC1">&lt;!DOCTYPE html&gt;
+&lt;html lang="en"&gt;
+&lt;head&gt;
+  &lt;meta charset="UTF-8" /&gt;
+  &lt;title&gt;Menu Event Delegation&lt;/title&gt;
+  &lt;style&gt;
+    #menu {
+      list-style: none;
+      padding: 0;
+      font-family: Arial, sans-serif;
+      max-width: 200px;
+    }
+    #menu li {
+      margin: 8px 0;
+    }
+    #menu button {
+      width: 100%;
+      padding: 8px 12px;
+      cursor: pointer;
+      font-size: 16px;
+    }
+  &lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+
+  &lt;ul id="menu"&gt;
+    &lt;li&gt;&lt;button&gt;Home&lt;/button&gt;&lt;/li&gt;
+    &lt;li&gt;&lt;button&gt;About&lt;/button&gt;&lt;/li&gt;
+    &lt;li&gt;&lt;button&gt;Contact&lt;/button&gt;&lt;/li&gt;
+  &lt;/ul&gt;
+
+  &lt;script&gt;
+    const menu = document.getElementById('menu');
+
+    menu.addEventListener('click', (event) =&gt; {
+      console.log('target:', event.target.tagName);         // Element clicked, e.g., BUTTON
+      console.log('currentTarget:', event.currentTarget.id); // The UL element 'menu'
+    });
+  &lt;/script&gt;
+
+&lt;/body&gt;
+&lt;/html&gt;</textarea> <br> <button onclick="renderIframe(this,'KVJC1','G67Oo')">Run</button>
+  <div id="G67Oo_FloatingLog" class="floatingLog" aria-live="polite" role="alert"></div> <iframe id="G67Oo" class="result_iframe" style="display: none;"></iframe>
+  <script>
+  { let editor = CodeMirror.fromTextArea(document.getElementById("KVJC1"), {
+    mode: "htmlmixed",
+    lineNumbers:false,
+    tabSize: 2
+  });
+   codeMirrorMap.set("KVJC1", editor);}
+  </script>
+ </div>
+</div><h3 id="using-event-objects-for-dynamic-behavior">Using Event Objects for Dynamic Behavior</h3><p>Event objects allow you to react dynamically based on what element triggered the event or other event details:</p><h3 id="example-highlighting-clicked-items">Example: Highlighting Clicked Items</h3><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-js">menu.addEventListener('click', (event) =&gt; {
+  if (event.target.tagName === 'BUTTON') {
+    alert(`You clicked: ${event.target.textContent}`);
+    // Add a class to highlight the clicked button
+    event.target.classList.add('highlight');
+  }
+});</code></pre>
+</div><p>This code checks the <code>event.target</code> to ensure only button clicks inside the menu trigger the action.</p><div class="snippet-container" id="8cRLi">
+ <div class="snippet-header" onclick="toggleSnippetAndRefresh('8cRLi','JPIQB')">
+  Click to Try it
+ </div>
+ <div class="snippet-body"><textarea id="JPIQB">&lt;!DOCTYPE html&gt;
+&lt;html lang="en"&gt;
+&lt;head&gt;
+  &lt;meta charset="UTF-8" /&gt;
+  &lt;title&gt;Menu Button Highlight&lt;/title&gt;
+  &lt;style&gt;
+    #menu {
+      list-style: none;
+      padding: 0;
+      font-family: Arial, sans-serif;
+      max-width: 200px;
+    }
+    #menu li {
+      margin: 8px 0;
+    }
+    #menu button {
+      width: 100%;
+      padding: 8px 12px;
+      cursor: pointer;
+      font-size: 16px;
+      transition: background-color 0.3s ease;
+    }
+    /* Highlight class */
+    .highlight {
+      background-color: yellow;
+      font-weight: bold;
+    }
+  &lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+
+  &lt;ul id="menu"&gt;
+    &lt;li&gt;&lt;button&gt;Home&lt;/button&gt;&lt;/li&gt;
+    &lt;li&gt;&lt;button&gt;About&lt;/button&gt;&lt;/li&gt;
+    &lt;li&gt;&lt;button&gt;Contact&lt;/button&gt;&lt;/li&gt;
+  &lt;/ul&gt;
+
+  &lt;script&gt;
+    const menu = document.getElementById('menu');
+
+    menu.addEventListener('click', (event) =&gt; {
+      if (event.target.tagName === 'BUTTON') {
+        console.log(`You clicked: ${event.target.textContent}`);
+        // Add a class to highlight the clicked button
+        event.target.classList.add('highlight');
+      }
+    });
+  &lt;/script&gt;
+
+&lt;/body&gt;
+&lt;/html&gt;</textarea> <br> <button onclick="renderIframe(this,'JPIQB','OHEl4')">Run</button>
+  <div id="OHEl4_FloatingLog" class="floatingLog" aria-live="polite" role="alert"></div> <iframe id="OHEl4" class="result_iframe" style="display: none;"></iframe>
+  <script>
+  { let editor = CodeMirror.fromTextArea(document.getElementById("JPIQB"), {
+    mode: "htmlmixed",
+    lineNumbers:false,
+    tabSize: 2
+  });
+   codeMirrorMap.set("JPIQB", editor);}
+  </script>
+ </div>
+</div><h3 id="other-useful-event-object-properties">Other Useful Event Object Properties</h3><ul>
+ <li><strong><code>event.key</code></strong>: The key pressed during keyboard events.</li>
+ <li><strong><code>event.clientX</code>, <code>event.clientY</code></strong>: Mouse cursor coordinates relative to the viewport.</li>
+ <li><strong><code>event.shiftKey</code>, <code>event.ctrlKey</code></strong>: Boolean flags for modifier keys.</li>
+</ul><h3 id="summary">Summary</h3><ul>
+ <li>Event handlers receive an <strong>event object</strong> describing what happened.</li>
+ <li><code>event.target</code> is the element that initiated the event.</li>
+ <li><code>event.currentTarget</code> is the element handling the event.</li>
+ <li>You can prevent default browser behavior with <code>preventDefault()</code>.</li>
+ <li>Use these properties and methods to write flexible, context-aware event handlers.</li>
+</ul><p>Mastering the event object unlocks powerful event-driven programming patterns in the DOM!</p><div class = "chapter-navi-section">
+<a href="#top" class="nav-button prev">↑</a>
+<a href='javascript-dom-programming.htm#advanced-event-handling' class="nav-button toc-link">Index</a>
+<a href="#bottom" class="nav-button next">↓</a>
+</div>
+<h2 id='practical-example-efficient-list-item-click-handling'>6.5 Practical Example: Efficient List Item Click Handling</h2><p>Handling events on many dynamic elements can be tricky — especially if the elements are added or removed after the initial page load. Adding event listeners to each individual item is inefficient and can cause memory leaks.</p><p><strong>Event delegation</strong> solves this by attaching a single listener to a common ancestor element that exists from the start. This listener can detect and respond to events triggered by any of its child elements, even if those children are added later dynamically.</p><h3 id="example-delegated-click-handling-on-a-dynamic-list">Example: Delegated Click Handling on a Dynamic List</h3><p>HTML:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-html">&lt;style&gt;
+    .selected {
+      background-color: #d0f0c0;
+    }
+  &lt;/style&gt;
+
+  &lt;h2&gt;Click on a list item to select it&lt;/h2&gt;
+  &lt;ul id="itemList"&gt;
+    &lt;li data-id="1"&gt;Item 1&lt;/li&gt;
+    &lt;li data-id="2"&gt;Item 2&lt;/li&gt;
+  &lt;/ul&gt;
+
+  &lt;button id="addItemBtn"&gt;Add New Item&lt;/button&gt;</code></pre>
+</div><p>Javascript:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-html">&lt;script&gt;
+    const list = document.getElementById('itemList');
+    const addBtn = document.getElementById('addItemBtn');
+    let nextId = 3;
+
+    // Event delegation: single listener on the parent UL
+    list.addEventListener('click', (event) =&gt; {
+      // Only respond if a &lt;li&gt; was clicked (ignore clicks on the UL itself)
+      if (event.target &amp;&amp; event.target.nodeName === 'LI') {
+        // Remove "selected" class from all items
+        [...list.children].forEach(li =&gt; li.classList.remove('selected'));
+
+        // Add "selected" class to the clicked item
+        event.target.classList.add('selected');
+
+        // Log the data-id of the clicked item
+        console.log('Clicked item ID:', event.target.dataset.id);
+      }
+    });
+
+    // Dynamically add new items to the list
+    addBtn.addEventListener('click', () =&gt; {
+      const newItem = document.createElement('li');
+      newItem.textContent = `Item ${nextId}`;
+      newItem.dataset.id = nextId;
+      list.appendChild(newItem);
+      nextId++;
+    });
+  &lt;/script&gt;</code></pre>
+</div><div class="snippet-container" id="hVyZP">
+ <div class="snippet-header" onclick="toggleSnippetAndRefresh('hVyZP','U4jGB')">
+  Click to Try it
+ </div>
+ <div class="snippet-body"><textarea id="U4jGB">&lt;!DOCTYPE html&gt;
+&lt;html lang="en"&gt;
+&lt;head&gt;
+  &lt;meta charset="UTF-8" /&gt;
+  &lt;title&gt;Delegated List Click Handling&lt;/title&gt;
+  &lt;style&gt;
+    .selected {
+      background-color: #d0f0c0;
+    }
+  &lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+
+  &lt;h2&gt;Click on a list item to select it&lt;/h2&gt;
+  &lt;ul id="itemList"&gt;
+    &lt;li data-id="1"&gt;Item 1&lt;/li&gt;
+    &lt;li data-id="2"&gt;Item 2&lt;/li&gt;
+  &lt;/ul&gt;
+
+  &lt;button id="addItemBtn"&gt;Add New Item&lt;/button&gt;
+
+  &lt;script&gt;
+    const list = document.getElementById('itemList');
+    const addBtn = document.getElementById('addItemBtn');
+    let nextId = 3;
+
+    // Event delegation: single listener on the parent UL
+    list.addEventListener('click', (event) =&gt; {
+      // Only respond if a &lt;li&gt; was clicked (ignore clicks on the UL itself)
+      if (event.target &amp;&amp; event.target.nodeName === 'LI') {
+        // Remove "selected" class from all items
+        [...list.children].forEach(li =&gt; li.classList.remove('selected'));
+
+        // Add "selected" class to the clicked item
+        event.target.classList.add('selected');
+
+        // Log the data-id of the clicked item
+        console.log('Clicked item ID:', event.target.dataset.id);
+      }
+    });
+
+    // Dynamically add new items to the list
+    addBtn.addEventListener('click', () =&gt; {
+      const newItem = document.createElement('li');
+      newItem.textContent = `Item ${nextId}`;
+      newItem.dataset.id = nextId;
+      list.appendChild(newItem);
+      nextId++;
+    });
+  &lt;/script&gt;
+
+&lt;/body&gt;
+&lt;/html&gt;</textarea> <br> <button onclick="renderIframe(this,'U4jGB','Q8Xwp')">Run</button>
+  <div id="Q8Xwp_FloatingLog" class="floatingLog" aria-live="polite" role="alert"></div> <iframe id="Q8Xwp" class="result_iframe" style="display: none;"></iframe>
+  <script>
+  { let editor = CodeMirror.fromTextArea(document.getElementById("U4jGB"), {
+    mode: "htmlmixed",
+    lineNumbers:false,
+    tabSize: 2
+  });
+   codeMirrorMap.set("U4jGB", editor);}
+  </script>
+ </div>
+</div><h3 id="how-this-works">How This Works</h3><ol>
+ <li><p><strong>Single Event Listener on the Parent (<code>ul</code>)</strong> Instead of adding listeners to each <code>&lt;li&gt;</code>, we add one listener to the <code>&lt;ul id="itemList"&gt;</code>. This listener catches <strong>all click events bubbling up</strong> from child <code>&lt;li&gt;</code> elements.</p></li>
+ <li><p><strong>Identifying the Clicked Item Using <code>event.target</code></strong> Inside the event handler, we check <code>event.target.nodeName === 'LI'</code> to make sure the click was on a list item, not the parent or any other element.</p></li>
+ <li><p><strong>Updating UI Efficiently</strong> When an <code>&lt;li&gt;</code> is clicked, we first remove the <code>selected</code> class from all list items, then add it only to the clicked one. This provides clear visual feedback.</p></li>
+ <li><p><strong>Handling Dynamic Items</strong> New items can be added anytime with the "Add New Item" button. Since the listener is on the parent <code>&lt;ul&gt;</code>, clicks on these new <code>&lt;li&gt;</code> elements are handled automatically without extra setup.</p></li>
+</ol><h3 id="benefits-of-this-pattern">Benefits of This Pattern</h3><ul>
+ <li><strong>Performance:</strong> Only one event listener instead of many, reducing memory usage.</li>
+ <li><strong>Maintainability:</strong> No need to re-bind listeners when new elements are added dynamically.</li>
+ <li><strong>Simplicity:</strong> Centralized event logic instead of scattered handlers.</li>
+</ul><h3 id="extending-this-pattern">Extending This Pattern</h3><ul>
+ <li>Delegate events for forms, tables, menus, or any dynamic list.</li>
+ <li>Use more complex selectors or attribute checks inside the handler to filter events.</li>
+ <li>Combine with <code>event.stopPropagation()</code> if you need to control event bubbling behavior more precisely.</li>
+</ul><p>Mastering event delegation helps you build responsive, efficient, and scalable web applications with less code and better performance!</p><div class = "chapter-navi-section">
+<a href="javascript-dom-programming-handling-dom-events.htm" class="nav-button prev">←</a>
+<a href='javascript-dom-programming.htm#advanced-event-handling' class="nav-button toc-link">Index</a>
+<a href="javascript-dom-programming-forms-and-user-input.htm" class="nav-button next">→</a>
+</div>
+<section class="download-section">
+  <div class="book-cover" style="background-color: #f9f6f1;border: 1px solid #ccc;"> 
+    <div class="book-cover-title" style="font-size: 16px;color: #333;top: 20px;">JavaScript DOM Programming</div>
+    <div class="book-cover-author">readbytes</div>
+    <div class="book-cover-bottom-stripe" style="background-color: #333;"></div>
+    <img class="book-cover-icon" style="width: 90px;height: 90px;top: 60px;" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFoAAABaCAYAAAA4qEECAAAD5UlEQVR4Xu2dv4sTQRTHH6eFYnOWgqWoWKqFhYWNlnZXiCAIgs35sxEtjrOwicSUNnY2NhYWgleJ4PkH2CmE+xFFSxttTlnz4mZ3573Emb2deTPJvg98q7yZN+/DmdvkkhXAZGeYzGNwvzrQ9U1TB9HZabGPuHID+NqmuQnu0LU+MhVa6COu3Aa+tmnugDt0rY9MpSiqAp+X68WxGaEUff8s39M1uLbsvTvRdE9bXi6VcZxdRatox6hoKyqabWyLYzOCimYb2+LYjKCi2ca2ODYjqGi2sS2OzQgqmm1si2MzQjtFe4wr7Xxl6DGuLANf2zT4/okrdK2PTOUn8OImwf3qQNc3TR1iz84oNsu2htmGLi0ISPH08mTlX39aEBjR2c1mW9CjBQFJS/SmrOg+LQhIWqI34Awt8Ml1IA3J4yGJKbqY+ekjud6tFp3/SxbpXTTFZH04Sh4PRSzR5ryCohGjOXksFDFET5ScfYcDpC4Y+0FetrRoY75fn+R/msdcAC4bs1At8oiEaDw7nSdbex5P8ojBBzgCEw42T9npV54y+nAaYjG8cD+0Z4EfcNaDMxWCMd/gBKQAHubVM37gWQvOYAiO9XTxP4avlvbRQ/pKb6WUMX6ODp7B6Jd++mRf4Vi2DQ985OoSvMYtMYXoCXW7zgDuDX9QjtMZ2ojEVYcCKloMFS2Eis5hl0oznuQ4CPyQ8xKcLRno4eYtSbAIlUMZ0Iv/1POiTHWmfMbo3IL8QJ1Op5T84yEfJPW8h0L048uGaPwlHJ3iSqDb7VZEr/JBUs86FKJ7VwzRd42JI6GihVDRQqhoIVS0ECpaCBUthIoWQkULoaKFUNFCqGghVLQQKloIfZtUiEUoD1SKRuggqSeXjKnOlM+YBPRg85Zk0D/OCkMPOetpLcUVTts/QBMaFS2EihZCRQuhooVQ0RUuAr9MmrXgDMnyG/iBZz04UzLsBX7AeQvOGJXzwA+V/dmY8IaNh0h8/Q3PTufJg1/HjgL70j09dJ53w6z6yLVL8GbcqyKa1TUMnne0N53v4xqcGg8vyXTJAzhnlnpD9Kojn8OccxNOGkWBmSqZ1PlGVHQFY17yWFBiSEZiiUaMmemDIWA3r5JqDImIHt286m34KxEmOfsCh2lRIGKKRkR/qploWhAQFS3E3IiOfSNUur5p6iA6Oy32EVdadVtjWugjrhRPCx6T/o26q7Bbrdvi2IxQim7TredVdI2oaBU9CRXNNrbFsRlBRbONbXFsRlDRbGNbHJsRVDTb2BbHZgQVzTa2xbEZoZ2iPcaVdr4y9BhXWvXfVfv+EEzdD6DQ9U1Th6Cz/wVFmg1Swj4EJQAAAABJRU5ErkJggg=="/>
+  </div>
+  <div class="download-info">
+    <h2 id='bottom'>Download This Ebook</h2>
+    <p class="format-label">Available formats:</p>
+    <div class="download-buttons">
+      <a href="javascript-dom-programming.pdf" class="download-button">📄 PDF</a>
+      <a href="javascript-dom-programming.epub" class="download-button">📘 EPUB</a>
+    </div>
+  </div>
+</section><div class='related-books'>
+<h2>Javascript Introduction Books</h2>
+<div class='related-book-list'>
+<a href="javascript-for-beginners.htm">
+<div class="book-cover" style="background-color: #f9f6f1;border: 1px solid #ccc;"> 
+    <div class="book-cover-title" style="font-size: 18px;color: #333;top: 20px;">JavaScript for Beginners</div>
+    <div class="book-cover-author">readbytes</div>
+    <div class="book-cover-bottom-stripe" style="background-color: #333;"></div>
+    <img class="book-cover-icon" style="width: 90px;height: 90px;top: 60px;" src="data:image/png;base64,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"/>
+  </div>
+</a>
+
+
+<a href="javascript-syntax.htm">
+<div class="book-cover" style="background-color: #f9f6f1;border: 1px solid #ccc;"> 
+    <div class="book-cover-title" style="font-size: 18px;color: #333;top: 20px;">JavaScript Syntax</div>
+    <div class="book-cover-author">readbytes</div>
+    <div class="book-cover-bottom-stripe" style="background-color: #333;"></div>
+    <img class="book-cover-icon" style="width: 80px;height: 80px;top: 70px;" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFoAAABaCAYAAAA4qEECAAAFb0lEQVR4Xu2dy44bRRSG8xZJyGRAscgCIaQoyZ7LAgkmMAxIw4JwE4gQhQAvgFDEEoR4gSAisssOJMQKIV4gZGsHDSiy55JgT8YWE4/tZipQldP/6bb7VlWnnP6lb+M69tT/TcvjsdTdBw4UTLNxanef6CFjFz1YSatxapzwwx9KlAv0Uzr4Qyh/nX4y+nt1MdpcXojaLxwpTe+NBVGobqoj9qagr9xpNU4fxRf944kT0c77h6L20kErqNeWjnKAXpQr9Jcp+09epy+0duKpqPemPcEaLCUZ5QSEr6PHqcHflnpRFGKL26thyVagL/SZGDyS777nTrIGi4QAddaadWTje3LXwVtFElgiFOKyp7xn+z6SNVggJKhD9Hs/dEA9Acu7BDcfGlNl6wX1lxSLu6Z7NmzZ9NNITDL9j8/FR7gs4OZDQ/uM/QepH7y5/0EcC/sCNx4ayiU7qvUDagAL+wI3HiIx0U3yLRyW9QluOkS0V+U49mkDy/qk9xbfeGhQt0a0+oYKy/oGNx4a9Fs/I1p9HYhFfYMbDw3llIneXD7CivoGNx4avbMLXHTnxVp01QQjuvc233xIBCNagZsPiVq0I2rRjqhFOyIo0Xff5QVCISjR7TPhHtVhiV6qRTsDCyA0uOaTuRU9XrvO1nwyV6JpcM03wYleX06XXYuuGCyh0bn3w1dszTdzI5oG1yRQi3bEXIjuXzxuJA++eJ6tS0CUaB18HNl4JS6bBgsmzeHjLhAhOhrtEVWzRStoCRosmDanfiau28Sr6PFON17+/+BcErrAvWuXzPN2PlxkBSlJmQy6bM4GXkQPm9exr0ln5VE2n4QuQIPlkP75x2LzNOO139l8lTgVPfjpCvYz6agzuRKek4YuQIPlUjl3NPY8muGvV/h8BTgR3f36IvYxab90mM1nYWPlYDS5c8u8DhbLxAePkJ3E88+3H/P5ElgVvXXhady/Cc4WgQaL5SUtg8+fYbNFsCK689ox3K8JzpbBZDxmxYqSlv6FBpvNgxXR/R8v4z7ZTFlosFQVYIa/XGYzeXAiGtergAZLVQVNEKJ1cK4MOjY+liVFpGjF1kfP4l5NcDYvNFioDGkZXHqOzebFmmhN75tPcN8mOJsVGixUhLTsfvcpmy2KddGawc/fYw+T9pns58t0Vh83z+t+eZ4Vys5hsoN4hr9dTZgvhzPRmmHrBvYyab88++fG5pf4V6YzObcQew2a8Z83+HxFOBetGfe3sacJzlJwLs8Jn2mZDLbZbNV4E62JRiPszWY0dz573cx0Vh6c/oGl0mAZj9iMLbyL1tDg2qwZLJUGDa7ZRoxoDUrENR36OJZKQwUfc4U40WnQr1hxDUtJJBjRNLjWe4cXk0aAoidsTYHFpBGE6L1brdSjWYPFpBGEaBpc02AxaQQlenS7zdY0WEwa4kVP9oYzj2bFtvA/iOJF5wHLSaIW7YhatCNq0Y6YK9Hbgk/4nCvRkk/4nC/RS7VoZ2BBKdSiHZEoWuLFq7KCBaWQKFri5diyMu2ET58kXo5N4gUG84AlJZB4gUEFbj4ksKQEqFslWuRFYPOCJSVARP936yf9gFrEAqGAJSVgjma8frSkC3XnRZ3fgkV9knihbnrpeV+3BKkCLOsT7ZPdvEwvSLiZQlGwrC9Sb6ZARSvUMJYIASzsC+oSPd8PHfB5w5uiYGEfzJSsIuUWTkXZfNWvbOru5rGTi+g3lqaAm5KVAcu7gjprNk5uoNfExJ8U1ns2CnAB+kKfU6NuFUefrP6ShvBWghJswm8cmfFIxuB7tsL2rVDLgjJsUOmtUGnwRSlV39y3LFsr1d4g2MnNfTH17aofwP7js5VmfQP2XPkXPUeB6l4vBmkAAAAASUVORK5CYII="/>
+  </div>
+</a>
+
+
+<a href="javascript-object-oriented-programming.htm">
+<div class="book-cover" style="background-color: #f9f6f1;border: 1px solid #ccc;"> 
+    <div class="book-cover-title" style="font-size: 14px;color: #333;top: 20px;">JavaScript Object-Oriented Programming</div>
+    <div class="book-cover-author">readbytes</div>
+    <div class="book-cover-bottom-stripe" style="background-color: #333;"></div>
+    <img class="book-cover-icon" style="width: 90px;height: 60px;top: 90px;" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFoAAABaCAYAAAA4qEECAAADqklEQVR4Xu2c7WoTQRSGc33ejDejd6BobZum6adfIIpSRLBtak0r2P5IoXcROwwrm2d2dtY9Z5M4e154kO6ZyTvzUFIpJYNB0zx6Ms+Vs8lkzuuuLhUHzAUnen1kVxwwFwrR6yG74oC5UBa9etkVB8wFil6t7IoD5gIlr1Z2xQFzgYJXKvvx03fzXKFcQhed5v7+fp4rFFsFfXQWHi4nKDUGnXQSHi4nKLQOelEPD5cTlJmCblTDw+UERTaBftTCw+UEJTaFjlTCw+UEBf4L9CQOD2d46EkcFhgeehKHBYaHnsRhgeGhJ3FYYHjoSRwWtOXZxvbSYHcX0JM4LGhLIeHwzftgpsnzV8OlyKYncVjQluLy7t+jjmW/2NrpXDY9icOCtpQvvozv7Jfbo05l05M4LGgLL+2+Pjh+G6zTpEvZ9CQOC9pSdWH3bHz4OniuSVdvI/QkDgvaErusez4cHwbPNeniByQ9icOCttRd1M2WwdZoP+huCz2Jw4K2uIvyWZOZFiY6MdPCRCdmWpjoxEwLE52YaWGiEzMtTHRipoWJTsy0MNGJmRYmOjHTwkQnZlqY6MRMCxOdmGlhohMzLUx0YqaFiU7MtDDRiZkWJjox06I3ojd39qJCY8816Y1ox3B8UCm16pk2vRLt2Nk7CsTy6y7onWjHaH9RtokedCPaUf7ONtGD7kQ7ivdsEz3oVrSj+N/IMui16P8VehKHBYaHnsRhgeGhJ3FYYHjoSRwWGB56EocFhoeexGGB4aEncVhgeOhJHBYYHnoShwWGh57EYYHhoSdxWGB46EkcFhgeehKHBYaHnsRhgQb89WUZrm2yx3E2uQj2TK+uG712G+hJHBZIuLm9DQRV8fnka7CXa2KU9/RWNKXU0Xbvxvbu3z29FE0hvDhnqXnx/Or6V3RmoiOXrlvTZmaiI5euW8PZ6flk/u7Dx+B5eY+Jjly6+CCTgunD20JsfxV8PRMdufTGcLyw5sflNLo/Rvn1THTk0nVrYjM+L89MdOTSdWvazEz0A7sHxwvz0/OLYE3d/iazXoqezWaBkDo+fTlZ2M95HcWeXop2FB8i1QTu5TxGeU9vRTvc7zEop8zWbvXfx3FdFdxz+XNaO5dAT+KwQJPZ3d382/fTh7eVu2CmgftMPRO9BFLf8RLoSRwWrDt1Pwe4VgI9icOCdScmmuuk0JM4LFh3NkeLf9j+++YmWKMBPYnDAsNDT+KwwPDQkzgsMDz0JA4LDA89xfIHwL5BBIMQt3IAAAAASUVORK5CYII="/>
+  </div>
+</a>
+
+
+<a href="javascript-regex.htm">
+<div class="book-cover" style="background-color: #f9f6f1;border: 1px solid #ccc;"> 
+    <div class="book-cover-title" style="font-size: 18px;color: #333;top: 20px;">JavaScript Regex</div>
+    <div class="book-cover-author">readbytes</div>
+    <div class="book-cover-bottom-stripe" style="background-color: #333;"></div>
+    <img class="book-cover-icon" style="width: 90px;height: 90px;top: 60px;" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFoAAABaCAYAAAA4qEECAAAE1UlEQVR4Xu2czYscRRiHJxqCKCbT0wti8KQIykLcTHfrQcRBxYMfS9zucs1B0IsHr6Ig5BDwTxC86dGvi3+DKAgiiidBWQVBPOQiKFFDslod2LXn6eruqpraWLv9PvAcdvr9vfX2yzL7McNMJoIgCIIgCEIAkqx6dZZXO2mxVfCaEAC93H9Mntwo72Wt4AmXSyfr6gQzgiNcapfMCY5woV1Oz24/wKxgSZqV93GhfTIvWKKX9weX2SfzgiVc5JDMC5ZwkUMyL1iil/c+l9kn84IDXGafzAoOcJk9vsus4IBhoUaZGwkXb+Iiri9DqZtZOYTOXWUfk8zZoHN/h+jzvzDLyp84PL3jzIu3MdcH8yaZ6YNZgzvMREUyrx4xDN3lNea7MGSXzaonmTExm1cvt7Idpnn1BvPRwGFtZA8TzFDWm9B13zI3JHtEAwe1lX1MMOOSn+XqZ2ZsZJ9o4KAushdh/X+WH7K2yaxQn7Yzdk4LtcF+UcBBXWW/Jvr6NdYPZrLqNda7yH7RwEF9ZM8mrO2tz569lbWusmVUcFgPr7LnHobazmWwzsMf2TMq0qLaMgztqPqFfWtYl2bVBdbUsM5H9oySU9n2PRzcw1/ZlzW8XsMaD3fZM3r0d+Ylw424uPQ0or/+pnm9eU1zzJB3Ev0OJ/pGLvPGbEWf1uNJXp5nxlb9VPd4s//RYvHSLfr3313edJ86dayO4jGfp4rflmYZG3oBHxiWsrpF+QXPEhroJTl9xze8xF6CBfW/VA3LpH8yJ3igF/m7Ybl7XmG94MA0V5uGpfbKHkIHelk7XJ63hXqF/UdJklcvtJbTa/l5nWs+xq8H3E3nz92/PMURRP9R8ZTh5q3cb7KuTpgeZ72taw9v3r7f+7DDm3N1qVdRfd95zZB1sdnrUMEb8XGop+H6ys/x7Bk1HN5H9qyxrPmOda6yZ5RwaB/Zcw/W6aeSj1lTk+bVX61aR9kzKtIHnz/HgV1lzyas7atnnbNF9RF7RkNrWEfZrwlrV8nYyn7RwEFdZC/C+lVzNrJXNHBQW9nHBDMNO1/M3cOQsZJ9ooGD2sgeJpihrDfBjI3sEQ16OKfXCJnvgjnK+i6YG5L5qOCwHVq/k7TGkF8yydXbzHRRn828SeaiRA96hYM3buD6a3+2MN8lc0Mwv0qvKEiy8p1ZcX6dj9vCJXTJnAv6d+a3kmzraT4+KrjQLpkTXMC/RftM5tUzjAuWJJn6hAvt8fC9lSsWDMvslXnBEi5ySOajZZaXX3L4fQu1zfqDpjXDgMxHBwcekvmDgucOyXw0rPIP8onjHx4+TPNqwXN7vMx8FBgGdfbkupqxb2h4ZpfMRQGHXMXJYnGc/UOiz3iPZ7ZV8b2xMcnV6+1BV5NnhGZaqEd55o083wsOGUqecxDonyk/NM9cO7t5mjVRkObl11xQKHnWqOFyAvsZzxsthuUEleeNFi4mtDxvlJwqyru5mNDyzFGSzMszXExoeeYomW6cm3IxoeWZo4WLCS3PGy1cTGh53mjhYoL60NZdPG+8LBbHWwsKJI8aPVxQCNO5eoznCJPwy2Z/YR/zZ4f6yM4COH3UP0UrNrg8S+XNKj6sZVt3GpZplFnBF/0rYFpUbyb1h6Zm1VdpUT7BEkEQBEEQBOFG8S/PsCFtcgcxNQAAAABJRU5ErkJggg=="/>
+  </div>
+</a>
+
+
+<a href="javascript-functional-programming.htm">
+<div class="book-cover" style="background-color: #f9f6f1;border: 1px solid #ccc;"> 
+    <div class="book-cover-title" style="font-size: 18px;color: #333;top: 20px;">JavaScript Functional Programming</div>
+    <div class="book-cover-author">readbytes</div>
+    <div class="book-cover-bottom-stripe" style="background-color: #333;"></div>
+    <img class="book-cover-icon" style="width: 80px;height: 80px;top: 80px;" src='data:image/png;base64,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'/>
+  </div>
+</a>
+
+
+<a href="javascript-canvas-programming.htm">
+<div class="book-cover" style="background-color: #f9f6f1;border: 1px solid #ccc;"> 
+    <div class="book-cover-title" style="font-size: 16px;color: #333;top: 10px;">JavaScript Canvas Programming</div>
+    <div class="book-cover-author">readbytes</div>
+    <div class="book-cover-bottom-stripe" style="background-color: #333;"></div>
+    <img class="book-cover-icon" style="width: 80px;height: 80px;top: 70px;" src='data:image/png;base64,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'/>
+  </div>
+</a>
+
+
+<a href="javascript-clean-code.htm">
+<div class="book-cover" style="background-color: #f9f6f1;border: 1px solid #ccc;"> 
+    <div class="book-cover-title" style="font-size: 18px;color: #333;top: 20px;">JavaScript Clean Code</div>
+    <div class="book-cover-author">readbytes</div>
+    <div class="book-cover-bottom-stripe" style="background-color: #333;"></div>
+    <img class="book-cover-icon" style="width: 90px;height: 90px;top: 65px;" src='data:image/png;base64,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'/>
+  </div>
+</a>
+
+
+<a href="javascript-coding-best-practices.htm">
+<div class="book-cover" style="background-color: #f9f6f1;border: 1px solid #ccc;"> 
+    <div class="book-cover-title" style="font-size: 16px;color: #333;top: 20px;">JavaScript Coding Best Practices</div>
+    <div class="book-cover-author">readbytes</div>
+    <div class="book-cover-bottom-stripe" style="background-color: #333;"></div>
+    <img class="book-cover-icon" style="width: 80px;height: 80px;top: 80px;" src='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFoAAABaCAYAAAA4qEECAAADdklEQVR4Xu2dPW/UMBjHH0QRlRA7MDDBgBAbH4ABNsRCQXwHFpAQQwVKws1IwMaXYO/M1I0VWEC8bIgy81LO53sS54l9OSe2G7f/n/S/c2zXefpT4g6nXIkAAADkQUFvqKR9JECUyw4lbXYmIqGyaYpWHXtNBwhCST8XbpcH2jyIQ+1XvRS0VQ+8opPzvrfLvDfayLpRDpmKbpMh+lw90N1jkCFhlNvFsXqxieb2Np2tx0A/EJ0IiE6Et2iOKVqOmQEa6aNXNLdxRfsB0YmA6ER4i+bYRMs5MoqK7nf6x6ai76KS6cG1Mr2iuW0TDdxAdCIgOhHeojku0XJejMQ41x063rvmGOQaa4jeXry7Rd+a/9yLqGFk/5g09T/vjKmUdK2eMwRv0dx2iQZ2IDoR3qI5q0Tv07HO/IPIlJA1BRGt/rDI+QeRKSFr6hXN7VWiQReIToS36JLOrxT9mk7QjK63YiLHQiQHBojWcYmW88wTyL5QyQFZa69obrtEAzsQnQiIToS3aI5LtJw3NGPX8//Zm/U5Y2DWpegVzW2XaGAHohMB0YnwFs2xiZZzYkSf50un35YpIWvqFc1tm+jHdDpqfM71iE615h80QUUDNxCdCG/RHJdoOW9IFPpzuu7YmHRrfFn3xUbWsIbob4t3t+hd0g/DDEtF75brbHTGxqap8ceyb6Pui423aG67RAM7EJ0Ib9ElfXSKruirV44SA0Tr2ETLOX05SsjfuVc0t22igRuITgREJ8JbNMcULcfMAI300Sua27ii/YDoREB0IrxFI+PSKxqEBaITAdGJaIlG4mfxUtA9qugGEiHKrSEaW0csstyjO7djBmQnWn9GqZ98bR5S2pXTJkeGopXYX/VxRXtZXNUt0TO6KMcnh9wu5PFUKehCI7qkv3J8krDcXCQrKvpjis6jaEVBVxfJhdpv+yo5I+eBgSiXrbuvOfgtpCPj0zgl/pJu9QA9CEvzpQTLL+uu6F9jHgSBfSq3LWa0Zbn0kTEp6G5b8lRQxYXYwviWBQ5Cygm51qGipJ2gcvTtuyO7Ae9roQi93qFBSXlKV2T3YJ7RZYi2EUNKjDWz5gldiiJFrTmbrw2WxNpPY62bLVrIZ9k9mpI+QbRJTBkx186OmDJirp0FJT2o99BUqeihLOPwo//hWVdGzBT0QZYBAAAA/AcQ1vXmtMbyGwAAAABJRU5ErkJggg=='/>
+  </div>
+</a>
+
+
+<a href="javascript-dom-programming.htm">
+<div class="book-cover" style="background-color: #f9f6f1;border: 1px solid #ccc;"> 
+    <div class="book-cover-title" style="font-size: 16px;color: #333;top: 20px;">JavaScript DOM Programming</div>
+    <div class="book-cover-author">readbytes</div>
+    <div class="book-cover-bottom-stripe" style="background-color: #333;"></div>
+    <img class="book-cover-icon" style="width: 90px;height: 90px;top: 60px;" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFoAAABaCAYAAAA4qEECAAAD5UlEQVR4Xu2dv4sTQRTHH6eFYnOWgqWoWKqFhYWNlnZXiCAIgs35sxEtjrOwicSUNnY2NhYWgleJ4PkH2CmE+xFFSxttTlnz4mZ3573Emb2deTPJvg98q7yZN+/DmdvkkhXAZGeYzGNwvzrQ9U1TB9HZabGPuHID+NqmuQnu0LU+MhVa6COu3Aa+tmnugDt0rY9MpSiqAp+X68WxGaEUff8s39M1uLbsvTvRdE9bXi6VcZxdRatox6hoKyqabWyLYzOCimYb2+LYjKCi2ca2ODYjqGi2sS2OzQgqmm1si2MzQjtFe4wr7Xxl6DGuLANf2zT4/okrdK2PTOUn8OImwf3qQNc3TR1iz84oNsu2htmGLi0ISPH08mTlX39aEBjR2c1mW9CjBQFJS/SmrOg+LQhIWqI34Awt8Ml1IA3J4yGJKbqY+ekjud6tFp3/SxbpXTTFZH04Sh4PRSzR5ryCohGjOXksFDFET5ScfYcDpC4Y+0FetrRoY75fn+R/msdcAC4bs1At8oiEaDw7nSdbex5P8ojBBzgCEw42T9npV54y+nAaYjG8cD+0Z4EfcNaDMxWCMd/gBKQAHubVM37gWQvOYAiO9XTxP4avlvbRQ/pKb6WUMX6ODp7B6Jd++mRf4Vi2DQ985OoSvMYtMYXoCXW7zgDuDX9QjtMZ2ojEVYcCKloMFS2Eis5hl0oznuQ4CPyQ8xKcLRno4eYtSbAIlUMZ0Iv/1POiTHWmfMbo3IL8QJ1Op5T84yEfJPW8h0L048uGaPwlHJ3iSqDb7VZEr/JBUs86FKJ7VwzRd42JI6GihVDRQqhoIVS0ECpaCBUthIoWQkULoaKFUNFCqGghVLQQKloIfZtUiEUoD1SKRuggqSeXjKnOlM+YBPRg85Zk0D/OCkMPOetpLcUVTts/QBMaFS2EihZCRQuhooVQ0RUuAr9MmrXgDMnyG/iBZz04UzLsBX7AeQvOGJXzwA+V/dmY8IaNh0h8/Q3PTufJg1/HjgL70j09dJ53w6z6yLVL8GbcqyKa1TUMnne0N53v4xqcGg8vyXTJAzhnlnpD9Kojn8OccxNOGkWBmSqZ1PlGVHQFY17yWFBiSEZiiUaMmemDIWA3r5JqDImIHt286m34KxEmOfsCh2lRIGKKRkR/qploWhAQFS3E3IiOfSNUur5p6iA6Oy32EVdadVtjWugjrhRPCx6T/o26q7Bbrdvi2IxQim7TredVdI2oaBU9CRXNNrbFsRlBRbONbXFsRlDRbGNbHJsRVDTb2BbHZgQVzTa2xbEZoZ2iPcaVdr4y9BhXWvXfVfv+EEzdD6DQ9U1Th6Cz/wVFmg1Swj4EJQAAAABJRU5ErkJggg=="/>
+  </div>
+</a>
+
+
+
+<a href='javascript.htm'><div class='book-cover' style='background-color: #f9f6f1;color: #111111;border: 1px solid #ccc;display: flex;justify-content: center;align-items: center;text-align: center;'>More Javascript Books</div></a>
+</div>
+</div>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+  
+  <script>
+    function copyCode(button) {
+      const code = button.nextElementSibling.innerText;
+      navigator.clipboard.writeText(code).then(() => {
+        button.textContent = 'Copied!';
+        setTimeout(() => { button.textContent = 'Copy'; }, 1500);
+      });
+    }
+  </script>  
+<div id="floatingLog" aria-live="polite" role="alert"></div>
+<footer class="page-footer">
+    <nav>
+      <a href="https://readbytes.github.io">Home</a> | 
+      Email:<script language="JavaScript" type="text/javascript">
+var part1 = 'yinpeng';var part6 = '263';var part2 = Math.pow(2,6);var part3 = String.fromCharCode(part2);var part4 = 'hotmail dot com';var part5 = part1 + String.fromCharCode(part2) + part4;document.write(part1 + part6 + part3 + part4);
+</script>
+    </nav>
+  <p>© 2025 — All rights reserved.</p>    
+  </footer>
+
+</body>
+</html>

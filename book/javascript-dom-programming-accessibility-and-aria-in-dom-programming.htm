@@ -1,0 +1,1313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>JavaScript DOM Programming Accessibility and ARIA in DOM Programming</title>
+<link rel='shortcut icon' href='https://java2s.com/style/favicon.ico'>
+<link href="https://fonts.googleapis.com/css2?family=Merriweather&display=swap" rel="stylesheet" />
+<link href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.css" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/theme/material.css"> <!-- Dark theme -->
+<script src="https://cdn.jsdelivr.net/npm/typescript@5/lib/typescript.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/htmlmixed/htmlmixed.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/xml/xml.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/css/css.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/javascript/javascript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/javascript/typescript.min.js"></script>
+<style>
+    #floatingLog {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: rgba(20, 20, 20, 0.95);
+      color: white;
+      font-family: monospace;
+      font-size: 14px;
+      padding: 16px 20px;
+      border-radius: 8px;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+      max-width: 80%;
+      max-height: 200px;
+      overflow-y: auto;
+      display: none;
+      z-index: 9999;
+      pointer-events: none;
+      white-space: pre-wrap;
+      text-align: center;
+    }
+</style>
+<script>
+  const codeMirrorMap = new Map();
+  const iframeMap = new Map();
+  
+ 
+
+  let dismissTimer;
+  function showFloatingLog(message) {
+	const floatingLog = document.getElementById('floatingLog');
+
+    if (floatingLog.style.display !== 'block') {
+      floatingLog.textContent = '';
+      floatingLog.style.display = 'block'; 
+    }
+
+    floatingLog.textContent += message + '\n';
+    floatingLog.scrollTop = floatingLog.scrollHeight; 
+    clearTimeout(dismissTimer);
+    dismissTimer = setTimeout(() => {
+      floatingLog.style.display = 'none';
+      floatingLog.textContent = '';
+    }, 2000);
+  }
+  window.addEventListener('message', (event) => {
+	    if (!iframeMap.has(event.source)) return;
+
+	    if (event.data?.type === 'console-log') {
+	      showFloatingLog(event.data.message);
+	    }
+  });  
+  function renderIframe(button,textarea_id, iframe_id) {
+      const html = codeMirrorMap.get(textarea_id).getValue();
+      const iframe = document.getElementById(iframe_id);
+  
+      const oldIframe = iframe;
+      const newIframe = document.createElement('iframe');
+      newIframe.className ="result_iframe";
+      
+      newIframe.id = iframe_id;
+      oldIframe.replaceWith(newIframe);
+ 
+
+      // Track the iframe in the map
+      iframeMap.set(newIframe.contentWindow, button);
+
+      const overrideScript = `
+        <script>
+          (function() {
+            const originalLog = console.log;
+            console.log = function(...args) {
+              originalLog.apply(console, args);
+              window.parent.postMessage({
+                type: 'console-log',
+                message: args.map(a => {
+                  try { return JSON.stringify(a); }
+                  catch { return String(a); }
+                }).join(' ')
+              }, '*');
+            };
+          })();
+        <\/script>
+      `;
+
+      const iframeHTML = `
+        <!DOCTYPE html>
+        <html>
+        <body>
+          ${overrideScript}
+          ${html}
+        </body>
+        </html>
+      `;
+ 
+      const doc = newIframe.contentDocument || newIframe.contentWindow.document;
+      doc.open();
+      doc.write(iframeHTML);
+      doc.close();
+
+      
+  }
+  function renderIframeForClientTypescript(textarea_id, iframe_id) {
+      let code = codeMirrorMap.get(textarea_id).getValue();
+      code = ts.transpile(code);
+      const iframe = document.getElementById(iframe_id);
+      const doc = iframe.contentDocument || iframe.contentWindow.document;
+
+const html = `
+  <!DOCTYPE html>
+  <html>
+    <head>
+      <title>Output</title>
+      <style>
+        body { font-family: monospace; padding: 1em; background: #f4f4f4; color: #222; }
+        pre { white-space: pre-wrap; word-break: break-word; }
+        .error { color: red; }
+      </style>
+    </head>
+    <body>
+      <pre id="log"></pre>
+      <script>
+        (function(){
+          const logEl = document.getElementById('log');
+          const origLog = console.log;
+          const origError = console.error;
+
+          console.log = (...args) => {
+            logEl.textContent += args.join(' ') + '\\n';
+            origLog.apply(console, args);
+          };
+          console.table = (...args) => {
+            logEl.textContent += args.join(' ') + '\\n';
+            origLog.apply(console, args);
+          };
+
+          console.error = (...args) => {
+            logEl.innerHTML +='<span class="error">' + args.join(' ') + '</span>';
+            origError.apply(console, args);
+          };
+          window.addEventListener("error", function (event) {
+              console.error("Caught by event listener:", event.message);
+          });    
+          try {             
+              ${code};
+          } catch (err) {
+            console.error(err.stack || err.message);
+          }
+        })();
+      <\/script>
+    </body>
+  </html>
+`;
+
+      iframe.style.display = "block";
+      iframe.srcdoc = html;  
+  }
+
+    function renderIframeForClientJavascript(textarea_id, iframe_id) {
+        const code = codeMirrorMap.get(textarea_id).getValue();
+        const iframe = document.getElementById(iframe_id);
+        const doc = iframe.contentDocument || iframe.contentWindow.document;
+
+  const html = `
+    <!DOCTYPE html>
+    <html>
+      <head>
+        <title>Output</title>
+        <style>
+          body { font-family: monospace; padding: 1em; background: #1e1e1e; color: #eee; }
+          pre { white-space: pre-wrap; word-break: break-word; }
+          .error { color: red; }
+        </style>
+      </head>
+      <body>
+        <pre id="log"></pre>
+        <script>
+          (function(){
+            const logEl = document.getElementById('log');
+            const origLog = console.log;
+            const origError = console.error;
+
+            console.log = (...args) => {
+              logEl.textContent += args.join(' ') + '\\n';
+              origLog.apply(console, args);
+            };
+            console.table = (...args) => {
+              logEl.textContent += args.join(' ') + '\\n';
+              origLog.apply(console, args);
+            };
+
+            console.error = (...args) => {
+              logEl.innerHTML +='<span class="error">' + args.join(' ') + '</span>';
+              origError.apply(console, args);
+            };
+            window.addEventListener("error", function (event) {
+                console.error("Caught by event listener:", event.message);
+            });    
+            try {
+             ${code}; 
+            } catch (err) {
+              console.error(err.stack || err.message);
+            }
+          })();
+        <\/script>
+      </body>
+    </html>
+  `;
+    
+      
+        iframe.style.display = "block";
+        iframe.srcdoc = html;  
+    }
+
+    function toggleSnippetAndRefresh(id, textarea_id) {
+      const box = document.getElementById(id);
+      box.classList.toggle("open");
+      codeMirrorMap.get(textarea_id).refresh();
+    }
+
+  </script>
+  <script>
+  const mode = localStorage.getItem('mode') || 'light';
+  document.documentElement.classList.add(`${mode}-mode`);
+  </script>   
+<style> 
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: 'Merriweather', serif;
+  margin: 0;
+  padding: 2rem 1rem;
+  font-size: 15px;
+  line-height: 1.5;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+.container {
+  max-width: 700px;
+  margin: 0 auto;
+  padding: 1rem 2rem;
+  box-shadow: 0 0 15px rgba(0,0,0,0.1);
+}
+
+h1, h2, h3 {
+  font-weight: 600;
+  margin-top: 2.5rem;
+  margin-bottom: 1rem;
+  line-height: 1.2;
+}
+
+h1 { font-size: 1.8rem; }
+h2 { font-size: 1.4rem; }
+h3 { font-size: 1.2rem; }
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: sans-serif;
+  font-size: 1em;
+  margin: 1em 0;
+}
+
+th, td {
+  padding: 0.6em 1em;
+  text-align: left;
+  border: 1px solid;
+}
+
+tr:nth-child(even) {
+  background-color: inherit;
+}
+
+tr:hover {
+  background-color: inherit;
+}
+
+a {
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+code {
+  color: #d35400;
+}
+
+.book-title-chapter {
+  font-family: 'Merriweather', serif;
+  font-size: 2rem;
+  font-weight: bold;
+  text-align: center;
+  margin-bottom: 2rem;
+  border-bottom: 2px solid;
+  padding-bottom: 0.5rem;
+}
+
+.book-subtitle-chapter {
+  text-align: center;
+  font-size: 1rem;
+  margin-top: -1rem;
+  margin-bottom: 2rem;
+}
+
+.related-books {
+  margin-top: 40px;
+}
+
+.related-book-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+    .book-cover {
+      width: 130px;
+      height: 180px;
+      font-family: Arial, sans-serif;
+      position: relative;
+      overflow: hidden;      
+      line-height: normal;
+      box-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+    }
+    .book-cover-bottom-stripe {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      height: 5px;
+      width: 100%;
+    }
+    .book-cover-title {
+      position: absolute;
+      width: 100%;
+      text-align: center;
+      font-weight: bold;
+    }
+     
+    .book-cover-icon {
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      align-items: center;
+      justify-content: center; 
+    }
+
+    .book-cover-author {
+      position: absolute;
+      bottom: 10px;
+      width: 100%;
+      text-align: center;
+      font-size: 8px;
+      color: #333;
+    }
+
+.page-footer {
+  margin-top: 4rem;
+  padding: 1rem 0;
+  text-align: center;
+  font-size: 0.85rem;
+  border-top: 1px solid;
+}
+
+.chapter-navi-section {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 10px;
+}
+
+.nav-link {
+  color: inherit;
+  text-decoration: none;
+  opacity: 0.5;
+  transition: opacity 0.3s ease, text-decoration 0.3s ease;
+}
+
+.nav-link:hover {
+  opacity: 0.9;
+  text-decoration: underline;
+}
+
+.prev { text-align: left; }
+.toc-link { text-align: center; }
+.next { text-align: right; }
+
+.download-section {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2rem;
+  padding: 2rem 1rem;
+  max-width: 600px;
+  margin: 3rem auto;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+}
+
+.download-info h2 {
+  margin: 0 0 0.5rem;
+  font-size: 1.2rem;
+}
+
+.format-label {
+  margin: 0 0 0.5rem;
+  font-size: 0.95rem;
+}
+
+.download-buttons {
+  display: flex;
+  gap: 1rem;
+}
+
+.download-button {
+  background-color: #4A90E2;
+  color: white;
+  padding: 0.5em 1.2em;
+  border-radius: 25px;
+  font-size: 0.95rem;
+  text-decoration: none;
+  transition: background-color 0.3s ease;
+}
+
+.download-button:hover {
+  background-color: #357ABD;
+}
+
+.code-block {
+  position: relative;
+  margin-bottom: 1em;
+}
+
+.copy-button {
+  background: transparent;
+  color: white;
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  border: none;
+  padding: 4px 8px;
+  font-size: 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  z-index: 1;
+}
+
+.copy-button:hover {
+  background-color: #0056b3;
+}
+
+.snippet-container {
+  overflow: hidden;
+}
+
+.snippet-header {
+  padding: 0.75rem 1rem;
+  cursor: pointer;
+  font-size: 1rem;
+ 
+    background-color: #eeeeee;
+    color:  #111111; 
+    border-radius: 8px;
+    cursor: pointer;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);  
+}
+
+.snippet-body {
+  display: none;
+  font-family: monospace;
+}
+
+.snippet-container.open .snippet-body {
+  display: block;
+}
+
+.CodeMirror {
+  border: 2px solid #ccc;
+  border-radius: 4px;
+  resize: vertical;
+}
+
+/* === Light Mode === */
+html.light-mode {
+  background-color: #f8f7f5;
+  color: #333;
+}
+
+html.light-mode .container {
+  background: white;
+}
+
+html.light-mode .book-title-chapter {
+  color: #2c3e50;
+  border-color: #ccc;
+}
+html.light-mode .book-subtitle-chapter{
+  color: #888;
+}
+
+html.light-mode .page-footer,
+html.light-mode .series-name,
+html.light-mode .book-subtitle,
+html.light-mode .format-label {
+  color: #888;
+}
+
+html.light-mode .related-books h2 {
+  color: #333;
+  border-bottom: 2px solid #eee;
+}
+
+html.light-mode .book-title {
+  color: #fff;
+}
+
+html.light-mode .book-cover {
+  border: 1px solid #ccc;
+}
+
+html.light-mode th {
+  background-color: #f2f2f2;
+}
+
+html.light-mode tr:nth-child(even) {
+  background-color: #fafafa;
+}
+
+html.light-mode tr:hover {
+  background-color: #e6f7ff;
+}
+
+html.light-mode a,
+html.light-mode .page-footer a {
+  color: #000;
+}
+
+/* === Dark Mode === */
+html.dark-mode {
+  background-color: #181818;
+  color: #e0e0e0;
+}
+
+html.dark-mode .container {
+  background: #222;
+}
+
+html.dark-mode .book-title-chapter {
+  color: #ddd;
+  border-color: #444;
+}
+
+html.dark-mode .snippet-header {
+    background-color: #333;
+    color:  #ddd; 
+}
+
+
+html.dark-mode .book-subtitle-chapter,
+html.dark-mode .page-footer,
+html.dark-mode .series-name,
+html.dark-mode .book-subtitle,
+html.dark-mode .book-footer,
+html.dark-mode .format-label {
+  color: #aaa;
+}
+
+html.dark-mode .related-books h2 {
+  color: #ddd;
+  border-bottom: 2px solid #333;
+}
+
+html.dark-mode .book-title {
+  color: #fff;
+}
+
+html.dark-mode .book-cover {
+  border: 1px solid #555;
+}
+
+html.dark-mode th {
+  background-color: #333;
+  color: #fff;
+}
+
+html.dark-mode td {
+  border-color: #444;
+}
+
+html.dark-mode tr:nth-child(even) {
+  background-color: #2a2a2a;
+}
+
+html.dark-mode tr:hover {
+  background-color: #2c3e50;
+}
+
+html.dark-mode a,
+html.dark-mode .page-footer a {
+  color: #eee;
+}
+
+
+    button { padding: 0.5em 1em; background: green; color: white; border: none; cursor: pointer; }
+    button:hover { background: #1e7e34; }
+    .result_iframe { width:99%; height:200px; margin-top: 1em;  resize: both;border:1px solid #ccc;}        
+</style>
+</head>
+<body> 
+  <div class="container">
+    <div class = "chapter-navi-section">
+<a href="javascript-dom-programming-animations-and-transitions-with-the-dom.htm" class="nav-button prev">←</a>
+<a href='javascript-dom-programming.htm#accessibility-and-aria-in-dom-programming' class="nav-button toc-link">Index</a>
+<a href="javascript-dom-programming-performance-optimization-techniques.htm" class="nav-button next">→</a>
+</div>
+
+    <h1 class="book-title-chapter" id = 'top'>Accessibility and ARIA in DOM Programming</h1>
+    <h3 class="book-subtitle-chapter">JavaScript DOM Programming</h3>   
+    <!-- <h1 class ="chapter-title"></h1> -->
+    <h2 id='importance-of-accessible-dom-manipulation'>13.1 Importance of Accessible DOM Manipulation</h2><p>As modern web applications grow increasingly dynamic, <strong>accessibility (a11y)</strong> must be a top priority in DOM programming. Accessibility ensures that people with disabilities—such as those who use screen readers, rely on keyboard navigation, or have cognitive or motor impairments—can use and interact with web content effectively.</p><h3 id="why-accessibility-matters">Why Accessibility Matters</h3><h4 id="inclusive-design">Inclusive Design</h4><ul>
+ <li>Over <strong>1 billion people worldwide</strong> have some form of disability. Many rely on <strong>assistive technologies</strong> like screen readers or speech recognition tools.</li>
+ <li>Accessible DOM manipulation allows these users to perceive and interact with content just as effectively as others.</li>
+</ul><h4 id="legal-ethical-responsibility">Legal &amp; Ethical Responsibility</h4><ul>
+ <li><strong>Laws</strong> like the <a href="https://www.ada.gov/">Americans with Disabilities Act (ADA)</a> or <a href="https://www.w3.org/WAI/standards-guidelines/wcag/">Web Content Accessibility Guidelines (WCAG)</a> require accessibility in many countries.</li>
+ <li>Ethically, building inclusive web experiences is simply the right thing to do.</li>
+</ul><h3 id="common-accessibility-pitfalls-in-dynamic-dom-manipulation">Common Accessibility Pitfalls in Dynamic DOM Manipulation</h3><p>Dynamic DOM changes (adding/removing elements, updating content) can <strong>break accessibility</strong> if not handled correctly. Here are some examples:</p><table>
+ <thead>
+  <tr>
+   <th>Pitfall</th>
+   <th>Impact</th>
+  </tr>
+ </thead>
+ <tbody>
+  <tr>
+   <td>Inserting content without focus management</td>
+   <td>Screen reader users may not be aware of new content</td>
+  </tr>
+  <tr>
+   <td>Using <code>display: none</code> to hide important messages without ARIA</td>
+   <td>Content is not announced to screen readers</td>
+  </tr>
+  <tr>
+   <td>Missing or incorrect semantic roles</td>
+   <td>Assistive tech cannot interpret component purpose</td>
+  </tr>
+  <tr>
+   <td>Non-keyboard-accessible interactions (e.g., click-only modals)</td>
+   <td>Keyboard users cannot navigate or activate components</td>
+  </tr>
+ </tbody>
+</table><h3 id="example-accessible-vs-inaccessible-alert">Example: Accessible vs Inaccessible Alert</h3><h4 id="inaccessible-alert">Inaccessible Alert</h4><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-js">const alertBox = document.createElement('div');
+alertBox.textContent = "Your session is about to expire!";
+document.body.appendChild(alertBox);</code></pre>
+</div><ul>
+ <li>Problem: A screen reader won’t know this alert appeared.</li>
+ <li>The user might miss critical information.</li>
+</ul><h4 id="accessible-alert-with-aria">Accessible Alert with ARIA</h4><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-js">const alertBox = document.createElement('div');
+alertBox.setAttribute('role', 'alert');
+alertBox.setAttribute('aria-live', 'assertive');
+alertBox.textContent = "Your session is about to expire!";
+document.body.appendChild(alertBox);</code></pre>
+</div><ul>
+ <li>With <code>role="alert"</code> or <code>aria-live="assertive"</code>, screen readers will announce the alert automatically.</li>
+ <li>This ensures timely communication for all users.</li>
+</ul><h3 id="dynamic-content-and-screen-readers">Dynamic Content and Screen Readers</h3><p>If your script updates the DOM (e.g., inserting new form errors, toggling visibility, injecting tooltips), consider the <strong>timing and visibility</strong> for screen reader users:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-html">&lt;!-- Screen-reader friendly error message --&gt;
+&lt;div id="email-error" role="alert" aria-live="polite" class="visually-hidden"&gt;
+  Please enter a valid email address.
+&lt;/div&gt;</code></pre>
+</div><p>Then toggle visibility <strong>while preserving semantic meaning</strong>:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-js">document.getElementById('email-error').textContent = 'Invalid email';
+document.getElementById('email-error').classList.remove('visually-hidden');</code></pre>
+</div><h3 id="best-practices-for-accessible-dom-manipulation">Best Practices for Accessible DOM Manipulation</h3><ul>
+ <li>Use semantic HTML first (<code>&lt;button&gt;</code>, <code>&lt;nav&gt;</code>, <code>&lt;section&gt;</code>, etc.).</li>
+ <li>Announce dynamic changes with ARIA roles like <code>role="alert"</code>, <code>aria-live</code>, <code>aria-hidden</code>.</li>
+ <li>Manage keyboard focus when inserting or revealing elements (<code>element.focus()</code>).</li>
+ <li>Provide alternatives to pointer input (mouse/touch) with keyboard support (<code>keydown</code>, <code>keyup</code>).</li>
+ <li>Never rely solely on visual cues like color—use text or icons too.</li>
+</ul><h3 id="real-world-impacts">Real-World Impacts</h3><table>
+ <thead>
+  <tr>
+   <th>Without Accessibility</th>
+   <th>With Accessibility</th>
+  </tr>
+ </thead>
+ <tbody>
+  <tr>
+   <td>Modal appears, but screen reader stays on background</td>
+   <td>Focus shifts to modal, user is informed</td>
+  </tr>
+  <tr>
+   <td>Form validation messages appear visually but not announced</td>
+   <td>ARIA live regions announce errors</td>
+  </tr>
+  <tr>
+   <td>Tabs change content, but screen readers are unaware</td>
+   <td>Proper <code>aria-controls</code> and <code>aria-selected</code> guide assistive tools</td>
+  </tr>
+ </tbody>
+</table><h3 id="summary">Summary</h3><p>Accessible DOM manipulation ensures <strong>equal access</strong>, improves <strong>usability for all</strong>, and aligns your project with <strong>legal standards</strong>. As you work with the DOM dynamically—creating modals, tabs, alerts, menus—always consider how your changes are communicated <strong>not just visually</strong>, but <strong>semantically</strong>.</p><p>In the next section, we’ll explore how <strong>ARIA attributes</strong> provide the tools to bridge these gaps and enrich your DOM manipulations with clear, accessible meaning.</p><div class = "chapter-navi-section">
+<a href="#top" class="nav-button prev">↑</a>
+<a href='javascript-dom-programming.htm#accessibility-and-aria-in-dom-programming' class="nav-button toc-link">Index</a>
+<a href="#bottom" class="nav-button next">↓</a>
+</div>
+<h2 id='working-with-aria-attributes'>13.2 Working with ARIA Attributes</h2><p>As web interfaces become more interactive and component-based, it’s crucial to ensure that custom elements are accessible to all users. <strong>ARIA (Accessible Rich Internet Applications)</strong> is a set of roles, states, and properties designed to bridge the accessibility gaps in dynamic content and custom widgets.</p><h3 id="what-is-aria">What Is ARIA?</h3><p>ARIA attributes are used when native HTML elements <strong>can’t provide sufficient semantic meaning</strong> or behavior by themselves.</p><h4 id="aria-provides">ARIA provides:</h4><ul>
+ <li><strong>Roles</strong>: Describe what an element is (<code>button</code>, <code>dialog</code>, <code>tablist</code>, etc.)</li>
+ <li><strong>States</strong>: Represent current conditions (<code>aria-expanded</code>, <code>aria-checked</code>, etc.)</li>
+ <li><strong>Properties</strong>: Provide relationships (<code>aria-labelledby</code>, <code>aria-controls</code>, etc.)</li>
+</ul><blockquote>
+ <p>✅ Use <strong>semantic HTML whenever possible</strong>, and <strong>ARIA only as a supplement</strong>.</p>
+</blockquote><h3 id="manipulating-aria-attributes-in-javascript">Manipulating ARIA Attributes in JavaScript</h3><p>You can dynamically add or modify ARIA attributes using standard DOM methods:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-js">const menu = document.getElementById('menu');
+menu.setAttribute('aria-expanded', 'true');
+
+menu.removeAttribute('aria-hidden');
+
+const isExpanded = menu.getAttribute('aria-expanded'); // "true"</code></pre>
+</div><p>This approach ensures screen readers stay informed as your UI changes dynamically.</p><h3 id="common-aria-roles-and-states">Common ARIA Roles and States</h3><table>
+ <thead>
+  <tr>
+   <th>Role</th>
+   <th>Purpose</th>
+  </tr>
+ </thead>
+ <tbody>
+  <tr>
+   <td><code>button</code></td>
+   <td>Identifies an element as a button (useful if not using <code>&lt;button&gt;</code>)</td>
+  </tr>
+  <tr>
+   <td><code>dialog</code></td>
+   <td>Marks a modal dialog that interrupts workflow</td>
+  </tr>
+  <tr>
+   <td><code>tablist</code> / <code>tab</code> / <code>tabpanel</code></td>
+   <td>Used together to structure tabbed interfaces</td>
+  </tr>
+  <tr>
+   <td><code>alert</code></td>
+   <td>Announces important, time-sensitive messages</td>
+  </tr>
+  <tr>
+   <td><code>navigation</code></td>
+   <td>Denotes a navigational region</td>
+  </tr>
+ </tbody>
+</table><table>
+ <thead>
+  <tr>
+   <th>State / Property</th>
+   <th>Description</th>
+  </tr>
+ </thead>
+ <tbody>
+  <tr>
+   <td><code>aria-expanded</code></td>
+   <td>Indicates if a section (like a dropdown) is expanded</td>
+  </tr>
+  <tr>
+   <td><code>aria-hidden</code></td>
+   <td>Hides elements from assistive tech</td>
+  </tr>
+  <tr>
+   <td><code>aria-selected</code></td>
+   <td>Used in tabs, listboxes to mark selection</td>
+  </tr>
+  <tr>
+   <td><code>aria-labelledby</code> / <code>aria-describedby</code></td>
+   <td>Associate elements for labels or descriptions</td>
+  </tr>
+ </tbody>
+</table><h3 id="practical-example-expandable-menu">Practical Example: Expandable Menu</h3><p>HTML:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-html">&lt;button id="menuToggle" aria-controls="menu" aria-expanded="false"&gt;Menu&lt;/button&gt;
+&lt;ul id="menu" hidden&gt;
+  &lt;li&gt;&lt;a href="#"&gt;Home&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href="#"&gt;About&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;</code></pre>
+</div><p>JavaScript:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-js">const toggleBtn = document.getElementById('menuToggle');
+const menu = document.getElementById('menu');
+
+toggleBtn.addEventListener('click', () =&gt; {
+  const expanded = toggleBtn.getAttribute('aria-expanded') === 'true';
+  toggleBtn.setAttribute('aria-expanded', String(!expanded));
+  menu.hidden = expanded;
+});</code></pre>
+</div><p>✅ <strong>ARIA in Action</strong>:</p><ul>
+ <li>Screen readers now know that <code>#menuToggle</code> controls an expandable menu.</li>
+ <li>The <code>aria-expanded</code> attribute reflects the visible state of the menu.</li>
+</ul><h3 id="example-dialog-with-aria">Example: Dialog with ARIA</h3><p>HTML:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-html">&lt;div id="modal" role="dialog" aria-modal="true" aria-labelledby="dialog-title" hidden&gt;
+  &lt;h2 id="dialog-title"&gt;Subscribe&lt;/h2&gt;
+  &lt;p&gt;Join our newsletter.&lt;/p&gt;
+&lt;/div&gt;</code></pre>
+</div><p>JavaScript:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-js">const modal = document.getElementById('modal');
+modal.hidden = false;
+modal.setAttribute('aria-hidden', 'false');</code></pre>
+</div><ul>
+ <li><code>role="dialog"</code> tells screen readers this is a modal.</li>
+ <li><code>aria-modal="true"</code> ensures focus is kept inside the dialog.</li>
+ <li><code>aria-labelledby="dialog-title"</code> links the heading to the dialog.</li>
+</ul><h3 id="best-practices">Best Practices</h3><ul>
+ <li>✅ Prefer native elements: use <code>&lt;button&gt;</code>, <code>&lt;a&gt;</code>, <code>&lt;dialog&gt;</code>, etc., when possible.</li>
+ <li>✅ Always keep ARIA states in sync with visual state.</li>
+ <li>❌ Don't misuse ARIA to change visual behavior (e.g., don’t rely on <code>aria-hidden="true"</code> to visually hide an element).</li>
+ <li>✅ Test with screen readers and accessibility tools.</li>
+</ul><h3 id="summary">Summary</h3><p>ARIA attributes are powerful tools for making dynamic interfaces <strong>perceivable and operable</strong> by users with assistive technologies. By using JavaScript to manage roles and states like <code>aria-expanded</code>, <code>aria-hidden</code>, and <code>aria-labelledby</code>, you ensure your applications communicate effectively—beyond just the visual layer.</p><p>In the next section, we’ll explore how <strong>keyboard navigation and focus management</strong> complement ARIA to provide a fully accessible experience.</p><div class = "chapter-navi-section">
+<a href="#top" class="nav-button prev">↑</a>
+<a href='javascript-dom-programming.htm#accessibility-and-aria-in-dom-programming' class="nav-button toc-link">Index</a>
+<a href="#bottom" class="nav-button next">↓</a>
+</div>
+<h2 id='keyboard-navigation-and-focus-management'>13.3 Keyboard Navigation and Focus Management</h2><p>Keyboard navigation is a vital part of building accessible web interfaces. Users who rely on keyboards—whether due to motor disabilities, screen readers, or personal preference—must be able to navigate, interact with, and control dynamic DOM elements as easily as those using a mouse.</p><h3 id="why-focus-management-matters">Why Focus Management Matters</h3><p>Many dynamic UI components—modals, dropdowns, custom tabs—are built with divs and spans instead of native HTML controls. These often lack proper <strong>keyboard interaction</strong> and <strong>focus behavior</strong>, making them unusable for keyboard and screen reader users unless managed explicitly.</p><h3 id="the-role-of-tabindex">The Role of <code>tabindex</code></h3><p>The <code>tabindex</code> attribute controls how elements participate in keyboard tabbing.</p><table>
+ <thead>
+  <tr>
+   <th>Value</th>
+   <th>Behavior</th>
+  </tr>
+ </thead>
+ <tbody>
+  <tr>
+   <td><code>0</code></td>
+   <td>Makes a normally non-focusable element focusable (in tab order)</td>
+  </tr>
+  <tr>
+   <td><code>-1</code></td>
+   <td>Makes an element programmatically focusable, but not tabbable</td>
+  </tr>
+  <tr>
+   <td><code>&gt; 0</code></td>
+   <td>Rarely used; creates custom tab order (not recommended)</td>
+  </tr>
+ </tbody>
+</table><p><strong>Example:</strong></p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-html">&lt;div tabindex="0"&gt;Focusable div&lt;/div&gt;</code></pre>
+</div><p>This lets users reach the div using the <code>Tab</code> key.</p><h3 id="setting-focus-programmatically">Setting Focus Programmatically</h3><p>You can set focus using JavaScript with <code>.focus()</code>:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-js">const dialog = document.getElementById('dialog');
+dialog.focus(); // Move keyboard focus to the dialog</code></pre>
+</div><p>This is useful for:</p><ul>
+ <li>Moving focus into modals</li>
+ <li>Returning focus to a trigger after closing a menu or dialog</li>
+ <li>Guiding users after an error or validation message</li>
+</ul><h3 id="trapping-focus-in-a-modal">Trapping Focus in a Modal</h3><p>When a modal dialog is open, keyboard users should <strong>not</strong> be able to tab to content behind it. You can trap focus within the modal by cycling between its focusable children.</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-js">function trapFocus(container) {
+  const focusable = container.querySelectorAll('button, [href], input, [tabindex]:not([tabindex="-1"])');
+  const first = focusable[0];
+  const last = focusable[focusable.length - 1];
+
+  container.addEventListener('keydown', (e) =&gt; {
+    if (e.key === 'Tab') {
+      if (e.shiftKey &amp;&amp; document.activeElement === first) {
+        e.preventDefault();
+        last.focus();
+      } else if (!e.shiftKey &amp;&amp; document.activeElement === last) {
+        e.preventDefault();
+        first.focus();
+      }
+    }
+  });
+}</code></pre>
+</div><p>Use this when opening a modal:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-js">const modal = document.getElementById('modal');
+modal.hidden = false;
+modal.focus();
+trapFocus(modal);</code></pre>
+</div><h3 id="handling-keyboard-events-for-navigation">Handling Keyboard Events for Navigation</h3><p>You can make custom components keyboard-accessible by listening for relevant keys:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-js">document.addEventListener('keydown', (e) =&gt; {
+  if (e.key === 'ArrowRight') {
+    // move to next item
+  } else if (e.key === 'Enter' || e.key === ' ') {
+    // activate selected item
+  }
+});</code></pre>
+</div><p>Examples of common keys:</p><ul>
+ <li><code>Tab</code> / <code>Shift + Tab</code> – Move forward/backward through focusable elements</li>
+ <li><code>Enter</code> / <code>Space</code> – Activate buttons, checkboxes, etc.</li>
+ <li><code>Arrow</code> keys – Navigate menus, sliders, or tablists</li>
+ <li><code>Escape</code> – Close modals or menus</li>
+</ul><h3 id="example-custom-button-with-keyboard-support">Example: Custom Button with Keyboard Support</h3><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-html">&lt;div role="button" tabindex="0" id="myButton"&gt;Click Me&lt;/div&gt;</code></pre>
+</div><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-js">const btn = document.getElementById('myButton');
+
+btn.addEventListener('keydown', (e) =&gt; {
+  if (e.key === 'Enter' || e.key === ' ') {
+    e.preventDefault();
+    console.log('Button activated!');
+  }
+});
+
+btn.addEventListener('click', () =&gt; {
+  console.log('Button clicked!');
+});</code></pre>
+</div><p>This ensures both keyboard and mouse users can activate the element.</p><h3 id="best-practices">Best Practices</h3><ul>
+ <li>Always <strong>include <code>tabindex="0"</code></strong> on custom interactive elements.</li>
+ <li>Use <code>.focus()</code> to guide user interaction (especially in modals or form errors).</li>
+ <li>Trap focus within dialogs using keyboard listeners.</li>
+ <li>Handle <strong>Enter</strong>, <strong>Space</strong>, and <strong>Arrow</strong> keys appropriately based on context.</li>
+ <li>Test your UI <strong>without a mouse</strong> to identify accessibility issues.</li>
+</ul><h3 id="summary">Summary</h3><p>Good keyboard navigation is essential for accessibility and usability. By combining <code>tabindex</code>, focus control, and key event handling, you ensure that users who rely on the keyboard can access and operate every part of your web application. In the next section, we'll apply these principles to build a fully <strong>accessible tab interface</strong> that supports both mouse and keyboard interaction.</p><div class = "chapter-navi-section">
+<a href="#top" class="nav-button prev">↑</a>
+<a href='javascript-dom-programming.htm#accessibility-and-aria-in-dom-programming' class="nav-button toc-link">Index</a>
+<a href="#bottom" class="nav-button next">↓</a>
+</div>
+<h2 id='practical-example-accessible-tab-interface'>13.4 Practical Example: Accessible Tab Interface</h2><p>A <strong>tabbed interface</strong> is a common UI pattern used to show different content panels under labeled tabs. To make it accessible, we must combine correct ARIA roles, keyboard navigation, and focus management to support screen readers and keyboard-only users.</p><h3 id="key-accessibility-requirements">Key Accessibility Requirements</h3><ul>
+ <li><p><strong>ARIA Roles</strong>:</p>
+  <ul>
+   <li><code>role="tablist"</code> on the container</li>
+   <li><code>role="tab"</code> on each tab</li>
+   <li><code>role="tabpanel"</code> on each associated panel</li>
+  </ul></li>
+ <li><p><strong>ARIA States</strong>:</p>
+  <ul>
+   <li><code>aria-selected</code>, <code>aria-controls</code>, <code>aria-labelledby</code>, and <code>tabindex</code></li>
+  </ul></li>
+ <li><p><strong>Keyboard Support</strong>:</p>
+  <ul>
+   <li>Arrow keys to move between tabs</li>
+   <li><code>Enter</code> or <code>Space</code> to activate a tab</li>
+  </ul></li>
+</ul><h3 id="complete-example-accessible-tabs">Complete Example: Accessible Tabs</h3><h4 id="html">HTML</h4><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-html">&lt;div class="tabs" role="tablist" aria-label="Sample Tabs"&gt;
+  &lt;button role="tab" id="tab-1" aria-selected="true" aria-controls="panel-1" tabindex="0"&gt;Tab One&lt;/button&gt;
+  &lt;button role="tab" id="tab-2" aria-selected="false" aria-controls="panel-2" tabindex="-1"&gt;Tab Two&lt;/button&gt;
+  &lt;button role="tab" id="tab-3" aria-selected="false" aria-controls="panel-3" tabindex="-1"&gt;Tab Three&lt;/button&gt;
+&lt;/div&gt;
+
+&lt;div id="panel-1" role="tabpanel" aria-labelledby="tab-1"&gt;Content for Tab One&lt;/div&gt;
+&lt;div id="panel-2" role="tabpanel" aria-labelledby="tab-2" hidden&gt;Content for Tab Two&lt;/div&gt;
+&lt;div id="panel-3" role="tabpanel" aria-labelledby="tab-3" hidden&gt;Content for Tab Three&lt;/div&gt;</code></pre>
+</div><h4 id="css-for-visual-feedback">CSS (for visual feedback)</h4><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-css">[role="tab"][aria-selected="true"] {
+  font-weight: bold;
+  border-bottom: 2px solid #333;
+}
+[role="tabpanel"] {
+  margin-top: 1rem;
+}</code></pre>
+</div><h4 id="javascript">JavaScript</h4><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-js">const tabs = document.querySelectorAll('[role="tab"]');
+const tabList = document.querySelector('[role="tablist"]');
+
+tabList.addEventListener('keydown', (e) =&gt; {
+  const keys = ['ArrowLeft', 'ArrowRight', 'Home', 'End'];
+  if (!keys.includes(e.key)) return;
+
+  const currentTab = document.activeElement;
+  let newIndex;
+
+  const tabArray = Array.from(tabs);
+  const currentIndex = tabArray.indexOf(currentTab);
+
+  switch (e.key) {
+    case 'ArrowLeft':
+      newIndex = currentIndex === 0 ? tabArray.length - 1 : currentIndex - 1;
+      break;
+    case 'ArrowRight':
+      newIndex = currentIndex === tabArray.length - 1 ? 0 : currentIndex + 1;
+      break;
+    case 'Home':
+      newIndex = 0;
+      break;
+    case 'End':
+      newIndex = tabArray.length - 1;
+      break;
+  }
+
+  tabArray[newIndex].focus();
+});
+
+tabs.forEach(tab =&gt; {
+  tab.addEventListener('click', () =&gt; activateTab(tab));
+  tab.addEventListener('keydown', (e) =&gt; {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      activateTab(tab);
+    }
+  });
+});
+
+function activateTab(tab) {
+  // Update tab attributes
+  tabs.forEach(t =&gt; {
+    t.setAttribute('aria-selected', false);
+    t.setAttribute('tabindex', -1);
+  });
+
+  tab.setAttribute('aria-selected', true);
+  tab.setAttribute('tabindex', 0);
+  tab.focus();
+
+  // Show/hide panels
+  const selectedPanelId = tab.getAttribute('aria-controls');
+  document.querySelectorAll('[role="tabpanel"]').forEach(panel =&gt; {
+    panel.hidden = panel.id !== selectedPanelId;
+  });
+}</code></pre>
+</div><div class="snippet-container" id="e9J2B">
+ <div class="snippet-header" onclick="toggleSnippetAndRefresh('e9J2B','P2k2g')">
+  Click to Try it
+ </div>
+ <div class="snippet-body"><textarea id="P2k2g">&lt;!DOCTYPE html&gt;
+&lt;html lang="en"&gt;
+&lt;head&gt;
+&lt;meta charset="UTF-8" /&gt;
+&lt;meta name="viewport" content="width=device-width, initial-scale=1" /&gt;
+&lt;title&gt;Accessible Tabs Example&lt;/title&gt;
+&lt;style&gt;
+  [role="tab"][aria-selected="true"] {
+    font-weight: bold;
+    border-bottom: 2px solid #333;
+  }
+  [role="tab"] {
+    cursor: pointer;
+    padding: 0.5rem 1rem;
+    border: none;
+    background: none;
+    font-size: 1rem;
+  }
+  [role="tab"]:focus {
+    outline: 2px solid #007acc;
+    outline-offset: 2px;
+  }
+  [role="tabpanel"] {
+    margin-top: 1rem;
+    padding: 0.5rem;
+    border: 1px solid #ccc;
+  }
+  .tabs {
+    display: flex;
+    gap: 1rem;
+  }
+&lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+
+&lt;div class="tabs" role="tablist" aria-label="Sample Tabs"&gt;
+  &lt;button role="tab" id="tab-1" aria-selected="true" aria-controls="panel-1" tabindex="0"&gt;Tab One&lt;/button&gt;
+  &lt;button role="tab" id="tab-2" aria-selected="false" aria-controls="panel-2" tabindex="-1"&gt;Tab Two&lt;/button&gt;
+  &lt;button role="tab" id="tab-3" aria-selected="false" aria-controls="panel-3" tabindex="-1"&gt;Tab Three&lt;/button&gt;
+&lt;/div&gt;
+
+&lt;div id="panel-1" role="tabpanel" aria-labelledby="tab-1"&gt;Content for Tab One&lt;/div&gt;
+&lt;div id="panel-2" role="tabpanel" aria-labelledby="tab-2" hidden&gt;Content for Tab Two&lt;/div&gt;
+&lt;div id="panel-3" role="tabpanel" aria-labelledby="tab-3" hidden&gt;Content for Tab Three&lt;/div&gt;
+
+&lt;script&gt;
+  const tabs = document.querySelectorAll('[role="tab"]');
+  const tabList = document.querySelector('[role="tablist"]');
+
+  tabList.addEventListener('keydown', (e) =&gt; {
+    const keys = ['ArrowLeft', 'ArrowRight', 'Home', 'End'];
+    if (!keys.includes(e.key)) return;
+
+    const currentTab = document.activeElement;
+    let newIndex;
+
+    const tabArray = Array.from(tabs);
+    const currentIndex = tabArray.indexOf(currentTab);
+
+    switch (e.key) {
+      case 'ArrowLeft':
+        newIndex = currentIndex === 0 ? tabArray.length - 1 : currentIndex - 1;
+        break;
+      case 'ArrowRight':
+        newIndex = currentIndex === tabArray.length - 1 ? 0 : currentIndex + 1;
+        break;
+      case 'Home':
+        newIndex = 0;
+        break;
+      case 'End':
+        newIndex = tabArray.length - 1;
+        break;
+    }
+
+    tabArray[newIndex].focus();
+    e.preventDefault();
+  });
+
+  tabs.forEach(tab =&gt; {
+    tab.addEventListener('click', () =&gt; activateTab(tab));
+    tab.addEventListener('keydown', (e) =&gt; {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        activateTab(tab);
+      }
+    });
+  });
+
+  function activateTab(tab) {
+    // Update tab attributes
+    tabs.forEach(t =&gt; {
+      t.setAttribute('aria-selected', 'false');
+      t.setAttribute('tabindex', '-1');
+    });
+
+    tab.setAttribute('aria-selected', 'true');
+    tab.setAttribute('tabindex', '0');
+    tab.focus();
+
+    // Show/hide panels
+    const selectedPanelId = tab.getAttribute('aria-controls');
+    document.querySelectorAll('[role="tabpanel"]').forEach(panel =&gt; {
+      panel.hidden = panel.id !== selectedPanelId;
+    });
+  }
+&lt;/script&gt;
+
+&lt;/body&gt;
+&lt;/html&gt;</textarea> <br> <button onclick="renderIframe(this,'P2k2g','dJzGq')">Run</button>
+  <div id="dJzGq_FloatingLog" class="floatingLog" aria-live="polite" role="alert"></div> <iframe id="dJzGq" class="result_iframe" style="display: none;"></iframe>
+  <script>
+  { let editor = CodeMirror.fromTextArea(document.getElementById("P2k2g"), {
+    mode: "htmlmixed",
+    lineNumbers:false,
+    tabSize: 2
+  });
+   codeMirrorMap.set("P2k2g", editor);}
+  </script>
+ </div>
+</div><h3 id="explanation-and-accessibility-highlights">Explanation and Accessibility Highlights</h3><ol>
+ <li><p><strong>ARIA roles/states</strong>:</p>
+  <ul>
+   <li>Each <code>button</code> uses <code>role="tab"</code> and links to its panel with <code>aria-controls</code>.</li>
+   <li>Panels reference the tab with <code>aria-labelledby</code>.</li>
+   <li>Only the active tab has <code>aria-selected="true"</code> and <code>tabindex="0"</code>.</li>
+  </ul></li>
+ <li><p><strong>Keyboard navigation</strong>:</p>
+  <ul>
+   <li>Arrow keys move focus between tabs.</li>
+   <li><code>Enter</code> or <code>Space</code> activates the tab and displays its content.</li>
+  </ul></li>
+ <li><p><strong>Focus management</strong>:</p>
+  <ul>
+   <li>When a tab is activated, <code>tabindex</code> and <code>aria-selected</code> are updated, and the corresponding panel is shown.</li>
+  </ul></li>
+ <li><p><strong>Screen readers</strong>:</p>
+  <ul>
+   <li>The use of <code>role</code>, <code>aria-labelledby</code>, and <code>aria-controls</code> enables screen readers to announce tab relationships correctly.</li>
+  </ul></li>
+</ol><h3 id="ideas-to-extend">Ideas to Extend</h3><p>Encourage readers to:</p><ul>
+ <li>Add screen reader announcements using <code>aria-live</code>.</li>
+ <li>Style the selected tab more distinctly.</li>
+ <li>Store selected tab in <code>localStorage</code> to persist state on reload.</li>
+ <li>Make the tab interface responsive for small screens (e.g., converting to accordion).</li>
+</ul><h3 id="summary">Summary</h3><p>This practical example brings together <strong>ARIA semantics</strong>, <strong>focus control</strong>, and <strong>keyboard navigation</strong> to deliver a robust, accessible tabbed interface. Building components like this improves usability for all users and ensures your applications are inclusive and compliant with accessibility standards.</p><div class = "chapter-navi-section">
+<a href="javascript-dom-programming-animations-and-transitions-with-the-dom.htm" class="nav-button prev">←</a>
+<a href='javascript-dom-programming.htm#accessibility-and-aria-in-dom-programming' class="nav-button toc-link">Index</a>
+<a href="javascript-dom-programming-performance-optimization-techniques.htm" class="nav-button next">→</a>
+</div>
+<section class="download-section">
+  <div class="book-cover" style="background-color: #f9f6f1;border: 1px solid #ccc;"> 
+    <div class="book-cover-title" style="font-size: 16px;color: #333;top: 20px;">JavaScript DOM Programming</div>
+    <div class="book-cover-author">readbytes</div>
+    <div class="book-cover-bottom-stripe" style="background-color: #333;"></div>
+    <img class="book-cover-icon" style="width: 90px;height: 90px;top: 60px;" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFoAAABaCAYAAAA4qEECAAAD5UlEQVR4Xu2dv4sTQRTHH6eFYnOWgqWoWKqFhYWNlnZXiCAIgs35sxEtjrOwicSUNnY2NhYWgleJ4PkH2CmE+xFFSxttTlnz4mZ3573Emb2deTPJvg98q7yZN+/DmdvkkhXAZGeYzGNwvzrQ9U1TB9HZabGPuHID+NqmuQnu0LU+MhVa6COu3Aa+tmnugDt0rY9MpSiqAp+X68WxGaEUff8s39M1uLbsvTvRdE9bXi6VcZxdRatox6hoKyqabWyLYzOCimYb2+LYjKCi2ca2ODYjqGi2sS2OzQgqmm1si2MzQjtFe4wr7Xxl6DGuLANf2zT4/okrdK2PTOUn8OImwf3qQNc3TR1iz84oNsu2htmGLi0ISPH08mTlX39aEBjR2c1mW9CjBQFJS/SmrOg+LQhIWqI34Awt8Ml1IA3J4yGJKbqY+ekjud6tFp3/SxbpXTTFZH04Sh4PRSzR5ryCohGjOXksFDFET5ScfYcDpC4Y+0FetrRoY75fn+R/msdcAC4bs1At8oiEaDw7nSdbex5P8ojBBzgCEw42T9npV54y+nAaYjG8cD+0Z4EfcNaDMxWCMd/gBKQAHubVM37gWQvOYAiO9XTxP4avlvbRQ/pKb6WUMX6ODp7B6Jd++mRf4Vi2DQ985OoSvMYtMYXoCXW7zgDuDX9QjtMZ2ojEVYcCKloMFS2Eis5hl0oznuQ4CPyQ8xKcLRno4eYtSbAIlUMZ0Iv/1POiTHWmfMbo3IL8QJ1Op5T84yEfJPW8h0L048uGaPwlHJ3iSqDb7VZEr/JBUs86FKJ7VwzRd42JI6GihVDRQqhoIVS0ECpaCBUthIoWQkULoaKFUNFCqGghVLQQKloIfZtUiEUoD1SKRuggqSeXjKnOlM+YBPRg85Zk0D/OCkMPOetpLcUVTts/QBMaFS2EihZCRQuhooVQ0RUuAr9MmrXgDMnyG/iBZz04UzLsBX7AeQvOGJXzwA+V/dmY8IaNh0h8/Q3PTufJg1/HjgL70j09dJ53w6z6yLVL8GbcqyKa1TUMnne0N53v4xqcGg8vyXTJAzhnlnpD9Kojn8OccxNOGkWBmSqZ1PlGVHQFY17yWFBiSEZiiUaMmemDIWA3r5JqDImIHt286m34KxEmOfsCh2lRIGKKRkR/qploWhAQFS3E3IiOfSNUur5p6iA6Oy32EVdadVtjWugjrhRPCx6T/o26q7Bbrdvi2IxQim7TredVdI2oaBU9CRXNNrbFsRlBRbONbXFsRlDRbGNbHJsRVDTb2BbHZgQVzTa2xbEZoZ2iPcaVdr4y9BhXWvXfVfv+EEzdD6DQ9U1Th6Cz/wVFmg1Swj4EJQAAAABJRU5ErkJggg=="/>
+  </div>
+  <div class="download-info">
+    <h2 id='bottom'>Download This Ebook</h2>
+    <p class="format-label">Available formats:</p>
+    <div class="download-buttons">
+      <a href="javascript-dom-programming.pdf" class="download-button">📄 PDF</a>
+      <a href="javascript-dom-programming.epub" class="download-button">📘 EPUB</a>
+    </div>
+  </div>
+</section><div class='related-books'>
+<h2>Javascript Introduction Books</h2>
+<div class='related-book-list'>
+<a href="javascript-for-beginners.htm">
+<div class="book-cover" style="background-color: #f9f6f1;border: 1px solid #ccc;"> 
+    <div class="book-cover-title" style="font-size: 18px;color: #333;top: 20px;">JavaScript for Beginners</div>
+    <div class="book-cover-author">readbytes</div>
+    <div class="book-cover-bottom-stripe" style="background-color: #333;"></div>
+    <img class="book-cover-icon" style="width: 90px;height: 90px;top: 60px;" src="data:image/png;base64,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"/>
+  </div>
+</a>
+
+
+<a href="javascript-syntax.htm">
+<div class="book-cover" style="background-color: #f9f6f1;border: 1px solid #ccc;"> 
+    <div class="book-cover-title" style="font-size: 18px;color: #333;top: 20px;">JavaScript Syntax</div>
+    <div class="book-cover-author">readbytes</div>
+    <div class="book-cover-bottom-stripe" style="background-color: #333;"></div>
+    <img class="book-cover-icon" style="width: 80px;height: 80px;top: 70px;" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFoAAABaCAYAAAA4qEECAAAFb0lEQVR4Xu2dy44bRRSG8xZJyGRAscgCIaQoyZ7LAgkmMAxIw4JwE4gQhQAvgFDEEoR4gSAisssOJMQKIV4gZGsHDSiy55JgT8YWE4/tZipQldP/6bb7VlWnnP6lb+M69tT/TcvjsdTdBw4UTLNxanef6CFjFz1YSatxapzwwx9KlAv0Uzr4Qyh/nX4y+nt1MdpcXojaLxwpTe+NBVGobqoj9qagr9xpNU4fxRf944kT0c77h6L20kErqNeWjnKAXpQr9Jcp+09epy+0duKpqPemPcEaLCUZ5QSEr6PHqcHflnpRFGKL26thyVagL/SZGDyS777nTrIGi4QAddaadWTje3LXwVtFElgiFOKyp7xn+z6SNVggJKhD9Hs/dEA9Acu7BDcfGlNl6wX1lxSLu6Z7NmzZ9NNITDL9j8/FR7gs4OZDQ/uM/QepH7y5/0EcC/sCNx4ayiU7qvUDagAL+wI3HiIx0U3yLRyW9QluOkS0V+U49mkDy/qk9xbfeGhQt0a0+oYKy/oGNx4a9Fs/I1p9HYhFfYMbDw3llIneXD7CivoGNx4avbMLXHTnxVp01QQjuvc233xIBCNagZsPiVq0I2rRjqhFOyIo0Xff5QVCISjR7TPhHtVhiV6qRTsDCyA0uOaTuRU9XrvO1nwyV6JpcM03wYleX06XXYuuGCyh0bn3w1dszTdzI5oG1yRQi3bEXIjuXzxuJA++eJ6tS0CUaB18HNl4JS6bBgsmzeHjLhAhOhrtEVWzRStoCRosmDanfiau28Sr6PFON17+/+BcErrAvWuXzPN2PlxkBSlJmQy6bM4GXkQPm9exr0ln5VE2n4QuQIPlkP75x2LzNOO139l8lTgVPfjpCvYz6agzuRKek4YuQIPlUjl3NPY8muGvV/h8BTgR3f36IvYxab90mM1nYWPlYDS5c8u8DhbLxAePkJ3E88+3H/P5ElgVvXXhady/Cc4WgQaL5SUtg8+fYbNFsCK689ox3K8JzpbBZDxmxYqSlv6FBpvNgxXR/R8v4z7ZTFlosFQVYIa/XGYzeXAiGtergAZLVQVNEKJ1cK4MOjY+liVFpGjF1kfP4l5NcDYvNFioDGkZXHqOzebFmmhN75tPcN8mOJsVGixUhLTsfvcpmy2KddGawc/fYw+T9pns58t0Vh83z+t+eZ4Vys5hsoN4hr9dTZgvhzPRmmHrBvYyab88++fG5pf4V6YzObcQew2a8Z83+HxFOBetGfe3sacJzlJwLs8Jn2mZDLbZbNV4E62JRiPszWY0dz573cx0Vh6c/oGl0mAZj9iMLbyL1tDg2qwZLJUGDa7ZRoxoDUrENR36OJZKQwUfc4U40WnQr1hxDUtJJBjRNLjWe4cXk0aAoidsTYHFpBGE6L1brdSjWYPFpBGEaBpc02AxaQQlenS7zdY0WEwa4kVP9oYzj2bFtvA/iOJF5wHLSaIW7YhatCNq0Y6YK9Hbgk/4nCvRkk/4nC/RS7VoZ2BBKdSiHZEoWuLFq7KCBaWQKFri5diyMu2ET58kXo5N4gUG84AlJZB4gUEFbj4ksKQEqFslWuRFYPOCJSVARP936yf9gFrEAqGAJSVgjma8frSkC3XnRZ3fgkV9knihbnrpeV+3BKkCLOsT7ZPdvEwvSLiZQlGwrC9Sb6ZARSvUMJYIASzsC+oSPd8PHfB5w5uiYGEfzJSsIuUWTkXZfNWvbOru5rGTi+g3lqaAm5KVAcu7gjprNk5uoNfExJ8U1ns2CnAB+kKfU6NuFUefrP6ShvBWghJswm8cmfFIxuB7tsL2rVDLgjJsUOmtUGnwRSlV39y3LFsr1d4g2MnNfTH17aofwP7js5VmfQP2XPkXPUeB6l4vBmkAAAAASUVORK5CYII="/>
+  </div>
+</a>
+
+
+<a href="javascript-object-oriented-programming.htm">
+<div class="book-cover" style="background-color: #f9f6f1;border: 1px solid #ccc;"> 
+    <div class="book-cover-title" style="font-size: 14px;color: #333;top: 20px;">JavaScript Object-Oriented Programming</div>
+    <div class="book-cover-author">readbytes</div>
+    <div class="book-cover-bottom-stripe" style="background-color: #333;"></div>
+    <img class="book-cover-icon" style="width: 90px;height: 60px;top: 90px;" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFoAAABaCAYAAAA4qEECAAADqklEQVR4Xu2c7WoTQRSGc33ejDejd6BobZum6adfIIpSRLBtak0r2P5IoXcROwwrm2d2dtY9Z5M4e154kO6ZyTvzUFIpJYNB0zx6Ms+Vs8lkzuuuLhUHzAUnen1kVxwwFwrR6yG74oC5UBa9etkVB8wFil6t7IoD5gIlr1Z2xQFzgYJXKvvx03fzXKFcQhed5v7+fp4rFFsFfXQWHi4nKDUGnXQSHi4nKLQOelEPD5cTlJmCblTDw+UERTaBftTCw+UEJTaFjlTCw+UEBf4L9CQOD2d46EkcFhgeehKHBYaHnsRhgeGhJ3FYYHjoSRwWtOXZxvbSYHcX0JM4LGhLIeHwzftgpsnzV8OlyKYncVjQluLy7t+jjmW/2NrpXDY9icOCtpQvvozv7Jfbo05l05M4LGgLL+2+Pjh+G6zTpEvZ9CQOC9pSdWH3bHz4OniuSVdvI/QkDgvaErusez4cHwbPNeniByQ9icOCttRd1M2WwdZoP+huCz2Jw4K2uIvyWZOZFiY6MdPCRCdmWpjoxEwLE52YaWGiEzMtTHRipoWJTsy0MNGJmRYmOjHTwkQnZlqY6MRMCxOdmGlhohMzLUx0YqaFiU7MtDDRiZkWJjox06I3ojd39qJCY8816Y1ox3B8UCm16pk2vRLt2Nk7CsTy6y7onWjHaH9RtokedCPaUf7ONtGD7kQ7ivdsEz3oVrSj+N/IMui16P8VehKHBYaHnsRhgeGhJ3FYYHjoSRwWGB56EocFhoeexGGB4aEncVhgeOhJHBYYHnoShwWGh57EYYHhoSdxWGB46EkcFhgeehKHBYaHnsRhgQb89WUZrm2yx3E2uQj2TK+uG712G+hJHBZIuLm9DQRV8fnka7CXa2KU9/RWNKXU0Xbvxvbu3z29FE0hvDhnqXnx/Or6V3RmoiOXrlvTZmaiI5euW8PZ6flk/u7Dx+B5eY+Jjly6+CCTgunD20JsfxV8PRMdufTGcLyw5sflNLo/Rvn1THTk0nVrYjM+L89MdOTSdWvazEz0A7sHxwvz0/OLYE3d/iazXoqezWaBkDo+fTlZ2M95HcWeXop2FB8i1QTu5TxGeU9vRTvc7zEop8zWbvXfx3FdFdxz+XNaO5dAT+KwQJPZ3d382/fTh7eVu2CmgftMPRO9BFLf8RLoSRwWrDt1Pwe4VgI9icOCdScmmuuk0JM4LFh3NkeLf9j+++YmWKMBPYnDAsNDT+KwwPDQkzgsMDz0JA4LDA89xfIHwL5BBIMQt3IAAAAASUVORK5CYII="/>
+  </div>
+</a>
+
+
+<a href="javascript-regex.htm">
+<div class="book-cover" style="background-color: #f9f6f1;border: 1px solid #ccc;"> 
+    <div class="book-cover-title" style="font-size: 18px;color: #333;top: 20px;">JavaScript Regex</div>
+    <div class="book-cover-author">readbytes</div>
+    <div class="book-cover-bottom-stripe" style="background-color: #333;"></div>
+    <img class="book-cover-icon" style="width: 90px;height: 90px;top: 60px;" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFoAAABaCAYAAAA4qEECAAAE1UlEQVR4Xu2czYscRRiHJxqCKCbT0wti8KQIykLcTHfrQcRBxYMfS9zucs1B0IsHr6Ig5BDwTxC86dGvi3+DKAgiiidBWQVBPOQiKFFDslod2LXn6eruqpraWLv9PvAcdvr9vfX2yzL7McNMJoIgCIIgCEIAkqx6dZZXO2mxVfCaEAC93H9Mntwo72Wt4AmXSyfr6gQzgiNcapfMCY5woV1Oz24/wKxgSZqV93GhfTIvWKKX9weX2SfzgiVc5JDMC5ZwkUMyL1iil/c+l9kn84IDXGafzAoOcJk9vsus4IBhoUaZGwkXb+Iiri9DqZtZOYTOXWUfk8zZoHN/h+jzvzDLyp84PL3jzIu3MdcH8yaZ6YNZgzvMREUyrx4xDN3lNea7MGSXzaonmTExm1cvt7Idpnn1BvPRwGFtZA8TzFDWm9B13zI3JHtEAwe1lX1MMOOSn+XqZ2ZsZJ9o4KAushdh/X+WH7K2yaxQn7Yzdk4LtcF+UcBBXWW/Jvr6NdYPZrLqNda7yH7RwEF9ZM8mrO2tz569lbWusmVUcFgPr7LnHobazmWwzsMf2TMq0qLaMgztqPqFfWtYl2bVBdbUsM5H9oySU9n2PRzcw1/ZlzW8XsMaD3fZM3r0d+Ylw424uPQ0or/+pnm9eU1zzJB3Ev0OJ/pGLvPGbEWf1uNJXp5nxlb9VPd4s//RYvHSLfr3313edJ86dayO4jGfp4rflmYZG3oBHxiWsrpF+QXPEhroJTl9xze8xF6CBfW/VA3LpH8yJ3igF/m7Ybl7XmG94MA0V5uGpfbKHkIHelk7XJ63hXqF/UdJklcvtJbTa/l5nWs+xq8H3E3nz92/PMURRP9R8ZTh5q3cb7KuTpgeZ72taw9v3r7f+7DDm3N1qVdRfd95zZB1sdnrUMEb8XGop+H6ys/x7Bk1HN5H9qyxrPmOda6yZ5RwaB/Zcw/W6aeSj1lTk+bVX61aR9kzKtIHnz/HgV1lzyas7atnnbNF9RF7RkNrWEfZrwlrV8nYyn7RwEFdZC/C+lVzNrJXNHBQW9nHBDMNO1/M3cOQsZJ9ooGD2sgeJpihrDfBjI3sEQ16OKfXCJnvgjnK+i6YG5L5qOCwHVq/k7TGkF8yydXbzHRRn828SeaiRA96hYM3buD6a3+2MN8lc0Mwv0qvKEiy8p1ZcX6dj9vCJXTJnAv6d+a3kmzraT4+KrjQLpkTXMC/RftM5tUzjAuWJJn6hAvt8fC9lSsWDMvslXnBEi5ySOajZZaXX3L4fQu1zfqDpjXDgMxHBwcekvmDgucOyXw0rPIP8onjHx4+TPNqwXN7vMx8FBgGdfbkupqxb2h4ZpfMRQGHXMXJYnGc/UOiz3iPZ7ZV8b2xMcnV6+1BV5NnhGZaqEd55o083wsOGUqecxDonyk/NM9cO7t5mjVRkObl11xQKHnWqOFyAvsZzxsthuUEleeNFi4mtDxvlJwqyru5mNDyzFGSzMszXExoeeYomW6cm3IxoeWZo4WLCS3PGy1cTGh53mjhYoL60NZdPG+8LBbHWwsKJI8aPVxQCNO5eoznCJPwy2Z/YR/zZ4f6yM4COH3UP0UrNrg8S+XNKj6sZVt3GpZplFnBF/0rYFpUbyb1h6Zm1VdpUT7BEkEQBEEQBOFG8S/PsCFtcgcxNQAAAABJRU5ErkJggg=="/>
+  </div>
+</a>
+
+
+<a href="javascript-functional-programming.htm">
+<div class="book-cover" style="background-color: #f9f6f1;border: 1px solid #ccc;"> 
+    <div class="book-cover-title" style="font-size: 18px;color: #333;top: 20px;">JavaScript Functional Programming</div>
+    <div class="book-cover-author">readbytes</div>
+    <div class="book-cover-bottom-stripe" style="background-color: #333;"></div>
+    <img class="book-cover-icon" style="width: 80px;height: 80px;top: 80px;" src='data:image/png;base64,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'/>
+  </div>
+</a>
+
+
+<a href="javascript-canvas-programming.htm">
+<div class="book-cover" style="background-color: #f9f6f1;border: 1px solid #ccc;"> 
+    <div class="book-cover-title" style="font-size: 16px;color: #333;top: 10px;">JavaScript Canvas Programming</div>
+    <div class="book-cover-author">readbytes</div>
+    <div class="book-cover-bottom-stripe" style="background-color: #333;"></div>
+    <img class="book-cover-icon" style="width: 80px;height: 80px;top: 70px;" src='data:image/png;base64,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'/>
+  </div>
+</a>
+
+
+<a href="javascript-clean-code.htm">
+<div class="book-cover" style="background-color: #f9f6f1;border: 1px solid #ccc;"> 
+    <div class="book-cover-title" style="font-size: 18px;color: #333;top: 20px;">JavaScript Clean Code</div>
+    <div class="book-cover-author">readbytes</div>
+    <div class="book-cover-bottom-stripe" style="background-color: #333;"></div>
+    <img class="book-cover-icon" style="width: 90px;height: 90px;top: 65px;" src='data:image/png;base64,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'/>
+  </div>
+</a>
+
+
+<a href="javascript-coding-best-practices.htm">
+<div class="book-cover" style="background-color: #f9f6f1;border: 1px solid #ccc;"> 
+    <div class="book-cover-title" style="font-size: 16px;color: #333;top: 20px;">JavaScript Coding Best Practices</div>
+    <div class="book-cover-author">readbytes</div>
+    <div class="book-cover-bottom-stripe" style="background-color: #333;"></div>
+    <img class="book-cover-icon" style="width: 80px;height: 80px;top: 80px;" src='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFoAAABaCAYAAAA4qEECAAADdklEQVR4Xu2dPW/UMBjHH0QRlRA7MDDBgBAbH4ABNsRCQXwHFpAQQwVKws1IwMaXYO/M1I0VWEC8bIgy81LO53sS54l9OSe2G7f/n/S/c2zXefpT4g6nXIkAAADkQUFvqKR9JECUyw4lbXYmIqGyaYpWHXtNBwhCST8XbpcH2jyIQ+1XvRS0VQ+8opPzvrfLvDfayLpRDpmKbpMh+lw90N1jkCFhlNvFsXqxieb2Np2tx0A/EJ0IiE6Et2iOKVqOmQEa6aNXNLdxRfsB0YmA6ER4i+bYRMs5MoqK7nf6x6ai76KS6cG1Mr2iuW0TDdxAdCIgOhHeojku0XJejMQ41x063rvmGOQaa4jeXry7Rd+a/9yLqGFk/5g09T/vjKmUdK2eMwRv0dx2iQZ2IDoR3qI5q0Tv07HO/IPIlJA1BRGt/rDI+QeRKSFr6hXN7VWiQReIToS36JLOrxT9mk7QjK63YiLHQiQHBojWcYmW88wTyL5QyQFZa69obrtEAzsQnQiIToS3aI5LtJw3NGPX8//Zm/U5Y2DWpegVzW2XaGAHohMB0YnwFs2xiZZzYkSf50un35YpIWvqFc1tm+jHdDpqfM71iE615h80QUUDNxCdCG/RHJdoOW9IFPpzuu7YmHRrfFn3xUbWsIbob4t3t+hd0g/DDEtF75brbHTGxqap8ceyb6Pui423aG67RAM7EJ0Ib9ElfXSKruirV44SA0Tr2ETLOX05SsjfuVc0t22igRuITgREJ8JbNMcULcfMAI300Sua27ii/YDoREB0IrxFI+PSKxqEBaITAdGJaIlG4mfxUtA9qugGEiHKrSEaW0csstyjO7djBmQnWn9GqZ98bR5S2pXTJkeGopXYX/VxRXtZXNUt0TO6KMcnh9wu5PFUKehCI7qkv3J8krDcXCQrKvpjis6jaEVBVxfJhdpv+yo5I+eBgSiXrbuvOfgtpCPj0zgl/pJu9QA9CEvzpQTLL+uu6F9jHgSBfSq3LWa0Zbn0kTEp6G5b8lRQxYXYwviWBQ5Cygm51qGipJ2gcvTtuyO7Ae9roQi93qFBSXlKV2T3YJ7RZYi2EUNKjDWz5gldiiJFrTmbrw2WxNpPY62bLVrIZ9k9mpI+QbRJTBkx186OmDJirp0FJT2o99BUqeihLOPwo//hWVdGzBT0QZYBAAAA/AcQ1vXmtMbyGwAAAABJRU5ErkJggg=='/>
+  </div>
+</a>
+
+
+<a href="javascript-dom-programming.htm">
+<div class="book-cover" style="background-color: #f9f6f1;border: 1px solid #ccc;"> 
+    <div class="book-cover-title" style="font-size: 16px;color: #333;top: 20px;">JavaScript DOM Programming</div>
+    <div class="book-cover-author">readbytes</div>
+    <div class="book-cover-bottom-stripe" style="background-color: #333;"></div>
+    <img class="book-cover-icon" style="width: 90px;height: 90px;top: 60px;" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFoAAABaCAYAAAA4qEECAAAD5UlEQVR4Xu2dv4sTQRTHH6eFYnOWgqWoWKqFhYWNlnZXiCAIgs35sxEtjrOwicSUNnY2NhYWgleJ4PkH2CmE+xFFSxttTlnz4mZ3573Emb2deTPJvg98q7yZN+/DmdvkkhXAZGeYzGNwvzrQ9U1TB9HZabGPuHID+NqmuQnu0LU+MhVa6COu3Aa+tmnugDt0rY9MpSiqAp+X68WxGaEUff8s39M1uLbsvTvRdE9bXi6VcZxdRatox6hoKyqabWyLYzOCimYb2+LYjKCi2ca2ODYjqGi2sS2OzQgqmm1si2MzQjtFe4wr7Xxl6DGuLANf2zT4/okrdK2PTOUn8OImwf3qQNc3TR1iz84oNsu2htmGLi0ISPH08mTlX39aEBjR2c1mW9CjBQFJS/SmrOg+LQhIWqI34Awt8Ml1IA3J4yGJKbqY+ekjud6tFp3/SxbpXTTFZH04Sh4PRSzR5ryCohGjOXksFDFET5ScfYcDpC4Y+0FetrRoY75fn+R/msdcAC4bs1At8oiEaDw7nSdbex5P8ojBBzgCEw42T9npV54y+nAaYjG8cD+0Z4EfcNaDMxWCMd/gBKQAHubVM37gWQvOYAiO9XTxP4avlvbRQ/pKb6WUMX6ODp7B6Jd++mRf4Vi2DQ985OoSvMYtMYXoCXW7zgDuDX9QjtMZ2ojEVYcCKloMFS2Eis5hl0oznuQ4CPyQ8xKcLRno4eYtSbAIlUMZ0Iv/1POiTHWmfMbo3IL8QJ1Op5T84yEfJPW8h0L048uGaPwlHJ3iSqDb7VZEr/JBUs86FKJ7VwzRd42JI6GihVDRQqhoIVS0ECpaCBUthIoWQkULoaKFUNFCqGghVLQQKloIfZtUiEUoD1SKRuggqSeXjKnOlM+YBPRg85Zk0D/OCkMPOetpLcUVTts/QBMaFS2EihZCRQuhooVQ0RUuAr9MmrXgDMnyG/iBZz04UzLsBX7AeQvOGJXzwA+V/dmY8IaNh0h8/Q3PTufJg1/HjgL70j09dJ53w6z6yLVL8GbcqyKa1TUMnne0N53v4xqcGg8vyXTJAzhnlnpD9Kojn8OccxNOGkWBmSqZ1PlGVHQFY17yWFBiSEZiiUaMmemDIWA3r5JqDImIHt286m34KxEmOfsCh2lRIGKKRkR/qploWhAQFS3E3IiOfSNUur5p6iA6Oy32EVdadVtjWugjrhRPCx6T/o26q7Bbrdvi2IxQim7TredVdI2oaBU9CRXNNrbFsRlBRbONbXFsRlDRbGNbHJsRVDTb2BbHZgQVzTa2xbEZoZ2iPcaVdr4y9BhXWvXfVfv+EEzdD6DQ9U1Th6Cz/wVFmg1Swj4EJQAAAABJRU5ErkJggg=="/>
+  </div>
+</a>
+
+
+
+<a href='javascript.htm'><div class='book-cover' style='background-color: #f9f6f1;color: #111111;border: 1px solid #ccc;display: flex;justify-content: center;align-items: center;text-align: center;'>More Javascript Books</div></a>
+</div>
+</div>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+  
+  <script>
+    function copyCode(button) {
+      const code = button.nextElementSibling.innerText;
+      navigator.clipboard.writeText(code).then(() => {
+        button.textContent = 'Copied!';
+        setTimeout(() => { button.textContent = 'Copy'; }, 1500);
+      });
+    }
+  </script>  
+<div id="floatingLog" aria-live="polite" role="alert"></div>
+<footer class="page-footer">
+    <nav>
+      <a href="https://readbytes.github.io">Home</a> | 
+      Email:<script language="JavaScript" type="text/javascript">
+var part1 = 'yinpeng';var part6 = '263';var part2 = Math.pow(2,6);var part3 = String.fromCharCode(part2);var part4 = 'hotmail dot com';var part5 = part1 + String.fromCharCode(part2) + part4;document.write(part1 + part6 + part3 + part4);
+</script>
+    </nav>
+  <p>© 2025 — All rights reserved.</p>    
+  </footer>
+
+</body>
+</html>
