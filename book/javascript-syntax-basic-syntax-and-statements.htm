@@ -225,12 +225,9 @@ const html = `
       </body>
     </html>
   `;
-    
-      
         iframe.style.display = "block";
         iframe.srcdoc = html;  
     }
-
     function toggleSnippetAndRefresh(id, textarea_id) {
       const box = document.getElementById(id);
       box.classList.toggle("open");
@@ -480,7 +477,6 @@ code {
   padding: 0.75rem 1rem;
   cursor: pointer;
   font-size: 1rem;
- 
     background-color: #eeeeee;
     color:  #111111; 
     border-radius: 8px;
@@ -623,7 +619,60 @@ html.dark-mode .page-footer a {
   color: #eee;
 }
 
+    .dialog-backdrop {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(0,0,0,0.5);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 10;
+    }
 
+    .dialog {
+      background: white;
+      padding: 20px;
+      width: 90vw;
+      height: 80vh;
+      border-radius: 8px;
+      box-shadow: 0 0 20px rgba(0,0,0,0.3);
+      display: flex;
+      flex-direction: column;
+    }
+    .dialog-content {
+      display: flex;
+      flex: 1;
+      gap: 20px;
+      margin-top: 10px;
+    }
+    .dialog h2 {
+      margin-top: 0;
+    }
+
+    .textarea_dialog {
+      width: 50%;
+      height: 100%;
+      resize: none;
+      font-family: monospace;
+      font-size: 14px;
+      padding: 10px;
+      box-sizing: border-box;
+      border: 1px solid #ccc;
+    }
+
+    .iframe_dialog {
+      width: 50%;
+      height: 100%;
+      border: 1px solid #ccc;
+    }
+    .controls_dialog {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 10px;
+    }    
     button { padding: 0.5em 1em; background: green; color: white; border: none; cursor: pointer; }
     button:hover { background: #1e7e34; }
     .result_iframe { width:99%; height:200px; margin-top: 1em;  resize: both;border:1px solid #ccc;}        
@@ -645,14 +694,14 @@ html.dark-mode .page-footer a {
   <pre><code class="language-js">let userName = "Alice";
 console.log(username); // ❌ ReferenceError: username is not defined</code></pre>
  </div>
- <div class="snippet-container" id="08kiG">
-  <div class="snippet-header" onclick="toggleSnippetAndRefresh('08kiG','1W3Xh')">
+ <div class="snippet-container" id="QZQvE">
+  <div class="snippet-header" onclick="toggleSnippetAndRefresh('QZQvE','P9zPk')">
    Try it in editor
   </div>
-  <div class="snippet-body"><textarea id="1W3Xh">let userName = "Alice";
-console.log(username); // ❌ ReferenceError: username is not defined</textarea> <br> <button onclick="renderIframeForClientJavascript('1W3Xh','Zxbfk')">Run</button> <iframe id="Zxbfk" class="result_iframe" style="display: none;"></iframe>
+  <div class="snippet-body"><textarea id="P9zPk">let userName = "Alice";
+console.log(username); // ❌ ReferenceError: username is not defined</textarea> <br> <button onclick="renderIframeForClientJavascript('P9zPk','KWunH')">Run</button> <iframe id="KWunH" class="result_iframe" style="display: none;"></iframe>
    <script>
-  {let editor1 = CodeMirror.fromTextArea(document.getElementById("1W3Xh"), {
+  {let editor1 = CodeMirror.fromTextArea(document.getElementById("P9zPk"), {
     mode: "javascript",
     lineNumbers:false,
     tabSize: 2
@@ -661,7 +710,7 @@ console.log(username); // ❌ ReferenceError: username is not defined</textarea>
     const newTheme = mode === "dark" ? "material" : "default";
     editor1.setOption("theme", newTheme);
 
-   codeMirrorMap.set("1W3Xh", editor1);}
+   codeMirrorMap.set("P9zPk", editor1);}
   </script>
   </div>
  </div>
@@ -783,14 +832,14 @@ person.name = "Bob"; // ✅ allowed</code></pre>
   <pre><code class="language-js">let name = "Alice";
 console.log(typeof name); // "string"</code></pre>
  </div>
- <div class="snippet-container" id="SU26E">
-  <div class="snippet-header" onclick="toggleSnippetAndRefresh('SU26E','RjPeY')">
+ <div class="snippet-container" id="JqlXE">
+  <div class="snippet-header" onclick="toggleSnippetAndRefresh('JqlXE','uXS2O')">
    Try it in editor
   </div>
-  <div class="snippet-body"><textarea id="RjPeY">let name = "Alice";
-console.log(typeof name); // "string"</textarea> <br> <button onclick="renderIframeForClientJavascript('RjPeY','LVKNQ')">Run</button> <iframe id="LVKNQ" class="result_iframe" style="display: none;"></iframe>
+  <div class="snippet-body"><textarea id="uXS2O">let name = "Alice";
+console.log(typeof name); // "string"</textarea> <br> <button onclick="renderIframeForClientJavascript('uXS2O','Bd1K0')">Run</button> <iframe id="Bd1K0" class="result_iframe" style="display: none;"></iframe>
    <script>
-  {let editor1 = CodeMirror.fromTextArea(document.getElementById("RjPeY"), {
+  {let editor1 = CodeMirror.fromTextArea(document.getElementById("uXS2O"), {
     mode: "javascript",
     lineNumbers:false,
     tabSize: 2
@@ -799,7 +848,7 @@ console.log(typeof name); // "string"</textarea> <br> <button onclick="renderIfr
     const newTheme = mode === "dark" ? "material" : "default";
     editor1.setOption("theme", newTheme);
 
-   codeMirrorMap.set("RjPeY", editor1);}
+   codeMirrorMap.set("uXS2O", editor1);}
   </script>
   </div>
  </div>
@@ -810,16 +859,16 @@ let price = 19.99;
 console.log(typeof age);   // "number"
 console.log(typeof price); // "number"</code></pre>
  </div>
- <div class="snippet-container" id="0rgd7">
-  <div class="snippet-header" onclick="toggleSnippetAndRefresh('0rgd7','qdQxl')">
+ <div class="snippet-container" id="oeiG6">
+  <div class="snippet-header" onclick="toggleSnippetAndRefresh('oeiG6','AuiSt')">
    Try it in editor
   </div>
-  <div class="snippet-body"><textarea id="qdQxl">let age = 30;
+  <div class="snippet-body"><textarea id="AuiSt">let age = 30;
 let price = 19.99;
 console.log(typeof age);   // "number"
-console.log(typeof price); // "number"</textarea> <br> <button onclick="renderIframeForClientJavascript('qdQxl','zcLFT')">Run</button> <iframe id="zcLFT" class="result_iframe" style="display: none;"></iframe>
+console.log(typeof price); // "number"</textarea> <br> <button onclick="renderIframeForClientJavascript('AuiSt','T1fac')">Run</button> <iframe id="T1fac" class="result_iframe" style="display: none;"></iframe>
    <script>
-  {let editor1 = CodeMirror.fromTextArea(document.getElementById("qdQxl"), {
+  {let editor1 = CodeMirror.fromTextArea(document.getElementById("AuiSt"), {
     mode: "javascript",
     lineNumbers:false,
     tabSize: 2
@@ -828,7 +877,7 @@ console.log(typeof price); // "number"</textarea> <br> <button onclick="renderIf
     const newTheme = mode === "dark" ? "material" : "default";
     editor1.setOption("theme", newTheme);
 
-   codeMirrorMap.set("qdQxl", editor1);}
+   codeMirrorMap.set("AuiSt", editor1);}
   </script>
   </div>
  </div>
@@ -837,14 +886,14 @@ console.log(typeof price); // "number"</textarea> <br> <button onclick="renderIf
   <pre><code class="language-js">let isLoggedIn = true;
 console.log(typeof isLoggedIn); // "boolean"</code></pre>
  </div>
- <div class="snippet-container" id="QVIVl">
-  <div class="snippet-header" onclick="toggleSnippetAndRefresh('QVIVl','CWsth')">
+ <div class="snippet-container" id="7spgP">
+  <div class="snippet-header" onclick="toggleSnippetAndRefresh('7spgP','TuBGW')">
    Try it in editor
   </div>
-  <div class="snippet-body"><textarea id="CWsth">let isLoggedIn = true;
-console.log(typeof isLoggedIn); // "boolean"</textarea> <br> <button onclick="renderIframeForClientJavascript('CWsth','d3Dur')">Run</button> <iframe id="d3Dur" class="result_iframe" style="display: none;"></iframe>
+  <div class="snippet-body"><textarea id="TuBGW">let isLoggedIn = true;
+console.log(typeof isLoggedIn); // "boolean"</textarea> <br> <button onclick="renderIframeForClientJavascript('TuBGW','qi7ls')">Run</button> <iframe id="qi7ls" class="result_iframe" style="display: none;"></iframe>
    <script>
-  {let editor1 = CodeMirror.fromTextArea(document.getElementById("CWsth"), {
+  {let editor1 = CodeMirror.fromTextArea(document.getElementById("TuBGW"), {
     mode: "javascript",
     lineNumbers:false,
     tabSize: 2
@@ -853,7 +902,7 @@ console.log(typeof isLoggedIn); // "boolean"</textarea> <br> <button onclick="re
     const newTheme = mode === "dark" ? "material" : "default";
     editor1.setOption("theme", newTheme);
 
-   codeMirrorMap.set("CWsth", editor1);}
+   codeMirrorMap.set("TuBGW", editor1);}
   </script>
   </div>
  </div>
@@ -862,14 +911,14 @@ console.log(typeof isLoggedIn); // "boolean"</textarea> <br> <button onclick="re
   <pre><code class="language-js">let data = null;
 console.log(typeof data); // "object" ← known quirk in JavaScript</code></pre>
  </div>
- <div class="snippet-container" id="cBm7K">
-  <div class="snippet-header" onclick="toggleSnippetAndRefresh('cBm7K','WAcA4')">
+ <div class="snippet-container" id="4kcWT">
+  <div class="snippet-header" onclick="toggleSnippetAndRefresh('4kcWT','gLnoD')">
    Try it in editor
   </div>
-  <div class="snippet-body"><textarea id="WAcA4">let data = null;
-console.log(typeof data); // "object" ← known quirk in JavaScript</textarea> <br> <button onclick="renderIframeForClientJavascript('WAcA4','XdvYU')">Run</button> <iframe id="XdvYU" class="result_iframe" style="display: none;"></iframe>
+  <div class="snippet-body"><textarea id="gLnoD">let data = null;
+console.log(typeof data); // "object" ← known quirk in JavaScript</textarea> <br> <button onclick="renderIframeForClientJavascript('gLnoD','b4WjP')">Run</button> <iframe id="b4WjP" class="result_iframe" style="display: none;"></iframe>
    <script>
-  {let editor1 = CodeMirror.fromTextArea(document.getElementById("WAcA4"), {
+  {let editor1 = CodeMirror.fromTextArea(document.getElementById("gLnoD"), {
     mode: "javascript",
     lineNumbers:false,
     tabSize: 2
@@ -878,7 +927,7 @@ console.log(typeof data); // "object" ← known quirk in JavaScript</textarea> <
     const newTheme = mode === "dark" ? "material" : "default";
     editor1.setOption("theme", newTheme);
 
-   codeMirrorMap.set("WAcA4", editor1);}
+   codeMirrorMap.set("gLnoD", editor1);}
   </script>
   </div>
  </div>
@@ -890,15 +939,15 @@ console.log(typeof data); // "object" ← known quirk in JavaScript</textarea> <
 console.log(score);         // undefined
 console.log(typeof score);  // "undefined"</code></pre>
  </div>
- <div class="snippet-container" id="EoK9l">
-  <div class="snippet-header" onclick="toggleSnippetAndRefresh('EoK9l','dktk2')">
+ <div class="snippet-container" id="A1XcP">
+  <div class="snippet-header" onclick="toggleSnippetAndRefresh('A1XcP','tRWWE')">
    Try it in editor
   </div>
-  <div class="snippet-body"><textarea id="dktk2">let score;
+  <div class="snippet-body"><textarea id="tRWWE">let score;
 console.log(score);         // undefined
-console.log(typeof score);  // "undefined"</textarea> <br> <button onclick="renderIframeForClientJavascript('dktk2','hzJrj')">Run</button> <iframe id="hzJrj" class="result_iframe" style="display: none;"></iframe>
+console.log(typeof score);  // "undefined"</textarea> <br> <button onclick="renderIframeForClientJavascript('tRWWE','HFNAo')">Run</button> <iframe id="HFNAo" class="result_iframe" style="display: none;"></iframe>
    <script>
-  {let editor1 = CodeMirror.fromTextArea(document.getElementById("dktk2"), {
+  {let editor1 = CodeMirror.fromTextArea(document.getElementById("tRWWE"), {
     mode: "javascript",
     lineNumbers:false,
     tabSize: 2
@@ -907,7 +956,7 @@ console.log(typeof score);  // "undefined"</textarea> <br> <button onclick="rend
     const newTheme = mode === "dark" ? "material" : "default";
     editor1.setOption("theme", newTheme);
 
-   codeMirrorMap.set("dktk2", editor1);}
+   codeMirrorMap.set("tRWWE", editor1);}
   </script>
   </div>
  </div>
@@ -916,14 +965,14 @@ console.log(typeof score);  // "undefined"</textarea> <br> <button onclick="rend
   <pre><code class="language-js">let sym = Symbol("id");
 console.log(typeof sym); // "symbol"</code></pre>
  </div>
- <div class="snippet-container" id="e4fkc">
-  <div class="snippet-header" onclick="toggleSnippetAndRefresh('e4fkc','firrx')">
+ <div class="snippet-container" id="sarJ9">
+  <div class="snippet-header" onclick="toggleSnippetAndRefresh('sarJ9','5tQGF')">
    Try it in editor
   </div>
-  <div class="snippet-body"><textarea id="firrx">let sym = Symbol("id");
-console.log(typeof sym); // "symbol"</textarea> <br> <button onclick="renderIframeForClientJavascript('firrx','baZNi')">Run</button> <iframe id="baZNi" class="result_iframe" style="display: none;"></iframe>
+  <div class="snippet-body"><textarea id="5tQGF">let sym = Symbol("id");
+console.log(typeof sym); // "symbol"</textarea> <br> <button onclick="renderIframeForClientJavascript('5tQGF','K8waO')">Run</button> <iframe id="K8waO" class="result_iframe" style="display: none;"></iframe>
    <script>
-  {let editor1 = CodeMirror.fromTextArea(document.getElementById("firrx"), {
+  {let editor1 = CodeMirror.fromTextArea(document.getElementById("5tQGF"), {
     mode: "javascript",
     lineNumbers:false,
     tabSize: 2
@@ -932,7 +981,7 @@ console.log(typeof sym); // "symbol"</textarea> <br> <button onclick="renderIfra
     const newTheme = mode === "dark" ? "material" : "default";
     editor1.setOption("theme", newTheme);
 
-   codeMirrorMap.set("firrx", editor1);}
+   codeMirrorMap.set("5tQGF", editor1);}
   </script>
   </div>
  </div>
@@ -941,14 +990,14 @@ console.log(typeof sym); // "symbol"</textarea> <br> <button onclick="renderIfra
   <pre><code class="language-js">let bigNumber = 1234567890123456789012345678901234567890n;
 console.log(typeof bigNumber); // "bigint"</code></pre>
  </div>
- <div class="snippet-container" id="egaQ1">
-  <div class="snippet-header" onclick="toggleSnippetAndRefresh('egaQ1','9K17L')">
+ <div class="snippet-container" id="cvEBJ">
+  <div class="snippet-header" onclick="toggleSnippetAndRefresh('cvEBJ','dbQyn')">
    Try it in editor
   </div>
-  <div class="snippet-body"><textarea id="9K17L">let bigNumber = 1234567890123456789012345678901234567890n;
-console.log(typeof bigNumber); // "bigint"</textarea> <br> <button onclick="renderIframeForClientJavascript('9K17L','0E15z')">Run</button> <iframe id="0E15z" class="result_iframe" style="display: none;"></iframe>
+  <div class="snippet-body"><textarea id="dbQyn">let bigNumber = 1234567890123456789012345678901234567890n;
+console.log(typeof bigNumber); // "bigint"</textarea> <br> <button onclick="renderIframeForClientJavascript('dbQyn','nvA4d')">Run</button> <iframe id="nvA4d" class="result_iframe" style="display: none;"></iframe>
    <script>
-  {let editor1 = CodeMirror.fromTextArea(document.getElementById("9K17L"), {
+  {let editor1 = CodeMirror.fromTextArea(document.getElementById("dbQyn"), {
     mode: "javascript",
     lineNumbers:false,
     tabSize: 2
@@ -957,7 +1006,7 @@ console.log(typeof bigNumber); // "bigint"</textarea> <br> <button onclick="rend
     const newTheme = mode === "dark" ? "material" : "default";
     editor1.setOption("theme", newTheme);
 
-   codeMirrorMap.set("9K17L", editor1);}
+   codeMirrorMap.set("dbQyn", editor1);}
   </script>
   </div>
  </div>
@@ -1022,20 +1071,20 @@ console.log(x * y); // 30 (multiplication)
 console.log(x / y); // 3.333... (division)
 console.log(x % y); // 1  (modulo/remainder)</code></pre>
  </div>
- <div class="snippet-container" id="V1xRS">
-  <div class="snippet-header" onclick="toggleSnippetAndRefresh('V1xRS','2arnA')">
+ <div class="snippet-container" id="1sywQ">
+  <div class="snippet-header" onclick="toggleSnippetAndRefresh('1sywQ','hiQSA')">
    Try it in editor
   </div>
-  <div class="snippet-body"><textarea id="2arnA">let x = 10;
+  <div class="snippet-body"><textarea id="hiQSA">let x = 10;
 let y = 3;
 
 console.log(x + y); // 13 (addition)
 console.log(x - y); // 7  (subtraction)
 console.log(x * y); // 30 (multiplication)
 console.log(x / y); // 3.333... (division)
-console.log(x % y); // 1  (modulo/remainder)</textarea> <br> <button onclick="renderIframeForClientJavascript('2arnA','IqpWq')">Run</button> <iframe id="IqpWq" class="result_iframe" style="display: none;"></iframe>
+console.log(x % y); // 1  (modulo/remainder)</textarea> <br> <button onclick="renderIframeForClientJavascript('hiQSA','a8oVB')">Run</button> <iframe id="a8oVB" class="result_iframe" style="display: none;"></iframe>
    <script>
-  {let editor1 = CodeMirror.fromTextArea(document.getElementById("2arnA"), {
+  {let editor1 = CodeMirror.fromTextArea(document.getElementById("hiQSA"), {
     mode: "javascript",
     lineNumbers:false,
     tabSize: 2
@@ -1044,7 +1093,7 @@ console.log(x % y); // 1  (modulo/remainder)</textarea> <br> <button onclick="re
     const newTheme = mode === "dark" ? "material" : "default";
     editor1.setOption("theme", newTheme);
 
-   codeMirrorMap.set("2arnA", editor1);}
+   codeMirrorMap.set("hiQSA", editor1);}
   </script>
   </div>
  </div>
@@ -1059,20 +1108,20 @@ a %= 4;  // a = a % 4 → 1
 
 console.log(a); // 1</code></pre>
  </div>
- <div class="snippet-container" id="7otZe">
-  <div class="snippet-header" onclick="toggleSnippetAndRefresh('7otZe','lflkZ')">
+ <div class="snippet-container" id="2RN1B">
+  <div class="snippet-header" onclick="toggleSnippetAndRefresh('2RN1B','QdOLg')">
    Try it in editor
   </div>
-  <div class="snippet-body"><textarea id="lflkZ">let a = 5;
+  <div class="snippet-body"><textarea id="QdOLg">let a = 5;
 a += 2;  // a = a + 2 → 7
 a -= 1;  // a = a - 1 → 6
 a *= 3;  // a = a * 3 → 18
 a /= 2;  // a = a / 2 → 9
 a %= 4;  // a = a % 4 → 1
 
-console.log(a); // 1</textarea> <br> <button onclick="renderIframeForClientJavascript('lflkZ','o3FBw')">Run</button> <iframe id="o3FBw" class="result_iframe" style="display: none;"></iframe>
+console.log(a); // 1</textarea> <br> <button onclick="renderIframeForClientJavascript('QdOLg','rS3qD')">Run</button> <iframe id="rS3qD" class="result_iframe" style="display: none;"></iframe>
    <script>
-  {let editor1 = CodeMirror.fromTextArea(document.getElementById("lflkZ"), {
+  {let editor1 = CodeMirror.fromTextArea(document.getElementById("QdOLg"), {
     mode: "javascript",
     lineNumbers:false,
     tabSize: 2
@@ -1081,7 +1130,7 @@ console.log(a); // 1</textarea> <br> <button onclick="renderIframeForClientJavas
     const newTheme = mode === "dark" ? "material" : "default";
     editor1.setOption("theme", newTheme);
 
-   codeMirrorMap.set("lflkZ", editor1);}
+   codeMirrorMap.set("QdOLg", editor1);}
   </script>
   </div>
  </div>
@@ -1092,16 +1141,16 @@ console.log(5 &lt; 3);     // false
 console.log(5 &gt;= 5);    // true
 console.log(3 &lt;= 2);    // false</code></pre>
  </div>
- <div class="snippet-container" id="OgxUl">
-  <div class="snippet-header" onclick="toggleSnippetAndRefresh('OgxUl','MHlwZ')">
+ <div class="snippet-container" id="B6ewe">
+  <div class="snippet-header" onclick="toggleSnippetAndRefresh('B6ewe','vJixz')">
    Try it in editor
   </div>
-  <div class="snippet-body"><textarea id="MHlwZ">console.log(5 &gt; 3);     // true
+  <div class="snippet-body"><textarea id="vJixz">console.log(5 &gt; 3);     // true
 console.log(5 &lt; 3);     // false
 console.log(5 &gt;= 5);    // true
-console.log(3 &lt;= 2);    // false</textarea> <br> <button onclick="renderIframeForClientJavascript('MHlwZ','Sokeq')">Run</button> <iframe id="Sokeq" class="result_iframe" style="display: none;"></iframe>
+console.log(3 &lt;= 2);    // false</textarea> <br> <button onclick="renderIframeForClientJavascript('vJixz','QN90Z')">Run</button> <iframe id="QN90Z" class="result_iframe" style="display: none;"></iframe>
    <script>
-  {let editor1 = CodeMirror.fromTextArea(document.getElementById("MHlwZ"), {
+  {let editor1 = CodeMirror.fromTextArea(document.getElementById("vJixz"), {
     mode: "javascript",
     lineNumbers:false,
     tabSize: 2
@@ -1110,7 +1159,7 @@ console.log(3 &lt;= 2);    // false</textarea> <br> <button onclick="renderIfram
     const newTheme = mode === "dark" ? "material" : "default";
     editor1.setOption("theme", newTheme);
 
-   codeMirrorMap.set("MHlwZ", editor1);}
+   codeMirrorMap.set("vJixz", editor1);}
   </script>
   </div>
  </div>
@@ -1120,13 +1169,13 @@ console.log(3 &lt;= 2);    // false</textarea> <br> <button onclick="renderIfram
    <div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
     <pre><code class="language-js">console.log("5" == 5);  // true</code></pre>
    </div>
-   <div class="snippet-container" id="uznE2">
-    <div class="snippet-header" onclick="toggleSnippetAndRefresh('uznE2','OR0Sr')">
+   <div class="snippet-container" id="5ndyL">
+    <div class="snippet-header" onclick="toggleSnippetAndRefresh('5ndyL','ucEAc')">
      Try it in editor
     </div>
-    <div class="snippet-body"><textarea id="OR0Sr">console.log("5" == 5);  // true</textarea> <br> <button onclick="renderIframeForClientJavascript('OR0Sr','FcGsM')">Run</button> <iframe id="FcGsM" class="result_iframe" style="display: none;"></iframe>
+    <div class="snippet-body"><textarea id="ucEAc">console.log("5" == 5);  // true</textarea> <br> <button onclick="renderIframeForClientJavascript('ucEAc','0yXmn')">Run</button> <iframe id="0yXmn" class="result_iframe" style="display: none;"></iframe>
      <script>
-  {let editor1 = CodeMirror.fromTextArea(document.getElementById("OR0Sr"), {
+  {let editor1 = CodeMirror.fromTextArea(document.getElementById("ucEAc"), {
     mode: "javascript",
     lineNumbers:false,
     tabSize: 2
@@ -1135,7 +1184,7 @@ console.log(3 &lt;= 2);    // false</textarea> <br> <button onclick="renderIfram
     const newTheme = mode === "dark" ? "material" : "default";
     editor1.setOption("theme", newTheme);
 
-   codeMirrorMap.set("OR0Sr", editor1);}
+   codeMirrorMap.set("ucEAc", editor1);}
   </script>
     </div>
    </div>
@@ -1145,13 +1194,13 @@ console.log(3 &lt;= 2);    // false</textarea> <br> <button onclick="renderIfram
    <div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
     <pre><code class="language-js">console.log("5" === 5); // false</code></pre>
    </div>
-   <div class="snippet-container" id="vIeRu">
-    <div class="snippet-header" onclick="toggleSnippetAndRefresh('vIeRu','yUtIj')">
+   <div class="snippet-container" id="6LhRm">
+    <div class="snippet-header" onclick="toggleSnippetAndRefresh('6LhRm','bLzIj')">
      Try it in editor
     </div>
-    <div class="snippet-body"><textarea id="yUtIj">console.log("5" === 5); // false</textarea> <br> <button onclick="renderIframeForClientJavascript('yUtIj','5Asai')">Run</button> <iframe id="5Asai" class="result_iframe" style="display: none;"></iframe>
+    <div class="snippet-body"><textarea id="bLzIj">console.log("5" === 5); // false</textarea> <br> <button onclick="renderIframeForClientJavascript('bLzIj','QBaGx')">Run</button> <iframe id="QBaGx" class="result_iframe" style="display: none;"></iframe>
      <script>
-  {let editor1 = CodeMirror.fromTextArea(document.getElementById("yUtIj"), {
+  {let editor1 = CodeMirror.fromTextArea(document.getElementById("bLzIj"), {
     mode: "javascript",
     lineNumbers:false,
     tabSize: 2
@@ -1160,7 +1209,7 @@ console.log(3 &lt;= 2);    // false</textarea> <br> <button onclick="renderIfram
     const newTheme = mode === "dark" ? "material" : "default";
     editor1.setOption("theme", newTheme);
 
-   codeMirrorMap.set("yUtIj", editor1);}
+   codeMirrorMap.set("bLzIj", editor1);}
   </script>
     </div>
    </div>
@@ -1174,18 +1223,18 @@ console.log(~5);    // -6 (NOT)
 console.log(5 &lt;&lt; 1); // 10 (Left shift)
 console.log(5 &gt;&gt; 1); // 2  (Right shift)</code></pre>
  </div>
- <div class="snippet-container" id="gvbKz">
-  <div class="snippet-header" onclick="toggleSnippetAndRefresh('gvbKz','nDJLa')">
+ <div class="snippet-container" id="gPox4">
+  <div class="snippet-header" onclick="toggleSnippetAndRefresh('gPox4','3mJBC')">
    Try it in editor
   </div>
-  <div class="snippet-body"><textarea id="nDJLa">console.log(5 &amp; 1); // 1 (AND)
+  <div class="snippet-body"><textarea id="3mJBC">console.log(5 &amp; 1); // 1 (AND)
 console.log(5 | 1); // 5 (OR)
 console.log(5 ^ 1); // 4 (XOR)
 console.log(~5);    // -6 (NOT)
 console.log(5 &lt;&lt; 1); // 10 (Left shift)
-console.log(5 &gt;&gt; 1); // 2  (Right shift)</textarea> <br> <button onclick="renderIframeForClientJavascript('nDJLa','tsq2o')">Run</button> <iframe id="tsq2o" class="result_iframe" style="display: none;"></iframe>
+console.log(5 &gt;&gt; 1); // 2  (Right shift)</textarea> <br> <button onclick="renderIframeForClientJavascript('3mJBC','Xw1VF')">Run</button> <iframe id="Xw1VF" class="result_iframe" style="display: none;"></iframe>
    <script>
-  {let editor1 = CodeMirror.fromTextArea(document.getElementById("nDJLa"), {
+  {let editor1 = CodeMirror.fromTextArea(document.getElementById("3mJBC"), {
     mode: "javascript",
     lineNumbers:false,
     tabSize: 2
@@ -1194,7 +1243,7 @@ console.log(5 &gt;&gt; 1); // 2  (Right shift)</textarea> <br> <button onclick="
     const newTheme = mode === "dark" ? "material" : "default";
     editor1.setOption("theme", newTheme);
 
-   codeMirrorMap.set("nDJLa", editor1);}
+   codeMirrorMap.set("3mJBC", editor1);}
   </script>
   </div>
  </div>
@@ -1286,13 +1335,13 @@ if (x &gt; 3) {          // if statement (with condition expression)
  <div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
   <pre><code class="language-js">console.log("5" + 3);  // "53"</code></pre>
  </div>
- <div class="snippet-container" id="s4Dbh">
-  <div class="snippet-header" onclick="toggleSnippetAndRefresh('s4Dbh','WtX73')">
+ <div class="snippet-container" id="IMw2w">
+  <div class="snippet-header" onclick="toggleSnippetAndRefresh('IMw2w','hbMUa')">
    Try it in editor
   </div>
-  <div class="snippet-body"><textarea id="WtX73">console.log("5" + 3);  // "53"</textarea> <br> <button onclick="renderIframeForClientJavascript('WtX73','3115L')">Run</button> <iframe id="3115L" class="result_iframe" style="display: none;"></iframe>
+  <div class="snippet-body"><textarea id="hbMUa">console.log("5" + 3);  // "53"</textarea> <br> <button onclick="renderIframeForClientJavascript('hbMUa','OcCQd')">Run</button> <iframe id="OcCQd" class="result_iframe" style="display: none;"></iframe>
    <script>
-  {let editor1 = CodeMirror.fromTextArea(document.getElementById("WtX73"), {
+  {let editor1 = CodeMirror.fromTextArea(document.getElementById("hbMUa"), {
     mode: "javascript",
     lineNumbers:false,
     tabSize: 2
@@ -1301,7 +1350,7 @@ if (x &gt; 3) {          // if statement (with condition expression)
     const newTheme = mode === "dark" ? "material" : "default";
     editor1.setOption("theme", newTheme);
 
-   codeMirrorMap.set("WtX73", editor1);}
+   codeMirrorMap.set("hbMUa", editor1);}
   </script>
   </div>
  </div>
@@ -1309,13 +1358,13 @@ if (x &gt; 3) {          // if statement (with condition expression)
  <div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
   <pre><code class="language-js">console.log("5" - 2);  // 3</code></pre>
  </div>
- <div class="snippet-container" id="vfc0c">
-  <div class="snippet-header" onclick="toggleSnippetAndRefresh('vfc0c','QCz6G')">
+ <div class="snippet-container" id="yzmbS">
+  <div class="snippet-header" onclick="toggleSnippetAndRefresh('yzmbS','o6V1N')">
    Try it in editor
   </div>
-  <div class="snippet-body"><textarea id="QCz6G">console.log("5" - 2);  // 3</textarea> <br> <button onclick="renderIframeForClientJavascript('QCz6G','9ApZC')">Run</button> <iframe id="9ApZC" class="result_iframe" style="display: none;"></iframe>
+  <div class="snippet-body"><textarea id="o6V1N">console.log("5" - 2);  // 3</textarea> <br> <button onclick="renderIframeForClientJavascript('o6V1N','sSAJ8')">Run</button> <iframe id="sSAJ8" class="result_iframe" style="display: none;"></iframe>
    <script>
-  {let editor1 = CodeMirror.fromTextArea(document.getElementById("QCz6G"), {
+  {let editor1 = CodeMirror.fromTextArea(document.getElementById("o6V1N"), {
     mode: "javascript",
     lineNumbers:false,
     tabSize: 2
@@ -1324,7 +1373,7 @@ if (x &gt; 3) {          // if statement (with condition expression)
     const newTheme = mode === "dark" ? "material" : "default";
     editor1.setOption("theme", newTheme);
 
-   codeMirrorMap.set("QCz6G", editor1);}
+   codeMirrorMap.set("o6V1N", editor1);}
   </script>
   </div>
  </div>
@@ -1336,17 +1385,17 @@ if (x &gt; 3) {          // if statement (with condition expression)
   console.log("Empty string is falsy");
 }</code></pre>
  </div>
- <div class="snippet-container" id="77ZMi">
-  <div class="snippet-header" onclick="toggleSnippetAndRefresh('77ZMi','qKNXR')">
+ <div class="snippet-container" id="xJb4y">
+  <div class="snippet-header" onclick="toggleSnippetAndRefresh('xJb4y','RMZBn')">
    Try it in editor
   </div>
-  <div class="snippet-body"><textarea id="qKNXR">if ("") {
+  <div class="snippet-body"><textarea id="RMZBn">if ("") {
   console.log("This won't run");
 } else {
   console.log("Empty string is falsy");
-}</textarea> <br> <button onclick="renderIframeForClientJavascript('qKNXR','q8wwN')">Run</button> <iframe id="q8wwN" class="result_iframe" style="display: none;"></iframe>
+}</textarea> <br> <button onclick="renderIframeForClientJavascript('RMZBn','r7zWM')">Run</button> <iframe id="r7zWM" class="result_iframe" style="display: none;"></iframe>
    <script>
-  {let editor1 = CodeMirror.fromTextArea(document.getElementById("qKNXR"), {
+  {let editor1 = CodeMirror.fromTextArea(document.getElementById("RMZBn"), {
     mode: "javascript",
     lineNumbers:false,
     tabSize: 2
@@ -1355,7 +1404,7 @@ if (x &gt; 3) {          // if statement (with condition expression)
     const newTheme = mode === "dark" ? "material" : "default";
     editor1.setOption("theme", newTheme);
 
-   codeMirrorMap.set("qKNXR", editor1);}
+   codeMirrorMap.set("RMZBn", editor1);}
   </script>
   </div>
  </div>
@@ -1371,16 +1420,16 @@ console.log(Number("456"));     // 456
 console.log(Boolean(0));        // false
 console.log(parseInt("15px"));  // 15</code></pre>
  </div>
- <div class="snippet-container" id="zCQVR">
-  <div class="snippet-header" onclick="toggleSnippetAndRefresh('zCQVR','djno6')">
+ <div class="snippet-container" id="Bp0YR">
+  <div class="snippet-header" onclick="toggleSnippetAndRefresh('Bp0YR','ql5yM')">
    Try it in editor
   </div>
-  <div class="snippet-body"><textarea id="djno6">console.log(String(123));       // "123"
+  <div class="snippet-body"><textarea id="ql5yM">console.log(String(123));       // "123"
 console.log(Number("456"));     // 456
 console.log(Boolean(0));        // false
-console.log(parseInt("15px"));  // 15</textarea> <br> <button onclick="renderIframeForClientJavascript('djno6','EoQRi')">Run</button> <iframe id="EoQRi" class="result_iframe" style="display: none;"></iframe>
+console.log(parseInt("15px"));  // 15</textarea> <br> <button onclick="renderIframeForClientJavascript('ql5yM','lzGaU')">Run</button> <iframe id="lzGaU" class="result_iframe" style="display: none;"></iframe>
    <script>
-  {let editor1 = CodeMirror.fromTextArea(document.getElementById("djno6"), {
+  {let editor1 = CodeMirror.fromTextArea(document.getElementById("ql5yM"), {
     mode: "javascript",
     lineNumbers:false,
     tabSize: 2
@@ -1389,7 +1438,7 @@ console.log(parseInt("15px"));  // 15</textarea> <br> <button onclick="renderIfr
     const newTheme = mode === "dark" ? "material" : "default";
     editor1.setOption("theme", newTheme);
 
-   codeMirrorMap.set("djno6", editor1);}
+   codeMirrorMap.set("ql5yM", editor1);}
   </script>
   </div>
  </div>
@@ -1400,14 +1449,14 @@ console.log(parseInt("15px"));  // 15</textarea> <br> <button onclick="renderIfr
   <pre><code class="language-js">console.log(0 == false);   // true (0 coerced to false)
 console.log("0" == 0);     // true ("0" coerced to number 0)</code></pre>
  </div>
- <div class="snippet-container" id="bhT3v">
-  <div class="snippet-header" onclick="toggleSnippetAndRefresh('bhT3v','rYBOn')">
+ <div class="snippet-container" id="Y2H00">
+  <div class="snippet-header" onclick="toggleSnippetAndRefresh('Y2H00','TjRU6')">
    Try it in editor
   </div>
-  <div class="snippet-body"><textarea id="rYBOn">console.log(0 == false);   // true (0 coerced to false)
-console.log("0" == 0);     // true ("0" coerced to number 0)</textarea> <br> <button onclick="renderIframeForClientJavascript('rYBOn','gXjMx')">Run</button> <iframe id="gXjMx" class="result_iframe" style="display: none;"></iframe>
+  <div class="snippet-body"><textarea id="TjRU6">console.log(0 == false);   // true (0 coerced to false)
+console.log("0" == 0);     // true ("0" coerced to number 0)</textarea> <br> <button onclick="renderIframeForClientJavascript('TjRU6','IBOyN')">Run</button> <iframe id="IBOyN" class="result_iframe" style="display: none;"></iframe>
    <script>
-  {let editor1 = CodeMirror.fromTextArea(document.getElementById("rYBOn"), {
+  {let editor1 = CodeMirror.fromTextArea(document.getElementById("TjRU6"), {
     mode: "javascript",
     lineNumbers:false,
     tabSize: 2
@@ -1416,7 +1465,7 @@ console.log("0" == 0);     // true ("0" coerced to number 0)</textarea> <br> <bu
     const newTheme = mode === "dark" ? "material" : "default";
     editor1.setOption("theme", newTheme);
 
-   codeMirrorMap.set("rYBOn", editor1);}
+   codeMirrorMap.set("TjRU6", editor1);}
   </script>
   </div>
  </div>
@@ -1427,14 +1476,14 @@ console.log("0" == 0);     // true ("0" coerced to number 0)</textarea> <br> <bu
   <pre><code class="language-js">console.log("5" * "4");    // 20 (strings coerced to numbers)
 console.log("5" + 4);      // "54" (number coerced to string)</code></pre>
  </div>
- <div class="snippet-container" id="OJZkP">
-  <div class="snippet-header" onclick="toggleSnippetAndRefresh('OJZkP','gX2TB')">
+ <div class="snippet-container" id="HQjr6">
+  <div class="snippet-header" onclick="toggleSnippetAndRefresh('HQjr6','xHpEN')">
    Try it in editor
   </div>
-  <div class="snippet-body"><textarea id="gX2TB">console.log("5" * "4");    // 20 (strings coerced to numbers)
-console.log("5" + 4);      // "54" (number coerced to string)</textarea> <br> <button onclick="renderIframeForClientJavascript('gX2TB','pISCZ')">Run</button> <iframe id="pISCZ" class="result_iframe" style="display: none;"></iframe>
+  <div class="snippet-body"><textarea id="xHpEN">console.log("5" * "4");    // 20 (strings coerced to numbers)
+console.log("5" + 4);      // "54" (number coerced to string)</textarea> <br> <button onclick="renderIframeForClientJavascript('xHpEN','mx52W')">Run</button> <iframe id="mx52W" class="result_iframe" style="display: none;"></iframe>
    <script>
-  {let editor1 = CodeMirror.fromTextArea(document.getElementById("gX2TB"), {
+  {let editor1 = CodeMirror.fromTextArea(document.getElementById("xHpEN"), {
     mode: "javascript",
     lineNumbers:false,
     tabSize: 2
@@ -1443,7 +1492,7 @@ console.log("5" + 4);      // "54" (number coerced to string)</textarea> <br> <b
     const newTheme = mode === "dark" ? "material" : "default";
     editor1.setOption("theme", newTheme);
 
-   codeMirrorMap.set("gX2TB", editor1);}
+   codeMirrorMap.set("xHpEN", editor1);}
   </script>
   </div>
  </div>
@@ -1454,14 +1503,14 @@ console.log("5" + 4);      // "54" (number coerced to string)</textarea> <br> <b
   <pre><code class="language-js">console.log(parseInt("10abc")); // 10
 console.log(parseInt("abc10")); // NaN (Not a Number)</code></pre>
  </div>
- <div class="snippet-container" id="SMjAb">
-  <div class="snippet-header" onclick="toggleSnippetAndRefresh('SMjAb','1evvK')">
+ <div class="snippet-container" id="J9GuU">
+  <div class="snippet-header" onclick="toggleSnippetAndRefresh('J9GuU','pssRc')">
    Try it in editor
   </div>
-  <div class="snippet-body"><textarea id="1evvK">console.log(parseInt("10abc")); // 10
-console.log(parseInt("abc10")); // NaN (Not a Number)</textarea> <br> <button onclick="renderIframeForClientJavascript('1evvK','nEB1O')">Run</button> <iframe id="nEB1O" class="result_iframe" style="display: none;"></iframe>
+  <div class="snippet-body"><textarea id="pssRc">console.log(parseInt("10abc")); // 10
+console.log(parseInt("abc10")); // NaN (Not a Number)</textarea> <br> <button onclick="renderIframeForClientJavascript('pssRc','5W70T')">Run</button> <iframe id="5W70T" class="result_iframe" style="display: none;"></iframe>
    <script>
-  {let editor1 = CodeMirror.fromTextArea(document.getElementById("1evvK"), {
+  {let editor1 = CodeMirror.fromTextArea(document.getElementById("pssRc"), {
     mode: "javascript",
     lineNumbers:false,
     tabSize: 2
@@ -1470,7 +1519,7 @@ console.log(parseInt("abc10")); // NaN (Not a Number)</textarea> <br> <button on
     const newTheme = mode === "dark" ? "material" : "default";
     editor1.setOption("theme", newTheme);
 
-   codeMirrorMap.set("1evvK", editor1);}
+   codeMirrorMap.set("pssRc", editor1);}
   </script>
   </div>
  </div>
@@ -1604,7 +1653,27 @@ console.log(parseInt("abc10")); // NaN (Not a Number)</textarea> <br> <button on
     <div class="book-cover-title" style="font-size: 16px;color: #333;top: 20px;">JavaScript DOM Programming</div>
     <div class="book-cover-author">readbytes</div>
     <div class="book-cover-bottom-stripe" style="background-color: #333;"></div>
-    <img class="book-cover-icon" style="width: 90px;height: 90px;top: 60px;" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFoAAABaCAYAAAA4qEECAAAD5UlEQVR4Xu2dv4sTQRTHH6eFYnOWgqWoWKqFhYWNlnZXiCAIgs35sxEtjrOwicSUNnY2NhYWgleJ4PkH2CmE+xFFSxttTlnz4mZ3573Emb2deTPJvg98q7yZN+/DmdvkkhXAZGeYzGNwvzrQ9U1TB9HZabGPuHID+NqmuQnu0LU+MhVa6COu3Aa+tmnugDt0rY9MpSiqAp+X68WxGaEUff8s39M1uLbsvTvRdE9bXi6VcZxdRatox6hoKyqabWyLYzOCimYb2+LYjKCi2ca2ODYjqGi2sS2OzQgqmm1si2MzQjtFe4wr7Xxl6DGuLANf2zT4/okrdK2PTOUn8OImwf3qQNc3TR1iz84oNsu2htmGLi0ISPH08mTlX39aEBjR2c1mW9CjBQFJS/SmrOg+LQhIWqI34Awt8Ml1IA3J4yGJKbqY+ekjud6tFp3/SxbpXTTFZH04Sh4PRSzR5ryCohGjOXksFDFET5ScfYcDpC4Y+0FetrRoY75fn+R/msdcAC4bs1At8oiEaDw7nSdbex5P8ojBBzgCEw42T9npV54y+nAaYjG8cD+0Z4EfcNaDMxWCMd/gBKQAHubVM37gWQvOYAiO9XTxP4avlvbRQ/pKb6WUMX6ODp7B6Jd++mRf4Vi2DQ985OoSvMYtMYXoCXW7zgDuDX9QjtMZ2ojEVYcCKloMFS2Eis5hl0oznuQ4CPyQ8xKcLRno4eYtSbAIlUMZ0Iv/1POiTHWmfMbo3IL8QJ1Op5T84yEfJPW8h0L048uGaPwlHJ3iSqDb7VZEr/JBUs86FKJ7VwzRd42JI6GihVDRQqhoIVS0ECpaCBUthIoWQkULoaKFUNFCqGghVLQQKloIfZtUiEUoD1SKRuggqSeXjKnOlM+YBPRg85Zk0D/OCkMPOetpLcUVTts/QBMaFS2EihZCRQuhooVQ0RUuAr9MmrXgDMnyG/iBZz04UzLsBX7AeQvOGJXzwA+V/dmY8IaNh0h8/Q3PTufJg1/HjgL70j09dJ53w6z6yLVL8GbcqyKa1TUMnne0N53v4xqcGg8vyXTJAzhnlnpD9Kojn8OccxNOGkWBmSqZ1PlGVHQFY17yWFBiSEZiiUaMmemDIWA3r5JqDImIHt286m34KxEmOfsCh2lRIGKKRkR/qploWhAQFS3E3IiOfSNUur5p6iA6Oy32EVdadVtjWugjrhRPCx6T/o26q7Bbrdvi2IxQim7TredVdI2oaBU9CRXNNrbFsRlBRbONbXFsRlDRbGNbHJsRVDTb2BbHZgQVzTa2xbEZoZ2iPcaVdr4y9BhXWvXfVfv+EEzdD6DQ9U1Th6Cz/wVFmg1Swj4EJQAAAABJRU5ErkJggg=="/>
+    <img class="book-cover-icon" style="width: 90px;height: 90px;top: 60px;" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFoAAABaCAYAAAA4qEECAAADUklEQVR4Xu2dv47TQBDGI0RDczY9rwMlrwEFBweC/t4EXRwaXuI6WiSaOLkCIZ6BCqTgPRFr8zkbnPF4Zuydn/RVuzsz33eSlX/2LRYRm1Xxe1MVOzY19eL6/6NzfqCw/ilEvXc2Mwh7pNiuyks8O1T1snyNfVLgWQ5hjxbcyCHskaJelVd4drCW5Vvsk6JzlkHYo6XXph5Q6hwEfUZASDhLqUOZ+Ri96vTa1ANKHQ+aAKWOB02AUseDJkCp40EToNTxoAlQ6njQBCh1PGgClDrZBs0l7JEi23eGXMIeKTbVxSs8O1Trm4tL7JMCz3IIe7Rsq+IXbh6iUA97nALPDxXWP4W29w5xMVwbG67rOBVR76LNAA9aiKyCbq49L0QbRmgGHXuul8VLXB+F3IPGtdGIm0o21gpay+89Gs01gtbwecDPz08eSQ8hHTT6C55xjwh3q+IZDhO0u148wL0cSAR93cyOfoKCV9wryu528RCHmpuCR/StRvOy7w8OOHUFT+jTDHdV+RwHnpqCB/SVFRLXaGfhQYvhQQvhQQvhQQvhQf8DXyZNXehPnW+fisc45FwUvKFfNXC4uQn9qvD1Y1maG4qB2NP3xiOui1NX5Zv9QNuq+IDrU6Xx8n7vq16WV7guTvxKYH1TvsP1qWLOl7mBmDDny9xATJjzZW4gJsz5MjcQE+Z8mRuICXO+zA3EhDlf5gZiwpwvcwMxYc6XuYGYMOfL3EBMmPNlbiAmzPkyNxAT5nyZG4gJc778Y1Ih/IN/QeKh5ij0q8acv5z9YenL2T045NSF/rIhfiWQ9Q9oxsaDFsKDFsKDFsKDFsKDjqj9ZqFx8dvfRubWb+gcn+Yv/hSHuh9swrcoh9nRT5DaLcpf/KZ7GXAIXB8D6aADGj5btJprBB3Q8nvQGNfGRCvogLjntT+8SubhVVohBzSDDoh6F20GeNBCzCZo7Qeh4vmhwvqnEPWOmzmEPVJk9Vhj3Mgh7JHi4LLApTMuL52zDMIeLb029YBSh+v6G85S6lBmPkavOr029YBSx4MmQKnjQROg1PGgCVDqeNAEKHU8aAKUOh40AUodD5oApU62QXMJe6TI9p0hl7BHitz+XTX3j2DO+gHKkfODhPVPsRnZ+1+tJg8Iaaje6wAAAABJRU5ErkJggg=="/>
+  </div>
+</a>
+
+
+<a href="javascript-asynchronous-programming.htm">
+<div class="book-cover" style="background-color: #f9f6f1;border: 1px solid #ccc;"> 
+    <div class="book-cover-title" style="font-size: 18px;color: #333;top: 20px;">JavaScript Asynchronous Programming</div>
+    <div class="book-cover-author">readbytes</div>
+    <div class="book-cover-bottom-stripe" style="background-color: #333;"></div>
+    <img class="book-cover-icon" style="width: 80px;height: 80px;top: 80px;" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFoAAABaCAYAAAA4qEECAAADU0lEQVR4Xu2cvW7UQBRGkwKJV0CipqJbG9pIFLGXRyD2IgpeghegQ9DRUNHQUdLQUVFAC0h0tFEKkMJPCEykRHKObzZrr6/t8X5H+qrMN3PvUbQpEmVra8NI8vLfWWazh1f4ddEBVcmVPOA5sQZB6DND8mkWj3hetCQI/VAXXE3xhB3RkrrcWl6wI1qQZuUrQ+75ZOVr9kQL0mxxpya3nnfsiRbs7Ny/ashFiq/siZbU5Z7PLC9/sCNaQrlGfrIjWmLIxXd28Z0d0QKKvSCSvQ5pXr41pF6QxT77vRF+Or+vDzTdhJW36cAdDrEpoQdX+PgmhS482ebjmxTKcIMPb1roww0+vGmhDzf4MMPzY4fzL8tsd+8a+27w8Wp4Nga4w7Kw6wofr+Qzz8aAsYcZ9tzhAIMN0gFh7l/cwwp7vcAhBh1mDcLMf7iDFfZ6g4MMPlALwrzHnN/IMXu9YgwUlehktY+LI/Z6xxgqGtFhzgPObeQve4NgDBaF6Nl88YUzGxn246KKMVwUojlvPYtx/dqqPuD4RSeX/aXSvDxgZ3BqQ0YhunjOec+SzstvPD8KOGgMok/gvKf5xHOjwRg2CtEnVOdNs+Ipvz4qKDgm0VFBwRLtBAVLtBMULNFOULBEO0HBEu0EBUu0ExQs0U5QsEQ7QcES7QQFS7QTFCzRTlCwRDtBwRLtBAVLtBMULNFOULBEO0HBEu0EBUu0ExQs0U5QsEQ7QcES7QQFS7QTFCzRTlBw16LDXb897o0OCu5SSLjniPd2dXd0UEKXMnhn1/dHBQV0KYJ3Mjw/abh8lxJ4pxV2JgsX71oA77XCziTh0h7L824r7EwOLuy1OO+3ws6k4LKeSydZech3GHYmAxf1XniWl2/4FsPOJOCSfSyb5sVLvsewEz1csK9l+ZYVdqKGyzFpXj5O7hY3u0q6u5fxjWXhvNHCxcYYzhwlXGqM4cxRwqXGmPDxdci5o4SLjTGcOVq42JgSvqOH+8+4HtzO713nkmMI5xQrQpGXhX3RAMq8KOyJBtyalzco1Ap7ohkr/RtllkRDKNQKO6IhFGqFHdEQCrXCjmgIhVphRzSEQq2wIxpCoVbYES2gVIbnRUsoVpKdCEL3KViSnUjm5cepSf4Pt8Ix0I7hKy8AAAAASUVORK5CYII="/>
+  </div>
+</a>
+
+
+<a href="javascript-pragmatic-developer.htm">
+<div class="book-cover" style="background-color: #f9f6f1;border: 1px solid #ccc;"> 
+    <div class="book-cover-title" style="font-size: 18px;color: #333;top: 20px;">JavaScript Pragmatic Developer</div>
+    <div class="book-cover-author">readbytes</div>
+    <div class="book-cover-bottom-stripe" style="background-color: #333;"></div>
+    <img class="book-cover-icon" style="width: 80px;height: 70px;top: 85px;" src="data:image/png;base64,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"/>
   </div>
 </a>
 

@@ -225,12 +225,9 @@ const html = `
       </body>
     </html>
   `;
-    
-      
         iframe.style.display = "block";
         iframe.srcdoc = html;  
     }
-
     function toggleSnippetAndRefresh(id, textarea_id) {
       const box = document.getElementById(id);
       box.classList.toggle("open");
@@ -480,7 +477,6 @@ code {
   padding: 0.75rem 1rem;
   cursor: pointer;
   font-size: 1rem;
- 
     background-color: #eeeeee;
     color:  #111111; 
     border-radius: 8px;
@@ -623,7 +619,60 @@ html.dark-mode .page-footer a {
   color: #eee;
 }
 
+    .dialog-backdrop {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(0,0,0,0.5);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 10;
+    }
 
+    .dialog {
+      background: white;
+      padding: 20px;
+      width: 90vw;
+      height: 80vh;
+      border-radius: 8px;
+      box-shadow: 0 0 20px rgba(0,0,0,0.3);
+      display: flex;
+      flex-direction: column;
+    }
+    .dialog-content {
+      display: flex;
+      flex: 1;
+      gap: 20px;
+      margin-top: 10px;
+    }
+    .dialog h2 {
+      margin-top: 0;
+    }
+
+    .textarea_dialog {
+      width: 50%;
+      height: 100%;
+      resize: none;
+      font-family: monospace;
+      font-size: 14px;
+      padding: 10px;
+      box-sizing: border-box;
+      border: 1px solid #ccc;
+    }
+
+    .iframe_dialog {
+      width: 50%;
+      height: 100%;
+      border: 1px solid #ccc;
+    }
+    .controls_dialog {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 10px;
+    }    
     button { padding: 0.5em 1em; background: green; color: white; border: none; cursor: pointer; }
     button:hover { background: #1e7e34; }
     .result_iframe { width:99%; height:200px; margin-top: 1em;  resize: both;border:1px solid #ccc;}        
@@ -723,11 +772,13 @@ html.dark-mode .page-footer a {
     }
   });
 });</code></pre>
-</div><div class="snippet-container" id="61F2s">
- <div class="snippet-header" onclick="toggleSnippetAndRefresh('61F2s','K7dEJ')">
-  Click to Try it
- </div>
- <div class="snippet-body"><textarea id="K7dEJ">&lt;div id="container"&gt;
+</div><div class="snippet-container" id="4FJT8">
+ <div id="jjONv_Dialog" class="dialog-backdrop">
+  <div class="dialog">
+   <h2>Dialog 1</h2>
+   <div class="controls"><button onclick="renderIframe(this,'95tBv_Textarea','jjONv_IFrame')">Run</button> <button onclick="closeAll()">Close</button>
+   </div>
+   <div class="dialog-content"><textarea id="95tBv_Textarea" class="textarea_dialog" placeholder="Type HTML here...">&lt;div id="container"&gt;
   &lt;p&gt;Initial paragraph.&lt;/p&gt;
 &lt;/div&gt;
 
@@ -776,16 +827,94 @@ html.dark-mode .page-footer a {
   container.addEventListener('click', () =&gt; {
     container.classList.toggle('highlight');
   });
-&lt;/script&gt;</textarea> <br> <button onclick="renderIframe(this,'K7dEJ','CSACy')">Run</button>
-  <div id="CSACy_FloatingLog" class="floatingLog" aria-live="polite" role="alert"></div> <iframe id="CSACy" class="result_iframe" style="display: none;"></iframe>
-  <script>
-  { let editor = CodeMirror.fromTextArea(document.getElementById("K7dEJ"), {
-    mode: "htmlmixed",
-    lineNumbers:false,
-    tabSize: 2
+&lt;/script&gt;</textarea> <iframe id="jjONv_IFrame" class="iframe_dialog"></iframe>
+   </div>
+  </div>
+ </div>
+ <div class="snippet-header"><span onclick="toggleSnippetAndRefresh('4FJT8','95tBv')">Click to Try it</span> <!-- <span onclick="openDialog('jjONv_Dialog')">Dialog</span> -->
+ </div>
+ <div class="snippet-body"><textarea id="95tBv">&lt;div id="container"&gt;
+  &lt;p&gt;Initial paragraph.&lt;/p&gt;
+&lt;/div&gt;
+
+&lt;button id="add-btn"&gt;Add Paragraph&lt;/button&gt;
+
+&lt;script&gt;
+  const container = document.getElementById('container');
+  const addBtn = document.getElementById('add-btn');
+
+  // Create a MutationObserver instance
+  const observer = new MutationObserver((mutationsList) =&gt; {
+    mutationsList.forEach(mutation =&gt; {
+      if (mutation.type === 'childList' &amp;&amp; mutation.addedNodes.length &gt; 0) {
+        mutation.addedNodes.forEach(node =&gt; {
+          if (node.nodeName === 'P') {
+            console.log('New paragraph added:', node.textContent);
+            // You could initialize something here (e.g., attach events)
+          }
+        });
+      }
+      if (mutation.type === 'attributes') {
+        console.log(`Attribute ${mutation.attributeName} changed on`, mutation.target);
+        console.log('Old value:', mutation.oldValue);
+        console.log('New value:', mutation.target.getAttribute(mutation.attributeName));
+      }
+    });
   });
-   codeMirrorMap.set("K7dEJ", editor);}
-  </script>
+
+  // Start observing child node additions and attribute changes in the container
+  observer.observe(container, { 
+    childList: true, 
+    attributes: true, 
+    attributeOldValue: true,
+    attributeFilter: ['class', 'style'], // optional: watch only specific attributes
+    subtree: true // watch in descendants too
+  });
+
+  // Add paragraphs dynamically when button clicked
+  addBtn.addEventListener('click', () =&gt; {
+    const newPara = document.createElement('p');
+    newPara.textContent = 'This is a dynamically added paragraph.';
+    container.appendChild(newPara);
+  });
+
+  // Example: change container's class on click to test attribute observer
+  container.addEventListener('click', () =&gt; {
+    container.classList.toggle('highlight');
+  });
+&lt;/script&gt;</textarea> <br> <button onclick="renderIframe(this,'95tBv','jjONv')">Run</button>
+  <div id="jjONv_FloatingLog" class="floatingLog" aria-live="polite" role="alert"></div> <iframe id="jjONv" class="result_iframe" style="display: none;"></iframe>
+  <script>
+			{
+				let editor = CodeMirror.fromTextArea(document
+						.getElementById("95tBv"), {
+					mode : "htmlmixed",
+					lineNumbers : false,
+					tabSize : 2
+				});
+				codeMirrorMap.set("95tBv", editor);
+
+				let editor1 = CodeMirror.fromTextArea(document.getElementById("95tBv_Textarea"), {
+					mode : "htmlmixed",
+					lineNumbers : false,
+					tabSize : 2
+				});
+				codeMirrorMap.set("95tBv_Textarea", editor1);
+			}
+		    function openDialog(id) {
+		        closeAll();
+		        document.getElementById(id).style.display = 'flex';
+		        setTimeout(() => {
+		        	 codeMirrorMap.get("95tBv_Textarea").refresh();
+		        }, 100); // 100ms 
+		      }
+
+		      function closeAll() {
+		        document.querySelectorAll('.dialog-backdrop').forEach(el => {
+		          el.style.display = 'none';
+		        });
+		      }			
+		</script>
  </div>
 </div><h3 id="summary">Summary</h3><p>Mutation Observers are a powerful and efficient tool for reacting to changes in the DOM without resorting to inefficient polling. By configuring observers carefully and disconnecting them when done, you can enhance dynamic behavior in your web applications with minimal performance overhead.</p><p>Feel free to experiment with different observer options and callbacks to suit your use cases such as live content updates, custom component frameworks, or debugging dynamic UI changes!</p><div class = "chapter-navi-section">
 <a href="#top" class="nav-button prev">↑</a>
@@ -1041,11 +1170,13 @@ if ('IntersectionObserver' in window) {
   // Fallback: Load all images immediately
   lazyLoadFallback();
 }</code></pre>
-</div><div class="snippet-container" id="C2A2m">
- <div class="snippet-header" onclick="toggleSnippetAndRefresh('C2A2m','3KVce')">
-  Click to Try it
- </div>
- <div class="snippet-body"><textarea id="3KVce">&lt;!DOCTYPE html&gt;
+</div><div class="snippet-container" id="Lwnqm">
+ <div id="fgGa1_Dialog" class="dialog-backdrop">
+  <div class="dialog">
+   <h2>Dialog 1</h2>
+   <div class="controls"><button onclick="renderIframe(this,'GyL8E_Textarea','fgGa1_IFrame')">Run</button> <button onclick="closeAll()">Close</button>
+   </div>
+   <div class="dialog-content"><textarea id="GyL8E_Textarea" class="textarea_dialog" placeholder="Type HTML here...">&lt;!DOCTYPE html&gt;
 &lt;html lang="en"&gt;
 &lt;head&gt;
 &lt;meta charset="UTF-8" /&gt;
@@ -1134,16 +1265,134 @@ if ('IntersectionObserver' in window) {
 &lt;/script&gt;
 
 &lt;/body&gt;
-&lt;/html&gt;</textarea> <br> <button onclick="renderIframe(this,'3KVce','ZeHBl')">Run</button>
-  <div id="ZeHBl_FloatingLog" class="floatingLog" aria-live="polite" role="alert"></div> <iframe id="ZeHBl" class="result_iframe" style="display: none;"></iframe>
-  <script>
-  { let editor = CodeMirror.fromTextArea(document.getElementById("3KVce"), {
-    mode: "htmlmixed",
-    lineNumbers:false,
-    tabSize: 2
+&lt;/html&gt;</textarea> <iframe id="fgGa1_IFrame" class="iframe_dialog"></iframe>
+   </div>
+  </div>
+ </div>
+ <div class="snippet-header"><span onclick="toggleSnippetAndRefresh('Lwnqm','GyL8E')">Click to Try it</span> <!-- <span onclick="openDialog('fgGa1_Dialog')">Dialog</span> -->
+ </div>
+ <div class="snippet-body"><textarea id="GyL8E">&lt;!DOCTYPE html&gt;
+&lt;html lang="en"&gt;
+&lt;head&gt;
+&lt;meta charset="UTF-8" /&gt;
+&lt;meta name="viewport" content="width=device-width, initial-scale=1" /&gt;
+&lt;title&gt;Lazy Loading with Intersection Observer&lt;/title&gt;
+&lt;style&gt;
+  body {
+    font-family: Arial, sans-serif;
+  }
+  .image-container {
+    max-width: 600px;
+    margin: 20px auto;
+  }
+  img {
+    display: block;
+    width: 100%;
+    height: auto;
+    margin-bottom: 20px;
+    background-color: #f0f0f0; /* placeholder background */
+    transition: filter 0.3s ease;
+    filter: blur(10px);
+  }
+  img.loaded {
+    filter: blur(0);
+  }
+&lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+
+&lt;h2&gt;Lazy Loading Images Example&lt;/h2&gt;
+
+&lt;div class="image-container"&gt;
+  &lt;!-- Placeholder images with data-src --&gt;
+  &lt;img class="lazy" data-src="https://picsum.photos/id/1015/600/400" alt="Mountain" src="https://via.placeholder.com/600x400?text=Loading..." /&gt;
+  &lt;img class="lazy" data-src="https://picsum.photos/id/1025/600/400" alt="Dog" src="https://via.placeholder.com/600x400?text=Loading..." /&gt;
+  &lt;img class="lazy" data-src="https://picsum.photos/id/1035/600/400" alt="Forest" src="https://via.placeholder.com/600x400?text=Loading..." /&gt;
+  &lt;img class="lazy" data-src="https://picsum.photos/id/1045/600/400" alt="Sea" src="https://via.placeholder.com/600x400?text=Loading..." /&gt;
+  &lt;img class="lazy" data-src="https://picsum.photos/id/1055/600/400" alt="Desert" src="https://via.placeholder.com/600x400?text=Loading..." /&gt;
+&lt;/div&gt;
+
+&lt;script&gt;
+// Select all images with the 'lazy' class
+const lazyImages = document.querySelectorAll('img.lazy');
+
+// Intersection Observer callback
+const onIntersection = (entries, observer) =&gt; {
+  entries.forEach(entry =&gt; {
+    if (entry.isIntersecting) {
+      const img = entry.target;
+
+      // Replace src with data-src to load actual image
+      img.src = img.dataset.src;
+
+      // Add event listener to remove blur filter when image loads
+      img.onload = () =&gt; {
+        img.classList.add('loaded');
+      };
+
+      // Stop observing this image as it has loaded
+      observer.unobserve(img);
+    }
   });
-   codeMirrorMap.set("3KVce", editor);}
-  </script>
+};
+
+// Fallback for browsers without Intersection Observer support
+const lazyLoadFallback = () =&gt; {
+  lazyImages.forEach(img =&gt; {
+    img.src = img.dataset.src;
+    img.classList.add('loaded');
+  });
+};
+
+if ('IntersectionObserver' in window) {
+  const observerOptions = {
+    root: null,           // viewport
+    rootMargin: '100px',  // preload images 100px before entering viewport
+    threshold: 0.01
+  };
+
+  const observer = new IntersectionObserver(onIntersection, observerOptions);
+  lazyImages.forEach(img =&gt; observer.observe(img));
+} else {
+  // Fallback: Load all images immediately
+  lazyLoadFallback();
+}
+&lt;/script&gt;
+
+&lt;/body&gt;
+&lt;/html&gt;</textarea> <br> <button onclick="renderIframe(this,'GyL8E','fgGa1')">Run</button>
+  <div id="fgGa1_FloatingLog" class="floatingLog" aria-live="polite" role="alert"></div> <iframe id="fgGa1" class="result_iframe" style="display: none;"></iframe>
+  <script>
+			{
+				let editor = CodeMirror.fromTextArea(document
+						.getElementById("GyL8E"), {
+					mode : "htmlmixed",
+					lineNumbers : false,
+					tabSize : 2
+				});
+				codeMirrorMap.set("GyL8E", editor);
+
+				let editor1 = CodeMirror.fromTextArea(document.getElementById("GyL8E_Textarea"), {
+					mode : "htmlmixed",
+					lineNumbers : false,
+					tabSize : 2
+				});
+				codeMirrorMap.set("GyL8E_Textarea", editor1);
+			}
+		    function openDialog(id) {
+		        closeAll();
+		        document.getElementById(id).style.display = 'flex';
+		        setTimeout(() => {
+		        	 codeMirrorMap.get("GyL8E_Textarea").refresh();
+		        }, 100); // 100ms 
+		      }
+
+		      function closeAll() {
+		        document.querySelectorAll('.dialog-backdrop').forEach(el => {
+		          el.style.display = 'none';
+		        });
+		      }			
+		</script>
  </div>
 </div><h3 id="explanation-of-the-code">Explanation of the Code</h3><ul>
  <li><p><strong>HTML Setup:</strong> Each image has a small placeholder <code>src</code> and the real image URL stored in the <code>data-src</code> attribute.</p></li>
@@ -1171,7 +1420,7 @@ if ('IntersectionObserver' in window) {
     <div class="book-cover-title" style="font-size: 16px;color: #333;top: 20px;">JavaScript DOM Programming</div>
     <div class="book-cover-author">readbytes</div>
     <div class="book-cover-bottom-stripe" style="background-color: #333;"></div>
-    <img class="book-cover-icon" style="width: 90px;height: 90px;top: 60px;" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFoAAABaCAYAAAA4qEECAAAD5UlEQVR4Xu2dv4sTQRTHH6eFYnOWgqWoWKqFhYWNlnZXiCAIgs35sxEtjrOwicSUNnY2NhYWgleJ4PkH2CmE+xFFSxttTlnz4mZ3573Emb2deTPJvg98q7yZN+/DmdvkkhXAZGeYzGNwvzrQ9U1TB9HZabGPuHID+NqmuQnu0LU+MhVa6COu3Aa+tmnugDt0rY9MpSiqAp+X68WxGaEUff8s39M1uLbsvTvRdE9bXi6VcZxdRatox6hoKyqabWyLYzOCimYb2+LYjKCi2ca2ODYjqGi2sS2OzQgqmm1si2MzQjtFe4wr7Xxl6DGuLANf2zT4/okrdK2PTOUn8OImwf3qQNc3TR1iz84oNsu2htmGLi0ISPH08mTlX39aEBjR2c1mW9CjBQFJS/SmrOg+LQhIWqI34Awt8Ml1IA3J4yGJKbqY+ekjud6tFp3/SxbpXTTFZH04Sh4PRSzR5ryCohGjOXksFDFET5ScfYcDpC4Y+0FetrRoY75fn+R/msdcAC4bs1At8oiEaDw7nSdbex5P8ojBBzgCEw42T9npV54y+nAaYjG8cD+0Z4EfcNaDMxWCMd/gBKQAHubVM37gWQvOYAiO9XTxP4avlvbRQ/pKb6WUMX6ODp7B6Jd++mRf4Vi2DQ985OoSvMYtMYXoCXW7zgDuDX9QjtMZ2ojEVYcCKloMFS2Eis5hl0oznuQ4CPyQ8xKcLRno4eYtSbAIlUMZ0Iv/1POiTHWmfMbo3IL8QJ1Op5T84yEfJPW8h0L048uGaPwlHJ3iSqDb7VZEr/JBUs86FKJ7VwzRd42JI6GihVDRQqhoIVS0ECpaCBUthIoWQkULoaKFUNFCqGghVLQQKloIfZtUiEUoD1SKRuggqSeXjKnOlM+YBPRg85Zk0D/OCkMPOetpLcUVTts/QBMaFS2EihZCRQuhooVQ0RUuAr9MmrXgDMnyG/iBZz04UzLsBX7AeQvOGJXzwA+V/dmY8IaNh0h8/Q3PTufJg1/HjgL70j09dJ53w6z6yLVL8GbcqyKa1TUMnne0N53v4xqcGg8vyXTJAzhnlnpD9Kojn8OccxNOGkWBmSqZ1PlGVHQFY17yWFBiSEZiiUaMmemDIWA3r5JqDImIHt286m34KxEmOfsCh2lRIGKKRkR/qploWhAQFS3E3IiOfSNUur5p6iA6Oy32EVdadVtjWugjrhRPCx6T/o26q7Bbrdvi2IxQim7TredVdI2oaBU9CRXNNrbFsRlBRbONbXFsRlDRbGNbHJsRVDTb2BbHZgQVzTa2xbEZoZ2iPcaVdr4y9BhXWvXfVfv+EEzdD6DQ9U1Th6Cz/wVFmg1Swj4EJQAAAABJRU5ErkJggg=="/>
+    <img class="book-cover-icon" style="width: 90px;height: 90px;top: 60px;" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFoAAABaCAYAAAA4qEECAAADUklEQVR4Xu2dv47TQBDGI0RDczY9rwMlrwEFBweC/t4EXRwaXuI6WiSaOLkCIZ6BCqTgPRFr8zkbnPF4Zuydn/RVuzsz33eSlX/2LRYRm1Xxe1MVOzY19eL6/6NzfqCw/ilEvXc2Mwh7pNiuyks8O1T1snyNfVLgWQ5hjxbcyCHskaJelVd4drCW5Vvsk6JzlkHYo6XXph5Q6hwEfUZASDhLqUOZ+Ri96vTa1ANKHQ+aAKWOB02AUseDJkCp40EToNTxoAlQ6njQBCh1PGgClDrZBs0l7JEi23eGXMIeKTbVxSs8O1Trm4tL7JMCz3IIe7Rsq+IXbh6iUA97nALPDxXWP4W29w5xMVwbG67rOBVR76LNAA9aiKyCbq49L0QbRmgGHXuul8VLXB+F3IPGtdGIm0o21gpay+89Gs01gtbwecDPz08eSQ8hHTT6C55xjwh3q+IZDhO0u148wL0cSAR93cyOfoKCV9wryu528RCHmpuCR/StRvOy7w8OOHUFT+jTDHdV+RwHnpqCB/SVFRLXaGfhQYvhQQvhQQvhQQvhQf8DXyZNXehPnW+fisc45FwUvKFfNXC4uQn9qvD1Y1maG4qB2NP3xiOui1NX5Zv9QNuq+IDrU6Xx8n7vq16WV7guTvxKYH1TvsP1qWLOl7mBmDDny9xATJjzZW4gJsz5MjcQE+Z8mRuICXO+zA3EhDlf5gZiwpwvcwMxYc6XuYGYMOfL3EBMmPNlbiAmzPkyNxAT5nyZG4gJc778Y1Ih/IN/QeKh5ij0q8acv5z9YenL2T045NSF/rIhfiWQ9Q9oxsaDFsKDFsKDFsKDFsKDjqj9ZqFx8dvfRubWb+gcn+Yv/hSHuh9swrcoh9nRT5DaLcpf/KZ7GXAIXB8D6aADGj5btJprBB3Q8nvQGNfGRCvogLjntT+8SubhVVohBzSDDoh6F20GeNBCzCZo7Qeh4vmhwvqnEPWOmzmEPVJk9Vhj3Mgh7JHi4LLApTMuL52zDMIeLb029YBSh+v6G85S6lBmPkavOr029YBSx4MmQKnjQROg1PGgCVDqeNAEKHU8aAKUOh40AUodD5oApU62QXMJe6TI9p0hl7BHitz+XTX3j2DO+gHKkfODhPVPsRnZ+1+tJg8Iaaje6wAAAABJRU5ErkJggg=="/>
   </div>
   <div class="download-info">
     <h2 id='bottom'>Download This Ebook</h2>
@@ -1269,7 +1518,27 @@ if ('IntersectionObserver' in window) {
     <div class="book-cover-title" style="font-size: 16px;color: #333;top: 20px;">JavaScript DOM Programming</div>
     <div class="book-cover-author">readbytes</div>
     <div class="book-cover-bottom-stripe" style="background-color: #333;"></div>
-    <img class="book-cover-icon" style="width: 90px;height: 90px;top: 60px;" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFoAAABaCAYAAAA4qEECAAAD5UlEQVR4Xu2dv4sTQRTHH6eFYnOWgqWoWKqFhYWNlnZXiCAIgs35sxEtjrOwicSUNnY2NhYWgleJ4PkH2CmE+xFFSxttTlnz4mZ3573Emb2deTPJvg98q7yZN+/DmdvkkhXAZGeYzGNwvzrQ9U1TB9HZabGPuHID+NqmuQnu0LU+MhVa6COu3Aa+tmnugDt0rY9MpSiqAp+X68WxGaEUff8s39M1uLbsvTvRdE9bXi6VcZxdRatox6hoKyqabWyLYzOCimYb2+LYjKCi2ca2ODYjqGi2sS2OzQgqmm1si2MzQjtFe4wr7Xxl6DGuLANf2zT4/okrdK2PTOUn8OImwf3qQNc3TR1iz84oNsu2htmGLi0ISPH08mTlX39aEBjR2c1mW9CjBQFJS/SmrOg+LQhIWqI34Awt8Ml1IA3J4yGJKbqY+ekjud6tFp3/SxbpXTTFZH04Sh4PRSzR5ryCohGjOXksFDFET5ScfYcDpC4Y+0FetrRoY75fn+R/msdcAC4bs1At8oiEaDw7nSdbex5P8ojBBzgCEw42T9npV54y+nAaYjG8cD+0Z4EfcNaDMxWCMd/gBKQAHubVM37gWQvOYAiO9XTxP4avlvbRQ/pKb6WUMX6ODp7B6Jd++mRf4Vi2DQ985OoSvMYtMYXoCXW7zgDuDX9QjtMZ2ojEVYcCKloMFS2Eis5hl0oznuQ4CPyQ8xKcLRno4eYtSbAIlUMZ0Iv/1POiTHWmfMbo3IL8QJ1Op5T84yEfJPW8h0L048uGaPwlHJ3iSqDb7VZEr/JBUs86FKJ7VwzRd42JI6GihVDRQqhoIVS0ECpaCBUthIoWQkULoaKFUNFCqGghVLQQKloIfZtUiEUoD1SKRuggqSeXjKnOlM+YBPRg85Zk0D/OCkMPOetpLcUVTts/QBMaFS2EihZCRQuhooVQ0RUuAr9MmrXgDMnyG/iBZz04UzLsBX7AeQvOGJXzwA+V/dmY8IaNh0h8/Q3PTufJg1/HjgL70j09dJ53w6z6yLVL8GbcqyKa1TUMnne0N53v4xqcGg8vyXTJAzhnlnpD9Kojn8OccxNOGkWBmSqZ1PlGVHQFY17yWFBiSEZiiUaMmemDIWA3r5JqDImIHt286m34KxEmOfsCh2lRIGKKRkR/qploWhAQFS3E3IiOfSNUur5p6iA6Oy32EVdadVtjWugjrhRPCx6T/o26q7Bbrdvi2IxQim7TredVdI2oaBU9CRXNNrbFsRlBRbONbXFsRlDRbGNbHJsRVDTb2BbHZgQVzTa2xbEZoZ2iPcaVdr4y9BhXWvXfVfv+EEzdD6DQ9U1Th6Cz/wVFmg1Swj4EJQAAAABJRU5ErkJggg=="/>
+    <img class="book-cover-icon" style="width: 90px;height: 90px;top: 60px;" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFoAAABaCAYAAAA4qEECAAADUklEQVR4Xu2dv47TQBDGI0RDczY9rwMlrwEFBweC/t4EXRwaXuI6WiSaOLkCIZ6BCqTgPRFr8zkbnPF4Zuydn/RVuzsz33eSlX/2LRYRm1Xxe1MVOzY19eL6/6NzfqCw/ilEvXc2Mwh7pNiuyks8O1T1snyNfVLgWQ5hjxbcyCHskaJelVd4drCW5Vvsk6JzlkHYo6XXph5Q6hwEfUZASDhLqUOZ+Ri96vTa1ANKHQ+aAKWOB02AUseDJkCp40EToNTxoAlQ6njQBCh1PGgClDrZBs0l7JEi23eGXMIeKTbVxSs8O1Trm4tL7JMCz3IIe7Rsq+IXbh6iUA97nALPDxXWP4W29w5xMVwbG67rOBVR76LNAA9aiKyCbq49L0QbRmgGHXuul8VLXB+F3IPGtdGIm0o21gpay+89Gs01gtbwecDPz08eSQ8hHTT6C55xjwh3q+IZDhO0u148wL0cSAR93cyOfoKCV9wryu528RCHmpuCR/StRvOy7w8OOHUFT+jTDHdV+RwHnpqCB/SVFRLXaGfhQYvhQQvhQQvhQQvhQf8DXyZNXehPnW+fisc45FwUvKFfNXC4uQn9qvD1Y1maG4qB2NP3xiOui1NX5Zv9QNuq+IDrU6Xx8n7vq16WV7guTvxKYH1TvsP1qWLOl7mBmDDny9xATJjzZW4gJsz5MjcQE+Z8mRuICXO+zA3EhDlf5gZiwpwvcwMxYc6XuYGYMOfL3EBMmPNlbiAmzPkyNxAT5nyZG4gJc778Y1Ih/IN/QeKh5ij0q8acv5z9YenL2T045NSF/rIhfiWQ9Q9oxsaDFsKDFsKDFsKDFsKDjqj9ZqFx8dvfRubWb+gcn+Yv/hSHuh9swrcoh9nRT5DaLcpf/KZ7GXAIXB8D6aADGj5btJprBB3Q8nvQGNfGRCvogLjntT+8SubhVVohBzSDDoh6F20GeNBCzCZo7Qeh4vmhwvqnEPWOmzmEPVJk9Vhj3Mgh7JHi4LLApTMuL52zDMIeLb029YBSh+v6G85S6lBmPkavOr029YBSx4MmQKnjQROg1PGgCVDqeNAEKHU8aAKUOh40AUodD5oApU62QXMJe6TI9p0hl7BHitz+XTX3j2DO+gHKkfODhPVPsRnZ+1+tJg8Iaaje6wAAAABJRU5ErkJggg=="/>
+  </div>
+</a>
+
+
+<a href="javascript-asynchronous-programming.htm">
+<div class="book-cover" style="background-color: #f9f6f1;border: 1px solid #ccc;"> 
+    <div class="book-cover-title" style="font-size: 18px;color: #333;top: 20px;">JavaScript Asynchronous Programming</div>
+    <div class="book-cover-author">readbytes</div>
+    <div class="book-cover-bottom-stripe" style="background-color: #333;"></div>
+    <img class="book-cover-icon" style="width: 80px;height: 80px;top: 80px;" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFoAAABaCAYAAAA4qEECAAADU0lEQVR4Xu2cvW7UQBRGkwKJV0CipqJbG9pIFLGXRyD2IgpeghegQ9DRUNHQUdLQUVFAC0h0tFEKkMJPCEykRHKObzZrr6/t8X5H+qrMN3PvUbQpEmVra8NI8vLfWWazh1f4ddEBVcmVPOA5sQZB6DND8mkWj3hetCQI/VAXXE3xhB3RkrrcWl6wI1qQZuUrQ+75ZOVr9kQL0mxxpya3nnfsiRbs7Ny/ashFiq/siZbU5Z7PLC9/sCNaQrlGfrIjWmLIxXd28Z0d0QKKvSCSvQ5pXr41pF6QxT77vRF+Or+vDzTdhJW36cAdDrEpoQdX+PgmhS482ebjmxTKcIMPb1roww0+vGmhDzf4MMPzY4fzL8tsd+8a+27w8Wp4Nga4w7Kw6wofr+Qzz8aAsYcZ9tzhAIMN0gFh7l/cwwp7vcAhBh1mDcLMf7iDFfZ6g4MMPlALwrzHnN/IMXu9YgwUlehktY+LI/Z6xxgqGtFhzgPObeQve4NgDBaF6Nl88YUzGxn246KKMVwUojlvPYtx/dqqPuD4RSeX/aXSvDxgZ3BqQ0YhunjOec+SzstvPD8KOGgMok/gvKf5xHOjwRg2CtEnVOdNs+Ipvz4qKDgm0VFBwRLtBAVLtBMULNFOULBEO0HBEu0EBUu0ExQs0U5QsEQ7QcES7QQFS7QTFCzRTlCwRDtBwRLtBAVLtBMULNFOULBEO0HBEu0EBUu0ExQs0U5QsEQ7QcES7QQFS7QTFCzRTlBw16LDXb897o0OCu5SSLjniPd2dXd0UEKXMnhn1/dHBQV0KYJ3Mjw/abh8lxJ4pxV2JgsX71oA77XCziTh0h7L824r7EwOLuy1OO+3ws6k4LKeSydZech3GHYmAxf1XniWl2/4FsPOJOCSfSyb5sVLvsewEz1csK9l+ZYVdqKGyzFpXj5O7hY3u0q6u5fxjWXhvNHCxcYYzhwlXGqM4cxRwqXGmPDxdci5o4SLjTGcOVq42JgSvqOH+8+4HtzO713nkmMI5xQrQpGXhX3RAMq8KOyJBtyalzco1Ap7ohkr/RtllkRDKNQKO6IhFGqFHdEQCrXCjmgIhVphRzSEQq2wIxpCoVbYES2gVIbnRUsoVpKdCEL3KViSnUjm5cepSf4Pt8Ix0I7hKy8AAAAASUVORK5CYII="/>
+  </div>
+</a>
+
+
+<a href="javascript-pragmatic-developer.htm">
+<div class="book-cover" style="background-color: #f9f6f1;border: 1px solid #ccc;"> 
+    <div class="book-cover-title" style="font-size: 18px;color: #333;top: 20px;">JavaScript Pragmatic Developer</div>
+    <div class="book-cover-author">readbytes</div>
+    <div class="book-cover-bottom-stripe" style="background-color: #333;"></div>
+    <img class="book-cover-icon" style="width: 80px;height: 70px;top: 85px;" src="data:image/png;base64,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"/>
   </div>
 </a>
 

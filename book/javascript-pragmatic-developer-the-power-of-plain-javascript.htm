@@ -1,0 +1,1148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>JavaScript Pragmatic Developer The Power of Plain JavaScript</title>
+<link rel='shortcut icon' href='https://java2s.com/style/favicon.ico'>
+<link href="https://fonts.googleapis.com/css2?family=Merriweather&display=swap" rel="stylesheet" />
+<link href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.css" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/theme/material.css"> <!-- Dark theme -->
+<script src="https://cdn.jsdelivr.net/npm/typescript@5/lib/typescript.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/htmlmixed/htmlmixed.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/xml/xml.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/css/css.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/javascript/javascript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/javascript/typescript.min.js"></script>
+<style>
+    #floatingLog {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: rgba(20, 20, 20, 0.95);
+      color: white;
+      font-family: monospace;
+      font-size: 14px;
+      padding: 16px 20px;
+      border-radius: 8px;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+      max-width: 80%;
+      max-height: 200px;
+      overflow-y: auto;
+      display: none;
+      z-index: 9999;
+      pointer-events: none;
+      white-space: pre-wrap;
+      text-align: center;
+    }
+</style>
+<script>
+  const codeMirrorMap = new Map();
+  const iframeMap = new Map();
+  
+ 
+
+  let dismissTimer;
+  function showFloatingLog(message) {
+	const floatingLog = document.getElementById('floatingLog');
+
+    if (floatingLog.style.display !== 'block') {
+      floatingLog.textContent = '';
+      floatingLog.style.display = 'block'; 
+    }
+
+    floatingLog.textContent += message + '\n';
+    floatingLog.scrollTop = floatingLog.scrollHeight; 
+    clearTimeout(dismissTimer);
+    dismissTimer = setTimeout(() => {
+      floatingLog.style.display = 'none';
+      floatingLog.textContent = '';
+    }, 2000);
+  }
+  window.addEventListener('message', (event) => {
+	    if (!iframeMap.has(event.source)) return;
+
+	    if (event.data?.type === 'console-log') {
+	      showFloatingLog(event.data.message);
+	    }
+  });  
+  function renderIframe(button,textarea_id, iframe_id) {
+      const html = codeMirrorMap.get(textarea_id).getValue();
+      const iframe = document.getElementById(iframe_id);
+  
+      const oldIframe = iframe;
+      const newIframe = document.createElement('iframe');
+      newIframe.className ="result_iframe";
+      
+      newIframe.id = iframe_id;
+      oldIframe.replaceWith(newIframe);
+ 
+
+      // Track the iframe in the map
+      iframeMap.set(newIframe.contentWindow, button);
+
+      const overrideScript = `
+        <script>
+          (function() {
+            const originalLog = console.log;
+            console.log = function(...args) {
+              originalLog.apply(console, args);
+              window.parent.postMessage({
+                type: 'console-log',
+                message: args.map(a => {
+                  try { return JSON.stringify(a); }
+                  catch { return String(a); }
+                }).join(' ')
+              }, '*');
+            };
+          })();
+        <\/script>
+      `;
+
+      const iframeHTML = `
+        <!DOCTYPE html>
+        <html>
+        <body>
+          ${overrideScript}
+          ${html}
+        </body>
+        </html>
+      `;
+ 
+      const doc = newIframe.contentDocument || newIframe.contentWindow.document;
+      doc.open();
+      doc.write(iframeHTML);
+      doc.close();
+
+      
+  }
+  function renderIframeForClientTypescript(textarea_id, iframe_id) {
+      let code = codeMirrorMap.get(textarea_id).getValue();
+      code = ts.transpile(code);
+      const iframe = document.getElementById(iframe_id);
+      const doc = iframe.contentDocument || iframe.contentWindow.document;
+
+const html = `
+  <!DOCTYPE html>
+  <html>
+    <head>
+      <title>Output</title>
+      <style>
+        body { font-family: monospace; padding: 1em; background: #f4f4f4; color: #222; }
+        pre { white-space: pre-wrap; word-break: break-word; }
+        .error { color: red; }
+      </style>
+    </head>
+    <body>
+      <pre id="log"></pre>
+      <script>
+        (function(){
+          const logEl = document.getElementById('log');
+          const origLog = console.log;
+          const origError = console.error;
+
+          console.log = (...args) => {
+            logEl.textContent += args.join(' ') + '\\n';
+            origLog.apply(console, args);
+          };
+          console.table = (...args) => {
+            logEl.textContent += args.join(' ') + '\\n';
+            origLog.apply(console, args);
+          };
+
+          console.error = (...args) => {
+            logEl.innerHTML +='<span class="error">' + args.join(' ') + '</span>';
+            origError.apply(console, args);
+          };
+          window.addEventListener("error", function (event) {
+              console.error("Caught by event listener:", event.message);
+          });    
+          try {             
+              ${code};
+          } catch (err) {
+            console.error(err.stack || err.message);
+          }
+        })();
+      <\/script>
+    </body>
+  </html>
+`;
+
+      iframe.style.display = "block";
+      iframe.srcdoc = html;  
+  }
+
+    function renderIframeForClientJavascript(textarea_id, iframe_id) {
+        const code = codeMirrorMap.get(textarea_id).getValue();
+        const iframe = document.getElementById(iframe_id);
+        const doc = iframe.contentDocument || iframe.contentWindow.document;
+
+  const html = `
+    <!DOCTYPE html>
+    <html>
+      <head>
+        <title>Output</title>
+        <style>
+          body { font-family: monospace; padding: 1em; background: #1e1e1e; color: #eee; }
+          pre { white-space: pre-wrap; word-break: break-word; }
+          .error { color: red; }
+        </style>
+      </head>
+      <body>
+        <pre id="log"></pre>
+        <script>
+          (function(){
+            const logEl = document.getElementById('log');
+            const origLog = console.log;
+            const origError = console.error;
+
+            console.log = (...args) => {
+              logEl.textContent += args.join(' ') + '\\n';
+              origLog.apply(console, args);
+            };
+            console.table = (...args) => {
+              logEl.textContent += args.join(' ') + '\\n';
+              origLog.apply(console, args);
+            };
+
+            console.error = (...args) => {
+              logEl.innerHTML +='<span class="error">' + args.join(' ') + '</span>';
+              origError.apply(console, args);
+            };
+            window.addEventListener("error", function (event) {
+                console.error("Caught by event listener:", event.message);
+            });    
+            try {
+             ${code}; 
+            } catch (err) {
+              console.error(err.stack || err.message);
+            }
+          })();
+        <\/script>
+      </body>
+    </html>
+  `;
+        iframe.style.display = "block";
+        iframe.srcdoc = html;  
+    }
+    function toggleSnippetAndRefresh(id, textarea_id) {
+      const box = document.getElementById(id);
+      box.classList.toggle("open");
+      codeMirrorMap.get(textarea_id).refresh();
+    }
+
+  </script>
+  <script>
+  const mode = localStorage.getItem('mode') || 'light';
+  document.documentElement.classList.add(`${mode}-mode`);
+  </script>   
+<style> 
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: 'Merriweather', serif;
+  margin: 0;
+  padding: 2rem 1rem;
+  font-size: 15px;
+  line-height: 1.5;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+.container {
+  max-width: 700px;
+  margin: 0 auto;
+  padding: 1rem 2rem;
+  box-shadow: 0 0 15px rgba(0,0,0,0.1);
+}
+
+h1, h2, h3 {
+  font-weight: 600;
+  margin-top: 2.5rem;
+  margin-bottom: 1rem;
+  line-height: 1.2;
+}
+
+h1 { font-size: 1.8rem; }
+h2 { font-size: 1.4rem; }
+h3 { font-size: 1.2rem; }
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: sans-serif;
+  font-size: 1em;
+  margin: 1em 0;
+}
+
+th, td {
+  padding: 0.6em 1em;
+  text-align: left;
+  border: 1px solid;
+}
+
+tr:nth-child(even) {
+  background-color: inherit;
+}
+
+tr:hover {
+  background-color: inherit;
+}
+
+a {
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+code {
+  color: #d35400;
+}
+
+.book-title-chapter {
+  font-family: 'Merriweather', serif;
+  font-size: 2rem;
+  font-weight: bold;
+  text-align: center;
+  margin-bottom: 2rem;
+  border-bottom: 2px solid;
+  padding-bottom: 0.5rem;
+}
+
+.book-subtitle-chapter {
+  text-align: center;
+  font-size: 1rem;
+  margin-top: -1rem;
+  margin-bottom: 2rem;
+}
+
+.related-books {
+  margin-top: 40px;
+}
+
+.related-book-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+    .book-cover {
+      width: 130px;
+      height: 180px;
+      font-family: Arial, sans-serif;
+      position: relative;
+      overflow: hidden;      
+      line-height: normal;
+      box-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+    }
+    .book-cover-bottom-stripe {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      height: 5px;
+      width: 100%;
+    }
+    .book-cover-title {
+      position: absolute;
+      width: 100%;
+      text-align: center;
+      font-weight: bold;
+    }
+     
+    .book-cover-icon {
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      align-items: center;
+      justify-content: center; 
+    }
+
+    .book-cover-author {
+      position: absolute;
+      bottom: 10px;
+      width: 100%;
+      text-align: center;
+      font-size: 8px;
+      color: #333;
+    }
+
+.page-footer {
+  margin-top: 4rem;
+  padding: 1rem 0;
+  text-align: center;
+  font-size: 0.85rem;
+  border-top: 1px solid;
+}
+
+.chapter-navi-section {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 10px;
+}
+
+.nav-link {
+  color: inherit;
+  text-decoration: none;
+  opacity: 0.5;
+  transition: opacity 0.3s ease, text-decoration 0.3s ease;
+}
+
+.nav-link:hover {
+  opacity: 0.9;
+  text-decoration: underline;
+}
+
+.prev { text-align: left; }
+.toc-link { text-align: center; }
+.next { text-align: right; }
+
+.download-section {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2rem;
+  padding: 2rem 1rem;
+  max-width: 600px;
+  margin: 3rem auto;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+}
+
+.download-info h2 {
+  margin: 0 0 0.5rem;
+  font-size: 1.2rem;
+}
+
+.format-label {
+  margin: 0 0 0.5rem;
+  font-size: 0.95rem;
+}
+
+.download-buttons {
+  display: flex;
+  gap: 1rem;
+}
+
+.download-button {
+  background-color: #4A90E2;
+  color: white;
+  padding: 0.5em 1.2em;
+  border-radius: 25px;
+  font-size: 0.95rem;
+  text-decoration: none;
+  transition: background-color 0.3s ease;
+}
+
+.download-button:hover {
+  background-color: #357ABD;
+}
+
+.code-block {
+  position: relative;
+  margin-bottom: 1em;
+}
+
+.copy-button {
+  background: transparent;
+  color: white;
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  border: none;
+  padding: 4px 8px;
+  font-size: 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  z-index: 1;
+}
+
+.copy-button:hover {
+  background-color: #0056b3;
+}
+
+.snippet-container {
+  overflow: hidden;
+}
+
+.snippet-header {
+  padding: 0.75rem 1rem;
+  cursor: pointer;
+  font-size: 1rem;
+    background-color: #eeeeee;
+    color:  #111111; 
+    border-radius: 8px;
+    cursor: pointer;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);  
+}
+
+.snippet-body {
+  display: none;
+  font-family: monospace;
+}
+
+.snippet-container.open .snippet-body {
+  display: block;
+}
+
+.CodeMirror {
+  border: 2px solid #ccc;
+  border-radius: 4px;
+  resize: vertical;
+}
+
+/* === Light Mode === */
+html.light-mode {
+  background-color: #f8f7f5;
+  color: #333;
+}
+
+html.light-mode .container {
+  background: white;
+}
+
+html.light-mode .book-title-chapter {
+  color: #2c3e50;
+  border-color: #ccc;
+}
+html.light-mode .book-subtitle-chapter{
+  color: #888;
+}
+
+html.light-mode .page-footer,
+html.light-mode .series-name,
+html.light-mode .book-subtitle,
+html.light-mode .format-label {
+  color: #888;
+}
+
+html.light-mode .related-books h2 {
+  color: #333;
+  border-bottom: 2px solid #eee;
+}
+
+html.light-mode .book-title {
+  color: #fff;
+}
+
+html.light-mode .book-cover {
+  border: 1px solid #ccc;
+}
+
+html.light-mode th {
+  background-color: #f2f2f2;
+}
+
+html.light-mode tr:nth-child(even) {
+  background-color: #fafafa;
+}
+
+html.light-mode tr:hover {
+  background-color: #e6f7ff;
+}
+
+html.light-mode a,
+html.light-mode .page-footer a {
+  color: #000;
+}
+
+/* === Dark Mode === */
+html.dark-mode {
+  background-color: #181818;
+  color: #e0e0e0;
+}
+
+html.dark-mode .container {
+  background: #222;
+}
+
+html.dark-mode .book-title-chapter {
+  color: #ddd;
+  border-color: #444;
+}
+
+html.dark-mode .snippet-header {
+    background-color: #333;
+    color:  #ddd; 
+}
+
+
+html.dark-mode .book-subtitle-chapter,
+html.dark-mode .page-footer,
+html.dark-mode .series-name,
+html.dark-mode .book-subtitle,
+html.dark-mode .book-footer,
+html.dark-mode .format-label {
+  color: #aaa;
+}
+
+html.dark-mode .related-books h2 {
+  color: #ddd;
+  border-bottom: 2px solid #333;
+}
+
+html.dark-mode .book-title {
+  color: #fff;
+}
+
+html.dark-mode .book-cover {
+  border: 1px solid #555;
+}
+
+html.dark-mode th {
+  background-color: #333;
+  color: #fff;
+}
+
+html.dark-mode td {
+  border-color: #444;
+}
+
+html.dark-mode tr:nth-child(even) {
+  background-color: #2a2a2a;
+}
+
+html.dark-mode tr:hover {
+  background-color: #2c3e50;
+}
+
+html.dark-mode a,
+html.dark-mode .page-footer a {
+  color: #eee;
+}
+
+    .dialog-backdrop {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(0,0,0,0.5);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 10;
+    }
+
+    .dialog {
+      background: white;
+      padding: 20px;
+      width: 90vw;
+      height: 80vh;
+      border-radius: 8px;
+      box-shadow: 0 0 20px rgba(0,0,0,0.3);
+      display: flex;
+      flex-direction: column;
+    }
+    .dialog-content {
+      display: flex;
+      flex: 1;
+      gap: 20px;
+      margin-top: 10px;
+    }
+    .dialog h2 {
+      margin-top: 0;
+    }
+
+    .textarea_dialog {
+      width: 50%;
+      height: 100%;
+      resize: none;
+      font-family: monospace;
+      font-size: 14px;
+      padding: 10px;
+      box-sizing: border-box;
+      border: 1px solid #ccc;
+    }
+
+    .iframe_dialog {
+      width: 50%;
+      height: 100%;
+      border: 1px solid #ccc;
+    }
+    .controls_dialog {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 10px;
+    }    
+    button { padding: 0.5em 1em; background: green; color: white; border: none; cursor: pointer; }
+    button:hover { background: #1e7e34; }
+    .result_iframe { width:99%; height:200px; margin-top: 1em;  resize: both;border:1px solid #ccc;}        
+</style>
+</head>
+<body> 
+  <div class="container">
+    <div class = "chapter-navi-section">
+<a href="javascript-pragmatic-developer-the-pragmatic-mindset.htm" class="nav-button prev">←</a>
+<a href='javascript-pragmatic-developer.htm#the-power-of-plain-javascript' class="nav-button toc-link">Index</a>
+<a href="javascript-pragmatic-developer-dry-dont-repeat-yourself.htm" class="nav-button next">→</a>
+</div>
+
+    <h1 class="book-title-chapter" id = 'top'>The Power of Plain JavaScript</h1>
+    <h3 class="book-subtitle-chapter">JavaScript Pragmatic Developer</h3>   
+    <!-- <h1 class ="chapter-title"></h1> -->
+    <h2 id='know-your-tools-the-language-core'>3.1 Know Your Tools: The Language Core</h2><p>In the fast-moving world of JavaScript development, it’s tempting to jump straight into frameworks and libraries. React, Vue, Angular, and countless others offer powerful abstractions that promise rapid development. But before reaching for these tools, every pragmatic developer must first <strong>master the language core—the fundamental building blocks of JavaScript itself</strong>.</p><p>Understanding JavaScript’s core deeply means you write clearer, more reliable, and maintainable code. It also gives you the flexibility to troubleshoot framework issues, optimize performance, and adapt when libraries evolve or become obsolete. Frameworks come and go, but the language core remains.</p><h3 id="why-mastering-fundamentals-matters">Why Mastering Fundamentals Matters</h3><p>Frameworks are built on JavaScript’s foundation. Without a solid grasp of that foundation, you risk becoming a “framework jockey”—knowing how to use tools but lacking the insight to write robust code. You might blindly copy patterns without understanding them, struggle debugging, or produce fragile applications.</p><p>In contrast, mastering core JavaScript empowers you to:</p><ul>
+ <li>Write code that works anywhere, independent of frameworks</li>
+ <li>Understand and optimize the code generated by frameworks</li>
+ <li>Choose the best tool or pattern for the problem, rather than defaulting to what’s trendy</li>
+</ul><h3 id="essential-language-features-for-pragmatic-coding">Essential Language Features for Pragmatic Coding</h3><p>Here are some key JavaScript fundamentals every developer should know:</p><h4 id="variable-declarations-and-scoping">Variable Declarations and Scoping</h4><p>Understand the differences between <code>var</code>, <code>let</code>, and <code>const</code>—especially block scoping and hoisting.</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-js">function test() {
+  if (true) {
+    let a = 10;      // block scoped
+    var b = 20;      // function scoped
+  }
+  console.log(a);    // ReferenceError
+  console.log(b);    // 20
+}</code></pre>
+</div><p>Use <code>const</code> by default for values that won’t change, <code>let</code> when reassignment is needed, and avoid <code>var</code> to prevent subtle bugs.</p><h4 id="functions-and-arrow-functions">Functions and Arrow Functions</h4><p>Know function declarations, expressions, and arrow functions, including how they handle <code>this</code>.</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-js">const obj = {
+  value: 42,
+  getValue() {
+    return this.value;
+  },
+  getArrowValue: () =&gt; this.value
+};
+
+console.log(obj.getValue());       // 42
+console.log(obj.getArrowValue());  // undefined (arrow uses outer 'this')</code></pre>
+</div><p>Choosing the right function form affects readability and behavior.</p><h4 id="closures-and-lexical-scope">Closures and Lexical Scope</h4><p>JavaScript functions capture the surrounding scope, enabling powerful patterns like data encapsulation.</p><div>
+ <div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+  <pre><code class="language-js">function makeCounter() {
+  let count = 0;
+  return function() {
+    count++;
+    return count;
+  };
+}
+const counter = makeCounter();
+console.log(counter());  // 1
+console.log(counter());  // 2</code></pre>
+ </div>
+ <div class="snippet-container" id="pTEfx">
+  <div class="snippet-header" onclick="toggleSnippetAndRefresh('pTEfx','bHrpC')">
+   Try it in editor
+  </div>
+  <div class="snippet-body"><textarea id="bHrpC">function makeCounter() {
+  let count = 0;
+  return function() {
+    count++;
+    return count;
+  };
+}
+const counter = makeCounter();
+console.log(counter());  // 1
+console.log(counter());  // 2</textarea> <br> <button onclick="renderIframeForClientJavascript('bHrpC','0gIQk')">Run</button> <iframe id="0gIQk" class="result_iframe" style="display: none;"></iframe>
+   <script>
+  {let editor1 = CodeMirror.fromTextArea(document.getElementById("bHrpC"), {
+    mode: "javascript",
+    lineNumbers:false,
+    tabSize: 2
+    });
+    const mode = localStorage.getItem("mode") || "light";  
+    const newTheme = mode === "dark" ? "material" : "default";
+    editor1.setOption("theme", newTheme);
+
+   codeMirrorMap.set("bHrpC", editor1);}
+  </script>
+  </div>
+ </div>
+</div><p>Closures are foundational for callbacks, modules, and functional programming.</p><h4 id="asynchronous-javascript">Asynchronous JavaScript</h4><p>Understand callbacks, Promises, and <code>async/await</code> for handling asynchronous operations.</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-js">async function fetchData() {
+  try {
+    const response = await fetch('/api/data');
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error('Fetch error:', error);
+  }
+}</code></pre>
+</div><p>This knowledge lets you write responsive, non-blocking applications.</p><h4 id="objects-and-prototypes">Objects and Prototypes</h4><p>Know how objects work, including prototype inheritance and methods like <code>Object.create()</code>.</p><div>
+ <div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+  <pre><code class="language-js">const animal = {
+  speak() {
+    console.log('Animal sound');
+  }
+};
+
+const dog = Object.create(animal);
+dog.speak();  // Animal sound</code></pre>
+ </div>
+ <div class="snippet-container" id="Wy8zk">
+  <div class="snippet-header" onclick="toggleSnippetAndRefresh('Wy8zk','pCuoq')">
+   Try it in editor
+  </div>
+  <div class="snippet-body"><textarea id="pCuoq">const animal = {
+  speak() {
+    console.log('Animal sound');
+  }
+};
+
+const dog = Object.create(animal);
+dog.speak();  // Animal sound</textarea> <br> <button onclick="renderIframeForClientJavascript('pCuoq','eWvKd')">Run</button> <iframe id="eWvKd" class="result_iframe" style="display: none;"></iframe>
+   <script>
+  {let editor1 = CodeMirror.fromTextArea(document.getElementById("pCuoq"), {
+    mode: "javascript",
+    lineNumbers:false,
+    tabSize: 2
+    });
+    const mode = localStorage.getItem("mode") || "light";  
+    const newTheme = mode === "dark" ? "material" : "default";
+    editor1.setOption("theme", newTheme);
+
+   codeMirrorMap.set("pCuoq", editor1);}
+  </script>
+  </div>
+ </div>
+</div><p>Frameworks often manipulate objects and prototypes behind the scenes, so this is key.</p><h3 id="practical-example-a-simple-module">Practical Example: A Simple Module</h3><p>Putting these fundamentals together, here’s a simple module using closures, constants, and arrow functions:</p><div>
+ <div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+  <pre><code class="language-js">const createLogger = () =&gt; {
+  const logs = [];
+  return {
+    log: (msg) =&gt; {
+      logs.push(msg);
+      console.log(`LOG: ${msg}`);
+    },
+    getLogs: () =&gt; [...logs]
+  };
+};
+
+const logger = createLogger();
+logger.log('Starting app');
+logger.log('App running');
+console.log(logger.getLogs());</code></pre>
+ </div>
+ <div class="snippet-container" id="tqkGM">
+  <div class="snippet-header" onclick="toggleSnippetAndRefresh('tqkGM','daLmZ')">
+   Try it in editor
+  </div>
+  <div class="snippet-body"><textarea id="daLmZ">const createLogger = () =&gt; {
+  const logs = [];
+  return {
+    log: (msg) =&gt; {
+      logs.push(msg);
+      console.log(`LOG: ${msg}`);
+    },
+    getLogs: () =&gt; [...logs]
+  };
+};
+
+const logger = createLogger();
+logger.log('Starting app');
+logger.log('App running');
+console.log(logger.getLogs());</textarea> <br> <button onclick="renderIframeForClientJavascript('daLmZ','awxvK')">Run</button> <iframe id="awxvK" class="result_iframe" style="display: none;"></iframe>
+   <script>
+  {let editor1 = CodeMirror.fromTextArea(document.getElementById("daLmZ"), {
+    mode: "javascript",
+    lineNumbers:false,
+    tabSize: 2
+    });
+    const mode = localStorage.getItem("mode") || "light";  
+    const newTheme = mode === "dark" ? "material" : "default";
+    editor1.setOption("theme", newTheme);
+
+   codeMirrorMap.set("daLmZ", editor1);}
+  </script>
+  </div>
+ </div>
+</div><p>No frameworks—just core JavaScript features delivering encapsulation and state management cleanly and understandably.</p><h3 id="final-thought">Final Thought</h3><p>Before reaching for the latest framework, invest time mastering JavaScript fundamentals. This foundation will make you a more confident, adaptable, and pragmatic developer—able to write code that lasts, works well, and is a joy to maintain. Frameworks amplify your skills; a solid grasp of the language core is what makes those skills effective.</p><div class = "chapter-navi-section">
+<a href="#top" class="nav-button prev">↑</a>
+<a href='javascript-pragmatic-developer.htm#the-power-of-plain-javascript' class="nav-button toc-link">Index</a>
+<a href="#bottom" class="nav-button next">↓</a>
+</div>
+<h2 id='avoid-magic-in-frameworks'>3.2 Avoid “Magic” in Frameworks</h2><p>Modern JavaScript frameworks like React, Vue, and Angular promise to make development faster and easier by abstracting away complex details. This abstraction can be incredibly useful—saving time and reducing boilerplate. However, it also introduces a phenomenon often called <strong>“magic”</strong>: opaque behaviors, hidden side effects, or implicit code that runs behind the scenes without clear visibility.</p><p>While “magic” might feel like a convenience at first, <strong>over-reliance on it can lead to serious problems</strong>. As pragmatic developers, we must understand the risks and strive to write code that is <strong>transparent, predictable, and maintainable</strong>.</p><h3 id="the-danger-of-magic">The Danger of Magic</h3><p>Framework magic happens when a lot of logic or behavior is concealed from the developer, often behind terse syntax or configuration. This can manifest as:</p><ul>
+ <li>Automatic state updates triggered by unseen watchers or proxies</li>
+ <li>Implicit lifecycle method calls or dependency injections</li>
+ <li>Hidden optimizations that sometimes cause unexpected bugs</li>
+</ul><p>When things go wrong, magic makes debugging and reasoning about code difficult. You might spend hours chasing down a bug that’s caused by an internal mechanism you never explicitly called. Worse, magic can encourage complacency, where developers don’t fully understand how their app works—leading to fragile or inefficient code.</p><h3 id="example-magic-in-two-styles-of-react-code">Example: Magic in Two Styles of React Code</h3><p><strong>Magic-heavy code with hooks:</strong></p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-jsx">function Counter() {
+  const [count, setCount] = React.useState(0);
+
+  React.useEffect(() =&gt; {
+    document.title = `Count: ${count}`;
+  }); // Runs after every render
+
+  return &lt;button onClick={() =&gt; setCount(count + 1)}&gt;{count}&lt;/button&gt;;
+}</code></pre>
+</div><p>Here, React hooks handle state and side effects automatically, but the timing and dependencies of <code>useEffect</code> can confuse beginners. If you forget the dependency array, the effect runs on every render, possibly hurting performance.</p><p><strong>More explicit code:</strong></p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-jsx">class Counter extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = { count: 0 };
+    this.increment = this.increment.bind(this);
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    if (prevState.count !== this.state.count) {
+      document.title = `Count: ${this.state.count}`;
+    }
+  }
+
+  increment() {
+    this.setState(({ count }) =&gt; ({ count: count + 1 }));
+  }
+
+  render() {
+    return &lt;button onClick={this.increment}&gt;{this.state.count}&lt;/button&gt;;
+  }
+}</code></pre>
+</div><p>This version is more verbose, but the flow of data and side effects is explicit. You can see exactly when and how the title updates, making it easier to understand and debug.</p><h3 id="write-code-you-can-understand-and-control">Write Code You Can Understand and Control</h3><p>Avoiding magic means:</p><ul>
+ <li><strong>Learning the underlying mechanisms:</strong> Understand how your framework manages state, renders views, and handles events.</li>
+ <li><strong>Being explicit about dependencies:</strong> For example, when using hooks or reactive systems, clearly specify what triggers updates.</li>
+ <li><strong>Writing predictable code:</strong> Prefer clear, straightforward logic over clever shorthand.</li>
+ <li><strong>Knowing when to step outside the framework:</strong> Sometimes, plain JavaScript or minimal abstractions produce more maintainable code.</li>
+</ul><h3 id="why-this-matters-long-term">Why This Matters Long-Term</h3><p>Magic can speed up development initially but often <strong>increases technical debt</strong> and hampers onboarding new team members. Transparent, explicit code may be slightly more verbose but will be easier to maintain, extend, and debug—critical qualities for code that needs to last.</p><h3 id="final-thought">Final Thought</h3><p>Frameworks are powerful allies—but they’re not magic wands. Use their abstractions wisely, but always invest time to understand what’s happening under the hood. This awareness lets you harness their power without losing control. Writing transparent and predictable code is a core principle of pragmatic JavaScript development—and it’s what will keep your projects healthy for years to come.</p><div class = "chapter-navi-section">
+<a href="#top" class="nav-button prev">↑</a>
+<a href='javascript-pragmatic-developer.htm#the-power-of-plain-javascript' class="nav-button toc-link">Index</a>
+<a href="#bottom" class="nav-button next">↓</a>
+</div>
+<h2 id='write-code-that-works-in-5-years'>3.3 Write Code That Works in 5 Years</h2><p>One of the hallmarks of a pragmatic JavaScript developer is writing code that doesn’t just work today—but will continue to work, be maintainable, and remain useful <strong>five years down the road</strong>. The fast pace of JavaScript evolution and the web ecosystem makes this a challenge, but by following certain strategies, you can future-proof your code and reduce costly rewrites or refactors.</p><h3 id="prioritize-standards-and-avoid-deprecated-features">Prioritize Standards and Avoid Deprecated Features</h3><p>JavaScript is an evolving language with new features added regularly. While it’s tempting to use every shiny new syntax or API, a pragmatic approach balances innovation with stability.</p><ul>
+ <li><strong>Favor widely adopted standards.</strong> Features standardized in ECMAScript and supported broadly by browsers and runtimes are less likely to break.</li>
+ <li><strong>Avoid deprecated or experimental features.</strong> Keep an eye on MDN or official specs to know when features are being phased out or marked unstable.</li>
+ <li><strong>Use polyfills and transpilers wisely.</strong> Tools like Babel let you use modern syntax while targeting older environments, but don’t rely on them to shield poorly written code.</li>
+</ul><h3 id="write-clear-self-documenting-code">Write Clear, Self-Documenting Code</h3><p>Code that’s easy to read and understand ages better. Future maintainers—or future you—will thank you for descriptive names, consistent style, and clear separation of concerns.</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-js">// Instead of obscure one-liner:
+const r = a.map(x =&gt; x*2).filter(n =&gt; n &gt; 10);
+
+// Prefer clear intermediate steps:
+const doubled = a.map(value =&gt; value * 2);
+const filtered = doubled.filter(number =&gt; number &gt; 10);</code></pre>
+</div><p>Clear code minimizes misunderstandings and bugs when revisited years later.</p><h3 id="design-apis-and-modules-for-stability-and-flexibility">Design APIs and Modules for Stability and Flexibility</h3><p>If you’re building reusable modules or APIs, think carefully about your public interfaces:</p><ul>
+ <li><strong>Keep APIs small and focused.</strong> Avoid sprawling methods that do too much.</li>
+ <li><strong>Design for backward compatibility.</strong> Adding new features should not break existing code.</li>
+ <li><strong>Use semantic versioning.</strong> Communicate clearly about changes, especially breaking ones.</li>
+</ul><p>This mindset reduces friction when evolving your codebase over time.</p><h3 id="maintain-and-refactor-legacy-code-thoughtfully">Maintain and Refactor Legacy Code Thoughtfully</h3><p>Maintaining legacy JavaScript is part of many developers’ reality. Pragmatic strategies include:</p><ul>
+ <li><strong>Write tests before refactoring.</strong> Tests guard against accidental breakage.</li>
+ <li><strong>Refactor incrementally.</strong> Large rewrites are risky; small, well-tested improvements add up.</li>
+ <li><strong>Document quirks and edge cases.</strong> Legacy code often has hidden assumptions—make them explicit.</li>
+</ul><p>For example, when updating a 2015-era codebase using callbacks, gradually introduce Promises and async/await wrapped behind stable interfaces rather than wholesale rewrites.</p><h3 id="example-future-proof-module-design">Example: Future-Proof Module Design</h3><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-js">// A stable API with a clear function signature and pure functions
+export function calculateDiscount(price, discountRate) {
+  if (price &lt; 0 || discountRate &lt; 0) {
+    throw new Error("Invalid arguments");
+  }
+  return price - price * discountRate;
+}</code></pre>
+</div><p>This code avoids side effects, has clear input validation, and its purpose is immediately understandable—qualities that make it easier to maintain over time.</p><h3 id="final-thought">Final Thought</h3><p>Writing JavaScript that stands the test of time requires <strong>discipline and foresight</strong>. It’s about balancing modern features with stability, prioritizing clarity, and designing APIs with care. By doing so, you build software that not only solves today’s problems but remains adaptable, reliable, and maintainable years later—true pragmatism in action.</p><div class = "chapter-navi-section">
+<a href="#top" class="nav-button prev">↑</a>
+<a href='javascript-pragmatic-developer.htm#the-power-of-plain-javascript' class="nav-button toc-link">Index</a>
+<a href="#bottom" class="nav-button next">↓</a>
+</div>
+<h2 id='prefer-simplicity-over-complexity'>3.4 Prefer Simplicity Over Complexity</h2><p>In software development, simplicity is not just an aesthetic choice—it’s a practical strategy that pays dividends in maintainability, readability, and reliability. Especially in JavaScript, where the language’s flexibility can tempt you into clever but convoluted code, <strong>choosing simple, straightforward solutions is often the key to lasting success</strong>.</p><h3 id="why-simplicity-matters">Why Simplicity Matters</h3><p>Complex code often hides bugs, confuses teammates, and becomes difficult to extend or refactor. When code is complicated, developers spend more time figuring out what it does rather than improving or fixing it. Simple code, on the other hand, tends to be:</p><ul>
+ <li><strong>Easier to understand:</strong> Clear intent makes onboarding and collaboration smoother.</li>
+ <li><strong>Safer to change:</strong> When you know exactly what the code does, you can modify it with confidence.</li>
+ <li><strong>More efficient to debug:</strong> Fewer moving parts mean fewer places for bugs to hide.</li>
+</ul><p>Ultimately, simplicity leads to more reliable software and happier developers.</p><h3 id="example-simplifying-complex-logic">Example: Simplifying Complex Logic</h3><p>Consider this snippet, which uses nested ternary operators and multiple negations to determine a user’s access level:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-js">const access = (user.isAdmin) ? "admin" :
+               (!user.isActive) ? "inactive" :
+               (user.isGuest) ? "guest" : "user";</code></pre>
+</div><p>While compact, this code is hard to read and easy to misinterpret.</p><p>Refactoring it into clear <code>if</code> statements improves clarity:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-js">let access;
+
+if (user.isAdmin) {
+  access = "admin";
+} else if (!user.isActive) {
+  access = "inactive";
+} else if (user.isGuest) {
+  access = "guest";
+} else {
+  access = "user";
+}</code></pre>
+</div><p>This form explicitly expresses intent and is easier to maintain.</p><h3 id="refactoring-convoluted-code">Refactoring Convoluted Code</h3><p>Imagine a function that processes a list of orders with intertwined conditions and multiple flags:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-js">function processOrders(orders) {
+  return orders.filter(order =&gt; {
+    if (!order.paid) return false;
+    if (order.status === "shipped" &amp;&amp; order.priority) return true;
+    if (order.status === "processing" &amp;&amp; !order.delayed) return true;
+    return false;
+  });
+}</code></pre>
+</div><p>While correct, the logic inside the <code>filter</code> is dense and mixes multiple concerns. Extracting predicate functions can simplify it:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-js">function isEligible(order) {
+  if (!order.paid) return false;
+  if (order.status === "shipped" &amp;&amp; order.priority) return true;
+  if (order.status === "processing" &amp;&amp; !order.delayed) return true;
+  return false;
+}
+
+function processOrders(orders) {
+  return orders.filter(isEligible);
+}</code></pre>
+</div><p>Now, the filtering condition is named and separated, improving readability and testability.</p><h3 id="the-kiss-principle-in-javascript">The KISS Principle in JavaScript</h3><p>The “Keep It Simple, Stupid” (KISS) principle reminds us that <strong>simplicity should always be the goal unless complexity is absolutely necessary</strong>. For instance:</p><ul>
+ <li>Prefer plain loops over complicated functional chains when performance or clarity suffers.</li>
+ <li>Avoid premature abstraction; extract functions or modules only when there’s clear duplication or complexity.</li>
+ <li>Write explicit code rather than relying on tricky shortcuts or overly concise expressions.</li>
+</ul><h3 id="benefits-beyond-code">Benefits Beyond Code</h3><p>Simplicity also improves:</p><ul>
+ <li><strong>Team communication:</strong> Code reviews become focused on logic, not deciphering syntax.</li>
+ <li><strong>Future proofing:</strong> It’s easier to onboard new developers or hand off projects.</li>
+ <li><strong>Testing:</strong> Simple code paths reduce the number of edge cases and test scenarios.</li>
+</ul><h3 id="final-thought">Final Thought</h3><p>Simplicity is a <strong>pragmatic choice</strong> that leads to robust, maintainable, and efficient JavaScript code. By resisting the urge to over-engineer or write overly clever constructs, you craft solutions that stand the test of time and reduce headaches for everyone involved. In the long run, simple code is not just easier to write—it’s better code.</p><div class = "chapter-navi-section">
+<a href="javascript-pragmatic-developer-the-pragmatic-mindset.htm" class="nav-button prev">←</a>
+<a href='javascript-pragmatic-developer.htm#the-power-of-plain-javascript' class="nav-button toc-link">Index</a>
+<a href="javascript-pragmatic-developer-dry-dont-repeat-yourself.htm" class="nav-button next">→</a>
+</div>
+<section class="download-section">
+  <div class="book-cover" style="background-color: #f9f6f1;border: 1px solid #ccc;"> 
+    <div class="book-cover-title" style="font-size: 18px;color: #333;top: 20px;">JavaScript Pragmatic Developer</div>
+    <div class="book-cover-author">readbytes</div>
+    <div class="book-cover-bottom-stripe" style="background-color: #333;"></div>
+    <img class="book-cover-icon" style="width: 80px;height: 70px;top: 85px;" src="data:image/png;base64,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"/>
+  </div>
+  <div class="download-info">
+    <h2 id='bottom'>Download This Ebook</h2>
+    <p class="format-label">Available formats:</p>
+    <div class="download-buttons">
+      <a href="javascript-pragmatic-developer.pdf" class="download-button">📄 PDF</a>
+      <a href="javascript-pragmatic-developer.epub" class="download-button">📘 EPUB</a>
+    </div>
+  </div>
+</section><div class='related-books'>
+<h2>Javascript Introduction Books</h2>
+<div class='related-book-list'>
+<a href="javascript-for-beginners.htm">
+<div class="book-cover" style="background-color: #f9f6f1;border: 1px solid #ccc;"> 
+    <div class="book-cover-title" style="font-size: 18px;color: #333;top: 20px;">JavaScript for Beginners</div>
+    <div class="book-cover-author">readbytes</div>
+    <div class="book-cover-bottom-stripe" style="background-color: #333;"></div>
+    <img class="book-cover-icon" style="width: 90px;height: 90px;top: 60px;" src="data:image/png;base64,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"/>
+  </div>
+</a>
+
+
+<a href="javascript-syntax.htm">
+<div class="book-cover" style="background-color: #f9f6f1;border: 1px solid #ccc;"> 
+    <div class="book-cover-title" style="font-size: 18px;color: #333;top: 20px;">JavaScript Syntax</div>
+    <div class="book-cover-author">readbytes</div>
+    <div class="book-cover-bottom-stripe" style="background-color: #333;"></div>
+    <img class="book-cover-icon" style="width: 80px;height: 80px;top: 70px;" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFoAAABaCAYAAAA4qEECAAAFb0lEQVR4Xu2dy44bRRSG8xZJyGRAscgCIaQoyZ7LAgkmMAxIw4JwE4gQhQAvgFDEEoR4gSAisssOJMQKIV4gZGsHDSiy55JgT8YWE4/tZipQldP/6bb7VlWnnP6lb+M69tT/TcvjsdTdBw4UTLNxanef6CFjFz1YSatxapzwwx9KlAv0Uzr4Qyh/nX4y+nt1MdpcXojaLxwpTe+NBVGobqoj9qagr9xpNU4fxRf944kT0c77h6L20kErqNeWjnKAXpQr9Jcp+09epy+0duKpqPemPcEaLCUZ5QSEr6PHqcHflnpRFGKL26thyVagL/SZGDyS777nTrIGi4QAddaadWTje3LXwVtFElgiFOKyp7xn+z6SNVggJKhD9Hs/dEA9Acu7BDcfGlNl6wX1lxSLu6Z7NmzZ9NNITDL9j8/FR7gs4OZDQ/uM/QepH7y5/0EcC/sCNx4ayiU7qvUDagAL+wI3HiIx0U3yLRyW9QluOkS0V+U49mkDy/qk9xbfeGhQt0a0+oYKy/oGNx4a9Fs/I1p9HYhFfYMbDw3llIneXD7CivoGNx4avbMLXHTnxVp01QQjuvc233xIBCNagZsPiVq0I2rRjqhFOyIo0Xff5QVCISjR7TPhHtVhiV6qRTsDCyA0uOaTuRU9XrvO1nwyV6JpcM03wYleX06XXYuuGCyh0bn3w1dszTdzI5oG1yRQi3bEXIjuXzxuJA++eJ6tS0CUaB18HNl4JS6bBgsmzeHjLhAhOhrtEVWzRStoCRosmDanfiau28Sr6PFON17+/+BcErrAvWuXzPN2PlxkBSlJmQy6bM4GXkQPm9exr0ln5VE2n4QuQIPlkP75x2LzNOO139l8lTgVPfjpCvYz6agzuRKek4YuQIPlUjl3NPY8muGvV/h8BTgR3f36IvYxab90mM1nYWPlYDS5c8u8DhbLxAePkJ3E88+3H/P5ElgVvXXhady/Cc4WgQaL5SUtg8+fYbNFsCK689ox3K8JzpbBZDxmxYqSlv6FBpvNgxXR/R8v4z7ZTFlosFQVYIa/XGYzeXAiGtergAZLVQVNEKJ1cK4MOjY+liVFpGjF1kfP4l5NcDYvNFioDGkZXHqOzebFmmhN75tPcN8mOJsVGixUhLTsfvcpmy2KddGawc/fYw+T9pns58t0Vh83z+t+eZ4Vys5hsoN4hr9dTZgvhzPRmmHrBvYyab88++fG5pf4V6YzObcQew2a8Z83+HxFOBetGfe3sacJzlJwLs8Jn2mZDLbZbNV4E62JRiPszWY0dz573cx0Vh6c/oGl0mAZj9iMLbyL1tDg2qwZLJUGDa7ZRoxoDUrENR36OJZKQwUfc4U40WnQr1hxDUtJJBjRNLjWe4cXk0aAoidsTYHFpBGE6L1brdSjWYPFpBGEaBpc02AxaQQlenS7zdY0WEwa4kVP9oYzj2bFtvA/iOJF5wHLSaIW7YhatCNq0Y6YK9Hbgk/4nCvRkk/4nC/RS7VoZ2BBKdSiHZEoWuLFq7KCBaWQKFri5diyMu2ET58kXo5N4gUG84AlJZB4gUEFbj4ksKQEqFslWuRFYPOCJSVARP936yf9gFrEAqGAJSVgjma8frSkC3XnRZ3fgkV9knihbnrpeV+3BKkCLOsT7ZPdvEwvSLiZQlGwrC9Sb6ZARSvUMJYIASzsC+oSPd8PHfB5w5uiYGEfzJSsIuUWTkXZfNWvbOru5rGTi+g3lqaAm5KVAcu7gjprNk5uoNfExJ8U1ns2CnAB+kKfU6NuFUefrP6ShvBWghJswm8cmfFIxuB7tsL2rVDLgjJsUOmtUGnwRSlV39y3LFsr1d4g2MnNfTH17aofwP7js5VmfQP2XPkXPUeB6l4vBmkAAAAASUVORK5CYII="/>
+  </div>
+</a>
+
+
+<a href="javascript-object-oriented-programming.htm">
+<div class="book-cover" style="background-color: #f9f6f1;border: 1px solid #ccc;"> 
+    <div class="book-cover-title" style="font-size: 14px;color: #333;top: 20px;">JavaScript Object-Oriented Programming</div>
+    <div class="book-cover-author">readbytes</div>
+    <div class="book-cover-bottom-stripe" style="background-color: #333;"></div>
+    <img class="book-cover-icon" style="width: 90px;height: 60px;top: 90px;" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFoAAABaCAYAAAA4qEECAAADqklEQVR4Xu2c7WoTQRSGc33ejDejd6BobZum6adfIIpSRLBtak0r2P5IoXcROwwrm2d2dtY9Z5M4e154kO6ZyTvzUFIpJYNB0zx6Ms+Vs8lkzuuuLhUHzAUnen1kVxwwFwrR6yG74oC5UBa9etkVB8wFil6t7IoD5gIlr1Z2xQFzgYJXKvvx03fzXKFcQhed5v7+fp4rFFsFfXQWHi4nKDUGnXQSHi4nKLQOelEPD5cTlJmCblTDw+UERTaBftTCw+UEJTaFjlTCw+UEBf4L9CQOD2d46EkcFhgeehKHBYaHnsRhgeGhJ3FYYHjoSRwWtOXZxvbSYHcX0JM4LGhLIeHwzftgpsnzV8OlyKYncVjQluLy7t+jjmW/2NrpXDY9icOCtpQvvozv7Jfbo05l05M4LGgLL+2+Pjh+G6zTpEvZ9CQOC9pSdWH3bHz4OniuSVdvI/QkDgvaErusez4cHwbPNeniByQ9icOCttRd1M2WwdZoP+huCz2Jw4K2uIvyWZOZFiY6MdPCRCdmWpjoxEwLE52YaWGiEzMtTHRipoWJTsy0MNGJmRYmOjHTwkQnZlqY6MRMCxOdmGlhohMzLUx0YqaFiU7MtDDRiZkWJjox06I3ojd39qJCY8816Y1ox3B8UCm16pk2vRLt2Nk7CsTy6y7onWjHaH9RtokedCPaUf7ONtGD7kQ7ivdsEz3oVrSj+N/IMui16P8VehKHBYaHnsRhgeGhJ3FYYHjoSRwWGB56EocFhoeexGGB4aEncVhgeOhJHBYYHnoShwWGh57EYYHhoSdxWGB46EkcFhgeehKHBYaHnsRhgQb89WUZrm2yx3E2uQj2TK+uG712G+hJHBZIuLm9DQRV8fnka7CXa2KU9/RWNKXU0Xbvxvbu3z29FE0hvDhnqXnx/Or6V3RmoiOXrlvTZmaiI5euW8PZ6flk/u7Dx+B5eY+Jjly6+CCTgunD20JsfxV8PRMdufTGcLyw5sflNLo/Rvn1THTk0nVrYjM+L89MdOTSdWvazEz0A7sHxwvz0/OLYE3d/iazXoqezWaBkDo+fTlZ2M95HcWeXop2FB8i1QTu5TxGeU9vRTvc7zEop8zWbvXfx3FdFdxz+XNaO5dAT+KwQJPZ3d382/fTh7eVu2CmgftMPRO9BFLf8RLoSRwWrDt1Pwe4VgI9icOCdScmmuuk0JM4LFh3NkeLf9j+++YmWKMBPYnDAsNDT+KwwPDQkzgsMDz0JA4LDA89xfIHwL5BBIMQt3IAAAAASUVORK5CYII="/>
+  </div>
+</a>
+
+
+<a href="javascript-regex.htm">
+<div class="book-cover" style="background-color: #f9f6f1;border: 1px solid #ccc;"> 
+    <div class="book-cover-title" style="font-size: 18px;color: #333;top: 20px;">JavaScript Regex</div>
+    <div class="book-cover-author">readbytes</div>
+    <div class="book-cover-bottom-stripe" style="background-color: #333;"></div>
+    <img class="book-cover-icon" style="width: 90px;height: 90px;top: 60px;" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFoAAABaCAYAAAA4qEECAAAE1UlEQVR4Xu2czYscRRiHJxqCKCbT0wti8KQIykLcTHfrQcRBxYMfS9zucs1B0IsHr6Ig5BDwTxC86dGvi3+DKAgiiidBWQVBPOQiKFFDslod2LXn6eruqpraWLv9PvAcdvr9vfX2yzL7McNMJoIgCIIgCEIAkqx6dZZXO2mxVfCaEAC93H9Mntwo72Wt4AmXSyfr6gQzgiNcapfMCY5woV1Oz24/wKxgSZqV93GhfTIvWKKX9weX2SfzgiVc5JDMC5ZwkUMyL1iil/c+l9kn84IDXGafzAoOcJk9vsus4IBhoUaZGwkXb+Iiri9DqZtZOYTOXWUfk8zZoHN/h+jzvzDLyp84PL3jzIu3MdcH8yaZ6YNZgzvMREUyrx4xDN3lNea7MGSXzaonmTExm1cvt7Idpnn1BvPRwGFtZA8TzFDWm9B13zI3JHtEAwe1lX1MMOOSn+XqZ2ZsZJ9o4KAushdh/X+WH7K2yaxQn7Yzdk4LtcF+UcBBXWW/Jvr6NdYPZrLqNda7yH7RwEF9ZM8mrO2tz569lbWusmVUcFgPr7LnHobazmWwzsMf2TMq0qLaMgztqPqFfWtYl2bVBdbUsM5H9oySU9n2PRzcw1/ZlzW8XsMaD3fZM3r0d+Ylw424uPQ0or/+pnm9eU1zzJB3Ev0OJ/pGLvPGbEWf1uNJXp5nxlb9VPd4s//RYvHSLfr3313edJ86dayO4jGfp4rflmYZG3oBHxiWsrpF+QXPEhroJTl9xze8xF6CBfW/VA3LpH8yJ3igF/m7Ybl7XmG94MA0V5uGpfbKHkIHelk7XJ63hXqF/UdJklcvtJbTa/l5nWs+xq8H3E3nz92/PMURRP9R8ZTh5q3cb7KuTpgeZ72taw9v3r7f+7DDm3N1qVdRfd95zZB1sdnrUMEb8XGop+H6ys/x7Bk1HN5H9qyxrPmOda6yZ5RwaB/Zcw/W6aeSj1lTk+bVX61aR9kzKtIHnz/HgV1lzyas7atnnbNF9RF7RkNrWEfZrwlrV8nYyn7RwEFdZC/C+lVzNrJXNHBQW9nHBDMNO1/M3cOQsZJ9ooGD2sgeJpihrDfBjI3sEQ16OKfXCJnvgjnK+i6YG5L5qOCwHVq/k7TGkF8yydXbzHRRn828SeaiRA96hYM3buD6a3+2MN8lc0Mwv0qvKEiy8p1ZcX6dj9vCJXTJnAv6d+a3kmzraT4+KrjQLpkTXMC/RftM5tUzjAuWJJn6hAvt8fC9lSsWDMvslXnBEi5ySOajZZaXX3L4fQu1zfqDpjXDgMxHBwcekvmDgucOyXw0rPIP8onjHx4+TPNqwXN7vMx8FBgGdfbkupqxb2h4ZpfMRQGHXMXJYnGc/UOiz3iPZ7ZV8b2xMcnV6+1BV5NnhGZaqEd55o083wsOGUqecxDonyk/NM9cO7t5mjVRkObl11xQKHnWqOFyAvsZzxsthuUEleeNFi4mtDxvlJwqyru5mNDyzFGSzMszXExoeeYomW6cm3IxoeWZo4WLCS3PGy1cTGh53mjhYoL60NZdPG+8LBbHWwsKJI8aPVxQCNO5eoznCJPwy2Z/YR/zZ4f6yM4COH3UP0UrNrg8S+XNKj6sZVt3GpZplFnBF/0rYFpUbyb1h6Zm1VdpUT7BEkEQBEEQBOFG8S/PsCFtcgcxNQAAAABJRU5ErkJggg=="/>
+  </div>
+</a>
+
+
+<a href="javascript-functional-programming.htm">
+<div class="book-cover" style="background-color: #f9f6f1;border: 1px solid #ccc;"> 
+    <div class="book-cover-title" style="font-size: 18px;color: #333;top: 20px;">JavaScript Functional Programming</div>
+    <div class="book-cover-author">readbytes</div>
+    <div class="book-cover-bottom-stripe" style="background-color: #333;"></div>
+    <img class="book-cover-icon" style="width: 80px;height: 80px;top: 80px;" src='data:image/png;base64,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'/>
+  </div>
+</a>
+
+
+<a href="javascript-canvas-programming.htm">
+<div class="book-cover" style="background-color: #f9f6f1;border: 1px solid #ccc;"> 
+    <div class="book-cover-title" style="font-size: 16px;color: #333;top: 10px;">JavaScript Canvas Programming</div>
+    <div class="book-cover-author">readbytes</div>
+    <div class="book-cover-bottom-stripe" style="background-color: #333;"></div>
+    <img class="book-cover-icon" style="width: 80px;height: 80px;top: 70px;" src='data:image/png;base64,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'/>
+  </div>
+</a>
+
+
+<a href="javascript-clean-code.htm">
+<div class="book-cover" style="background-color: #f9f6f1;border: 1px solid #ccc;"> 
+    <div class="book-cover-title" style="font-size: 18px;color: #333;top: 20px;">JavaScript Clean Code</div>
+    <div class="book-cover-author">readbytes</div>
+    <div class="book-cover-bottom-stripe" style="background-color: #333;"></div>
+    <img class="book-cover-icon" style="width: 90px;height: 90px;top: 65px;" src='data:image/png;base64,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'/>
+  </div>
+</a>
+
+
+<a href="javascript-coding-best-practices.htm">
+<div class="book-cover" style="background-color: #f9f6f1;border: 1px solid #ccc;"> 
+    <div class="book-cover-title" style="font-size: 16px;color: #333;top: 20px;">JavaScript Coding Best Practices</div>
+    <div class="book-cover-author">readbytes</div>
+    <div class="book-cover-bottom-stripe" style="background-color: #333;"></div>
+    <img class="book-cover-icon" style="width: 80px;height: 80px;top: 80px;" src='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFoAAABaCAYAAAA4qEECAAADdklEQVR4Xu2dPW/UMBjHH0QRlRA7MDDBgBAbH4ABNsRCQXwHFpAQQwVKws1IwMaXYO/M1I0VWEC8bIgy81LO53sS54l9OSe2G7f/n/S/c2zXefpT4g6nXIkAAADkQUFvqKR9JECUyw4lbXYmIqGyaYpWHXtNBwhCST8XbpcH2jyIQ+1XvRS0VQ+8opPzvrfLvDfayLpRDpmKbpMh+lw90N1jkCFhlNvFsXqxieb2Np2tx0A/EJ0IiE6Et2iOKVqOmQEa6aNXNLdxRfsB0YmA6ER4i+bYRMs5MoqK7nf6x6ai76KS6cG1Mr2iuW0TDdxAdCIgOhHeojku0XJejMQ41x063rvmGOQaa4jeXry7Rd+a/9yLqGFk/5g09T/vjKmUdK2eMwRv0dx2iQZ2IDoR3qI5q0Tv07HO/IPIlJA1BRGt/rDI+QeRKSFr6hXN7VWiQReIToS36JLOrxT9mk7QjK63YiLHQiQHBojWcYmW88wTyL5QyQFZa69obrtEAzsQnQiIToS3aI5LtJw3NGPX8//Zm/U5Y2DWpegVzW2XaGAHohMB0YnwFs2xiZZzYkSf50un35YpIWvqFc1tm+jHdDpqfM71iE615h80QUUDNxCdCG/RHJdoOW9IFPpzuu7YmHRrfFn3xUbWsIbob4t3t+hd0g/DDEtF75brbHTGxqap8ceyb6Pui423aG67RAM7EJ0Ib9ElfXSKruirV44SA0Tr2ETLOX05SsjfuVc0t22igRuITgREJ8JbNMcULcfMAI300Sua27ii/YDoREB0IrxFI+PSKxqEBaITAdGJaIlG4mfxUtA9qugGEiHKrSEaW0csstyjO7djBmQnWn9GqZ98bR5S2pXTJkeGopXYX/VxRXtZXNUt0TO6KMcnh9wu5PFUKehCI7qkv3J8krDcXCQrKvpjis6jaEVBVxfJhdpv+yo5I+eBgSiXrbuvOfgtpCPj0zgl/pJu9QA9CEvzpQTLL+uu6F9jHgSBfSq3LWa0Zbn0kTEp6G5b8lRQxYXYwviWBQ5Cygm51qGipJ2gcvTtuyO7Ae9roQi93qFBSXlKV2T3YJ7RZYi2EUNKjDWz5gldiiJFrTmbrw2WxNpPY62bLVrIZ9k9mpI+QbRJTBkx186OmDJirp0FJT2o99BUqeihLOPwo//hWVdGzBT0QZYBAAAA/AcQ1vXmtMbyGwAAAABJRU5ErkJggg=='/>
+  </div>
+</a>
+
+
+<a href="javascript-dom-programming.htm">
+<div class="book-cover" style="background-color: #f9f6f1;border: 1px solid #ccc;"> 
+    <div class="book-cover-title" style="font-size: 16px;color: #333;top: 20px;">JavaScript DOM Programming</div>
+    <div class="book-cover-author">readbytes</div>
+    <div class="book-cover-bottom-stripe" style="background-color: #333;"></div>
+    <img class="book-cover-icon" style="width: 90px;height: 90px;top: 60px;" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFoAAABaCAYAAAA4qEECAAADUklEQVR4Xu2dv47TQBDGI0RDczY9rwMlrwEFBweC/t4EXRwaXuI6WiSaOLkCIZ6BCqTgPRFr8zkbnPF4Zuydn/RVuzsz33eSlX/2LRYRm1Xxe1MVOzY19eL6/6NzfqCw/ilEvXc2Mwh7pNiuyks8O1T1snyNfVLgWQ5hjxbcyCHskaJelVd4drCW5Vvsk6JzlkHYo6XXph5Q6hwEfUZASDhLqUOZ+Ri96vTa1ANKHQ+aAKWOB02AUseDJkCp40EToNTxoAlQ6njQBCh1PGgClDrZBs0l7JEi23eGXMIeKTbVxSs8O1Trm4tL7JMCz3IIe7Rsq+IXbh6iUA97nALPDxXWP4W29w5xMVwbG67rOBVR76LNAA9aiKyCbq49L0QbRmgGHXuul8VLXB+F3IPGtdGIm0o21gpay+89Gs01gtbwecDPz08eSQ8hHTT6C55xjwh3q+IZDhO0u148wL0cSAR93cyOfoKCV9wryu528RCHmpuCR/StRvOy7w8OOHUFT+jTDHdV+RwHnpqCB/SVFRLXaGfhQYvhQQvhQQvhQQvhQf8DXyZNXehPnW+fisc45FwUvKFfNXC4uQn9qvD1Y1maG4qB2NP3xiOui1NX5Zv9QNuq+IDrU6Xx8n7vq16WV7guTvxKYH1TvsP1qWLOl7mBmDDny9xATJjzZW4gJsz5MjcQE+Z8mRuICXO+zA3EhDlf5gZiwpwvcwMxYc6XuYGYMOfL3EBMmPNlbiAmzPkyNxAT5nyZG4gJc778Y1Ih/IN/QeKh5ij0q8acv5z9YenL2T045NSF/rIhfiWQ9Q9oxsaDFsKDFsKDFsKDFsKDjqj9ZqFx8dvfRubWb+gcn+Yv/hSHuh9swrcoh9nRT5DaLcpf/KZ7GXAIXB8D6aADGj5btJprBB3Q8nvQGNfGRCvogLjntT+8SubhVVohBzSDDoh6F20GeNBCzCZo7Qeh4vmhwvqnEPWOmzmEPVJk9Vhj3Mgh7JHi4LLApTMuL52zDMIeLb029YBSh+v6G85S6lBmPkavOr029YBSx4MmQKnjQROg1PGgCVDqeNAEKHU8aAKUOh40AUodD5oApU62QXMJe6TI9p0hl7BHitz+XTX3j2DO+gHKkfODhPVPsRnZ+1+tJg8Iaaje6wAAAABJRU5ErkJggg=="/>
+  </div>
+</a>
+
+
+<a href="javascript-asynchronous-programming.htm">
+<div class="book-cover" style="background-color: #f9f6f1;border: 1px solid #ccc;"> 
+    <div class="book-cover-title" style="font-size: 18px;color: #333;top: 20px;">JavaScript Asynchronous Programming</div>
+    <div class="book-cover-author">readbytes</div>
+    <div class="book-cover-bottom-stripe" style="background-color: #333;"></div>
+    <img class="book-cover-icon" style="width: 80px;height: 80px;top: 80px;" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFoAAABaCAYAAAA4qEECAAADU0lEQVR4Xu2cvW7UQBRGkwKJV0CipqJbG9pIFLGXRyD2IgpeghegQ9DRUNHQUdLQUVFAC0h0tFEKkMJPCEykRHKObzZrr6/t8X5H+qrMN3PvUbQpEmVra8NI8vLfWWazh1f4ddEBVcmVPOA5sQZB6DND8mkWj3hetCQI/VAXXE3xhB3RkrrcWl6wI1qQZuUrQ+75ZOVr9kQL0mxxpya3nnfsiRbs7Ny/ashFiq/siZbU5Z7PLC9/sCNaQrlGfrIjWmLIxXd28Z0d0QKKvSCSvQ5pXr41pF6QxT77vRF+Or+vDzTdhJW36cAdDrEpoQdX+PgmhS482ebjmxTKcIMPb1roww0+vGmhDzf4MMPzY4fzL8tsd+8a+27w8Wp4Nga4w7Kw6wofr+Qzz8aAsYcZ9tzhAIMN0gFh7l/cwwp7vcAhBh1mDcLMf7iDFfZ6g4MMPlALwrzHnN/IMXu9YgwUlehktY+LI/Z6xxgqGtFhzgPObeQve4NgDBaF6Nl88YUzGxn246KKMVwUojlvPYtx/dqqPuD4RSeX/aXSvDxgZ3BqQ0YhunjOec+SzstvPD8KOGgMok/gvKf5xHOjwRg2CtEnVOdNs+Ipvz4qKDgm0VFBwRLtBAVLtBMULNFOULBEO0HBEu0EBUu0ExQs0U5QsEQ7QcES7QQFS7QTFCzRTlCwRDtBwRLtBAVLtBMULNFOULBEO0HBEu0EBUu0ExQs0U5QsEQ7QcES7QQFS7QTFCzRTlBw16LDXb897o0OCu5SSLjniPd2dXd0UEKXMnhn1/dHBQV0KYJ3Mjw/abh8lxJ4pxV2JgsX71oA77XCziTh0h7L824r7EwOLuy1OO+3ws6k4LKeSydZech3GHYmAxf1XniWl2/4FsPOJOCSfSyb5sVLvsewEz1csK9l+ZYVdqKGyzFpXj5O7hY3u0q6u5fxjWXhvNHCxcYYzhwlXGqM4cxRwqXGmPDxdci5o4SLjTGcOVq42JgSvqOH+8+4HtzO713nkmMI5xQrQpGXhX3RAMq8KOyJBtyalzco1Ap7ohkr/RtllkRDKNQKO6IhFGqFHdEQCrXCjmgIhVphRzSEQq2wIxpCoVbYES2gVIbnRUsoVpKdCEL3KViSnUjm5cepSf4Pt8Ix0I7hKy8AAAAASUVORK5CYII="/>
+  </div>
+</a>
+
+
+<a href="javascript-pragmatic-developer.htm">
+<div class="book-cover" style="background-color: #f9f6f1;border: 1px solid #ccc;"> 
+    <div class="book-cover-title" style="font-size: 18px;color: #333;top: 20px;">JavaScript Pragmatic Developer</div>
+    <div class="book-cover-author">readbytes</div>
+    <div class="book-cover-bottom-stripe" style="background-color: #333;"></div>
+    <img class="book-cover-icon" style="width: 80px;height: 70px;top: 85px;" src="data:image/png;base64,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"/>
+  </div>
+</a>
+
+
+
+<a href='javascript.htm'><div class='book-cover' style='background-color: #f9f6f1;color: #111111;border: 1px solid #ccc;display: flex;justify-content: center;align-items: center;text-align: center;'>More Javascript Books</div></a>
+</div>
+</div>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+  
+  <script>
+    function copyCode(button) {
+      const code = button.nextElementSibling.innerText;
+      navigator.clipboard.writeText(code).then(() => {
+        button.textContent = 'Copied!';
+        setTimeout(() => { button.textContent = 'Copy'; }, 1500);
+      });
+    }
+  </script>  
+<div id="floatingLog" aria-live="polite" role="alert"></div>
+<footer class="page-footer">
+    <nav>
+      <a href="https://readbytes.github.io">Home</a> | 
+      Email:<script language="JavaScript" type="text/javascript">
+var part1 = 'yinpeng';var part6 = '263';var part2 = Math.pow(2,6);var part3 = String.fromCharCode(part2);var part4 = 'hotmail dot com';var part5 = part1 + String.fromCharCode(part2) + part4;document.write(part1 + part6 + part3 + part4);
+</script>
+    </nav>
+  <p>© 2025 — All rights reserved.</p>    
+  </footer>
+
+</body>
+</html>

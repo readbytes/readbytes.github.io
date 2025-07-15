@@ -1,0 +1,718 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Table of Content for JavaScript Algorithms</title>
+  <script>
+  const mode = localStorage.getItem('mode') || 'light';
+  document.documentElement.classList.add(`${mode}-mode`);
+  </script>  
+  <link rel='shortcut icon' href='https://java2s.com/style/favicon.ico'>  
+  <style>
+body {
+  font-family: 'Georgia', serif;
+  padding: 40px;
+  max-width: 800px;
+  margin: auto;
+  transition: background-color 0.3s, color 0.3s;
+}
+  .book-title-toc {
+      font-size: 32px;
+      font-weight: bold; 
+    }
+
+    .book-subtitle-toc {
+      font-size: 18px; 
+      margin-top: 8px;
+      font-style: italic;
+    }
+.book-header {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.toc-container {
+  border-radius: 10px;
+  padding: 30px;
+  margin-bottom: 40px;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.05);
+}
+
+h1 {
+  font-size: 24px;
+  text-align: center;
+  margin-bottom: 30px;
+  letter-spacing: 1px;
+  padding-bottom: 10px;
+}
+
+.toc-list,
+.toc-section-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.toc-section-list {
+  padding-left: 18px;
+  margin-top: 6px;
+  margin-bottom: 20px; 
+}
+
+.toc-chapter {
+  padding: 20px 0;
+}
+
+.chapter-title,
+.toc-section {
+  display: flex;
+  justify-content: space-between;
+  padding-top: 4px;
+}
+
+.chapter-title {
+  font-size: 17px;
+  font-weight: bold;
+}
+
+.chapter-page,
+.section-page {
+  font-style: italic;
+}
+
+.related-books {
+  margin-top: 40px;
+}
+
+.related-book-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+    .book-cover {
+      width: 130px;
+      height: 180px;
+      font-family: Arial, sans-serif;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+    }
+    .book-cover-bottom-stripe {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      height: 5px;
+      width: 100%;
+    }
+    .book-cover-title {
+      position: absolute;
+      width: 100%;
+      text-align: center;
+      font-weight: bold;
+    }
+     
+    .book-cover-icon {
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      align-items: center;
+      justify-content: center; 
+    }
+
+    .book-cover-author {
+      position: absolute;
+      bottom: 10px;
+      width: 100%;
+      text-align: center;
+      font-size: 8px;
+      color: #333;
+    }
+
+a {
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+.site-footer {
+  margin-top: 60px;
+  padding: 20px 0;
+  border-top: 1px solid #eee;
+  text-align: center;
+  font-size: 14px; 
+}
+/* === Light Mode === */
+html.light-mode {
+  background-color: #fdfdfd;
+  color: #333;
+}
+
+.light-mode .book-title-toc,
+.light-mode .chapter-title,
+.light-mode .book-name {
+  color: #222;
+}
+
+.light-mode .book-subtitle-toc,
+.light-mode .book-sub,
+.light-mode .chapter-page,
+.light-mode .section-page {
+  color: #666;
+}
+
+.light-mode .toc-container {
+  background: #fff;
+  border: 1px solid #ddd;
+}
+
+.light-mode h1 {
+  border-bottom: 2px solid #eee;
+  color: #222;
+}
+
+.light-mode .toc-section {
+  color: #444;
+}
+
+.light-mode .related-books h2 {
+  color: #333;
+  border-bottom: 2px solid #eee;
+}
+
+.light-mode .book-cover { 
+  border: 1px solid #ccc;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+.light-mode .book-title,
+.light-mode .series-name {
+  color: #fff;
+}
+
+.light-mode .book-subtitle,
+.light-mode .book-footer {
+  color: #aaa;
+}
+
+.light-mode .site-footer {
+  color: #777;
+  border-color: #eee;
+}
+
+.light-mode a {
+  color: #555;
+}
+
+/* === Dark Mode === */
+html.dark-mode {
+  background-color: #121212;
+  color: #e0e0e0;
+}
+
+.dark-mode .book-title-toc,
+.dark-mode .chapter-title,
+.dark-mode .book-name {
+  color: #f5f5f5;
+}
+
+.dark-mode .book-subtitle-toc,
+.dark-mode .book-sub,
+.dark-mode .chapter-page,
+.dark-mode .section-page {
+  color: #aaa;
+}
+
+.dark-mode .toc-container {
+  background: #1e1e1e;
+  border: 1px solid #444;
+}
+
+.dark-mode h1 {
+  border-bottom: 2px solid #333;
+  color: #eee;
+}
+
+.dark-mode .toc-section {
+  color: #bbb;
+}
+
+.dark-mode .related-books h2 {
+  color: #ddd;
+  border-bottom: 2px solid #333;
+}
+
+
+.dark-mode .book-title,
+.dark-mode .series-name {
+  color: #fff;
+}
+
+.dark-mode .book-subtitle,
+.dark-mode .book-footer {
+  color: #bbb;
+}
+
+.dark-mode .site-footer {
+  color: #aaa;
+  border-color: #333;
+}
+
+.dark-mode .toc-section {
+  color: #ddd;
+}
+
+
+.dark-mode a {
+  color: #aaa;
+}
+
+/* === Responsive === */
+@media (max-width: 600px) {
+  .chapter-title,
+  .toc-section {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .chapter-page,
+  .section-page {
+    margin-top: 4px;
+  }
+}
+  </style>
+</head>
+<body>
+<button onclick="toggleMode()">Toggle Mode</button>
+<script>
+function toggleMode() {
+    const html = document.documentElement;
+    const isDark = html.classList.contains('dark-mode');
+
+    html.classList.toggle('dark-mode', !isDark);
+    html.classList.toggle('light-mode', isDark);
+
+    localStorage.setItem('mode', isDark ? 'light' : 'dark');
+  }
+</script>
+<div class="book-header">
+  <div class="book-title-toc">JavaScript Algorithms</div>
+  <div class="book-subtitle-toc">Guide to Problem Solving and Data Structures</div>
+</div>
+
+<div class="toc-container">
+  <h1>Table of Contents</h1>
+  <ul class="toc-list">
+    <li class='toc-chapter'><a href='javascript-algorithms-introduction.htm'>
+<div class='chapter-title'>
+<span id='introduction'>Chapter 1 : Introduction </span>
+<span class='chapter-page'>1</span>
+</div>
+</a><ul class="toc-section-list"><li class="toc-section">
+<a href='javascript-algorithms-introduction.htm#why-study-algorithms-in-javascript'>
+<span>Why Study Algorithms in JavaScript?</span></a>
+<span class='section-page'>1</span>
+</li><li class="toc-section">
+<a href='javascript-algorithms-introduction.htm#using-js-to-understand-efficiency'>
+<span>Using JS to Understand Efficiency</span></a>
+<span class='section-page'>2</span>
+</li><li class="toc-section">
+<a href='javascript-algorithms-introduction.htm#a-quick-tour-of-big-o-notation'>
+<span>A Quick Tour of Big-O Notation</span></a>
+<span class='section-page'>4</span>
+</li></ul></li><a href='javascript-algorithms-analyzing-algorithms.htm'>
+<div class='chapter-title'>
+<span id='analyzing-algorithms'>Chapter 2 : Analyzing Algorithms </span>
+<span class='chapter-page'>7</span>
+</div>
+</a><ul class="toc-section-list"><li class="toc-section">
+<a href='javascript-algorithms-analyzing-algorithms.htm#time-and-space-complexity'>
+<span>Time and Space Complexity</span></a>
+<span class='section-page'>7</span>
+</li><li class="toc-section">
+<a href='javascript-algorithms-analyzing-algorithms.htm#asymptotic-notation-o'>
+<span>Asymptotic Notation (O, Ω, Θ)</span></a>
+<span class='section-page'>9</span>
+</li><li class="toc-section">
+<a href='javascript-algorithms-analyzing-algorithms.htm#real-world-performance-in-js-engines'>
+<span>Real-World Performance in JS Engines</span></a>
+<span class='section-page'>12</span>
+</li></ul></li><a href='javascript-algorithms-mathematical-tools-lightweight.htm'>
+<div class='chapter-title'>
+<span id='mathematical-tools-lightweight'>Chapter 3 : Mathematical Tools (Lightweight) </span>
+<span class='chapter-page'>14</span>
+</div>
+</a><ul class="toc-section-list"><li class="toc-section">
+<a href='javascript-algorithms-mathematical-tools-lightweight.htm#logarithms-exponents-and-series'>
+<span>Logarithms, Exponents, and Series</span></a>
+<span class='section-page'>14</span>
+</li><li class="toc-section">
+<a href='javascript-algorithms-mathematical-tools-lightweight.htm#recurrence-relations-brief'>
+<span>Recurrence Relations (Brief)</span></a>
+<span class='section-page'>16</span>
+</li><li class="toc-section">
+<a href='javascript-algorithms-mathematical-tools-lightweight.htm#growth-rates-of-functions'>
+<span>Growth Rates of Functions</span></a>
+<span class='section-page'>18</span>
+</li></ul></li><a href='javascript-algorithms-sorting-and-order-elementary-sorting-algorithms.htm'>
+<div class='chapter-title'>
+<span id='sorting-and-order-elementary-sorting-algorithms'>Chapter 4 : Sorting and Order: Elementary Sorting Algorithms </span>
+<span class='chapter-page'>21</span>
+</div>
+</a><ul class="toc-section-list"><li class="toc-section">
+<a href='javascript-algorithms-sorting-and-order-elementary-sorting-algorithms.htm#bubble-sort'>
+<span>Bubble Sort</span></a>
+<span class='section-page'>21</span>
+</li><li class="toc-section">
+<a href='javascript-algorithms-sorting-and-order-elementary-sorting-algorithms.htm#insertion-sort'>
+<span>Insertion Sort</span></a>
+<span class='section-page'>27</span>
+</li><li class="toc-section">
+<a href='javascript-algorithms-sorting-and-order-elementary-sorting-algorithms.htm#selection-sort'>
+<span>Selection Sort</span></a>
+<span class='section-page'>35</span>
+</li></ul></li><a href='javascript-algorithms-sorting-and-order-divide-and-conquer.htm'>
+<div class='chapter-title'>
+<span id='sorting-and-order-divide-and-conquer'>Chapter 5 : Sorting and Order: Divide and Conquer </span>
+<span class='chapter-page'>41</span>
+</div>
+</a><ul class="toc-section-list"><li class="toc-section">
+<a href='javascript-algorithms-sorting-and-order-divide-and-conquer.htm#merge-sort'>
+<span>Merge Sort</span></a>
+<span class='section-page'>41</span>
+</li><li class="toc-section">
+<a href='javascript-algorithms-sorting-and-order-divide-and-conquer.htm#quick-sort'>
+<span>Quick Sort</span></a>
+<span class='section-page'>48</span>
+</li><li class="toc-section">
+<a href='javascript-algorithms-sorting-and-order-divide-and-conquer.htm#time-complexity-and-recursion-trees'>
+<span>Time Complexity and Recursion Trees</span></a>
+<span class='section-page'>58</span>
+</li></ul></li><a href='javascript-algorithms-sorting-and-order-linear-time-sorting.htm'>
+<div class='chapter-title'>
+<span id='sorting-and-order-linear-time-sorting'>Chapter 6 : Sorting and Order: Linear-Time Sorting </span>
+<span class='chapter-page'>68</span>
+</div>
+</a><ul class="toc-section-list"><li class="toc-section">
+<a href='javascript-algorithms-sorting-and-order-linear-time-sorting.htm#counting-sort'>
+<span>Counting Sort</span></a>
+<span class='section-page'>68</span>
+</li><li class="toc-section">
+<a href='javascript-algorithms-sorting-and-order-linear-time-sorting.htm#radix-sort'>
+<span>Radix Sort</span></a>
+<span class='section-page'>71</span>
+</li><li class="toc-section">
+<a href='javascript-algorithms-sorting-and-order-linear-time-sorting.htm#bucket-sort'>
+<span>Bucket Sort</span></a>
+<span class='section-page'>74</span>
+</li><li class="toc-section">
+<a href='javascript-algorithms-sorting-and-order-linear-time-sorting.htm#when-these-work-in-js-contexts'>
+<span>When These Work in JS Contexts</span></a>
+<span class='section-page'>76</span>
+</li></ul></li><a href='javascript-algorithms-arrays-and-linked-lists.htm'>
+<div class='chapter-title'>
+<span id='arrays-and-linked-lists'>Chapter 7 : Arrays and Linked Lists </span>
+<span class='chapter-page'>79</span>
+</div>
+</a><ul class="toc-section-list"><li class="toc-section">
+<a href='javascript-algorithms-arrays-and-linked-lists.htm#native-arrays-and-their-limits'>
+<span>Native Arrays and Their Limits</span></a>
+<span class='section-page'>79</span>
+</li><li class="toc-section">
+<a href='javascript-algorithms-arrays-and-linked-lists.htm#implementing-singly-doubly-linked-lists'>
+<span>Implementing Singly/Doubly Linked Lists</span></a>
+<span class='section-page'>94</span>
+</li></ul></li><a href='javascript-algorithms-stacks-and-queues.htm'>
+<div class='chapter-title'>
+<span id='stacks-and-queues'>Chapter 8 : Stacks and Queues </span>
+<span class='chapter-page'>112</span>
+</div>
+</a><ul class="toc-section-list"><li class="toc-section">
+<a href='javascript-algorithms-stacks-and-queues.htm#implementing-from-scratch'>
+<span>Implementing from Scratch</span></a>
+<span class='section-page'>112</span>
+</li><li class="toc-section">
+<a href='javascript-algorithms-stacks-and-queues.htm#use-cases-in-frontend-backend'>
+<span>Use Cases in Frontend/Backend</span></a>
+<span class='section-page'>124</span>
+</li></ul></li><a href='javascript-algorithms-hash-tables.htm'>
+<div class='chapter-title'>
+<span id='hash-tables'>Chapter 9 : Hash Tables </span>
+<span class='chapter-page'>128</span>
+</div>
+</a><ul class="toc-section-list"><li class="toc-section">
+<a href='javascript-algorithms-hash-tables.htm#javascript-objects-and-map'>
+<span>JavaScript Objects and <code>Map</code></span></a>
+<span class='section-page'>128</span>
+</li><li class="toc-section">
+<a href='javascript-algorithms-hash-tables.htm#hash-functions-and-collisions'>
+<span>Hash Functions and Collisions</span></a>
+<span class='section-page'>131</span>
+</li><li class="toc-section">
+<a href='javascript-algorithms-hash-tables.htm#custom-hash-table-implementation'>
+<span>Custom Hash Table Implementation</span></a>
+<span class='section-page'>133</span>
+</li></ul></li><a href='javascript-algorithms-trees-and-binary-search-trees.htm'>
+<div class='chapter-title'>
+<span id='trees-and-binary-search-trees'>Chapter 10 : Trees and Binary Search Trees </span>
+<span class='chapter-page'>140</span>
+</div>
+</a><ul class="toc-section-list"><li class="toc-section">
+<a href='javascript-algorithms-trees-and-binary-search-trees.htm#recursive-tree-traversals'>
+<span>Recursive Tree Traversals</span></a>
+<span class='section-page'>140</span>
+</li><li class="toc-section">
+<a href='javascript-algorithms-trees-and-binary-search-trees.htm#balanced-vs-unbalanced-trees'>
+<span>Balanced vs Unbalanced Trees</span></a>
+<span class='section-page'>149</span>
+</li><li class="toc-section">
+<a href='javascript-algorithms-trees-and-binary-search-trees.htm#binary-search-tree-from-scratch'>
+<span>Binary Search Tree from Scratch</span></a>
+<span class='section-page'>153</span>
+</li></ul></li><a href='javascript-algorithms-heaps-and-priority-queues.htm'>
+<div class='chapter-title'>
+<span id='heaps-and-priority-queues'>Chapter 11 : Heaps and Priority Queues </span>
+<span class='chapter-page'>165</span>
+</div>
+</a><ul class="toc-section-list"><li class="toc-section">
+<a href='javascript-algorithms-heaps-and-priority-queues.htm#min-heap-max-heap'>
+<span>Min-Heap, Max-Heap</span></a>
+<span class='section-page'>165</span>
+</li><li class="toc-section">
+<a href='javascript-algorithms-heaps-and-priority-queues.htm#heap-sort'>
+<span>Heap Sort</span></a>
+<span class='section-page'>175</span>
+</li><li class="toc-section">
+<a href='javascript-algorithms-heaps-and-priority-queues.htm#implementing-a-priority-queue'>
+<span>Implementing a Priority Queue</span></a>
+<span class='section-page'>183</span>
+</li></ul></li><a href='javascript-algorithms-balanced-search-trees.htm'>
+<div class='chapter-title'>
+<span id='balanced-search-trees'>Chapter 12 : Balanced Search Trees </span>
+<span class='chapter-page'>187</span>
+</div>
+</a><ul class="toc-section-list"><li class="toc-section">
+<a href='javascript-algorithms-balanced-search-trees.htm#red-black-trees-conceptual-overview'>
+<span>Red-Black Trees (Conceptual Overview)</span></a>
+<span class='section-page'>187</span>
+</li><li class="toc-section">
+<a href='javascript-algorithms-balanced-search-trees.htm#avl-trees-optional-in-javascript'>
+<span>AVL Trees (Optional in JavaScript)</span></a>
+<span class='section-page'>195</span>
+</li><li class="toc-section">
+<a href='javascript-algorithms-balanced-search-trees.htm#b-trees-and-their-real-world-relevance'>
+<span>B-Trees and Their Real-World Relevance</span></a>
+<span class='section-page'>202</span>
+</li></ul></li><a href='javascript-algorithms-graph-representations.htm'>
+<div class='chapter-title'>
+<span id='graph-representations'>Chapter 13 : Graph Representations </span>
+<span class='chapter-page'>204</span>
+</div>
+</a><ul class="toc-section-list"><li class="toc-section">
+<a href='javascript-algorithms-graph-representations.htm#adjacency-lists-and-matrices-in-js'>
+<span>Adjacency Lists and Matrices in JS</span></a>
+<span class='section-page'>204</span>
+</li><li class="toc-section">
+<a href='javascript-algorithms-graph-representations.htm#directed-vs-undirected-graphs'>
+<span>Directed vs Undirected Graphs</span></a>
+<span class='section-page'>210</span>
+</li><li class="toc-section">
+<a href='javascript-algorithms-graph-representations.htm#weighted-vs-unweighted-graphs'>
+<span>Weighted vs Unweighted Graphs</span></a>
+<span class='section-page'>215</span>
+</li></ul></li><a href='javascript-algorithms-graphs-traversals.htm'>
+<div class='chapter-title'>
+<span id='graphs-traversals'>Chapter 14 : Graphs: Traversals </span>
+<span class='chapter-page'>218</span>
+</div>
+</a><ul class="toc-section-list"><li class="toc-section">
+<a href='javascript-algorithms-graphs-traversals.htm#breadth-first-search-bfs'>
+<span>Breadth-First Search (BFS)</span></a>
+<span class='section-page'>218</span>
+</li><li class="toc-section">
+<a href='javascript-algorithms-graphs-traversals.htm#depth-first-search-dfs'>
+<span>Depth-First Search (DFS)</span></a>
+<span class='section-page'>224</span>
+</li><li class="toc-section">
+<a href='javascript-algorithms-graphs-traversals.htm#applications-pathfinding-web-crawling'>
+<span>Applications (Pathfinding, Web Crawling)</span></a>
+<span class='section-page'>231</span>
+</li></ul></li><a href='javascript-algorithms-graph-shortest-paths.htm'>
+<div class='chapter-title'>
+<span id='graph-shortest-paths'>Chapter 15 : Graph Shortest Paths </span>
+<span class='chapter-page'>233</span>
+</div>
+</a><ul class="toc-section-list"><li class="toc-section">
+<a href='javascript-algorithms-graph-shortest-paths.htm#dijkstra-s-algorithm'>
+<span>Dijkstra’s Algorithm</span></a>
+<span class='section-page'>234</span>
+</li><li class="toc-section">
+<a href='javascript-algorithms-graph-shortest-paths.htm#bellman-ford-algorithm'>
+<span>Bellman-Ford Algorithm</span></a>
+<span class='section-page'>244</span>
+</li><li class="toc-section">
+<a href='javascript-algorithms-graph-shortest-paths.htm#a-search-practical-frontend-use'>
+<span>A* Search (Practical Frontend Use)*\*</span></a>
+<span class='section-page'>254</span>
+</li></ul></li><a href='javascript-algorithms-minimum-spanning-trees.htm'>
+<div class='chapter-title'>
+<span id='minimum-spanning-trees'>Chapter 16 : Minimum Spanning Trees </span>
+<span class='chapter-page'>264</span>
+</div>
+</a><ul class="toc-section-list"><li class="toc-section">
+<a href='javascript-algorithms-minimum-spanning-trees.htm#prim-s-algorithm'>
+<span>Prim’s Algorithm</span></a>
+<span class='section-page'>264</span>
+</li><li class="toc-section">
+<a href='javascript-algorithms-minimum-spanning-trees.htm#kruskal-s-algorithm'>
+<span>Kruskal’s Algorithm</span></a>
+<span class='section-page'>273</span>
+</li><li class="toc-section">
+<a href='javascript-algorithms-minimum-spanning-trees.htm#real-world-applications'>
+<span>Real-World Applications</span></a>
+<span class='section-page'>282</span>
+</li></ul></li><a href='javascript-algorithms-principles-of-dynamic-programming.htm'>
+<div class='chapter-title'>
+<span id='principles-of-dynamic-programming'>Chapter 17 : Principles of Dynamic Programming </span>
+<span class='chapter-page'>284</span>
+</div>
+</a><ul class="toc-section-list"><li class="toc-section">
+<a href='javascript-algorithms-principles-of-dynamic-programming.htm#overlapping-subproblems-and-memoization'>
+<span>Overlapping Subproblems and Memoization</span></a>
+<span class='section-page'>284</span>
+</li><li class="toc-section">
+<a href='javascript-algorithms-principles-of-dynamic-programming.htm#bottom-up-vs-top-down-approaches'>
+<span>Bottom-Up vs Top-Down Approaches</span></a>
+<span class='section-page'>286</span>
+</li></ul></li><a href='javascript-algorithms-principles-of-dynamic-programming-classic-problems.htm'>
+<div class='chapter-title'>
+<span id='principles-of-dynamic-programming-classic-problems'>Chapter 18 : Principles of Dynamic Programming Classic Problems </span>
+<span class='chapter-page'>290</span>
+</div>
+</a><ul class="toc-section-list"><li class="toc-section">
+<a href='javascript-algorithms-principles-of-dynamic-programming-classic-problems.htm#fibonacci-variants'>
+<span>Fibonacci Variants</span></a>
+<span class='section-page'>290</span>
+</li><li class="toc-section">
+<a href='javascript-algorithms-principles-of-dynamic-programming-classic-problems.htm#longest-common-subsequence-lcs'>
+<span>Longest Common Subsequence (LCS)</span></a>
+<span class='section-page'>293</span>
+</li><li class="toc-section">
+<a href='javascript-algorithms-principles-of-dynamic-programming-classic-problems.htm#knapsack-problem'>
+<span>Knapsack Problem</span></a>
+<span class='section-page'>296</span>
+</li><li class="toc-section">
+<a href='javascript-algorithms-principles-of-dynamic-programming-classic-problems.htm#grid-based-pathfinding'>
+<span>Grid-Based Pathfinding</span></a>
+<span class='section-page'>300</span>
+</li></ul></li><a href='javascript-algorithms-greedy-algorithms.htm'>
+<div class='chapter-title'>
+<span id='greedy-algorithms'>Chapter 19 : Greedy Algorithms </span>
+<span class='chapter-page'>304</span>
+</div>
+</a><ul class="toc-section-list"><li class="toc-section">
+<a href='javascript-algorithms-greedy-algorithms.htm#when-greedy-works'>
+<span>When Greedy Works</span></a>
+<span class='section-page'>304</span>
+</li><li class="toc-section">
+<a href='javascript-algorithms-greedy-algorithms.htm#activity-selection'>
+<span>Activity Selection</span></a>
+<span class='section-page'>307</span>
+</li><li class="toc-section">
+<a href='javascript-algorithms-greedy-algorithms.htm#huffman-encoding'>
+<span>Huffman Encoding</span></a>
+<span class='section-page'>309</span>
+</li><li class="toc-section">
+<a href='javascript-algorithms-greedy-algorithms.htm#interval-scheduling'>
+<span>Interval Scheduling</span></a>
+<span class='section-page'>322</span>
+</li></ul></li><a href='javascript-algorithms-backtracking-and-recursion.htm'>
+<div class='chapter-title'>
+<span id='backtracking-and-recursion'>Chapter 20 : Backtracking and Recursion </span>
+<span class='chapter-page'>331</span>
+</div>
+</a><ul class="toc-section-list"><li class="toc-section">
+<a href='javascript-algorithms-backtracking-and-recursion.htm#combinatorial-problems'>
+<span>Combinatorial Problems</span></a>
+<span class='section-page'>331</span>
+</li><li class="toc-section">
+<a href='javascript-algorithms-backtracking-and-recursion.htm#subsets-permutations-and-n-queens'>
+<span>Subsets, Permutations, and N-Queens</span></a>
+<span class='section-page'>335</span>
+</li><li class="toc-section">
+<a href='javascript-algorithms-backtracking-and-recursion.htm#solving-puzzles-recursively'>
+<span>Solving Puzzles Recursively</span></a>
+<span class='section-page'>339</span>
+</li></ul></li><a href='javascript-algorithms-real-world-applications.htm'>
+<div class='chapter-title'>
+<span id='real-world-applications'>Chapter 21 : Real-World Applications </span>
+<span class='chapter-page'>344</span>
+</div>
+</a><ul class="toc-section-list"><li class="toc-section">
+<a href='javascript-algorithms-real-world-applications.htm#autocomplete-with-tries'>
+<span>Autocomplete with Tries</span></a>
+<span class='section-page'>344</span>
+</li><li class="toc-section">
+<a href='javascript-algorithms-real-world-applications.htm#debouncing-throttling-as-algorithmic-patterns'>
+<span>Debouncing/Throttling as Algorithmic Patterns</span></a>
+<span class='section-page'>348</span>
+</li><li class="toc-section">
+<a href='javascript-algorithms-real-world-applications.htm#scheduling-algorithms-in-uis'>
+<span>Scheduling Algorithms in UIs</span></a>
+<span class='section-page'>351</span>
+</li><li class="toc-section">
+<a href='javascript-algorithms-real-world-applications.htm#caching-strategies-lru-lfu-in-js'>
+<span>Caching Strategies (LRU, LFU) in JS</span></a>
+<span class='section-page'>355</span>
+</li></ul></li><a href='javascript-algorithms-algorithmic-thinking-in-practice.htm'>
+<div class='chapter-title'>
+<span id='algorithmic-thinking-in-practice'>Chapter 22 : Algorithmic Thinking in Practice </span>
+<span class='chapter-page'>360</span>
+</div>
+</a><ul class="toc-section-list"><li class="toc-section">
+<a href='javascript-algorithms-algorithmic-thinking-in-practice.htm#how-to-approach-a-problem'>
+<span>How to Approach a Problem</span></a>
+<span class='section-page'>360</span>
+</li><li class="toc-section">
+<a href='javascript-algorithms-algorithmic-thinking-in-practice.htm#brute-force-greedy-dp'>
+<span>Brute Force → Greedy → DP</span></a>
+<span class='section-page'>363</span>
+</li><li class="toc-section">
+<a href='javascript-algorithms-algorithmic-thinking-in-practice.htm#thinking-in-constraints'>
+<span>Thinking in Constraints</span></a>
+<span class='section-page'>366</span>
+</li></ul></li>
+  </ul>
+</div>
+
+<div class='related-books'>
+<h2>Java Introduction Books</h2>
+<div class='related-book-list'>
+<a href="javascript-algorithms.htm">
+<div class="book-cover" style="background-color: #f9f6f1;border: 1px solid #ccc;"> 
+    <div class="book-cover-title" style="font-size: 18px;color: #333;top: 20px;">JavaScript Algorithms</div>
+    <div class="book-cover-author">readbytes</div>
+    <div class="book-cover-bottom-stripe" style="background-color: #333;"></div>
+    <img class="book-cover-icon" style="width: 80px;height: 80px;top: 70px;" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFoAAABaCAYAAAA4qEECAAAErElEQVR4Xu2dPWgUQRiGo6BB8I+AlV3w9gzptLBWsLQ89O7ARrDXSivTCTaCnWhn7pQTxOoInpjCeEQQLC2CjVqoVSwMFpp1Jtzo7Luzs/Nd7uZ29r4HPpDsu7vPvIl7+SGTmRmGYRiGYZjCEzVacdnn9NX7+3DdXkGhMg+u3Su6SNztzsZvevH/efED8zrJbM+6EGJ2K5Hv9w9gRpHnXMyik2VsYVaHWJx7tt/bTOQ3urOYUch3QJ5z0YtOCeuQiqNlvybyto/ktbVDcG2jc5GLNgoriMW5Z/svPyfy693DmFHE71ePwrUznQta9ISeyViyKBIziri/Mpe8tt25kEXjMR1ScbQsPC5W5jCjMJT8DTM6MuO6vrHjIkIszj2LL3y2ktOPiy+Y0VE5l/V5IU+EVBwtm/wUzva4SL/wOZUsJ2993rCJEIujZJMl2174Up/C5T8u9LGtzyu6SNkH1+6VhUargkJlHVy7f5aW9qJUqeZy5zguufToBeAxZoRw0Z7goj3BRXuCi/YEF+0BvWQue0xgwfrMiy+aMM8QEUW+w2IHb8fC/+C5jCOGMhOPiqi+vG47zjiABVbr7XOYUWC2Um+fxwwDiKJeYXGYMYHniNnGDDPAUJZTyYph30nTg+G7f5VLj89gzBW8lu2xMzWIIt5iMZgZBrzmqK4bJFhENOLnatRsfcR7YKb0YAELF5+cwsyowHudrLcvYKZ0iIV+wIVjZhzgPaMR/+8pFIbFeilZUWm2Vyd5/5GxWOvsx4VkTbXROovn+wJdMqfevoHnFoKUaMbgeZMAnbIGzysEKGmZiX4DKKo/um5wMg6eWwhsgtVm62cRFoEOJg/xtltZxwqBTV4inuEHcZHztc4RzI0LvLeY15iRBF+0wrDgsX6qZXpUYEanNEVLROY3ZfHDgvdwuU+pipYs1h7OpUqI4z2YGxa8dqXefooZE6UrWoGFiMn8nRIXoubyTbymeLPzO7C0RUuiRvuXoRwyeI1hrlPqoiUnap1jWNLilU7mr0sgeK746rOFGRdKX7QCC4tyHiXi+DU8BzMUpqZoiSzXpTzMZOUoTFXROxh+xKV/gYPHqvVlp88q8pi+ogdgoabBc3bD1BYtEdfcxnLHeK/pLVoiHxvJktsPMDMKpr5oX3DRnuCiPcFFe4KL9gQX7Qku2hNctCe4aE94K1puD6mXNsmpOv74KUTnxEdmEQb9TOA5kx70M6KfcO/u8/j2nWffxb+XskZm9MHjw2YjgrTKygnFeUaF5cSEjZ4c9kJyz/Z7mxTpEJ0T0nhMhyRBy+5sTuXioAjR2UmaKEHJ/tsBLM9BJ0TnXGmiBCWb2GbN5oCE6GyVJkq4Z3FXxo3ubJaDiRCdM6VJErSscTtik0MWITobpYkS7lncKVfblREdbITonJImSVCyKAz7i1KkQ3ROSJMkaNnc7Ygp0iE6Z0pjTockjC8iBmEJRTpEZ6M0ZnRIwrhTrmU7Yop0iM4paTyusyvhnO2IKdIhOqdeWLLYlbDtL0oM/jaKi4MiRGcnaZIwPt8c/zZKnoNOiM4J6SIM+pnAcyY96GekYJtvf0I/EyE6MwzDMAzDjI+/5MPGam/zucIAAAAASUVORK5CYII="/>
+  </div>
+</a>
+
+
+
+<a href='java.htm'><div class='book-cover' style='background-color: #f9f6f1;color: #111111;border: 1px solid #ccc;display: flex;justify-content: center;align-items: center;text-align: center;'>More Java Books</div></a>
+</div>
+</div>
+<footer class="site-footer">
+    <nav>
+      <a href="https://readbytes.github.io">Home</a> | 
+      Email:<script language="JavaScript" type="text/javascript">
+var part1 = 'yinpeng';var part6 = '263';var part2 = Math.pow(2,6);var part3 = String.fromCharCode(part2);var part4 = 'hotmail dot com';var part5 = part1 + String.fromCharCode(part2) + part4;document.write(part1 + part6 + part3 + part4);
+</script>
+    </nav>
+  <p>© 2025 — All rights reserved.</p>   
+</footer>
+
+</body>
+</html>

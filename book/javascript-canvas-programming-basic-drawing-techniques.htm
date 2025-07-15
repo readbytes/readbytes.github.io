@@ -225,12 +225,9 @@ const html = `
       </body>
     </html>
   `;
-    
-      
         iframe.style.display = "block";
         iframe.srcdoc = html;  
     }
-
     function toggleSnippetAndRefresh(id, textarea_id) {
       const box = document.getElementById(id);
       box.classList.toggle("open");
@@ -480,7 +477,6 @@ code {
   padding: 0.75rem 1rem;
   cursor: pointer;
   font-size: 1rem;
- 
     background-color: #eeeeee;
     color:  #111111; 
     border-radius: 8px;
@@ -623,7 +619,60 @@ html.dark-mode .page-footer a {
   color: #eee;
 }
 
+    .dialog-backdrop {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(0,0,0,0.5);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 10;
+    }
 
+    .dialog {
+      background: white;
+      padding: 20px;
+      width: 90vw;
+      height: 80vh;
+      border-radius: 8px;
+      box-shadow: 0 0 20px rgba(0,0,0,0.3);
+      display: flex;
+      flex-direction: column;
+    }
+    .dialog-content {
+      display: flex;
+      flex: 1;
+      gap: 20px;
+      margin-top: 10px;
+    }
+    .dialog h2 {
+      margin-top: 0;
+    }
+
+    .textarea_dialog {
+      width: 50%;
+      height: 100%;
+      resize: none;
+      font-family: monospace;
+      font-size: 14px;
+      padding: 10px;
+      box-sizing: border-box;
+      border: 1px solid #ccc;
+    }
+
+    .iframe_dialog {
+      width: 50%;
+      height: 100%;
+      border: 1px solid #ccc;
+    }
+    .controls_dialog {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 10px;
+    }    
     button { padding: 0.5em 1em; background: green; color: white; border: none; cursor: pointer; }
     button:hover { background: #1e7e34; }
     .result_iframe { width:99%; height:200px; margin-top: 1em;  resize: both;border:1px solid #ccc;}        
@@ -718,11 +767,13 @@ ctx.stroke();</code></pre>
     ctx.lineWidth = 6;
     ctx.stroke();
   &lt;/script&gt;</code></pre>
-</div><div class="snippet-container" id="5bbLN">
- <div class="snippet-header" onclick="toggleSnippetAndRefresh('5bbLN','vMBrA')">
-  Click to Try it
- </div>
- <div class="snippet-body"><textarea id="vMBrA">&lt;!DOCTYPE html&gt;
+</div><div class="snippet-container" id="C1IHB">
+ <div id="eUAl0_Dialog" class="dialog-backdrop">
+  <div class="dialog">
+   <h2>Dialog 1</h2>
+   <div class="controls"><button onclick="renderIframe(this,'mnQQn_Textarea','eUAl0_IFrame')">Run</button> <button onclick="closeAll()">Close</button>
+   </div>
+   <div class="dialog-content"><textarea id="mnQQn_Textarea" class="textarea_dialog" placeholder="Type HTML here...">&lt;!DOCTYPE html&gt;
 &lt;html lang="en"&gt;
 &lt;head&gt;
   &lt;meta charset="UTF-8"&gt;
@@ -767,16 +818,90 @@ ctx.stroke();</code></pre>
     ctx.stroke();
   &lt;/script&gt;
 &lt;/body&gt;
-&lt;/html&gt;</textarea> <br> <button onclick="renderIframe(this,'vMBrA','PYfCt')">Run</button>
-  <div id="PYfCt_FloatingLog" class="floatingLog" aria-live="polite" role="alert"></div> <iframe id="PYfCt" class="result_iframe" style="display: none;"></iframe>
+&lt;/html&gt;</textarea> <iframe id="eUAl0_IFrame" class="iframe_dialog"></iframe>
+   </div>
+  </div>
+ </div>
+ <div class="snippet-header"><span onclick="toggleSnippetAndRefresh('C1IHB','mnQQn')">Click to Try it</span> <!-- <span onclick="openDialog('eUAl0_Dialog')">Dialog</span> -->
+ </div>
+ <div class="snippet-body"><textarea id="mnQQn">&lt;!DOCTYPE html&gt;
+&lt;html lang="en"&gt;
+&lt;head&gt;
+  &lt;meta charset="UTF-8"&gt;
+  &lt;title&gt;Canvas Lines Demo&lt;/title&gt;
+  &lt;style&gt;
+    canvas {
+      border: 1px solid #aaa;
+      display: block;
+      margin: 20px auto;
+    }
+  &lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+  &lt;canvas id="lineCanvas" width="400" height="300"&gt;&lt;/canvas&gt;
+
+  &lt;script&gt;
+    const canvas = document.getElementById("lineCanvas");
+    const ctx = canvas.getContext("2d");
+
+    // Line 1: Thin, horizontal
+    ctx.beginPath();
+    ctx.moveTo(20, 40);
+    ctx.lineTo(200, 40);
+    ctx.strokeStyle = "blue";
+    ctx.lineWidth = 2;
+    ctx.stroke();
+
+    // Line 2: Medium, diagonal
+    ctx.beginPath();
+    ctx.moveTo(20, 80);
+    ctx.lineTo(200, 120);
+    ctx.strokeStyle = "green";
+    ctx.lineWidth = 4;
+    ctx.stroke();
+
+    // Line 3: Thick, vertical
+    ctx.beginPath();
+    ctx.moveTo(100, 150);
+    ctx.lineTo(100, 250);
+    ctx.strokeStyle = "purple";
+    ctx.lineWidth = 6;
+    ctx.stroke();
+  &lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;</textarea> <br> <button onclick="renderIframe(this,'mnQQn','eUAl0')">Run</button>
+  <div id="eUAl0_FloatingLog" class="floatingLog" aria-live="polite" role="alert"></div> <iframe id="eUAl0" class="result_iframe" style="display: none;"></iframe>
   <script>
-  { let editor = CodeMirror.fromTextArea(document.getElementById("vMBrA"), {
-    mode: "htmlmixed",
-    lineNumbers:false,
-    tabSize: 2
-  });
-   codeMirrorMap.set("vMBrA", editor);}
-  </script>
+			{
+				let editor = CodeMirror.fromTextArea(document
+						.getElementById("mnQQn"), {
+					mode : "htmlmixed",
+					lineNumbers : false,
+					tabSize : 2
+				});
+				codeMirrorMap.set("mnQQn", editor);
+
+				let editor1 = CodeMirror.fromTextArea(document.getElementById("mnQQn_Textarea"), {
+					mode : "htmlmixed",
+					lineNumbers : false,
+					tabSize : 2
+				});
+				codeMirrorMap.set("mnQQn_Textarea", editor1);
+			}
+		    function openDialog(id) {
+		        closeAll();
+		        document.getElementById(id).style.display = 'flex';
+		        setTimeout(() => {
+		        	 codeMirrorMap.get("mnQQn_Textarea").refresh();
+		        }, 100); // 100ms 
+		      }
+
+		      function closeAll() {
+		        document.querySelectorAll('.dialog-backdrop').forEach(el => {
+		          el.style.display = 'none';
+		        });
+		      }			
+		</script>
  </div>
 </div><p>This example draws three different lines:</p><ul>
  <li>A thin blue horizontal line,</li>
@@ -856,11 +981,13 @@ ctx.stroke();</code></pre>
   ctx.strokeStyle = "red";
   ctx.stroke();
 &lt;/script&gt;</code></pre>
-</div><div class="snippet-container" id="qWdOw">
- <div class="snippet-header" onclick="toggleSnippetAndRefresh('qWdOw','gsns9')">
-  Click to Try it
- </div>
- <div class="snippet-body"><textarea id="gsns9">&lt;!DOCTYPE html&gt;
+</div><div class="snippet-container" id="shRDH">
+ <div id="1kPHm_Dialog" class="dialog-backdrop">
+  <div class="dialog">
+   <h2>Dialog 1</h2>
+   <div class="controls"><button onclick="renderIframe(this,'tY9dp_Textarea','1kPHm_IFrame')">Run</button> <button onclick="closeAll()">Close</button>
+   </div>
+   <div class="dialog-content"><textarea id="tY9dp_Textarea" class="textarea_dialog" placeholder="Type HTML here...">&lt;!DOCTYPE html&gt;
 &lt;html lang="en"&gt;
 &lt;head&gt;
   &lt;meta charset="UTF-8"&gt;
@@ -888,16 +1015,73 @@ ctx.stroke();</code></pre>
 &lt;/script&gt;
 
 &lt;/body&gt;
-&lt;/html&gt;</textarea> <br> <button onclick="renderIframe(this,'gsns9','uKld0')">Run</button>
-  <div id="uKld0_FloatingLog" class="floatingLog" aria-live="polite" role="alert"></div> <iframe id="uKld0" class="result_iframe" style="display: none;"></iframe>
+&lt;/html&gt;</textarea> <iframe id="1kPHm_IFrame" class="iframe_dialog"></iframe>
+   </div>
+  </div>
+ </div>
+ <div class="snippet-header"><span onclick="toggleSnippetAndRefresh('shRDH','tY9dp')">Click to Try it</span> <!-- <span onclick="openDialog('1kPHm_Dialog')">Dialog</span> -->
+ </div>
+ <div class="snippet-body"><textarea id="tY9dp">&lt;!DOCTYPE html&gt;
+&lt;html lang="en"&gt;
+&lt;head&gt;
+  &lt;meta charset="UTF-8"&gt;
+
+&lt;/head&gt;
+&lt;body&gt;
+
+&lt;canvas id="myCanvas" width="400" height="200" style="border:1px solid #ccc;"&gt;&lt;/canvas&gt;
+
+&lt;script&gt;
+  const canvas = document.getElementById("myCanvas");
+  const ctx = canvas.getContext("2d");
+
+  // Draw full circle
+  ctx.beginPath();
+  ctx.arc(100, 100, 50, 0, Math.PI * 2);  // Full circle
+  ctx.strokeStyle = "blue";
+  ctx.stroke();
+
+  // Draw semicircle
+  ctx.beginPath();
+  ctx.arc(250, 100, 50, 0, Math.PI);  // Top half
+  ctx.strokeStyle = "red";
+  ctx.stroke();
+&lt;/script&gt;
+
+&lt;/body&gt;
+&lt;/html&gt;</textarea> <br> <button onclick="renderIframe(this,'tY9dp','1kPHm')">Run</button>
+  <div id="1kPHm_FloatingLog" class="floatingLog" aria-live="polite" role="alert"></div> <iframe id="1kPHm" class="result_iframe" style="display: none;"></iframe>
   <script>
-  { let editor = CodeMirror.fromTextArea(document.getElementById("gsns9"), {
-    mode: "htmlmixed",
-    lineNumbers:false,
-    tabSize: 2
-  });
-   codeMirrorMap.set("gsns9", editor);}
-  </script>
+			{
+				let editor = CodeMirror.fromTextArea(document
+						.getElementById("tY9dp"), {
+					mode : "htmlmixed",
+					lineNumbers : false,
+					tabSize : 2
+				});
+				codeMirrorMap.set("tY9dp", editor);
+
+				let editor1 = CodeMirror.fromTextArea(document.getElementById("tY9dp_Textarea"), {
+					mode : "htmlmixed",
+					lineNumbers : false,
+					tabSize : 2
+				});
+				codeMirrorMap.set("tY9dp_Textarea", editor1);
+			}
+		    function openDialog(id) {
+		        closeAll();
+		        document.getElementById(id).style.display = 'flex';
+		        setTimeout(() => {
+		        	 codeMirrorMap.get("tY9dp_Textarea").refresh();
+		        }, 100); // 100ms 
+		      }
+
+		      function closeAll() {
+		        document.querySelectorAll('.dialog-backdrop').forEach(el => {
+		          el.style.display = 'none';
+		        });
+		      }			
+		</script>
  </div>
 </div><h3 id="drawing-direction-clockwise-vs-counterclockwise">Drawing Direction: Clockwise vs Counterclockwise</h3><p>By default, arcs are drawn <strong>clockwise</strong>. If you set the last parameter of <code>arc()</code> to <code>true</code>, the arc will draw in the <strong>counterclockwise</strong> direction.</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-js">ctx.arc(200, 100, 50, 0, Math.PI, true);  // Counterclockwise semicircle</code></pre>
@@ -930,11 +1114,13 @@ ctx.moveTo(50, 50);             // Start at top-left
 ctx.arcTo(150, 50, 150, 150, 40);  // Curve to lower-right
 ctx.lineTo(150, 150);
 ctx.stroke();</code></pre>
-</div><p>This draws a smooth corner between two straight lines with a circular arc in between.</p><div class="snippet-container" id="mpFwX">
- <div class="snippet-header" onclick="toggleSnippetAndRefresh('mpFwX','GKs8L')">
-  Click to Try it
- </div>
- <div class="snippet-body"><textarea id="GKs8L">&lt;!DOCTYPE html&gt;
+</div><p>This draws a smooth corner between two straight lines with a circular arc in between.</p><div class="snippet-container" id="jmXvG">
+ <div id="ZTUtC_Dialog" class="dialog-backdrop">
+  <div class="dialog">
+   <h2>Dialog 1</h2>
+   <div class="controls"><button onclick="renderIframe(this,'9rJLh_Textarea','ZTUtC_IFrame')">Run</button> <button onclick="closeAll()">Close</button>
+   </div>
+   <div class="dialog-content"><textarea id="9rJLh_Textarea" class="textarea_dialog" placeholder="Type HTML here...">&lt;!DOCTYPE html&gt;
 &lt;html lang="en"&gt;
 &lt;head&gt;
   &lt;meta charset="UTF-8"&gt;
@@ -956,16 +1142,67 @@ ctx.stroke();
 &lt;/script&gt;
 
 &lt;/body&gt;
-&lt;/html&gt;</textarea> <br> <button onclick="renderIframe(this,'GKs8L','WJciI')">Run</button>
-  <div id="WJciI_FloatingLog" class="floatingLog" aria-live="polite" role="alert"></div> <iframe id="WJciI" class="result_iframe" style="display: none;"></iframe>
+&lt;/html&gt;</textarea> <iframe id="ZTUtC_IFrame" class="iframe_dialog"></iframe>
+   </div>
+  </div>
+ </div>
+ <div class="snippet-header"><span onclick="toggleSnippetAndRefresh('jmXvG','9rJLh')">Click to Try it</span> <!-- <span onclick="openDialog('ZTUtC_Dialog')">Dialog</span> -->
+ </div>
+ <div class="snippet-body"><textarea id="9rJLh">&lt;!DOCTYPE html&gt;
+&lt;html lang="en"&gt;
+&lt;head&gt;
+  &lt;meta charset="UTF-8"&gt;
+
+&lt;/head&gt;
+&lt;body&gt;
+
+&lt;canvas id="myCanvas" width="400" height="200" style="border:1px solid #ccc;"&gt;&lt;/canvas&gt;
+
+&lt;script&gt;
+  const canvas = document.getElementById("myCanvas");
+  const ctx = canvas.getContext("2d");
+
+ctx.beginPath();
+ctx.moveTo(50, 50);             // Start at top-left
+ctx.arcTo(150, 50, 150, 150, 40);  // Curve to lower-right
+ctx.lineTo(150, 150);
+ctx.stroke();
+&lt;/script&gt;
+
+&lt;/body&gt;
+&lt;/html&gt;</textarea> <br> <button onclick="renderIframe(this,'9rJLh','ZTUtC')">Run</button>
+  <div id="ZTUtC_FloatingLog" class="floatingLog" aria-live="polite" role="alert"></div> <iframe id="ZTUtC" class="result_iframe" style="display: none;"></iframe>
   <script>
-  { let editor = CodeMirror.fromTextArea(document.getElementById("GKs8L"), {
-    mode: "htmlmixed",
-    lineNumbers:false,
-    tabSize: 2
-  });
-   codeMirrorMap.set("GKs8L", editor);}
-  </script>
+			{
+				let editor = CodeMirror.fromTextArea(document
+						.getElementById("9rJLh"), {
+					mode : "htmlmixed",
+					lineNumbers : false,
+					tabSize : 2
+				});
+				codeMirrorMap.set("9rJLh", editor);
+
+				let editor1 = CodeMirror.fromTextArea(document.getElementById("9rJLh_Textarea"), {
+					mode : "htmlmixed",
+					lineNumbers : false,
+					tabSize : 2
+				});
+				codeMirrorMap.set("9rJLh_Textarea", editor1);
+			}
+		    function openDialog(id) {
+		        closeAll();
+		        document.getElementById(id).style.display = 'flex';
+		        setTimeout(() => {
+		        	 codeMirrorMap.get("9rJLh_Textarea").refresh();
+		        }, 100); // 100ms 
+		      }
+
+		      function closeAll() {
+		        document.querySelectorAll('.dialog-backdrop').forEach(el => {
+		          el.style.display = 'none';
+		        });
+		      }			
+		</script>
  </div>
 </div><h3 id="practice-ideas-using-arcs-creatively">Practice Ideas: Using Arcs Creatively</h3><p>Now that you know how to draw arcs, here are a few fun and practical mini-projects to apply what you've learned.</p><h4 id="draw-a-clock-face">Draw a Clock Face</h4><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-js">ctx.beginPath();
@@ -983,11 +1220,13 @@ for (let i = 0; i &lt; 12; i++) {
   ctx.lineTo(x2, y2);
   ctx.stroke();
 }</code></pre>
-</div><div class="snippet-container" id="e3INS">
- <div class="snippet-header" onclick="toggleSnippetAndRefresh('e3INS','3D4h5')">
-  Click to Try it
- </div>
- <div class="snippet-body"><textarea id="3D4h5">&lt;!DOCTYPE html&gt;
+</div><div class="snippet-container" id="AdoNw">
+ <div id="cKHk8_Dialog" class="dialog-backdrop">
+  <div class="dialog">
+   <h2>Dialog 1</h2>
+   <div class="controls"><button onclick="renderIframe(this,'RK0nm_Textarea','cKHk8_IFrame')">Run</button> <button onclick="closeAll()">Close</button>
+   </div>
+   <div class="dialog-content"><textarea id="RK0nm_Textarea" class="textarea_dialog" placeholder="Type HTML here...">&lt;!DOCTYPE html&gt;
 &lt;html lang="en"&gt;
 &lt;head&gt;
   &lt;meta charset="UTF-8"&gt;
@@ -1019,16 +1258,77 @@ for (let i = 0; i &lt; 12; i++) {
 &lt;/script&gt;
 
 &lt;/body&gt;
-&lt;/html&gt;</textarea> <br> <button onclick="renderIframe(this,'3D4h5','L5nDS')">Run</button>
-  <div id="L5nDS_FloatingLog" class="floatingLog" aria-live="polite" role="alert"></div> <iframe id="L5nDS" class="result_iframe" style="display: none;"></iframe>
+&lt;/html&gt;</textarea> <iframe id="cKHk8_IFrame" class="iframe_dialog"></iframe>
+   </div>
+  </div>
+ </div>
+ <div class="snippet-header"><span onclick="toggleSnippetAndRefresh('AdoNw','RK0nm')">Click to Try it</span> <!-- <span onclick="openDialog('cKHk8_Dialog')">Dialog</span> -->
+ </div>
+ <div class="snippet-body"><textarea id="RK0nm">&lt;!DOCTYPE html&gt;
+&lt;html lang="en"&gt;
+&lt;head&gt;
+  &lt;meta charset="UTF-8"&gt;
+
+&lt;/head&gt;
+&lt;body&gt;
+
+&lt;canvas id="myCanvas" width="400" height="200" style="border:1px solid #ccc;"&gt;&lt;/canvas&gt;
+
+&lt;script&gt;
+  const canvas = document.getElementById("myCanvas");
+  const ctx = canvas.getContext("2d");
+ctx.beginPath();
+ctx.arc(200, 150, 100, 0, 2 * Math.PI); // Clock circle
+ctx.stroke();
+
+for (let i = 0; i &lt; 12; i++) {
+  const angle = (i * Math.PI) / 6;
+  const x1 = 200 + Math.cos(angle) * 90;
+  const y1 = 150 + Math.sin(angle) * 90;
+  const x2 = 200 + Math.cos(angle) * 100;
+  const y2 = 150 + Math.sin(angle) * 100;
+  ctx.beginPath();
+  ctx.moveTo(x1, y1);
+  ctx.lineTo(x2, y2);
+  ctx.stroke();
+}
+
+&lt;/script&gt;
+
+&lt;/body&gt;
+&lt;/html&gt;</textarea> <br> <button onclick="renderIframe(this,'RK0nm','cKHk8')">Run</button>
+  <div id="cKHk8_FloatingLog" class="floatingLog" aria-live="polite" role="alert"></div> <iframe id="cKHk8" class="result_iframe" style="display: none;"></iframe>
   <script>
-  { let editor = CodeMirror.fromTextArea(document.getElementById("3D4h5"), {
-    mode: "htmlmixed",
-    lineNumbers:false,
-    tabSize: 2
-  });
-   codeMirrorMap.set("3D4h5", editor);}
-  </script>
+			{
+				let editor = CodeMirror.fromTextArea(document
+						.getElementById("RK0nm"), {
+					mode : "htmlmixed",
+					lineNumbers : false,
+					tabSize : 2
+				});
+				codeMirrorMap.set("RK0nm", editor);
+
+				let editor1 = CodeMirror.fromTextArea(document.getElementById("RK0nm_Textarea"), {
+					mode : "htmlmixed",
+					lineNumbers : false,
+					tabSize : 2
+				});
+				codeMirrorMap.set("RK0nm_Textarea", editor1);
+			}
+		    function openDialog(id) {
+		        closeAll();
+		        document.getElementById(id).style.display = 'flex';
+		        setTimeout(() => {
+		        	 codeMirrorMap.get("RK0nm_Textarea").refresh();
+		        }, 100); // 100ms 
+		      }
+
+		      function closeAll() {
+		        document.querySelectorAll('.dialog-backdrop').forEach(el => {
+		          el.style.display = 'none';
+		        });
+		      }			
+		</script>
  </div>
 </div><h4 id="draw-a-smiley-face">Draw a Smiley Face</h4><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-js">// Face circle
@@ -1046,11 +1346,13 @@ ctx.fill();
 ctx.beginPath();
 ctx.arc(200, 150, 50, 0, Math.PI, false); // Bottom half
 ctx.stroke();</code></pre>
-</div><div class="snippet-container" id="ma1r9">
- <div class="snippet-header" onclick="toggleSnippetAndRefresh('ma1r9','zllE6')">
-  Click to Try it
- </div>
- <div class="snippet-body"><textarea id="zllE6">&lt;!DOCTYPE html&gt;
+</div><div class="snippet-container" id="N3VUX">
+ <div id="eA1B1_Dialog" class="dialog-backdrop">
+  <div class="dialog">
+   <h2>Dialog 1</h2>
+   <div class="controls"><button onclick="renderIframe(this,'Z7FMY_Textarea','eA1B1_IFrame')">Run</button> <button onclick="closeAll()">Close</button>
+   </div>
+   <div class="dialog-content"><textarea id="Z7FMY_Textarea" class="textarea_dialog" placeholder="Type HTML here...">&lt;!DOCTYPE html&gt;
 &lt;html lang="en"&gt;
 &lt;head&gt;
   &lt;meta charset="UTF-8"&gt;
@@ -1082,16 +1384,77 @@ ctx.stroke();
 &lt;/script&gt;
 
 &lt;/body&gt;
-&lt;/html&gt;</textarea> <br> <button onclick="renderIframe(this,'zllE6','SVvCK')">Run</button>
-  <div id="SVvCK_FloatingLog" class="floatingLog" aria-live="polite" role="alert"></div> <iframe id="SVvCK" class="result_iframe" style="display: none;"></iframe>
+&lt;/html&gt;</textarea> <iframe id="eA1B1_IFrame" class="iframe_dialog"></iframe>
+   </div>
+  </div>
+ </div>
+ <div class="snippet-header"><span onclick="toggleSnippetAndRefresh('N3VUX','Z7FMY')">Click to Try it</span> <!-- <span onclick="openDialog('eA1B1_Dialog')">Dialog</span> -->
+ </div>
+ <div class="snippet-body"><textarea id="Z7FMY">&lt;!DOCTYPE html&gt;
+&lt;html lang="en"&gt;
+&lt;head&gt;
+  &lt;meta charset="UTF-8"&gt;
+
+&lt;/head&gt;
+&lt;body&gt;
+
+&lt;canvas id="myCanvas" width="400" height="200" style="border:1px solid #ccc;"&gt;&lt;/canvas&gt;
+
+&lt;script&gt;
+  const canvas = document.getElementById("myCanvas");
+  const ctx = canvas.getContext("2d");
+// Face circle
+ctx.beginPath();
+ctx.arc(200, 150, 80, 0, 2 * Math.PI);
+ctx.stroke();
+
+// Eyes
+ctx.beginPath();
+ctx.arc(170, 130, 10, 0, 2 * Math.PI);
+ctx.arc(230, 130, 10, 0, 2 * Math.PI);
+ctx.fill();
+
+// Smile
+ctx.beginPath();
+ctx.arc(200, 150, 50, 0, Math.PI, false); // Bottom half
+ctx.stroke();
+
+&lt;/script&gt;
+
+&lt;/body&gt;
+&lt;/html&gt;</textarea> <br> <button onclick="renderIframe(this,'Z7FMY','eA1B1')">Run</button>
+  <div id="eA1B1_FloatingLog" class="floatingLog" aria-live="polite" role="alert"></div> <iframe id="eA1B1" class="result_iframe" style="display: none;"></iframe>
   <script>
-  { let editor = CodeMirror.fromTextArea(document.getElementById("zllE6"), {
-    mode: "htmlmixed",
-    lineNumbers:false,
-    tabSize: 2
-  });
-   codeMirrorMap.set("zllE6", editor);}
-  </script>
+			{
+				let editor = CodeMirror.fromTextArea(document
+						.getElementById("Z7FMY"), {
+					mode : "htmlmixed",
+					lineNumbers : false,
+					tabSize : 2
+				});
+				codeMirrorMap.set("Z7FMY", editor);
+
+				let editor1 = CodeMirror.fromTextArea(document.getElementById("Z7FMY_Textarea"), {
+					mode : "htmlmixed",
+					lineNumbers : false,
+					tabSize : 2
+				});
+				codeMirrorMap.set("Z7FMY_Textarea", editor1);
+			}
+		    function openDialog(id) {
+		        closeAll();
+		        document.getElementById(id).style.display = 'flex';
+		        setTimeout(() => {
+		        	 codeMirrorMap.get("Z7FMY_Textarea").refresh();
+		        }, 100); // 100ms 
+		      }
+
+		      function closeAll() {
+		        document.querySelectorAll('.dialog-backdrop').forEach(el => {
+		          el.style.display = 'none';
+		        });
+		      }			
+		</script>
  </div>
 </div><h4 id="draw-a-radial-gauge">Draw a Radial Gauge</h4><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-js">function drawGauge(value) {
@@ -1114,11 +1477,13 @@ ctx.stroke();
 }
 
 drawGauge(0.7); // 70%</code></pre>
-</div><div class="snippet-container" id="wpdzD">
- <div class="snippet-header" onclick="toggleSnippetAndRefresh('wpdzD','KpLq7')">
-  Click to Try it
- </div>
- <div class="snippet-body"><textarea id="KpLq7">&lt;!DOCTYPE html&gt;
+</div><div class="snippet-container" id="WXtDN">
+ <div id="wZCQy_Dialog" class="dialog-backdrop">
+  <div class="dialog">
+   <h2>Dialog 1</h2>
+   <div class="controls"><button onclick="renderIframe(this,'Oh0Lc_Textarea','wZCQy_IFrame')">Run</button> <button onclick="closeAll()">Close</button>
+   </div>
+   <div class="dialog-content"><textarea id="Oh0Lc_Textarea" class="textarea_dialog" placeholder="Type HTML here...">&lt;!DOCTYPE html&gt;
 &lt;html lang="en"&gt;
 &lt;head&gt;
   &lt;meta charset="UTF-8"&gt;
@@ -1156,16 +1521,83 @@ drawGauge(0.7); // 70%
 &lt;/script&gt;
 
 &lt;/body&gt;
-&lt;/html&gt;</textarea> <br> <button onclick="renderIframe(this,'KpLq7','lCfkM')">Run</button>
-  <div id="lCfkM_FloatingLog" class="floatingLog" aria-live="polite" role="alert"></div> <iframe id="lCfkM" class="result_iframe" style="display: none;"></iframe>
+&lt;/html&gt;</textarea> <iframe id="wZCQy_IFrame" class="iframe_dialog"></iframe>
+   </div>
+  </div>
+ </div>
+ <div class="snippet-header"><span onclick="toggleSnippetAndRefresh('WXtDN','Oh0Lc')">Click to Try it</span> <!-- <span onclick="openDialog('wZCQy_Dialog')">Dialog</span> -->
+ </div>
+ <div class="snippet-body"><textarea id="Oh0Lc">&lt;!DOCTYPE html&gt;
+&lt;html lang="en"&gt;
+&lt;head&gt;
+  &lt;meta charset="UTF-8"&gt;
+
+&lt;/head&gt;
+&lt;body&gt;
+
+&lt;canvas id="myCanvas" width="400" height="200" style="border:1px solid #ccc;"&gt;&lt;/canvas&gt;
+
+&lt;script&gt;
+function drawGauge(value) {
+  const canvas = document.getElementById("myCanvas");
+  const ctx = canvas.getContext("2d");
+
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  ctx.beginPath();
+  ctx.arc(200, 150, 100, Math.PI, 0, false); // Half-circle gauge
+  ctx.stroke();
+
+  // Pointer line
+  const angle = Math.PI * (1 - value); // value between 0 and 1
+  const x = 200 + Math.cos(angle) * 80;
+  const y = 150 - Math.sin(angle) * 80;
+  ctx.beginPath();
+  ctx.moveTo(200, 150);
+  ctx.lineTo(x, y);
+  ctx.strokeStyle = "red";
+  ctx.lineWidth = 3;
+  ctx.stroke();
+}
+
+drawGauge(0.7); // 70%
+
+&lt;/script&gt;
+
+&lt;/body&gt;
+&lt;/html&gt;</textarea> <br> <button onclick="renderIframe(this,'Oh0Lc','wZCQy')">Run</button>
+  <div id="wZCQy_FloatingLog" class="floatingLog" aria-live="polite" role="alert"></div> <iframe id="wZCQy" class="result_iframe" style="display: none;"></iframe>
   <script>
-  { let editor = CodeMirror.fromTextArea(document.getElementById("KpLq7"), {
-    mode: "htmlmixed",
-    lineNumbers:false,
-    tabSize: 2
-  });
-   codeMirrorMap.set("KpLq7", editor);}
-  </script>
+			{
+				let editor = CodeMirror.fromTextArea(document
+						.getElementById("Oh0Lc"), {
+					mode : "htmlmixed",
+					lineNumbers : false,
+					tabSize : 2
+				});
+				codeMirrorMap.set("Oh0Lc", editor);
+
+				let editor1 = CodeMirror.fromTextArea(document.getElementById("Oh0Lc_Textarea"), {
+					mode : "htmlmixed",
+					lineNumbers : false,
+					tabSize : 2
+				});
+				codeMirrorMap.set("Oh0Lc_Textarea", editor1);
+			}
+		    function openDialog(id) {
+		        closeAll();
+		        document.getElementById(id).style.display = 'flex';
+		        setTimeout(() => {
+		        	 codeMirrorMap.get("Oh0Lc_Textarea").refresh();
+		        }, 100); // 100ms 
+		      }
+
+		      function closeAll() {
+		        document.querySelectorAll('.dialog-backdrop').forEach(el => {
+		          el.style.display = 'none';
+		        });
+		      }			
+		</script>
  </div>
 </div><h3 id="summary">Summary</h3><p>With <code>arc()</code> and <code>arcTo()</code>, you now have the tools to draw circles, semicircles, curves, and rounded corners. These methods allow you to create everything from simple decorative elements to dynamic data visualizations. You’ve also learned the importance of understanding radians and controlling drawing direction—core skills for advanced canvas work.</p><p>In the next section, we’ll bring your shapes to life with <strong>colors, gradients, and patterns</strong> to give your graphics style and depth.</p><div class = "chapter-navi-section">
 <a href="#top" class="nav-button prev">↑</a>
@@ -1184,11 +1616,13 @@ ctx.strokeRect(50, 50, 100, 100);  // Outline the square</code></pre>
  <li>Hex codes (<code>"#FF5733"</code>)</li>
  <li>RGB or RGBA (<code>"rgb(255, 0, 0)"</code>, <code>"rgba(0, 0, 255, 0.5)"</code>)</li>
  <li>HSL (<code>"hsl(200, 50%, 50%)"</code>)</li>
-</ul><div class="snippet-container" id="rX2oT">
- <div class="snippet-header" onclick="toggleSnippetAndRefresh('rX2oT','7h9AR')">
-  Click to Try it
- </div>
- <div class="snippet-body"><textarea id="7h9AR">&lt;!DOCTYPE html&gt;
+</ul><div class="snippet-container" id="Jr9AQ">
+ <div id="ULaV3_Dialog" class="dialog-backdrop">
+  <div class="dialog">
+   <h2>Dialog 1</h2>
+   <div class="controls"><button onclick="renderIframe(this,'Cj15r_Textarea','ULaV3_IFrame')">Run</button> <button onclick="closeAll()">Close</button>
+   </div>
+   <div class="dialog-content"><textarea id="Cj15r_Textarea" class="textarea_dialog" placeholder="Type HTML here...">&lt;!DOCTYPE html&gt;
 &lt;html lang="en"&gt;
 &lt;head&gt;
   &lt;meta charset="UTF-8"&gt;
@@ -1211,16 +1645,68 @@ ctx.strokeRect(50, 50, 100, 100);  // Outline the square
 &lt;/script&gt;
 
 &lt;/body&gt;
-&lt;/html&gt;</textarea> <br> <button onclick="renderIframe(this,'7h9AR','LovuM')">Run</button>
-  <div id="LovuM_FloatingLog" class="floatingLog" aria-live="polite" role="alert"></div> <iframe id="LovuM" class="result_iframe" style="display: none;"></iframe>
+&lt;/html&gt;</textarea> <iframe id="ULaV3_IFrame" class="iframe_dialog"></iframe>
+   </div>
+  </div>
+ </div>
+ <div class="snippet-header"><span onclick="toggleSnippetAndRefresh('Jr9AQ','Cj15r')">Click to Try it</span> <!-- <span onclick="openDialog('ULaV3_Dialog')">Dialog</span> -->
+ </div>
+ <div class="snippet-body"><textarea id="Cj15r">&lt;!DOCTYPE html&gt;
+&lt;html lang="en"&gt;
+&lt;head&gt;
+  &lt;meta charset="UTF-8"&gt;
+
+&lt;/head&gt;
+&lt;body&gt;
+
+&lt;canvas id="myCanvas" width="400" height="200" style="border:1px solid #ccc;"&gt;&lt;/canvas&gt;
+
+&lt;script&gt;
+  const canvas = document.getElementById("myCanvas");
+  const ctx = canvas.getContext("2d");
+ctx.fillStyle = "blue";      // Fill color
+ctx.strokeStyle = "black";   // Border color
+ctx.lineWidth = 3;
+
+ctx.fillRect(50, 50, 100, 100);    // Draw filled square
+ctx.strokeRect(50, 50, 100, 100);  // Outline the square
+
+&lt;/script&gt;
+
+&lt;/body&gt;
+&lt;/html&gt;</textarea> <br> <button onclick="renderIframe(this,'Cj15r','ULaV3')">Run</button>
+  <div id="ULaV3_FloatingLog" class="floatingLog" aria-live="polite" role="alert"></div> <iframe id="ULaV3" class="result_iframe" style="display: none;"></iframe>
   <script>
-  { let editor = CodeMirror.fromTextArea(document.getElementById("7h9AR"), {
-    mode: "htmlmixed",
-    lineNumbers:false,
-    tabSize: 2
-  });
-   codeMirrorMap.set("7h9AR", editor);}
-  </script>
+			{
+				let editor = CodeMirror.fromTextArea(document
+						.getElementById("Cj15r"), {
+					mode : "htmlmixed",
+					lineNumbers : false,
+					tabSize : 2
+				});
+				codeMirrorMap.set("Cj15r", editor);
+
+				let editor1 = CodeMirror.fromTextArea(document.getElementById("Cj15r_Textarea"), {
+					mode : "htmlmixed",
+					lineNumbers : false,
+					tabSize : 2
+				});
+				codeMirrorMap.set("Cj15r_Textarea", editor1);
+			}
+		    function openDialog(id) {
+		        closeAll();
+		        document.getElementById(id).style.display = 'flex';
+		        setTimeout(() => {
+		        	 codeMirrorMap.get("Cj15r_Textarea").refresh();
+		        }, 100); // 100ms 
+		      }
+
+		      function closeAll() {
+		        document.querySelectorAll('.dialog-backdrop').forEach(el => {
+		          el.style.display = 'none';
+		        });
+		      }			
+		</script>
  </div>
 </div><h3 id="creating-gradients">Creating Gradients</h3><p>Gradients let you blend multiple colors together smoothly. Canvas supports two types:</p><h4 id="linear-gradients">Linear Gradients</h4><p>Use <code>ctx.createLinearGradient(x0, y0, x1, y1)</code> to create a gradient from point A <code>(x0, y0)</code> to point B <code>(x1, y1)</code>.</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-js">const gradient = ctx.createLinearGradient(0, 0, 200, 0);
@@ -1229,11 +1715,13 @@ gradient.addColorStop(1, "white");
 
 ctx.fillStyle = gradient;
 ctx.fillRect(50, 50, 200, 100);</code></pre>
-</div><div class="snippet-container" id="p0rns">
- <div class="snippet-header" onclick="toggleSnippetAndRefresh('p0rns','kqWqs')">
-  Click to Try it
- </div>
- <div class="snippet-body"><textarea id="kqWqs">&lt;!DOCTYPE html&gt;
+</div><div class="snippet-container" id="7oaxo">
+ <div id="AGAE5_Dialog" class="dialog-backdrop">
+  <div class="dialog">
+   <h2>Dialog 1</h2>
+   <div class="controls"><button onclick="renderIframe(this,'21q8Y_Textarea','AGAE5_IFrame')">Run</button> <button onclick="closeAll()">Close</button>
+   </div>
+   <div class="dialog-content"><textarea id="21q8Y_Textarea" class="textarea_dialog" placeholder="Type HTML here...">&lt;!DOCTYPE html&gt;
 &lt;html lang="en"&gt;
 &lt;head&gt;
   &lt;meta charset="UTF-8"&gt;
@@ -1256,16 +1744,68 @@ ctx.fillRect(50, 50, 200, 100);
 &lt;/script&gt;
 
 &lt;/body&gt;
-&lt;/html&gt;</textarea> <br> <button onclick="renderIframe(this,'kqWqs','vV6VR')">Run</button>
-  <div id="vV6VR_FloatingLog" class="floatingLog" aria-live="polite" role="alert"></div> <iframe id="vV6VR" class="result_iframe" style="display: none;"></iframe>
+&lt;/html&gt;</textarea> <iframe id="AGAE5_IFrame" class="iframe_dialog"></iframe>
+   </div>
+  </div>
+ </div>
+ <div class="snippet-header"><span onclick="toggleSnippetAndRefresh('7oaxo','21q8Y')">Click to Try it</span> <!-- <span onclick="openDialog('AGAE5_Dialog')">Dialog</span> -->
+ </div>
+ <div class="snippet-body"><textarea id="21q8Y">&lt;!DOCTYPE html&gt;
+&lt;html lang="en"&gt;
+&lt;head&gt;
+  &lt;meta charset="UTF-8"&gt;
+
+&lt;/head&gt;
+&lt;body&gt;
+
+&lt;canvas id="myCanvas" width="400" height="200" style="border:1px solid #ccc;"&gt;&lt;/canvas&gt;
+
+&lt;script&gt;
+  const canvas = document.getElementById("myCanvas");
+  const ctx = canvas.getContext("2d");
+const gradient = ctx.createLinearGradient(0, 0, 200, 0);
+gradient.addColorStop(0, "blue");
+gradient.addColorStop(1, "white");
+
+ctx.fillStyle = gradient;
+ctx.fillRect(50, 50, 200, 100);
+
+&lt;/script&gt;
+
+&lt;/body&gt;
+&lt;/html&gt;</textarea> <br> <button onclick="renderIframe(this,'21q8Y','AGAE5')">Run</button>
+  <div id="AGAE5_FloatingLog" class="floatingLog" aria-live="polite" role="alert"></div> <iframe id="AGAE5" class="result_iframe" style="display: none;"></iframe>
   <script>
-  { let editor = CodeMirror.fromTextArea(document.getElementById("kqWqs"), {
-    mode: "htmlmixed",
-    lineNumbers:false,
-    tabSize: 2
-  });
-   codeMirrorMap.set("kqWqs", editor);}
-  </script>
+			{
+				let editor = CodeMirror.fromTextArea(document
+						.getElementById("21q8Y"), {
+					mode : "htmlmixed",
+					lineNumbers : false,
+					tabSize : 2
+				});
+				codeMirrorMap.set("21q8Y", editor);
+
+				let editor1 = CodeMirror.fromTextArea(document.getElementById("21q8Y_Textarea"), {
+					mode : "htmlmixed",
+					lineNumbers : false,
+					tabSize : 2
+				});
+				codeMirrorMap.set("21q8Y_Textarea", editor1);
+			}
+		    function openDialog(id) {
+		        closeAll();
+		        document.getElementById(id).style.display = 'flex';
+		        setTimeout(() => {
+		        	 codeMirrorMap.get("21q8Y_Textarea").refresh();
+		        }, 100); // 100ms 
+		      }
+
+		      function closeAll() {
+		        document.querySelectorAll('.dialog-backdrop').forEach(el => {
+		          el.style.display = 'none';
+		        });
+		      }			
+		</script>
  </div>
 </div><p>This creates a horizontal gradient from blue to white.</p><h4 id="radial-gradients">Radial Gradients</h4><p>Use <code>ctx.createRadialGradient(x0, y0, r0, x1, y1, r1)</code> to create a circular gradient.</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-js">const radial = ctx.createRadialGradient(150, 100, 20, 150, 100, 80);
@@ -1274,11 +1814,13 @@ radial.addColorStop(1, "orange");
 
 ctx.fillStyle = radial;
 ctx.fillRect(50, 50, 200, 100);</code></pre>
-</div><p>This produces a glow effect that radiates outward.</p><div class="snippet-container" id="7KxYe">
- <div class="snippet-header" onclick="toggleSnippetAndRefresh('7KxYe','Qm3X2')">
-  Click to Try it
- </div>
- <div class="snippet-body"><textarea id="Qm3X2">&lt;!DOCTYPE html&gt;
+</div><p>This produces a glow effect that radiates outward.</p><div class="snippet-container" id="0bSTP">
+ <div id="YxVt3_Dialog" class="dialog-backdrop">
+  <div class="dialog">
+   <h2>Dialog 1</h2>
+   <div class="controls"><button onclick="renderIframe(this,'6i7af_Textarea','YxVt3_IFrame')">Run</button> <button onclick="closeAll()">Close</button>
+   </div>
+   <div class="dialog-content"><textarea id="6i7af_Textarea" class="textarea_dialog" placeholder="Type HTML here...">&lt;!DOCTYPE html&gt;
 &lt;html lang="en"&gt;
 &lt;head&gt;
   &lt;meta charset="UTF-8"&gt;
@@ -1301,16 +1843,68 @@ ctx.fillRect(50, 50, 200, 100);
 &lt;/script&gt;
 
 &lt;/body&gt;
-&lt;/html&gt;</textarea> <br> <button onclick="renderIframe(this,'Qm3X2','UO5xT')">Run</button>
-  <div id="UO5xT_FloatingLog" class="floatingLog" aria-live="polite" role="alert"></div> <iframe id="UO5xT" class="result_iframe" style="display: none;"></iframe>
+&lt;/html&gt;</textarea> <iframe id="YxVt3_IFrame" class="iframe_dialog"></iframe>
+   </div>
+  </div>
+ </div>
+ <div class="snippet-header"><span onclick="toggleSnippetAndRefresh('0bSTP','6i7af')">Click to Try it</span> <!-- <span onclick="openDialog('YxVt3_Dialog')">Dialog</span> -->
+ </div>
+ <div class="snippet-body"><textarea id="6i7af">&lt;!DOCTYPE html&gt;
+&lt;html lang="en"&gt;
+&lt;head&gt;
+  &lt;meta charset="UTF-8"&gt;
+
+&lt;/head&gt;
+&lt;body&gt;
+
+&lt;canvas id="myCanvas" width="400" height="200" style="border:1px solid #ccc;"&gt;&lt;/canvas&gt;
+
+&lt;script&gt;
+  const canvas = document.getElementById("myCanvas");
+  const ctx = canvas.getContext("2d");
+const radial = ctx.createRadialGradient(150, 100, 20, 150, 100, 80);
+radial.addColorStop(0, "yellow");
+radial.addColorStop(1, "orange");
+
+ctx.fillStyle = radial;
+ctx.fillRect(50, 50, 200, 100);
+
+&lt;/script&gt;
+
+&lt;/body&gt;
+&lt;/html&gt;</textarea> <br> <button onclick="renderIframe(this,'6i7af','YxVt3')">Run</button>
+  <div id="YxVt3_FloatingLog" class="floatingLog" aria-live="polite" role="alert"></div> <iframe id="YxVt3" class="result_iframe" style="display: none;"></iframe>
   <script>
-  { let editor = CodeMirror.fromTextArea(document.getElementById("Qm3X2"), {
-    mode: "htmlmixed",
-    lineNumbers:false,
-    tabSize: 2
-  });
-   codeMirrorMap.set("Qm3X2", editor);}
-  </script>
+			{
+				let editor = CodeMirror.fromTextArea(document
+						.getElementById("6i7af"), {
+					mode : "htmlmixed",
+					lineNumbers : false,
+					tabSize : 2
+				});
+				codeMirrorMap.set("6i7af", editor);
+
+				let editor1 = CodeMirror.fromTextArea(document.getElementById("6i7af_Textarea"), {
+					mode : "htmlmixed",
+					lineNumbers : false,
+					tabSize : 2
+				});
+				codeMirrorMap.set("6i7af_Textarea", editor1);
+			}
+		    function openDialog(id) {
+		        closeAll();
+		        document.getElementById(id).style.display = 'flex';
+		        setTimeout(() => {
+		        	 codeMirrorMap.get("6i7af_Textarea").refresh();
+		        }, 100); // 100ms 
+		      }
+
+		      function closeAll() {
+		        document.querySelectorAll('.dialog-backdrop').forEach(el => {
+		          el.style.display = 'none';
+		        });
+		      }			
+		</script>
  </div>
 </div><h3 id="using-image-based-patterns">Using Image-Based Patterns</h3><p>Canvas can fill shapes with repeated images using <code>createPattern(image, repetition)</code>.</p><h4 id="steps">Steps:</h4><ol>
  <li>Create an <code>Image</code> object.</li>
@@ -1327,11 +1921,13 @@ img.onload = () =&gt; {
 };</code></pre>
 </div><blockquote>
  <p>ℹ️ Tip: Use small, tileable images (like textures or icons) for seamless backgrounds.</p>
-</blockquote><div class="snippet-container" id="JJY19">
- <div class="snippet-header" onclick="toggleSnippetAndRefresh('JJY19','WKce5')">
-  Click to Try it
- </div>
- <div class="snippet-body"><textarea id="WKce5">&lt;!DOCTYPE html&gt;
+</blockquote><div class="snippet-container" id="ueywl">
+ <div id="BWQSL_Dialog" class="dialog-backdrop">
+  <div class="dialog">
+   <h2>Dialog 1</h2>
+   <div class="controls"><button onclick="renderIframe(this,'1O0JY_Textarea','BWQSL_IFrame')">Run</button> <button onclick="closeAll()">Close</button>
+   </div>
+   <div class="dialog-content"><textarea id="1O0JY_Textarea" class="textarea_dialog" placeholder="Type HTML here...">&lt;!DOCTYPE html&gt;
 &lt;html lang="en"&gt;
 &lt;head&gt;
   &lt;meta charset="UTF-8"&gt;
@@ -1356,16 +1952,70 @@ img.onload = () =&gt; {
 &lt;/script&gt;
 
 &lt;/body&gt;
-&lt;/html&gt;</textarea> <br> <button onclick="renderIframe(this,'WKce5','7GOlv')">Run</button>
-  <div id="7GOlv_FloatingLog" class="floatingLog" aria-live="polite" role="alert"></div> <iframe id="7GOlv" class="result_iframe" style="display: none;"></iframe>
+&lt;/html&gt;</textarea> <iframe id="BWQSL_IFrame" class="iframe_dialog"></iframe>
+   </div>
+  </div>
+ </div>
+ <div class="snippet-header"><span onclick="toggleSnippetAndRefresh('ueywl','1O0JY')">Click to Try it</span> <!-- <span onclick="openDialog('BWQSL_Dialog')">Dialog</span> -->
+ </div>
+ <div class="snippet-body"><textarea id="1O0JY">&lt;!DOCTYPE html&gt;
+&lt;html lang="en"&gt;
+&lt;head&gt;
+  &lt;meta charset="UTF-8"&gt;
+
+&lt;/head&gt;
+&lt;body&gt;
+
+&lt;canvas id="myCanvas" width="400" height="200" style="border:1px solid #ccc;"&gt;&lt;/canvas&gt;
+
+&lt;script&gt;
+  const canvas = document.getElementById("myCanvas");
+  const ctx = canvas.getContext("2d");
+const img = new Image();
+img.src = "https://via.placeholder.com/40"; // Example tile
+
+img.onload = () =&gt; {
+  const pattern = ctx.createPattern(img, "repeat"); // repeat-x, repeat-y, no-repeat
+  ctx.fillStyle = pattern;
+  ctx.fillRect(0, 0, 300, 150);
+};
+
+&lt;/script&gt;
+
+&lt;/body&gt;
+&lt;/html&gt;</textarea> <br> <button onclick="renderIframe(this,'1O0JY','BWQSL')">Run</button>
+  <div id="BWQSL_FloatingLog" class="floatingLog" aria-live="polite" role="alert"></div> <iframe id="BWQSL" class="result_iframe" style="display: none;"></iframe>
   <script>
-  { let editor = CodeMirror.fromTextArea(document.getElementById("WKce5"), {
-    mode: "htmlmixed",
-    lineNumbers:false,
-    tabSize: 2
-  });
-   codeMirrorMap.set("WKce5", editor);}
-  </script>
+			{
+				let editor = CodeMirror.fromTextArea(document
+						.getElementById("1O0JY"), {
+					mode : "htmlmixed",
+					lineNumbers : false,
+					tabSize : 2
+				});
+				codeMirrorMap.set("1O0JY", editor);
+
+				let editor1 = CodeMirror.fromTextArea(document.getElementById("1O0JY_Textarea"), {
+					mode : "htmlmixed",
+					lineNumbers : false,
+					tabSize : 2
+				});
+				codeMirrorMap.set("1O0JY_Textarea", editor1);
+			}
+		    function openDialog(id) {
+		        closeAll();
+		        document.getElementById(id).style.display = 'flex';
+		        setTimeout(() => {
+		        	 codeMirrorMap.get("1O0JY_Textarea").refresh();
+		        }, 100); // 100ms 
+		      }
+
+		      function closeAll() {
+		        document.querySelectorAll('.dialog-backdrop').forEach(el => {
+		          el.style.display = 'none';
+		        });
+		      }			
+		</script>
  </div>
 </div><h3 id="interactive-example-switching-fill-styles">Interactive Example: Switching Fill Styles</h3><p>Let’s combine what we’ve learned into an interactive demo using <code>&lt;select&gt;</code> and JavaScript to change the canvas fill style.</p><h4 id="html">HTML:</h4><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-html">&lt;label&gt;Fill Style:
@@ -1419,11 +2069,13 @@ selector.addEventListener("change", (e) =&gt; draw(e.target.value));
 img.onload = () =&gt; draw("color"); // Draw default</code></pre>
 </div><blockquote>
  <p>✅ Try switching between fill styles to see the effect in real time.</p>
-</blockquote><div class="snippet-container" id="KDC3N">
- <div class="snippet-header" onclick="toggleSnippetAndRefresh('KDC3N','Dau4E')">
-  Click to Try it
- </div>
- <div class="snippet-body"><textarea id="Dau4E">&lt;!DOCTYPE html&gt;
+</blockquote><div class="snippet-container" id="pqDrZ">
+ <div id="zsk32_Dialog" class="dialog-backdrop">
+  <div class="dialog">
+   <h2>Dialog 1</h2>
+   <div class="controls"><button onclick="renderIframe(this,'I9ClT_Textarea','zsk32_IFrame')">Run</button> <button onclick="closeAll()">Close</button>
+   </div>
+   <div class="dialog-content"><textarea id="I9ClT_Textarea" class="textarea_dialog" placeholder="Type HTML here...">&lt;!DOCTYPE html&gt;
 &lt;html lang="en"&gt;
 &lt;head&gt;
   &lt;meta charset="UTF-8"&gt;
@@ -1499,16 +2151,121 @@ img.onload = () =&gt; draw("color"); // Draw default</code></pre>
 &lt;/script&gt;
 
 &lt;/body&gt;
-&lt;/html&gt;</textarea> <br> <button onclick="renderIframe(this,'Dau4E','t9VKu')">Run</button>
-  <div id="t9VKu_FloatingLog" class="floatingLog" aria-live="polite" role="alert"></div> <iframe id="t9VKu" class="result_iframe" style="display: none;"></iframe>
+&lt;/html&gt;</textarea> <iframe id="zsk32_IFrame" class="iframe_dialog"></iframe>
+   </div>
+  </div>
+ </div>
+ <div class="snippet-header"><span onclick="toggleSnippetAndRefresh('pqDrZ','I9ClT')">Click to Try it</span> <!-- <span onclick="openDialog('zsk32_Dialog')">Dialog</span> -->
+ </div>
+ <div class="snippet-body"><textarea id="I9ClT">&lt;!DOCTYPE html&gt;
+&lt;html lang="en"&gt;
+&lt;head&gt;
+  &lt;meta charset="UTF-8"&gt;
+  &lt;title&gt;Canvas Fill Style Switcher&lt;/title&gt;
+  &lt;style&gt;
+    body {
+      font-family: sans-serif;
+      padding: 1rem;
+    }
+    label {
+      display: block;
+      margin-bottom: 0.5rem;
+    }
+  &lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+
+&lt;label&gt;Fill Style:
+  &lt;select id="styleSelector"&gt;
+    &lt;option value="color"&gt;Solid Color&lt;/option&gt;
+    &lt;option value="linear"&gt;Linear Gradient&lt;/option&gt;
+    &lt;option value="radial"&gt;Radial Gradient&lt;/option&gt;
+    &lt;option value="pattern"&gt;Pattern&lt;/option&gt;
+  &lt;/select&gt;
+&lt;/label&gt;
+
+&lt;canvas id="myCanvas" width="400" height="200" style="border:1px solid #ccc;"&gt;&lt;/canvas&gt;
+
+&lt;script&gt;
+  const canvas = document.getElementById("myCanvas");
+  const ctx = canvas.getContext("2d");
+  const selector = document.getElementById("styleSelector");
+
+  const img = new Image();
+  img.src = "https://via.placeholder.com/40"; // Pattern tile
+
+  function draw(styleType) {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    switch (styleType) {
+      case "color":
+        ctx.fillStyle = "teal";
+        break;
+      case "linear":
+        const linear = ctx.createLinearGradient(0, 0, canvas.width, 0);
+        linear.addColorStop(0, "red");
+        linear.addColorStop(1, "yellow");
+        ctx.fillStyle = linear;
+        break;
+      case "radial":
+        const radial = ctx.createRadialGradient(200, 100, 20, 200, 100, 100);
+        radial.addColorStop(0, "lightblue");
+        radial.addColorStop(1, "navy");
+        ctx.fillStyle = radial;
+        break;
+      case "pattern":
+        if (img.complete) {
+          const pattern = ctx.createPattern(img, "repeat");
+          ctx.fillStyle = pattern;
+        } else {
+          // wait for image to load
+          img.onload = () =&gt; draw("pattern");
+          return;
+        }
+        break;
+    }
+
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+  }
+
+  selector.addEventListener("change", (e) =&gt; draw(e.target.value));
+  img.onload = () =&gt; draw("color"); // Initial draw
+&lt;/script&gt;
+
+&lt;/body&gt;
+&lt;/html&gt;</textarea> <br> <button onclick="renderIframe(this,'I9ClT','zsk32')">Run</button>
+  <div id="zsk32_FloatingLog" class="floatingLog" aria-live="polite" role="alert"></div> <iframe id="zsk32" class="result_iframe" style="display: none;"></iframe>
   <script>
-  { let editor = CodeMirror.fromTextArea(document.getElementById("Dau4E"), {
-    mode: "htmlmixed",
-    lineNumbers:false,
-    tabSize: 2
-  });
-   codeMirrorMap.set("Dau4E", editor);}
-  </script>
+			{
+				let editor = CodeMirror.fromTextArea(document
+						.getElementById("I9ClT"), {
+					mode : "htmlmixed",
+					lineNumbers : false,
+					tabSize : 2
+				});
+				codeMirrorMap.set("I9ClT", editor);
+
+				let editor1 = CodeMirror.fromTextArea(document.getElementById("I9ClT_Textarea"), {
+					mode : "htmlmixed",
+					lineNumbers : false,
+					tabSize : 2
+				});
+				codeMirrorMap.set("I9ClT_Textarea", editor1);
+			}
+		    function openDialog(id) {
+		        closeAll();
+		        document.getElementById(id).style.display = 'flex';
+		        setTimeout(() => {
+		        	 codeMirrorMap.get("I9ClT_Textarea").refresh();
+		        }, 100); // 100ms 
+		      }
+
+		      function closeAll() {
+		        document.querySelectorAll('.dialog-backdrop').forEach(el => {
+		          el.style.display = 'none';
+		        });
+		      }			
+		</script>
  </div>
 </div><h3 id="summary">Summary</h3><p>You’ve now mastered the three primary ways to add visual flair to your canvas drawings:</p><ul>
  <li><strong>Solid Colors</strong> using <code>fillStyle</code> and <code>strokeStyle</code></li>
@@ -1536,11 +2293,13 @@ ctx.lineWidth = 5;
 ctx.stroke();  // Outline the circle</code></pre>
 </div><blockquote>
  <p>✅ This will draw a sky-blue filled circle with a navy border.</p>
-</blockquote><div class="snippet-container" id="1mZAj">
- <div class="snippet-header" onclick="toggleSnippetAndRefresh('1mZAj','NggYM')">
-  Click to Try it
- </div>
- <div class="snippet-body"><textarea id="NggYM">&lt;!DOCTYPE html&gt;
+</blockquote><div class="snippet-container" id="1RRqt">
+ <div id="az43V_Dialog" class="dialog-backdrop">
+  <div class="dialog">
+   <h2>Dialog 1</h2>
+   <div class="controls"><button onclick="renderIframe(this,'vzEXW_Textarea','az43V_IFrame')">Run</button> <button onclick="closeAll()">Close</button>
+   </div>
+   <div class="dialog-content"><textarea id="vzEXW_Textarea" class="textarea_dialog" placeholder="Type HTML here...">&lt;!DOCTYPE html&gt;
 &lt;html lang="en"&gt;
 &lt;head&gt;
   &lt;meta charset="UTF-8"&gt;
@@ -1564,16 +2323,69 @@ ctx.stroke();  // Outline the circle
 &lt;/script&gt;
 
 &lt;/body&gt;
-&lt;/html&gt;</textarea> <br> <button onclick="renderIframe(this,'NggYM','m8rC9')">Run</button>
-  <div id="m8rC9_FloatingLog" class="floatingLog" aria-live="polite" role="alert"></div> <iframe id="m8rC9" class="result_iframe" style="display: none;"></iframe>
+&lt;/html&gt;</textarea> <iframe id="az43V_IFrame" class="iframe_dialog"></iframe>
+   </div>
+  </div>
+ </div>
+ <div class="snippet-header"><span onclick="toggleSnippetAndRefresh('1RRqt','vzEXW')">Click to Try it</span> <!-- <span onclick="openDialog('az43V_Dialog')">Dialog</span> -->
+ </div>
+ <div class="snippet-body"><textarea id="vzEXW">&lt;!DOCTYPE html&gt;
+&lt;html lang="en"&gt;
+&lt;head&gt;
+  &lt;meta charset="UTF-8"&gt;
+
+&lt;/head&gt;
+&lt;body&gt;
+
+&lt;canvas id="myCanvas" width="400" height="200" style="border:1px solid #ccc;"&gt;&lt;/canvas&gt;
+
+&lt;script&gt;
+  const canvas = document.getElementById("myCanvas");
+  const ctx = canvas.getContext("2d");
+
+ctx.beginPath();
+ctx.arc(100, 100, 50, 0, Math.PI * 2); // Circle
+ctx.fillStyle = "skyblue";
+ctx.fill();    // Fill the circle
+ctx.strokeStyle = "navy";
+ctx.lineWidth = 5;
+ctx.stroke();  // Outline the circle
+&lt;/script&gt;
+
+&lt;/body&gt;
+&lt;/html&gt;</textarea> <br> <button onclick="renderIframe(this,'vzEXW','az43V')">Run</button>
+  <div id="az43V_FloatingLog" class="floatingLog" aria-live="polite" role="alert"></div> <iframe id="az43V" class="result_iframe" style="display: none;"></iframe>
   <script>
-  { let editor = CodeMirror.fromTextArea(document.getElementById("NggYM"), {
-    mode: "htmlmixed",
-    lineNumbers:false,
-    tabSize: 2
-  });
-   codeMirrorMap.set("NggYM", editor);}
-  </script>
+			{
+				let editor = CodeMirror.fromTextArea(document
+						.getElementById("vzEXW"), {
+					mode : "htmlmixed",
+					lineNumbers : false,
+					tabSize : 2
+				});
+				codeMirrorMap.set("vzEXW", editor);
+
+				let editor1 = CodeMirror.fromTextArea(document.getElementById("vzEXW_Textarea"), {
+					mode : "htmlmixed",
+					lineNumbers : false,
+					tabSize : 2
+				});
+				codeMirrorMap.set("vzEXW_Textarea", editor1);
+			}
+		    function openDialog(id) {
+		        closeAll();
+		        document.getElementById(id).style.display = 'flex';
+		        setTimeout(() => {
+		        	 codeMirrorMap.get("vzEXW_Textarea").refresh();
+		        }, 100); // 100ms 
+		      }
+
+		      function closeAll() {
+		        document.querySelectorAll('.dialog-backdrop').forEach(el => {
+		          el.style.display = 'none';
+		        });
+		      }			
+		</script>
  </div>
 </div><h3 id="stroke-styling-options">Stroke Styling Options</h3><p>Canvas provides several properties to control how strokes look. These work together to create everything from smooth curves to sketchy edges.</p><h4 id="linewidth"><code>lineWidth</code></h4><p>Sets the thickness of the stroke (in pixels):</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-js">ctx.lineWidth = 8;</code></pre>
@@ -1591,11 +2403,13 @@ ctx.lineCap = "square";   // extends past endpoint</code></pre>
   ctx.lineCap = cap;
   ctx.stroke();
 });</code></pre>
-</div><div class="snippet-container" id="FrpSK">
- <div class="snippet-header" onclick="toggleSnippetAndRefresh('FrpSK','8jjua')">
-  Click to Try it
- </div>
- <div class="snippet-body"><textarea id="8jjua">&lt;!DOCTYPE html&gt;
+</div><div class="snippet-container" id="WPqna">
+ <div id="flZRa_Dialog" class="dialog-backdrop">
+  <div class="dialog">
+   <h2>Dialog 1</h2>
+   <div class="controls"><button onclick="renderIframe(this,'9GiPy_Textarea','flZRa_IFrame')">Run</button> <button onclick="closeAll()">Close</button>
+   </div>
+   <div class="dialog-content"><textarea id="9GiPy_Textarea" class="textarea_dialog" placeholder="Type HTML here...">&lt;!DOCTYPE html&gt;
 &lt;html lang="en"&gt;
 &lt;head&gt;
   &lt;meta charset="UTF-8"&gt;
@@ -1621,16 +2435,71 @@ ctx.lineWidth = 10;
 &lt;/script&gt;
 
 &lt;/body&gt;
-&lt;/html&gt;</textarea> <br> <button onclick="renderIframe(this,'8jjua','sNkCo')">Run</button>
-  <div id="sNkCo_FloatingLog" class="floatingLog" aria-live="polite" role="alert"></div> <iframe id="sNkCo" class="result_iframe" style="display: none;"></iframe>
+&lt;/html&gt;</textarea> <iframe id="flZRa_IFrame" class="iframe_dialog"></iframe>
+   </div>
+  </div>
+ </div>
+ <div class="snippet-header"><span onclick="toggleSnippetAndRefresh('WPqna','9GiPy')">Click to Try it</span> <!-- <span onclick="openDialog('flZRa_Dialog')">Dialog</span> -->
+ </div>
+ <div class="snippet-body"><textarea id="9GiPy">&lt;!DOCTYPE html&gt;
+&lt;html lang="en"&gt;
+&lt;head&gt;
+  &lt;meta charset="UTF-8"&gt;
+
+&lt;/head&gt;
+&lt;body&gt;
+
+&lt;canvas id="myCanvas" width="400" height="200" style="border:1px solid #ccc;"&gt;&lt;/canvas&gt;
+
+&lt;script&gt;
+  const canvas = document.getElementById("myCanvas");
+  const ctx = canvas.getContext("2d");
+
+ctx.lineWidth = 10;
+
+["butt", "round", "square"].forEach((cap, i) =&gt; {
+  ctx.beginPath();
+  ctx.moveTo(50, 30 + i * 40);
+  ctx.lineTo(250, 30 + i * 40);
+  ctx.lineCap = cap;
+  ctx.stroke();
+});
+&lt;/script&gt;
+
+&lt;/body&gt;
+&lt;/html&gt;</textarea> <br> <button onclick="renderIframe(this,'9GiPy','flZRa')">Run</button>
+  <div id="flZRa_FloatingLog" class="floatingLog" aria-live="polite" role="alert"></div> <iframe id="flZRa" class="result_iframe" style="display: none;"></iframe>
   <script>
-  { let editor = CodeMirror.fromTextArea(document.getElementById("8jjua"), {
-    mode: "htmlmixed",
-    lineNumbers:false,
-    tabSize: 2
-  });
-   codeMirrorMap.set("8jjua", editor);}
-  </script>
+			{
+				let editor = CodeMirror.fromTextArea(document
+						.getElementById("9GiPy"), {
+					mode : "htmlmixed",
+					lineNumbers : false,
+					tabSize : 2
+				});
+				codeMirrorMap.set("9GiPy", editor);
+
+				let editor1 = CodeMirror.fromTextArea(document.getElementById("9GiPy_Textarea"), {
+					mode : "htmlmixed",
+					lineNumbers : false,
+					tabSize : 2
+				});
+				codeMirrorMap.set("9GiPy_Textarea", editor1);
+			}
+		    function openDialog(id) {
+		        closeAll();
+		        document.getElementById(id).style.display = 'flex';
+		        setTimeout(() => {
+		        	 codeMirrorMap.get("9GiPy_Textarea").refresh();
+		        }, 100); // 100ms 
+		      }
+
+		      function closeAll() {
+		        document.querySelectorAll('.dialog-backdrop').forEach(el => {
+		          el.style.display = 'none';
+		        });
+		      }			
+		</script>
  </div>
 </div><h4 id="linejoin"><code>lineJoin</code></h4><p>Controls how corners between connected lines are rendered:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-js">ctx.lineJoin = "miter";   // (default) sharp corner
@@ -1647,11 +2516,13 @@ ctx.lineJoin = "bevel";   // flattened corner</code></pre>
   ctx.lineJoin = join;
   ctx.stroke();
 });</code></pre>
-</div><div class="snippet-container" id="YzmsX">
- <div class="snippet-header" onclick="toggleSnippetAndRefresh('YzmsX','VaAG9')">
-  Click to Try it
- </div>
- <div class="snippet-body"><textarea id="VaAG9">&lt;!DOCTYPE html&gt;
+</div><div class="snippet-container" id="ak5l9">
+ <div id="pYOkH_Dialog" class="dialog-backdrop">
+  <div class="dialog">
+   <h2>Dialog 1</h2>
+   <div class="controls"><button onclick="renderIframe(this,'c1bIE_Textarea','pYOkH_IFrame')">Run</button> <button onclick="closeAll()">Close</button>
+   </div>
+   <div class="dialog-content"><textarea id="c1bIE_Textarea" class="textarea_dialog" placeholder="Type HTML here...">&lt;!DOCTYPE html&gt;
 &lt;html lang="en"&gt;
 &lt;head&gt;
   &lt;meta charset="UTF-8"&gt;
@@ -1678,16 +2549,72 @@ ctx.lineWidth = 10;
 &lt;/script&gt;
 
 &lt;/body&gt;
-&lt;/html&gt;</textarea> <br> <button onclick="renderIframe(this,'VaAG9','3hNC2')">Run</button>
-  <div id="3hNC2_FloatingLog" class="floatingLog" aria-live="polite" role="alert"></div> <iframe id="3hNC2" class="result_iframe" style="display: none;"></iframe>
+&lt;/html&gt;</textarea> <iframe id="pYOkH_IFrame" class="iframe_dialog"></iframe>
+   </div>
+  </div>
+ </div>
+ <div class="snippet-header"><span onclick="toggleSnippetAndRefresh('ak5l9','c1bIE')">Click to Try it</span> <!-- <span onclick="openDialog('pYOkH_Dialog')">Dialog</span> -->
+ </div>
+ <div class="snippet-body"><textarea id="c1bIE">&lt;!DOCTYPE html&gt;
+&lt;html lang="en"&gt;
+&lt;head&gt;
+  &lt;meta charset="UTF-8"&gt;
+
+&lt;/head&gt;
+&lt;body&gt;
+
+&lt;canvas id="myCanvas" width="400" height="200" style="border:1px solid #ccc;"&gt;&lt;/canvas&gt;
+
+&lt;script&gt;
+  const canvas = document.getElementById("myCanvas");
+  const ctx = canvas.getContext("2d");
+
+ctx.lineWidth = 10;
+
+["miter", "round", "bevel"].forEach((join, i) =&gt; {
+  ctx.beginPath();
+  ctx.moveTo(80, 50 + i * 60);
+  ctx.lineTo(130, 20 + i * 60);
+  ctx.lineTo(180, 50 + i * 60);
+  ctx.lineJoin = join;
+  ctx.stroke();
+});
+&lt;/script&gt;
+
+&lt;/body&gt;
+&lt;/html&gt;</textarea> <br> <button onclick="renderIframe(this,'c1bIE','pYOkH')">Run</button>
+  <div id="pYOkH_FloatingLog" class="floatingLog" aria-live="polite" role="alert"></div> <iframe id="pYOkH" class="result_iframe" style="display: none;"></iframe>
   <script>
-  { let editor = CodeMirror.fromTextArea(document.getElementById("VaAG9"), {
-    mode: "htmlmixed",
-    lineNumbers:false,
-    tabSize: 2
-  });
-   codeMirrorMap.set("VaAG9", editor);}
-  </script>
+			{
+				let editor = CodeMirror.fromTextArea(document
+						.getElementById("c1bIE"), {
+					mode : "htmlmixed",
+					lineNumbers : false,
+					tabSize : 2
+				});
+				codeMirrorMap.set("c1bIE", editor);
+
+				let editor1 = CodeMirror.fromTextArea(document.getElementById("c1bIE_Textarea"), {
+					mode : "htmlmixed",
+					lineNumbers : false,
+					tabSize : 2
+				});
+				codeMirrorMap.set("c1bIE_Textarea", editor1);
+			}
+		    function openDialog(id) {
+		        closeAll();
+		        document.getElementById(id).style.display = 'flex';
+		        setTimeout(() => {
+		        	 codeMirrorMap.get("c1bIE_Textarea").refresh();
+		        }, 100); // 100ms 
+		      }
+
+		      function closeAll() {
+		        document.querySelectorAll('.dialog-backdrop').forEach(el => {
+		          el.style.display = 'none';
+		        });
+		      }			
+		</script>
  </div>
 </div><h4 id="setlinedash"><code>setLineDash()</code></h4><p>Creates dashed or dotted lines by specifying a pattern of dashes and gaps:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-js">ctx.setLineDash([10, 5]);  // 10px dash, 5px gap
@@ -1700,11 +2627,13 @@ ctx.lineTo(250, 200);
 ctx.strokeStyle = "darkgreen";
 ctx.lineWidth = 4;
 ctx.stroke();</code></pre>
-</div><div class="snippet-container" id="rKjur">
- <div class="snippet-header" onclick="toggleSnippetAndRefresh('rKjur','yLpkE')">
-  Click to Try it
- </div>
- <div class="snippet-body"><textarea id="yLpkE">&lt;!DOCTYPE html&gt;
+</div><div class="snippet-container" id="kw1Wu">
+ <div id="0qwfN_Dialog" class="dialog-backdrop">
+  <div class="dialog">
+   <h2>Dialog 1</h2>
+   <div class="controls"><button onclick="renderIframe(this,'hKDy6_Textarea','0qwfN_IFrame')">Run</button> <button onclick="closeAll()">Close</button>
+   </div>
+   <div class="dialog-content"><textarea id="hKDy6_Textarea" class="textarea_dialog" placeholder="Type HTML here...">&lt;!DOCTYPE html&gt;
 &lt;html lang="en"&gt;
 &lt;head&gt;
   &lt;meta charset="UTF-8"&gt;
@@ -1728,16 +2657,69 @@ ctx.stroke();
 &lt;/script&gt;
 
 &lt;/body&gt;
-&lt;/html&gt;</textarea> <br> <button onclick="renderIframe(this,'yLpkE','zrzRX')">Run</button>
-  <div id="zrzRX_FloatingLog" class="floatingLog" aria-live="polite" role="alert"></div> <iframe id="zrzRX" class="result_iframe" style="display: none;"></iframe>
+&lt;/html&gt;</textarea> <iframe id="0qwfN_IFrame" class="iframe_dialog"></iframe>
+   </div>
+  </div>
+ </div>
+ <div class="snippet-header"><span onclick="toggleSnippetAndRefresh('kw1Wu','hKDy6')">Click to Try it</span> <!-- <span onclick="openDialog('0qwfN_Dialog')">Dialog</span> -->
+ </div>
+ <div class="snippet-body"><textarea id="hKDy6">&lt;!DOCTYPE html&gt;
+&lt;html lang="en"&gt;
+&lt;head&gt;
+  &lt;meta charset="UTF-8"&gt;
+
+&lt;/head&gt;
+&lt;body&gt;
+
+&lt;canvas id="myCanvas" width="400" height="200" style="border:1px solid #ccc;"&gt;&lt;/canvas&gt;
+
+&lt;script&gt;
+  const canvas = document.getElementById("myCanvas");
+  const ctx = canvas.getContext("2d");
+
+ctx.beginPath();
+ctx.setLineDash([6, 4]);
+ctx.moveTo(50, 200);
+ctx.lineTo(250, 200);
+ctx.strokeStyle = "darkgreen";
+ctx.lineWidth = 4;
+ctx.stroke();
+&lt;/script&gt;
+
+&lt;/body&gt;
+&lt;/html&gt;</textarea> <br> <button onclick="renderIframe(this,'hKDy6','0qwfN')">Run</button>
+  <div id="0qwfN_FloatingLog" class="floatingLog" aria-live="polite" role="alert"></div> <iframe id="0qwfN" class="result_iframe" style="display: none;"></iframe>
   <script>
-  { let editor = CodeMirror.fromTextArea(document.getElementById("yLpkE"), {
-    mode: "htmlmixed",
-    lineNumbers:false,
-    tabSize: 2
-  });
-   codeMirrorMap.set("yLpkE", editor);}
-  </script>
+			{
+				let editor = CodeMirror.fromTextArea(document
+						.getElementById("hKDy6"), {
+					mode : "htmlmixed",
+					lineNumbers : false,
+					tabSize : 2
+				});
+				codeMirrorMap.set("hKDy6", editor);
+
+				let editor1 = CodeMirror.fromTextArea(document.getElementById("hKDy6_Textarea"), {
+					mode : "htmlmixed",
+					lineNumbers : false,
+					tabSize : 2
+				});
+				codeMirrorMap.set("hKDy6_Textarea", editor1);
+			}
+		    function openDialog(id) {
+		        closeAll();
+		        document.getElementById(id).style.display = 'flex';
+		        setTimeout(() => {
+		        	 codeMirrorMap.get("hKDy6_Textarea").refresh();
+		        }, 100); // 100ms 
+		      }
+
+		      function closeAll() {
+		        document.querySelectorAll('.dialog-backdrop').forEach(el => {
+		          el.style.display = 'none';
+		        });
+		      }			
+		</script>
  </div>
 </div><h3 id="combined-stroke-fill">Combined Stroke Fill</h3><p>You can apply both <code>fill()</code> and <code>stroke()</code> to the same shape for enhanced contrast or emphasis.</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-js">ctx.beginPath();
@@ -1747,11 +2729,13 @@ ctx.strokeStyle = "orange";
 ctx.lineWidth = 5;
 ctx.fill();
 ctx.stroke();</code></pre>
-</div><div class="snippet-container" id="kA4fi">
- <div class="snippet-header" onclick="toggleSnippetAndRefresh('kA4fi','zIoWH')">
-  Click to Try it
- </div>
- <div class="snippet-body"><textarea id="zIoWH">&lt;!DOCTYPE html&gt;
+</div><div class="snippet-container" id="QArpZ">
+ <div id="WGNAh_Dialog" class="dialog-backdrop">
+  <div class="dialog">
+   <h2>Dialog 1</h2>
+   <div class="controls"><button onclick="renderIframe(this,'ZcLlO_Textarea','WGNAh_IFrame')">Run</button> <button onclick="closeAll()">Close</button>
+   </div>
+   <div class="dialog-content"><textarea id="ZcLlO_Textarea" class="textarea_dialog" placeholder="Type HTML here...">&lt;!DOCTYPE html&gt;
 &lt;html lang="en"&gt;
 &lt;head&gt;
   &lt;meta charset="UTF-8"&gt;
@@ -1775,16 +2759,69 @@ ctx.stroke();
 &lt;/script&gt;
 
 &lt;/body&gt;
-&lt;/html&gt;</textarea> <br> <button onclick="renderIframe(this,'zIoWH','gmMKp')">Run</button>
-  <div id="gmMKp_FloatingLog" class="floatingLog" aria-live="polite" role="alert"></div> <iframe id="gmMKp" class="result_iframe" style="display: none;"></iframe>
+&lt;/html&gt;</textarea> <iframe id="WGNAh_IFrame" class="iframe_dialog"></iframe>
+   </div>
+  </div>
+ </div>
+ <div class="snippet-header"><span onclick="toggleSnippetAndRefresh('QArpZ','ZcLlO')">Click to Try it</span> <!-- <span onclick="openDialog('WGNAh_Dialog')">Dialog</span> -->
+ </div>
+ <div class="snippet-body"><textarea id="ZcLlO">&lt;!DOCTYPE html&gt;
+&lt;html lang="en"&gt;
+&lt;head&gt;
+  &lt;meta charset="UTF-8"&gt;
+
+&lt;/head&gt;
+&lt;body&gt;
+
+&lt;canvas id="myCanvas" width="400" height="200" style="border:1px solid #ccc;"&gt;&lt;/canvas&gt;
+
+&lt;script&gt;
+  const canvas = document.getElementById("myCanvas");
+  const ctx = canvas.getContext("2d");
+
+ctx.beginPath();
+ctx.rect(50, 50, 150, 100);
+ctx.fillStyle = "lightyellow";
+ctx.strokeStyle = "orange";
+ctx.lineWidth = 5;
+ctx.fill();
+ctx.stroke();
+&lt;/script&gt;
+
+&lt;/body&gt;
+&lt;/html&gt;</textarea> <br> <button onclick="renderIframe(this,'ZcLlO','WGNAh')">Run</button>
+  <div id="WGNAh_FloatingLog" class="floatingLog" aria-live="polite" role="alert"></div> <iframe id="WGNAh" class="result_iframe" style="display: none;"></iframe>
   <script>
-  { let editor = CodeMirror.fromTextArea(document.getElementById("zIoWH"), {
-    mode: "htmlmixed",
-    lineNumbers:false,
-    tabSize: 2
-  });
-   codeMirrorMap.set("zIoWH", editor);}
-  </script>
+			{
+				let editor = CodeMirror.fromTextArea(document
+						.getElementById("ZcLlO"), {
+					mode : "htmlmixed",
+					lineNumbers : false,
+					tabSize : 2
+				});
+				codeMirrorMap.set("ZcLlO", editor);
+
+				let editor1 = CodeMirror.fromTextArea(document.getElementById("ZcLlO_Textarea"), {
+					mode : "htmlmixed",
+					lineNumbers : false,
+					tabSize : 2
+				});
+				codeMirrorMap.set("ZcLlO_Textarea", editor1);
+			}
+		    function openDialog(id) {
+		        closeAll();
+		        document.getElementById(id).style.display = 'flex';
+		        setTimeout(() => {
+		        	 codeMirrorMap.get("ZcLlO_Textarea").refresh();
+		        }, 100); // 100ms 
+		      }
+
+		      function closeAll() {
+		        document.querySelectorAll('.dialog-backdrop').forEach(el => {
+		          el.style.display = 'none';
+		        });
+		      }			
+		</script>
  </div>
 </div><h3 id="style-in-practice-from-clean-to-sketchy">Style in Practice: From Clean to Sketchy</h3><p>The way you style strokes can dramatically change the <strong>tone</strong> of your drawing:</p><table>
  <thead>
@@ -1834,11 +2871,13 @@ ctx.stroke();
   ctx.fill();
   ctx.stroke();
 }</code></pre>
-</div><div class="snippet-container" id="sDl3V">
- <div class="snippet-header" onclick="toggleSnippetAndRefresh('sDl3V','W3QUv')">
-  Click to Try it
- </div>
- <div class="snippet-body"><textarea id="W3QUv">&lt;!DOCTYPE html&gt;
+</div><div class="snippet-container" id="T2ycP">
+ <div id="caQWk_Dialog" class="dialog-backdrop">
+  <div class="dialog">
+   <h2>Dialog 1</h2>
+   <div class="controls"><button onclick="renderIframe(this,'eNdXh_Textarea','caQWk_IFrame')">Run</button> <button onclick="closeAll()">Close</button>
+   </div>
+   <div class="dialog-content"><textarea id="eNdXh_Textarea" class="textarea_dialog" placeholder="Type HTML here...">&lt;!DOCTYPE html&gt;
 &lt;html lang="en"&gt;
 &lt;head&gt;
   &lt;meta charset="UTF-8"&gt;
@@ -1874,16 +2913,81 @@ drawTree(100,20);
 &lt;/script&gt;
 
 &lt;/body&gt;
-&lt;/html&gt;</textarea> <br> <button onclick="renderIframe(this,'W3QUv','CdHAJ')">Run</button>
-  <div id="CdHAJ_FloatingLog" class="floatingLog" aria-live="polite" role="alert"></div> <iframe id="CdHAJ" class="result_iframe" style="display: none;"></iframe>
+&lt;/html&gt;</textarea> <iframe id="caQWk_IFrame" class="iframe_dialog"></iframe>
+   </div>
+  </div>
+ </div>
+ <div class="snippet-header"><span onclick="toggleSnippetAndRefresh('T2ycP','eNdXh')">Click to Try it</span> <!-- <span onclick="openDialog('caQWk_Dialog')">Dialog</span> -->
+ </div>
+ <div class="snippet-body"><textarea id="eNdXh">&lt;!DOCTYPE html&gt;
+&lt;html lang="en"&gt;
+&lt;head&gt;
+  &lt;meta charset="UTF-8"&gt;
+
+&lt;/head&gt;
+&lt;body&gt;
+
+&lt;canvas id="myCanvas" width="400" height="200" style="border:1px solid #ccc;"&gt;&lt;/canvas&gt;
+
+&lt;script&gt;
+  const canvas = document.getElementById("myCanvas");
+  const ctx = canvas.getContext("2d");
+function drawTree(x, y) {
+  ctx.beginPath();
+  ctx.moveTo(x, y);
+  ctx.lineTo(x, y - 40);
+  ctx.lineTo(x - 10, y - 30);
+  ctx.lineTo(x + 10, y - 30);
+  ctx.lineTo(x, y - 40);
+  ctx.closePath();
+
+  ctx.fillStyle = "#228B22";
+  ctx.strokeStyle = "#004d00";
+  ctx.lineWidth = 3;
+  ctx.lineJoin = "round";
+  ctx.setLineDash([3, 2]);
+  ctx.fill();
+  ctx.stroke();
+}
+
+drawTree(100,20);
+
+&lt;/script&gt;
+
+&lt;/body&gt;
+&lt;/html&gt;</textarea> <br> <button onclick="renderIframe(this,'eNdXh','caQWk')">Run</button>
+  <div id="caQWk_FloatingLog" class="floatingLog" aria-live="polite" role="alert"></div> <iframe id="caQWk" class="result_iframe" style="display: none;"></iframe>
   <script>
-  { let editor = CodeMirror.fromTextArea(document.getElementById("W3QUv"), {
-    mode: "htmlmixed",
-    lineNumbers:false,
-    tabSize: 2
-  });
-   codeMirrorMap.set("W3QUv", editor);}
-  </script>
+			{
+				let editor = CodeMirror.fromTextArea(document
+						.getElementById("eNdXh"), {
+					mode : "htmlmixed",
+					lineNumbers : false,
+					tabSize : 2
+				});
+				codeMirrorMap.set("eNdXh", editor);
+
+				let editor1 = CodeMirror.fromTextArea(document.getElementById("eNdXh_Textarea"), {
+					mode : "htmlmixed",
+					lineNumbers : false,
+					tabSize : 2
+				});
+				codeMirrorMap.set("eNdXh_Textarea", editor1);
+			}
+		    function openDialog(id) {
+		        closeAll();
+		        document.getElementById(id).style.display = 'flex';
+		        setTimeout(() => {
+		        	 codeMirrorMap.get("eNdXh_Textarea").refresh();
+		        }, 100); // 100ms 
+		      }
+
+		      function closeAll() {
+		        document.querySelectorAll('.dialog-backdrop').forEach(el => {
+		          el.style.display = 'none';
+		        });
+		      }			
+		</script>
  </div>
 </div><h3 id="summary">Summary</h3><p>You've now gained control over how paths look by using:</p><ul>
  <li><code>fill()</code> and <code>stroke()</code> for different effects</li>
@@ -2002,11 +3106,13 @@ drawTree(100,20);
     });
 
     drawScene();  // Initial draw</code></pre>
-</div><div class="snippet-container" id="ZB8Ym">
- <div class="snippet-header" onclick="toggleSnippetAndRefresh('ZB8Ym','jxqWE')">
-  Click to Try it
- </div>
- <div class="snippet-body"><textarea id="jxqWE">&lt;!DOCTYPE html&gt;
+</div><div class="snippet-container" id="y4UpQ">
+ <div id="47LQb_Dialog" class="dialog-backdrop">
+  <div class="dialog">
+   <h2>Dialog 1</h2>
+   <div class="controls"><button onclick="renderIframe(this,'NFVdv_Textarea','47LQb_IFrame')">Run</button> <button onclick="closeAll()">Close</button>
+   </div>
+   <div class="dialog-content"><textarea id="NFVdv_Textarea" class="textarea_dialog" placeholder="Type HTML here...">&lt;!DOCTYPE html&gt;
 &lt;html lang="en"&gt;
 &lt;head&gt;
   &lt;meta charset="UTF-8" /&gt;
@@ -2125,16 +3231,164 @@ drawTree(100,20);
     drawScene();  // Initial draw
   &lt;/script&gt;
 &lt;/body&gt;
-&lt;/html&gt;</textarea> <br> <button onclick="renderIframe(this,'jxqWE','7fVGY')">Run</button>
-  <div id="7fVGY_FloatingLog" class="floatingLog" aria-live="polite" role="alert"></div> <iframe id="7fVGY" class="result_iframe" style="display: none;"></iframe>
+&lt;/html&gt;</textarea> <iframe id="47LQb_IFrame" class="iframe_dialog"></iframe>
+   </div>
+  </div>
+ </div>
+ <div class="snippet-header"><span onclick="toggleSnippetAndRefresh('y4UpQ','NFVdv')">Click to Try it</span> <!-- <span onclick="openDialog('47LQb_Dialog')">Dialog</span> -->
+ </div>
+ <div class="snippet-body"><textarea id="NFVdv">&lt;!DOCTYPE html&gt;
+&lt;html lang="en"&gt;
+&lt;head&gt;
+  &lt;meta charset="UTF-8" /&gt;
+  &lt;title&gt;Canvas House Example&lt;/title&gt;
+  &lt;style&gt;
+    canvas {
+      border: 1px solid #ccc;
+      display: block;
+      margin: 20px auto;
+      background-color: #e0f7ff;
+    }
+    .controls {
+      text-align: center;
+      margin-bottom: 10px;
+    }
+  &lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+  &lt;div class="controls"&gt;
+    &lt;button id="colorBtn"&gt;Change House Color&lt;/button&gt;
+    &lt;button id="doorBtn"&gt;Toggle Door&lt;/button&gt;
+  &lt;/div&gt;
+  &lt;canvas id="houseCanvas" width="600" height="400"&gt;&lt;/canvas&gt;
+
+  &lt;script&gt;
+    const canvas = document.getElementById("houseCanvas");
+    const ctx = canvas.getContext("2d");
+
+    // State variables
+    const houseColors = ["#FFB6C1", "#D8BFD8", "#ADD8E6", "#F4A460"];
+    let currentColorIndex = 0;
+    let doorOpen = false;
+
+    function drawScene() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      // --- Background: sky and grass ---
+      const skyGradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
+      skyGradient.addColorStop(0, "#87CEFA");
+      skyGradient.addColorStop(1, "#ffffff");
+      ctx.fillStyle = skyGradient;
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      ctx.fillStyle = "#7CFC00"; // Grass green
+      ctx.fillRect(0, 300, canvas.width, 100);
+
+      // --- Sun ---
+      ctx.beginPath();
+      ctx.arc(520, 80, 40, 0, Math.PI * 2);
+      ctx.fillStyle = "yellow";
+      ctx.fill();
+
+      // --- House Walls ---
+      ctx.fillStyle = houseColors[currentColorIndex];
+      ctx.fillRect(200, 180, 200, 120);
+
+      // --- Roof ---
+      ctx.beginPath();
+      ctx.moveTo(180, 180);  // Left point
+      ctx.lineTo(300, 100);  // Top point
+      ctx.lineTo(420, 180);  // Right point
+      ctx.closePath();
+      ctx.fillStyle = "#8B0000";  // Dark red
+      ctx.fill();
+
+      // --- Door ---
+      ctx.fillStyle = "#654321";  // Brown
+      if (doorOpen) {
+        ctx.beginPath();
+        ctx.moveTo(280, 300);
+        ctx.lineTo(280, 240);
+        ctx.lineTo(260, 250);
+        ctx.lineTo(260, 300);
+        ctx.closePath();
+        ctx.fill();
+      } else {
+        ctx.fillRect(270, 240, 40, 60);  // Closed door
+      }
+
+      // Doorknob
+      ctx.beginPath();
+      ctx.arc(300, 270, 4, 0, 2 * Math.PI);
+      ctx.fillStyle = "gold";
+      ctx.fill();
+
+      // --- Windows ---
+      ctx.fillStyle = "#ffffffcc";  // Semi-transparent white
+      ctx.strokeStyle = "#444";
+      ctx.lineWidth = 2;
+      drawWindow(220, 200);
+      drawWindow(340, 200);
+    }
+
+    function drawWindow(x, y) {
+      ctx.fillRect(x, y, 30, 30);
+      ctx.strokeRect(x, y, 30, 30);
+      ctx.beginPath();
+      ctx.moveTo(x + 15, y);
+      ctx.lineTo(x + 15, y + 30);
+      ctx.moveTo(x, y + 15);
+      ctx.lineTo(x + 30, y + 15);
+      ctx.stroke();
+    }
+
+    // --- Interactivity ---
+    document.getElementById("colorBtn").addEventListener("click", () =&gt; {
+      currentColorIndex = (currentColorIndex + 1) % houseColors.length;
+      drawScene();
+    });
+
+    document.getElementById("doorBtn").addEventListener("click", () =&gt; {
+      doorOpen = !doorOpen;
+      drawScene();
+    });
+
+    drawScene();  // Initial draw
+  &lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;</textarea> <br> <button onclick="renderIframe(this,'NFVdv','47LQb')">Run</button>
+  <div id="47LQb_FloatingLog" class="floatingLog" aria-live="polite" role="alert"></div> <iframe id="47LQb" class="result_iframe" style="display: none;"></iframe>
   <script>
-  { let editor = CodeMirror.fromTextArea(document.getElementById("jxqWE"), {
-    mode: "htmlmixed",
-    lineNumbers:false,
-    tabSize: 2
-  });
-   codeMirrorMap.set("jxqWE", editor);}
-  </script>
+			{
+				let editor = CodeMirror.fromTextArea(document
+						.getElementById("NFVdv"), {
+					mode : "htmlmixed",
+					lineNumbers : false,
+					tabSize : 2
+				});
+				codeMirrorMap.set("NFVdv", editor);
+
+				let editor1 = CodeMirror.fromTextArea(document.getElementById("NFVdv_Textarea"), {
+					mode : "htmlmixed",
+					lineNumbers : false,
+					tabSize : 2
+				});
+				codeMirrorMap.set("NFVdv_Textarea", editor1);
+			}
+		    function openDialog(id) {
+		        closeAll();
+		        document.getElementById(id).style.display = 'flex';
+		        setTimeout(() => {
+		        	 codeMirrorMap.get("NFVdv_Textarea").refresh();
+		        }, 100); // 100ms 
+		      }
+
+		      function closeAll() {
+		        document.querySelectorAll('.dialog-backdrop').forEach(el => {
+		          el.style.display = 'none';
+		        });
+		      }			
+		</script>
  </div>
 </div><h3 id="code-breakdown">Code Breakdown</h3><table>
  <thead>
@@ -2287,7 +3541,27 @@ drawTree(100,20);
     <div class="book-cover-title" style="font-size: 16px;color: #333;top: 20px;">JavaScript DOM Programming</div>
     <div class="book-cover-author">readbytes</div>
     <div class="book-cover-bottom-stripe" style="background-color: #333;"></div>
-    <img class="book-cover-icon" style="width: 90px;height: 90px;top: 60px;" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFoAAABaCAYAAAA4qEECAAAD5UlEQVR4Xu2dv4sTQRTHH6eFYnOWgqWoWKqFhYWNlnZXiCAIgs35sxEtjrOwicSUNnY2NhYWgleJ4PkH2CmE+xFFSxttTlnz4mZ3573Emb2deTPJvg98q7yZN+/DmdvkkhXAZGeYzGNwvzrQ9U1TB9HZabGPuHID+NqmuQnu0LU+MhVa6COu3Aa+tmnugDt0rY9MpSiqAp+X68WxGaEUff8s39M1uLbsvTvRdE9bXi6VcZxdRatox6hoKyqabWyLYzOCimYb2+LYjKCi2ca2ODYjqGi2sS2OzQgqmm1si2MzQjtFe4wr7Xxl6DGuLANf2zT4/okrdK2PTOUn8OImwf3qQNc3TR1iz84oNsu2htmGLi0ISPH08mTlX39aEBjR2c1mW9CjBQFJS/SmrOg+LQhIWqI34Awt8Ml1IA3J4yGJKbqY+ekjud6tFp3/SxbpXTTFZH04Sh4PRSzR5ryCohGjOXksFDFET5ScfYcDpC4Y+0FetrRoY75fn+R/msdcAC4bs1At8oiEaDw7nSdbex5P8ojBBzgCEw42T9npV54y+nAaYjG8cD+0Z4EfcNaDMxWCMd/gBKQAHubVM37gWQvOYAiO9XTxP4avlvbRQ/pKb6WUMX6ODp7B6Jd++mRf4Vi2DQ985OoSvMYtMYXoCXW7zgDuDX9QjtMZ2ojEVYcCKloMFS2Eis5hl0oznuQ4CPyQ8xKcLRno4eYtSbAIlUMZ0Iv/1POiTHWmfMbo3IL8QJ1Op5T84yEfJPW8h0L048uGaPwlHJ3iSqDb7VZEr/JBUs86FKJ7VwzRd42JI6GihVDRQqhoIVS0ECpaCBUthIoWQkULoaKFUNFCqGghVLQQKloIfZtUiEUoD1SKRuggqSeXjKnOlM+YBPRg85Zk0D/OCkMPOetpLcUVTts/QBMaFS2EihZCRQuhooVQ0RUuAr9MmrXgDMnyG/iBZz04UzLsBX7AeQvOGJXzwA+V/dmY8IaNh0h8/Q3PTufJg1/HjgL70j09dJ53w6z6yLVL8GbcqyKa1TUMnne0N53v4xqcGg8vyXTJAzhnlnpD9Kojn8OccxNOGkWBmSqZ1PlGVHQFY17yWFBiSEZiiUaMmemDIWA3r5JqDImIHt286m34KxEmOfsCh2lRIGKKRkR/qploWhAQFS3E3IiOfSNUur5p6iA6Oy32EVdadVtjWugjrhRPCx6T/o26q7Bbrdvi2IxQim7TredVdI2oaBU9CRXNNrbFsRlBRbONbXFsRlDRbGNbHJsRVDTb2BbHZgQVzTa2xbEZoZ2iPcaVdr4y9BhXWvXfVfv+EEzdD6DQ9U1Th6Cz/wVFmg1Swj4EJQAAAABJRU5ErkJggg=="/>
+    <img class="book-cover-icon" style="width: 90px;height: 90px;top: 60px;" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFoAAABaCAYAAAA4qEECAAADUklEQVR4Xu2dv47TQBDGI0RDczY9rwMlrwEFBweC/t4EXRwaXuI6WiSaOLkCIZ6BCqTgPRFr8zkbnPF4Zuydn/RVuzsz33eSlX/2LRYRm1Xxe1MVOzY19eL6/6NzfqCw/ilEvXc2Mwh7pNiuyks8O1T1snyNfVLgWQ5hjxbcyCHskaJelVd4drCW5Vvsk6JzlkHYo6XXph5Q6hwEfUZASDhLqUOZ+Ri96vTa1ANKHQ+aAKWOB02AUseDJkCp40EToNTxoAlQ6njQBCh1PGgClDrZBs0l7JEi23eGXMIeKTbVxSs8O1Trm4tL7JMCz3IIe7Rsq+IXbh6iUA97nALPDxXWP4W29w5xMVwbG67rOBVR76LNAA9aiKyCbq49L0QbRmgGHXuul8VLXB+F3IPGtdGIm0o21gpay+89Gs01gtbwecDPz08eSQ8hHTT6C55xjwh3q+IZDhO0u148wL0cSAR93cyOfoKCV9wryu528RCHmpuCR/StRvOy7w8OOHUFT+jTDHdV+RwHnpqCB/SVFRLXaGfhQYvhQQvhQQvhQQvhQf8DXyZNXehPnW+fisc45FwUvKFfNXC4uQn9qvD1Y1maG4qB2NP3xiOui1NX5Zv9QNuq+IDrU6Xx8n7vq16WV7guTvxKYH1TvsP1qWLOl7mBmDDny9xATJjzZW4gJsz5MjcQE+Z8mRuICXO+zA3EhDlf5gZiwpwvcwMxYc6XuYGYMOfL3EBMmPNlbiAmzPkyNxAT5nyZG4gJc778Y1Ih/IN/QeKh5ij0q8acv5z9YenL2T045NSF/rIhfiWQ9Q9oxsaDFsKDFsKDFsKDFsKDjqj9ZqFx8dvfRubWb+gcn+Yv/hSHuh9swrcoh9nRT5DaLcpf/KZ7GXAIXB8D6aADGj5btJprBB3Q8nvQGNfGRCvogLjntT+8SubhVVohBzSDDoh6F20GeNBCzCZo7Qeh4vmhwvqnEPWOmzmEPVJk9Vhj3Mgh7JHi4LLApTMuL52zDMIeLb029YBSh+v6G85S6lBmPkavOr029YBSx4MmQKnjQROg1PGgCVDqeNAEKHU8aAKUOh40AUodD5oApU62QXMJe6TI9p0hl7BHitz+XTX3j2DO+gHKkfODhPVPsRnZ+1+tJg8Iaaje6wAAAABJRU5ErkJggg=="/>
+  </div>
+</a>
+
+
+<a href="javascript-asynchronous-programming.htm">
+<div class="book-cover" style="background-color: #f9f6f1;border: 1px solid #ccc;"> 
+    <div class="book-cover-title" style="font-size: 18px;color: #333;top: 20px;">JavaScript Asynchronous Programming</div>
+    <div class="book-cover-author">readbytes</div>
+    <div class="book-cover-bottom-stripe" style="background-color: #333;"></div>
+    <img class="book-cover-icon" style="width: 80px;height: 80px;top: 80px;" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFoAAABaCAYAAAA4qEECAAADU0lEQVR4Xu2cvW7UQBRGkwKJV0CipqJbG9pIFLGXRyD2IgpeghegQ9DRUNHQUdLQUVFAC0h0tFEKkMJPCEykRHKObzZrr6/t8X5H+qrMN3PvUbQpEmVra8NI8vLfWWazh1f4ddEBVcmVPOA5sQZB6DND8mkWj3hetCQI/VAXXE3xhB3RkrrcWl6wI1qQZuUrQ+75ZOVr9kQL0mxxpya3nnfsiRbs7Ny/ashFiq/siZbU5Z7PLC9/sCNaQrlGfrIjWmLIxXd28Z0d0QKKvSCSvQ5pXr41pF6QxT77vRF+Or+vDzTdhJW36cAdDrEpoQdX+PgmhS482ebjmxTKcIMPb1roww0+vGmhDzf4MMPzY4fzL8tsd+8a+27w8Wp4Nga4w7Kw6wofr+Qzz8aAsYcZ9tzhAIMN0gFh7l/cwwp7vcAhBh1mDcLMf7iDFfZ6g4MMPlALwrzHnN/IMXu9YgwUlehktY+LI/Z6xxgqGtFhzgPObeQve4NgDBaF6Nl88YUzGxn246KKMVwUojlvPYtx/dqqPuD4RSeX/aXSvDxgZ3BqQ0YhunjOec+SzstvPD8KOGgMok/gvKf5xHOjwRg2CtEnVOdNs+Ipvz4qKDgm0VFBwRLtBAVLtBMULNFOULBEO0HBEu0EBUu0ExQs0U5QsEQ7QcES7QQFS7QTFCzRTlCwRDtBwRLtBAVLtBMULNFOULBEO0HBEu0EBUu0ExQs0U5QsEQ7QcES7QQFS7QTFCzRTlBw16LDXb897o0OCu5SSLjniPd2dXd0UEKXMnhn1/dHBQV0KYJ3Mjw/abh8lxJ4pxV2JgsX71oA77XCziTh0h7L824r7EwOLuy1OO+3ws6k4LKeSydZech3GHYmAxf1XniWl2/4FsPOJOCSfSyb5sVLvsewEz1csK9l+ZYVdqKGyzFpXj5O7hY3u0q6u5fxjWXhvNHCxcYYzhwlXGqM4cxRwqXGmPDxdci5o4SLjTGcOVq42JgSvqOH+8+4HtzO713nkmMI5xQrQpGXhX3RAMq8KOyJBtyalzco1Ap7ohkr/RtllkRDKNQKO6IhFGqFHdEQCrXCjmgIhVphRzSEQq2wIxpCoVbYES2gVIbnRUsoVpKdCEL3KViSnUjm5cepSf4Pt8Ix0I7hKy8AAAAASUVORK5CYII="/>
+  </div>
+</a>
+
+
+<a href="javascript-pragmatic-developer.htm">
+<div class="book-cover" style="background-color: #f9f6f1;border: 1px solid #ccc;"> 
+    <div class="book-cover-title" style="font-size: 18px;color: #333;top: 20px;">JavaScript Pragmatic Developer</div>
+    <div class="book-cover-author">readbytes</div>
+    <div class="book-cover-bottom-stripe" style="background-color: #333;"></div>
+    <img class="book-cover-icon" style="width: 80px;height: 70px;top: 85px;" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFoAAABaCAYAAAA4qEECAAAGkUlEQVR4Xu2de4hUVRzHlR5UYGm+epgkamahRGUgYkUkKFlIcmdnTFdNW52ZO491y1dp619ZaZpg+oeUYBgoWREZ1H9hkNJjBU0qaq1W21iNkqTWdG/zm+aMZ753zn2f253r+cDvn3vP+T0+np29Mwxrv34KhcIjmaacUYqf8LpTKvt/w+tuWJrMLajkqQm9SddwbcNRGuQCPxTed0qNmHn6KLzvBLb/kQceq4bfviIBG4LwOxDLk03mPeeiPXNnzjcGDBxSjXRC95QrEmiadhkvOUjRxLnec57y0XpeMsXwG0a6zhMV+lPjhXnLqmIIL2J4eNFec9YTTeEmR2SgpvU5BXTiWgpSTzThNG+6KVe0Ep1O5lbgnsjChq6HUyEiRHmJsqjZ6Ym4h4fVR8lMtJ/eQiXTpH9nJ8PPMFa52xYut81N9xc9vsR4ePIMU/jtLVSo0aMdX6ODKn6HsRJNVPKfx30MVt8qcE/kKJ3m8w5FeB7GLv/pntOW+eled/dJYVjtjQzUZNePJ3D2GmSLJio1/sC9BKuPgin0VMFXb6FQnFUc6EKC52Gc1Ni6fpuwRqvWerVItGhPpGAC7QhDNGFVo96p9ttXaFCTv5zoxnlN+B3IjehsIj8f9xOle531RJeesd/BtZHDjYCwRIvqZBL6rnqiS9dfxrWRIwgBTnBax+oXW8OKbmlpucapgOeya4UCnOC0TtfxLmGdhhXdlmob4lQAUTnVzZjHDtpX7/OTevT+3Rs/0W5ONFERXVeCCD2p3+SmxpnfzwhrNKxowo0EwqXs8keuBz85hGmErF/5kjD/JSWaYLIzTYVJmI+RTeR+pjWvvbgdt1ti9Q/Z8KK7u+yfo5GLssXR19eH22wp703mnsI+iYYXTeGV17fsrJGbn9uKS1xBObBHRkOLXv7k8gF+RAdJ57ed8RVNULM93T04d+hUfirOYn+MOIi2/Tw6DKxOM9Hwoglq+PtvfsDZQ6NymvuwL564iO78v071B3v3255mIhaiicqpQg/SoZp6Qp+C/SCxEU1Q4/kn/D2iucHJSwYjVqIJar7Y3IZOAof9BGF9EbETTch+GXErmYilaILJ6Lvg/q20CPbBfin+wnp2xFY0kU7ofUGc7o5DHdVT3P5g++VYxwmxFk1MmzK9Koliw5pN6FEIv2/x7BbXLxc8sRc94/5Hq18oTHPinMbIW8YG8hXb2IumYYgjR47WfIvz+iE3GtOnzjSJHT92Ys26awcNrTndmN8pl4xoZNnTK0xfoaUYOHi4ceDAp7hcibZDJNotSrQNdqKZQIr33nofb1dRom0QieYFY9R79laibagnenV6TXnIYcNHmF6jmVAkKNGmWnEWTdfuuvM+k2Qr2U5E05sZti6IWKq13ow1Igs1zHPs8LHyECiXj6mTHiqv4WHDY34e9qWe/fpW4wWtzbh7wuSaoOsYojWUJ5sqTMMakQWFbV63xVY0O9U8bkSfevZdY4e20pSTrmOI1jS86FfaX1WiZYDClGhJoDAlWhIoLAzRXyzbaWzWnjFGj7qjJug6hmiNEm1B+4L2q9i6IGLJnPxYrBFZqGEemaI5yl/5vW7QUFNeqxg3ZkK5RkErjMOEkQeFhSS6XNdJHazppkakQGFKtCRQWEiiKy8dw0x5rWL0qPHlGuqlw0Z00L8MM1pmDNaILNQwj0zR7PHu88rj3ZjS4xofdB1DtIbyqMc7AeoNC4cSLQkUpkRLAoUp0ZJAYUq0JFCYEi0JFKZESwKFKdGSQGFKtCRQmBItCRSmREsChSnRkkBhSrQkUJgSLQkUpkRLAoUp0ZJAYUq0JFCYEi0JFBaWaCuJSnTAoseNuK2ar3v1PpNkio8WbayuSd07Iz6i9+36bwgUi4H7nIhmf5AbZXoJyqOn9NuxRmShhvFv2NmJZlJxj51oIkjRmDvSWElDwbzonl9PmfZomnYl5keCEH185Z7GE60n9FkomolD2QtnLa57mjsOHnY8ONuP8twEy4G5Iw81veeNvTXyCDYQH19+9hUuK19PN+V6Ma8IP6JPrnqbSe6PeSNPOlWYiKfUKV5Ol59T7aVepCg1/49b2X6G9iLbT71IURriTxqkMLf2v+FD2B/c9js0y/FxfptJKh8bFz4fSL1I0XJPyxVsqHIkc8ab23cbG9duungtwKEzidyHfM51zauM3Us3GK2pItTL78C9saE04FmUm0nmd+G6ICgmi7eaapUi25wdjGsVCoWIfwEHsnr03kJ4IwAAAABJRU5ErkJggg=="/>
   </div>
 </a>
 

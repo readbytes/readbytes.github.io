@@ -225,12 +225,9 @@ const html = `
       </body>
     </html>
   `;
-    
-      
         iframe.style.display = "block";
         iframe.srcdoc = html;  
     }
-
     function toggleSnippetAndRefresh(id, textarea_id) {
       const box = document.getElementById(id);
       box.classList.toggle("open");
@@ -480,7 +477,6 @@ code {
   padding: 0.75rem 1rem;
   cursor: pointer;
   font-size: 1rem;
- 
     background-color: #eeeeee;
     color:  #111111; 
     border-radius: 8px;
@@ -623,7 +619,60 @@ html.dark-mode .page-footer a {
   color: #eee;
 }
 
+    .dialog-backdrop {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(0,0,0,0.5);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 10;
+    }
 
+    .dialog {
+      background: white;
+      padding: 20px;
+      width: 90vw;
+      height: 80vh;
+      border-radius: 8px;
+      box-shadow: 0 0 20px rgba(0,0,0,0.3);
+      display: flex;
+      flex-direction: column;
+    }
+    .dialog-content {
+      display: flex;
+      flex: 1;
+      gap: 20px;
+      margin-top: 10px;
+    }
+    .dialog h2 {
+      margin-top: 0;
+    }
+
+    .textarea_dialog {
+      width: 50%;
+      height: 100%;
+      resize: none;
+      font-family: monospace;
+      font-size: 14px;
+      padding: 10px;
+      box-sizing: border-box;
+      border: 1px solid #ccc;
+    }
+
+    .iframe_dialog {
+      width: 50%;
+      height: 100%;
+      border: 1px solid #ccc;
+    }
+    .controls_dialog {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 10px;
+    }    
     button { padding: 0.5em 1em; background: green; color: white; border: none; cursor: pointer; }
     button:hover { background: #1e7e34; }
     .result_iframe { width:99%; height:200px; margin-top: 1em;  resize: both;border:1px solid #ccc;}        
@@ -649,11 +698,13 @@ html.dark-mode .page-footer a {
 title.textContent = "Welcome!";</code></pre>
 </div><p><strong>HTML Example:</strong></p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-html">&lt;h1 id="main-title"&gt;Hello&lt;/h1&gt;</code></pre>
-</div><div class="snippet-container" id="rHpQp">
- <div class="snippet-header" onclick="toggleSnippetAndRefresh('rHpQp','wR5LS')">
-  Click to Try it
- </div>
- <div class="snippet-body"><textarea id="wR5LS">&lt;!DOCTYPE html&gt;
+</div><div class="snippet-container" id="5cv0r">
+ <div id="PI06J_Dialog" class="dialog-backdrop">
+  <div class="dialog">
+   <h2>Dialog 1</h2>
+   <div class="controls"><button onclick="renderIframe(this,'AREbr_Textarea','PI06J_IFrame')">Run</button> <button onclick="closeAll()">Close</button>
+   </div>
+   <div class="dialog-content"><textarea id="AREbr_Textarea" class="textarea_dialog" placeholder="Type HTML here...">&lt;!DOCTYPE html&gt;
 &lt;html lang="en"&gt;
 &lt;head&gt;
   &lt;meta charset="UTF-8"&gt;
@@ -667,16 +718,59 @@ title.textContent = "Welcome!";</code></pre>
     title.textContent = "Welcome!";
   &lt;/script&gt;
 &lt;/body&gt;
-&lt;/html&gt;</textarea> <br> <button onclick="renderIframe(this,'wR5LS','mhGPP')">Run</button>
-  <div id="mhGPP_FloatingLog" class="floatingLog" aria-live="polite" role="alert"></div> <iframe id="mhGPP" class="result_iframe" style="display: none;"></iframe>
+&lt;/html&gt;</textarea> <iframe id="PI06J_IFrame" class="iframe_dialog"></iframe>
+   </div>
+  </div>
+ </div>
+ <div class="snippet-header"><span onclick="toggleSnippetAndRefresh('5cv0r','AREbr')">Click to Try it</span> <!-- <span onclick="openDialog('PI06J_Dialog')">Dialog</span> -->
+ </div>
+ <div class="snippet-body"><textarea id="AREbr">&lt;!DOCTYPE html&gt;
+&lt;html lang="en"&gt;
+&lt;head&gt;
+  &lt;meta charset="UTF-8"&gt;
+  &lt;title&gt;Title Update Example&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+  &lt;h1 id="main-title"&gt;Hello&lt;/h1&gt;
+
+  &lt;script&gt;
+    const title = document.getElementById("main-title");
+    title.textContent = "Welcome!";
+  &lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;</textarea> <br> <button onclick="renderIframe(this,'AREbr','PI06J')">Run</button>
+  <div id="PI06J_FloatingLog" class="floatingLog" aria-live="polite" role="alert"></div> <iframe id="PI06J" class="result_iframe" style="display: none;"></iframe>
   <script>
-  { let editor = CodeMirror.fromTextArea(document.getElementById("wR5LS"), {
-    mode: "htmlmixed",
-    lineNumbers:false,
-    tabSize: 2
-  });
-   codeMirrorMap.set("wR5LS", editor);}
-  </script>
+			{
+				let editor = CodeMirror.fromTextArea(document
+						.getElementById("AREbr"), {
+					mode : "htmlmixed",
+					lineNumbers : false,
+					tabSize : 2
+				});
+				codeMirrorMap.set("AREbr", editor);
+
+				let editor1 = CodeMirror.fromTextArea(document.getElementById("AREbr_Textarea"), {
+					mode : "htmlmixed",
+					lineNumbers : false,
+					tabSize : 2
+				});
+				codeMirrorMap.set("AREbr_Textarea", editor1);
+			}
+		    function openDialog(id) {
+		        closeAll();
+		        document.getElementById(id).style.display = 'flex';
+		        setTimeout(() => {
+		        	 codeMirrorMap.get("AREbr_Textarea").refresh();
+		        }, 100); // 100ms 
+		      }
+
+		      function closeAll() {
+		        document.querySelectorAll('.dialog-backdrop').forEach(el => {
+		          el.style.display = 'none';
+		        });
+		      }			
+		</script>
  </div>
 </div><p><strong>Key Points:</strong></p><ul>
  <li>Returns <strong>one element</strong> (or <code>null</code> if none found).</li>
@@ -694,11 +788,13 @@ for (let i = 0; i &lt; items.length; i++) {
   &lt;li class="item"&gt;Second&lt;/li&gt;
   &lt;li class="item"&gt;Third&lt;/li&gt;
 &lt;/ul&gt;</code></pre>
-</div><div class="snippet-container" id="DS30V">
- <div class="snippet-header" onclick="toggleSnippetAndRefresh('DS30V','tLFBI')">
-  Click to Try it
- </div>
- <div class="snippet-body"><textarea id="tLFBI">&lt;!DOCTYPE html&gt;
+</div><div class="snippet-container" id="kItEn">
+ <div id="NndJi_Dialog" class="dialog-backdrop">
+  <div class="dialog">
+   <h2>Dialog 1</h2>
+   <div class="controls"><button onclick="renderIframe(this,'qGfdI_Textarea','NndJi_IFrame')">Run</button> <button onclick="closeAll()">Close</button>
+   </div>
+   <div class="dialog-content"><textarea id="qGfdI_Textarea" class="textarea_dialog" placeholder="Type HTML here...">&lt;!DOCTYPE html&gt;
 &lt;html lang="en"&gt;
 &lt;head&gt;
   &lt;meta charset="UTF-8"&gt;
@@ -719,16 +815,66 @@ for (let i = 0; i &lt; items.length; i++) {
     }
   &lt;/script&gt;
 &lt;/body&gt;
-&lt;/html&gt;</textarea> <br> <button onclick="renderIframe(this,'tLFBI','zO6pO')">Run</button>
-  <div id="zO6pO_FloatingLog" class="floatingLog" aria-live="polite" role="alert"></div> <iframe id="zO6pO" class="result_iframe" style="display: none;"></iframe>
+&lt;/html&gt;</textarea> <iframe id="NndJi_IFrame" class="iframe_dialog"></iframe>
+   </div>
+  </div>
+ </div>
+ <div class="snippet-header"><span onclick="toggleSnippetAndRefresh('kItEn','qGfdI')">Click to Try it</span> <!-- <span onclick="openDialog('NndJi_Dialog')">Dialog</span> -->
+ </div>
+ <div class="snippet-body"><textarea id="qGfdI">&lt;!DOCTYPE html&gt;
+&lt;html lang="en"&gt;
+&lt;head&gt;
+  &lt;meta charset="UTF-8"&gt;
+  &lt;title&gt;Style Items Example&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+  &lt;ul&gt;
+    &lt;li class="item"&gt;First&lt;/li&gt;
+    &lt;li class="item"&gt;Second&lt;/li&gt;
+    &lt;li class="item"&gt;Third&lt;/li&gt;
+  &lt;/ul&gt;
+
+  &lt;script&gt;
+    const items = document.getElementsByClassName("item");
+
+    for (let i = 0; i &lt; items.length; i++) {
+      items[i].style.color = "blue";
+    }
+  &lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;</textarea> <br> <button onclick="renderIframe(this,'qGfdI','NndJi')">Run</button>
+  <div id="NndJi_FloatingLog" class="floatingLog" aria-live="polite" role="alert"></div> <iframe id="NndJi" class="result_iframe" style="display: none;"></iframe>
   <script>
-  { let editor = CodeMirror.fromTextArea(document.getElementById("tLFBI"), {
-    mode: "htmlmixed",
-    lineNumbers:false,
-    tabSize: 2
-  });
-   codeMirrorMap.set("tLFBI", editor);}
-  </script>
+			{
+				let editor = CodeMirror.fromTextArea(document
+						.getElementById("qGfdI"), {
+					mode : "htmlmixed",
+					lineNumbers : false,
+					tabSize : 2
+				});
+				codeMirrorMap.set("qGfdI", editor);
+
+				let editor1 = CodeMirror.fromTextArea(document.getElementById("qGfdI_Textarea"), {
+					mode : "htmlmixed",
+					lineNumbers : false,
+					tabSize : 2
+				});
+				codeMirrorMap.set("qGfdI_Textarea", editor1);
+			}
+		    function openDialog(id) {
+		        closeAll();
+		        document.getElementById(id).style.display = 'flex';
+		        setTimeout(() => {
+		        	 codeMirrorMap.get("qGfdI_Textarea").refresh();
+		        }, 100); // 100ms 
+		      }
+
+		      function closeAll() {
+		        document.querySelectorAll('.dialog-backdrop').forEach(el => {
+		          el.style.display = 'none';
+		        });
+		      }			
+		</script>
  </div>
 </div><p><strong>Key Points:</strong></p><ul>
  <li>Returns a <strong>live collection</strong> that updates if the DOM changes.</li>
@@ -744,11 +890,13 @@ for (let p of paragraphs) {
  <pre><code class="language-html">&lt;p&gt;Intro&lt;/p&gt;
 &lt;p&gt;Details&lt;/p&gt;
 &lt;p&gt;Summary&lt;/p&gt;</code></pre>
-</div><div class="snippet-container" id="Gn0UA">
- <div class="snippet-header" onclick="toggleSnippetAndRefresh('Gn0UA','k4wKN')">
-  Click to Try it
- </div>
- <div class="snippet-body"><textarea id="k4wKN">&lt;!DOCTYPE html&gt;
+</div><div class="snippet-container" id="jqbds">
+ <div id="aVP4J_Dialog" class="dialog-backdrop">
+  <div class="dialog">
+   <h2>Dialog 1</h2>
+   <div class="controls"><button onclick="renderIframe(this,'tCo4C_Textarea','aVP4J_IFrame')">Run</button> <button onclick="closeAll()">Close</button>
+   </div>
+   <div class="dialog-content"><textarea id="tCo4C_Textarea" class="textarea_dialog" placeholder="Type HTML here...">&lt;!DOCTYPE html&gt;
 &lt;html lang="en"&gt;
 &lt;head&gt;
   &lt;meta charset="UTF-8"&gt;
@@ -767,16 +915,64 @@ for (let p of paragraphs) {
     }
   &lt;/script&gt;
 &lt;/body&gt;
-&lt;/html&gt;</textarea> <br> <button onclick="renderIframe(this,'k4wKN','AeCp0')">Run</button>
-  <div id="AeCp0_FloatingLog" class="floatingLog" aria-live="polite" role="alert"></div> <iframe id="AeCp0" class="result_iframe" style="display: none;"></iframe>
+&lt;/html&gt;</textarea> <iframe id="aVP4J_IFrame" class="iframe_dialog"></iframe>
+   </div>
+  </div>
+ </div>
+ <div class="snippet-header"><span onclick="toggleSnippetAndRefresh('jqbds','tCo4C')">Click to Try it</span> <!-- <span onclick="openDialog('aVP4J_Dialog')">Dialog</span> -->
+ </div>
+ <div class="snippet-body"><textarea id="tCo4C">&lt;!DOCTYPE html&gt;
+&lt;html lang="en"&gt;
+&lt;head&gt;
+  &lt;meta charset="UTF-8"&gt;
+  &lt;title&gt;Bold Paragraphs Example&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+  &lt;p&gt;Intro&lt;/p&gt;
+  &lt;p&gt;Details&lt;/p&gt;
+  &lt;p&gt;Summary&lt;/p&gt;
+
+  &lt;script&gt;
+    const paragraphs = document.getElementsByTagName("p");
+
+    for (let p of paragraphs) {
+      p.style.fontWeight = "bold";
+    }
+  &lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;</textarea> <br> <button onclick="renderIframe(this,'tCo4C','aVP4J')">Run</button>
+  <div id="aVP4J_FloatingLog" class="floatingLog" aria-live="polite" role="alert"></div> <iframe id="aVP4J" class="result_iframe" style="display: none;"></iframe>
   <script>
-  { let editor = CodeMirror.fromTextArea(document.getElementById("k4wKN"), {
-    mode: "htmlmixed",
-    lineNumbers:false,
-    tabSize: 2
-  });
-   codeMirrorMap.set("k4wKN", editor);}
-  </script>
+			{
+				let editor = CodeMirror.fromTextArea(document
+						.getElementById("tCo4C"), {
+					mode : "htmlmixed",
+					lineNumbers : false,
+					tabSize : 2
+				});
+				codeMirrorMap.set("tCo4C", editor);
+
+				let editor1 = CodeMirror.fromTextArea(document.getElementById("tCo4C_Textarea"), {
+					mode : "htmlmixed",
+					lineNumbers : false,
+					tabSize : 2
+				});
+				codeMirrorMap.set("tCo4C_Textarea", editor1);
+			}
+		    function openDialog(id) {
+		        closeAll();
+		        document.getElementById(id).style.display = 'flex';
+		        setTimeout(() => {
+		        	 codeMirrorMap.get("tCo4C_Textarea").refresh();
+		        }, 100); // 100ms 
+		      }
+
+		      function closeAll() {
+		        document.querySelectorAll('.dialog-backdrop').forEach(el => {
+		          el.style.display = 'none';
+		        });
+		      }			
+		</script>
  </div>
 </div><p><strong>Key Points:</strong></p><ul>
  <li>Also returns a <strong>live HTMLCollection</strong>.</li>
@@ -842,11 +1038,13 @@ const inputByAttr = document.querySelector("input[type='email']");</code></pre>
  <li>By <strong>combination</strong>: <code>".form input[type='text']"</code></li>
 </ul><p><strong>Returns:</strong></p><ul>
  <li>The <strong>first matching element</strong>, or <code>null</code> if none found.</li>
-</ul><div class="snippet-container" id="tfzFC">
- <div class="snippet-header" onclick="toggleSnippetAndRefresh('tfzFC','DF9gS')">
-  Click to Try it
- </div>
- <div class="snippet-body"><textarea id="DF9gS">&lt;!DOCTYPE html&gt;
+</ul><div class="snippet-container" id="r6SNv">
+ <div id="kWOWB_Dialog" class="dialog-backdrop">
+  <div class="dialog">
+   <h2>Dialog 1</h2>
+   <div class="controls"><button onclick="renderIframe(this,'DaapB_Textarea','kWOWB_IFrame')">Run</button> <button onclick="closeAll()">Close</button>
+   </div>
+   <div class="dialog-content"><textarea id="DaapB_Textarea" class="textarea_dialog" placeholder="Type HTML here...">&lt;!DOCTYPE html&gt;
 &lt;html lang="en"&gt;
 &lt;head&gt;
   &lt;meta charset="UTF-8"&gt;
@@ -868,16 +1066,67 @@ const inputByAttr = document.querySelector("input[type='email']");</code></pre>
     inputByAttr.style.border = "2px solid red";
   &lt;/script&gt;
 &lt;/body&gt;
-&lt;/html&gt;</textarea> <br> <button onclick="renderIframe(this,'DF9gS','aP6Pu')">Run</button>
-  <div id="aP6Pu_FloatingLog" class="floatingLog" aria-live="polite" role="alert"></div> <iframe id="aP6Pu" class="result_iframe" style="display: none;"></iframe>
+&lt;/html&gt;</textarea> <iframe id="kWOWB_IFrame" class="iframe_dialog"></iframe>
+   </div>
+  </div>
+ </div>
+ <div class="snippet-header"><span onclick="toggleSnippetAndRefresh('r6SNv','DaapB')">Click to Try it</span> <!-- <span onclick="openDialog('kWOWB_Dialog')">Dialog</span> -->
+ </div>
+ <div class="snippet-body"><textarea id="DaapB">&lt;!DOCTYPE html&gt;
+&lt;html lang="en"&gt;
+&lt;head&gt;
+  &lt;meta charset="UTF-8"&gt;
+  &lt;title&gt;QuerySelector Example&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+  &lt;h1&gt;Main Title&lt;/h1&gt;
+  &lt;button class="btn active"&gt;Click Me&lt;/button&gt;
+  &lt;input type="email" placeholder="Your email" /&gt;
+
+  &lt;script&gt;
+    const header = document.querySelector("h1");
+    const activeButton = document.querySelector(".btn.active");
+    const inputByAttr = document.querySelector("input[type='email']");
+
+    // Example actions to show they're selected
+    header.style.color = "green";
+    activeButton.textContent = "I'm Active!";
+    inputByAttr.style.border = "2px solid red";
+  &lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;</textarea> <br> <button onclick="renderIframe(this,'DaapB','kWOWB')">Run</button>
+  <div id="kWOWB_FloatingLog" class="floatingLog" aria-live="polite" role="alert"></div> <iframe id="kWOWB" class="result_iframe" style="display: none;"></iframe>
   <script>
-  { let editor = CodeMirror.fromTextArea(document.getElementById("DF9gS"), {
-    mode: "htmlmixed",
-    lineNumbers:false,
-    tabSize: 2
-  });
-   codeMirrorMap.set("DF9gS", editor);}
-  </script>
+			{
+				let editor = CodeMirror.fromTextArea(document
+						.getElementById("DaapB"), {
+					mode : "htmlmixed",
+					lineNumbers : false,
+					tabSize : 2
+				});
+				codeMirrorMap.set("DaapB", editor);
+
+				let editor1 = CodeMirror.fromTextArea(document.getElementById("DaapB_Textarea"), {
+					mode : "htmlmixed",
+					lineNumbers : false,
+					tabSize : 2
+				});
+				codeMirrorMap.set("DaapB_Textarea", editor1);
+			}
+		    function openDialog(id) {
+		        closeAll();
+		        document.getElementById(id).style.display = 'flex';
+		        setTimeout(() => {
+		        	 codeMirrorMap.get("DaapB_Textarea").refresh();
+		        }, 100); // 100ms 
+		      }
+
+		      function closeAll() {
+		        document.querySelectorAll('.dialog-backdrop').forEach(el => {
+		          el.style.display = 'none';
+		        });
+		      }			
+		</script>
  </div>
 </div><h3 id="queryselectorall"><code>querySelectorAll()</code></h3><p><code>querySelectorAll()</code> returns <strong>all matching elements</strong> as a <strong>static NodeList</strong>.</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-js">const buttons = document.querySelectorAll(".btn");
@@ -888,11 +1137,13 @@ buttons.forEach((btn) =&gt; (btn.disabled = true));</code></pre>
 </div><ul>
  <li>Returns a <strong>NodeList</strong> (not live like <code>getElementsByClassName()</code>).</li>
  <li>Can be iterated using <code>forEach()</code> or converted to an array with <code>Array.from()</code> or spread syntax.</li>
-</ul><div class="snippet-container" id="tSpfk">
- <div class="snippet-header" onclick="toggleSnippetAndRefresh('tSpfk','zgwjz')">
-  Click to Try it
- </div>
- <div class="snippet-body"><textarea id="zgwjz">&lt;!DOCTYPE html&gt;
+</ul><div class="snippet-container" id="2BMF1">
+ <div id="lnec7_Dialog" class="dialog-backdrop">
+  <div class="dialog">
+   <h2>Dialog 1</h2>
+   <div class="controls"><button onclick="renderIframe(this,'9nNGW_Textarea','lnec7_IFrame')">Run</button> <button onclick="closeAll()">Close</button>
+   </div>
+   <div class="dialog-content"><textarea id="9nNGW_Textarea" class="textarea_dialog" placeholder="Type HTML here...">&lt;!DOCTYPE html&gt;
 &lt;html lang="en"&gt;
 &lt;head&gt;
   &lt;meta charset="UTF-8"&gt;
@@ -907,16 +1158,60 @@ buttons.forEach((btn) =&gt; (btn.disabled = true));</code></pre>
     buttons.forEach((btn) =&gt; (btn.disabled = true));
   &lt;/script&gt;
 &lt;/body&gt;
-&lt;/html&gt;</textarea> <br> <button onclick="renderIframe(this,'zgwjz','BrbEk')">Run</button>
-  <div id="BrbEk_FloatingLog" class="floatingLog" aria-live="polite" role="alert"></div> <iframe id="BrbEk" class="result_iframe" style="display: none;"></iframe>
+&lt;/html&gt;</textarea> <iframe id="lnec7_IFrame" class="iframe_dialog"></iframe>
+   </div>
+  </div>
+ </div>
+ <div class="snippet-header"><span onclick="toggleSnippetAndRefresh('2BMF1','9nNGW')">Click to Try it</span> <!-- <span onclick="openDialog('lnec7_Dialog')">Dialog</span> -->
+ </div>
+ <div class="snippet-body"><textarea id="9nNGW">&lt;!DOCTYPE html&gt;
+&lt;html lang="en"&gt;
+&lt;head&gt;
+  &lt;meta charset="UTF-8"&gt;
+  &lt;title&gt;Disable Buttons Example&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+  &lt;button class="btn"&gt;Save&lt;/button&gt;
+  &lt;button class="btn"&gt;Cancel&lt;/button&gt;
+
+  &lt;script&gt;
+    const buttons = document.querySelectorAll(".btn");
+    buttons.forEach((btn) =&gt; (btn.disabled = true));
+  &lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;</textarea> <br> <button onclick="renderIframe(this,'9nNGW','lnec7')">Run</button>
+  <div id="lnec7_FloatingLog" class="floatingLog" aria-live="polite" role="alert"></div> <iframe id="lnec7" class="result_iframe" style="display: none;"></iframe>
   <script>
-  { let editor = CodeMirror.fromTextArea(document.getElementById("zgwjz"), {
-    mode: "htmlmixed",
-    lineNumbers:false,
-    tabSize: 2
-  });
-   codeMirrorMap.set("zgwjz", editor);}
-  </script>
+			{
+				let editor = CodeMirror.fromTextArea(document
+						.getElementById("9nNGW"), {
+					mode : "htmlmixed",
+					lineNumbers : false,
+					tabSize : 2
+				});
+				codeMirrorMap.set("9nNGW", editor);
+
+				let editor1 = CodeMirror.fromTextArea(document.getElementById("9nNGW_Textarea"), {
+					mode : "htmlmixed",
+					lineNumbers : false,
+					tabSize : 2
+				});
+				codeMirrorMap.set("9nNGW_Textarea", editor1);
+			}
+		    function openDialog(id) {
+		        closeAll();
+		        document.getElementById(id).style.display = 'flex';
+		        setTimeout(() => {
+		        	 codeMirrorMap.get("9nNGW_Textarea").refresh();
+		        }, 100); // 100ms 
+		      }
+
+		      function closeAll() {
+		        document.querySelectorAll('.dialog-backdrop').forEach(el => {
+		          el.style.display = 'none';
+		        });
+		      }			
+		</script>
  </div>
 </div><h3 id="complex-selector-capabilities">Complex Selector Capabilities</h3><p><code>querySelector()</code> and <code>querySelectorAll()</code> support the full range of CSS selectors:</p><table>
  <thead>
@@ -1081,11 +1376,13 @@ ul.appendChild(newItem);
 
 console.log(liveList.length);  // 2 (updated)
 console.log(staticList.length); // 1 (unchanged)</code></pre>
-</div><div class="snippet-container" id="e1g7D">
- <div class="snippet-header" onclick="toggleSnippetAndRefresh('e1g7D','4MQFQ')">
-  Click to Try it
- </div>
- <div class="snippet-body"><textarea id="4MQFQ">&lt;!DOCTYPE html&gt;
+</div><div class="snippet-container" id="dojLg">
+ <div id="WXS9N_Dialog" class="dialog-backdrop">
+  <div class="dialog">
+   <h2>Dialog 1</h2>
+   <div class="controls"><button onclick="renderIframe(this,'dWYKa_Textarea','WXS9N_IFrame')">Run</button> <button onclick="closeAll()">Close</button>
+   </div>
+   <div class="dialog-content"><textarea id="dWYKa_Textarea" class="textarea_dialog" placeholder="Type HTML here...">&lt;!DOCTYPE html&gt;
 &lt;html lang="en"&gt;
 &lt;head&gt;
   &lt;meta charset="UTF-8" /&gt;
@@ -1109,16 +1406,69 @@ console.log(staticList.length); // 1 (unchanged)</code></pre>
     console.log("Static NodeList length:", staticList.length);    // 1 (unchanged)
   &lt;/script&gt;
 &lt;/body&gt;
-&lt;/html&gt;</textarea> <br> <button onclick="renderIframe(this,'4MQFQ','QoXnz')">Run</button>
-  <div id="QoXnz_FloatingLog" class="floatingLog" aria-live="polite" role="alert"></div> <iframe id="QoXnz" class="result_iframe" style="display: none;"></iframe>
+&lt;/html&gt;</textarea> <iframe id="WXS9N_IFrame" class="iframe_dialog"></iframe>
+   </div>
+  </div>
+ </div>
+ <div class="snippet-header"><span onclick="toggleSnippetAndRefresh('dojLg','dWYKa')">Click to Try it</span> <!-- <span onclick="openDialog('WXS9N_Dialog')">Dialog</span> -->
+ </div>
+ <div class="snippet-body"><textarea id="dWYKa">&lt;!DOCTYPE html&gt;
+&lt;html lang="en"&gt;
+&lt;head&gt;
+  &lt;meta charset="UTF-8" /&gt;
+  &lt;title&gt;Live vs Static NodeList Example&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+  &lt;ul id="myList"&gt;
+    &lt;li&gt;Item 1&lt;/li&gt;
+  &lt;/ul&gt;
+
+  &lt;script&gt;
+    const liveList = document.getElementsByTagName("li"); // Live HTMLCollection
+    const staticList = document.querySelectorAll("li");   // Static NodeList
+
+    const ul = document.getElementById("myList");
+    const newItem = document.createElement("li");
+    newItem.textContent = "Item 2";
+    ul.appendChild(newItem);
+
+    console.log("Live HTMLCollection length:", liveList.length);  // 2 (updated)
+    console.log("Static NodeList length:", staticList.length);    // 1 (unchanged)
+  &lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;</textarea> <br> <button onclick="renderIframe(this,'dWYKa','WXS9N')">Run</button>
+  <div id="WXS9N_FloatingLog" class="floatingLog" aria-live="polite" role="alert"></div> <iframe id="WXS9N" class="result_iframe" style="display: none;"></iframe>
   <script>
-  { let editor = CodeMirror.fromTextArea(document.getElementById("4MQFQ"), {
-    mode: "htmlmixed",
-    lineNumbers:false,
-    tabSize: 2
-  });
-   codeMirrorMap.set("4MQFQ", editor);}
-  </script>
+			{
+				let editor = CodeMirror.fromTextArea(document
+						.getElementById("dWYKa"), {
+					mode : "htmlmixed",
+					lineNumbers : false,
+					tabSize : 2
+				});
+				codeMirrorMap.set("dWYKa", editor);
+
+				let editor1 = CodeMirror.fromTextArea(document.getElementById("dWYKa_Textarea"), {
+					mode : "htmlmixed",
+					lineNumbers : false,
+					tabSize : 2
+				});
+				codeMirrorMap.set("dWYKa_Textarea", editor1);
+			}
+		    function openDialog(id) {
+		        closeAll();
+		        document.getElementById(id).style.display = 'flex';
+		        setTimeout(() => {
+		        	 codeMirrorMap.get("dWYKa_Textarea").refresh();
+		        }, 100); // 100ms 
+		      }
+
+		      function closeAll() {
+		        document.querySelectorAll('.dialog-backdrop').forEach(el => {
+		          el.style.display = 'none';
+		        });
+		      }			
+		</script>
  </div>
 </div><h3 id="iterating-over-collections">Iterating Over Collections</h3><h4 id="nodelist-has-foreach">NodeList (has forEach):</h4><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-js">const items = document.querySelectorAll("li");
@@ -1184,11 +1534,13 @@ const htmlCollection = document.getElementsByClassName("fruits");
 
 console.log(Array.isArray(nodeList));            // false
 console.log(Array.from(nodeList).map(el =&gt; el.textContent)); // ["Apple", "Banana", "Cherry"]</code></pre>
-</div><div class="snippet-container" id="cnqPN">
- <div class="snippet-header" onclick="toggleSnippetAndRefresh('cnqPN','Id5N1')">
-  Click to Try it
- </div>
- <div class="snippet-body"><textarea id="Id5N1">&lt;!DOCTYPE html&gt;
+</div><div class="snippet-container" id="pvauC">
+ <div id="ErwOu_Dialog" class="dialog-backdrop">
+  <div class="dialog">
+   <h2>Dialog 1</h2>
+   <div class="controls"><button onclick="renderIframe(this,'qHWNa_Textarea','ErwOu_IFrame')">Run</button> <button onclick="closeAll()">Close</button>
+   </div>
+   <div class="dialog-content"><textarea id="qHWNa_Textarea" class="textarea_dialog" placeholder="Type HTML here...">&lt;!DOCTYPE html&gt;
 &lt;html lang="en"&gt;
 &lt;head&gt;
   &lt;meta charset="UTF-8" /&gt;
@@ -1211,16 +1563,68 @@ console.log(Array.from(nodeList).map(el =&gt; el.textContent)); // ["Apple", "Ba
     console.log("HTMLCollection length:", htmlCollection.length);  // 1
   &lt;/script&gt;
 &lt;/body&gt;
-&lt;/html&gt;</textarea> <br> <button onclick="renderIframe(this,'Id5N1','p8yLo')">Run</button>
-  <div id="p8yLo_FloatingLog" class="floatingLog" aria-live="polite" role="alert"></div> <iframe id="p8yLo" class="result_iframe" style="display: none;"></iframe>
+&lt;/html&gt;</textarea> <iframe id="ErwOu_IFrame" class="iframe_dialog"></iframe>
+   </div>
+  </div>
+ </div>
+ <div class="snippet-header"><span onclick="toggleSnippetAndRefresh('pvauC','qHWNa')">Click to Try it</span> <!-- <span onclick="openDialog('ErwOu_Dialog')">Dialog</span> -->
+ </div>
+ <div class="snippet-body"><textarea id="qHWNa">&lt;!DOCTYPE html&gt;
+&lt;html lang="en"&gt;
+&lt;head&gt;
+  &lt;meta charset="UTF-8" /&gt;
+  &lt;title&gt;NodeList vs HTMLCollection Example&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+  &lt;ul class="fruits"&gt;
+    &lt;li&gt;Apple&lt;/li&gt;
+    &lt;li&gt;Banana&lt;/li&gt;
+    &lt;li&gt;Cherry&lt;/li&gt;
+  &lt;/ul&gt;
+
+  &lt;script&gt;
+    const nodeList = document.querySelectorAll(".fruits li");
+    const htmlCollection = document.getElementsByClassName("fruits");
+
+    console.log("Is nodeList an Array?", Array.isArray(nodeList)); // false
+    console.log("nodeList items:", Array.from(nodeList).map(el =&gt; el.textContent)); // ["Apple", "Banana", "Cherry"]
+
+    console.log("HTMLCollection length:", htmlCollection.length);  // 1
+  &lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;</textarea> <br> <button onclick="renderIframe(this,'qHWNa','ErwOu')">Run</button>
+  <div id="ErwOu_FloatingLog" class="floatingLog" aria-live="polite" role="alert"></div> <iframe id="ErwOu" class="result_iframe" style="display: none;"></iframe>
   <script>
-  { let editor = CodeMirror.fromTextArea(document.getElementById("Id5N1"), {
-    mode: "htmlmixed",
-    lineNumbers:false,
-    tabSize: 2
-  });
-   codeMirrorMap.set("Id5N1", editor);}
-  </script>
+			{
+				let editor = CodeMirror.fromTextArea(document
+						.getElementById("qHWNa"), {
+					mode : "htmlmixed",
+					lineNumbers : false,
+					tabSize : 2
+				});
+				codeMirrorMap.set("qHWNa", editor);
+
+				let editor1 = CodeMirror.fromTextArea(document.getElementById("qHWNa_Textarea"), {
+					mode : "htmlmixed",
+					lineNumbers : false,
+					tabSize : 2
+				});
+				codeMirrorMap.set("qHWNa_Textarea", editor1);
+			}
+		    function openDialog(id) {
+		        closeAll();
+		        document.getElementById(id).style.display = 'flex';
+		        setTimeout(() => {
+		        	 codeMirrorMap.get("qHWNa_Textarea").refresh();
+		        }, 100); // 100ms 
+		      }
+
+		      function closeAll() {
+		        document.querySelectorAll('.dialog-backdrop').forEach(el => {
+		          el.style.display = 'none';
+		        });
+		      }			
+		</script>
  </div>
 </div><p>Understanding these collection types is essential before diving into real-world DOM manipulation and dynamic UI updates. Next, we’ll learn how to access <strong>element properties and attributes</strong> in these collections.</p><div class = "chapter-navi-section">
 <a href="#top" class="nav-button prev">↑</a>
@@ -1253,11 +1657,13 @@ console.log(input.getAttribute("value")); // still "Alice"</code></pre>
 </div><ul>
  <li><code>getAttribute()</code> reads from the <strong>HTML attribute</strong>.</li>
  <li><code>.value</code> reflects the <strong>current DOM state</strong> (which may have changed).</li>
-</ul><div class="snippet-container" id="3OCzs">
- <div class="snippet-header" onclick="toggleSnippetAndRefresh('3OCzs','i4qn2')">
-  Click to Try it
- </div>
- <div class="snippet-body"><textarea id="i4qn2">&lt;!DOCTYPE html&gt;
+</ul><div class="snippet-container" id="ZXgcN">
+ <div id="HfIXD_Dialog" class="dialog-backdrop">
+  <div class="dialog">
+   <h2>Dialog 1</h2>
+   <div class="controls"><button onclick="renderIframe(this,'DevHY_Textarea','HfIXD_IFrame')">Run</button> <button onclick="closeAll()">Close</button>
+   </div>
+   <div class="dialog-content"><textarea id="DevHY_Textarea" class="textarea_dialog" placeholder="Type HTML here...">&lt;!DOCTYPE html&gt;
 &lt;html lang="en"&gt;
 &lt;head&gt;
   &lt;meta charset="UTF-8" /&gt;
@@ -1279,16 +1685,67 @@ console.log(input.getAttribute("value")); // still "Alice"</code></pre>
     console.log("input.value:", input.value);                           // "Bob"
   &lt;/script&gt;
 &lt;/body&gt;
-&lt;/html&gt;</textarea> <br> <button onclick="renderIframe(this,'i4qn2','v1dT1')">Run</button>
-  <div id="v1dT1_FloatingLog" class="floatingLog" aria-live="polite" role="alert"></div> <iframe id="v1dT1" class="result_iframe" style="display: none;"></iframe>
+&lt;/html&gt;</textarea> <iframe id="HfIXD_IFrame" class="iframe_dialog"></iframe>
+   </div>
+  </div>
+ </div>
+ <div class="snippet-header"><span onclick="toggleSnippetAndRefresh('ZXgcN','DevHY')">Click to Try it</span> <!-- <span onclick="openDialog('HfIXD_Dialog')">Dialog</span> -->
+ </div>
+ <div class="snippet-body"><textarea id="DevHY">&lt;!DOCTYPE html&gt;
+&lt;html lang="en"&gt;
+&lt;head&gt;
+  &lt;meta charset="UTF-8" /&gt;
+  &lt;title&gt;Input Attribute vs Property&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+  &lt;input id="nameInput" type="text" value="Alice" /&gt;
+
+  &lt;script&gt;
+    const input = document.getElementById("nameInput");
+
+    console.log("getAttribute('value'):", input.getAttribute("value")); // "Alice" (original attribute)
+    console.log("input.value:", input.value);                           // "Alice" (current DOM value)
+
+    input.value = "Bob";
+
+    console.log("After change:");
+    console.log("getAttribute('value'):", input.getAttribute("value")); // still "Alice"
+    console.log("input.value:", input.value);                           // "Bob"
+  &lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;</textarea> <br> <button onclick="renderIframe(this,'DevHY','HfIXD')">Run</button>
+  <div id="HfIXD_FloatingLog" class="floatingLog" aria-live="polite" role="alert"></div> <iframe id="HfIXD" class="result_iframe" style="display: none;"></iframe>
   <script>
-  { let editor = CodeMirror.fromTextArea(document.getElementById("i4qn2"), {
-    mode: "htmlmixed",
-    lineNumbers:false,
-    tabSize: 2
-  });
-   codeMirrorMap.set("i4qn2", editor);}
-  </script>
+			{
+				let editor = CodeMirror.fromTextArea(document
+						.getElementById("DevHY"), {
+					mode : "htmlmixed",
+					lineNumbers : false,
+					tabSize : 2
+				});
+				codeMirrorMap.set("DevHY", editor);
+
+				let editor1 = CodeMirror.fromTextArea(document.getElementById("DevHY_Textarea"), {
+					mode : "htmlmixed",
+					lineNumbers : false,
+					tabSize : 2
+				});
+				codeMirrorMap.set("DevHY_Textarea", editor1);
+			}
+		    function openDialog(id) {
+		        closeAll();
+		        document.getElementById(id).style.display = 'flex';
+		        setTimeout(() => {
+		        	 codeMirrorMap.get("DevHY_Textarea").refresh();
+		        }, 100); // 100ms 
+		      }
+
+		      function closeAll() {
+		        document.querySelectorAll('.dialog-backdrop').forEach(el => {
+		          el.style.display = 'none';
+		        });
+		      }			
+		</script>
  </div>
 </div><h3 id="accessing-and-modifying-common-properties">Accessing and Modifying Common Properties</h3><p>You can read and write many properties directly using dot notation:</p><h4 id="id-and-classname"><code>id</code> and <code>className</code></h4><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-js">const element = document.getElementById("myDiv");
@@ -1334,11 +1791,13 @@ console.log(userDiv.dataset.role);   // "admin"
 userDiv.dataset.role = "editor";     // Updates the data-role attribute</code></pre>
 </div><blockquote>
  <p>✅ <code>dataset</code> provides a clean way to work with custom data embedded in HTML.</p>
-</blockquote><div class="snippet-container" id="ZEoBq">
- <div class="snippet-header" onclick="toggleSnippetAndRefresh('ZEoBq','cQu7s')">
-  Click to Try it
- </div>
- <div class="snippet-body"><textarea id="cQu7s">&lt;!DOCTYPE html&gt;
+</blockquote><div class="snippet-container" id="uZiRE">
+ <div id="ai29D_Dialog" class="dialog-backdrop">
+  <div class="dialog">
+   <h2>Dialog 1</h2>
+   <div class="controls"><button onclick="renderIframe(this,'YGQfq_Textarea','ai29D_IFrame')">Run</button> <button onclick="closeAll()">Close</button>
+   </div>
+   <div class="dialog-content"><textarea id="YGQfq_Textarea" class="textarea_dialog" placeholder="Type HTML here...">&lt;!DOCTYPE html&gt;
 &lt;html lang="en"&gt;
 &lt;head&gt;
   &lt;meta charset="UTF-8" /&gt;
@@ -1359,16 +1818,66 @@ userDiv.dataset.role = "editor";     // Updates the data-role attribute</code></
     console.log(userDiv.getAttribute("data-role")); // "editor"
   &lt;/script&gt;
 &lt;/body&gt;
-&lt;/html&gt;</textarea> <br> <button onclick="renderIframe(this,'cQu7s','BhOXU')">Run</button>
-  <div id="BhOXU_FloatingLog" class="floatingLog" aria-live="polite" role="alert"></div> <iframe id="BhOXU" class="result_iframe" style="display: none;"></iframe>
+&lt;/html&gt;</textarea> <iframe id="ai29D_IFrame" class="iframe_dialog"></iframe>
+   </div>
+  </div>
+ </div>
+ <div class="snippet-header"><span onclick="toggleSnippetAndRefresh('uZiRE','YGQfq')">Click to Try it</span> <!-- <span onclick="openDialog('ai29D_Dialog')">Dialog</span> -->
+ </div>
+ <div class="snippet-body"><textarea id="YGQfq">&lt;!DOCTYPE html&gt;
+&lt;html lang="en"&gt;
+&lt;head&gt;
+  &lt;meta charset="UTF-8" /&gt;
+  &lt;title&gt;Custom Data Attributes Example&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+  &lt;div id="user" data-user-id="42" data-role="admin"&gt;&lt;/div&gt;
+
+  &lt;script&gt;
+    const userDiv = document.getElementById("user");
+
+    console.log(userDiv.dataset.userId); // "42"
+    console.log(userDiv.dataset.role);   // "admin"
+
+    userDiv.dataset.role = "editor";     // Updates the data-role attribute
+
+    // Verify the update
+    console.log(userDiv.getAttribute("data-role")); // "editor"
+  &lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;</textarea> <br> <button onclick="renderIframe(this,'YGQfq','ai29D')">Run</button>
+  <div id="ai29D_FloatingLog" class="floatingLog" aria-live="polite" role="alert"></div> <iframe id="ai29D" class="result_iframe" style="display: none;"></iframe>
   <script>
-  { let editor = CodeMirror.fromTextArea(document.getElementById("cQu7s"), {
-    mode: "htmlmixed",
-    lineNumbers:false,
-    tabSize: 2
-  });
-   codeMirrorMap.set("cQu7s", editor);}
-  </script>
+			{
+				let editor = CodeMirror.fromTextArea(document
+						.getElementById("YGQfq"), {
+					mode : "htmlmixed",
+					lineNumbers : false,
+					tabSize : 2
+				});
+				codeMirrorMap.set("YGQfq", editor);
+
+				let editor1 = CodeMirror.fromTextArea(document.getElementById("YGQfq_Textarea"), {
+					mode : "htmlmixed",
+					lineNumbers : false,
+					tabSize : 2
+				});
+				codeMirrorMap.set("YGQfq_Textarea", editor1);
+			}
+		    function openDialog(id) {
+		        closeAll();
+		        document.getElementById(id).style.display = 'flex';
+		        setTimeout(() => {
+		        	 codeMirrorMap.get("YGQfq_Textarea").refresh();
+		        }, 100); // 100ms 
+		      }
+
+		      function closeAll() {
+		        document.querySelectorAll('.dialog-backdrop').forEach(el => {
+		          el.style.display = 'none';
+		        });
+		      }			
+		</script>
  </div>
 </div><h3 id="common-pitfalls-and-gotchas">Common Pitfalls and Gotchas</h3><table>
  <thead>
@@ -1411,11 +1920,13 @@ console.log(emailInput.dataset.label);         // "User Email"
 
 emailInput.value = "new@example.com";
 console.log(emailInput.getAttribute("value")); // still "user@example.com"</code></pre>
-</div><p>Understanding how to read and modify properties and attributes gives you powerful control over web page behavior. Up next, we'll explore <strong>real-world examples</strong> of selecting and accessing elements in different ways.</p><div class="snippet-container" id="pcQm4">
- <div class="snippet-header" onclick="toggleSnippetAndRefresh('pcQm4','K6dDV')">
-  Click to Try it
- </div>
- <div class="snippet-body"><textarea id="K6dDV">&lt;!DOCTYPE html&gt;
+</div><p>Understanding how to read and modify properties and attributes gives you powerful control over web page behavior. Up next, we'll explore <strong>real-world examples</strong> of selecting and accessing elements in different ways.</p><div class="snippet-container" id="EVqTF">
+ <div id="PgbDq_Dialog" class="dialog-backdrop">
+  <div class="dialog">
+   <h2>Dialog 1</h2>
+   <div class="controls"><button onclick="renderIframe(this,'0gFvz_Textarea','PgbDq_IFrame')">Run</button> <button onclick="closeAll()">Close</button>
+   </div>
+   <div class="dialog-content"><textarea id="0gFvz_Textarea" class="textarea_dialog" placeholder="Type HTML here...">&lt;!DOCTYPE html&gt;
 &lt;html lang="en"&gt;
 &lt;head&gt;
   &lt;meta charset="UTF-8"&gt;
@@ -1438,16 +1949,68 @@ console.log(emailInput.getAttribute("value")); // still "user@example.com"</code
     console.log("Value (attribute):", emailInput.getAttribute("value"));        // still "user@example.com"
   &lt;/script&gt;
 &lt;/body&gt;
-&lt;/html&gt;</textarea> <br> <button onclick="renderIframe(this,'K6dDV','Rk2sn')">Run</button>
-  <div id="Rk2sn_FloatingLog" class="floatingLog" aria-live="polite" role="alert"></div> <iframe id="Rk2sn" class="result_iframe" style="display: none;"></iframe>
+&lt;/html&gt;</textarea> <iframe id="PgbDq_IFrame" class="iframe_dialog"></iframe>
+   </div>
+  </div>
+ </div>
+ <div class="snippet-header"><span onclick="toggleSnippetAndRefresh('EVqTF','0gFvz')">Click to Try it</span> <!-- <span onclick="openDialog('PgbDq_Dialog')">Dialog</span> -->
+ </div>
+ <div class="snippet-body"><textarea id="0gFvz">&lt;!DOCTYPE html&gt;
+&lt;html lang="en"&gt;
+&lt;head&gt;
+  &lt;meta charset="UTF-8"&gt;
+  &lt;title&gt;Input Attributes Example&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+  &lt;input id="email" type="email" value="user@example.com" data-label="User Email" /&gt;
+
+  &lt;script&gt;
+    const emailInput = document.getElementById("email");
+
+    console.log("Initial value (DOM):", emailInput.value);                     // "user@example.com"
+    console.log("Initial value (attribute):", emailInput.getAttribute("value")); // "user@example.com"
+    console.log("Data label:", emailInput.dataset.label);                        // "User Email"
+
+    emailInput.value = "new@example.com";
+
+    console.log("After change:");
+    console.log("Value (DOM):", emailInput.value);                              // "new@example.com"
+    console.log("Value (attribute):", emailInput.getAttribute("value"));        // still "user@example.com"
+  &lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;</textarea> <br> <button onclick="renderIframe(this,'0gFvz','PgbDq')">Run</button>
+  <div id="PgbDq_FloatingLog" class="floatingLog" aria-live="polite" role="alert"></div> <iframe id="PgbDq" class="result_iframe" style="display: none;"></iframe>
   <script>
-  { let editor = CodeMirror.fromTextArea(document.getElementById("K6dDV"), {
-    mode: "htmlmixed",
-    lineNumbers:false,
-    tabSize: 2
-  });
-   codeMirrorMap.set("K6dDV", editor);}
-  </script>
+			{
+				let editor = CodeMirror.fromTextArea(document
+						.getElementById("0gFvz"), {
+					mode : "htmlmixed",
+					lineNumbers : false,
+					tabSize : 2
+				});
+				codeMirrorMap.set("0gFvz", editor);
+
+				let editor1 = CodeMirror.fromTextArea(document.getElementById("0gFvz_Textarea"), {
+					mode : "htmlmixed",
+					lineNumbers : false,
+					tabSize : 2
+				});
+				codeMirrorMap.set("0gFvz_Textarea", editor1);
+			}
+		    function openDialog(id) {
+		        closeAll();
+		        document.getElementById(id).style.display = 'flex';
+		        setTimeout(() => {
+		        	 codeMirrorMap.get("0gFvz_Textarea").refresh();
+		        }, 100); // 100ms 
+		      }
+
+		      function closeAll() {
+		        document.querySelectorAll('.dialog-backdrop').forEach(el => {
+		          el.style.display = 'none';
+		        });
+		      }			
+		</script>
  </div>
 </div><div class = "chapter-navi-section">
 <a href="#top" class="nav-button prev">↑</a>
@@ -1459,11 +2022,13 @@ console.log(emailInput.getAttribute("value")); // still "user@example.com"</code
 </div><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-js">const usernameInput = document.getElementById("username");
 console.log(usernameInput.value); // "guest"</code></pre>
-</div><div class="snippet-container" id="imFma">
- <div class="snippet-header" onclick="toggleSnippetAndRefresh('imFma','Lm6Nd')">
-  Click to Try it
- </div>
- <div class="snippet-body"><textarea id="Lm6Nd">&lt;!DOCTYPE html&gt;
+</div><div class="snippet-container" id="ilUjh">
+ <div id="7OWe9_Dialog" class="dialog-backdrop">
+  <div class="dialog">
+   <h2>Dialog 1</h2>
+   <div class="controls"><button onclick="renderIframe(this,'iKVwi_Textarea','7OWe9_IFrame')">Run</button> <button onclick="closeAll()">Close</button>
+   </div>
+   <div class="dialog-content"><textarea id="iKVwi_Textarea" class="textarea_dialog" placeholder="Type HTML here...">&lt;!DOCTYPE html&gt;
 &lt;html lang="en"&gt;
 &lt;head&gt;
   &lt;meta charset="UTF-8"&gt;
@@ -1477,16 +2042,59 @@ console.log(usernameInput.value); // "guest"</code></pre>
     console.log(usernameInput.value); // "guest"
   &lt;/script&gt;
 &lt;/body&gt;
-&lt;/html&gt;</textarea> <br> <button onclick="renderIframe(this,'Lm6Nd','mBBx2')">Run</button>
-  <div id="mBBx2_FloatingLog" class="floatingLog" aria-live="polite" role="alert"></div> <iframe id="mBBx2" class="result_iframe" style="display: none;"></iframe>
+&lt;/html&gt;</textarea> <iframe id="7OWe9_IFrame" class="iframe_dialog"></iframe>
+   </div>
+  </div>
+ </div>
+ <div class="snippet-header"><span onclick="toggleSnippetAndRefresh('ilUjh','iKVwi')">Click to Try it</span> <!-- <span onclick="openDialog('7OWe9_Dialog')">Dialog</span> -->
+ </div>
+ <div class="snippet-body"><textarea id="iKVwi">&lt;!DOCTYPE html&gt;
+&lt;html lang="en"&gt;
+&lt;head&gt;
+  &lt;meta charset="UTF-8"&gt;
+  &lt;title&gt;Input Value Example&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+  &lt;input id="username" type="text" value="guest" /&gt;
+
+  &lt;script&gt;
+    const usernameInput = document.getElementById("username");
+    console.log(usernameInput.value); // "guest"
+  &lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;</textarea> <br> <button onclick="renderIframe(this,'iKVwi','7OWe9')">Run</button>
+  <div id="7OWe9_FloatingLog" class="floatingLog" aria-live="polite" role="alert"></div> <iframe id="7OWe9" class="result_iframe" style="display: none;"></iframe>
   <script>
-  { let editor = CodeMirror.fromTextArea(document.getElementById("Lm6Nd"), {
-    mode: "htmlmixed",
-    lineNumbers:false,
-    tabSize: 2
-  });
-   codeMirrorMap.set("Lm6Nd", editor);}
-  </script>
+			{
+				let editor = CodeMirror.fromTextArea(document
+						.getElementById("iKVwi"), {
+					mode : "htmlmixed",
+					lineNumbers : false,
+					tabSize : 2
+				});
+				codeMirrorMap.set("iKVwi", editor);
+
+				let editor1 = CodeMirror.fromTextArea(document.getElementById("iKVwi_Textarea"), {
+					mode : "htmlmixed",
+					lineNumbers : false,
+					tabSize : 2
+				});
+				codeMirrorMap.set("iKVwi_Textarea", editor1);
+			}
+		    function openDialog(id) {
+		        closeAll();
+		        document.getElementById(id).style.display = 'flex';
+		        setTimeout(() => {
+		        	 codeMirrorMap.get("iKVwi_Textarea").refresh();
+		        }, 100); // 100ms 
+		      }
+
+		      function closeAll() {
+		        document.querySelectorAll('.dialog-backdrop').forEach(el => {
+		          el.style.display = 'none';
+		        });
+		      }			
+		</script>
  </div>
 </div><p><strong>Why <code>getElementById()</code>?</strong> It’s fast and direct — perfect for a unique element like a form field with a known <code>id</code>.</p><h3 id="example-2-selecting-all-items-with-a-class">Example 2: Selecting All Items with a Class</h3><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-html">&lt;ul&gt;
@@ -1500,11 +2108,13 @@ console.log(usernameInput.value); // "guest"</code></pre>
 for (let item of items) {
   console.log(item.textContent); // Logs each menu item's text
 }</code></pre>
-</div><div class="snippet-container" id="koL2n">
- <div class="snippet-header" onclick="toggleSnippetAndRefresh('koL2n','x45BM')">
-  Click to Try it
- </div>
- <div class="snippet-body"><textarea id="x45BM">&lt;!DOCTYPE html&gt;
+</div><div class="snippet-container" id="fBG02">
+ <div id="EOIkn_Dialog" class="dialog-backdrop">
+  <div class="dialog">
+   <h2>Dialog 1</h2>
+   <div class="controls"><button onclick="renderIframe(this,'wsfve_Textarea','EOIkn_IFrame')">Run</button> <button onclick="closeAll()">Close</button>
+   </div>
+   <div class="dialog-content"><textarea id="wsfve_Textarea" class="textarea_dialog" placeholder="Type HTML here...">&lt;!DOCTYPE html&gt;
 &lt;html lang="en"&gt;
 &lt;head&gt;
   &lt;meta charset="UTF-8"&gt;
@@ -1525,16 +2135,66 @@ for (let item of items) {
     }
   &lt;/script&gt;
 &lt;/body&gt;
-&lt;/html&gt;</textarea> <br> <button onclick="renderIframe(this,'x45BM','XeEu4')">Run</button>
-  <div id="XeEu4_FloatingLog" class="floatingLog" aria-live="polite" role="alert"></div> <iframe id="XeEu4" class="result_iframe" style="display: none;"></iframe>
+&lt;/html&gt;</textarea> <iframe id="EOIkn_IFrame" class="iframe_dialog"></iframe>
+   </div>
+  </div>
+ </div>
+ <div class="snippet-header"><span onclick="toggleSnippetAndRefresh('fBG02','wsfve')">Click to Try it</span> <!-- <span onclick="openDialog('EOIkn_Dialog')">Dialog</span> -->
+ </div>
+ <div class="snippet-body"><textarea id="wsfve">&lt;!DOCTYPE html&gt;
+&lt;html lang="en"&gt;
+&lt;head&gt;
+  &lt;meta charset="UTF-8"&gt;
+  &lt;title&gt;Menu Items Logger&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+  &lt;ul&gt;
+    &lt;li class="menu-item"&gt;Home&lt;/li&gt;
+    &lt;li class="menu-item"&gt;About&lt;/li&gt;
+    &lt;li class="menu-item"&gt;Contact&lt;/li&gt;
+  &lt;/ul&gt;
+
+  &lt;script&gt;
+    const items = document.getElementsByClassName("menu-item");
+
+    for (let item of items) {
+      console.log(item.textContent); // Logs each menu item's text
+    }
+  &lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;</textarea> <br> <button onclick="renderIframe(this,'wsfve','EOIkn')">Run</button>
+  <div id="EOIkn_FloatingLog" class="floatingLog" aria-live="polite" role="alert"></div> <iframe id="EOIkn" class="result_iframe" style="display: none;"></iframe>
   <script>
-  { let editor = CodeMirror.fromTextArea(document.getElementById("x45BM"), {
-    mode: "htmlmixed",
-    lineNumbers:false,
-    tabSize: 2
-  });
-   codeMirrorMap.set("x45BM", editor);}
-  </script>
+			{
+				let editor = CodeMirror.fromTextArea(document
+						.getElementById("wsfve"), {
+					mode : "htmlmixed",
+					lineNumbers : false,
+					tabSize : 2
+				});
+				codeMirrorMap.set("wsfve", editor);
+
+				let editor1 = CodeMirror.fromTextArea(document.getElementById("wsfve_Textarea"), {
+					mode : "htmlmixed",
+					lineNumbers : false,
+					tabSize : 2
+				});
+				codeMirrorMap.set("wsfve_Textarea", editor1);
+			}
+		    function openDialog(id) {
+		        closeAll();
+		        document.getElementById(id).style.display = 'flex';
+		        setTimeout(() => {
+		        	 codeMirrorMap.get("wsfve_Textarea").refresh();
+		        }, 100); // 100ms 
+		      }
+
+		      function closeAll() {
+		        document.querySelectorAll('.dialog-backdrop').forEach(el => {
+		          el.style.display = 'none';
+		        });
+		      }			
+		</script>
  </div>
 </div><p><strong>Note:</strong> This returns an <strong>HTMLCollection</strong>, which is <em>live</em> and <strong>not a true array</strong>.</p><h3 id="example-3-using-queryselectorall-with-css-selectors">Example 3: Using <code>querySelectorAll()</code> with CSS Selectors</h3><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-html">&lt;div&gt;
@@ -1548,11 +2208,13 @@ for (let item of items) {
 highlighted.forEach(p =&gt; {
   p.style.backgroundColor = "yellow";
 });</code></pre>
-</div><div class="snippet-container" id="6Lz9h">
- <div class="snippet-header" onclick="toggleSnippetAndRefresh('6Lz9h','umtEB')">
-  Click to Try it
- </div>
- <div class="snippet-body"><textarea id="umtEB">&lt;!DOCTYPE html&gt;
+</div><div class="snippet-container" id="9Mvbs">
+ <div id="M4xXZ_Dialog" class="dialog-backdrop">
+  <div class="dialog">
+   <h2>Dialog 1</h2>
+   <div class="controls"><button onclick="renderIframe(this,'VAbRz_Textarea','M4xXZ_IFrame')">Run</button> <button onclick="closeAll()">Close</button>
+   </div>
+   <div class="dialog-content"><textarea id="VAbRz_Textarea" class="textarea_dialog" placeholder="Type HTML here...">&lt;!DOCTYPE html&gt;
 &lt;html lang="en"&gt;
 &lt;head&gt;
   &lt;meta charset="UTF-8"&gt;
@@ -1573,16 +2235,66 @@ highlighted.forEach(p =&gt; {
     });
   &lt;/script&gt;
 &lt;/body&gt;
-&lt;/html&gt;</textarea> <br> <button onclick="renderIframe(this,'umtEB','iMVx3')">Run</button>
-  <div id="iMVx3_FloatingLog" class="floatingLog" aria-live="polite" role="alert"></div> <iframe id="iMVx3" class="result_iframe" style="display: none;"></iframe>
+&lt;/html&gt;</textarea> <iframe id="M4xXZ_IFrame" class="iframe_dialog"></iframe>
+   </div>
+  </div>
+ </div>
+ <div class="snippet-header"><span onclick="toggleSnippetAndRefresh('9Mvbs','VAbRz')">Click to Try it</span> <!-- <span onclick="openDialog('M4xXZ_Dialog')">Dialog</span> -->
+ </div>
+ <div class="snippet-body"><textarea id="VAbRz">&lt;!DOCTYPE html&gt;
+&lt;html lang="en"&gt;
+&lt;head&gt;
+  &lt;meta charset="UTF-8"&gt;
+  &lt;title&gt;Highlight Example&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+  &lt;div&gt;
+    &lt;p class="highlight"&gt;This is important.&lt;/p&gt;
+    &lt;p&gt;This is normal.&lt;/p&gt;
+    &lt;p class="highlight"&gt;So is this.&lt;/p&gt;
+  &lt;/div&gt;
+
+  &lt;script&gt;
+    const highlighted = document.querySelectorAll("p.highlight");
+
+    highlighted.forEach(p =&gt; {
+      p.style.backgroundColor = "yellow";
+    });
+  &lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;</textarea> <br> <button onclick="renderIframe(this,'VAbRz','M4xXZ')">Run</button>
+  <div id="M4xXZ_FloatingLog" class="floatingLog" aria-live="polite" role="alert"></div> <iframe id="M4xXZ" class="result_iframe" style="display: none;"></iframe>
   <script>
-  { let editor = CodeMirror.fromTextArea(document.getElementById("umtEB"), {
-    mode: "htmlmixed",
-    lineNumbers:false,
-    tabSize: 2
-  });
-   codeMirrorMap.set("umtEB", editor);}
-  </script>
+			{
+				let editor = CodeMirror.fromTextArea(document
+						.getElementById("VAbRz"), {
+					mode : "htmlmixed",
+					lineNumbers : false,
+					tabSize : 2
+				});
+				codeMirrorMap.set("VAbRz", editor);
+
+				let editor1 = CodeMirror.fromTextArea(document.getElementById("VAbRz_Textarea"), {
+					mode : "htmlmixed",
+					lineNumbers : false,
+					tabSize : 2
+				});
+				codeMirrorMap.set("VAbRz_Textarea", editor1);
+			}
+		    function openDialog(id) {
+		        closeAll();
+		        document.getElementById(id).style.display = 'flex';
+		        setTimeout(() => {
+		        	 codeMirrorMap.get("VAbRz_Textarea").refresh();
+		        }, 100); // 100ms 
+		      }
+
+		      function closeAll() {
+		        document.querySelectorAll('.dialog-backdrop').forEach(el => {
+		          el.style.display = 'none';
+		        });
+		      }			
+		</script>
  </div>
 </div><p><strong>Why <code>querySelectorAll()</code>?</strong> It allows complex CSS selectors like <code>p.highlight</code>, <code>div &gt; p</code>, or <code>[data-*]</code>.</p><h3 id="example-4-selecting-form-inputs-by-tag">Example 4: Selecting Form Inputs by Tag</h3><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-html">&lt;form&gt;
@@ -1595,11 +2307,13 @@ highlighted.forEach(p =&gt; {
 Array.from(inputs).forEach(input =&gt; {
   console.log(input.name); // "firstName", then "lastName"
 });</code></pre>
-</div><p><strong>Tip:</strong> Convert the <code>HTMLCollection</code> to an array with <code>Array.from()</code> for full array method support.</p><div class="snippet-container" id="TxPJp">
- <div class="snippet-header" onclick="toggleSnippetAndRefresh('TxPJp','ZdVcd')">
-  Click to Try it
- </div>
- <div class="snippet-body"><textarea id="ZdVcd">&lt;!DOCTYPE html&gt;
+</div><p><strong>Tip:</strong> Convert the <code>HTMLCollection</code> to an array with <code>Array.from()</code> for full array method support.</p><div class="snippet-container" id="rokp5">
+ <div id="Eck2i_Dialog" class="dialog-backdrop">
+  <div class="dialog">
+   <h2>Dialog 1</h2>
+   <div class="controls"><button onclick="renderIframe(this,'LRdw5_Textarea','Eck2i_IFrame')">Run</button> <button onclick="closeAll()">Close</button>
+   </div>
+   <div class="dialog-content"><textarea id="LRdw5_Textarea" class="textarea_dialog" placeholder="Type HTML here...">&lt;!DOCTYPE html&gt;
 &lt;html lang="en"&gt;
 &lt;head&gt;
   &lt;meta charset="UTF-8"&gt;
@@ -1619,16 +2333,65 @@ Array.from(inputs).forEach(input =&gt; {
     });
   &lt;/script&gt;
 &lt;/body&gt;
-&lt;/html&gt;</textarea> <br> <button onclick="renderIframe(this,'ZdVcd','tsbSs')">Run</button>
-  <div id="tsbSs_FloatingLog" class="floatingLog" aria-live="polite" role="alert"></div> <iframe id="tsbSs" class="result_iframe" style="display: none;"></iframe>
+&lt;/html&gt;</textarea> <iframe id="Eck2i_IFrame" class="iframe_dialog"></iframe>
+   </div>
+  </div>
+ </div>
+ <div class="snippet-header"><span onclick="toggleSnippetAndRefresh('rokp5','LRdw5')">Click to Try it</span> <!-- <span onclick="openDialog('Eck2i_Dialog')">Dialog</span> -->
+ </div>
+ <div class="snippet-body"><textarea id="LRdw5">&lt;!DOCTYPE html&gt;
+&lt;html lang="en"&gt;
+&lt;head&gt;
+  &lt;meta charset="UTF-8"&gt;
+  &lt;title&gt;Form Input Names&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+  &lt;form&gt;
+    &lt;input type="text" name="firstName" /&gt;
+    &lt;input type="text" name="lastName" /&gt;
+  &lt;/form&gt;
+
+  &lt;script&gt;
+    const inputs = document.getElementsByTagName("input");
+
+    Array.from(inputs).forEach(input =&gt; {
+      console.log(input.name); // "firstName", then "lastName"
+    });
+  &lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;</textarea> <br> <button onclick="renderIframe(this,'LRdw5','Eck2i')">Run</button>
+  <div id="Eck2i_FloatingLog" class="floatingLog" aria-live="polite" role="alert"></div> <iframe id="Eck2i" class="result_iframe" style="display: none;"></iframe>
   <script>
-  { let editor = CodeMirror.fromTextArea(document.getElementById("ZdVcd"), {
-    mode: "htmlmixed",
-    lineNumbers:false,
-    tabSize: 2
-  });
-   codeMirrorMap.set("ZdVcd", editor);}
-  </script>
+			{
+				let editor = CodeMirror.fromTextArea(document
+						.getElementById("LRdw5"), {
+					mode : "htmlmixed",
+					lineNumbers : false,
+					tabSize : 2
+				});
+				codeMirrorMap.set("LRdw5", editor);
+
+				let editor1 = CodeMirror.fromTextArea(document.getElementById("LRdw5_Textarea"), {
+					mode : "htmlmixed",
+					lineNumbers : false,
+					tabSize : 2
+				});
+				codeMirrorMap.set("LRdw5_Textarea", editor1);
+			}
+		    function openDialog(id) {
+		        closeAll();
+		        document.getElementById(id).style.display = 'flex';
+		        setTimeout(() => {
+		        	 codeMirrorMap.get("LRdw5_Textarea").refresh();
+		        }, 100); // 100ms 
+		      }
+
+		      function closeAll() {
+		        document.querySelectorAll('.dialog-backdrop').forEach(el => {
+		          el.style.display = 'none';
+		        });
+		      }			
+		</script>
  </div>
 </div><h3 id="example-5-mixing-selectors-to-narrow-down">Example 5: Mixing Selectors to Narrow Down</h3><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-html">&lt;div class="card featured"&gt;...&lt;/div&gt;
@@ -1636,11 +2399,13 @@ Array.from(inputs).forEach(input =&gt; {
 </div><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-js">const featuredCard = document.querySelector(".card.featured");
 console.log(JSON.stringify(featuredCard,null,2)); // The div with both 'card' and 'featured' classes</code></pre>
-</div><p><strong>Benefit:</strong> Clear, concise selector that expresses both class conditions.</p><div class="snippet-container" id="fVJmM">
- <div class="snippet-header" onclick="toggleSnippetAndRefresh('fVJmM','W9rLL')">
-  Click to Try it
- </div>
- <div class="snippet-body"><textarea id="W9rLL">&lt;!DOCTYPE html&gt;
+</div><p><strong>Benefit:</strong> Clear, concise selector that expresses both class conditions.</p><div class="snippet-container" id="8hijB">
+ <div id="tkUoi_Dialog" class="dialog-backdrop">
+  <div class="dialog">
+   <h2>Dialog 1</h2>
+   <div class="controls"><button onclick="renderIframe(this,'bMxoL_Textarea','tkUoi_IFrame')">Run</button> <button onclick="closeAll()">Close</button>
+   </div>
+   <div class="dialog-content"><textarea id="bMxoL_Textarea" class="textarea_dialog" placeholder="Type HTML here...">&lt;!DOCTYPE html&gt;
 &lt;html lang="en"&gt;
 &lt;head&gt;
   &lt;meta charset="UTF-8"&gt;
@@ -1665,16 +2430,70 @@ console.log(JSON.stringify(featuredCard,null,2)); // The div with both 'card' an
     console.log(featuredCard); // The div with both 'card' and 'featured' classes
   &lt;/script&gt;
 &lt;/body&gt;
-&lt;/html&gt;</textarea> <br> <button onclick="renderIframe(this,'W9rLL','5mKz9')">Run</button>
-  <div id="5mKz9_FloatingLog" class="floatingLog" aria-live="polite" role="alert"></div> <iframe id="5mKz9" class="result_iframe" style="display: none;"></iframe>
+&lt;/html&gt;</textarea> <iframe id="tkUoi_IFrame" class="iframe_dialog"></iframe>
+   </div>
+  </div>
+ </div>
+ <div class="snippet-header"><span onclick="toggleSnippetAndRefresh('8hijB','bMxoL')">Click to Try it</span> <!-- <span onclick="openDialog('tkUoi_Dialog')">Dialog</span> -->
+ </div>
+ <div class="snippet-body"><textarea id="bMxoL">&lt;!DOCTYPE html&gt;
+&lt;html lang="en"&gt;
+&lt;head&gt;
+  &lt;meta charset="UTF-8"&gt;
+  &lt;title&gt;QuerySelector Multi-Class Example&lt;/title&gt;
+  &lt;style&gt;
+    .card {
+      padding: 10px;
+      border: 1px solid #ccc;
+      margin-bottom: 10px;
+    }
+    .featured {
+      background-color: #f9f871;
+    }
+  &lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+  &lt;div class="card featured"&gt;This is the featured card.&lt;/div&gt;
+  &lt;div class="card"&gt;This is a regular card.&lt;/div&gt;
+
+  &lt;script&gt;
+    const featuredCard = document.querySelector(".card.featured");
+    console.log(featuredCard); // The div with both 'card' and 'featured' classes
+  &lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;</textarea> <br> <button onclick="renderIframe(this,'bMxoL','tkUoi')">Run</button>
+  <div id="tkUoi_FloatingLog" class="floatingLog" aria-live="polite" role="alert"></div> <iframe id="tkUoi" class="result_iframe" style="display: none;"></iframe>
   <script>
-  { let editor = CodeMirror.fromTextArea(document.getElementById("W9rLL"), {
-    mode: "htmlmixed",
-    lineNumbers:false,
-    tabSize: 2
-  });
-   codeMirrorMap.set("W9rLL", editor);}
-  </script>
+			{
+				let editor = CodeMirror.fromTextArea(document
+						.getElementById("bMxoL"), {
+					mode : "htmlmixed",
+					lineNumbers : false,
+					tabSize : 2
+				});
+				codeMirrorMap.set("bMxoL", editor);
+
+				let editor1 = CodeMirror.fromTextArea(document.getElementById("bMxoL_Textarea"), {
+					mode : "htmlmixed",
+					lineNumbers : false,
+					tabSize : 2
+				});
+				codeMirrorMap.set("bMxoL_Textarea", editor1);
+			}
+		    function openDialog(id) {
+		        closeAll();
+		        document.getElementById(id).style.display = 'flex';
+		        setTimeout(() => {
+		        	 codeMirrorMap.get("bMxoL_Textarea").refresh();
+		        }, 100); // 100ms 
+		      }
+
+		      function closeAll() {
+		        document.querySelectorAll('.dialog-backdrop').forEach(el => {
+		          el.style.display = 'none';
+		        });
+		      }			
+		</script>
  </div>
 </div><h3 id="example-6-selecting-custom-attributes">Example 6: Selecting Custom Attributes</h3><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-html">&lt;button data-action="save"&gt;Save&lt;/button&gt;
@@ -1685,11 +2504,13 @@ console.log(JSON.stringify(featuredCard,null,2)); // The div with both 'card' an
 buttons.forEach(btn =&gt; {
   console.log(btn.dataset.action); // "save", then "delete"
 });</code></pre>
-</div><p><strong>Why it's useful:</strong> You can filter based on attribute presence or value (<code>[data-action="save"]</code>).</p><div class="snippet-container" id="3UtkD">
- <div class="snippet-header" onclick="toggleSnippetAndRefresh('3UtkD','emZo7')">
-  Click to Try it
- </div>
- <div class="snippet-body"><textarea id="emZo7">&lt;!DOCTYPE html&gt;
+</div><p><strong>Why it's useful:</strong> You can filter based on attribute presence or value (<code>[data-action="save"]</code>).</p><div class="snippet-container" id="cg9E5">
+ <div id="i6iHJ_Dialog" class="dialog-backdrop">
+  <div class="dialog">
+   <h2>Dialog 1</h2>
+   <div class="controls"><button onclick="renderIframe(this,'tWzAn_Textarea','i6iHJ_IFrame')">Run</button> <button onclick="closeAll()">Close</button>
+   </div>
+   <div class="dialog-content"><textarea id="tWzAn_Textarea" class="textarea_dialog" placeholder="Type HTML here...">&lt;!DOCTYPE html&gt;
 &lt;html lang="en"&gt;
 &lt;head&gt;
   &lt;meta charset="UTF-8"&gt;
@@ -1707,16 +2528,63 @@ buttons.forEach(btn =&gt; {
     });
   &lt;/script&gt;
 &lt;/body&gt;
-&lt;/html&gt;</textarea> <br> <button onclick="renderIframe(this,'emZo7','MvTy4')">Run</button>
-  <div id="MvTy4_FloatingLog" class="floatingLog" aria-live="polite" role="alert"></div> <iframe id="MvTy4" class="result_iframe" style="display: none;"></iframe>
+&lt;/html&gt;</textarea> <iframe id="i6iHJ_IFrame" class="iframe_dialog"></iframe>
+   </div>
+  </div>
+ </div>
+ <div class="snippet-header"><span onclick="toggleSnippetAndRefresh('cg9E5','tWzAn')">Click to Try it</span> <!-- <span onclick="openDialog('i6iHJ_Dialog')">Dialog</span> -->
+ </div>
+ <div class="snippet-body"><textarea id="tWzAn">&lt;!DOCTYPE html&gt;
+&lt;html lang="en"&gt;
+&lt;head&gt;
+  &lt;meta charset="UTF-8"&gt;
+  &lt;title&gt;Data Action Buttons&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+  &lt;button data-action="save"&gt;Save&lt;/button&gt;
+  &lt;button data-action="delete"&gt;Delete&lt;/button&gt;
+
+  &lt;script&gt;
+    const buttons = document.querySelectorAll("button[data-action]");
+
+    buttons.forEach(btn =&gt; {
+      console.log(btn.dataset.action); // "save", then "delete"
+    });
+  &lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;</textarea> <br> <button onclick="renderIframe(this,'tWzAn','i6iHJ')">Run</button>
+  <div id="i6iHJ_FloatingLog" class="floatingLog" aria-live="polite" role="alert"></div> <iframe id="i6iHJ" class="result_iframe" style="display: none;"></iframe>
   <script>
-  { let editor = CodeMirror.fromTextArea(document.getElementById("emZo7"), {
-    mode: "htmlmixed",
-    lineNumbers:false,
-    tabSize: 2
-  });
-   codeMirrorMap.set("emZo7", editor);}
-  </script>
+			{
+				let editor = CodeMirror.fromTextArea(document
+						.getElementById("tWzAn"), {
+					mode : "htmlmixed",
+					lineNumbers : false,
+					tabSize : 2
+				});
+				codeMirrorMap.set("tWzAn", editor);
+
+				let editor1 = CodeMirror.fromTextArea(document.getElementById("tWzAn_Textarea"), {
+					mode : "htmlmixed",
+					lineNumbers : false,
+					tabSize : 2
+				});
+				codeMirrorMap.set("tWzAn_Textarea", editor1);
+			}
+		    function openDialog(id) {
+		        closeAll();
+		        document.getElementById(id).style.display = 'flex';
+		        setTimeout(() => {
+		        	 codeMirrorMap.get("tWzAn_Textarea").refresh();
+		        }, 100); // 100ms 
+		      }
+
+		      function closeAll() {
+		        document.querySelectorAll('.dialog-backdrop').forEach(el => {
+		          el.style.display = 'none';
+		        });
+		      }			
+		</script>
  </div>
 </div><h3 id="example-7-efficient-targeting-with-descendant-selectors">Example 7: Efficient Targeting with Descendant Selectors</h3><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-html">&lt;div class="form-section"&gt;
@@ -1767,11 +2635,13 @@ buttons.forEach(btn =&gt; {
 </div><p>Can you select only the list items with class <code>favorite</code>?</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-js">const favs = document.querySelectorAll("#fruits li.favorite");
 favs.forEach(item =&gt; console.log(item.textContent)); // "Apple", "Cherry"</code></pre>
-</div><p>These examples give you the power to select, inspect, and modify any part of your document dynamically and efficiently — a crucial first step in DOM programming mastery.</p><div class="snippet-container" id="t5EnA">
- <div class="snippet-header" onclick="toggleSnippetAndRefresh('t5EnA','bLa4V')">
-  Click to Try it
- </div>
- <div class="snippet-body"><textarea id="bLa4V">&lt;!DOCTYPE html&gt;
+</div><p>These examples give you the power to select, inspect, and modify any part of your document dynamically and efficiently — a crucial first step in DOM programming mastery.</p><div class="snippet-container" id="oHGuT">
+ <div id="EG5u5_Dialog" class="dialog-backdrop">
+  <div class="dialog">
+   <h2>Dialog 1</h2>
+   <div class="controls"><button onclick="renderIframe(this,'xNzYT_Textarea','EG5u5_IFrame')">Run</button> <button onclick="closeAll()">Close</button>
+   </div>
+   <div class="dialog-content"><textarea id="xNzYT_Textarea" class="textarea_dialog" placeholder="Type HTML here...">&lt;!DOCTYPE html&gt;
 &lt;html lang="en"&gt;
 &lt;head&gt;
   &lt;meta charset="UTF-8"&gt;
@@ -1789,16 +2659,63 @@ favs.forEach(item =&gt; console.log(item.textContent)); // "Apple", "Cherry"</co
     favs.forEach(item =&gt; console.log(item.textContent)); // "Apple", "Cherry"
   &lt;/script&gt;
 &lt;/body&gt;
-&lt;/html&gt;</textarea> <br> <button onclick="renderIframe(this,'bLa4V','Wc2AG')">Run</button>
-  <div id="Wc2AG_FloatingLog" class="floatingLog" aria-live="polite" role="alert"></div> <iframe id="Wc2AG" class="result_iframe" style="display: none;"></iframe>
+&lt;/html&gt;</textarea> <iframe id="EG5u5_IFrame" class="iframe_dialog"></iframe>
+   </div>
+  </div>
+ </div>
+ <div class="snippet-header"><span onclick="toggleSnippetAndRefresh('oHGuT','xNzYT')">Click to Try it</span> <!-- <span onclick="openDialog('EG5u5_Dialog')">Dialog</span> -->
+ </div>
+ <div class="snippet-body"><textarea id="xNzYT">&lt;!DOCTYPE html&gt;
+&lt;html lang="en"&gt;
+&lt;head&gt;
+  &lt;meta charset="UTF-8"&gt;
+  &lt;title&gt;Select Favorite Fruits&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+  &lt;ul id="fruits"&gt;
+    &lt;li class="favorite"&gt;Apple&lt;/li&gt;
+    &lt;li&gt;Banana&lt;/li&gt;
+    &lt;li class="favorite"&gt;Cherry&lt;/li&gt;
+  &lt;/ul&gt;
+
+  &lt;script&gt;
+    const favs = document.querySelectorAll("#fruits li.favorite");
+    favs.forEach(item =&gt; console.log(item.textContent)); // "Apple", "Cherry"
+  &lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;</textarea> <br> <button onclick="renderIframe(this,'xNzYT','EG5u5')">Run</button>
+  <div id="EG5u5_FloatingLog" class="floatingLog" aria-live="polite" role="alert"></div> <iframe id="EG5u5" class="result_iframe" style="display: none;"></iframe>
   <script>
-  { let editor = CodeMirror.fromTextArea(document.getElementById("bLa4V"), {
-    mode: "htmlmixed",
-    lineNumbers:false,
-    tabSize: 2
-  });
-   codeMirrorMap.set("bLa4V", editor);}
-  </script>
+			{
+				let editor = CodeMirror.fromTextArea(document
+						.getElementById("xNzYT"), {
+					mode : "htmlmixed",
+					lineNumbers : false,
+					tabSize : 2
+				});
+				codeMirrorMap.set("xNzYT", editor);
+
+				let editor1 = CodeMirror.fromTextArea(document.getElementById("xNzYT_Textarea"), {
+					mode : "htmlmixed",
+					lineNumbers : false,
+					tabSize : 2
+				});
+				codeMirrorMap.set("xNzYT_Textarea", editor1);
+			}
+		    function openDialog(id) {
+		        closeAll();
+		        document.getElementById(id).style.display = 'flex';
+		        setTimeout(() => {
+		        	 codeMirrorMap.get("xNzYT_Textarea").refresh();
+		        }, 100); // 100ms 
+		      }
+
+		      function closeAll() {
+		        document.querySelectorAll('.dialog-backdrop').forEach(el => {
+		          el.style.display = 'none';
+		        });
+		      }			
+		</script>
  </div>
 </div><div class = "chapter-navi-section">
 <a href="javascript-dom-programming-introduction-to-the-dom.htm" class="nav-button prev">←</a>
@@ -1810,7 +2727,7 @@ favs.forEach(item =&gt; console.log(item.textContent)); // "Apple", "Cherry"</co
     <div class="book-cover-title" style="font-size: 16px;color: #333;top: 20px;">JavaScript DOM Programming</div>
     <div class="book-cover-author">readbytes</div>
     <div class="book-cover-bottom-stripe" style="background-color: #333;"></div>
-    <img class="book-cover-icon" style="width: 90px;height: 90px;top: 60px;" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFoAAABaCAYAAAA4qEECAAAD5UlEQVR4Xu2dv4sTQRTHH6eFYnOWgqWoWKqFhYWNlnZXiCAIgs35sxEtjrOwicSUNnY2NhYWgleJ4PkH2CmE+xFFSxttTlnz4mZ3573Emb2deTPJvg98q7yZN+/DmdvkkhXAZGeYzGNwvzrQ9U1TB9HZabGPuHID+NqmuQnu0LU+MhVa6COu3Aa+tmnugDt0rY9MpSiqAp+X68WxGaEUff8s39M1uLbsvTvRdE9bXi6VcZxdRatox6hoKyqabWyLYzOCimYb2+LYjKCi2ca2ODYjqGi2sS2OzQgqmm1si2MzQjtFe4wr7Xxl6DGuLANf2zT4/okrdK2PTOUn8OImwf3qQNc3TR1iz84oNsu2htmGLi0ISPH08mTlX39aEBjR2c1mW9CjBQFJS/SmrOg+LQhIWqI34Awt8Ml1IA3J4yGJKbqY+ekjud6tFp3/SxbpXTTFZH04Sh4PRSzR5ryCohGjOXksFDFET5ScfYcDpC4Y+0FetrRoY75fn+R/msdcAC4bs1At8oiEaDw7nSdbex5P8ojBBzgCEw42T9npV54y+nAaYjG8cD+0Z4EfcNaDMxWCMd/gBKQAHubVM37gWQvOYAiO9XTxP4avlvbRQ/pKb6WUMX6ODp7B6Jd++mRf4Vi2DQ985OoSvMYtMYXoCXW7zgDuDX9QjtMZ2ojEVYcCKloMFS2Eis5hl0oznuQ4CPyQ8xKcLRno4eYtSbAIlUMZ0Iv/1POiTHWmfMbo3IL8QJ1Op5T84yEfJPW8h0L048uGaPwlHJ3iSqDb7VZEr/JBUs86FKJ7VwzRd42JI6GihVDRQqhoIVS0ECpaCBUthIoWQkULoaKFUNFCqGghVLQQKloIfZtUiEUoD1SKRuggqSeXjKnOlM+YBPRg85Zk0D/OCkMPOetpLcUVTts/QBMaFS2EihZCRQuhooVQ0RUuAr9MmrXgDMnyG/iBZz04UzLsBX7AeQvOGJXzwA+V/dmY8IaNh0h8/Q3PTufJg1/HjgL70j09dJ53w6z6yLVL8GbcqyKa1TUMnne0N53v4xqcGg8vyXTJAzhnlnpD9Kojn8OccxNOGkWBmSqZ1PlGVHQFY17yWFBiSEZiiUaMmemDIWA3r5JqDImIHt286m34KxEmOfsCh2lRIGKKRkR/qploWhAQFS3E3IiOfSNUur5p6iA6Oy32EVdadVtjWugjrhRPCx6T/o26q7Bbrdvi2IxQim7TredVdI2oaBU9CRXNNrbFsRlBRbONbXFsRlDRbGNbHJsRVDTb2BbHZgQVzTa2xbEZoZ2iPcaVdr4y9BhXWvXfVfv+EEzdD6DQ9U1Th6Cz/wVFmg1Swj4EJQAAAABJRU5ErkJggg=="/>
+    <img class="book-cover-icon" style="width: 90px;height: 90px;top: 60px;" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFoAAABaCAYAAAA4qEECAAADUklEQVR4Xu2dv47TQBDGI0RDczY9rwMlrwEFBweC/t4EXRwaXuI6WiSaOLkCIZ6BCqTgPRFr8zkbnPF4Zuydn/RVuzsz33eSlX/2LRYRm1Xxe1MVOzY19eL6/6NzfqCw/ilEvXc2Mwh7pNiuyks8O1T1snyNfVLgWQ5hjxbcyCHskaJelVd4drCW5Vvsk6JzlkHYo6XXph5Q6hwEfUZASDhLqUOZ+Ri96vTa1ANKHQ+aAKWOB02AUseDJkCp40EToNTxoAlQ6njQBCh1PGgClDrZBs0l7JEi23eGXMIeKTbVxSs8O1Trm4tL7JMCz3IIe7Rsq+IXbh6iUA97nALPDxXWP4W29w5xMVwbG67rOBVR76LNAA9aiKyCbq49L0QbRmgGHXuul8VLXB+F3IPGtdGIm0o21gpay+89Gs01gtbwecDPz08eSQ8hHTT6C55xjwh3q+IZDhO0u148wL0cSAR93cyOfoKCV9wryu528RCHmpuCR/StRvOy7w8OOHUFT+jTDHdV+RwHnpqCB/SVFRLXaGfhQYvhQQvhQQvhQQvhQf8DXyZNXehPnW+fisc45FwUvKFfNXC4uQn9qvD1Y1maG4qB2NP3xiOui1NX5Zv9QNuq+IDrU6Xx8n7vq16WV7guTvxKYH1TvsP1qWLOl7mBmDDny9xATJjzZW4gJsz5MjcQE+Z8mRuICXO+zA3EhDlf5gZiwpwvcwMxYc6XuYGYMOfL3EBMmPNlbiAmzPkyNxAT5nyZG4gJc778Y1Ih/IN/QeKh5ij0q8acv5z9YenL2T045NSF/rIhfiWQ9Q9oxsaDFsKDFsKDFsKDFsKDjqj9ZqFx8dvfRubWb+gcn+Yv/hSHuh9swrcoh9nRT5DaLcpf/KZ7GXAIXB8D6aADGj5btJprBB3Q8nvQGNfGRCvogLjntT+8SubhVVohBzSDDoh6F20GeNBCzCZo7Qeh4vmhwvqnEPWOmzmEPVJk9Vhj3Mgh7JHi4LLApTMuL52zDMIeLb029YBSh+v6G85S6lBmPkavOr029YBSx4MmQKnjQROg1PGgCVDqeNAEKHU8aAKUOh40AUodD5oApU62QXMJe6TI9p0hl7BHitz+XTX3j2DO+gHKkfODhPVPsRnZ+1+tJg8Iaaje6wAAAABJRU5ErkJggg=="/>
   </div>
   <div class="download-info">
     <h2 id='bottom'>Download This Ebook</h2>
@@ -1908,7 +2825,27 @@ favs.forEach(item =&gt; console.log(item.textContent)); // "Apple", "Cherry"</co
     <div class="book-cover-title" style="font-size: 16px;color: #333;top: 20px;">JavaScript DOM Programming</div>
     <div class="book-cover-author">readbytes</div>
     <div class="book-cover-bottom-stripe" style="background-color: #333;"></div>
-    <img class="book-cover-icon" style="width: 90px;height: 90px;top: 60px;" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFoAAABaCAYAAAA4qEECAAAD5UlEQVR4Xu2dv4sTQRTHH6eFYnOWgqWoWKqFhYWNlnZXiCAIgs35sxEtjrOwicSUNnY2NhYWgleJ4PkH2CmE+xFFSxttTlnz4mZ3573Emb2deTPJvg98q7yZN+/DmdvkkhXAZGeYzGNwvzrQ9U1TB9HZabGPuHID+NqmuQnu0LU+MhVa6COu3Aa+tmnugDt0rY9MpSiqAp+X68WxGaEUff8s39M1uLbsvTvRdE9bXi6VcZxdRatox6hoKyqabWyLYzOCimYb2+LYjKCi2ca2ODYjqGi2sS2OzQgqmm1si2MzQjtFe4wr7Xxl6DGuLANf2zT4/okrdK2PTOUn8OImwf3qQNc3TR1iz84oNsu2htmGLi0ISPH08mTlX39aEBjR2c1mW9CjBQFJS/SmrOg+LQhIWqI34Awt8Ml1IA3J4yGJKbqY+ekjud6tFp3/SxbpXTTFZH04Sh4PRSzR5ryCohGjOXksFDFET5ScfYcDpC4Y+0FetrRoY75fn+R/msdcAC4bs1At8oiEaDw7nSdbex5P8ojBBzgCEw42T9npV54y+nAaYjG8cD+0Z4EfcNaDMxWCMd/gBKQAHubVM37gWQvOYAiO9XTxP4avlvbRQ/pKb6WUMX6ODp7B6Jd++mRf4Vi2DQ985OoSvMYtMYXoCXW7zgDuDX9QjtMZ2ojEVYcCKloMFS2Eis5hl0oznuQ4CPyQ8xKcLRno4eYtSbAIlUMZ0Iv/1POiTHWmfMbo3IL8QJ1Op5T84yEfJPW8h0L048uGaPwlHJ3iSqDb7VZEr/JBUs86FKJ7VwzRd42JI6GihVDRQqhoIVS0ECpaCBUthIoWQkULoaKFUNFCqGghVLQQKloIfZtUiEUoD1SKRuggqSeXjKnOlM+YBPRg85Zk0D/OCkMPOetpLcUVTts/QBMaFS2EihZCRQuhooVQ0RUuAr9MmrXgDMnyG/iBZz04UzLsBX7AeQvOGJXzwA+V/dmY8IaNh0h8/Q3PTufJg1/HjgL70j09dJ53w6z6yLVL8GbcqyKa1TUMnne0N53v4xqcGg8vyXTJAzhnlnpD9Kojn8OccxNOGkWBmSqZ1PlGVHQFY17yWFBiSEZiiUaMmemDIWA3r5JqDImIHt286m34KxEmOfsCh2lRIGKKRkR/qploWhAQFS3E3IiOfSNUur5p6iA6Oy32EVdadVtjWugjrhRPCx6T/o26q7Bbrdvi2IxQim7TredVdI2oaBU9CRXNNrbFsRlBRbONbXFsRlDRbGNbHJsRVDTb2BbHZgQVzTa2xbEZoZ2iPcaVdr4y9BhXWvXfVfv+EEzdD6DQ9U1Th6Cz/wVFmg1Swj4EJQAAAABJRU5ErkJggg=="/>
+    <img class="book-cover-icon" style="width: 90px;height: 90px;top: 60px;" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFoAAABaCAYAAAA4qEECAAADUklEQVR4Xu2dv47TQBDGI0RDczY9rwMlrwEFBweC/t4EXRwaXuI6WiSaOLkCIZ6BCqTgPRFr8zkbnPF4Zuydn/RVuzsz33eSlX/2LRYRm1Xxe1MVOzY19eL6/6NzfqCw/ilEvXc2Mwh7pNiuyks8O1T1snyNfVLgWQ5hjxbcyCHskaJelVd4drCW5Vvsk6JzlkHYo6XXph5Q6hwEfUZASDhLqUOZ+Ri96vTa1ANKHQ+aAKWOB02AUseDJkCp40EToNTxoAlQ6njQBCh1PGgClDrZBs0l7JEi23eGXMIeKTbVxSs8O1Trm4tL7JMCz3IIe7Rsq+IXbh6iUA97nALPDxXWP4W29w5xMVwbG67rOBVR76LNAA9aiKyCbq49L0QbRmgGHXuul8VLXB+F3IPGtdGIm0o21gpay+89Gs01gtbwecDPz08eSQ8hHTT6C55xjwh3q+IZDhO0u148wL0cSAR93cyOfoKCV9wryu528RCHmpuCR/StRvOy7w8OOHUFT+jTDHdV+RwHnpqCB/SVFRLXaGfhQYvhQQvhQQvhQQvhQf8DXyZNXehPnW+fisc45FwUvKFfNXC4uQn9qvD1Y1maG4qB2NP3xiOui1NX5Zv9QNuq+IDrU6Xx8n7vq16WV7guTvxKYH1TvsP1qWLOl7mBmDDny9xATJjzZW4gJsz5MjcQE+Z8mRuICXO+zA3EhDlf5gZiwpwvcwMxYc6XuYGYMOfL3EBMmPNlbiAmzPkyNxAT5nyZG4gJc778Y1Ih/IN/QeKh5ij0q8acv5z9YenL2T045NSF/rIhfiWQ9Q9oxsaDFsKDFsKDFsKDFsKDjqj9ZqFx8dvfRubWb+gcn+Yv/hSHuh9swrcoh9nRT5DaLcpf/KZ7GXAIXB8D6aADGj5btJprBB3Q8nvQGNfGRCvogLjntT+8SubhVVohBzSDDoh6F20GeNBCzCZo7Qeh4vmhwvqnEPWOmzmEPVJk9Vhj3Mgh7JHi4LLApTMuL52zDMIeLb029YBSh+v6G85S6lBmPkavOr029YBSx4MmQKnjQROg1PGgCVDqeNAEKHU8aAKUOh40AUodD5oApU62QXMJe6TI9p0hl7BHitz+XTX3j2DO+gHKkfODhPVPsRnZ+1+tJg8Iaaje6wAAAABJRU5ErkJggg=="/>
+  </div>
+</a>
+
+
+<a href="javascript-asynchronous-programming.htm">
+<div class="book-cover" style="background-color: #f9f6f1;border: 1px solid #ccc;"> 
+    <div class="book-cover-title" style="font-size: 18px;color: #333;top: 20px;">JavaScript Asynchronous Programming</div>
+    <div class="book-cover-author">readbytes</div>
+    <div class="book-cover-bottom-stripe" style="background-color: #333;"></div>
+    <img class="book-cover-icon" style="width: 80px;height: 80px;top: 80px;" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFoAAABaCAYAAAA4qEECAAADU0lEQVR4Xu2cvW7UQBRGkwKJV0CipqJbG9pIFLGXRyD2IgpeghegQ9DRUNHQUdLQUVFAC0h0tFEKkMJPCEykRHKObzZrr6/t8X5H+qrMN3PvUbQpEmVra8NI8vLfWWazh1f4ddEBVcmVPOA5sQZB6DND8mkWj3hetCQI/VAXXE3xhB3RkrrcWl6wI1qQZuUrQ+75ZOVr9kQL0mxxpya3nnfsiRbs7Ny/ashFiq/siZbU5Z7PLC9/sCNaQrlGfrIjWmLIxXd28Z0d0QKKvSCSvQ5pXr41pF6QxT77vRF+Or+vDzTdhJW36cAdDrEpoQdX+PgmhS482ebjmxTKcIMPb1roww0+vGmhDzf4MMPzY4fzL8tsd+8a+27w8Wp4Nga4w7Kw6wofr+Qzz8aAsYcZ9tzhAIMN0gFh7l/cwwp7vcAhBh1mDcLMf7iDFfZ6g4MMPlALwrzHnN/IMXu9YgwUlehktY+LI/Z6xxgqGtFhzgPObeQve4NgDBaF6Nl88YUzGxn246KKMVwUojlvPYtx/dqqPuD4RSeX/aXSvDxgZ3BqQ0YhunjOec+SzstvPD8KOGgMok/gvKf5xHOjwRg2CtEnVOdNs+Ipvz4qKDgm0VFBwRLtBAVLtBMULNFOULBEO0HBEu0EBUu0ExQs0U5QsEQ7QcES7QQFS7QTFCzRTlCwRDtBwRLtBAVLtBMULNFOULBEO0HBEu0EBUu0ExQs0U5QsEQ7QcES7QQFS7QTFCzRTlBw16LDXb897o0OCu5SSLjniPd2dXd0UEKXMnhn1/dHBQV0KYJ3Mjw/abh8lxJ4pxV2JgsX71oA77XCziTh0h7L824r7EwOLuy1OO+3ws6k4LKeSydZech3GHYmAxf1XniWl2/4FsPOJOCSfSyb5sVLvsewEz1csK9l+ZYVdqKGyzFpXj5O7hY3u0q6u5fxjWXhvNHCxcYYzhwlXGqM4cxRwqXGmPDxdci5o4SLjTGcOVq42JgSvqOH+8+4HtzO713nkmMI5xQrQpGXhX3RAMq8KOyJBtyalzco1Ap7ohkr/RtllkRDKNQKO6IhFGqFHdEQCrXCjmgIhVphRzSEQq2wIxpCoVbYES2gVIbnRUsoVpKdCEL3KViSnUjm5cepSf4Pt8Ix0I7hKy8AAAAASUVORK5CYII="/>
+  </div>
+</a>
+
+
+<a href="javascript-pragmatic-developer.htm">
+<div class="book-cover" style="background-color: #f9f6f1;border: 1px solid #ccc;"> 
+    <div class="book-cover-title" style="font-size: 18px;color: #333;top: 20px;">JavaScript Pragmatic Developer</div>
+    <div class="book-cover-author">readbytes</div>
+    <div class="book-cover-bottom-stripe" style="background-color: #333;"></div>
+    <img class="book-cover-icon" style="width: 80px;height: 70px;top: 85px;" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFoAAABaCAYAAAA4qEECAAAGkUlEQVR4Xu2de4hUVRzHlR5UYGm+epgkamahRGUgYkUkKFlIcmdnTFdNW52ZO491y1dp619ZaZpg+oeUYBgoWREZ1H9hkNJjBU0qaq1W21iNkqTWdG/zm+aMZ753zn2f253r+cDvn3vP+T0+np29Mwxrv34KhcIjmaacUYqf8LpTKvt/w+tuWJrMLajkqQm9SddwbcNRGuQCPxTed0qNmHn6KLzvBLb/kQceq4bfviIBG4LwOxDLk03mPeeiPXNnzjcGDBxSjXRC95QrEmiadhkvOUjRxLnec57y0XpeMsXwG0a6zhMV+lPjhXnLqmIIL2J4eNFec9YTTeEmR2SgpvU5BXTiWgpSTzThNG+6KVe0Ep1O5lbgnsjChq6HUyEiRHmJsqjZ6Ym4h4fVR8lMtJ/eQiXTpH9nJ8PPMFa52xYut81N9xc9vsR4ePIMU/jtLVSo0aMdX6ODKn6HsRJNVPKfx30MVt8qcE/kKJ3m8w5FeB7GLv/pntOW+eled/dJYVjtjQzUZNePJ3D2GmSLJio1/sC9BKuPgin0VMFXb6FQnFUc6EKC52Gc1Ni6fpuwRqvWerVItGhPpGAC7QhDNGFVo96p9ttXaFCTv5zoxnlN+B3IjehsIj8f9xOle531RJeesd/BtZHDjYCwRIvqZBL6rnqiS9dfxrWRIwgBTnBax+oXW8OKbmlpucapgOeya4UCnOC0TtfxLmGdhhXdlmob4lQAUTnVzZjHDtpX7/OTevT+3Rs/0W5ONFERXVeCCD2p3+SmxpnfzwhrNKxowo0EwqXs8keuBz85hGmErF/5kjD/JSWaYLIzTYVJmI+RTeR+pjWvvbgdt1ti9Q/Z8KK7u+yfo5GLssXR19eH22wp703mnsI+iYYXTeGV17fsrJGbn9uKS1xBObBHRkOLXv7k8gF+RAdJ57ed8RVNULM93T04d+hUfirOYn+MOIi2/Tw6DKxOM9Hwoglq+PtvfsDZQ6NymvuwL564iO78v071B3v3255mIhaiicqpQg/SoZp6Qp+C/SCxEU1Q4/kn/D2iucHJSwYjVqIJar7Y3IZOAof9BGF9EbETTch+GXErmYilaILJ6Lvg/q20CPbBfin+wnp2xFY0kU7ofUGc7o5DHdVT3P5g++VYxwmxFk1MmzK9Koliw5pN6FEIv2/x7BbXLxc8sRc94/5Hq18oTHPinMbIW8YG8hXb2IumYYgjR47WfIvz+iE3GtOnzjSJHT92Ys26awcNrTndmN8pl4xoZNnTK0xfoaUYOHi4ceDAp7hcibZDJNotSrQNdqKZQIr33nofb1dRom0QieYFY9R79laibagnenV6TXnIYcNHmF6jmVAkKNGmWnEWTdfuuvM+k2Qr2U5E05sZti6IWKq13ow1Igs1zHPs8LHyECiXj6mTHiqv4WHDY34e9qWe/fpW4wWtzbh7wuSaoOsYojWUJ5sqTMMakQWFbV63xVY0O9U8bkSfevZdY4e20pSTrmOI1jS86FfaX1WiZYDClGhJoDAlWhIoLAzRXyzbaWzWnjFGj7qjJug6hmiNEm1B+4L2q9i6IGLJnPxYrBFZqGEemaI5yl/5vW7QUFNeqxg3ZkK5RkErjMOEkQeFhSS6XNdJHazppkakQGFKtCRQWEiiKy8dw0x5rWL0qPHlGuqlw0Z00L8MM1pmDNaILNQwj0zR7PHu88rj3ZjS4xofdB1DtIbyqMc7AeoNC4cSLQkUpkRLAoUp0ZJAYUq0JFCYEi0JFKZESwKFKdGSQGFKtCRQmBItCRSmREsChSnRkkBhSrQkUJgSLQkUpkRLAoUp0ZJAYUq0JFCYEi0JFBaWaCuJSnTAoseNuK2ar3v1PpNkio8WbayuSd07Iz6i9+36bwgUi4H7nIhmf5AbZXoJyqOn9NuxRmShhvFv2NmJZlJxj51oIkjRmDvSWElDwbzonl9PmfZomnYl5keCEH185Z7GE60n9FkomolD2QtnLa57mjsOHnY8ONuP8twEy4G5Iw81veeNvTXyCDYQH19+9hUuK19PN+V6Ma8IP6JPrnqbSe6PeSNPOlWYiKfUKV5Ol59T7aVepCg1/49b2X6G9iLbT71IURriTxqkMLf2v+FD2B/c9js0y/FxfptJKh8bFz4fSL1I0XJPyxVsqHIkc8ab23cbG9duungtwKEzidyHfM51zauM3Us3GK2pItTL78C9saE04FmUm0nmd+G6ICgmi7eaapUi25wdjGsVCoWIfwEHsnr03kJ4IwAAAABJRU5ErkJggg=="/>
   </div>
 </a>
 
