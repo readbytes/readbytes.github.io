@@ -118,6 +118,16 @@
       doc.close();
 
       
+      setTimeout(() => {
+    	  newIframe.style.height = '0px';
+    	   let contentHeight = Math.max(doc.body.scrollHeight,doc.documentElement.scrollHeight);
+ 
+    	   if(contentHeight < 150 || contentHeight > 600){
+    		   contentHeight = 600;
+    	   } 
+    	   newIframe.style.height = contentHeight + 'px';
+    	}, 50);      
+      
   }
   function renderIframeForClientTypescript(textarea_id, iframe_id) {
       let code = codeMirrorMap.get(textarea_id).getValue();
@@ -712,13 +722,13 @@ html.dark-mode .page-footer a {
  <li>We select the button element with <code>getElementById</code>.</li>
  <li>We attach an event listener that listens for the <code>click</code> event.</li>
  <li>When the button is clicked, the anonymous function runs and displays an alert.</li>
-</ol><div class="snippet-container" id="WzJUb">
- <div id="mqvvM_Dialog" class="dialog-backdrop">
+</ol><div class="snippet-container" id="HoHlj">
+ <div id="T7uHm_Dialog" class="dialog-backdrop">
   <div class="dialog">
    <h2>Dialog 1</h2>
-   <div class="controls"><button onclick="renderIframe(this,'lh8PW_Textarea','mqvvM_IFrame')">Run</button> <button onclick="closeAll()">Close</button>
+   <div class="controls"><button onclick="renderIframe(this,'wU4MB_Textarea','T7uHm_IFrame')">Run</button> <button onclick="closeAll()">Close</button>
    </div>
-   <div class="dialog-content"><textarea id="lh8PW_Textarea" class="textarea_dialog" placeholder="Type HTML here...">&lt;!DOCTYPE html&gt;
+   <div class="dialog-content"><textarea id="wU4MB_Textarea" class="textarea_dialog" placeholder="Type HTML here...">&lt;!DOCTYPE html&gt;
 &lt;html lang="en"&gt;
 &lt;head&gt;
   &lt;meta charset="UTF-8" /&gt;
@@ -738,13 +748,15 @@ html.dark-mode .page-footer a {
 &lt;/script&gt;
 
 &lt;/body&gt;
-&lt;/html&gt;</textarea> <iframe id="mqvvM_IFrame" class="iframe_dialog"></iframe>
+&lt;/html&gt;</textarea> <iframe id="T7uHm_IFrame" class="iframe_dialog"></iframe>
    </div>
   </div>
  </div>
- <div class="snippet-header"><span onclick="toggleSnippetAndRefresh('WzJUb','lh8PW')">Click to Try it</span> <!-- <span onclick="openDialog('mqvvM_Dialog')">Dialog</span> -->
+ <div class="snippet-header" onclick="toggleSnippetAndRefresh('HoHlj','wU4MB')">
+  Click to Try it <!--<span onclick="toggleSnippetAndRefresh('HoHlj','wU4MB')">Click
+			to Try it</span> --> <!-- <span onclick="openDialog('T7uHm_Dialog')">Dialog</span> -->
  </div>
- <div class="snippet-body"><textarea id="lh8PW">&lt;!DOCTYPE html&gt;
+ <div class="snippet-body"><textarea id="wU4MB">&lt;!DOCTYPE html&gt;
 &lt;html lang="en"&gt;
 &lt;head&gt;
   &lt;meta charset="UTF-8" /&gt;
@@ -764,30 +776,36 @@ html.dark-mode .page-footer a {
 &lt;/script&gt;
 
 &lt;/body&gt;
-&lt;/html&gt;</textarea> <br> <button onclick="renderIframe(this,'lh8PW','mqvvM')">Run</button>
-  <div id="mqvvM_FloatingLog" class="floatingLog" aria-live="polite" role="alert"></div> <iframe id="mqvvM" class="result_iframe" style="display: none;"></iframe>
+&lt;/html&gt;</textarea> <br> <button onclick="renderIframe(this,'wU4MB','T7uHm')">Run</button>
+  <div id="T7uHm_FloatingLog" class="floatingLog" aria-live="polite" role="alert"></div> <iframe id="T7uHm" class="result_iframe" style="display: none;"></iframe>
   <script>
 			{
 				let editor = CodeMirror.fromTextArea(document
-						.getElementById("lh8PW"), {
+						.getElementById("wU4MB"), {
 					mode : "htmlmixed",
 					lineNumbers : false,
 					tabSize : 2
 				});
-				codeMirrorMap.set("lh8PW", editor);
+			    const mode = localStorage.getItem("mode") || "light";  
+			    const newTheme = mode === "dark" ? "material" : "default";
+			    editor.setOption("theme", newTheme);
+			    
+				codeMirrorMap.set("wU4MB", editor);
 
-				let editor1 = CodeMirror.fromTextArea(document.getElementById("lh8PW_Textarea"), {
+				let editor1 = CodeMirror.fromTextArea(document.getElementById("wU4MB_Textarea"), {
 					mode : "htmlmixed",
 					lineNumbers : false,
 					tabSize : 2
 				});
-				codeMirrorMap.set("lh8PW_Textarea", editor1);
+			    editor1.setOption("theme", newTheme);				
+				
+				codeMirrorMap.set("wU4MB_Textarea", editor1);
 			}
 		    function openDialog(id) {
 		        closeAll();
 		        document.getElementById(id).style.display = 'flex';
 		        setTimeout(() => {
-		        	 codeMirrorMap.get("lh8PW_Textarea").refresh();
+		        	 codeMirrorMap.get("wU4MB_Textarea").refresh();
 		        }, 100); // 100ms 
 		      }
 
@@ -819,13 +837,13 @@ html.dark-mode .page-footer a {
 button.addEventListener('click', event =&gt; {
   console.log('Button clicked at coordinates:', event.clientX, event.clientY);
 });</code></pre>
-</div><p>The <code>event</code> object provides useful properties like <code>clientX</code> and <code>clientY</code> (mouse position).</p><div class="snippet-container" id="mrK8F">
- <div id="NNgAF_Dialog" class="dialog-backdrop">
+</div><p>The <code>event</code> object provides useful properties like <code>clientX</code> and <code>clientY</code> (mouse position).</p><div class="snippet-container" id="Oo1x7">
+ <div id="42wCc_Dialog" class="dialog-backdrop">
   <div class="dialog">
    <h2>Dialog 1</h2>
-   <div class="controls"><button onclick="renderIframe(this,'4hVj3_Textarea','NNgAF_IFrame')">Run</button> <button onclick="closeAll()">Close</button>
+   <div class="controls"><button onclick="renderIframe(this,'L0jHF_Textarea','42wCc_IFrame')">Run</button> <button onclick="closeAll()">Close</button>
    </div>
-   <div class="dialog-content"><textarea id="4hVj3_Textarea" class="textarea_dialog" placeholder="Type HTML here...">&lt;!DOCTYPE html&gt;
+   <div class="dialog-content"><textarea id="L0jHF_Textarea" class="textarea_dialog" placeholder="Type HTML here...">&lt;!DOCTYPE html&gt;
 &lt;html lang="en"&gt;
 &lt;head&gt;
   &lt;meta charset="UTF-8" /&gt;
@@ -844,13 +862,15 @@ button.addEventListener('click', event =&gt; {
 &lt;/script&gt;
 
 &lt;/body&gt;
-&lt;/html&gt;</textarea> <iframe id="NNgAF_IFrame" class="iframe_dialog"></iframe>
+&lt;/html&gt;</textarea> <iframe id="42wCc_IFrame" class="iframe_dialog"></iframe>
    </div>
   </div>
  </div>
- <div class="snippet-header"><span onclick="toggleSnippetAndRefresh('mrK8F','4hVj3')">Click to Try it</span> <!-- <span onclick="openDialog('NNgAF_Dialog')">Dialog</span> -->
+ <div class="snippet-header" onclick="toggleSnippetAndRefresh('Oo1x7','L0jHF')">
+  Click to Try it <!--<span onclick="toggleSnippetAndRefresh('Oo1x7','L0jHF')">Click
+			to Try it</span> --> <!-- <span onclick="openDialog('42wCc_Dialog')">Dialog</span> -->
  </div>
- <div class="snippet-body"><textarea id="4hVj3">&lt;!DOCTYPE html&gt;
+ <div class="snippet-body"><textarea id="L0jHF">&lt;!DOCTYPE html&gt;
 &lt;html lang="en"&gt;
 &lt;head&gt;
   &lt;meta charset="UTF-8" /&gt;
@@ -869,30 +889,36 @@ button.addEventListener('click', event =&gt; {
 &lt;/script&gt;
 
 &lt;/body&gt;
-&lt;/html&gt;</textarea> <br> <button onclick="renderIframe(this,'4hVj3','NNgAF')">Run</button>
-  <div id="NNgAF_FloatingLog" class="floatingLog" aria-live="polite" role="alert"></div> <iframe id="NNgAF" class="result_iframe" style="display: none;"></iframe>
+&lt;/html&gt;</textarea> <br> <button onclick="renderIframe(this,'L0jHF','42wCc')">Run</button>
+  <div id="42wCc_FloatingLog" class="floatingLog" aria-live="polite" role="alert"></div> <iframe id="42wCc" class="result_iframe" style="display: none;"></iframe>
   <script>
 			{
 				let editor = CodeMirror.fromTextArea(document
-						.getElementById("4hVj3"), {
+						.getElementById("L0jHF"), {
 					mode : "htmlmixed",
 					lineNumbers : false,
 					tabSize : 2
 				});
-				codeMirrorMap.set("4hVj3", editor);
+			    const mode = localStorage.getItem("mode") || "light";  
+			    const newTheme = mode === "dark" ? "material" : "default";
+			    editor.setOption("theme", newTheme);
+			    
+				codeMirrorMap.set("L0jHF", editor);
 
-				let editor1 = CodeMirror.fromTextArea(document.getElementById("4hVj3_Textarea"), {
+				let editor1 = CodeMirror.fromTextArea(document.getElementById("L0jHF_Textarea"), {
 					mode : "htmlmixed",
 					lineNumbers : false,
 					tabSize : 2
 				});
-				codeMirrorMap.set("4hVj3_Textarea", editor1);
+			    editor1.setOption("theme", newTheme);				
+				
+				codeMirrorMap.set("L0jHF_Textarea", editor1);
 			}
 		    function openDialog(id) {
 		        closeAll();
 		        document.getElementById(id).style.display = 'flex';
 		        setTimeout(() => {
-		        	 codeMirrorMap.get("4hVj3_Textarea").refresh();
+		        	 codeMirrorMap.get("L0jHF_Textarea").refresh();
 		        }, 100); // 100ms 
 		      }
 
@@ -913,13 +939,13 @@ button.addEventListener('click', event =&gt; {
     console.log('Enter key was pressed!');
   }
 });</code></pre>
-</div><p>The event object has useful properties such as <code>key</code> (the character) and <code>code</code> (physical key location).</p><div class="snippet-container" id="ijwDP">
- <div id="7XDU2_Dialog" class="dialog-backdrop">
+</div><p>The event object has useful properties such as <code>key</code> (the character) and <code>code</code> (physical key location).</p><div class="snippet-container" id="WiGSn">
+ <div id="JZgHr_Dialog" class="dialog-backdrop">
   <div class="dialog">
    <h2>Dialog 1</h2>
-   <div class="controls"><button onclick="renderIframe(this,'bQ313_Textarea','7XDU2_IFrame')">Run</button> <button onclick="closeAll()">Close</button>
+   <div class="controls"><button onclick="renderIframe(this,'j6OVR_Textarea','JZgHr_IFrame')">Run</button> <button onclick="closeAll()">Close</button>
    </div>
-   <div class="dialog-content"><textarea id="bQ313_Textarea" class="textarea_dialog" placeholder="Type HTML here...">&lt;!DOCTYPE html&gt;
+   <div class="dialog-content"><textarea id="j6OVR_Textarea" class="textarea_dialog" placeholder="Type HTML here...">&lt;!DOCTYPE html&gt;
 &lt;html lang="en"&gt;
 &lt;head&gt;
   &lt;meta charset="UTF-8" /&gt;
@@ -938,13 +964,15 @@ button.addEventListener('click', event =&gt; {
 &lt;/script&gt;
 
 &lt;/body&gt;
-&lt;/html&gt;</textarea> <iframe id="7XDU2_IFrame" class="iframe_dialog"></iframe>
+&lt;/html&gt;</textarea> <iframe id="JZgHr_IFrame" class="iframe_dialog"></iframe>
    </div>
   </div>
  </div>
- <div class="snippet-header"><span onclick="toggleSnippetAndRefresh('ijwDP','bQ313')">Click to Try it</span> <!-- <span onclick="openDialog('7XDU2_Dialog')">Dialog</span> -->
+ <div class="snippet-header" onclick="toggleSnippetAndRefresh('WiGSn','j6OVR')">
+  Click to Try it <!--<span onclick="toggleSnippetAndRefresh('WiGSn','j6OVR')">Click
+			to Try it</span> --> <!-- <span onclick="openDialog('JZgHr_Dialog')">Dialog</span> -->
  </div>
- <div class="snippet-body"><textarea id="bQ313">&lt;!DOCTYPE html&gt;
+ <div class="snippet-body"><textarea id="j6OVR">&lt;!DOCTYPE html&gt;
 &lt;html lang="en"&gt;
 &lt;head&gt;
   &lt;meta charset="UTF-8" /&gt;
@@ -963,30 +991,36 @@ button.addEventListener('click', event =&gt; {
 &lt;/script&gt;
 
 &lt;/body&gt;
-&lt;/html&gt;</textarea> <br> <button onclick="renderIframe(this,'bQ313','7XDU2')">Run</button>
-  <div id="7XDU2_FloatingLog" class="floatingLog" aria-live="polite" role="alert"></div> <iframe id="7XDU2" class="result_iframe" style="display: none;"></iframe>
+&lt;/html&gt;</textarea> <br> <button onclick="renderIframe(this,'j6OVR','JZgHr')">Run</button>
+  <div id="JZgHr_FloatingLog" class="floatingLog" aria-live="polite" role="alert"></div> <iframe id="JZgHr" class="result_iframe" style="display: none;"></iframe>
   <script>
 			{
 				let editor = CodeMirror.fromTextArea(document
-						.getElementById("bQ313"), {
+						.getElementById("j6OVR"), {
 					mode : "htmlmixed",
 					lineNumbers : false,
 					tabSize : 2
 				});
-				codeMirrorMap.set("bQ313", editor);
+			    const mode = localStorage.getItem("mode") || "light";  
+			    const newTheme = mode === "dark" ? "material" : "default";
+			    editor.setOption("theme", newTheme);
+			    
+				codeMirrorMap.set("j6OVR", editor);
 
-				let editor1 = CodeMirror.fromTextArea(document.getElementById("bQ313_Textarea"), {
+				let editor1 = CodeMirror.fromTextArea(document.getElementById("j6OVR_Textarea"), {
 					mode : "htmlmixed",
 					lineNumbers : false,
 					tabSize : 2
 				});
-				codeMirrorMap.set("bQ313_Textarea", editor1);
+			    editor1.setOption("theme", newTheme);				
+				
+				codeMirrorMap.set("j6OVR_Textarea", editor1);
 			}
 		    function openDialog(id) {
 		        closeAll();
 		        document.getElementById(id).style.display = 'flex';
 		        setTimeout(() => {
-		        	 codeMirrorMap.get("bQ313_Textarea").refresh();
+		        	 codeMirrorMap.get("j6OVR_Textarea").refresh();
 		        }, 100); // 100ms 
 		      }
 
@@ -1015,13 +1049,13 @@ button.addEventListener('click', event =&gt; {
     console.log('Form submitted:', form.username.value);
   });
 &lt;/script&gt;</code></pre>
-</div><div class="snippet-container" id="WdLdd">
- <div id="M9bPT_Dialog" class="dialog-backdrop">
+</div><div class="snippet-container" id="3Kevj">
+ <div id="81slQ_Dialog" class="dialog-backdrop">
   <div class="dialog">
    <h2>Dialog 1</h2>
-   <div class="controls"><button onclick="renderIframe(this,'ztxQ9_Textarea','M9bPT_IFrame')">Run</button> <button onclick="closeAll()">Close</button>
+   <div class="controls"><button onclick="renderIframe(this,'Dlpz1_Textarea','81slQ_IFrame')">Run</button> <button onclick="closeAll()">Close</button>
    </div>
-   <div class="dialog-content"><textarea id="ztxQ9_Textarea" class="textarea_dialog" placeholder="Type HTML here...">&lt;!DOCTYPE html&gt;
+   <div class="dialog-content"><textarea id="Dlpz1_Textarea" class="textarea_dialog" placeholder="Type HTML here...">&lt;!DOCTYPE html&gt;
 &lt;html lang="en"&gt;
 &lt;head&gt;
   &lt;meta charset="UTF-8" /&gt;
@@ -1044,13 +1078,15 @@ button.addEventListener('click', event =&gt; {
 &lt;/script&gt;
 
 &lt;/body&gt;
-&lt;/html&gt;</textarea> <iframe id="M9bPT_IFrame" class="iframe_dialog"></iframe>
+&lt;/html&gt;</textarea> <iframe id="81slQ_IFrame" class="iframe_dialog"></iframe>
    </div>
   </div>
  </div>
- <div class="snippet-header"><span onclick="toggleSnippetAndRefresh('WdLdd','ztxQ9')">Click to Try it</span> <!-- <span onclick="openDialog('M9bPT_Dialog')">Dialog</span> -->
+ <div class="snippet-header" onclick="toggleSnippetAndRefresh('3Kevj','Dlpz1')">
+  Click to Try it <!--<span onclick="toggleSnippetAndRefresh('3Kevj','Dlpz1')">Click
+			to Try it</span> --> <!-- <span onclick="openDialog('81slQ_Dialog')">Dialog</span> -->
  </div>
- <div class="snippet-body"><textarea id="ztxQ9">&lt;!DOCTYPE html&gt;
+ <div class="snippet-body"><textarea id="Dlpz1">&lt;!DOCTYPE html&gt;
 &lt;html lang="en"&gt;
 &lt;head&gt;
   &lt;meta charset="UTF-8" /&gt;
@@ -1073,30 +1109,36 @@ button.addEventListener('click', event =&gt; {
 &lt;/script&gt;
 
 &lt;/body&gt;
-&lt;/html&gt;</textarea> <br> <button onclick="renderIframe(this,'ztxQ9','M9bPT')">Run</button>
-  <div id="M9bPT_FloatingLog" class="floatingLog" aria-live="polite" role="alert"></div> <iframe id="M9bPT" class="result_iframe" style="display: none;"></iframe>
+&lt;/html&gt;</textarea> <br> <button onclick="renderIframe(this,'Dlpz1','81slQ')">Run</button>
+  <div id="81slQ_FloatingLog" class="floatingLog" aria-live="polite" role="alert"></div> <iframe id="81slQ" class="result_iframe" style="display: none;"></iframe>
   <script>
 			{
 				let editor = CodeMirror.fromTextArea(document
-						.getElementById("ztxQ9"), {
+						.getElementById("Dlpz1"), {
 					mode : "htmlmixed",
 					lineNumbers : false,
 					tabSize : 2
 				});
-				codeMirrorMap.set("ztxQ9", editor);
+			    const mode = localStorage.getItem("mode") || "light";  
+			    const newTheme = mode === "dark" ? "material" : "default";
+			    editor.setOption("theme", newTheme);
+			    
+				codeMirrorMap.set("Dlpz1", editor);
 
-				let editor1 = CodeMirror.fromTextArea(document.getElementById("ztxQ9_Textarea"), {
+				let editor1 = CodeMirror.fromTextArea(document.getElementById("Dlpz1_Textarea"), {
 					mode : "htmlmixed",
 					lineNumbers : false,
 					tabSize : 2
 				});
-				codeMirrorMap.set("ztxQ9_Textarea", editor1);
+			    editor1.setOption("theme", newTheme);				
+				
+				codeMirrorMap.set("Dlpz1_Textarea", editor1);
 			}
 		    function openDialog(id) {
 		        closeAll();
 		        document.getElementById(id).style.display = 'flex';
 		        setTimeout(() => {
-		        	 codeMirrorMap.get("ztxQ9_Textarea").refresh();
+		        	 codeMirrorMap.get("Dlpz1_Textarea").refresh();
 		        }, 100); // 100ms 
 		      }
 
@@ -1118,13 +1160,13 @@ document.addEventListener('myCustomEvent', event =&gt; {
 
 // Dispatch the custom event
 document.dispatchEvent(myEvent);</code></pre>
-</div><p>Custom events are powerful for decoupling components and enabling event-driven architecture beyond DOM user interactions.</p><div class="snippet-container" id="0VN8S">
- <div id="aZm3R_Dialog" class="dialog-backdrop">
+</div><p>Custom events are powerful for decoupling components and enabling event-driven architecture beyond DOM user interactions.</p><div class="snippet-container" id="ZE38X">
+ <div id="X6fXl_Dialog" class="dialog-backdrop">
   <div class="dialog">
    <h2>Dialog 1</h2>
-   <div class="controls"><button onclick="renderIframe(this,'g8N8T_Textarea','aZm3R_IFrame')">Run</button> <button onclick="closeAll()">Close</button>
+   <div class="controls"><button onclick="renderIframe(this,'lFikN_Textarea','X6fXl_IFrame')">Run</button> <button onclick="closeAll()">Close</button>
    </div>
-   <div class="dialog-content"><textarea id="g8N8T_Textarea" class="textarea_dialog" placeholder="Type HTML here...">&lt;!DOCTYPE html&gt;
+   <div class="dialog-content"><textarea id="lFikN_Textarea" class="textarea_dialog" placeholder="Type HTML here...">&lt;!DOCTYPE html&gt;
 &lt;html lang="en"&gt;
 &lt;head&gt;
   &lt;meta charset="UTF-8" /&gt;
@@ -1146,13 +1188,15 @@ document.dispatchEvent(myEvent);</code></pre>
 &lt;/script&gt;
 
 &lt;/body&gt;
-&lt;/html&gt;</textarea> <iframe id="aZm3R_IFrame" class="iframe_dialog"></iframe>
+&lt;/html&gt;</textarea> <iframe id="X6fXl_IFrame" class="iframe_dialog"></iframe>
    </div>
   </div>
  </div>
- <div class="snippet-header"><span onclick="toggleSnippetAndRefresh('0VN8S','g8N8T')">Click to Try it</span> <!-- <span onclick="openDialog('aZm3R_Dialog')">Dialog</span> -->
+ <div class="snippet-header" onclick="toggleSnippetAndRefresh('ZE38X','lFikN')">
+  Click to Try it <!--<span onclick="toggleSnippetAndRefresh('ZE38X','lFikN')">Click
+			to Try it</span> --> <!-- <span onclick="openDialog('X6fXl_Dialog')">Dialog</span> -->
  </div>
- <div class="snippet-body"><textarea id="g8N8T">&lt;!DOCTYPE html&gt;
+ <div class="snippet-body"><textarea id="lFikN">&lt;!DOCTYPE html&gt;
 &lt;html lang="en"&gt;
 &lt;head&gt;
   &lt;meta charset="UTF-8" /&gt;
@@ -1174,30 +1218,36 @@ document.dispatchEvent(myEvent);</code></pre>
 &lt;/script&gt;
 
 &lt;/body&gt;
-&lt;/html&gt;</textarea> <br> <button onclick="renderIframe(this,'g8N8T','aZm3R')">Run</button>
-  <div id="aZm3R_FloatingLog" class="floatingLog" aria-live="polite" role="alert"></div> <iframe id="aZm3R" class="result_iframe" style="display: none;"></iframe>
+&lt;/html&gt;</textarea> <br> <button onclick="renderIframe(this,'lFikN','X6fXl')">Run</button>
+  <div id="X6fXl_FloatingLog" class="floatingLog" aria-live="polite" role="alert"></div> <iframe id="X6fXl" class="result_iframe" style="display: none;"></iframe>
   <script>
 			{
 				let editor = CodeMirror.fromTextArea(document
-						.getElementById("g8N8T"), {
+						.getElementById("lFikN"), {
 					mode : "htmlmixed",
 					lineNumbers : false,
 					tabSize : 2
 				});
-				codeMirrorMap.set("g8N8T", editor);
+			    const mode = localStorage.getItem("mode") || "light";  
+			    const newTheme = mode === "dark" ? "material" : "default";
+			    editor.setOption("theme", newTheme);
+			    
+				codeMirrorMap.set("lFikN", editor);
 
-				let editor1 = CodeMirror.fromTextArea(document.getElementById("g8N8T_Textarea"), {
+				let editor1 = CodeMirror.fromTextArea(document.getElementById("lFikN_Textarea"), {
 					mode : "htmlmixed",
 					lineNumbers : false,
 					tabSize : 2
 				});
-				codeMirrorMap.set("g8N8T_Textarea", editor1);
+			    editor1.setOption("theme", newTheme);				
+				
+				codeMirrorMap.set("lFikN_Textarea", editor1);
 			}
 		    function openDialog(id) {
 		        closeAll();
 		        document.getElementById(id).style.display = 'flex';
 		        setTimeout(() => {
-		        	 codeMirrorMap.get("g8N8T_Textarea").refresh();
+		        	 codeMirrorMap.get("lFikN_Textarea").refresh();
 		        }, 100); // 100ms 
 		      }
 
@@ -1329,13 +1379,13 @@ btn.addEventListener('click', handleClick);</code></pre>
     console.log('Click listener removed!');
   });
 &lt;/script&gt;</code></pre>
-</div><p>Try clicking the first button — it will show an alert. Click the second button to remove the listener, then try clicking the first button again.</p><div class="snippet-container" id="tSMgk">
- <div id="TaTGb_Dialog" class="dialog-backdrop">
+</div><p>Try clicking the first button — it will show an alert. Click the second button to remove the listener, then try clicking the first button again.</p><div class="snippet-container" id="dkllF">
+ <div id="m8mLq_Dialog" class="dialog-backdrop">
   <div class="dialog">
    <h2>Dialog 1</h2>
-   <div class="controls"><button onclick="renderIframe(this,'7Ldfu_Textarea','TaTGb_IFrame')">Run</button> <button onclick="closeAll()">Close</button>
+   <div class="controls"><button onclick="renderIframe(this,'0OjJt_Textarea','m8mLq_IFrame')">Run</button> <button onclick="closeAll()">Close</button>
    </div>
-   <div class="dialog-content"><textarea id="7Ldfu_Textarea" class="textarea_dialog" placeholder="Type HTML here...">&lt;!DOCTYPE html&gt;
+   <div class="dialog-content"><textarea id="0OjJt_Textarea" class="textarea_dialog" placeholder="Type HTML here...">&lt;!DOCTYPE html&gt;
 &lt;html lang="en"&gt;
 &lt;head&gt;
   &lt;meta charset="UTF-8" /&gt;
@@ -1365,13 +1415,15 @@ btn.addEventListener('click', handleClick);</code></pre>
 &lt;/script&gt;
 
 &lt;/body&gt;
-&lt;/html&gt;</textarea> <iframe id="TaTGb_IFrame" class="iframe_dialog"></iframe>
+&lt;/html&gt;</textarea> <iframe id="m8mLq_IFrame" class="iframe_dialog"></iframe>
    </div>
   </div>
  </div>
- <div class="snippet-header"><span onclick="toggleSnippetAndRefresh('tSMgk','7Ldfu')">Click to Try it</span> <!-- <span onclick="openDialog('TaTGb_Dialog')">Dialog</span> -->
+ <div class="snippet-header" onclick="toggleSnippetAndRefresh('dkllF','0OjJt')">
+  Click to Try it <!--<span onclick="toggleSnippetAndRefresh('dkllF','0OjJt')">Click
+			to Try it</span> --> <!-- <span onclick="openDialog('m8mLq_Dialog')">Dialog</span> -->
  </div>
- <div class="snippet-body"><textarea id="7Ldfu">&lt;!DOCTYPE html&gt;
+ <div class="snippet-body"><textarea id="0OjJt">&lt;!DOCTYPE html&gt;
 &lt;html lang="en"&gt;
 &lt;head&gt;
   &lt;meta charset="UTF-8" /&gt;
@@ -1401,30 +1453,36 @@ btn.addEventListener('click', handleClick);</code></pre>
 &lt;/script&gt;
 
 &lt;/body&gt;
-&lt;/html&gt;</textarea> <br> <button onclick="renderIframe(this,'7Ldfu','TaTGb')">Run</button>
-  <div id="TaTGb_FloatingLog" class="floatingLog" aria-live="polite" role="alert"></div> <iframe id="TaTGb" class="result_iframe" style="display: none;"></iframe>
+&lt;/html&gt;</textarea> <br> <button onclick="renderIframe(this,'0OjJt','m8mLq')">Run</button>
+  <div id="m8mLq_FloatingLog" class="floatingLog" aria-live="polite" role="alert"></div> <iframe id="m8mLq" class="result_iframe" style="display: none;"></iframe>
   <script>
 			{
 				let editor = CodeMirror.fromTextArea(document
-						.getElementById("7Ldfu"), {
+						.getElementById("0OjJt"), {
 					mode : "htmlmixed",
 					lineNumbers : false,
 					tabSize : 2
 				});
-				codeMirrorMap.set("7Ldfu", editor);
+			    const mode = localStorage.getItem("mode") || "light";  
+			    const newTheme = mode === "dark" ? "material" : "default";
+			    editor.setOption("theme", newTheme);
+			    
+				codeMirrorMap.set("0OjJt", editor);
 
-				let editor1 = CodeMirror.fromTextArea(document.getElementById("7Ldfu_Textarea"), {
+				let editor1 = CodeMirror.fromTextArea(document.getElementById("0OjJt_Textarea"), {
 					mode : "htmlmixed",
 					lineNumbers : false,
 					tabSize : 2
 				});
-				codeMirrorMap.set("7Ldfu_Textarea", editor1);
+			    editor1.setOption("theme", newTheme);				
+				
+				codeMirrorMap.set("0OjJt_Textarea", editor1);
 			}
 		    function openDialog(id) {
 		        closeAll();
 		        document.getElementById(id).style.display = 'flex';
 		        setTimeout(() => {
-		        	 codeMirrorMap.get("7Ldfu_Textarea").refresh();
+		        	 codeMirrorMap.get("0OjJt_Textarea").refresh();
 		        }, 100); // 100ms 
 		      }
 
@@ -1476,13 +1534,13 @@ outer.addEventListener('click', () =&gt; {
 inner.addEventListener('click', () =&gt; {
   console.log('Inner BUTTON clicked');
 });</code></pre>
-</div><div class="snippet-container" id="GbY0m">
- <div id="xjvjg_Dialog" class="dialog-backdrop">
+</div><div class="snippet-container" id="9r7eK">
+ <div id="IYaiI_Dialog" class="dialog-backdrop">
   <div class="dialog">
    <h2>Dialog 1</h2>
-   <div class="controls"><button onclick="renderIframe(this,'jcMKN_Textarea','xjvjg_IFrame')">Run</button> <button onclick="closeAll()">Close</button>
+   <div class="controls"><button onclick="renderIframe(this,'ECg2n_Textarea','IYaiI_IFrame')">Run</button> <button onclick="closeAll()">Close</button>
    </div>
-   <div class="dialog-content"><textarea id="jcMKN_Textarea" class="textarea_dialog" placeholder="Type HTML here...">&lt;!DOCTYPE html&gt;
+   <div class="dialog-content"><textarea id="ECg2n_Textarea" class="textarea_dialog" placeholder="Type HTML here...">&lt;!DOCTYPE html&gt;
 &lt;html lang="en"&gt;
 &lt;head&gt;
   &lt;meta charset="UTF-8"&gt;
@@ -1526,13 +1584,15 @@ inner.addEventListener('click', () =&gt; {
 &lt;/script&gt;
 
 &lt;/body&gt;
-&lt;/html&gt;</textarea> <iframe id="xjvjg_IFrame" class="iframe_dialog"></iframe>
+&lt;/html&gt;</textarea> <iframe id="IYaiI_IFrame" class="iframe_dialog"></iframe>
    </div>
   </div>
  </div>
- <div class="snippet-header"><span onclick="toggleSnippetAndRefresh('GbY0m','jcMKN')">Click to Try it</span> <!-- <span onclick="openDialog('xjvjg_Dialog')">Dialog</span> -->
+ <div class="snippet-header" onclick="toggleSnippetAndRefresh('9r7eK','ECg2n')">
+  Click to Try it <!--<span onclick="toggleSnippetAndRefresh('9r7eK','ECg2n')">Click
+			to Try it</span> --> <!-- <span onclick="openDialog('IYaiI_Dialog')">Dialog</span> -->
  </div>
- <div class="snippet-body"><textarea id="jcMKN">&lt;!DOCTYPE html&gt;
+ <div class="snippet-body"><textarea id="ECg2n">&lt;!DOCTYPE html&gt;
 &lt;html lang="en"&gt;
 &lt;head&gt;
   &lt;meta charset="UTF-8"&gt;
@@ -1576,30 +1636,36 @@ inner.addEventListener('click', () =&gt; {
 &lt;/script&gt;
 
 &lt;/body&gt;
-&lt;/html&gt;</textarea> <br> <button onclick="renderIframe(this,'jcMKN','xjvjg')">Run</button>
-  <div id="xjvjg_FloatingLog" class="floatingLog" aria-live="polite" role="alert"></div> <iframe id="xjvjg" class="result_iframe" style="display: none;"></iframe>
+&lt;/html&gt;</textarea> <br> <button onclick="renderIframe(this,'ECg2n','IYaiI')">Run</button>
+  <div id="IYaiI_FloatingLog" class="floatingLog" aria-live="polite" role="alert"></div> <iframe id="IYaiI" class="result_iframe" style="display: none;"></iframe>
   <script>
 			{
 				let editor = CodeMirror.fromTextArea(document
-						.getElementById("jcMKN"), {
+						.getElementById("ECg2n"), {
 					mode : "htmlmixed",
 					lineNumbers : false,
 					tabSize : 2
 				});
-				codeMirrorMap.set("jcMKN", editor);
+			    const mode = localStorage.getItem("mode") || "light";  
+			    const newTheme = mode === "dark" ? "material" : "default";
+			    editor.setOption("theme", newTheme);
+			    
+				codeMirrorMap.set("ECg2n", editor);
 
-				let editor1 = CodeMirror.fromTextArea(document.getElementById("jcMKN_Textarea"), {
+				let editor1 = CodeMirror.fromTextArea(document.getElementById("ECg2n_Textarea"), {
 					mode : "htmlmixed",
 					lineNumbers : false,
 					tabSize : 2
 				});
-				codeMirrorMap.set("jcMKN_Textarea", editor1);
+			    editor1.setOption("theme", newTheme);				
+				
+				codeMirrorMap.set("ECg2n_Textarea", editor1);
 			}
 		    function openDialog(id) {
 		        closeAll();
 		        document.getElementById(id).style.display = 'flex';
 		        setTimeout(() => {
-		        	 codeMirrorMap.get("jcMKN_Textarea").refresh();
+		        	 codeMirrorMap.get("ECg2n_Textarea").refresh();
 		        }, 100); // 100ms 
 		      }
 
@@ -1676,13 +1742,13 @@ Outer DIV clicked (bubbling)</code></pre>
     // event.stopPropagation();
   });
 &lt;/script&gt;</code></pre>
-</div><p>Try clicking the button and observe the console logs. Experiment with <code>stopPropagation()</code> to see how it affects event flow.</p><div class="snippet-container" id="fozna">
- <div id="21UBK_Dialog" class="dialog-backdrop">
+</div><p>Try clicking the button and observe the console logs. Experiment with <code>stopPropagation()</code> to see how it affects event flow.</p><div class="snippet-container" id="dNgon">
+ <div id="9N0Zt_Dialog" class="dialog-backdrop">
   <div class="dialog">
    <h2>Dialog 1</h2>
-   <div class="controls"><button onclick="renderIframe(this,'g13fm_Textarea','21UBK_IFrame')">Run</button> <button onclick="closeAll()">Close</button>
+   <div class="controls"><button onclick="renderIframe(this,'79EqM_Textarea','9N0Zt_IFrame')">Run</button> <button onclick="closeAll()">Close</button>
    </div>
-   <div class="dialog-content"><textarea id="g13fm_Textarea" class="textarea_dialog" placeholder="Type HTML here...">&lt;!DOCTYPE html&gt;
+   <div class="dialog-content"><textarea id="79EqM_Textarea" class="textarea_dialog" placeholder="Type HTML here...">&lt;!DOCTYPE html&gt;
 &lt;html lang="en"&gt;
 &lt;head&gt;
   &lt;meta charset="UTF-8"&gt;
@@ -1715,13 +1781,15 @@ Outer DIV clicked (bubbling)</code></pre>
     });
   &lt;/script&gt;
 &lt;/body&gt;
-&lt;/html&gt;</textarea> <iframe id="21UBK_IFrame" class="iframe_dialog"></iframe>
+&lt;/html&gt;</textarea> <iframe id="9N0Zt_IFrame" class="iframe_dialog"></iframe>
    </div>
   </div>
  </div>
- <div class="snippet-header"><span onclick="toggleSnippetAndRefresh('fozna','g13fm')">Click to Try it</span> <!-- <span onclick="openDialog('21UBK_Dialog')">Dialog</span> -->
+ <div class="snippet-header" onclick="toggleSnippetAndRefresh('dNgon','79EqM')">
+  Click to Try it <!--<span onclick="toggleSnippetAndRefresh('dNgon','79EqM')">Click
+			to Try it</span> --> <!-- <span onclick="openDialog('9N0Zt_Dialog')">Dialog</span> -->
  </div>
- <div class="snippet-body"><textarea id="g13fm">&lt;!DOCTYPE html&gt;
+ <div class="snippet-body"><textarea id="79EqM">&lt;!DOCTYPE html&gt;
 &lt;html lang="en"&gt;
 &lt;head&gt;
   &lt;meta charset="UTF-8"&gt;
@@ -1754,30 +1822,36 @@ Outer DIV clicked (bubbling)</code></pre>
     });
   &lt;/script&gt;
 &lt;/body&gt;
-&lt;/html&gt;</textarea> <br> <button onclick="renderIframe(this,'g13fm','21UBK')">Run</button>
-  <div id="21UBK_FloatingLog" class="floatingLog" aria-live="polite" role="alert"></div> <iframe id="21UBK" class="result_iframe" style="display: none;"></iframe>
+&lt;/html&gt;</textarea> <br> <button onclick="renderIframe(this,'79EqM','9N0Zt')">Run</button>
+  <div id="9N0Zt_FloatingLog" class="floatingLog" aria-live="polite" role="alert"></div> <iframe id="9N0Zt" class="result_iframe" style="display: none;"></iframe>
   <script>
 			{
 				let editor = CodeMirror.fromTextArea(document
-						.getElementById("g13fm"), {
+						.getElementById("79EqM"), {
 					mode : "htmlmixed",
 					lineNumbers : false,
 					tabSize : 2
 				});
-				codeMirrorMap.set("g13fm", editor);
+			    const mode = localStorage.getItem("mode") || "light";  
+			    const newTheme = mode === "dark" ? "material" : "default";
+			    editor.setOption("theme", newTheme);
+			    
+				codeMirrorMap.set("79EqM", editor);
 
-				let editor1 = CodeMirror.fromTextArea(document.getElementById("g13fm_Textarea"), {
+				let editor1 = CodeMirror.fromTextArea(document.getElementById("79EqM_Textarea"), {
 					mode : "htmlmixed",
 					lineNumbers : false,
 					tabSize : 2
 				});
-				codeMirrorMap.set("g13fm_Textarea", editor1);
+			    editor1.setOption("theme", newTheme);				
+				
+				codeMirrorMap.set("79EqM_Textarea", editor1);
 			}
 		    function openDialog(id) {
 		        closeAll();
 		        document.getElementById(id).style.display = 'flex';
 		        setTimeout(() => {
-		        	 codeMirrorMap.get("g13fm_Textarea").refresh();
+		        	 codeMirrorMap.get("79EqM_Textarea").refresh();
 		        }, 100); // 100ms 
 		      }
 
@@ -1821,13 +1895,13 @@ button.addEventListener('mouseenter', (event) =&gt; {
 button.addEventListener('focus', (event) =&gt; {
   logMessage('Button is focused (via keyboard or tab).');
 });</code></pre>
-</div><div class="snippet-container" id="PkmAD">
- <div id="FfOmh_Dialog" class="dialog-backdrop">
+</div><div class="snippet-container" id="XjP8P">
+ <div id="E6dyQ_Dialog" class="dialog-backdrop">
   <div class="dialog">
    <h2>Dialog 1</h2>
-   <div class="controls"><button onclick="renderIframe(this,'881Tv_Textarea','FfOmh_IFrame')">Run</button> <button onclick="closeAll()">Close</button>
+   <div class="controls"><button onclick="renderIframe(this,'wmLW5_Textarea','E6dyQ_IFrame')">Run</button> <button onclick="closeAll()">Close</button>
    </div>
-   <div class="dialog-content"><textarea id="881Tv_Textarea" class="textarea_dialog" placeholder="Type HTML here...">&lt;!DOCTYPE html&gt;
+   <div class="dialog-content"><textarea id="wmLW5_Textarea" class="textarea_dialog" placeholder="Type HTML here...">&lt;!DOCTYPE html&gt;
 &lt;html lang="en"&gt;
 &lt;head&gt;
   &lt;meta charset="UTF-8" /&gt;
@@ -1885,13 +1959,15 @@ button.addEventListener('focus', (event) =&gt; {
     });
   &lt;/script&gt;
 &lt;/body&gt;
-&lt;/html&gt;</textarea> <iframe id="FfOmh_IFrame" class="iframe_dialog"></iframe>
+&lt;/html&gt;</textarea> <iframe id="E6dyQ_IFrame" class="iframe_dialog"></iframe>
    </div>
   </div>
  </div>
- <div class="snippet-header"><span onclick="toggleSnippetAndRefresh('PkmAD','881Tv')">Click to Try it</span> <!-- <span onclick="openDialog('FfOmh_Dialog')">Dialog</span> -->
+ <div class="snippet-header" onclick="toggleSnippetAndRefresh('XjP8P','wmLW5')">
+  Click to Try it <!--<span onclick="toggleSnippetAndRefresh('XjP8P','wmLW5')">Click
+			to Try it</span> --> <!-- <span onclick="openDialog('E6dyQ_Dialog')">Dialog</span> -->
  </div>
- <div class="snippet-body"><textarea id="881Tv">&lt;!DOCTYPE html&gt;
+ <div class="snippet-body"><textarea id="wmLW5">&lt;!DOCTYPE html&gt;
 &lt;html lang="en"&gt;
 &lt;head&gt;
   &lt;meta charset="UTF-8" /&gt;
@@ -1949,30 +2025,36 @@ button.addEventListener('focus', (event) =&gt; {
     });
   &lt;/script&gt;
 &lt;/body&gt;
-&lt;/html&gt;</textarea> <br> <button onclick="renderIframe(this,'881Tv','FfOmh')">Run</button>
-  <div id="FfOmh_FloatingLog" class="floatingLog" aria-live="polite" role="alert"></div> <iframe id="FfOmh" class="result_iframe" style="display: none;"></iframe>
+&lt;/html&gt;</textarea> <br> <button onclick="renderIframe(this,'wmLW5','E6dyQ')">Run</button>
+  <div id="E6dyQ_FloatingLog" class="floatingLog" aria-live="polite" role="alert"></div> <iframe id="E6dyQ" class="result_iframe" style="display: none;"></iframe>
   <script>
 			{
 				let editor = CodeMirror.fromTextArea(document
-						.getElementById("881Tv"), {
+						.getElementById("wmLW5"), {
 					mode : "htmlmixed",
 					lineNumbers : false,
 					tabSize : 2
 				});
-				codeMirrorMap.set("881Tv", editor);
+			    const mode = localStorage.getItem("mode") || "light";  
+			    const newTheme = mode === "dark" ? "material" : "default";
+			    editor.setOption("theme", newTheme);
+			    
+				codeMirrorMap.set("wmLW5", editor);
 
-				let editor1 = CodeMirror.fromTextArea(document.getElementById("881Tv_Textarea"), {
+				let editor1 = CodeMirror.fromTextArea(document.getElementById("wmLW5_Textarea"), {
 					mode : "htmlmixed",
 					lineNumbers : false,
 					tabSize : 2
 				});
-				codeMirrorMap.set("881Tv_Textarea", editor1);
+			    editor1.setOption("theme", newTheme);				
+				
+				codeMirrorMap.set("wmLW5_Textarea", editor1);
 			}
 		    function openDialog(id) {
 		        closeAll();
 		        document.getElementById(id).style.display = 'flex';
 		        setTimeout(() => {
-		        	 codeMirrorMap.get("881Tv_Textarea").refresh();
+		        	 codeMirrorMap.get("wmLW5_Textarea").refresh();
 		        }, 100); // 100ms 
 		      }
 
@@ -2137,6 +2219,26 @@ button.addEventListener('focus', (event) =&gt; {
     <div class="book-cover-author">readbytes</div>
     <div class="book-cover-bottom-stripe" style="background-color: #333;"></div>
     <img class="book-cover-icon" style="width: 80px;height: 80px;top: 70px;" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFoAAABaCAYAAAA4qEECAAAErElEQVR4Xu2dPWgUQRiGo6BB8I+AlV3w9gzptLBWsLQ89O7ARrDXSivTCTaCnWhn7pQTxOoInpjCeEQQLC2CjVqoVSwMFpp1Jtzo7Luzs/Nd7uZ29r4HPpDsu7vPvIl7+SGTmRmGYRiGYZjCEzVacdnn9NX7+3DdXkGhMg+u3Su6SNztzsZvevH/efED8zrJbM+6EGJ2K5Hv9w9gRpHnXMyik2VsYVaHWJx7tt/bTOQ3urOYUch3QJ5z0YtOCeuQiqNlvybyto/ktbVDcG2jc5GLNgoriMW5Z/svPyfy693DmFHE71ePwrUznQta9ISeyViyKBIziri/Mpe8tt25kEXjMR1ScbQsPC5W5jCjMJT8DTM6MuO6vrHjIkIszj2LL3y2ktOPiy+Y0VE5l/V5IU+EVBwtm/wUzva4SL/wOZUsJ2993rCJEIujZJMl2174Up/C5T8u9LGtzyu6SNkH1+6VhUargkJlHVy7f5aW9qJUqeZy5zguufToBeAxZoRw0Z7goj3BRXuCi/YEF+0BvWQue0xgwfrMiy+aMM8QEUW+w2IHb8fC/+C5jCOGMhOPiqi+vG47zjiABVbr7XOYUWC2Um+fxwwDiKJeYXGYMYHniNnGDDPAUJZTyYph30nTg+G7f5VLj89gzBW8lu2xMzWIIt5iMZgZBrzmqK4bJFhENOLnatRsfcR7YKb0YAELF5+cwsyowHudrLcvYKZ0iIV+wIVjZhzgPaMR/+8pFIbFeilZUWm2Vyd5/5GxWOvsx4VkTbXROovn+wJdMqfevoHnFoKUaMbgeZMAnbIGzysEKGmZiX4DKKo/um5wMg6eWwhsgtVm62cRFoEOJg/xtltZxwqBTV4inuEHcZHztc4RzI0LvLeY15iRBF+0wrDgsX6qZXpUYEanNEVLROY3ZfHDgvdwuU+pipYs1h7OpUqI4z2YGxa8dqXefooZE6UrWoGFiMn8nRIXoubyTbymeLPzO7C0RUuiRvuXoRwyeI1hrlPqoiUnap1jWNLilU7mr0sgeK746rOFGRdKX7QCC4tyHiXi+DU8BzMUpqZoiSzXpTzMZOUoTFXROxh+xKV/gYPHqvVlp88q8pi+ogdgoabBc3bD1BYtEdfcxnLHeK/pLVoiHxvJktsPMDMKpr5oX3DRnuCiPcFFe4KL9gQX7Qku2hNctCe4aE94K1puD6mXNsmpOv74KUTnxEdmEQb9TOA5kx70M6KfcO/u8/j2nWffxb+XskZm9MHjw2YjgrTKygnFeUaF5cSEjZ4c9kJyz/Z7mxTpEJ0T0nhMhyRBy+5sTuXioAjR2UmaKEHJ/tsBLM9BJ0TnXGmiBCWb2GbN5oCE6GyVJkq4Z3FXxo3ubJaDiRCdM6VJErSscTtik0MWITobpYkS7lncKVfblREdbITonJImSVCyKAz7i1KkQ3ROSJMkaNnc7Ygp0iE6Z0pjTockjC8iBmEJRTpEZ6M0ZnRIwrhTrmU7Yop0iM4paTyusyvhnO2IKdIhOqdeWLLYlbDtL0oM/jaKi4MiRGcnaZIwPt8c/zZKnoNOiM4J6SIM+pnAcyY96GekYJtvf0I/EyE6MwzDMAzDjI+/5MPGam/zucIAAAAASUVORK5CYII="/>
+  </div>
+</a>
+
+
+<a href="jquery-in-depth.htm">
+<div class="book-cover" style="background-color: #f9f6f1;border: 1px solid #ccc;"> 
+    <div class="book-cover-title" style="font-size: 18px;color: #333;top: 20px;">jQuery In-Depth</div>
+    <div class="book-cover-author">readbytes</div>
+    <div class="book-cover-bottom-stripe" style="background-color: #333;"></div>
+    <img class="book-cover-icon" style="width: 90px;height: 90px;top: 65px;" src='data:image/png;base64,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'/>
+  </div>
+</a>
+
+
+<a href="javascript-data-visualization.htm">
+<div class="book-cover" style="background-color: #f9f6f1;border: 1px solid #ccc;"> 
+    <div class="book-cover-title" style="font-size: 16px;color: #333;top: 20px;">JavaScript Data Visualization</div>
+    <div class="book-cover-author">readbytes</div>
+    <div class="book-cover-bottom-stripe" style="background-color: #333;"></div>
+    <img class="book-cover-icon" style="width: 90px;height: 90px;top: 60px;" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFoAAABaCAYAAAA4qEECAAAC0UlEQVR4Xu3dMWsUURSG4fwr2U6zJI0WKZSAaa0EG7tU2giWimLETrQQQRCxUDsbK3+IYOWCiFU06IQz356ZuffOvXdm4A28ze585OxDsLDZnR3zs1pf+rHavXhKWdpY2/Mf50HKEMgV+4cs/1z8/v6OMiTYm9Zfsz5M42r9VQNdLqArBXSlgK4U0JUCulKLgrb39aW7ObQY6PXl/S3Qrs6e1f3ULQZaMYfS/dTZ2xYDvff6g9tS7ge6YEBXCuhKAV0poCsFdKWArtQk0G9e3Tt9dnLc2+dPD1sboCOzv2Ool8/vujsFBtpJMYfydgoMtFMqWOpuLtnbgC6YvQ3ogtnbgC6YvQ3ogtnbgC6YvQ3ogtnbgC6YvQ3ogtnboqCvHR20xn11/UKF6gNL3Y1JP0dXV68fbG01+3wUtP6yvp4+OXZ3CtUHlrpL7ew/tvRz9KV7zT4LtGmW0O+/fnRr3l86tH4u/Xwhv88+C7QJ6MhdakBH7lIDOnKXGtCRu9SAjtylBnTkLjWgI3e67evnt7fnG6BH7EJqdkCP2IXU7IAesft169DN2wE9YqfAQDt35NgpMNDOHTl2Cgy0c0eOnQID7dxhXwvJ2ykw0M4d9rWQvJ0CA+3cYV8LydspMNDOHfa1C/cfuQ3tFBho5w77mgID/f99oCeGDsnbKXBp6JDUR7PPAm12QO8CvVXzfhe0QoWC6fOhOwUOhX7w4rGbt+vKPgu02QE9YqfAi4Meai7QITU7oEfsQmp2s4S+cfumW/P+XKDvXFm7ebtZQusBeshcoL8c7rt5O6BH7BQYaOeOHDsFBtq5I8dOgYF27sixU2CgnTty7BQYaOeOHDsFBtq5I8dOgRcHPVQXdEhT7Wb536RDAQ30Vs1uNtAUF9CVArpSQFcK6EoBXSmgK9WG5qtQi2RNV803KsuLlDn7RcpgF6qF3Pz8fWOjD1JyrS9g/wOlHj3Oru4PcQAAAABJRU5ErkJggg=="/>
   </div>
 </a>
 

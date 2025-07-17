@@ -6,7 +6,7 @@
 <link rel='shortcut icon' href='https://java2s.com/style/favicon.ico'>
 <link href="https://fonts.googleapis.com/css2?family=Merriweather&display=swap" rel="stylesheet" />
 <link href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
-<script type='text/javascript' async src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-MML-AM_CHTML'></script>
+
 
   <script>
   const mode = localStorage.getItem('mode') || 'light';
@@ -727,7 +727,7 @@ Pass12: Invalid</code></pre>
 
 public class PriceExtractor {
     public static void main(String[] args) {
-        String text = "Prices are \( 100,  \)250 and 300 without dollar sign.";
+        String text = "Prices are $100, $250 and 300 without dollar sign.";
 
         // Pattern to match digits preceded by $ using positive lookbehind
         Pattern pattern = Pattern.compile("(?&lt;=\\$)\\d+");
@@ -741,7 +741,7 @@ public class PriceExtractor {
 </div><p><strong>Output:</strong></p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-bash">Price found: 100
 Price found: 250</code></pre>
-</div><p>Here, <code>(?&lt;=\\( )</code> asserts that the digits are preceded by a dollar sign without including it in the match. Numbers without <code>\)</code> are ignored.</p><h3 id="example-3-exclude-data-based-on-lookbehind">Example 3: Exclude Data Based on Lookbehind</h3><p>Alternatively, if you need to find all numbers <strong>not preceded by a <code>$</code></strong>, you can use negative lookbehind:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</div><p>Here, <code>(?&lt;=\$)</code> asserts that the digits are preceded by a dollar sign without including it in the match. Numbers without <code>$</code> are ignored.</p><h3 id="example-3-exclude-data-based-on-lookbehind">Example 3: Exclude Data Based on Lookbehind</h3><p>Alternatively, if you need to find all numbers <strong>not preceded by a <code>$</code></strong>, you can use negative lookbehind:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-java">Pattern pattern = Pattern.compile("(?&lt;!\\$)\\d+");</code></pre>
 </div><p>This matches digits only if they are <strong>not</strong> immediately preceded by <code>$</code>.</p><h3 id="summary">Summary</h3><p>Lookaheads and lookbehinds enable <strong>complex validations</strong> and <strong>precise extractions</strong> by enforcing conditions on what surrounds a match without capturing those characters. This leads to more maintainable, readable, and performant regexes.</p><table>
  <thead>

@@ -6,7 +6,7 @@
 <link rel='shortcut icon' href='https://java2s.com/style/favicon.ico'>
 <link href="https://fonts.googleapis.com/css2?family=Merriweather&display=swap" rel="stylesheet" />
 <link href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
-<script type='text/javascript' async src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-MML-AM_CHTML'></script>
+
 
   <script>
   const mode = localStorage.getItem('mode') || 'light';
@@ -509,7 +509,7 @@ System.out.println(cleaned); // Outputs: Data with  control chars</code></pre>
 <h2 id='replacing-patterns-using-replaceall-and-replacefirst'>13.2 Replacing patterns using <code>replaceAll</code> and <code>replaceFirst</code></h2><p>Java’s <code>String</code> class provides powerful methods for replacing text using regular expressions: <code>replaceAll()</code> and <code>replaceFirst()</code>. Both methods allow you to specify a regex pattern to identify parts of a string to be replaced, but they differ in scope and typical use cases.</p><h4 id="differences-between-replaceall-and-replacefirst">Differences Between <code>replaceAll()</code> and <code>replaceFirst()</code></h4><ul>
  <li><p><strong><code>replaceAll(String regex, String replacement)</code></strong> This method replaces <strong>all</strong> occurrences of the regex pattern in the string with the given replacement. It’s useful when you want to transform every matching substring, such as removing unwanted characters or formatting all dates in a document.</p></li>
  <li><p><strong><code>replaceFirst(String regex, String replacement)</code></strong> This method replaces <strong>only the first</strong> occurrence of the regex pattern. Use it when you need to modify just the initial match—such as anonymizing the first email in a log or replacing the first delimiter in a string.</p></li>
-</ul><h4 id="using-regex-groups-in-replacement-strings">Using Regex Groups in Replacement Strings</h4><p>Regex groups, created by parentheses <code>(…)</code> in the pattern, allow you to capture parts of the matched substring. You can reference these captured groups in the replacement string using <code>\( 1</code>, <code>\)2</code>, etc., corresponding to the group numbers.</p><p>This capability enables complex transformations where you rearrange, format, or selectively modify portions of the matched text.</p><h4 id="examples">Examples</h4><ol>
+</ul><h4 id="using-regex-groups-in-replacement-strings">Using Regex Groups in Replacement Strings</h4><p>Regex groups, created by parentheses <code>(…)</code> in the pattern, allow you to capture parts of the matched substring. You can reference these captured groups in the replacement string using <code>$1</code>, <code>$2</code>, etc., corresponding to the group numbers.</p><p>This capability enables complex transformations where you rearrange, format, or selectively modify portions of the matched text.</p><h4 id="examples">Examples</h4><ol>
  <li><strong>Simple global replacement: Removing all digits</strong></li>
 </ol><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-java">String input = "User123 logged in at 10:45";
@@ -525,7 +525,7 @@ System.out.println(replaced); // Outputs: apple-banana cherry</code></pre>
  <li><strong>Using groups to reformat dates</strong></li>
 </ol><p>Suppose you have dates like <code>"2025-06-22"</code> and want to change them to <code>"22/06/2025"</code>:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-java">String date = "2025-06-22";
-String reformatted = date.replaceAll("(\\d{4})-(\\d{2})-(\\d{2})", "\( 3/ \)2/$1");
+String reformatted = date.replaceAll("(\\d{4})-(\\d{2})-(\\d{2})", "$3/$2/$1");
 System.out.println(reformatted); // Outputs: 22/06/2025</code></pre>
 </div><p>Here, <code>(\\d{4})</code> captures the year, <code>(\\d{2})</code> the month, and <code>(\\d{2})</code> the day. The replacement rearranges these groups in a new format.</p><ol start="4">
  <li><strong>Anonymizing email usernames</strong></li>
@@ -563,7 +563,7 @@ System.out.println(anonymized); // Outputs: ***@example.com</code></pre>
         String phonePattern = ".*?(\\d{3}).*?(\\d{3}).*?(\\d{4}).*";
 
         for (String input : inputs) {
-            String normalized = input.replaceAll(phonePattern, "\( 1- \)2-$3");
+            String normalized = input.replaceAll(phonePattern, "$1-$2-$3");
             System.out.println("Original: " + input + " -&gt; Normalized: " + normalized);
         }
     }
@@ -571,7 +571,7 @@ System.out.println(anonymized); // Outputs: ***@example.com</code></pre>
 </div><p><strong>Explanation:</strong></p><ul>
  <li>The pattern <code>.*?(\\d{3}).*?(\\d{3}).*?(\\d{4}).*</code> uses reluctant quantifiers <code>.*?</code> to skip any characters non-greedily until it finds groups of digits.</li>
  <li>Three capturing groups extract area code, prefix, and line number.</li>
- <li>The replacement string <code>\( 1- \)2-$3</code> reconstructs the phone number in the desired format.</li>
+ <li>The replacement string <code>$1-$2-$3</code> reconstructs the phone number in the desired format.</li>
 </ul><p><strong>Expected output:</strong></p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-bash">Original: (123) 456-7890 -&gt; Normalized: 123-456-7890
 Original: 123.456.7890 -&gt; Normalized: 123-456-7890
@@ -604,12 +604,12 @@ Original: +1 123 456 7890 -&gt; Normalized: 123-456-7890</code></pre>
 
         // Match MM/DD/YYYY and transform to YYYY-MM-DD
         if (date.matches("\\d{2}/\\d{2}/\\d{4}")) {
-            return date.replaceAll("(\\d{2})/(\\d{2})/(\\d{4})", "\( 3- \)1-$2");
+            return date.replaceAll("(\\d{2})/(\\d{2})/(\\d{4})", "$3-$1-$2");
         }
 
         // Match DD.MM.YYYY and transform to YYYY-MM-DD
         if (date.matches("\\d{2}\\.\\d{2}\\.\\d{4}")) {
-            return date.replaceAll("(\\d{2})\\.(\\d{2})\\.(\\d{4})", "\( 3- \)2-$1");
+            return date.replaceAll("(\\d{2})\\.(\\d{2})\\.(\\d{4})", "$3-$2-$1");
         }
 
         // Return original if no pattern matched
