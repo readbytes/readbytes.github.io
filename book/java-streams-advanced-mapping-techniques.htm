@@ -465,7 +465,7 @@ html.dark-mode .page-footer a {
     <h2 id='flatmapping-with-flatmap'>10.1 FlatMapping with <code>flatMap()</code></h2><p>The <code>flatMap()</code> operation is a powerful tool in the Java Streams API used to <strong>flatten nested structures</strong> and combine multiple streams into a single continuous stream. While <code>map()</code> transforms each element into exactly one output element (one-to-one mapping), <code>flatMap()</code> transforms each element into <strong>zero or more elements</strong> (one-to-many mapping) and then flattens the results into a single stream.</p><h4 id="how-flatmap-differs-from-map">How <code>flatMap()</code> Differs from <code>map()</code></h4><ul>
  <li><code>map()</code> takes a function that returns a single element and produces a stream of those elements.</li>
  <li><code>flatMap()</code> takes a function that returns a <strong>stream or collection</strong> for each element, then concatenates (flattens) all those inner streams into one flat stream.</li>
-</ul><p>This is useful when you deal with nested collections or want to transform each element into multiple elements.</p><h3 id="example-1-flattening-a-list-of-lists">Example 1: Flattening a List of Lists</h3><p>Suppose you have a list of lists and want to process all inner elements as a single stream.</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">📋</button>
+</ul><p>This is useful when you deal with nested collections or want to transform each element into multiple elements.</p><h3 id="example-1-flattening-a-list-of-lists">Example 1: Flattening a List of Lists</h3><p>Suppose you have a list of lists and want to process all inner elements as a single stream.</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-java">import java.util.List;
 
 public class FlatMapExample1 {
@@ -488,7 +488,7 @@ public class FlatMapExample1 {
 </div><p><strong>Output:</strong></p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-bash">Before flatMap (listOfLists): [[apple, banana], [cherry, date], [elderberry]]
 After flatMap (flattened): [apple, banana, cherry, date, elderberry]</code></pre>
-</div><h3 id="example-2-splitting-strings-into-words">Example 2: Splitting Strings into Words</h3><p>Transform a stream of sentences into a stream of words by splitting each sentence and flattening the resulting arrays.</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">📋</button>
+</div><h3 id="example-2-splitting-strings-into-words">Example 2: Splitting Strings into Words</h3><p>Transform a stream of sentences into a stream of words by splitting each sentence and flattening the resulting arrays.</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-java">import java.util.List;
 import java.util.Arrays;
 
@@ -512,7 +512,7 @@ public class FlatMapExample2 {
 </div><p><strong>Output:</strong></p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-bash">Before flatMap (sentences): [Java streams are powerful, flatMap is very useful, functional programming rocks]
 After flatMap (words): [Java, streams, are, powerful, flatMap, is, very, useful, functional, programming, rocks]</code></pre>
-</div><h3 id="example-3-processing-nested-objects">Example 3: Processing Nested Objects</h3><p>Assume you have a list of <code>User</code> objects, each with a list of email addresses, and you want to get all emails in a single stream.</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">📋</button>
+</div><h3 id="example-3-processing-nested-objects">Example 3: Processing Nested Objects</h3><p>Assume you have a list of <code>User</code> objects, each with a list of email addresses, and you want to get all emails in a single stream.</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-java">import java.util.List;
 
 public class FlatMapExample3 {
@@ -556,7 +556,7 @@ After flatMap (allEmails): [alice@example.com, alice.work@example.com, bob@examp
 <h2 id='mapping-to-multiple-collections'>10.2 Mapping to Multiple Collections</h2><p>In some situations, you want to <strong>process a stream once but collect the results into multiple collections simultaneously</strong>—for example, splitting data into categories or producing different aggregations from the same data source.</p><p>Java 12 introduced <strong><code>Collectors.teeing()</code></strong>, a powerful utility that allows you to run two collectors in parallel on the same stream and then combine their results. Before Java 12, this kind of logic required multiple stream passes or manual splitting.</p><h4 id="using-collectors-teeing">Using <code>Collectors.teeing()</code></h4><p><code>teeing()</code> takes three arguments:</p><ul>
  <li><strong>Two downstream collectors</strong> that process the stream elements.</li>
  <li>A <strong>merger function</strong> to combine their results into a single output object.</li>
-</ul><h3 id="example-1-splitting-even-and-odd-numbers-into-separate-lists">Example 1: Splitting Even and Odd Numbers into Separate Lists</h3><div class="code-block"><button class="copy-button" onclick="copyCode(this)">📋</button>
+</ul><h3 id="example-1-splitting-even-and-odd-numbers-into-separate-lists">Example 1: Splitting Even and Odd Numbers into Separate Lists</h3><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-java">import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -582,7 +582,7 @@ public class TeeingExample1 {
 </div><p><strong>Output:</strong></p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-bash">Evens: [2, 4, 6, 8, 10]
 Odds: [1, 3, 5, 7, 9]</code></pre>
-</div><h3 id="example-2-computing-multiple-summaries-count-and-sum-from-the-same-stream">Example 2: Computing Multiple Summaries (Count and Sum) from the Same Stream</h3><div class="code-block"><button class="copy-button" onclick="copyCode(this)">📋</button>
+</div><h3 id="example-2-computing-multiple-summaries-count-and-sum-from-the-same-stream">Example 2: Computing Multiple Summaries (Count and Sum) from the Same Stream</h3><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-java">import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -605,7 +605,7 @@ public class TeeingExample2 {
 </div><p><strong>Output:</strong></p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-bash">Count: 5
 Sum: 150</code></pre>
-</div><h3 id="alternative-splitting-streams-without-teeing-pre-java-12">Alternative: Splitting Streams Without <code>teeing()</code> (Pre-Java 12)</h3><p>If <code>Collectors.teeing()</code> is unavailable, you can process the stream twice or use <code>partitioningBy()</code> for boolean splits:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">📋</button>
+</div><h3 id="alternative-splitting-streams-without-teeing-pre-java-12">Alternative: Splitting Streams Without <code>teeing()</code> (Pre-Java 12)</h3><p>If <code>Collectors.teeing()</code> is unavailable, you can process the stream twice or use <code>partitioningBy()</code> for boolean splits:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-java">import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -636,7 +636,7 @@ public class PartitioningExample {
  <li><strong>Multi-field extraction:</strong> Extract multiple properties from objects to construct new structures.</li>
  <li><strong>Nested mapping:</strong> Build hierarchical or grouped data, such as reports or JSON-like objects.</li>
  <li><strong>DTO mapping:</strong> Convert domain objects into simplified or formatted versions for output or transport.</li>
-</ul><h3 id="example-1-summarizing-transactions-by-customer-and-category">Example 1: Summarizing Transactions by Customer and Category</h3><p>Given a list of transactions, group them by customer, then by category, and calculate total amounts per group.</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">📋</button>
+</ul><h3 id="example-1-summarizing-transactions-by-customer-and-category">Example 1: Summarizing Transactions by Customer and Category</h3><p>Given a list of transactions, group them by customer, then by category, and calculate total amounts per group.</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-java">import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -680,7 +680,7 @@ public class ComplexTransformationExample1 {
 </div><p><strong>Output:</strong></p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-bash">Customer spending report:
 {Alice={Books=150.0, Electronics=200.0}, Bob={Books=130.0}}</code></pre>
-</div><p>This nested grouping and summing provides a clear multi-level summary of spending per customer and category.</p><h3 id="example-2-mapping-entities-to-json-ready-nested-dtos-with-conditional-fields">Example 2: Mapping Entities to JSON-Ready Nested DTOs with Conditional Fields</h3><p>Suppose you have <code>Person</code> objects with optional addresses and phone numbers. You want to convert them into nested DTOs suitable for JSON serialization, skipping empty data.</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">📋</button>
+</div><p>This nested grouping and summing provides a clear multi-level summary of spending per customer and category.</p><h3 id="example-2-mapping-entities-to-json-ready-nested-dtos-with-conditional-fields">Example 2: Mapping Entities to JSON-Ready Nested DTOs with Conditional Fields</h3><p>Suppose you have <code>Person</code> objects with optional addresses and phone numbers. You want to convert them into nested DTOs suitable for JSON serialization, skipping empty data.</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-java">import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;

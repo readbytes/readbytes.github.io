@@ -523,7 +523,7 @@ html.dark-mode .page-footer a {
 </ul><h4 id="how-channels-work-with-buffers">How Channels Work with Buffers</h4><p>Channels do not operate on streams of bytes like old IO; instead, they <strong>transfer data to or from buffers</strong>.</p><ul>
  <li>To <strong>read</strong> data, a channel fills a buffer.</li>
  <li>To <strong>write</strong> data, a channel drains data from a buffer.</li>
-</ul><p>Because buffers are containers, this separation allows for efficient, flexible data handling.</p><h3 id="example-reading-from-a-file-using-channel-and-buffer">Example: Reading from a File Using Channel and Buffer</h3><div class="code-block"><button class="copy-button" onclick="copyCode(this)">📋</button>
+</ul><p>Because buffers are containers, this separation allows for efficient, flexible data handling.</p><h3 id="example-reading-from-a-file-using-channel-and-buffer">Example: Reading from a File Using Channel and Buffer</h3><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-java">import java.nio.*;
 import java.nio.channels.*;
 import java.nio.file.*;
@@ -552,7 +552,7 @@ public class FileReadExample {
  <li>The selector blocks until at least one channel is ready.</li>
  <li>It provides a set of <strong>SelectionKeys</strong>, representing channels ready for IO.</li>
  <li>Your program handles these ready channels accordingly.</li>
-</ol><h3 id="analogy-selector-as-a-traffic-controller">Analogy: Selector as a Traffic Controller</h3><p>Imagine a traffic controller watching multiple roads (channels). Instead of blocking at each road, the controller waits until a vehicle arrives on any road and directs traffic accordingly. This approach avoids idle waiting at each road and efficiently manages multiple lanes with fewer resources.</p><h3 id="example-registering-a-channel-with-a-selector">Example: Registering a Channel with a Selector</h3><div class="code-block"><button class="copy-button" onclick="copyCode(this)">📋</button>
+</ol><h3 id="analogy-selector-as-a-traffic-controller">Analogy: Selector as a Traffic Controller</h3><p>Imagine a traffic controller watching multiple roads (channels). Instead of blocking at each road, the controller waits until a vehicle arrives on any road and directs traffic accordingly. This approach avoids idle waiting at each road and efficiently manages multiple lanes with fewer resources.</p><h3 id="example-registering-a-channel-with-a-selector">Example: Registering a Channel with a Selector</h3><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-java">import java.nio.channels.*;
 import java.net.InetSocketAddress;
 
@@ -607,7 +607,7 @@ int data = input.read();  // Blocks until a byte is available or EOF</code></pre
 </ul><h4 id="java-nio-non-blocking-io">Java NIO: Non-Blocking IO</h4><p>Java NIO introduces <strong>non-blocking IO</strong> and <strong>selectors</strong>, enabling a single thread to manage multiple channels (connections) without waiting.</p><p>Channels can be configured to non-blocking mode, so calls like <code>read()</code> or <code>write()</code> return immediately:</p><ul>
  <li>If data is available, they read/write some or all data.</li>
  <li>If no data is available, they return zero or a special value, letting the thread continue other work.</li>
-</ul><p>A <strong>Selector</strong> monitors many channels, notifying when one or more are ready for IO, avoiding thread-blocking.</p><p><strong>Example:</strong></p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">📋</button>
+</ul><p>A <strong>Selector</strong> monitors many channels, notifying when one or more are ready for IO, avoiding thread-blocking.</p><p><strong>Example:</strong></p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-java">import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
 import java.nio.channels.SocketChannel;
@@ -761,7 +761,7 @@ SelectionKey key = channel.register(selector, SelectionKey.OP_READ | SelectionKe
  <pre><code class="language-Java">int readyChannels = selector.select();</code></pre>
 </div><ol start="4">
  <li><strong>Processing Selected Keys</strong></li>
-</ol><p>After <code>select()</code> returns, you retrieve the set of <strong><code>SelectionKey</code></strong> objects representing ready channels:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">📋</button>
+</ol><p>After <code>select()</code> returns, you retrieve the set of <strong><code>SelectionKey</code></strong> objects representing ready channels:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-java">import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
 import java.nio.channels.SocketChannel;
@@ -803,7 +803,7 @@ public class Test {
  <li><strong>Resource Efficiency:</strong> Threads aren’t blocked and don’t waste CPU cycles polling or waiting.</li>
  <li><strong>Responsiveness:</strong> Applications can respond immediately when channels are ready for IO.</li>
  <li><strong>Fits Event-driven Models:</strong> The selector pattern aligns well with event-driven programming, facilitating reactive and asynchronous designs.</li>
-</ul><h3 id="conceptual-example-echo-server-using-selectors">Conceptual Example: Echo Server Using Selectors</h3><div class="code-block"><button class="copy-button" onclick="copyCode(this)">📋</button>
+</ul><h3 id="conceptual-example-echo-server-using-selectors">Conceptual Example: Echo Server Using Selectors</h3><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-java">import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
 import java.nio.channels.SelectionKey;

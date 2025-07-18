@@ -464,7 +464,7 @@ html.dark-mode .page-footer a {
     <!-- <h1 class ="chapter-title"></h1> -->
     <h2 id='introduction-to-goroutines'>8.1 Introduction to Goroutines</h2><p>One of Go’s standout features is its built-in support for <strong>concurrency</strong>, which allows programs to perform multiple tasks simultaneously. At the heart of Go’s concurrency model are <strong>goroutines</strong>—a powerful but simple mechanism for running functions concurrently.</p><h3 id="what-are-goroutines">What Are Goroutines?</h3><p>A <strong>goroutine</strong> is a <strong>lightweight thread</strong> managed by the Go runtime. Unlike operating system threads, goroutines are much cheaper to create and manage in terms of memory and scheduling. You can create thousands (even millions) of goroutines in a single Go program without exhausting system resources.</p><p>Goroutines are <strong>not</strong> actual OS threads. Instead, the Go scheduler multiplexes many goroutines onto a small number of OS threads behind the scenes.</p><h3 id="starting-a-goroutine">Starting a Goroutine</h3><p>To launch a goroutine, you simply prefix a function call with the <code>go</code> keyword:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-go">go myFunction()</code></pre>
-</div><p>This runs <code>myFunction()</code> concurrently—<strong>asynchronously</strong>—with the rest of the program.</p><h3 id="example-concurrent-print-function">Example: Concurrent Print Function</h3><p>Here’s a simple program that starts multiple goroutines:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">📋</button>
+</div><p>This runs <code>myFunction()</code> concurrently—<strong>asynchronously</strong>—with the rest of the program.</p><h3 id="example-concurrent-print-function">Example: Concurrent Print Function</h3><p>Here’s a simple program that starts multiple goroutines:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-go">package main
 
 import (
@@ -525,7 +525,7 @@ Hello from goroutine 1</code></pre>
   <div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
    <pre><code class="language-go">val := &lt;-ch</code></pre>
   </div></li>
-</ul><p>The <code>&lt;-</code> operator indicates the direction of data flow.</p><h3 id="channels-block-until-ready">Channels Block Until Ready</h3><p>Channels <strong>block</strong> the sending goroutine until another goroutine receives the value, and vice versa. This behavior provides natural synchronization.</p><h3 id="practical-example-one-goroutine-sends-another-receives">Practical Example: One Goroutine Sends, Another Receives</h3><div class="code-block"><button class="copy-button" onclick="copyCode(this)">📋</button>
+</ul><p>The <code>&lt;-</code> operator indicates the direction of data flow.</p><h3 id="channels-block-until-ready">Channels Block Until Ready</h3><p>Channels <strong>block</strong> the sending goroutine until another goroutine receives the value, and vice versa. This behavior provides natural synchronization.</p><h3 id="practical-example-one-goroutine-sends-another-receives">Practical Example: One Goroutine Sends, Another Receives</h3><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-go">package main
 
 import (
@@ -600,7 +600,7 @@ Received: 5</code></pre>
  <li><p>Sends block only when the buffer is <strong>full</strong>.</p></li>
  <li><p>Receives block only when the buffer is <strong>empty</strong>.</p></li>
  <li><p>Buffered channels provide <strong>asynchronous communication</strong> up to the buffer capacity, allowing senders to proceed without immediate receivers (up to a limit).</p></li>
-</ul><h3 id="example-unbuffered-channel">Example: Unbuffered Channel</h3><div class="code-block"><button class="copy-button" onclick="copyCode(this)">📋</button>
+</ul><h3 id="example-unbuffered-channel">Example: Unbuffered Channel</h3><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-go">package main
 
 import (
@@ -629,7 +629,7 @@ func main() {
 Main: Receiving
 Goroutine: Sent 1
 Main: Received 1</code></pre>
-</div><p><em>Notice:</em> The goroutine <strong>blocks immediately</strong> on sending until the main function receives from the channel.</p><h3 id="example-buffered-channel">Example: Buffered Channel</h3><div class="code-block"><button class="copy-button" onclick="copyCode(this)">📋</button>
+</div><p><em>Notice:</em> The goroutine <strong>blocks immediately</strong> on sending until the main function receives from the channel.</p><h3 id="example-buffered-channel">Example: Buffered Channel</h3><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-go">package main
 
 import (
@@ -718,7 +718,7 @@ default:
  <li><strong>Multiplexing</strong>: Receiving from multiple channels without blocking on any single one.</li>
  <li><strong>Timeouts</strong>: Using a timer channel to avoid waiting indefinitely.</li>
  <li><strong>Non-blocking channel operations</strong>: Using <code>default</code> case to continue execution if no channels are ready.</li>
-</ul><h3 id="example-reading-from-multiple-channels-with-timeout">Example: Reading from Multiple Channels with Timeout</h3><div class="code-block"><button class="copy-button" onclick="copyCode(this)">📋</button>
+</ul><h3 id="example-reading-from-multiple-channels-with-timeout">Example: Reading from Multiple Channels with Timeout</h3><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-go">package main
 
 import (
@@ -781,7 +781,7 @@ Timeout! No message received.</code></pre>
  <li>Call <code>Add(n)</code> to set the number of goroutines to wait for.</li>
  <li>Each goroutine calls <code>Done()</code> when finished.</li>
  <li>The main goroutine calls <code>Wait()</code> to block until all goroutines complete.</li>
-</ol><h4 id="example-using-waitgroup-to-wait-for-goroutines">Example: Using WaitGroup to Wait for Goroutines</h4><div class="code-block"><button class="copy-button" onclick="copyCode(this)">📋</button>
+</ol><h4 id="example-using-waitgroup-to-wait-for-goroutines">Example: Using WaitGroup to Wait for Goroutines</h4><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-go">package main
 
 import (
@@ -812,7 +812,7 @@ func main() {
  <li>Lock the mutex before accessing the shared resource.</li>
  <li>Unlock it when done.</li>
  <li>Only one goroutine can hold the lock at a time.</li>
-</ul><h4 id="example-using-mutex-to-safely-update-shared-data">Example: Using Mutex to Safely Update Shared Data</h4><div class="code-block"><button class="copy-button" onclick="copyCode(this)">📋</button>
+</ul><h4 id="example-using-mutex-to-safely-update-shared-data">Example: Using Mutex to Safely Update Shared Data</h4><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-go">package main
 
 import (

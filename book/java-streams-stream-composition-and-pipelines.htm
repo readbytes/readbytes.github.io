@@ -465,7 +465,7 @@ html.dark-mode .page-footer a {
     <h2 id='chaining-multiple-streams'>13.1 Chaining Multiple Streams</h2><p>One of the most powerful features of Java Streams is the ability to <strong>chain multiple operations</strong> together, forming a clear and concise data processing pipeline. Each intermediate operation returns a new stream, enabling fluent composition of transformations without modifying the original data source.</p><h4 id="immutability-and-laziness-in-stream-chaining">Immutability and Laziness in Stream Chaining</h4><ul>
  <li><p><strong>Immutability:</strong> Streams are immutable; operations don’t change the source data but produce new streams with the applied transformations. This avoids side effects and makes code easier to reason about.</p></li>
  <li><p><strong>Laziness:</strong> Intermediate operations like <code>filter()</code>, <code>map()</code>, and <code>sorted()</code> are lazy — they don’t execute immediately. Instead, they build up a pipeline of transformations that only run when a <strong>terminal operation</strong> (e.g., <code>collect()</code>, <code>forEach()</code>) is invoked. This allows optimization and efficient processing.</p></li>
-</ul><h4 id="practical-examples">Practical Examples</h4><p>Here are two real-world examples illustrating chaining of multiple stream operations:</p><p><strong>Example 1: Filter, Map, and Sort a List of Products</strong></p><p>Imagine a product list where you want to find all available items priced above $20, convert their names to uppercase, and then sort alphabetically.</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">📋</button>
+</ul><h4 id="practical-examples">Practical Examples</h4><p>Here are two real-world examples illustrating chaining of multiple stream operations:</p><p><strong>Example 1: Filter, Map, and Sort a List of Products</strong></p><p>Imagine a product list where you want to find all available items priced above $20, convert their names to uppercase, and then sort alphabetically.</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-java">import java.util.*;
 import java.util.stream.*;
 
@@ -505,7 +505,7 @@ public class ProductPipeline {
 }</code></pre>
 </div><p><strong>Output:</strong></p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-bash">[LAPTOP, MONITOR]</code></pre>
-</div><p><strong>Example 2: FlatMapping Nested Lists and Sorting</strong></p><p>Suppose you have a list of orders, each containing multiple items. You want to extract all unique item names, filter those starting with "B", and sort them.</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">📋</button>
+</div><p><strong>Example 2: FlatMapping Nested Lists and Sorting</strong></p><p>Suppose you have a list of orders, each containing multiple items. You want to extract all unique item names, filter those starting with "B", and sort them.</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-java">import java.util.*;
 import java.util.stream.*;
 
@@ -556,7 +556,7 @@ public class OrderPipeline {
  <li><code>Stream.concat()</code> can only combine <strong>two streams</strong> at a time. To concatenate more streams, you need to chain multiple calls or use other approaches (e.g., <code>Stream.of()</code> with <code>flatMap()</code>).</li>
  <li>It does <strong>not automatically flatten nested collections</strong>; the streams must be of the same element type.</li>
  <li>Performance-wise, concatenation introduces minimal overhead but be mindful when working with very large or infinite streams.</li>
-</ul><h4 id="examples">Examples</h4><p><strong>Example 1: Concatenating Numeric Streams</strong></p><p>Combine two <code>IntStream</code>s of numbers and sum all elements.</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">📋</button>
+</ul><h4 id="examples">Examples</h4><p><strong>Example 1: Concatenating Numeric Streams</strong></p><p>Combine two <code>IntStream</code>s of numbers and sum all elements.</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-java">import java.util.stream.*;
 
 public class NumericConcatExample {
@@ -572,7 +572,7 @@ public class NumericConcatExample {
 }</code></pre>
 </div><p><strong>Expected Output:</strong></p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-bash">Sum of combined streams: 21</code></pre>
-</div><p><strong>Example 2: Concatenating Streams from Lists</strong></p><p>Merge two lists of strings into one stream, convert all to uppercase, and collect.</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">📋</button>
+</div><p><strong>Example 2: Concatenating Streams from Lists</strong></p><p>Merge two lists of strings into one stream, convert all to uppercase, and collect.</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-java">import java.util.*;
 import java.util.stream.*;
 
@@ -592,7 +592,7 @@ public class ListConcatExample {
 }</code></pre>
 </div><p><strong>Expected Output:</strong></p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-bash">[APPLE, BANANA, CHERRY, DATE]</code></pre>
-</div><p><strong>Example 3: Concatenating Streams of Custom Objects</strong></p><p>Suppose you have two employee streams and want to concatenate them, then filter by department.</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">📋</button>
+</div><p><strong>Example 3: Concatenating Streams of Custom Objects</strong></p><p>Suppose you have two employee streams and want to concatenate them, then filter by department.</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-java">import java.util.*;
 import java.util.stream.*;
 
@@ -641,7 +641,7 @@ public class EmployeeConcatExample {
 <a href='java-streams.htm#stream-composition-and-pipelines' class="nav-button toc-link">Index</a>
 <a href="#bottom" class="nav-button next">↓</a>
 </div>
-<h2 id='stream-builders-and-custom-stream-sources'>13.3 Stream Builders and Custom Stream Sources</h2><p>Java Streams offer flexible ways to create streams programmatically beyond collections and arrays. This includes <code>Stream.builder()</code>, <code>Stream.generate()</code>, <code>Stream.iterate()</code>, and custom sources for dynamic or infinite data. Each method serves different needs, such as deferred computation, on-demand data, or constructing values programmatically.</p><h3 id="using-stream-builder">Using <code>Stream.builder()</code></h3><p><code>Stream.builder()</code> allows you to build a stream manually by adding elements one at a time. It’s useful when the data isn’t already in a collection or needs to be constructed conditionally.</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">📋</button>
+<h2 id='stream-builders-and-custom-stream-sources'>13.3 Stream Builders and Custom Stream Sources</h2><p>Java Streams offer flexible ways to create streams programmatically beyond collections and arrays. This includes <code>Stream.builder()</code>, <code>Stream.generate()</code>, <code>Stream.iterate()</code>, and custom sources for dynamic or infinite data. Each method serves different needs, such as deferred computation, on-demand data, or constructing values programmatically.</p><h3 id="using-stream-builder">Using <code>Stream.builder()</code></h3><p><code>Stream.builder()</code> allows you to build a stream manually by adding elements one at a time. It’s useful when the data isn’t already in a collection or needs to be constructed conditionally.</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-java">import java.util.stream.*;
 
 public class BuilderExample {
@@ -655,7 +655,7 @@ public class BuilderExample {
         names.forEach(System.out::println);
     }
 }</code></pre>
-</div><h3 id="using-stream-generate">Using <code>Stream.generate()</code></h3><p><code>Stream.generate()</code> creates an <strong>infinite stream</strong> where each element is supplied by a <code>Supplier&lt;T&gt;</code>. It’s ideal for producing repeated or computed values, such as random numbers.</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">📋</button>
+</div><h3 id="using-stream-generate">Using <code>Stream.generate()</code></h3><p><code>Stream.generate()</code> creates an <strong>infinite stream</strong> where each element is supplied by a <code>Supplier&lt;T&gt;</code>. It’s ideal for producing repeated or computed values, such as random numbers.</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-java">import java.util.stream.*;
 import java.util.Random;
 
@@ -668,7 +668,7 @@ public class GenerateExample {
               .forEach(System.out::println);
     }
 }</code></pre>
-</div><p>Use <code>limit()</code> to safely cap infinite streams.</p><h3 id="using-stream-iterate">Using <code>Stream.iterate()</code></h3><p><code>Stream.iterate()</code> is used to produce elements by applying a function repeatedly, often for sequences.</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">📋</button>
+</div><p>Use <code>limit()</code> to safely cap infinite streams.</p><h3 id="using-stream-iterate">Using <code>Stream.iterate()</code></h3><p><code>Stream.iterate()</code> is used to produce elements by applying a function repeatedly, often for sequences.</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-java">import java.util.stream.*;
 
 public class IterateExample {
@@ -678,7 +678,7 @@ public class IterateExample {
               .forEach(System.out::println);
     }
 }</code></pre>
-</div><p>From Java 9 onward, you can also pass a predicate to create bounded <code>iterate()</code> streams.</p><h3 id="creating-custom-stream-sources">Creating Custom Stream Sources</h3><p>Custom streams are useful when reading from non-standard sources like sensors, logs, or APIs. This often involves wrapping a custom <code>Iterator</code> or using <code>Spliterator</code> and <code>StreamSupport</code>.</p><p><strong>Example: Stream from a Custom Iterator (simulated sensor data)</strong></p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">📋</button>
+</div><p>From Java 9 onward, you can also pass a predicate to create bounded <code>iterate()</code> streams.</p><h3 id="creating-custom-stream-sources">Creating Custom Stream Sources</h3><p>Custom streams are useful when reading from non-standard sources like sensors, logs, or APIs. This often involves wrapping a custom <code>Iterator</code> or using <code>Spliterator</code> and <code>StreamSupport</code>.</p><p><strong>Example: Stream from a Custom Iterator (simulated sensor data)</strong></p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-java">import java.util.*;
 import java.util.stream.*;
 

@@ -469,7 +469,7 @@ List&lt;String&gt; paths = List.of("file1.txt", "file2.txt");
 paths.stream()
      .map(path -&gt; Files.readString(Path.of(path))) // IOException not allowed
      .forEach(System.out::println);</code></pre>
-</div><h3 id="strategy-1-wrap-checked-exception-in-a-runtimeexception">Strategy 1: Wrap Checked Exception in a RuntimeException</h3><p>A simple workaround is to wrap the checked exception in an unchecked one (<code>RuntimeException</code>). This shifts the handling responsibility downstream.</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">📋</button>
+</div><h3 id="strategy-1-wrap-checked-exception-in-a-runtimeexception">Strategy 1: Wrap Checked Exception in a RuntimeException</h3><p>A simple workaround is to wrap the checked exception in an unchecked one (<code>RuntimeException</code>). This shifts the handling responsibility downstream.</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-java">import java.nio.file.*;
 import java.util.*;
 import java.util.stream.*;
@@ -489,7 +489,7 @@ public class WrapRuntimeExample {
              .forEach(System.out::println);
     }
 }</code></pre>
-</div><p>💡 <em>Pros</em>: Simple to implement. ⚠️ <em>Cons</em>: Loses specific error typing and forces downstream handling or crashes at runtime.</p><h3 id="strategy-2-use-a-utility-method-for-exception-handling">Strategy 2: Use a Utility Method for Exception Handling</h3><p>To promote reuse and cleaner code, you can create a helper function that converts a lambda that throws checked exceptions into a standard functional interface.</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">📋</button>
+</div><p>💡 <em>Pros</em>: Simple to implement. ⚠️ <em>Cons</em>: Loses specific error typing and forces downstream handling or crashes at runtime.</p><h3 id="strategy-2-use-a-utility-method-for-exception-handling">Strategy 2: Use a Utility Method for Exception Handling</h3><p>To promote reuse and cleaner code, you can create a helper function that converts a lambda that throws checked exceptions into a standard functional interface.</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-java">import java.io.*;
 import java.nio.file.*;
 import java.util.function.*;
@@ -535,7 +535,7 @@ public class WithHandlerExample {
 <a href='java-streams.htm#exception-handling-in-streams' class="nav-button toc-link">Index</a>
 <a href="#bottom" class="nav-button next">↓</a>
 </div>
-<h2 id='strategies-for-robust-stream-pipelines'>14.2 Strategies for Robust Stream Pipelines</h2><p>When working with real-world data, stream pipelines must be <strong>resilient</strong> to malformed, missing, or inconsistent input. Streams offer elegant ways to <strong>validate, filter, and recover</strong> without interrupting the entire pipeline. This section outlines key strategies for writing fault-tolerant and robust stream-based code.</p><h3 id="filter-invalid-or-null-data-early">Filter Invalid or Null Data Early</h3><p>The <code>filter()</code> operation can remove invalid or <code>null</code> elements before they cause errors downstream.</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">📋</button>
+<h2 id='strategies-for-robust-stream-pipelines'>14.2 Strategies for Robust Stream Pipelines</h2><p>When working with real-world data, stream pipelines must be <strong>resilient</strong> to malformed, missing, or inconsistent input. Streams offer elegant ways to <strong>validate, filter, and recover</strong> without interrupting the entire pipeline. This section outlines key strategies for writing fault-tolerant and robust stream-based code.</p><h3 id="filter-invalid-or-null-data-early">Filter Invalid or Null Data Early</h3><p>The <code>filter()</code> operation can remove invalid or <code>null</code> elements before they cause errors downstream.</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-java">import java.util.*;
 import java.util.stream.*;
 
@@ -550,7 +550,7 @@ public class FilterNullExample {
              .forEach(System.out::println);
     }
 }</code></pre>
-</div><p>💡 <strong>Tip</strong>: Defensive filtering early in the pipeline prevents runtime exceptions during transformations.</p><h3 id="use-optional-to-represent-absence">Use <code>Optional</code> to Represent Absence</h3><p><code>Optional</code> allows you to express missing or invalid values without nulls. Use it with <code>flatMap()</code> to seamlessly handle optional returns.</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">📋</button>
+</div><p>💡 <strong>Tip</strong>: Defensive filtering early in the pipeline prevents runtime exceptions during transformations.</p><h3 id="use-optional-to-represent-absence">Use <code>Optional</code> to Represent Absence</h3><p><code>Optional</code> allows you to express missing or invalid values without nulls. Use it with <code>flatMap()</code> to seamlessly handle optional returns.</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-java">import java.util.List;
 import java.util.Optional;
 
@@ -573,7 +573,7 @@ public class OptionalParseExample {
                .forEach(System.out::println);
     }
 }</code></pre>
-</div><p>💡 <strong>Benefit</strong>: Avoids crashes by skipping invalid elements gracefully.</p><h3 id="validate-before-transforming">Validate Before Transforming</h3><p>Use conditional logic to validate data before applying expensive or error-prone transformations.</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">📋</button>
+</div><p>💡 <strong>Benefit</strong>: Avoids crashes by skipping invalid elements gracefully.</p><h3 id="validate-before-transforming">Validate Before Transforming</h3><p>Use conditional logic to validate data before applying expensive or error-prone transformations.</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-java">import java.util.List;
 
 public class ValidateBeforeTransform {
@@ -587,7 +587,7 @@ public class ValidateBeforeTransform {
               .forEach(System.out::println);
     }
 }</code></pre>
-</div><h3 id="wrap-operations-with-try-catch-or-fallbacks">Wrap Operations with Try/Catch or Fallbacks</h3><p>Use helper methods to wrap risky operations and provide default values or error logging.</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">📋</button>
+</div><h3 id="wrap-operations-with-try-catch-or-fallbacks">Wrap Operations with Try/Catch or Fallbacks</h3><p>Use helper methods to wrap risky operations and provide default values or error logging.</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-java">import java.util.List;
 
 public class FallbackExample {
@@ -642,7 +642,7 @@ public class FallbackExample {
 <a href='java-streams.htm#exception-handling-in-streams' class="nav-button toc-link">Index</a>
 <a href="#bottom" class="nav-button next">↓</a>
 </div>
-<h2 id='examples-with-file-i-o-and-streams'>14.3 Examples with File I/O and Streams</h2><p>Working with files in stream pipelines often involves handling <strong>checked exceptions</strong>, particularly <code>IOException</code>. Java provides the <code>Files.lines(Path)</code> method, which returns a lazily populated <code>Stream&lt;String&gt;</code> for reading lines of text from a file. However, because it can throw an exception, it's important to use proper <strong>exception handling</strong> techniques such as <strong>try-with-resources</strong> to ensure safety and resource management.</p><h3 id="recommended-pattern-try-with-resources">Recommended Pattern: Try-with-Resources</h3><p>Using try-with-resources ensures that the file stream is <strong>automatically closed</strong>, even if an exception occurs during stream processing.</p><h3 id="example-1-reading-and-filtering-log-entries">Example 1: Reading and Filtering Log Entries</h3><p>Suppose you have a log file where each line is a log entry, and you want to extract only the <code>ERROR</code> lines.</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">📋</button>
+<h2 id='examples-with-file-i-o-and-streams'>14.3 Examples with File I/O and Streams</h2><p>Working with files in stream pipelines often involves handling <strong>checked exceptions</strong>, particularly <code>IOException</code>. Java provides the <code>Files.lines(Path)</code> method, which returns a lazily populated <code>Stream&lt;String&gt;</code> for reading lines of text from a file. However, because it can throw an exception, it's important to use proper <strong>exception handling</strong> techniques such as <strong>try-with-resources</strong> to ensure safety and resource management.</p><h3 id="recommended-pattern-try-with-resources">Recommended Pattern: Try-with-Resources</h3><p>Using try-with-resources ensures that the file stream is <strong>automatically closed</strong>, even if an exception occurs during stream processing.</p><h3 id="example-1-reading-and-filtering-log-entries">Example 1: Reading and Filtering Log Entries</h3><p>Suppose you have a log file where each line is a log entry, and you want to extract only the <code>ERROR</code> lines.</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-java">import java.io.IOException;
 import java.nio.file.*;
 import java.util.stream.*;
@@ -664,7 +664,7 @@ public class ErrorLogFilter {
  <li><code>Files.lines()</code> returns a <code>Stream&lt;String&gt;</code> from the file.</li>
  <li><code>try-with-resources</code> ensures the file is closed after processing.</li>
  <li>If an <code>IOException</code> occurs, it's caught and logged.</li>
-</ul><h3 id="example-2-reading-csv-records-with-fallback">Example 2: Reading CSV Records with Fallback</h3><p>This example processes a CSV file where each line contains a user record (e.g., <code>name,email</code>). Some lines may be malformed.</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">📋</button>
+</ul><h3 id="example-2-reading-csv-records-with-fallback">Example 2: Reading CSV Records with Fallback</h3><p>This example processes a CSV file where each line contains a user record (e.g., <code>name,email</code>). Some lines may be malformed.</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-java">import java.io.IOException;
 import java.nio.file.*;
 import java.util.*;

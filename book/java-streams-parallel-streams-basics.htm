@@ -477,7 +477,7 @@ stream.parallel()...;</code></pre>
  <li><strong>Improved performance:</strong> Tasks that can be broken into independent units often run faster by utilizing multiple CPU cores.</li>
  <li><strong>Simple concurrency:</strong> Parallelism is achieved with minimal code changes—just switch from <code>stream()</code> to <code>parallelStream()</code> or <code>.parallel()</code>.</li>
  <li><strong>Better CPU utilization:</strong> Especially effective for CPU-bound operations on large collections or data sources.</li>
-</ul><h4 id="example-sequential-vs-parallel-processing">Example: Sequential vs Parallel Processing</h4><p>The following example demonstrates summing the squares of numbers sequentially and in parallel, measuring the time taken for each.</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">📋</button>
+</ul><h4 id="example-sequential-vs-parallel-processing">Example: Sequential vs Parallel Processing</h4><p>The following example demonstrates summing the squares of numbers sequentially and in parallel, measuring the time taken for each.</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-java">import java.util.List;
 import java.util.stream.IntStream;
 
@@ -517,7 +517,7 @@ public class ParallelStreamExample {
 </ul><h4 id="comparison-to-other-concurrency-tools">Comparison to Other Concurrency Tools</h4><p>While parallel streams abstract away thread management, traditional frameworks like <strong>ForkJoinPool</strong> and <strong>ExecutorService</strong> provide finer control over thread creation, task scheduling, and exception handling. Parallel streams are easier to use but less flexible.</p><ul>
  <li>Use <strong>parallel streams</strong> for straightforward data-parallel computations.</li>
  <li>Use <strong>ForkJoinPool</strong> or <strong>ExecutorService</strong> when you need custom thread pools, more control, or complex concurrency patterns.</li>
-</ul><h3 id="example-when-parallel-streams-help">Example: When Parallel Streams Help</h3><div class="code-block"><button class="copy-button" onclick="copyCode(this)">📋</button>
+</ul><h3 id="example-when-parallel-streams-help">Example: When Parallel Streams Help</h3><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-java">import java.util.List;
 import java.util.stream.IntStream;
 
@@ -542,7 +542,7 @@ public class ParallelStreamGuidelineExample {
         return result;
     }
 }</code></pre>
-</div><h3 id="example-when-not-to-use-parallel-streams">Example: When Not to Use Parallel Streams</h3><div class="code-block"><button class="copy-button" onclick="copyCode(this)">📋</button>
+</div><h3 id="example-when-not-to-use-parallel-streams">Example: When Not to Use Parallel Streams</h3><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-java">import java.util.List;
 
 public class SmallDatasetExample {
@@ -562,7 +562,7 @@ public class SmallDatasetExample {
 <a href='java-streams.htm#parallel-streams-basics' class="nav-button toc-link">Index</a>
 <a href="#bottom" class="nav-button next">↓</a>
 </div>
-<h2 id='example-parallel-vs-sequential-performance'>9.3 Example: Parallel vs Sequential Performance</h2><p>To understand the real benefits of parallel streams, it helps to compare their performance with sequential streams on a sufficiently large dataset. This example processes a large list of numbers, applying a moderately expensive transformation, and measures the execution time of both approaches.</p><h4 id="setup-squaring-numbers-with-a-simulated-workload">Setup: Squaring Numbers with a Simulated Workload</h4><p>We'll square numbers from 1 to 10 million, simulating some CPU work with a small delay, then compare sequential and parallel execution times.</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">📋</button>
+<h2 id='example-parallel-vs-sequential-performance'>9.3 Example: Parallel vs Sequential Performance</h2><p>To understand the real benefits of parallel streams, it helps to compare their performance with sequential streams on a sufficiently large dataset. This example processes a large list of numbers, applying a moderately expensive transformation, and measures the execution time of both approaches.</p><h4 id="setup-squaring-numbers-with-a-simulated-workload">Setup: Squaring Numbers with a Simulated Workload</h4><p>We'll square numbers from 1 to 10 million, simulating some CPU work with a small delay, then compare sequential and parallel execution times.</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-java">import java.util.List;
 import java.util.stream.IntStream;
 
@@ -625,7 +625,7 @@ Parallel sum: 670962544, Time: 800 ms</code></pre>
  <li><p><strong>Non-Associative Operations</strong> Operations like <code>reduce()</code> require the accumulator to be <strong>associative</strong> and <strong>stateless</strong>. Non-associative or stateful reductions can produce incorrect results or exceptions in parallel execution.</p></li>
  <li><p><strong>Shared Mutable State</strong> Modifying shared objects (like collections or counters) inside stream operations—especially intermediate or terminal ones—can cause race conditions and data corruption when streams run in parallel.</p></li>
  <li><p><strong>Side-Effects in Intermediate Operations</strong> Intermediate operations like <code>map()</code>, <code>filter()</code>, or <code>peek()</code> should be <strong>stateless</strong> and without side effects, as they might be invoked multiple times or out of order in parallel.</p></li>
-</ol><h3 id="example-1-unsafe-shared-mutable-state">Example 1: Unsafe Shared Mutable State</h3><p>This example demonstrates a common mistake—updating a non-thread-safe collection inside a parallel stream, leading to unpredictable output:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">📋</button>
+</ol><h3 id="example-1-unsafe-shared-mutable-state">Example 1: Unsafe Shared Mutable State</h3><p>This example demonstrates a common mistake—updating a non-thread-safe collection inside a parallel stream, leading to unpredictable output:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-java">import java.util.ArrayList;
 import java.util.List;
 
@@ -642,7 +642,7 @@ public class UnsafeParallelExample {
         System.out.println("Results: " + results);
     }
 }</code></pre>
-</div><p><strong>Problem:</strong> <code>ArrayList</code> is not thread-safe. Concurrent <code>add()</code> calls cause data races and may miss elements or throw exceptions.</p><h3 id="example-2-safe-alternative-using-thread-safe-collector">Example 2: Safe Alternative Using Thread-Safe Collector</h3><p>Use built-in thread-safe collectors like <code>Collectors.toList()</code> to safely gather results in parallel streams:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">📋</button>
+</div><p><strong>Problem:</strong> <code>ArrayList</code> is not thread-safe. Concurrent <code>add()</code> calls cause data races and may miss elements or throw exceptions.</p><h3 id="example-2-safe-alternative-using-thread-safe-collector">Example 2: Safe Alternative Using Thread-Safe Collector</h3><p>Use built-in thread-safe collectors like <code>Collectors.toList()</code> to safely gather results in parallel streams:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-java">import java.util.List;
 import java.util.stream.Collectors;
 

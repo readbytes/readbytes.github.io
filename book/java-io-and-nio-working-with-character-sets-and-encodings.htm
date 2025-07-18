@@ -488,7 +488,7 @@ Charset charset2 = StandardCharsets.UTF_8;           // Preferred constant from 
  <li><strong>More control:</strong> You can manage incremental encoding/decoding (streaming).</li>
  <li><strong>Error handling:</strong> Configure how to respond to malformed or unmappable input.</li>
  <li><strong>Performance benefits:</strong> Avoid unnecessary intermediate objects in bulk operations.</li>
-</ul><h3 id="example-using-charsetencoder-and-charsetdecoder">Example: Using CharsetEncoder and CharsetDecoder</h3><div class="code-block"><button class="copy-button" onclick="copyCode(this)">📋</button>
+</ul><h3 id="example-using-charsetencoder-and-charsetdecoder">Example: Using CharsetEncoder and CharsetDecoder</h3><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-java">import java.nio.*;
 import java.nio.charset.*;
 
@@ -555,7 +555,7 @@ decoder.onMalformedInput(CodingErrorAction.REPORT);</code></pre>
 </ul><p>If you rely on Java's platform default charset implicitly (e.g., <code>FileReader</code> or <code>FileWriter</code>), your code becomes non-portable and fragile because default charset varies by platform, locale, and JVM settings.</p><p><strong>Explicit charset specification ensures that your program reads and writes text consistently, regardless of platform or environment.</strong></p><h3 id="java-classes-for-charset-aware-text-io">Java Classes for Charset-Aware Text IO</h3><p>The key classes to perform charset-aware reading and writing of text files are:</p><ul>
  <li><strong><code>InputStreamReader</code></strong>: Converts bytes from an input stream into characters using a specified charset.</li>
  <li><strong><code>OutputStreamWriter</code></strong>: Converts characters into bytes and writes them to an output stream using a specified charset.</li>
-</ul><p>Both classes bridge between byte streams (<code>InputStream</code>/<code>OutputStream</code>) and character streams (<code>Reader</code>/<code>Writer</code>).</p><h3 id="reading-text-files-with-inputstreamreader">Reading Text Files with <code>InputStreamReader</code></h3><p>The typical pattern to read a text file with a specific charset is:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">📋</button>
+</ul><p>Both classes bridge between byte streams (<code>InputStream</code>/<code>OutputStream</code>) and character streams (<code>Reader</code>/<code>Writer</code>).</p><h3 id="reading-text-files-with-inputstreamreader">Reading Text Files with <code>InputStreamReader</code></h3><p>The typical pattern to read a text file with a specific charset is:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-java">import java.io.*;
 import java.nio.charset.Charset;
 
@@ -582,7 +582,7 @@ public class CharsetAwareFileRead {
  <li><code>FileInputStream</code> reads raw bytes from the file.</li>
  <li><code>InputStreamReader</code> converts these bytes into characters using the specified charset (<code>UTF-8</code> in this example).</li>
  <li><code>BufferedReader</code> provides efficient buffered reading and convenient methods like <code>readLine()</code>.</li>
-</ul><p>This method guarantees that bytes are interpreted according to the specified charset, avoiding platform default pitfalls.</p><h3 id="writing-text-files-with-outputstreamwriter">Writing Text Files with <code>OutputStreamWriter</code></h3><p>Similarly, to write text safely with explicit charset:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">📋</button>
+</ul><p>This method guarantees that bytes are interpreted according to the specified charset, avoiding platform default pitfalls.</p><h3 id="writing-text-files-with-outputstreamwriter">Writing Text Files with <code>OutputStreamWriter</code></h3><p>Similarly, to write text safely with explicit charset:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-java">import java.io.*;
 import java.nio.charset.Charset;
 
@@ -608,7 +608,7 @@ public class CharsetAwareFileWrite {
  <li><code>FileOutputStream</code> writes raw bytes to the file.</li>
  <li><code>OutputStreamWriter</code> encodes characters into bytes using the specified charset.</li>
  <li><code>BufferedWriter</code> provides buffered writing with convenient methods such as <code>newLine()</code>.</li>
-</ul><p>This ensures the written bytes accurately represent the characters in UTF-8 encoding.</p><h3 id="example-round-trip-reading-and-writing">Example: Round-Trip Reading and Writing</h3><p>To illustrate safe and portable IO, consider reading a file in UTF-8 and writing its contents to another file in UTF-8 explicitly:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">📋</button>
+</ul><p>This ensures the written bytes accurately represent the characters in UTF-8 encoding.</p><h3 id="example-round-trip-reading-and-writing">Example: Round-Trip Reading and Writing</h3><p>To illustrate safe and portable IO, consider reading a file in UTF-8 and writing its contents to another file in UTF-8 explicitly:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-java">import java.io.*;
 import java.nio.charset.StandardCharsets;
 
@@ -719,7 +719,7 @@ public class RoundTripTextIO {
 </ul><p>To convert text from one charset to another, you:</p><ol>
  <li><strong>Decode</strong> the original bytes using the source charset into characters.</li>
  <li><strong>Encode</strong> these characters using the target charset back into bytes.</li>
-</ol><h3 id="example-1-basic-charset-conversion-using-charsetdecoder-and-charsetencoder">Example 1: Basic Charset Conversion Using CharsetDecoder and CharsetEncoder</h3><p>This example reads a byte array encoded in ISO-8859-1 and converts it to a UTF-8 encoded byte array.</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">📋</button>
+</ol><h3 id="example-1-basic-charset-conversion-using-charsetdecoder-and-charsetencoder">Example 1: Basic Charset Conversion Using CharsetDecoder and CharsetEncoder</h3><p>This example reads a byte array encoded in ISO-8859-1 and converts it to a UTF-8 encoded byte array.</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-java">import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
 import java.nio.charset.*;
@@ -755,7 +755,7 @@ public class CharsetConversionExample {
  <li>Using <code>CharsetDecoder</code> for ISO-8859-1, we decode these bytes into Java characters (<code>CharBuffer</code>).</li>
  <li>Then, we encode these characters into UTF-8 bytes using <code>CharsetEncoder</code>.</li>
  <li>This two-step decode-encode approach converts text from one charset to another safely.</li>
-</ul><h3 id="example-2-converting-text-file-encoding">Example 2: Converting Text File Encoding</h3><p>Suppose you have a file encoded in Windows-1252 and want to convert it to UTF-8.</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">📋</button>
+</ul><h3 id="example-2-converting-text-file-encoding">Example 2: Converting Text File Encoding</h3><p>Suppose you have a file encoded in Windows-1252 and want to convert it to UTF-8.</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-java">import java.io.*;
 import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
@@ -802,7 +802,7 @@ public class FileEncodingConverter {
  <li>It then encodes the characters into UTF-8 bytes with <code>CharsetEncoder</code>.</li>
  <li>Finally, it writes the UTF-8 bytes to the output file.</li>
  <li>This approach preserves the text correctly, regardless of special characters present.</li>
-</ul><h3 id="utility-approach-using-new-string-and-getbytes-for-quick-conversions">Utility Approach: Using <code>new String()</code> and <code>getBytes()</code> for Quick Conversions</h3><p>For simpler scenarios, Java’s <code>String</code> constructors and <code>getBytes()</code> methods can be used for conversion:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">📋</button>
+</ul><h3 id="utility-approach-using-new-string-and-getbytes-for-quick-conversions">Utility Approach: Using <code>new String()</code> and <code>getBytes()</code> for Quick Conversions</h3><p>For simpler scenarios, Java’s <code>String</code> constructors and <code>getBytes()</code> methods can be used for conversion:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-java">import java.io.UnsupportedEncodingException;
 
 public class Test {

@@ -462,7 +462,7 @@ html.dark-mode .page-footer a {
     <h1 class="book-title-chapter" id = 'top'>Legacy Date and Time API</h1>
     <h3 class="book-subtitle-chapter">Java Date and Time</h3>   
     <!-- <h1 class ="chapter-title"></h1> -->
-    <h2 id='overview-of-java-util-date-and-java-util-calendar'>10.1 Overview of <code>java.util.Date</code> and <code>java.util.Calendar</code></h2><p>Before Java 8 introduced the modern <code>java.time</code> API, date and time handling in Java was primarily done using the <code>java.util.Date</code> and <code>java.util.Calendar</code> classes. These legacy classes served as the foundation for managing dates and times in early Java applications and played a crucial role in standardizing time representation before more robust solutions emerged.</p><h3 id="java-util-date"><code>java.util.Date</code></h3><p>The <code>Date</code> class represents a specific instant in time, with millisecond precision since the Unix epoch (January 1, 1970, 00:00:00 GMT). Originally, it was designed to hold both date and time information, but its API is limited and sometimes confusing.</p><h4 id="creating-a-date">Creating a Date</h4><div class="code-block"><button class="copy-button" onclick="copyCode(this)">📋</button>
+    <h2 id='overview-of-java-util-date-and-java-util-calendar'>10.1 Overview of <code>java.util.Date</code> and <code>java.util.Calendar</code></h2><p>Before Java 8 introduced the modern <code>java.time</code> API, date and time handling in Java was primarily done using the <code>java.util.Date</code> and <code>java.util.Calendar</code> classes. These legacy classes served as the foundation for managing dates and times in early Java applications and played a crucial role in standardizing time representation before more robust solutions emerged.</p><h3 id="java-util-date"><code>java.util.Date</code></h3><p>The <code>Date</code> class represents a specific instant in time, with millisecond precision since the Unix epoch (January 1, 1970, 00:00:00 GMT). Originally, it was designed to hold both date and time information, but its API is limited and sometimes confusing.</p><h4 id="creating-a-date">Creating a Date</h4><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-java">import java.util.Date;
 
 public class DateExample {
@@ -484,7 +484,7 @@ Specific Date: Thu Jan 01 00:01:40 UTC 1970</code></pre>
  <li>Most getter methods such as <code>getYear()</code>, <code>getMonth()</code>, and <code>getDay()</code> were deprecated because of poor design.</li>
  <li><code>Date</code> does not handle time zones well; it stores time internally in UTC, but its <code>toString()</code> uses the system default time zone for display, causing confusion.</li>
  <li>No support for manipulating date fields like adding days or months directly.</li>
-</ul><h3 id="java-util-calendar"><code>java.util.Calendar</code></h3><p>To overcome some of the shortcomings of <code>Date</code>, Java introduced the <code>Calendar</code> class. It provides a more flexible and powerful API for date/time manipulation, including the ability to adjust individual fields and handle different time zones.</p><h4 id="creating-and-modifying-a-calendar">Creating and Modifying a Calendar</h4><div class="code-block"><button class="copy-button" onclick="copyCode(this)">📋</button>
+</ul><h3 id="java-util-calendar"><code>java.util.Calendar</code></h3><p>To overcome some of the shortcomings of <code>Date</code>, Java introduced the <code>Calendar</code> class. It provides a more flexible and powerful API for date/time manipulation, including the ability to adjust individual fields and handle different time zones.</p><h4 id="creating-and-modifying-a-calendar">Creating and Modifying a Calendar</h4><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-java">import java.util.Calendar;
 
 public class CalendarExample {
@@ -513,7 +513,7 @@ After adding 10 days: Mon Jul 14 09:15:30 UTC 2025</code></pre>
  <li>Supports multiple calendar systems through subclasses.</li>
  <li>Handles time zones explicitly.</li>
  <li>Provides constants for date and time fields, improving code readability.</li>
-</ul><h3 id="formatting-dates-in-legacy-api">Formatting Dates in Legacy API</h3><p>For displaying dates, Java traditionally used the <code>java.text.SimpleDateFormat</code> class. It formats <code>Date</code> objects into strings and parses strings back into dates.</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">📋</button>
+</ul><h3 id="formatting-dates-in-legacy-api">Formatting Dates in Legacy API</h3><p>For displaying dates, Java traditionally used the <code>java.text.SimpleDateFormat</code> class. It formats <code>Date</code> objects into strings and parses strings back into dates.</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-java">import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -571,12 +571,12 @@ System.out.println(date); // Output varies depending on system time zone</code><
 </ul><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-java">SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 Date date = sdf.parse("2021-13-01");  // Invalid month, throws ParseException</code></pre>
-</div><div class="snippet-container" id="wGqsY">
- <div class="snippet-header" onclick="toggleSnippet('wGqsY')">
+</div><div class="snippet-container" id="d0zI5">
+ <div class="snippet-header" onclick="toggleSnippet('d0zI5')">
   Click to view full runnable Code
  </div>
  <div class="snippet-body">
-  <div class="code-block"><button class="copy-button" onclick="copyCode(this)">📋</button>
+  <div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
    <pre><code class="language-java">
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -684,12 +684,12 @@ System.out.println("Calendar from Instant: " + calendar.getTime());</code></pre>
 </div><p>Failing to apply the correct <code>ZoneId</code> can lead to incorrect local times.</p><ol start="2">
  <li><p><strong>Calendar Time Zone Issues</strong> <code>Calendar</code> objects carry their own time zone internally. When converting a <code>Calendar</code> to <code>Instant</code>, this time zone is considered, but when converting back from <code>Instant</code> to <code>Calendar</code>, you must be cautious to set the appropriate time zone on the new <code>Calendar</code> instance to avoid surprises.</p></li>
  <li><p><strong>Immutability vs Mutability</strong> Legacy classes are mutable, whereas modern types like <code>Instant</code> and <code>LocalDateTime</code> are immutable. Conversions create new objects, so developers must be mindful not to unintentionally modify shared instances.</p></li>
-</ol><div class="snippet-container" id="8pRPK">
- <div class="snippet-header" onclick="toggleSnippet('8pRPK')">
+</ol><div class="snippet-container" id="Qk3VE">
+ <div class="snippet-header" onclick="toggleSnippet('Qk3VE')">
   Click to view full runnable Code
  </div>
  <div class="snippet-body">
-  <div class="code-block"><button class="copy-button" onclick="copyCode(this)">📋</button>
+  <div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
    <pre><code class="language-java">
 import java.util.Date;
 import java.util.Calendar;

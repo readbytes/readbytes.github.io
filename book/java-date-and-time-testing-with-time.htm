@@ -466,7 +466,7 @@ html.dark-mode .page-footer a {
  <li><strong>System Clock:</strong> Default, represents the actual current time.</li>
  <li><strong>Fixed Clock:</strong> Always returns the same fixed instant, useful to simulate a fixed point in time.</li>
  <li><strong>Offset Clock:</strong> Returns a time offset from another clock, useful for simulating clock drift or future/past moments.</li>
-</ul><h4 id="using-clock-fixed-for-repeatable-tests">Using <code>Clock.fixed()</code> for Repeatable Tests</h4><p><code>Clock.fixed()</code> creates a clock that always returns the same instant:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">📋</button>
+</ul><h4 id="using-clock-fixed-for-repeatable-tests">Using <code>Clock.fixed()</code> for Repeatable Tests</h4><p><code>Clock.fixed()</code> creates a clock that always returns the same instant:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-java">import java.time.Clock;
 import java.time.Instant;
 import java.time.ZoneId;
@@ -481,7 +481,7 @@ public class FixedClockExample {
         System.out.println(now);  // Output: 2025-06-22T10:00:00Z
     }
 }</code></pre>
-</div><p>In tests, injecting this fixed clock allows you to simulate an exact moment in time, ensuring that tests relying on "now" behave consistently every run.</p><h4 id="using-clock-offset-for-simulated-time-shifts">Using <code>Clock.offset()</code> for Simulated Time Shifts</h4><p><code>Clock.offset()</code> creates a clock that advances or rewinds time relative to another clock by a fixed duration:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">📋</button>
+</div><p>In tests, injecting this fixed clock allows you to simulate an exact moment in time, ensuring that tests relying on "now" behave consistently every run.</p><h4 id="using-clock-offset-for-simulated-time-shifts">Using <code>Clock.offset()</code> for Simulated Time Shifts</h4><p><code>Clock.offset()</code> creates a clock that advances or rewinds time relative to another clock by a fixed duration:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-java">import java.time.Clock;
 import java.time.Duration;
 import java.time.Instant;
@@ -509,7 +509,7 @@ public class OffsetClockExample {
 <a href='java-date-and-time.htm#testing-with-time' class="nav-button toc-link">Index</a>
 <a href="#bottom" class="nav-button next">↓</a>
 </div>
-<h2 id='time-based-unit-tests-and-assertions'>20.2 Time-based Unit Tests and Assertions</h2><p>Testing time-dependent logic can be challenging because system time constantly changes. Without control over the clock, tests can become flaky, intermittent, and difficult to debug. To build reliable unit tests, you need to isolate the time component and use precise assertions involving <code>Instant</code>, <code>Duration</code>, and related classes.</p><h4 id="example-1-asserting-elapsed-time-using-duration">Example 1: Asserting Elapsed Time Using <code>Duration</code></h4><p>Suppose you have a method that records the start and end time of a task, and you want to assert that the elapsed time is within expected bounds.</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">📋</button>
+<h2 id='time-based-unit-tests-and-assertions'>20.2 Time-based Unit Tests and Assertions</h2><p>Testing time-dependent logic can be challenging because system time constantly changes. Without control over the clock, tests can become flaky, intermittent, and difficult to debug. To build reliable unit tests, you need to isolate the time component and use precise assertions involving <code>Instant</code>, <code>Duration</code>, and related classes.</p><h4 id="example-1-asserting-elapsed-time-using-duration">Example 1: Asserting Elapsed Time Using <code>Duration</code></h4><p>Suppose you have a method that records the start and end time of a task, and you want to assert that the elapsed time is within expected bounds.</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-java">import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.time.Duration;
@@ -530,7 +530,7 @@ public class ElapsedTimeTest {
         assertTrue(elapsed.getSeconds() &lt; 10, "Elapsed time should be under 10 seconds");
     }
 }</code></pre>
-</div><p>This test is deterministic because the instants are fixed and known.</p><h4 id="example-2-verifying-event-ordering-with-instant">Example 2: Verifying Event Ordering with <code>Instant</code></h4><p>When your system processes events, you may want to confirm the order of timestamps.</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">📋</button>
+</div><p>This test is deterministic because the instants are fixed and known.</p><h4 id="example-2-verifying-event-ordering-with-instant">Example 2: Verifying Event Ordering with <code>Instant</code></h4><p>When your system processes events, you may want to confirm the order of timestamps.</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-java">import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.time.Instant;
@@ -547,7 +547,7 @@ public class EventOrderTest {
         assertTrue(firstEvent.isBefore(secondEvent), "First event must occur before second event");
     }
 }</code></pre>
-</div><p>Using <code>isBefore()</code>, <code>isAfter()</code>, and <code>isEqual()</code> methods helps write clear and meaningful assertions about temporal order.</p><h4 id="example-3-using-clock-to-test-time-sensitive-methods">Example 3: Using <code>Clock</code> to Test Time-Sensitive Methods</h4><p>Suppose you have a method that depends on the current time to decide behavior (e.g., whether a deadline has passed). Injecting a controllable <code>Clock</code> makes tests repeatable:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">📋</button>
+</div><p>Using <code>isBefore()</code>, <code>isAfter()</code>, and <code>isEqual()</code> methods helps write clear and meaningful assertions about temporal order.</p><h4 id="example-3-using-clock-to-test-time-sensitive-methods">Example 3: Using <code>Clock</code> to Test Time-Sensitive Methods</h4><p>Suppose you have a method that depends on the current time to decide behavior (e.g., whether a deadline has passed). Injecting a controllable <code>Clock</code> makes tests repeatable:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-java">import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 

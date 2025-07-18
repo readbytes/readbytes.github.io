@@ -539,7 +539,7 @@ html.dark-mode .page-footer a {
    <li>Classes: <code>Reader</code> and <code>Writer</code> (abstract base classes)</li>
    <li>Used for: reading and writing characters, with support for Unicode and encodings</li>
   </ul></li>
-</ol><p>We'll look at both byte and character stream examples below.</p><h3 id="byte-stream-example-reading-and-writing-bytes">Byte Stream Example: Reading and Writing Bytes</h3><p>The following example shows how to use <code>FileInputStream</code> and <code>FileOutputStream</code> to copy a file.</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">📋</button>
+</ol><p>We'll look at both byte and character stream examples below.</p><h3 id="byte-stream-example-reading-and-writing-bytes">Byte Stream Example: Reading and Writing Bytes</h3><p>The following example shows how to use <code>FileInputStream</code> and <code>FileOutputStream</code> to copy a file.</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-java">import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -564,7 +564,7 @@ public class ByteStreamExample {
  <li><code>FileInputStream</code> reads one byte at a time from <code>input.dat</code>.</li>
  <li><code>FileOutputStream</code> writes that byte to <code>output.dat</code>.</li>
  <li>This is a simple and direct way to copy binary data.</li>
-</ul><h3 id="character-stream-example-reading-and-writing-text">Character Stream Example: Reading and Writing Text</h3><p>When dealing with text, it’s better to use character streams to handle encoding properly.</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">📋</button>
+</ul><h3 id="character-stream-example-reading-and-writing-text">Character Stream Example: Reading and Writing Text</h3><p>When dealing with text, it’s better to use character streams to handle encoding properly.</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-java">import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -589,7 +589,7 @@ public class CharacterStreamExample {
  <li><code>FileReader</code> reads characters from a text file.</li>
  <li><code>FileWriter</code> writes characters to another text file.</li>
  <li>Character streams are ideal for handling Unicode text.</li>
-</ul><h3 id="stream-chaining-wrapping-streams">Stream Chaining (Wrapping Streams)</h3><p>Java IO encourages <strong>composition</strong> of stream objects for added functionality. For example, you can wrap a <code>FileInputStream</code> with a <code>BufferedInputStream</code> for performance.</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">📋</button>
+</ul><h3 id="stream-chaining-wrapping-streams">Stream Chaining (Wrapping Streams)</h3><p>Java IO encourages <strong>composition</strong> of stream objects for added functionality. For example, you can wrap a <code>FileInputStream</code> with a <code>BufferedInputStream</code> for performance.</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-java">import java.io.*;
 
 public class BufferedStreamExample {
@@ -618,7 +618,7 @@ public class BufferedStreamExample {
 <a href='java-io-and-nio.htm#introduction-to-java-io-and-nio' class="nav-button toc-link">Index</a>
 <a href="#bottom" class="nav-button next">↓</a>
 </div>
-<h2 id='blocking-vs-non-blocking-io'>1.4 Blocking vs Non-blocking IO</h2><p>When writing IO-based programs in Java, one of the most important design considerations is whether to use <strong>blocking</strong> or <strong>non-blocking</strong> IO. The distinction lies in <strong>how a thread behaves when it attempts to read or write data</strong> and whether it must wait for the operation to complete.</p><h3 id="blocking-io-traditional-and-simple">Blocking IO: Traditional and Simple</h3><h4 id="definition">Definition</h4><p><strong>Blocking IO</strong> refers to an IO model where the thread making a read or write call <strong>waits (blocks)</strong> until the operation completes. This model is straightforward and easy to implement, but it becomes inefficient when dealing with many concurrent IO tasks.</p><p>In Java, the classic IO streams (<code>InputStream</code>, <code>OutputStream</code>, <code>Reader</code>, <code>Writer</code>) follow the <strong>blocking IO model</strong>.</p><h4 id="how-it-works">How It Works</h4><p>Imagine you're at a bank teller window (the thread), and you're waiting for a transaction to finish (the IO operation). You <strong>cannot leave</strong> until the teller is done — even if it takes a long time.</p><p>Here’s a simple blocking IO example:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">📋</button>
+<h2 id='blocking-vs-non-blocking-io'>1.4 Blocking vs Non-blocking IO</h2><p>When writing IO-based programs in Java, one of the most important design considerations is whether to use <strong>blocking</strong> or <strong>non-blocking</strong> IO. The distinction lies in <strong>how a thread behaves when it attempts to read or write data</strong> and whether it must wait for the operation to complete.</p><h3 id="blocking-io-traditional-and-simple">Blocking IO: Traditional and Simple</h3><h4 id="definition">Definition</h4><p><strong>Blocking IO</strong> refers to an IO model where the thread making a read or write call <strong>waits (blocks)</strong> until the operation completes. This model is straightforward and easy to implement, but it becomes inefficient when dealing with many concurrent IO tasks.</p><p>In Java, the classic IO streams (<code>InputStream</code>, <code>OutputStream</code>, <code>Reader</code>, <code>Writer</code>) follow the <strong>blocking IO model</strong>.</p><h4 id="how-it-works">How It Works</h4><p>Imagine you're at a bank teller window (the thread), and you're waiting for a transaction to finish (the IO operation). You <strong>cannot leave</strong> until the teller is done — even if it takes a long time.</p><p>Here’s a simple blocking IO example:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-java">import java.io.BufferedReader;
 import java.io.InputStreamReader;
 
@@ -638,7 +638,7 @@ public class Test {
 </ul><h4 id="drawbacks-of-blocking-io">Drawbacks of Blocking IO</h4><ul>
  <li><strong>Scalability limits</strong>: One thread per connection becomes expensive in terms of memory and context-switching.</li>
  <li><strong>Inefficiency under high load</strong>: Many threads may spend most of their time idle, waiting for IO.</li>
-</ul><h3 id="non-blocking-io-scalable-and-efficient">Non-Blocking IO: Scalable and Efficient</h3><h4 id="definition">Definition</h4><p><strong>Non-blocking IO</strong> allows threads to <strong>initiate IO operations and continue doing other work</strong> while waiting for the operation to complete. Instead of waiting, the program is notified when the data is ready to be read or written.</p><p>In Java, this model is supported by the <strong>Java NIO (New IO)</strong> package, introduced in Java 1.4. NIO uses <code>SelectableChannel</code>, <code>Selector</code>, and <code>Buffer</code> classes to achieve non-blocking behavior.</p><h4 id="how-it-works">How It Works</h4><p>Back to our bank analogy: with non-blocking IO, you fill out a request slip (register interest in IO), drop it in a box, and move on. The bank calls your number (via a selector) when your transaction is ready.</p><p>Here's a conceptual snippet using NIO:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">📋</button>
+</ul><h3 id="non-blocking-io-scalable-and-efficient">Non-Blocking IO: Scalable and Efficient</h3><h4 id="definition">Definition</h4><p><strong>Non-blocking IO</strong> allows threads to <strong>initiate IO operations and continue doing other work</strong> while waiting for the operation to complete. Instead of waiting, the program is notified when the data is ready to be read or written.</p><p>In Java, this model is supported by the <strong>Java NIO (New IO)</strong> package, introduced in Java 1.4. NIO uses <code>SelectableChannel</code>, <code>Selector</code>, and <code>Buffer</code> classes to achieve non-blocking behavior.</p><h4 id="how-it-works">How It Works</h4><p>Back to our bank analogy: with non-blocking IO, you fill out a request slip (register interest in IO), drop it in a box, and move on. The bank calls your number (via a selector) when your transaction is ready.</p><p>Here's a conceptual snippet using NIO:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-java">import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
 import java.nio.channels.SocketChannel;
@@ -730,7 +730,7 @@ public class Test {
  <li><code>BufferedReader</code> / <code>BufferedWriter</code></li>
  <li><code>Socket</code> / <code>ServerSocket</code></li>
  <li><code>FileReader</code> / <code>FileWriter</code></li>
-</ul><p><strong>Example:</strong></p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">📋</button>
+</ul><p><strong>Example:</strong></p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-java">import java.io.BufferedReader;
 import java.io.FileReader;
 
@@ -763,7 +763,7 @@ public class Test {
  <li><code>AsynchronousSocketChannel</code></li>
  <li><code>CompletionHandler</code></li>
  <li><code>Future</code> (from <code>java.util.concurrent</code>)</li>
-</ul><p><strong>Example using Future:</strong></p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">📋</button>
+</ul><p><strong>Example using Future:</strong></p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-java">import java.nio.ByteBuffer;
 import java.nio.channels.AsynchronousFileChannel;
 import java.nio.file.Path;
@@ -787,7 +787,7 @@ public class Test {
         channel.close();
     }
 }</code></pre>
-</div><p><strong>Example using CompletionHandler:</strong></p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">📋</button>
+</div><p><strong>Example using CompletionHandler:</strong></p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-java">import java.nio.ByteBuffer;
 import java.nio.channels.AsynchronousFileChannel;
 import java.nio.channels.CompletionHandler;
