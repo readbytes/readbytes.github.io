@@ -1,0 +1,814 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>C Pointers Pointer Casting and Void Pointers</title>
+<link rel='shortcut icon' href='https://java2s.com/style/favicon.ico'>
+<link href="https://fonts.googleapis.com/css2?family=Merriweather&display=swap" rel="stylesheet" />
+<link href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+
+
+  <script>
+  const mode = localStorage.getItem('mode') || 'light';
+  document.documentElement.classList.add(`${mode}-mode`);
+  </script>   
+<style> 
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: 'Merriweather', serif;
+  margin: 0;
+  padding: 2rem 1rem;
+  font-size: 15px;
+  line-height: 1.5;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+.container {
+  max-width: 700px;
+  margin: 0 auto;
+  padding: 1rem 2rem;
+  box-shadow: 0 0 15px rgba(0,0,0,0.1);
+}
+
+h1, h2, h3 {
+  font-weight: 600;
+  margin-top: 2.5rem;
+  margin-bottom: 1rem;
+  line-height: 1.2;
+}
+
+h1 { font-size: 1.8rem; }
+h2 { font-size: 1.4rem; }
+h3 { font-size: 1.2rem; }
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: sans-serif;
+  font-size: 1em;
+  margin: 1em 0;
+}
+
+th, td {
+  padding: 0.6em 1em;
+  text-align: left;
+  border: 1px solid;
+}
+
+tr:nth-child(even) {
+  background-color: inherit;
+}
+
+tr:hover {
+  background-color: inherit;
+}
+
+a {
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+code {
+  color: #d35400;
+}
+
+.book-title-chapter {
+  font-family: 'Merriweather', serif;
+  font-size: 2rem;
+  font-weight: bold;
+  text-align: center;
+  margin-bottom: 2rem;
+  border-bottom: 2px solid;
+  padding-bottom: 0.5rem;
+}
+
+.book-subtitle-chapter {
+  text-align: center;
+  font-size: 1rem;
+  margin-top: -1rem;
+  margin-bottom: 2rem;
+}
+
+.related-books {
+  margin-top: 40px;
+}
+
+.related-book-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+    .book-cover {
+      width: 130px;
+      height: 180px;
+      font-family: Arial, sans-serif;
+      position: relative;
+      overflow: hidden;      
+      line-height: normal;
+      box-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+    }
+    .book-cover-bottom-stripe {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      height: 5px;
+      width: 100%;
+    }
+    .book-cover-title {
+      position: absolute;
+      width: 100%;
+      text-align: center;
+      font-weight: bold;
+    }
+     
+    .book-cover-icon {
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      align-items: center;
+      justify-content: center; 
+    }
+
+    .book-cover-author {
+      position: absolute;
+      bottom: 10px;
+      width: 100%;
+      text-align: center;
+      font-size: 8px;
+      color: #333;
+    }
+
+.page-footer {
+  margin-top: 4rem;
+  padding: 1rem 0;
+  text-align: center;
+  font-size: 0.85rem;
+  border-top: 1px solid;
+}
+
+.chapter-navi-section {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 10px;
+}
+
+.nav-link {
+  color: inherit;
+  text-decoration: none;
+  opacity: 0.5;
+  transition: opacity 0.3s ease, text-decoration 0.3s ease;
+}
+
+.nav-link:hover {
+  opacity: 0.9;
+  text-decoration: underline;
+}
+
+.prev { text-align: left; }
+.toc-link { text-align: center; }
+.next { text-align: right; }
+
+.download-section {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2rem;
+  padding: 2rem 1rem;
+  max-width: 600px;
+  margin: 3rem auto;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+}
+
+.download-info h2 {
+  margin: 0 0 0.5rem;
+  font-size: 1.2rem;
+}
+
+.format-label {
+  margin: 0 0 0.5rem;
+  font-size: 0.95rem;
+}
+
+.download-buttons {
+  display: flex;
+  gap: 1rem;
+}
+
+.download-button {
+  background-color: #4A90E2;
+  color: white;
+  padding: 0.5em 1.2em;
+  border-radius: 25px;
+  font-size: 0.95rem;
+  text-decoration: none;
+  transition: background-color 0.3s ease;
+}
+
+.download-button:hover {
+  background-color: #357ABD;
+}
+
+.code-block {
+  position: relative;
+  margin-bottom: 1em;
+}
+
+.copy-button {
+  background: transparent;
+  color: white;
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  border: none;
+  padding: 4px 8px;
+  font-size: 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  z-index: 1;
+}
+
+.copy-button:hover {
+  background-color: #0056b3;
+}
+
+.snippet-container {
+  overflow: hidden;
+}
+
+.snippet-header {
+  padding: 0.75rem 1rem;
+  cursor: pointer;
+  font-size: 1rem;
+    background-color: #eeeeee;
+    color:  #111111; 
+    border-radius: 8px;
+    cursor: pointer;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);  
+}
+
+.snippet-body {
+  display: none;
+  font-family: monospace;
+}
+
+.snippet-container.open .snippet-body {
+  display: block;
+}
+
+.CodeMirror {
+  border: 2px solid #ccc;
+  border-radius: 4px;
+  resize: vertical;
+}
+
+/* === Light Mode === */
+html.light-mode {
+  background-color: #f8f7f5;
+  color: #333;
+}
+
+html.light-mode .container {
+  background: white;
+}
+
+html.light-mode .book-title-chapter {
+  color: #2c3e50;
+  border-color: #ccc;
+}
+html.light-mode .book-subtitle-chapter{
+  color: #888;
+}
+
+html.light-mode .page-footer,
+html.light-mode .series-name,
+html.light-mode .book-subtitle,
+html.light-mode .format-label {
+  color: #888;
+}
+
+html.light-mode .related-books h2 {
+  color: #333;
+  border-bottom: 2px solid #eee;
+}
+
+html.light-mode .book-title {
+  color: #fff;
+}
+
+html.light-mode .book-cover {
+  border: 1px solid #ccc;
+}
+
+html.light-mode th {
+  background-color: #f2f2f2;
+}
+
+html.light-mode tr:nth-child(even) {
+  background-color: #fafafa;
+}
+
+html.light-mode tr:hover {
+  background-color: #e6f7ff;
+}
+
+html.light-mode a,
+html.light-mode .page-footer a {
+  color: #000;
+}
+
+/* === Dark Mode === */
+html.dark-mode {
+  background-color: #181818;
+  color: #e0e0e0;
+}
+
+html.dark-mode .container {
+  background: #222;
+}
+
+html.dark-mode .book-title-chapter {
+  color: #ddd;
+  border-color: #444;
+}
+
+html.dark-mode .snippet-header {
+    background-color: #333;
+    color:  #ddd; 
+}
+
+
+html.dark-mode .book-subtitle-chapter,
+html.dark-mode .page-footer,
+html.dark-mode .series-name,
+html.dark-mode .book-subtitle,
+html.dark-mode .book-footer,
+html.dark-mode .format-label {
+  color: #aaa;
+}
+
+html.dark-mode .related-books h2 {
+  color: #ddd;
+  border-bottom: 2px solid #333;
+}
+
+html.dark-mode .book-title {
+  color: #fff;
+}
+
+html.dark-mode .book-cover {
+  border: 1px solid #555;
+}
+
+html.dark-mode th {
+  background-color: #333;
+  color: #fff;
+}
+
+html.dark-mode td {
+  border-color: #444;
+}
+
+html.dark-mode tr:nth-child(even) {
+  background-color: #2a2a2a;
+}
+
+html.dark-mode tr:hover {
+  background-color: #2c3e50;
+}
+
+html.dark-mode a,
+html.dark-mode .page-footer a {
+  color: #eee;
+}
+
+    .dialog-backdrop {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(0,0,0,0.5);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 10;
+    }
+
+    .dialog {
+      background: white;
+      padding: 20px;
+      width: 90vw;
+      height: 80vh;
+      border-radius: 8px;
+      box-shadow: 0 0 20px rgba(0,0,0,0.3);
+      display: flex;
+      flex-direction: column;
+    }
+    .dialog-content {
+      display: flex;
+      flex: 1;
+      gap: 20px;
+      margin-top: 10px;
+    }
+    .dialog h2 {
+      margin-top: 0;
+    }
+
+    .textarea_dialog {
+      width: 50%;
+      height: 100%;
+      resize: none;
+      font-family: monospace;
+      font-size: 14px;
+      padding: 10px;
+      box-sizing: border-box;
+      border: 1px solid #ccc;
+    }
+
+    .iframe_dialog {
+      width: 50%;
+      height: 100%;
+      border: 1px solid #ccc;
+    }
+    .controls_dialog {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 10px;
+    }    
+    button { padding: 0.5em 1em; background: green; color: white; border: none; cursor: pointer; }
+    button:hover { background: #1e7e34; }
+    .result_iframe { width:99%; height:200px; margin-top: 1em;  resize: both;border:1px solid #ccc;}        
+</style>
+</head>
+<body> 
+  <div class="container">
+    <div class = "chapter-navi-section">
+<a href="c-pointers-structures-and-pointers.htm" class="nav-button prev">←</a>
+<a href='c-pointers.htm#pointer-casting-and-void-pointers' class="nav-button toc-link">Index</a>
+<a href="c-pointers-arrays-of-pointers-and-pointer-arrays.htm" class="nav-button next">→</a>
+</div>
+
+    <h1 class="book-title-chapter" id = 'top'>Pointer Casting and Void Pointers</h1>
+    <h3 class="book-subtitle-chapter">C Pointers</h3>   
+    <!-- <h1 class ="chapter-title"></h1> -->
+    <h2 id='understanding-pointer-type-conversion'>8.1 Understanding Pointer Type Conversion</h2><p>In C programming, <strong>pointer type conversion</strong> (or pointer casting) refers to changing a pointer’s type from one data type to another. This is a powerful but delicate feature that allows you to treat the same memory address as different types depending on your needs.</p><h3 id="why-cast-pointers">Why Cast Pointers?</h3><p>Sometimes, you need to:</p><ul>
+ <li>Interact with different data types using the same memory address</li>
+ <li>Use generic data handling mechanisms (e.g., <code>void*</code>)</li>
+ <li>Interface with low-level APIs or hardware where raw memory must be accessed differently</li>
+ <li>Implement data structures or functions that operate on multiple types</li>
+</ul><h3 id="implicit-vs-explicit-pointer-casting">Implicit vs Explicit Pointer Casting</h3><h4 id="implicit-casting">Implicit casting</h4><ul>
+ <li>Happens automatically when compatible pointer types are used.</li>
+ <li>Usually, from <code>void*</code> to another pointer type or vice versa.</li>
+ <li>Example: Assigning a <code>char*</code> to a <code>void*</code> pointer requires no explicit cast.</li>
+</ul><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-c">char *cptr;
+void *vptr = cptr;  // Implicit cast: char* to void*</code></pre>
+</div><h4 id="explicit-casting">Explicit casting</h4><ul>
+ <li>Required when converting between incompatible pointer types.</li>
+ <li>Uses a cast operator <code>(type*)</code> to specify the target type.</li>
+ <li>Example: Casting <code>void*</code> back to <code>int*</code>.</li>
+</ul><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-c">void *vptr;
+int *iptr = (int*)vptr;  // Explicit cast</code></pre>
+</div><h3 id="pointer-alignment-and-risks">Pointer Alignment and Risks</h3><p>Pointer casting can be risky if not done carefully:</p><ul>
+ <li><p><strong>Alignment issues:</strong> Different data types have alignment requirements (e.g., <code>int</code> on 4-byte boundaries). Casting to an improperly aligned pointer can cause hardware exceptions or corrupted data.</p></li>
+ <li><p><strong>Type safety:</strong> Casting bypasses the compiler’s type checking. This can lead to incorrect interpretation of data, causing bugs or crashes.</p></li>
+ <li><p><strong>Undefined behavior:</strong> Dereferencing a pointer cast to the wrong type may cause undefined behavior.</p></li>
+</ul><h3 id="summary">Summary</h3><table>
+ <thead>
+  <tr>
+   <th>Concept</th>
+   <th>Explanation</th>
+  </tr>
+ </thead>
+ <tbody>
+  <tr>
+   <td>Pointer casting</td>
+   <td>Converting one pointer type to another</td>
+  </tr>
+  <tr>
+   <td>Implicit cast</td>
+   <td>Automatic, allowed for compatible types</td>
+  </tr>
+  <tr>
+   <td>Explicit cast</td>
+   <td>Manual, required for incompatible types</td>
+  </tr>
+  <tr>
+   <td>Alignment</td>
+   <td>Proper memory alignment is crucial</td>
+  </tr>
+  <tr>
+   <td>Risks</td>
+   <td>Misaligned access, type confusion, crashes</td>
+  </tr>
+ </tbody>
+</table><p>Understanding pointer casting lays the foundation for working with generic data structures and APIs, which we will explore in the upcoming sections.</p><div class = "chapter-navi-section">
+<a href="#top" class="nav-button prev">↑</a>
+<a href='c-pointers.htm#pointer-casting-and-void-pointers' class="nav-button toc-link">Index</a>
+<a href="#bottom" class="nav-button next">↓</a>
+</div>
+<h2 id='using-void-pointers-for-generic-data-handling'>8.2 Using <code>void*</code> Pointers for Generic Data Handling</h2><p>In C, the <code>void*</code> type is known as a <strong>generic pointer</strong>. Unlike pointers to specific data types (like <code>int*</code> or <code>char*</code>), a <code>void*</code> pointer can hold the address of any data type without needing a cast during assignment.</p><h3 id="what-is-a-void-pointer">What is a <code>void*</code> Pointer?</h3><ul>
+ <li><strong>Definition:</strong> A <code>void*</code> pointer is a pointer to memory without a specified type.</li>
+ <li>It acts as a <strong>universal pointer</strong>, able to point to any data type.</li>
+ <li>You <strong>cannot directly dereference</strong> a <code>void*</code> pointer because it has no type information — the compiler does not know how much memory to read or what operations to perform.</li>
+</ul><h3 id="how-void-enables-generic-programming">How <code>void*</code> Enables Generic Programming</h3><p>Since <code>void*</code> pointers can hold addresses of any data, they are essential for writing <strong>generic functions</strong> that can operate on different types without rewriting code for each type.</p><h3 id="examples-of-generic-programming-use-cases">Examples of generic programming use cases:</h3><ul>
+ <li>Memory management functions like <code>malloc()</code> return <code>void*</code> so you can assign the result to any pointer type.</li>
+ <li>Data structures like linked lists or trees storing different data types.</li>
+ <li>Functions that compare or manipulate data generically by receiving <code>void*</code> pointers and accompanying size/type information.</li>
+</ul><h3 id="casting-void-back-to-specific-types">Casting <code>void*</code> Back to Specific Types</h3><p>Before you can use the data pointed to by a <code>void*</code> pointer, you must <strong>cast it back to the appropriate pointer type</strong> to inform the compiler what the data is.</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-c">void *ptr;
+int x = 42;
+
+ptr = &amp;x;               // Assign int* to void* implicitly
+int *iptr = (int*)ptr;  // Cast back to int* before dereferencing
+
+printf("%d\n", *iptr);  // Output: 42</code></pre>
+</div><h3 id="important-notes">Important Notes</h3><ul>
+ <li>Always cast <code>void*</code> pointers back to the correct type before dereferencing.</li>
+ <li>The programmer is responsible for ensuring the correct type is used; the compiler cannot verify this.</li>
+ <li>Using the wrong type when casting can cause undefined behavior.</li>
+</ul><h3 id="summary">Summary</h3><table>
+ <thead>
+  <tr>
+   <th>Aspect</th>
+   <th>Description</th>
+  </tr>
+ </thead>
+ <tbody>
+  <tr>
+   <td><code>void*</code></td>
+   <td>Generic pointer capable of holding any data type</td>
+  </tr>
+  <tr>
+   <td>Direct dereference</td>
+   <td>Not allowed; must cast first</td>
+  </tr>
+  <tr>
+   <td>Generic functions</td>
+   <td>Enables reusable code for multiple data types</td>
+  </tr>
+  <tr>
+   <td>Casting back</td>
+   <td>Required to convert <code>void*</code> to proper pointer type</td>
+  </tr>
+ </tbody>
+</table><p>Using <code>void*</code> pointers wisely opens the door to flexible and reusable C programming, especially when combined with careful casting and type management — topics we will continue exploring next.</p><div class = "chapter-navi-section">
+<a href="#top" class="nav-button prev">↑</a>
+<a href='c-pointers.htm#pointer-casting-and-void-pointers' class="nav-button toc-link">Index</a>
+<a href="#bottom" class="nav-button next">↓</a>
+</div>
+<h2 id='safety-considerations-and-proper-usage'>8.3 Safety Considerations and Proper Usage</h2><p>Using pointer casting and <code>void*</code> pointers in C gives great flexibility, but it also introduces risks that can lead to subtle bugs, crashes, and undefined behavior if not handled carefully. This section highlights common pitfalls and offers best practices for safe pointer casting.</p><h3 id="common-pitfalls">Common Pitfalls</h3><h4 id="misaligned-access">Misaligned Access</h4><ul>
+ <li>Different data types often require memory addresses aligned to certain byte boundaries.</li>
+ <li>For example, an <code>int</code> may need to be stored at a memory address divisible by 4.</li>
+ <li>Casting a pointer to a type with stricter alignment requirements and accessing unaligned memory can cause hardware faults or performance penalties.</li>
+</ul><h4 id="incorrect-casting">Incorrect Casting</h4><ul>
+ <li><p>Casting a pointer to the wrong type causes the compiler to interpret the underlying bytes incorrectly.</p></li>
+ <li><p>This can lead to:</p>
+  <ul>
+   <li>Data corruption</li>
+   <li>Unexpected values</li>
+   <li>Program crashes</li>
+  </ul></li>
+ <li><p>Example: Casting a <code>float*</code> to an <code>int*</code> and dereferencing without conversion.</p></li>
+</ul><h4 id="violating-type-safety">Violating Type Safety</h4><ul>
+ <li>C is not a type-safe language, so it is easy to misuse pointer casts.</li>
+ <li>Using <code>void*</code> bypasses compile-time type checks, placing the burden on the programmer to ensure correctness.</li>
+ <li>Failing to cast back to the original type before dereferencing leads to undefined behavior.</li>
+</ul><h3 id="best-practices-for-safe-pointer-casting">Best Practices for Safe Pointer Casting</h3><h4 id="use-explicit-casting">Use Explicit Casting</h4><ul>
+ <li>Always cast pointers explicitly when converting between incompatible types.</li>
+ <li>This makes your code clearer and reduces accidental misuse.</li>
+</ul><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-c">int *iptr = (int*)void_ptr;</code></pre>
+</div><h4 id="document-pointer-types-clearly">Document Pointer Types Clearly</h4><ul>
+ <li>Comment the intended data type associated with <code>void*</code> pointers.</li>
+ <li>This helps maintainers understand how the pointer should be cast and used.</li>
+</ul><h4 id="minimize-void-usage">Minimize <code>void*</code> Usage</h4><ul>
+ <li>Use <code>void*</code> only when necessary (e.g., generic data handling).</li>
+ <li>Prefer specific pointer types to leverage compile-time checks when possible.</li>
+</ul><h4 id="check-pointer-alignment">Check Pointer Alignment</h4><ul>
+ <li>When casting, ensure the pointer is properly aligned for the target type.</li>
+ <li>Use platform-specific functions or align your allocations to avoid faults.</li>
+</ul><h4 id="avoid-dereferencing-without-casting">Avoid Dereferencing Without Casting</h4><ul>
+ <li>Never dereference a <code>void*</code> pointer directly.</li>
+ <li>Always cast it back to the correct type first.</li>
+</ul><h3 id="debugging-tips">Debugging Tips</h3><ul>
+ <li>Use tools like <strong>Valgrind</strong> or <strong>AddressSanitizer</strong> to detect invalid memory accesses.</li>
+ <li>Enable compiler warnings and static analysis to catch suspicious casts.</li>
+ <li>Write unit tests focusing on areas where casting occurs.</li>
+</ul><h3 id="summary">Summary</h3><table>
+ <thead>
+  <tr>
+   <th>Risk</th>
+   <th>Description</th>
+   <th>Mitigation</th>
+  </tr>
+ </thead>
+ <tbody>
+  <tr>
+   <td>Misaligned Access</td>
+   <td>Accessing data at improper addresses</td>
+   <td>Ensure proper alignment and allocation</td>
+  </tr>
+  <tr>
+   <td>Incorrect Casting</td>
+   <td>Casting to wrong pointer type</td>
+   <td>Use explicit casts, document types</td>
+  </tr>
+  <tr>
+   <td>Type Safety Violation</td>
+   <td>Bypassing compile-time checks</td>
+   <td>Minimize <code>void*</code>, always cast correctly</td>
+  </tr>
+ </tbody>
+</table><p>By following these guidelines, you can harness the power of pointer casting and <code>void*</code> pointers <strong>safely</strong> and <strong>effectively</strong>, avoiding common pitfalls and ensuring your programs run reliably.</p><p>Next, we'll dive into practical examples demonstrating generic functions and casting between types.</p><div class = "chapter-navi-section">
+<a href="#top" class="nav-button prev">↑</a>
+<a href='c-pointers.htm#pointer-casting-and-void-pointers' class="nav-button toc-link">Index</a>
+<a href="#bottom" class="nav-button next">↓</a>
+</div>
+<h2 id='examples-generic-functions-with-void-casting-between-types'>8.4 Examples: Generic Functions with <code>void*</code>, Casting Between Types</h2><p>Generic programming in C often relies on <code>void*</code> pointers to write reusable functions that work with different data types. This section presents practical examples showing how to correctly use <code>void*</code> pointers, perform casting, and avoid common errors.</p><h3 id="example-1-a-generic-comparator-function-for-sorting">Example 1: A Generic Comparator Function for Sorting</h3><p>The standard library function <code>qsort</code> uses a comparator that accepts <code>const void*</code> pointers to elements of any type.</p><h3 id="comparator-for-integers">Comparator for Integers</h3><div class="code-block"><button class="copy-button" onclick="copyCode(this)">📋</button>
+ <pre><code class="language-c">#include &lt;stdio.h&gt;
+#include &lt;stdlib.h&gt;
+
+// Comparator: compares two integers pointed to by void pointers
+int compareInts(const void *a, const void *b) {
+    // Cast void pointers back to int pointers, then dereference
+    int int_a = *(const int*)a;
+    int int_b = *(const int*)b;
+
+    return (int_a &gt; int_b) - (int_a &lt; int_b);
+}
+
+int main() {
+    int arr[] = {5, 2, 9, 1, 7};
+    int n = sizeof(arr) / sizeof(arr[0]);
+
+    qsort(arr, n, sizeof(int), compareInts);
+
+    for (int i = 0; i &lt; n; i++) {
+        printf("%d ", arr[i]);
+    }
+    // Output: 1 2 5 7 9
+
+    return 0;
+}</code></pre>
+</div><p><strong>Key points:</strong></p><ul>
+ <li>The comparator receives <code>const void*</code> pointers.</li>
+ <li>Cast them explicitly to the correct pointer type (<code>const int*</code>).</li>
+ <li>Dereference after casting to access the actual values.</li>
+ <li>Return a value less than, equal to, or greater than zero to define ordering.</li>
+</ul><h3 id="example-2-generic-memory-copy-function">Example 2: Generic Memory Copy Function</h3><p>We can implement a simplified version of <code>memcpy</code> that copies a block of memory byte by byte using <code>void*</code>.</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">📋</button>
+ <pre><code class="language-c">#include &lt;stdio.h&gt;
+
+void *myMemcpy(void *dest, const void *src, size_t n) {
+    // Cast void pointers to char pointers (byte-wise copy)
+    char *d = (char*)dest;
+    const char *s = (const char*)src;
+
+    for (size_t i = 0; i &lt; n; i++) {
+        d[i] = s[i];
+    }
+    return dest;
+}
+
+int main() {
+    char src[] = "Hello, world!";
+    char dest[20];
+
+    myMemcpy(dest, src, sizeof(src));  // including null terminator
+
+    printf("%s\n", dest);  // Output: Hello, world!
+
+    return 0;
+}</code></pre>
+</div><p><strong>Key points:</strong></p><ul>
+ <li>Cast <code>void*</code> to <code>char*</code> to copy memory byte by byte.</li>
+ <li>This avoids issues with pointer arithmetic on unknown types.</li>
+ <li>The function returns the destination pointer for convenience.</li>
+</ul><h3 id="example-3-using-void-in-a-generic-swap-function">Example 3: Using <code>void*</code> in a Generic Swap Function</h3><div class="code-block"><button class="copy-button" onclick="copyCode(this)">📋</button>
+ <pre><code class="language-c">#include &lt;stdio.h&gt;
+#include &lt;string.h&gt;  // For memcpy
+#include &lt;stdlib.h&gt;  // For malloc, free
+
+void genericSwap(void *a, void *b, size_t size) {
+    char *temp = malloc(size);
+    if (temp == NULL) {
+        printf("Memory allocation failed\n");
+        return;
+    }
+
+    memcpy(temp, a, size);
+    memcpy(a, b, size);
+    memcpy(b, temp, size);
+
+    free(temp);
+}
+
+int main() {
+    int x = 10, y = 20;
+    printf("Before swap: x = %d, y = %d\n", x, y);
+    genericSwap(&amp;x, &amp;y, sizeof(int));
+    printf("After swap: x = %d, y = %d\n", x, y);
+
+    double a = 1.23, b = 4.56;
+    printf("Before swap: a = %.2f, b = %.2f\n", a, b);
+    genericSwap(&amp;a, &amp;b, sizeof(double));
+    printf("After swap: a = %.2f, b = %.2f\n", a, b);
+
+    return 0;
+}</code></pre>
+</div><p><strong>Key points:</strong></p><ul>
+ <li>The swap function accepts two <code>void*</code> pointers and the size of the data.</li>
+ <li>Memory is allocated dynamically to hold a temporary copy.</li>
+ <li><code>memcpy</code> is used for copying the raw bytes.</li>
+ <li>Works for any data type, as long as the size is correctly provided.</li>
+</ul><h3 id="summary">Summary</h3><ul>
+ <li>Use <code>void*</code> pointers for generic, reusable functions.</li>
+ <li>Always cast <code>void*</code> back to the correct pointer type before dereferencing.</li>
+ <li>For raw memory operations, cast to <code>char*</code> or <code>unsigned char*</code> for byte-wise manipulation.</li>
+ <li>Always ensure the size parameter matches the data being handled.</li>
+ <li>Manage memory carefully when allocating temporaries, and check for allocation failures.</li>
+</ul><p>With these examples, you can confidently write generic functions that leverage <code>void*</code> pointers and type casting safely and effectively!</p><div class = "chapter-navi-section">
+<a href="c-pointers-structures-and-pointers.htm" class="nav-button prev">←</a>
+<a href='c-pointers.htm#pointer-casting-and-void-pointers' class="nav-button toc-link">Index</a>
+<a href="c-pointers-arrays-of-pointers-and-pointer-arrays.htm" class="nav-button next">→</a>
+</div>
+<section class="download-section">
+  <div class="book-cover" style="background-color: #f9f6f1;border: 1px solid #ccc;"> 
+    <div class="book-cover-title" style="font-size: 22px;color: #333;top: 20px;">C Pointers</div>
+    <div class="book-cover-author">readbytes</div>
+    <div class="book-cover-bottom-stripe" style="background-color: #333;"></div>
+    <img class="book-cover-icon" style="width: 90px;height: 90px;top: 70px;" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFoAAABaCAYAAAA4qEECAAAD5ElEQVR4Xu2dwYoUVxhGr7hQn0F8AyH4Cq5cCwFxk2cQ3GXR1TK+QN5AssnWrRsfwWR0LbhJxKXoIhBQK2Olb5/v1tdV0/fHOPwHDtj/PbdudYHOuKpSkiRJkovFUP744qevvuSyZSin1d5TLlvGs85/7re553OzO3DfJXDPRd97bobylxy49HC2tZvylvkem/Je9uz8wHyPTfmzsWeng23toXs+Ch5GHWypgy11sKUOtjQMHkQdbKmDLXWwpQ62NAweRB1sqYMtdbClDrY0DB5EHWypgy11sKUOtjQMHkQdbKmDLXWwpQ62NAweRB1sqYMtdbClDrY0DB5EHWypgy11sKUOtjQMHkQdbKmDLXWwpQ62NAweRB1sqYMtdbClDrY0SZIkSZI18CdpGqMM0hhlkMYogzRGGaQxyiCNUQZpjDJIY5RBGqMM0hhlkMYogzRGGaQxyiCNUQZpjDJIY5RBT5fAPfO+W7xvabe2PUYZ9HQpQ7kjeynh+lzLNbqmPUYZ9NR/iYcH1uevdagnXJ/8pVxZ1PVQBj1d8iUmfi7XZW3ns+pKO7TTc3t0PZRBT5d8ibVNDTvXsxnKr0waTT9l0NMlX2Ji/GvMNTZDeYrP/0hbr9ecp+mpDHp66EscWh/dlgfS1LCv14fypPrz3ar5u5rXvV6rlzLo6Rq4t3WNafZjuSyz1p6zB31J2pr9Xq/VSxn0dAlDuSr7WtfYltfN+fj79dye8UHvf/4dn9nr+b2UQU9rlszpo/LDbFczt8YHTbTXe+ilDHpaU8+35adq/lj2tfY75vZND7p1raF8lDVep6cy6GnNmrVW4xjK8+Y+/6Bbvd5DL2XQ0xqujb8FTGzKfVl/UK5Ve180rWmdWz/oobz5b74p92Z63mM/ZdDTGq4dWndrkyflRrPZzeoHPf6bf+tfeZ3WNXorg57WcO3M29X6zebeuf+UaHfSmO0/6Dl3va71UgY9reGaa1qzOVvtxKb8Jn1L7o9QBmmMMkhjlEEaowzSGGWQxiiDNEYZpDHKII1RBmmMMkhjlEEaowzSGGWQxiiDNEYZpDHKII0xSZIkSZI18CcpdbClDrbUwZY62NIweBB1sKUOttTBljrY0jB4EHWwpQ621MGWOtjSMHgQdbClDrbUwZY62NIweBB1sKUOttTBljrY0jB4EHWwpQ621MGWOtjSMHgQdbClDrbUwZY62NIweBB1sKUOttTBljrY0jB4EHWwpQ621MGWOtjSMKJeSjZe13HMS8m23+NLyUZ44JIbnuCei773aPZfpLjuJYzbI17CeNyLI+tzX3HZsn/uuntOkiRJ/vd8BnnbnC2TD9qmAAAAAElFTkSuQmCC"/>
+  </div>
+  <div class="download-info">
+    <h2 id='bottom'>Download This Ebook</h2>
+    <p class="format-label">Available formats:</p>
+    <div class="download-buttons">
+      <a href="c-pointers.pdf" class="download-button">📄 PDF</a>
+      <a href="c-pointers.epub" class="download-button">📘 EPUB</a>
+    </div>
+  </div>
+</section><div class='related-books'>
+<h2>C Introduction Books</h2>
+<div class='related-book-list'>
+<a href="c-for-beginners.htm">
+<div class="book-cover" style="background-color: #f9f6f1;border: 1px solid #ccc;"> 
+    <div class="book-cover-title" style="font-size: 18px;color: #333;top: 20px;">C for Beginners</div>
+    <div class="book-cover-author">readbytes</div>
+    <div class="book-cover-bottom-stripe" style="background-color: #333;"></div>
+    <img class="book-cover-icon" style="width: 90px;height: 90px;top: 70px;" src="data:image/png;base64,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"/>
+  </div>
+</a>
+
+
+<a href="c-pointers.htm">
+<div class="book-cover" style="background-color: #f9f6f1;border: 1px solid #ccc;"> 
+    <div class="book-cover-title" style="font-size: 22px;color: #333;top: 20px;">C Pointers</div>
+    <div class="book-cover-author">readbytes</div>
+    <div class="book-cover-bottom-stripe" style="background-color: #333;"></div>
+    <img class="book-cover-icon" style="width: 90px;height: 90px;top: 70px;" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFoAAABaCAYAAAA4qEECAAAD5ElEQVR4Xu2dwYoUVxhGr7hQn0F8AyH4Cq5cCwFxk2cQ3GXR1TK+QN5AssnWrRsfwWR0LbhJxKXoIhBQK2Olb5/v1tdV0/fHOPwHDtj/PbdudYHOuKpSkiRJkovFUP744qevvuSyZSin1d5TLlvGs85/7re553OzO3DfJXDPRd97bobylxy49HC2tZvylvkem/Je9uz8wHyPTfmzsWeng23toXs+Ch5GHWypgy11sKUOtjQMHkQdbKmDLXWwpQ62NAweRB1sqYMtdbClDrY0DB5EHWypgy11sKUOtjQMHkQdbKmDLXWwpQ62NAweRB1sqYMtdbClDrY0DB5EHWypgy11sKUOtjQMHkQdbKmDLXWwpQ62NAweRB1sqYMtdbClDrY0SZIkSZI18CdpGqMM0hhlkMYogzRGGaQxyiCNUQZpjDJIY5RBGqMM0hhlkMYogzRGGaQxyiCNUQZpjDJIY5RBT5fAPfO+W7xvabe2PUYZ9HQpQ7kjeynh+lzLNbqmPUYZ9NR/iYcH1uevdagnXJ/8pVxZ1PVQBj1d8iUmfi7XZW3ns+pKO7TTc3t0PZRBT5d8ibVNDTvXsxnKr0waTT9l0NMlX2Ji/GvMNTZDeYrP/0hbr9ecp+mpDHp66EscWh/dlgfS1LCv14fypPrz3ar5u5rXvV6rlzLo6Rq4t3WNafZjuSyz1p6zB31J2pr9Xq/VSxn0dAlDuSr7WtfYltfN+fj79dye8UHvf/4dn9nr+b2UQU9rlszpo/LDbFczt8YHTbTXe+ilDHpaU8+35adq/lj2tfY75vZND7p1raF8lDVep6cy6GnNmrVW4xjK8+Y+/6Bbvd5DL2XQ0xqujb8FTGzKfVl/UK5Ve180rWmdWz/oobz5b74p92Z63mM/ZdDTGq4dWndrkyflRrPZzeoHPf6bf+tfeZ3WNXorg57WcO3M29X6zebeuf+UaHfSmO0/6Dl3va71UgY9reGaa1qzOVvtxKb8Jn1L7o9QBmmMMkhjlEEaowzSGGWQxiiDNEYZpDHKII1RBmmMMkhjlEEaowzSGGWQxiiDNEYZpDHKII0xSZIkSZI18CcpdbClDrbUwZY62NIweBB1sKUOttTBljrY0jB4EHWwpQ621MGWOtjSMHgQdbClDrbUwZY62NIweBB1sKUOttTBljrY0jB4EHWwpQ621MGWOtjSMHgQdbClDrbUwZY62NIweBB1sKUOttTBljrY0jB4EHWwpQ621MGWOtjSMKJeSjZe13HMS8m23+NLyUZ44JIbnuCei773aPZfpLjuJYzbI17CeNyLI+tzX3HZsn/uuntOkiRJ/vd8BnnbnC2TD9qmAAAAAElFTkSuQmCC"/>
+  </div>
+</a>
+
+
+
+<a href='c.htm'><div class='book-cover' style='background-color: #f9f6f1;color: #111111;border: 1px solid #ccc;display: flex;justify-content: center;align-items: center;text-align: center;'>More C Books</div></a>
+</div>
+</div>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+  
+  <script>
+    function copyCode(button) {
+      const code = button.nextElementSibling.innerText;
+      navigator.clipboard.writeText(code).then(() => {
+        button.textContent = 'Copied!';
+        setTimeout(() => { button.textContent = 'Copy'; }, 1500);
+      });
+    }
+  </script>  
+<div id="floatingLog" aria-live="polite" role="alert"></div>
+<footer class="page-footer">
+    <nav>
+      <a href="https://readbytes.github.io">Home</a> | 
+      Email:<script language="JavaScript" type="text/javascript">
+var part1 = 'yinpeng';var part6 = '263';var part2 = Math.pow(2,6);var part3 = String.fromCharCode(part2);var part4 = 'hotmail dot com';var part5 = part1 + String.fromCharCode(part2) + part4;document.write(part1 + part6 + part3 + part4);
+</script>
+    </nav>
+  <p>© 2025 — All rights reserved.</p>    
+  </footer>
+
+</body>
+</html>

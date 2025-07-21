@@ -1,0 +1,669 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Table of Content for C Pointers</title>
+  <script>
+  const mode = localStorage.getItem('mode') || 'light';
+  document.documentElement.classList.add(`${mode}-mode`);
+  </script>  
+  <link rel='shortcut icon' href='https://java2s.com/style/favicon.ico'>  
+  <style>
+body {
+  font-family: 'Georgia', serif;
+  padding: 40px;
+  max-width: 800px;
+  margin: auto;
+  transition: background-color 0.3s, color 0.3s;
+}
+  .book-title-toc {
+      font-size: 32px;
+      font-weight: bold; 
+    }
+
+    .book-subtitle-toc {
+      font-size: 18px; 
+      margin-top: 8px;
+      font-style: italic;
+    }
+.book-header {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.toc-container {
+  border-radius: 10px;
+  padding: 30px;
+  margin-bottom: 40px;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.05);
+}
+
+h1 {
+  font-size: 24px;
+  text-align: center;
+  margin-bottom: 30px;
+  letter-spacing: 1px;
+  padding-bottom: 10px;
+}
+
+.toc-list,
+.toc-section-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.toc-section-list {
+  padding-left: 18px;
+  margin-top: 6px;
+  margin-bottom: 20px; 
+}
+
+.toc-chapter {
+  padding: 20px 0;
+}
+
+.chapter-title,
+.toc-section {
+  display: flex;
+  justify-content: space-between;
+  padding-top: 4px;
+}
+
+.chapter-title {
+  font-size: 17px;
+  font-weight: bold;
+}
+
+.chapter-page,
+.section-page {
+  font-style: italic;
+}
+
+.related-books {
+  margin-top: 40px;
+}
+
+.related-book-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+    .book-cover {
+      width: 130px;
+      height: 180px;
+      font-family: Arial, sans-serif;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+    }
+    .book-cover-bottom-stripe {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      height: 5px;
+      width: 100%;
+    }
+    .book-cover-title {
+      position: absolute;
+      width: 100%;
+      text-align: center;
+      font-weight: bold;
+    }
+     
+    .book-cover-icon {
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      align-items: center;
+      justify-content: center; 
+    }
+
+    .book-cover-author {
+      position: absolute;
+      bottom: 10px;
+      width: 100%;
+      text-align: center;
+      font-size: 8px;
+      color: #333;
+    }
+
+a {
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+.site-footer {
+  margin-top: 60px;
+  padding: 20px 0;
+  border-top: 1px solid #eee;
+  text-align: center;
+  font-size: 14px; 
+}
+/* === Light Mode === */
+html.light-mode {
+  background-color: #fdfdfd;
+  color: #333;
+}
+
+.light-mode .book-title-toc,
+.light-mode .chapter-title,
+.light-mode .book-name {
+  color: #222;
+}
+
+.light-mode .book-subtitle-toc,
+.light-mode .book-sub,
+.light-mode .chapter-page,
+.light-mode .section-page {
+  color: #666;
+}
+
+.light-mode .toc-container {
+  background: #fff;
+  border: 1px solid #ddd;
+}
+
+.light-mode h1 {
+  border-bottom: 2px solid #eee;
+  color: #222;
+}
+
+.light-mode .toc-section {
+  color: #444;
+}
+
+.light-mode .related-books h2 {
+  color: #333;
+  border-bottom: 2px solid #eee;
+}
+
+.light-mode .book-cover { 
+  border: 1px solid #ccc;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+.light-mode .book-title,
+.light-mode .series-name {
+  color: #fff;
+}
+
+.light-mode .book-subtitle,
+.light-mode .book-footer {
+  color: #aaa;
+}
+
+.light-mode .site-footer {
+  color: #777;
+  border-color: #eee;
+}
+
+.light-mode a {
+  color: #555;
+}
+
+/* === Dark Mode === */
+html.dark-mode {
+  background-color: #121212;
+  color: #e0e0e0;
+}
+
+.dark-mode .book-title-toc,
+.dark-mode .chapter-title,
+.dark-mode .book-name {
+  color: #f5f5f5;
+}
+
+.dark-mode .book-subtitle-toc,
+.dark-mode .book-sub,
+.dark-mode .chapter-page,
+.dark-mode .section-page {
+  color: #aaa;
+}
+
+.dark-mode .toc-container {
+  background: #1e1e1e;
+  border: 1px solid #444;
+}
+
+.dark-mode h1 {
+  border-bottom: 2px solid #333;
+  color: #eee;
+}
+
+.dark-mode .toc-section {
+  color: #bbb;
+}
+
+.dark-mode .related-books h2 {
+  color: #ddd;
+  border-bottom: 2px solid #333;
+}
+
+
+.dark-mode .book-title,
+.dark-mode .series-name {
+  color: #fff;
+}
+
+.dark-mode .book-subtitle,
+.dark-mode .book-footer {
+  color: #bbb;
+}
+
+.dark-mode .site-footer {
+  color: #aaa;
+  border-color: #333;
+}
+
+.dark-mode .toc-section {
+  color: #ddd;
+}
+
+
+.dark-mode a {
+  color: #aaa;
+}
+
+/* === Responsive === */
+@media (max-width: 600px) {
+  .chapter-title,
+  .toc-section {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .chapter-page,
+  .section-page {
+    margin-top: 4px;
+  }
+}
+  </style>
+</head>
+<body>
+<button onclick="toggleMode()">Toggle Mode</button>
+<script>
+function toggleMode() {
+    const html = document.documentElement;
+    const isDark = html.classList.contains('dark-mode');
+
+    html.classList.toggle('dark-mode', !isDark);
+    html.classList.toggle('light-mode', isDark);
+
+    localStorage.setItem('mode', isDark ? 'light' : 'dark');
+  }
+</script>
+<div class="book-header">
+  <div class="book-title-toc">C Pointers</div>
+  <div class="book-subtitle-toc">Beginner’s Guide to Navigating Memory in C</div>
+</div>
+
+<div class="toc-container">
+  <h1>Table of Contents</h1>
+  <ul class="toc-list">
+    <li class='toc-chapter'><a href='c-pointers-introduction-to-pointers-in-c.htm'>
+<div class='chapter-title'>
+<span id='introduction-to-pointers-in-c'>Chapter 1 : Introduction to Pointers in C </span>
+<span class='chapter-page'>1</span>
+</div>
+</a><ul class="toc-section-list"><li class="toc-section">
+<a href='c-pointers-introduction-to-pointers-in-c.htm#what-is-a-pointer-understanding-memory-and-addresses'>
+<span>What is a Pointer? Understanding Memory and Addresses</span></a>
+<span class='section-page'>1</span>
+</li><li class="toc-section">
+<a href='c-pointers-introduction-to-pointers-in-c.htm#pointer-syntax-and-declaration'>
+<span>Pointer Syntax and Declaration</span></a>
+<span class='section-page'>2</span>
+</li><li class="toc-section">
+<a href='c-pointers-introduction-to-pointers-in-c.htm#pointer-variables-and-initialization'>
+<span>Pointer Variables and Initialization</span></a>
+<span class='section-page'>4</span>
+</li><li class="toc-section">
+<a href='c-pointers-introduction-to-pointers-in-c.htm#basic-pointer-operations-dereferencing-and-address-of-operator'>
+<span>Basic Pointer Operations: Dereferencing and Address-of Operator</span></a>
+<span class='section-page'>6</span>
+</li><li class="toc-section">
+<a href='c-pointers-introduction-to-pointers-in-c.htm#simple-examples-accessing-variables-via-pointers'>
+<span>Simple Examples: Accessing Variables via Pointers</span></a>
+<span class='section-page'>8</span>
+</li></ul></li><a href='c-pointers-pointer-arithmetic-and-arrays.htm'>
+<div class='chapter-title'>
+<span id='pointer-arithmetic-and-arrays'>Chapter 2 : Pointer Arithmetic and Arrays </span>
+<span class='chapter-page'>10</span>
+</div>
+</a><ul class="toc-section-list"><li class="toc-section">
+<a href='c-pointers-pointer-arithmetic-and-arrays.htm#pointer-arithmetic-explained-increment-decrement-addition-subtraction'>
+<span>Pointer Arithmetic Explained (Increment, Decrement, Addition, Subtraction)</span></a>
+<span class='section-page'>10</span>
+</li><li class="toc-section">
+<a href='c-pointers-pointer-arithmetic-and-arrays.htm#relationship-between-arrays-and-pointers'>
+<span>Relationship Between Arrays and Pointers</span></a>
+<span class='section-page'>12</span>
+</li><li class="toc-section">
+<a href='c-pointers-pointer-arithmetic-and-arrays.htm#accessing-array-elements-using-pointers'>
+<span>Accessing Array Elements Using Pointers</span></a>
+<span class='section-page'>14</span>
+</li><li class="toc-section">
+<a href='c-pointers-pointer-arithmetic-and-arrays.htm#pointer-and-array-equivalence-when-to-use-which'>
+<span>Pointer and Array Equivalence: When to Use Which</span></a>
+<span class='section-page'>17</span>
+</li><li class="toc-section">
+<a href='c-pointers-pointer-arithmetic-and-arrays.htm#examples-traversing-arrays-with-pointers'>
+<span>Examples: Traversing Arrays with Pointers</span></a>
+<span class='section-page'>19</span>
+</li></ul></li><a href='c-pointers-pointers-and-functions.htm'>
+<div class='chapter-title'>
+<span id='pointers-and-functions'>Chapter 3 : Pointers and Functions </span>
+<span class='chapter-page'>22</span>
+</div>
+</a><ul class="toc-section-list"><li class="toc-section">
+<a href='c-pointers-pointers-and-functions.htm#passing-pointers-to-functions'>
+<span>Passing Pointers to Functions</span></a>
+<span class='section-page'>22</span>
+</li><li class="toc-section">
+<a href='c-pointers-pointers-and-functions.htm#using-pointers-for-output-parameters'>
+<span>Using Pointers for Output Parameters</span></a>
+<span class='section-page'>24</span>
+</li><li class="toc-section">
+<a href='c-pointers-pointers-and-functions.htm#function-pointers-basics-and-syntax'>
+<span>Function Pointers: Basics and Syntax</span></a>
+<span class='section-page'>27</span>
+</li><li class="toc-section">
+<a href='c-pointers-pointers-and-functions.htm#calling-functions-via-pointers'>
+<span>Calling Functions via Pointers</span></a>
+<span class='section-page'>29</span>
+</li><li class="toc-section">
+<a href='c-pointers-pointers-and-functions.htm#examples-callback-functions-swapping-values-using-pointers'>
+<span>Examples: Callback Functions, Swapping Values Using Pointers</span></a>
+<span class='section-page'>31</span>
+</li></ul></li><a href='c-pointers-pointers-and-strings.htm'>
+<div class='chapter-title'>
+<span id='pointers-and-strings'>Chapter 4 : Pointers and Strings </span>
+<span class='chapter-page'>35</span>
+</div>
+</a><ul class="toc-section-list"><li class="toc-section">
+<a href='c-pointers-pointers-and-strings.htm#understanding-strings-as-character-arrays'>
+<span>Understanding Strings as Character Arrays</span></a>
+<span class='section-page'>35</span>
+</li><li class="toc-section">
+<a href='c-pointers-pointers-and-strings.htm#using-pointers-to-traverse-and-modify-strings'>
+<span>Using Pointers to Traverse and Modify Strings</span></a>
+<span class='section-page'>37</span>
+</li><li class="toc-section">
+<a href='c-pointers-pointers-and-strings.htm#pointer-based-string-manipulation-functions'>
+<span>Pointer-based String Manipulation Functions</span></a>
+<span class='section-page'>40</span>
+</li><li class="toc-section">
+<a href='c-pointers-pointers-and-strings.htm#examples-implementing-custom-string-functions-strlen-strcpy-strcmp'>
+<span>Examples: Implementing Custom String Functions (strlen, strcpy, strcmp)</span></a>
+<span class='section-page'>43</span>
+</li></ul></li><a href='c-pointers-pointers-to-pointers-and-multilevel-indirection.htm'>
+<div class='chapter-title'>
+<span id='pointers-to-pointers-and-multilevel-indirection'>Chapter 5 : Pointers to Pointers and Multilevel Indirection </span>
+<span class='chapter-page'>47</span>
+</div>
+</a><ul class="toc-section-list"><li class="toc-section">
+<a href='c-pointers-pointers-to-pointers-and-multilevel-indirection.htm#declaring-and-using-pointers-to-pointers'>
+<span>Declaring and Using Pointers to Pointers</span></a>
+<span class='section-page'>47</span>
+</li><li class="toc-section">
+<a href='c-pointers-pointers-to-pointers-and-multilevel-indirection.htm#use-cases-dynamic-arrays-double-indirection'>
+<span>Use Cases: Dynamic Arrays, Double Indirection</span></a>
+<span class='section-page'>49</span>
+</li><li class="toc-section">
+<a href='c-pointers-pointers-to-pointers-and-multilevel-indirection.htm#examples-manipulating-2d-arrays-with-pointer-to-pointer'>
+<span>Examples: Manipulating 2D Arrays with Pointer-to-Pointer</span></a>
+<span class='section-page'>53</span>
+</li></ul></li><a href='c-pointers-dynamic-memory-allocation-with-pointers.htm'>
+<div class='chapter-title'>
+<span id='dynamic-memory-allocation-with-pointers'>Chapter 6 : Dynamic Memory Allocation with Pointers </span>
+<span class='chapter-page'>56</span>
+</div>
+</a><ul class="toc-section-list"><li class="toc-section">
+<a href='c-pointers-dynamic-memory-allocation-with-pointers.htm#introduction-to-malloc-calloc-realloc-and-free'>
+<span>Introduction to <code>malloc()</code>, <code>calloc()</code>, <code>realloc()</code>, and <code>free()</code></span></a>
+<span class='section-page'>56</span>
+</li><li class="toc-section">
+<a href='c-pointers-dynamic-memory-allocation-with-pointers.htm#allocating-and-managing-memory-at-runtime'>
+<span>Allocating and Managing Memory at Runtime</span></a>
+<span class='section-page'>60</span>
+</li><li class="toc-section">
+<a href='c-pointers-dynamic-memory-allocation-with-pointers.htm#handling-memory-leaks-and-errors'>
+<span>Handling Memory Leaks and Errors</span></a>
+<span class='section-page'>63</span>
+</li><li class="toc-section">
+<a href='c-pointers-dynamic-memory-allocation-with-pointers.htm#examples-dynamic-arrays-linked-list-node-allocation'>
+<span>Examples: Dynamic Arrays, Linked List Node Allocation</span></a>
+<span class='section-page'>66</span>
+</li></ul></li><a href='c-pointers-structures-and-pointers.htm'>
+<div class='chapter-title'>
+<span id='structures-and-pointers'>Chapter 7 : Structures and Pointers </span>
+<span class='chapter-page'>70</span>
+</div>
+</a><ul class="toc-section-list"><li class="toc-section">
+<a href='c-pointers-structures-and-pointers.htm#pointer-to-structures-accessing-members-via-operator'>
+<span>Pointer to Structures: Accessing Members via <code>-&gt;</code> Operator</span></a>
+<span class='section-page'>70</span>
+</li><li class="toc-section">
+<a href='c-pointers-structures-and-pointers.htm#dynamic-allocation-of-structures'>
+<span>Dynamic Allocation of Structures</span></a>
+<span class='section-page'>72</span>
+</li><li class="toc-section">
+<a href='c-pointers-structures-and-pointers.htm#passing-structures-to-functions-by-pointer'>
+<span>Passing Structures to Functions by Pointer</span></a>
+<span class='section-page'>75</span>
+</li><li class="toc-section">
+<a href='c-pointers-structures-and-pointers.htm#examples-managing-complex-data-using-struct-pointers'>
+<span>Examples: Managing Complex Data Using Struct Pointers</span></a>
+<span class='section-page'>77</span>
+</li></ul></li><a href='c-pointers-pointer-casting-and-void-pointers.htm'>
+<div class='chapter-title'>
+<span id='pointer-casting-and-void-pointers'>Chapter 8 : Pointer Casting and Void Pointers </span>
+<span class='chapter-page'>84</span>
+</div>
+</a><ul class="toc-section-list"><li class="toc-section">
+<a href='c-pointers-pointer-casting-and-void-pointers.htm#understanding-pointer-type-conversion'>
+<span>Understanding Pointer Type Conversion</span></a>
+<span class='section-page'>84</span>
+</li><li class="toc-section">
+<a href='c-pointers-pointer-casting-and-void-pointers.htm#using-void-pointers-for-generic-data-handling'>
+<span>Using <code>void*</code> Pointers for Generic Data Handling</span></a>
+<span class='section-page'>86</span>
+</li><li class="toc-section">
+<a href='c-pointers-pointer-casting-and-void-pointers.htm#safety-considerations-and-proper-usage'>
+<span>Safety Considerations and Proper Usage</span></a>
+<span class='section-page'>88</span>
+</li><li class="toc-section">
+<a href='c-pointers-pointer-casting-and-void-pointers.htm#examples-generic-functions-with-void-casting-between-types'>
+<span>Examples: Generic Functions with <code>void*</code>, Casting Between Types</span></a>
+<span class='section-page'>90</span>
+</li></ul></li><a href='c-pointers-arrays-of-pointers-and-pointer-arrays.htm'>
+<div class='chapter-title'>
+<span id='arrays-of-pointers-and-pointer-arrays'>Chapter 9 : Arrays of Pointers and Pointer Arrays </span>
+<span class='chapter-page'>93</span>
+</div>
+</a><ul class="toc-section-list"><li class="toc-section">
+<a href='c-pointers-arrays-of-pointers-and-pointer-arrays.htm#declaring-and-using-arrays-of-pointers'>
+<span>Declaring and Using Arrays of Pointers</span></a>
+<span class='section-page'>93</span>
+</li><li class="toc-section">
+<a href='c-pointers-arrays-of-pointers-and-pointer-arrays.htm#applications-array-of-strings-function-pointer-arrays'>
+<span>Applications: Array of Strings, Function Pointer Arrays</span></a>
+<span class='section-page'>95</span>
+</li><li class="toc-section">
+<a href='c-pointers-arrays-of-pointers-and-pointer-arrays.htm#examples-menu-driven-program-using-function-pointer-array'>
+<span>Examples: Menu-Driven Program Using Function Pointer Array</span></a>
+<span class='section-page'>98</span>
+</li></ul></li><a href='c-pointers-advanced-pointer-concepts.htm'>
+<div class='chapter-title'>
+<span id='advanced-pointer-concepts'>Chapter 10 : Advanced Pointer Concepts </span>
+<span class='chapter-page'>102</span>
+</div>
+</a><ul class="toc-section-list"><li class="toc-section">
+<a href='c-pointers-advanced-pointer-concepts.htm#const-pointers-vs-pointer-to-const'>
+<span>Const Pointers vs Pointer to Const</span></a>
+<span class='section-page'>102</span>
+</li><li class="toc-section">
+<a href='c-pointers-advanced-pointer-concepts.htm#restrict-keyword-and-pointer-optimization'>
+<span>Restrict Keyword and Pointer Optimization</span></a>
+<span class='section-page'>105</span>
+</li><li class="toc-section">
+<a href='c-pointers-advanced-pointer-concepts.htm#volatile-pointers-and-memory-mapped-i-o'>
+<span>Volatile Pointers and Memory Mapped I/O</span></a>
+<span class='section-page'>107</span>
+</li><li class="toc-section">
+<a href='c-pointers-advanced-pointer-concepts.htm#examples-using-const-and-volatile-in-embedded-c'>
+<span>Examples: Using Const and Volatile in Embedded C</span></a>
+<span class='section-page'>109</span>
+</li></ul></li><a href='c-pointers-pointers-and-data-structures.htm'>
+<div class='chapter-title'>
+<span id='pointers-and-data-structures'>Chapter 11 : Pointers and Data Structures </span>
+<span class='chapter-page'>112</span>
+</div>
+</a><ul class="toc-section-list"><li class="toc-section">
+<a href='c-pointers-pointers-and-data-structures.htm#implementing-linked-lists-using-pointers'>
+<span>Implementing Linked Lists Using Pointers</span></a>
+<span class='section-page'>112</span>
+</li><li class="toc-section">
+<a href='c-pointers-pointers-and-data-structures.htm#trees-and-binary-search-trees-with-pointer-nodes'>
+<span>Trees and Binary Search Trees with Pointer Nodes</span></a>
+<span class='section-page'>122</span>
+</li><li class="toc-section">
+<a href='c-pointers-pointers-and-data-structures.htm#graphs-and-adjacency-lists-with-pointer-arrays'>
+<span>Graphs and Adjacency Lists with Pointer Arrays</span></a>
+<span class='section-page'>130</span>
+</li><li class="toc-section">
+<a href='c-pointers-pointers-and-data-structures.htm#examples-building-and-traversing-linked-data-structures'>
+<span>Examples: Building and Traversing Linked Data Structures</span></a>
+<span class='section-page'>138</span>
+</li></ul></li><a href='c-pointers-function-pointers-in-depth.htm'>
+<div class='chapter-title'>
+<span id='function-pointers-in-depth'>Chapter 12 : Function Pointers in Depth </span>
+<span class='chapter-page'>147</span>
+</div>
+</a><ul class="toc-section-list"><li class="toc-section">
+<a href='c-pointers-function-pointers-in-depth.htm#passing-functions-as-arguments'>
+<span>Passing Functions as Arguments</span></a>
+<span class='section-page'>147</span>
+</li><li class="toc-section">
+<a href='c-pointers-function-pointers-in-depth.htm#callback-mechanisms-and-event-driven-programming'>
+<span>Callback Mechanisms and Event-Driven Programming</span></a>
+<span class='section-page'>149</span>
+</li><li class="toc-section">
+<a href='c-pointers-function-pointers-in-depth.htm#storing-and-invoking-functions-dynamically'>
+<span>Storing and Invoking Functions Dynamically</span></a>
+<span class='section-page'>152</span>
+</li><li class="toc-section">
+<a href='c-pointers-function-pointers-in-depth.htm#examples-sorting-with-function-pointer-comparators'>
+<span>Examples: Sorting with Function Pointer Comparators</span></a>
+<span class='section-page'>155</span>
+</li></ul></li><a href='c-pointers-pointers-and-system-programming.htm'>
+<div class='chapter-title'>
+<span id='pointers-and-system-programming'>Chapter 13 : Pointers and System Programming </span>
+<span class='chapter-page'>159</span>
+</div>
+</a><ul class="toc-section-list"><li class="toc-section">
+<a href='c-pointers-pointers-and-system-programming.htm#using-pointers-for-file-i-o-buffers'>
+<span>Using Pointers for File I/O Buffers</span></a>
+<span class='section-page'>159</span>
+</li><li class="toc-section">
+<a href='c-pointers-pointers-and-system-programming.htm#memory-mapped-files-and-pointer-manipulation'>
+<span>Memory-Mapped Files and Pointer Manipulation</span></a>
+<span class='section-page'>162</span>
+</li><li class="toc-section">
+<a href='c-pointers-pointers-and-system-programming.htm#interfacing-with-hardware-using-pointers'>
+<span>Interfacing with Hardware Using Pointers</span></a>
+<span class='section-page'>166</span>
+</li><li class="toc-section">
+<a href='c-pointers-pointers-and-system-programming.htm#examples-low-level-buffer-management'>
+<span>Examples: Low-Level Buffer Management</span></a>
+<span class='section-page'>167</span>
+</li></ul></li><a href='c-pointers-debugging-and-common-pointer-errors.htm'>
+<div class='chapter-title'>
+<span id='debugging-and-common-pointer-errors'>Chapter 14 : Debugging and Common Pointer Errors </span>
+<span class='chapter-page'>171</span>
+</div>
+</a><ul class="toc-section-list"><li class="toc-section">
+<a href='c-pointers-debugging-and-common-pointer-errors.htm#common-pointer-mistakes-dangling-wild-null-pointers'>
+<span>Common Pointer Mistakes: Dangling, Wild, Null Pointers</span></a>
+<span class='section-page'>171</span>
+</li><li class="toc-section">
+<a href='c-pointers-debugging-and-common-pointer-errors.htm#detecting-and-preventing-memory-leaks'>
+<span>Detecting and Preventing Memory Leaks</span></a>
+<span class='section-page'>173</span>
+</li><li class="toc-section">
+<a href='c-pointers-debugging-and-common-pointer-errors.htm#using-debuggers-and-tools-valgrind-addresssanitizer'>
+<span>Using Debuggers and Tools (Valgrind, AddressSanitizer)</span></a>
+<span class='section-page'>176</span>
+</li><li class="toc-section">
+<a href='c-pointers-debugging-and-common-pointer-errors.htm#examples-safe-pointer-practices-and-debugging-scenarios'>
+<span>Examples: Safe Pointer Practices and Debugging Scenarios</span></a>
+<span class='section-page'>178</span>
+</li></ul></li><a href='c-pointers-best-practices-and-optimization-tips.htm'>
+<div class='chapter-title'>
+<span id='best-practices-and-optimization-tips'>Chapter 15 : Best Practices and Optimization Tips </span>
+<span class='chapter-page'>182</span>
+</div>
+</a><ul class="toc-section-list"><li class="toc-section">
+<a href='c-pointers-best-practices-and-optimization-tips.htm#writing-safe-and-efficient-pointer-code'>
+<span>Writing Safe and Efficient Pointer Code</span></a>
+<span class='section-page'>182</span>
+</li><li class="toc-section">
+<a href='c-pointers-best-practices-and-optimization-tips.htm#minimizing-undefined-behavior'>
+<span>Minimizing Undefined Behavior</span></a>
+<span class='section-page'>184</span>
+</li><li class="toc-section">
+<a href='c-pointers-best-practices-and-optimization-tips.htm#performance-considerations-with-pointers'>
+<span>Performance Considerations with Pointers</span></a>
+<span class='section-page'>187</span>
+</li><li class="toc-section">
+<a href='c-pointers-best-practices-and-optimization-tips.htm#examples-optimizing-pointer-usage-in-real-code'>
+<span>Examples: Optimizing Pointer Usage in Real Code</span></a>
+<span class='section-page'>190</span>
+</li></ul></li>
+  </ul>
+</div>
+
+<div class='related-books'>
+<h2>C Introduction Books</h2>
+<div class='related-book-list'>
+<a href="c-for-beginners.htm">
+<div class="book-cover" style="background-color: #f9f6f1;border: 1px solid #ccc;"> 
+    <div class="book-cover-title" style="font-size: 18px;color: #333;top: 20px;">C for Beginners</div>
+    <div class="book-cover-author">readbytes</div>
+    <div class="book-cover-bottom-stripe" style="background-color: #333;"></div>
+    <img class="book-cover-icon" style="width: 90px;height: 90px;top: 70px;" src="data:image/png;base64,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"/>
+  </div>
+</a>
+
+
+<a href="c-pointers.htm">
+<div class="book-cover" style="background-color: #f9f6f1;border: 1px solid #ccc;"> 
+    <div class="book-cover-title" style="font-size: 22px;color: #333;top: 20px;">C Pointers</div>
+    <div class="book-cover-author">readbytes</div>
+    <div class="book-cover-bottom-stripe" style="background-color: #333;"></div>
+    <img class="book-cover-icon" style="width: 90px;height: 90px;top: 70px;" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFoAAABaCAYAAAA4qEECAAAD5ElEQVR4Xu2dwYoUVxhGr7hQn0F8AyH4Cq5cCwFxk2cQ3GXR1TK+QN5AssnWrRsfwWR0LbhJxKXoIhBQK2Olb5/v1tdV0/fHOPwHDtj/PbdudYHOuKpSkiRJkovFUP744qevvuSyZSin1d5TLlvGs85/7re553OzO3DfJXDPRd97bobylxy49HC2tZvylvkem/Je9uz8wHyPTfmzsWeng23toXs+Ch5GHWypgy11sKUOtjQMHkQdbKmDLXWwpQ62NAweRB1sqYMtdbClDrY0DB5EHWypgy11sKUOtjQMHkQdbKmDLXWwpQ62NAweRB1sqYMtdbClDrY0DB5EHWypgy11sKUOtjQMHkQdbKmDLXWwpQ62NAweRB1sqYMtdbClDrY0SZIkSZI18CdpGqMM0hhlkMYogzRGGaQxyiCNUQZpjDJIY5RBGqMM0hhlkMYogzRGGaQxyiCNUQZpjDJIY5RBT5fAPfO+W7xvabe2PUYZ9HQpQ7kjeynh+lzLNbqmPUYZ9NR/iYcH1uevdagnXJ/8pVxZ1PVQBj1d8iUmfi7XZW3ns+pKO7TTc3t0PZRBT5d8ibVNDTvXsxnKr0waTT9l0NMlX2Ji/GvMNTZDeYrP/0hbr9ecp+mpDHp66EscWh/dlgfS1LCv14fypPrz3ar5u5rXvV6rlzLo6Rq4t3WNafZjuSyz1p6zB31J2pr9Xq/VSxn0dAlDuSr7WtfYltfN+fj79dye8UHvf/4dn9nr+b2UQU9rlszpo/LDbFczt8YHTbTXe+ilDHpaU8+35adq/lj2tfY75vZND7p1raF8lDVep6cy6GnNmrVW4xjK8+Y+/6Bbvd5DL2XQ0xqujb8FTGzKfVl/UK5Ve180rWmdWz/oobz5b74p92Z63mM/ZdDTGq4dWndrkyflRrPZzeoHPf6bf+tfeZ3WNXorg57WcO3M29X6zebeuf+UaHfSmO0/6Dl3va71UgY9reGaa1qzOVvtxKb8Jn1L7o9QBmmMMkhjlEEaowzSGGWQxiiDNEYZpDHKII1RBmmMMkhjlEEaowzSGGWQxiiDNEYZpDHKII0xSZIkSZI18CcpdbClDrbUwZY62NIweBB1sKUOttTBljrY0jB4EHWwpQ621MGWOtjSMHgQdbClDrbUwZY62NIweBB1sKUOttTBljrY0jB4EHWwpQ621MGWOtjSMHgQdbClDrbUwZY62NIweBB1sKUOttTBljrY0jB4EHWwpQ621MGWOtjSMKJeSjZe13HMS8m23+NLyUZ44JIbnuCei773aPZfpLjuJYzbI17CeNyLI+tzX3HZsn/uuntOkiRJ/vd8BnnbnC2TD9qmAAAAAElFTkSuQmCC"/>
+  </div>
+</a>
+
+
+
+<a href='c.htm'><div class='book-cover' style='background-color: #f9f6f1;color: #111111;border: 1px solid #ccc;display: flex;justify-content: center;align-items: center;text-align: center;'>More C Books</div></a>
+</div>
+</div>
+<footer class="site-footer">
+    <nav>
+      <a href="https://readbytes.github.io">Home</a> | 
+      Email:<script language="JavaScript" type="text/javascript">
+var part1 = 'yinpeng';var part6 = '263';var part2 = Math.pow(2,6);var part3 = String.fromCharCode(part2);var part4 = 'hotmail dot com';var part5 = part1 + String.fromCharCode(part2) + part4;document.write(part1 + part6 + part3 + part4);
+</script>
+    </nav>
+  <p>© 2025 — All rights reserved.</p>   
+</footer>
+
+</body>
+</html>
