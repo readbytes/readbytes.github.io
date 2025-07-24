@@ -1,0 +1,732 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Table of Content for C++ STL</title>
+  <script>
+  const mode = localStorage.getItem('mode') || 'light';
+  document.documentElement.classList.add(`${mode}-mode`);
+  </script>  
+  <link rel='shortcut icon' href='https://java2s.com/style/favicon.ico'>  
+  <style>
+body {
+  font-family: 'Georgia', serif;
+  padding: 40px;
+  max-width: 800px;
+  margin: auto;
+  transition: background-color 0.3s, color 0.3s;
+}
+  .book-title-toc {
+      font-size: 32px;
+      font-weight: bold; 
+    }
+
+    .book-subtitle-toc {
+      font-size: 18px; 
+      margin-top: 8px;
+      font-style: italic;
+    }
+.book-header {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.toc-container {
+  border-radius: 10px;
+  padding: 30px;
+  margin-bottom: 40px;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.05);
+}
+
+h1 {
+  font-size: 24px;
+  text-align: center;
+  margin-bottom: 30px;
+  letter-spacing: 1px;
+  padding-bottom: 10px;
+}
+
+.toc-list,
+.toc-section-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.toc-section-list {
+  padding-left: 18px;
+  margin-top: 6px;
+  margin-bottom: 20px; 
+}
+
+.toc-chapter {
+  padding: 20px 0;
+}
+
+.chapter-title,
+.toc-section {
+  display: flex;
+  justify-content: space-between;
+  padding-top: 4px;
+}
+
+.chapter-title {
+  font-size: 17px;
+  font-weight: bold;
+}
+
+.chapter-page,
+.section-page {
+  font-style: italic;
+}
+
+.related-books {
+  margin-top: 40px;
+}
+
+.related-book-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+    .book-cover {
+      width: 130px;
+      height: 180px;
+      font-family: Arial, sans-serif;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+    }
+    .book-cover-bottom-stripe {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      height: 5px;
+      width: 100%;
+    }
+    .book-cover-title {
+      position: absolute;
+      width: 100%;
+      text-align: center;
+      font-weight: bold;
+    }
+     
+    .book-cover-icon {
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      align-items: center;
+      justify-content: center; 
+    }
+
+    .book-cover-author {
+      position: absolute;
+      bottom: 10px;
+      width: 100%;
+      text-align: center;
+      font-size: 8px;
+      color: #333;
+    }
+
+a {
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+.site-footer {
+  margin-top: 60px;
+  padding: 20px 0;
+  border-top: 1px solid #eee;
+  text-align: center;
+  font-size: 14px; 
+}
+/* === Light Mode === */
+html.light-mode {
+  background-color: #fdfdfd;
+  color: #333;
+}
+
+.light-mode .book-title-toc,
+.light-mode .chapter-title,
+.light-mode .book-name {
+  color: #222;
+}
+
+.light-mode .book-subtitle-toc,
+.light-mode .book-sub,
+.light-mode .chapter-page,
+.light-mode .section-page {
+  color: #666;
+}
+
+.light-mode .toc-container {
+  background: #fff;
+  border: 1px solid #ddd;
+}
+
+.light-mode h1 {
+  border-bottom: 2px solid #eee;
+  color: #222;
+}
+
+.light-mode .toc-section {
+  color: #444;
+}
+
+.light-mode .related-books h2 {
+  color: #333;
+  border-bottom: 2px solid #eee;
+}
+
+.light-mode .book-cover { 
+  border: 1px solid #ccc;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+.light-mode .book-title,
+.light-mode .series-name {
+  color: #fff;
+}
+
+.light-mode .book-subtitle,
+.light-mode .book-footer {
+  color: #aaa;
+}
+
+.light-mode .site-footer {
+  color: #777;
+  border-color: #eee;
+}
+
+.light-mode a {
+  color: #555;
+}
+
+/* === Dark Mode === */
+html.dark-mode {
+  background-color: #121212;
+  color: #e0e0e0;
+}
+
+.dark-mode .book-title-toc,
+.dark-mode .chapter-title,
+.dark-mode .book-name {
+  color: #f5f5f5;
+}
+
+.dark-mode .book-subtitle-toc,
+.dark-mode .book-sub,
+.dark-mode .chapter-page,
+.dark-mode .section-page {
+  color: #aaa;
+}
+
+.dark-mode .toc-container {
+  background: #1e1e1e;
+  border: 1px solid #444;
+}
+
+.dark-mode h1 {
+  border-bottom: 2px solid #333;
+  color: #eee;
+}
+
+.dark-mode .toc-section {
+  color: #bbb;
+}
+
+.dark-mode .related-books h2 {
+  color: #ddd;
+  border-bottom: 2px solid #333;
+}
+
+
+.dark-mode .book-title,
+.dark-mode .series-name {
+  color: #fff;
+}
+
+.dark-mode .book-subtitle,
+.dark-mode .book-footer {
+  color: #bbb;
+}
+
+.dark-mode .site-footer {
+  color: #aaa;
+  border-color: #333;
+}
+
+.dark-mode .toc-section {
+  color: #ddd;
+}
+
+
+.dark-mode a {
+  color: #aaa;
+}
+
+/* === Responsive === */
+@media (max-width: 600px) {
+  .chapter-title,
+  .toc-section {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .chapter-page,
+  .section-page {
+    margin-top: 4px;
+  }
+}
+  </style>
+</head>
+<body>
+<button onclick="toggleMode()">Toggle Mode</button>
+<script>
+function toggleMode() {
+    const html = document.documentElement;
+    const isDark = html.classList.contains('dark-mode');
+
+    html.classList.toggle('dark-mode', !isDark);
+    html.classList.toggle('light-mode', isDark);
+
+    localStorage.setItem('mode', isDark ? 'light' : 'dark');
+  }
+</script>
+<div class="book-header">
+  <div class="book-title-toc">C++ STL</div>
+  <div class="book-subtitle-toc">Guide to Containers, Algorithms, and Iterators</div>
+</div>
+
+<div class="toc-container">
+  <h1>Table of Contents</h1>
+  <ul class="toc-list">
+    <li class='toc-chapter'><a href='cplusplus-stl-introduction-to-the-stl.htm'>
+<div class='chapter-title'>
+<span id='introduction-to-the-stl'>Chapter 1 : Introduction to the STL </span>
+<span class='chapter-page'>1</span>
+</div>
+</a><ul class="toc-section-list"><li class="toc-section">
+<a href='cplusplus-stl-introduction-to-the-stl.htm#what-is-the-stl-history-and-overview'>
+<span>What is the STL? History and Overview</span></a>
+<span class='section-page'>1</span>
+</li><li class="toc-section">
+<a href='cplusplus-stl-introduction-to-the-stl.htm#key-components-containers-iterators-algorithms-and-functors'>
+<span>Key Components: Containers, Iterators, Algorithms, and Functors</span></a>
+<span class='section-page'>2</span>
+</li><li class="toc-section">
+<a href='cplusplus-stl-introduction-to-the-stl.htm#setting-up-your-environment-and-compiling-stl-code'>
+<span>Setting up Your Environment and Compiling STL Code</span></a>
+<span class='section-page'>4</span>
+</li><li class="toc-section">
+<a href='cplusplus-stl-introduction-to-the-stl.htm#your-first-stl-program-using-std-vector'>
+<span>Your First STL Program: Using <code>std::vector</code></span></a>
+<span class='section-page'>6</span>
+</li></ul></li><a href='cplusplus-stl-stl-containers-sequence-containers-basics.htm'>
+<div class='chapter-title'>
+<span id='stl-containers-sequence-containers-basics'>Chapter 2 : STL Containers: Sequence Containers Basics </span>
+<span class='chapter-page'>8</span>
+</div>
+</a><ul class="toc-section-list"><li class="toc-section">
+<a href='cplusplus-stl-stl-containers-sequence-containers-basics.htm#overview-of-sequence-containers'>
+<span>Overview of Sequence Containers</span></a>
+<span class='section-page'>8</span>
+</li><li class="toc-section">
+<a href='cplusplus-stl-stl-containers-sequence-containers-basics.htm#std-vector-dynamic-arrays-and-usage-examples'>
+<span><code>std::vector</code>: Dynamic Arrays and Usage Examples</span></a>
+<span class='section-page'>9</span>
+</li><li class="toc-section">
+<a href='cplusplus-stl-stl-containers-sequence-containers-basics.htm#std-deque-double-ended-queues'>
+<span><code>std::deque</code>: Double-Ended Queues</span></a>
+<span class='section-page'>12</span>
+</li><li class="toc-section">
+<a href='cplusplus-stl-stl-containers-sequence-containers-basics.htm#std-list-doubly-linked-lists'>
+<span><code>std::list</code>: Doubly Linked Lists</span></a>
+<span class='section-page'>14</span>
+</li><li class="toc-section">
+<a href='cplusplus-stl-stl-containers-sequence-containers-basics.htm#comparing-sequence-containers-performance-and-use-cases'>
+<span>Comparing Sequence Containers: Performance and Use Cases</span></a>
+<span class='section-page'>16</span>
+</li></ul></li><a href='cplusplus-stl-stl-containers-associative-containers.htm'>
+<div class='chapter-title'>
+<span id='stl-containers-associative-containers'>Chapter 3 : STL Containers: Associative Containers </span>
+<span class='chapter-page'>17</span>
+</div>
+</a><ul class="toc-section-list"><li class="toc-section">
+<a href='cplusplus-stl-stl-containers-associative-containers.htm#overview-of-associative-containers'>
+<span>Overview of Associative Containers</span></a>
+<span class='section-page'>17</span>
+</li><li class="toc-section">
+<a href='cplusplus-stl-stl-containers-associative-containers.htm#std-set-and-std-multiset-ordered-unique-and-duplicate-keys'>
+<span><code>std::set</code> and <code>std::multiset</code>: Ordered Unique and Duplicate Keys</span></a>
+<span class='section-page'>19</span>
+</li><li class="toc-section">
+<a href='cplusplus-stl-stl-containers-associative-containers.htm#std-map-and-std-multimap-key-value-storage'>
+<span><code>std::map</code> and <code>std::multimap</code>: Key-Value Storage</span></a>
+<span class='section-page'>21</span>
+</li><li class="toc-section">
+<a href='cplusplus-stl-stl-containers-associative-containers.htm#insertion-deletion-and-lookup-operations'>
+<span>Insertion, Deletion, and Lookup Operations</span></a>
+<span class='section-page'>23</span>
+</li><li class="toc-section">
+<a href='cplusplus-stl-stl-containers-associative-containers.htm#practical-examples-counting-unique-words-phonebook'>
+<span>Practical Examples: Counting Unique Words, Phonebook</span></a>
+<span class='section-page'>25</span>
+</li></ul></li><a href='cplusplus-stl-unordered-containers-hash-based-containers.htm'>
+<div class='chapter-title'>
+<span id='unordered-containers-hash-based-containers'>Chapter 4 : Unordered Containers (Hash-Based Containers) </span>
+<span class='chapter-page'>28</span>
+</div>
+</a><ul class="toc-section-list"><li class="toc-section">
+<a href='cplusplus-stl-unordered-containers-hash-based-containers.htm#introduction-to-hashing-and-unordered-containers'>
+<span>Introduction to Hashing and Unordered Containers</span></a>
+<span class='section-page'>28</span>
+</li><li class="toc-section">
+<a href='cplusplus-stl-unordered-containers-hash-based-containers.htm#std-unordered-set-and-std-unordered-multiset'>
+<span><code>std::unordered_set</code> and <code>std::unordered_multiset</code></span></a>
+<span class='section-page'>30</span>
+</li><li class="toc-section">
+<a href='cplusplus-stl-unordered-containers-hash-based-containers.htm#std-unordered-map-and-std-unordered-multimap'>
+<span><code>std::unordered_map</code> and <code>std::unordered_multimap</code></span></a>
+<span class='section-page'>32</span>
+</li><li class="toc-section">
+<a href='cplusplus-stl-unordered-containers-hash-based-containers.htm#comparing-ordered-vs-unordered-containers-when-to-use-what'>
+<span>Comparing Ordered vs Unordered Containers: When to Use What</span></a>
+<span class='section-page'>34</span>
+</li><li class="toc-section">
+<a href='cplusplus-stl-unordered-containers-hash-based-containers.htm#examples-fast-lookup-and-grouping-data'>
+<span>Examples: Fast Lookup and Grouping Data</span></a>
+<span class='section-page'>35</span>
+</li></ul></li><a href='cplusplus-stl-iterators-the-stls-abstraction-layer.htm'>
+<div class='chapter-title'>
+<span id='iterators-the-stls-abstraction-layer'>Chapter 5 : Iterators: The STLs Abstraction Layer </span>
+<span class='chapter-page'>38</span>
+</div>
+</a><ul class="toc-section-list"><li class="toc-section">
+<a href='cplusplus-stl-iterators-the-stls-abstraction-layer.htm#what-are-iterators-types-and-categories'>
+<span>What Are Iterators? Types and Categories</span></a>
+<span class='section-page'>38</span>
+</li><li class="toc-section">
+<a href='cplusplus-stl-iterators-the-stls-abstraction-layer.htm#using-iterators-with-containers'>
+<span>Using Iterators with Containers</span></a>
+<span class='section-page'>40</span>
+</li><li class="toc-section">
+<a href='cplusplus-stl-iterators-the-stls-abstraction-layer.htm#iterator-operations-and-validity-rules'>
+<span>Iterator Operations and Validity Rules</span></a>
+<span class='section-page'>41</span>
+</li><li class="toc-section">
+<a href='cplusplus-stl-iterators-the-stls-abstraction-layer.htm#reverse-iterators-and-constant-iterators'>
+<span>Reverse Iterators and Constant Iterators</span></a>
+<span class='section-page'>43</span>
+</li><li class="toc-section">
+<a href='cplusplus-stl-iterators-the-stls-abstraction-layer.htm#iterator-examples-traversing-and-modifying-containers'>
+<span>Iterator Examples: Traversing and Modifying Containers</span></a>
+<span class='section-page'>45</span>
+</li></ul></li><a href='cplusplus-stl-stl-algorithms-fundamentals.htm'>
+<div class='chapter-title'>
+<span id='stl-algorithms-fundamentals'>Chapter 6 : STL Algorithms: Fundamentals </span>
+<span class='chapter-page'>47</span>
+</div>
+</a><ul class="toc-section-list"><li class="toc-section">
+<a href='cplusplus-stl-stl-algorithms-fundamentals.htm#overview-of-stl-algorithms'>
+<span>Overview of STL Algorithms</span></a>
+<span class='section-page'>47</span>
+</li><li class="toc-section">
+<a href='cplusplus-stl-stl-algorithms-fundamentals.htm#non-modifying-algorithms-std-for-each-std-find-std-count'>
+<span>Non-modifying Algorithms: <code>std::for_each</code>, <code>std::find</code>, <code>std::count</code></span></a>
+<span class='section-page'>49</span>
+</li><li class="toc-section">
+<a href='cplusplus-stl-stl-algorithms-fundamentals.htm#modifying-algorithms-std-copy-std-transform-std-replace'>
+<span>Modifying Algorithms: <code>std::copy</code>, <code>std::transform</code>, <code>std::replace</code></span></a>
+<span class='section-page'>51</span>
+</li><li class="toc-section">
+<a href='cplusplus-stl-stl-algorithms-fundamentals.htm#sorting-and-searching-std-sort-std-binary-search'>
+<span>Sorting and Searching: <code>std::sort</code>, <code>std::binary_search</code></span></a>
+<span class='section-page'>53</span>
+</li><li class="toc-section">
+<a href='cplusplus-stl-stl-algorithms-fundamentals.htm#using-algorithm-examples-in-real-scenarios'>
+<span>Using Algorithm Examples in Real Scenarios</span></a>
+<span class='section-page'>55</span>
+</li></ul></li><a href='cplusplus-stl-functors-lambdas-and-predicates-in-stl.htm'>
+<div class='chapter-title'>
+<span id='functors-lambdas-and-predicates-in-stl'>Chapter 7 : Functors, Lambdas, and Predicates in STL </span>
+<span class='chapter-page'>57</span>
+</div>
+</a><ul class="toc-section-list"><li class="toc-section">
+<a href='cplusplus-stl-functors-lambdas-and-predicates-in-stl.htm#what-are-functors-and-why-use-them'>
+<span>What Are Functors and Why Use Them?</span></a>
+<span class='section-page'>57</span>
+</li><li class="toc-section">
+<a href='cplusplus-stl-functors-lambdas-and-predicates-in-stl.htm#writing-custom-functors'>
+<span>Writing Custom Functors</span></a>
+<span class='section-page'>59</span>
+</li><li class="toc-section">
+<a href='cplusplus-stl-functors-lambdas-and-predicates-in-stl.htm#using-lambdas-with-stl-algorithms'>
+<span>Using Lambdas with STL Algorithms</span></a>
+<span class='section-page'>62</span>
+</li><li class="toc-section">
+<a href='cplusplus-stl-functors-lambdas-and-predicates-in-stl.htm#predicate-functions-unary-and-binary-predicates'>
+<span>Predicate Functions: Unary and Binary Predicates</span></a>
+<span class='section-page'>64</span>
+</li><li class="toc-section">
+<a href='cplusplus-stl-functors-lambdas-and-predicates-in-stl.htm#practical-examples-filtering-custom-sorting'>
+<span>Practical Examples: Filtering, Custom Sorting</span></a>
+<span class='section-page'>65</span>
+</li></ul></li><a href='cplusplus-stl-advanced-algorithms-and-utilities.htm'>
+<div class='chapter-title'>
+<span id='advanced-algorithms-and-utilities'>Chapter 8 : Advanced Algorithms and Utilities </span>
+<span class='chapter-page'>67</span>
+</div>
+</a><ul class="toc-section-list"><li class="toc-section">
+<a href='cplusplus-stl-advanced-algorithms-and-utilities.htm#set-algorithms-std-set-union-std-set-intersection-std-set-difference'>
+<span>Set Algorithms: <code>std::set_union</code>, <code>std::set_intersection</code>, <code>std::set_difference</code></span></a>
+<span class='section-page'>67</span>
+</li><li class="toc-section">
+<a href='cplusplus-stl-advanced-algorithms-and-utilities.htm#numeric-algorithms-std-accumulate-std-inner-product'>
+<span>Numeric Algorithms: <code>std::accumulate</code>, <code>std::inner_product</code></span></a>
+<span class='section-page'>69</span>
+</li><li class="toc-section">
+<a href='cplusplus-stl-advanced-algorithms-and-utilities.htm#permutations-and-combinations-std-next-permutation-std-prev-permutation'>
+<span>Permutations and Combinations: <code>std::next_permutation</code>, <code>std::prev_permutation</code></span></a>
+<span class='section-page'>71</span>
+</li><li class="toc-section">
+<a href='cplusplus-stl-advanced-algorithms-and-utilities.htm#algorithm-adaptors-and-bindings'>
+<span>Algorithm Adaptors and Bindings</span></a>
+<span class='section-page'>72</span>
+</li><li class="toc-section">
+<a href='cplusplus-stl-advanced-algorithms-and-utilities.htm#case-studies-applying-algorithms-in-complex-scenarios'>
+<span>Case Studies: Applying Algorithms in Complex Scenarios</span></a>
+<span class='section-page'>74</span>
+</li></ul></li><a href='cplusplus-stl-allocators-and-memory-management.htm'>
+<div class='chapter-title'>
+<span id='allocators-and-memory-management'>Chapter 9 : Allocators and Memory Management </span>
+<span class='chapter-page'>77</span>
+</div>
+</a><ul class="toc-section-list"><li class="toc-section">
+<a href='cplusplus-stl-allocators-and-memory-management.htm#understanding-allocators-in-stl'>
+<span>Understanding Allocators in STL</span></a>
+<span class='section-page'>77</span>
+</li><li class="toc-section">
+<a href='cplusplus-stl-allocators-and-memory-management.htm#using-custom-allocators'>
+<span>Using Custom Allocators</span></a>
+<span class='section-page'>78</span>
+</li><li class="toc-section">
+<a href='cplusplus-stl-allocators-and-memory-management.htm#memory-considerations-and-optimization'>
+<span>Memory Considerations and Optimization</span></a>
+<span class='section-page'>81</span>
+</li><li class="toc-section">
+<a href='cplusplus-stl-allocators-and-memory-management.htm#examples-custom-pool-allocator-integration'>
+<span>Examples: Custom Pool Allocator Integration</span></a>
+<span class='section-page'>82</span>
+</li></ul></li><a href='cplusplus-stl-string-and-stream-utilities.htm'>
+<div class='chapter-title'>
+<span id='string-and-stream-utilities'>Chapter 10 : String and Stream Utilities </span>
+<span class='chapter-page'>85</span>
+</div>
+</a><ul class="toc-section-list"><li class="toc-section">
+<a href='cplusplus-stl-string-and-stream-utilities.htm#std-string-and-std-wstring-basic-usage-and-operations'>
+<span><code>std::string</code> and <code>std::wstring</code>: Basic Usage and Operations</span></a>
+<span class='section-page'>85</span>
+</li><li class="toc-section">
+<a href='cplusplus-stl-string-and-stream-utilities.htm#string-manipulation-algorithms'>
+<span>String Manipulation Algorithms</span></a>
+<span class='section-page'>87</span>
+</li><li class="toc-section">
+<a href='cplusplus-stl-string-and-stream-utilities.htm#streams-and-string-streams-std-stringstream'>
+<span>Streams and String Streams (<code>std::stringstream</code>)</span></a>
+<span class='section-page'>89</span>
+</li><li class="toc-section">
+<a href='cplusplus-stl-string-and-stream-utilities.htm#practical-examples-parsing-formatting-and-serialization'>
+<span>Practical Examples: Parsing, Formatting, and Serialization</span></a>
+<span class='section-page'>91</span>
+</li></ul></li><a href='cplusplus-stl-tuples-and-pairs.htm'>
+<div class='chapter-title'>
+<span id='tuples-and-pairs'>Chapter 11 : Tuples and Pairs </span>
+<span class='chapter-page'>93</span>
+</div>
+</a><ul class="toc-section-list"><li class="toc-section">
+<a href='cplusplus-stl-tuples-and-pairs.htm#introduction-to-std-pair-and-std-tuple'>
+<span>Introduction to <code>std::pair</code> and <code>std::tuple</code></span></a>
+<span class='section-page'>93</span>
+</li><li class="toc-section">
+<a href='cplusplus-stl-tuples-and-pairs.htm#creating-accessing-and-using-tuples'>
+<span>Creating, Accessing, and Using Tuples</span></a>
+<span class='section-page'>95</span>
+</li><li class="toc-section">
+<a href='cplusplus-stl-tuples-and-pairs.htm#structured-bindings-with-tuples-cplusplus17'>
+<span>Structured Bindings with Tuples (C++17)</span></a>
+<span class='section-page'>96</span>
+</li><li class="toc-section">
+<a href='cplusplus-stl-tuples-and-pairs.htm#use-cases-returning-multiple-values-grouping-data'>
+<span>Use Cases: Returning Multiple Values, Grouping Data</span></a>
+<span class='section-page'>98</span>
+</li></ul></li><a href='cplusplus-stl-smart-pointers-and-resource-management-in-stl.htm'>
+<div class='chapter-title'>
+<span id='smart-pointers-and-resource-management-in-stl'>Chapter 12 : Smart Pointers and Resource Management in STL </span>
+<span class='chapter-page'>100</span>
+</div>
+</a><ul class="toc-section-list"><li class="toc-section">
+<a href='cplusplus-stl-smart-pointers-and-resource-management-in-stl.htm#overview-of-std-unique-ptr-std-shared-ptr-and-std-weak-ptr'>
+<span>Overview of <code>std::unique_ptr</code>, <code>std::shared_ptr</code>, and <code>std::weak_ptr</code></span></a>
+<span class='section-page'>100</span>
+</li><li class="toc-section">
+<a href='cplusplus-stl-smart-pointers-and-resource-management-in-stl.htm#automatic-resource-management-using-smart-pointers'>
+<span>Automatic Resource Management Using Smart Pointers</span></a>
+<span class='section-page'>102</span>
+</li><li class="toc-section">
+<a href='cplusplus-stl-smart-pointers-and-resource-management-in-stl.htm#custom-deleters-and-use-cases'>
+<span>Custom Deleters and Use Cases</span></a>
+<span class='section-page'>104</span>
+</li><li class="toc-section">
+<a href='cplusplus-stl-smart-pointers-and-resource-management-in-stl.htm#examples-managing-dynamic-memory-safely'>
+<span>Examples: Managing Dynamic Memory Safely</span></a>
+<span class='section-page'>106</span>
+</li></ul></li><a href='cplusplus-stl-concurrency-utilities-in-stl.htm'>
+<div class='chapter-title'>
+<span id='concurrency-utilities-in-stl'>Chapter 13 : Concurrency Utilities in STL </span>
+<span class='chapter-page'>109</span>
+</div>
+</a><ul class="toc-section-list"><li class="toc-section">
+<a href='cplusplus-stl-concurrency-utilities-in-stl.htm#thread-support-library-basics'>
+<span>Thread Support Library Basics</span></a>
+<span class='section-page'>109</span>
+</li><li class="toc-section">
+<a href='cplusplus-stl-concurrency-utilities-in-stl.htm#std-thread-creating-and-managing-threads'>
+<span><code>std::thread</code>: Creating and Managing Threads</span></a>
+<span class='section-page'>111</span>
+</li><li class="toc-section">
+<a href='cplusplus-stl-concurrency-utilities-in-stl.htm#mutexes-locks-and-condition-variables'>
+<span>Mutexes, Locks, and Condition Variables</span></a>
+<span class='section-page'>113</span>
+</li><li class="toc-section">
+<a href='cplusplus-stl-concurrency-utilities-in-stl.htm#atomic-operations'>
+<span>Atomic Operations</span></a>
+<span class='section-page'>117</span>
+</li><li class="toc-section">
+<a href='cplusplus-stl-concurrency-utilities-in-stl.htm#practical-examples-parallel-stl-algorithms-and-synchronization'>
+<span>Practical Examples: Parallel STL Algorithms and Synchronization</span></a>
+<span class='section-page'>120</span>
+</li></ul></li><a href='cplusplus-stl-stl-in-modern-c-c11-and-beyond.htm'>
+<div class='chapter-title'>
+<span id='stl-in-modern-c-c11-and-beyond'>Chapter 14 : STL in Modern C (C11 and Beyond) </span>
+<span class='chapter-page'>122</span>
+</div>
+</a><ul class="toc-section-list"><li class="toc-section">
+<a href='cplusplus-stl-stl-in-modern-c-c11-and-beyond.htm#range-based-for-loops-with-stl'>
+<span>Range-based For Loops with STL</span></a>
+<span class='section-page'>122</span>
+</li><li class="toc-section">
+<a href='cplusplus-stl-stl-in-modern-c-c11-and-beyond.htm#move-semantics-and-emplace-functions-emplace-back-emplace'>
+<span>Move Semantics and Emplace Functions (<code>emplace_back</code>, <code>emplace</code>)</span></a>
+<span class='section-page'>124</span>
+</li><li class="toc-section">
+<a href='cplusplus-stl-stl-in-modern-c-c11-and-beyond.htm#std-optional-std-variant-and-std-any-overview'>
+<span><code>std::optional</code>, <code>std::variant</code>, and <code>std::any</code> Overview</span></a>
+<span class='section-page'>127</span>
+</li><li class="toc-section">
+<a href='cplusplus-stl-stl-in-modern-c-c11-and-beyond.htm#using-stl-with-modern-language-features-for-cleaner-code'>
+<span>Using STL with Modern Language Features for Cleaner Code</span></a>
+<span class='section-page'>130</span>
+</li></ul></li><a href='cplusplus-stl-performance-considerations-and-best-practices.htm'>
+<div class='chapter-title'>
+<span id='performance-considerations-and-best-practices'>Chapter 15 : Performance Considerations and Best Practices </span>
+<span class='chapter-page'>131</span>
+</div>
+</a><ul class="toc-section-list"><li class="toc-section">
+<a href='cplusplus-stl-performance-considerations-and-best-practices.htm#choosing-the-right-container-and-algorithm'>
+<span>Choosing the Right Container and Algorithm</span></a>
+<span class='section-page'>131</span>
+</li><li class="toc-section">
+<a href='cplusplus-stl-performance-considerations-and-best-practices.htm#avoiding-common-pitfalls-and-inefficient-patterns'>
+<span>Avoiding Common Pitfalls and Inefficient Patterns</span></a>
+<span class='section-page'>133</span>
+</li><li class="toc-section">
+<a href='cplusplus-stl-performance-considerations-and-best-practices.htm#measuring-and-improving-stl-code-performance'>
+<span>Measuring and Improving STL Code Performance</span></a>
+<span class='section-page'>135</span>
+</li><li class="toc-section">
+<a href='cplusplus-stl-performance-considerations-and-best-practices.htm#case-study-optimizing-a-real-world-application-with-stl'>
+<span>Case Study: Optimizing a Real-World Application with STL</span></a>
+<span class='section-page'>137</span>
+</li></ul></li><a href='cplusplus-stl-real-world-projects-and-examples.htm'>
+<div class='chapter-title'>
+<span id='real-world-projects-and-examples'>Chapter 16 : Real-World Projects and Examples </span>
+<span class='chapter-page'>139</span>
+</div>
+</a><ul class="toc-section-list"><li class="toc-section">
+<a href='cplusplus-stl-real-world-projects-and-examples.htm#building-a-contact-manager-using-stl-containers-and-algorithms'>
+<span>Building a Contact Manager Using STL Containers and Algorithms</span></a>
+<span class='section-page'>139</span>
+</li><li class="toc-section">
+<a href='cplusplus-stl-real-world-projects-and-examples.htm#implementing-a-simple-cache-with-std-unordered-map'>
+<span>Implementing a Simple Cache with <code>std::unordered_map</code></span></a>
+<span class='section-page'>142</span>
+</li><li class="toc-section">
+<a href='cplusplus-stl-real-world-projects-and-examples.htm#text-processing-and-analysis-using-stl-algorithms'>
+<span>Text Processing and Analysis Using STL Algorithms</span></a>
+<span class='section-page'>145</span>
+</li><li class="toc-section">
+<a href='cplusplus-stl-real-world-projects-and-examples.htm#interactive-cli-to-do-list-application-using-stl'>
+<span>Interactive CLI To-Do List Application Using STL</span></a>
+<span class='section-page'>147</span>
+</li><li class="toc-section">
+<a href='cplusplus-stl-real-world-projects-and-examples.htm#advanced-custom-container-implementation'>
+<span>Advanced: Custom Container Implementation</span></a>
+<span class='section-page'>151</span>
+</li></ul></li>
+  </ul>
+</div>
+
+<div class='related-books'>
+<h2>C++ Introduction Books</h2>
+<div class='related-book-list'>
+<a href="cplusplus-for-beginners.htm">
+<div class="book-cover" style="background-color: #f9f6f1;border: 1px solid #ccc;"> 
+    <div class="book-cover-title" style="font-size: 18px;color: #333;top: 20px;">C++ for Beginners</div>
+    <div class="book-cover-author">readbytes</div>
+    <div class="book-cover-bottom-stripe" style="background-color: #333;"></div>
+    <img class="book-cover-icon" style="width: 90px;height: 90px;top: 70px;" src="data:image/png;base64,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"/>
+  </div>
+</a>
+
+
+<a href="cplusplus-syntax.htm">
+<div class="book-cover" style="background-color: #f9f6f1;border: 1px solid #ccc;"> 
+    <div class="book-cover-title" style="font-size: 20px;color: #333;top: 20px;">C++ Syntax</div>
+    <div class="book-cover-author">readbytes</div>
+    <div class="book-cover-bottom-stripe" style="background-color: #333;"></div>
+    <img class="book-cover-icon" style="width: 90px;height: 90px;top: 70px;" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFoAAABaCAYAAAA4qEECAAAFZ0lEQVR4Xu2dy4scVRSH8ye0iYtkERcmzgjT2OYBuhNREMVXBh/TgsYQx5ULDYTgVl3EFyg6uFJBV76IEXdKXAVBJCgISSTRGRmZiZlADBo6M5kp+3ZbnXt/p7q6btWtc++pqQPfpu/p7vP7UnSqi+m6GzbkrMbYO50u0Tqjgx5Kqe4brSa8+XplFf0UroQ3GbDltqNRs70Y3Tw5G22//2SXU0Fyy5MXc6GyqYyYWwd9WdfGbW9uxRe9vvlBtOvZKLrpwTOiUDO7QjlALxu3zWxFf5mq++RF/YU27/40au39lwSQAspygXICwhfRY2rhv5Z6URxcEuoAQUkuQV/oM7HwSN45vUoGlwaKKQOrI1t9zuhPaD19mQwtEZRSFrq71M/sqh3JMSikTHSH6LdXeoN6Ag4rlV3Ta0RG2aTKjhfU/6Q4rGRQAgf62QhKHnzjk3wKlwRK4EI7qq99g4wf3NR8nwwqmfE9s0QAF8olOarjB1QDDisZDM+NIbqhXYXDQaWDwbnRPj46xtkGDiodDM6N7nYgWl2hwkEl09r7DwnOzZbbr131G4iemFokw0oGQ/ug2XVKRI9PzpJhJYOhfdB66m8qevsDp8iwksHQPqi8aAzsi1o0E7VoJioteuzh30lgX1RaNIb1SS2aiVo0E5UVPTH1Fwnrk8qKxqC+qUUzUYtmwovoL49dioYV9uZhx/4VEjRmWM2fp70uYRc9qrA/DxhSZ1RhvyuCEL1wfiU6PXulB/bnAUPqnJnv8+cSTtEv7HeFd9G4XpyzJGQaWLjuisqJxoCjeOVjc572y7THBayim4+cNUKdONkhPUXBgKO495AxUrTvVdrjAq+ij//k/i9UMeAo7jlojFSLzsLE4/ZfuyspuvXYb0Yo16IxXBZQ9DOv0x4XsIqeOjRvhPri20ukpwgYLgt3HTBGir75kfa4gFU01h373f5ZA4bLChauu4BNdPtF82hWhT1FuHVfh4TLCtbR47SnKKWKTqu5hWXSXwQMZsOBGZzOLOzPA7voNz66QPpcgMHy8Py7OG2/sC8P7KLjurK8RvqLgMFsmDmC05mF/XkoVbTOjinz1E4V9uSl6I+AsF6YoT1FYROtwLpzeo705AFD2YKF6y5gFf3oQfPM48h3w8+jD3+4ZIDrOnGYtz7vgyHTuBvOo7/+nva4gFW0zTdDLFyPGdN+BBQXhkyDfDN8jfa4gFW0zbWOH365bIDrMXqYE7/2wZBpoOhKXOuwEZ0VDGTLuhD98+kO6bEFA9lyXxWvRyuwcN0GdccFDGTLe1+Z87Rfoj0uEC0aw+QBC9dd4V10XMsraz2wPw0Mk4WVq33WcID/C/tdwS766uqwiP3C/jQwTBZGFfa7gl204rnDC5hvUNg7DAySlWH1yTHa6xIvol2AQUKnFs2ESNHjk3MkSOiIFI0hJFCLZqIWzYQ40c0nLpAQEhAnGgNIoRbNRC2aCVGid6b8CCh0RInG4SVRi2YiUXSIN68ae8juR0ChkSg6xNux4eDSSLwdW4g3GMTBpZF4g0EFBvUNDi4N3a0SHeRNYCfaS2RwaWii+1s/xQ+oRQzsCxxaIoOjGe8fHdKNunFoaWzSdh/SRQd363kcXBrax4a5eVm8EMJmCmn33pDA5t2f0aMZRStUM4bnBAeXhu4SPfdKb/C54Q0OLomRklWFsoUTDi8F3d11N759A/o1quF5UzIcXgq6sy7n0GtiwZN6L4RCygIDSAB9oc/UwiOba+NIDBEy+tmF1ZGMhZ/ZijK3Qh3f8wcJEyJOt0LVC19UR12harbPOdncFzfWDQGVTb8KlwT6KlyNertqHffbVSdVo96A3ar+A5kzbYSE7G+UAAAAAElFTkSuQmCC"/>
+  </div>
+</a>
+
+
+<a href="cplusplus-stl.htm">
+<div class="book-cover" style="background-color: #f9f6f1;border: 1px solid #ccc;"> 
+    <div class="book-cover-title" style="font-size: 20px;color: #333;top: 20px;">C++ STL</div>
+    <div class="book-cover-author">readbytes</div>
+    <div class="book-cover-bottom-stripe" style="background-color: #333;"></div>
+    <img class="book-cover-icon" style="width: 90px;height: 90px;top: 70px;" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFoAAABaCAYAAAA4qEECAAADK0lEQVR4Xu2cvWsTcRjHo+DkIKiTjiJugqTJ0cG/QcRZ/wJXQTd3ByeHDiLJnS84dHMVBHUSRQUH90pNfmfb6CKi8fqSaj93ae4lzzV3+X7gS9vkeZ7f7/lwEDq0jYYQQgghxFzQ9t0wbTzf3WO/SAllpg3niAlQYJa0uu4W54kxeA96ZykwU4JwnTPFGGLyMqd3nTNFAnFx2cOZIiee//UK5TLsEQWg3D1ZHpxgvShATLCeajsoWKKNaAfuDyVvZuGhu8paURBK1lNtBAVLtBEULNFGULBEG0HBlRfNRUrMqwW/f473GZFQvxXWVQbPD5e4zEGlcXt4eHQvvrdbU2W4zEGn5Yd3+NoovHul4DKzHN69UnCZWQ7vXim8IHzJhWY1vLtIQSRujSInhTNEBppL345R6LiwV+SAUpPCHpETimVYLwpAuRJtBOVKtBHNR4OTFCzRRlCwRBtBwRJtBAVLtBEULNFGeN3wPiVvp/+OtVmJ5qzvmdl1z1kzV8Ql53+q0/6az765gBLyConqN9i/X9hfeyiAYX0S7cCtsi9NOKf2UADDesL6LOGsWsPlx+V8d/Vo3t5x4bzyGA4P8TK1TuBeU0FpxC5T83D/0uBF6h7uXxq8SN3D/Utj80OHl6ltgvAX9y+V2IUm53eUQZQvUT4nvJ8x/e/R14+RiBeeHz4bZfPn6PW3bT908Z7s4d6Vgwsxix13mj15iGb94Ows4bxKwWUY1heF89OGcyoHFypjOZ4zKV7gVjijUjSfrJ/hUqOwdtrwvH2yzN7KkbDUTsKfrLWgufTmSPzsf2F9ZeFitVtwVqBgiTaCgiXaCAqWaCMoWKKNoGCJNoKCJdoICpZoIyhYoo2gYIk2goIl2ggKlmgjKFiijaBgiTaCgiXagLbfu0jBW+m6NdaKAsQEj9Jxl1krChATvBPWiQJ4fviJgiV6yiw+3ThOuRI9ZbzA3aRYSZ4iFx73T1FqUtg3l1DKbrr9960gvBt9f207/Rst332I1U0Iz5tbKGaa4VlzTSQk8X84Fw3PEY3p/70KTxA7UFTeeB13ibPFf1BY1nCeEEIIIYQowl8t5mhjJHw+fQAAAABJRU5ErkJggg=="/>
+  </div>
+</a>
+
+
+
+<a href='cplusplus.htm'><div class='book-cover' style='background-color: #f9f6f1;color: #111111;border: 1px solid #ccc;display: flex;justify-content: center;align-items: center;text-align: center;'>More C++ Books</div></a>
+</div>
+</div>
+<footer class="site-footer">
+    <nav>
+      <a href="https://readbytes.github.io">Home</a> | 
+      Email:<script language="JavaScript" type="text/javascript">
+var part1 = 'yinpeng';var part6 = '263';var part2 = Math.pow(2,6);var part3 = String.fromCharCode(part2);var part4 = 'hotmail dot com';var part5 = part1 + String.fromCharCode(part2) + part4;document.write(part1 + part6 + part3 + part4);
+</script>
+    </nav>
+  <p>© 2025 — All rights reserved.</p>   
+</footer>
+
+</body>
+</html>

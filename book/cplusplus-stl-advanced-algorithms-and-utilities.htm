@@ -1,0 +1,780 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>C++ STL Advanced Algorithms and Utilities</title>
+<link rel='shortcut icon' href='https://java2s.com/style/favicon.ico'>
+<link href="https://fonts.googleapis.com/css2?family=Merriweather&display=swap" rel="stylesheet" />
+<link href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+
+
+  <script>
+  const mode = localStorage.getItem('mode') || 'light';
+  document.documentElement.classList.add(`${mode}-mode`);
+  </script>   
+<style> 
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: 'Merriweather', serif;
+  margin: 0;
+  padding: 2rem 1rem;
+  font-size: 15px;
+  line-height: 1.5;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+.container {
+  max-width: 700px;
+  margin: 0 auto;
+  padding: 1rem 2rem;
+  box-shadow: 0 0 15px rgba(0,0,0,0.1);
+}
+
+h1, h2, h3 {
+  font-weight: 600;
+  margin-top: 2.5rem;
+  margin-bottom: 1rem;
+  line-height: 1.2;
+}
+
+h1 { font-size: 1.8rem; }
+h2 { font-size: 1.4rem; }
+h3 { font-size: 1.2rem; }
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: sans-serif;
+  font-size: 1em;
+  margin: 1em 0;
+}
+
+th, td {
+  padding: 0.6em 1em;
+  text-align: left;
+  border: 1px solid;
+}
+
+tr:nth-child(even) {
+  background-color: inherit;
+}
+
+tr:hover {
+  background-color: inherit;
+}
+
+a {
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+code {
+  color: #d35400;
+}
+
+.book-title-chapter {
+  font-family: 'Merriweather', serif;
+  font-size: 2rem;
+  font-weight: bold;
+  text-align: center;
+  margin-bottom: 2rem;
+  border-bottom: 2px solid;
+  padding-bottom: 0.5rem;
+}
+
+.book-subtitle-chapter {
+  text-align: center;
+  font-size: 1rem;
+  margin-top: -1rem;
+  margin-bottom: 2rem;
+}
+
+.related-books {
+  margin-top: 40px;
+}
+
+.related-book-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+    .book-cover {
+      width: 130px;
+      height: 180px;
+      font-family: Arial, sans-serif;
+      position: relative;
+      overflow: hidden;      
+      line-height: normal;
+      box-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+    }
+    .book-cover-bottom-stripe {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      height: 5px;
+      width: 100%;
+    }
+    .book-cover-title {
+      position: absolute;
+      width: 100%;
+      text-align: center;
+      font-weight: bold;
+    }
+     
+    .book-cover-icon {
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      align-items: center;
+      justify-content: center; 
+    }
+
+    .book-cover-author {
+      position: absolute;
+      bottom: 10px;
+      width: 100%;
+      text-align: center;
+      font-size: 8px;
+      color: #333;
+    }
+
+.page-footer {
+  margin-top: 4rem;
+  padding: 1rem 0;
+  text-align: center;
+  font-size: 0.85rem;
+  border-top: 1px solid;
+}
+
+.chapter-navi-section {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 10px;
+}
+
+.nav-link {
+  color: inherit;
+  text-decoration: none;
+  opacity: 0.5;
+  transition: opacity 0.3s ease, text-decoration 0.3s ease;
+}
+
+.nav-link:hover {
+  opacity: 0.9;
+  text-decoration: underline;
+}
+
+.prev { text-align: left; }
+.toc-link { text-align: center; }
+.next { text-align: right; }
+
+.download-section {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2rem;
+  padding: 2rem 1rem;
+  max-width: 600px;
+  margin: 3rem auto;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+}
+
+.download-info h2 {
+  margin: 0 0 0.5rem;
+  font-size: 1.2rem;
+}
+
+.format-label {
+  margin: 0 0 0.5rem;
+  font-size: 0.95rem;
+}
+
+.download-buttons {
+  display: flex;
+  gap: 1rem;
+}
+
+.download-button {
+  background-color: #4A90E2;
+  color: white;
+  padding: 0.5em 1.2em;
+  border-radius: 25px;
+  font-size: 0.95rem;
+  text-decoration: none;
+  transition: background-color 0.3s ease;
+}
+
+.download-button:hover {
+  background-color: #357ABD;
+}
+
+.code-block {
+  position: relative;
+  margin-bottom: 1em;
+}
+
+.copy-button {
+  background: transparent;
+  color: white;
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  border: none;
+  padding: 4px 8px;
+  font-size: 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  z-index: 1;
+}
+
+.copy-button:hover {
+  background-color: #0056b3;
+}
+
+.snippet-container {
+  overflow: hidden;
+}
+
+.snippet-header {
+  padding: 0.75rem 1rem;
+  cursor: pointer;
+  font-size: 1rem;
+    background-color: #eeeeee;
+    color:  #111111; 
+    border-radius: 8px;
+    cursor: pointer;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);  
+}
+
+.snippet-body {
+  display: none;
+  font-family: monospace;
+}
+
+.snippet-container.open .snippet-body {
+  display: block;
+}
+
+.CodeMirror {
+  border: 2px solid #ccc;
+  border-radius: 4px;
+  resize: vertical;
+}
+
+/* === Light Mode === */
+html.light-mode {
+  background-color: #f8f7f5;
+  color: #333;
+}
+
+html.light-mode .container {
+  background: white;
+}
+
+html.light-mode .book-title-chapter {
+  color: #2c3e50;
+  border-color: #ccc;
+}
+html.light-mode .book-subtitle-chapter{
+  color: #888;
+}
+
+html.light-mode .page-footer,
+html.light-mode .series-name,
+html.light-mode .book-subtitle,
+html.light-mode .format-label {
+  color: #888;
+}
+
+html.light-mode .related-books h2 {
+  color: #333;
+  border-bottom: 2px solid #eee;
+}
+
+html.light-mode .book-title {
+  color: #fff;
+}
+
+html.light-mode .book-cover {
+  border: 1px solid #ccc;
+}
+
+html.light-mode th {
+  background-color: #f2f2f2;
+}
+
+html.light-mode tr:nth-child(even) {
+  background-color: #fafafa;
+}
+
+html.light-mode tr:hover {
+  background-color: #e6f7ff;
+}
+
+html.light-mode a,
+html.light-mode .page-footer a {
+  color: #000;
+}
+
+/* === Dark Mode === */
+html.dark-mode {
+  background-color: #181818;
+  color: #e0e0e0;
+}
+
+html.dark-mode .container {
+  background: #222;
+}
+
+html.dark-mode .book-title-chapter {
+  color: #ddd;
+  border-color: #444;
+}
+
+html.dark-mode .snippet-header {
+    background-color: #333;
+    color:  #ddd; 
+}
+
+
+html.dark-mode .book-subtitle-chapter,
+html.dark-mode .page-footer,
+html.dark-mode .series-name,
+html.dark-mode .book-subtitle,
+html.dark-mode .book-footer,
+html.dark-mode .format-label {
+  color: #aaa;
+}
+
+html.dark-mode .related-books h2 {
+  color: #ddd;
+  border-bottom: 2px solid #333;
+}
+
+html.dark-mode .book-title {
+  color: #fff;
+}
+
+html.dark-mode .book-cover {
+  border: 1px solid #555;
+}
+
+html.dark-mode th {
+  background-color: #333;
+  color: #fff;
+}
+
+html.dark-mode td {
+  border-color: #444;
+}
+
+html.dark-mode tr:nth-child(even) {
+  background-color: #2a2a2a;
+}
+
+html.dark-mode tr:hover {
+  background-color: #2c3e50;
+}
+
+html.dark-mode a,
+html.dark-mode .page-footer a {
+  color: #eee;
+}
+
+    .dialog-backdrop {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(0,0,0,0.5);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 10;
+    }
+
+    .dialog {
+      background: white;
+      padding: 20px;
+      width: 90vw;
+      height: 80vh;
+      border-radius: 8px;
+      box-shadow: 0 0 20px rgba(0,0,0,0.3);
+      display: flex;
+      flex-direction: column;
+    }
+    .dialog-content {
+      display: flex;
+      flex: 1;
+      gap: 20px;
+      margin-top: 10px;
+    }
+    .dialog h2 {
+      margin-top: 0;
+    }
+
+    .textarea_dialog {
+      width: 50%;
+      height: 100%;
+      resize: none;
+      font-family: monospace;
+      font-size: 14px;
+      padding: 10px;
+      box-sizing: border-box;
+      border: 1px solid #ccc;
+    }
+
+    .iframe_dialog {
+      width: 50%;
+      height: 100%;
+      border: 1px solid #ccc;
+    }
+    .controls_dialog {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 10px;
+    }    
+    button { padding: 0.5em 1em; background: green; color: white; border: none; cursor: pointer; }
+    button:hover { background: #1e7e34; }
+    .result_iframe { width:99%; height:200px; margin-top: 1em;  resize: both;border:1px solid #ccc;}        
+</style>
+</head>
+<body> 
+  <div class="container">
+    <div class = "chapter-navi-section">
+<a href="cplusplus-stl-functors-lambdas-and-predicates-in-stl.htm" class="nav-button prev">←</a>
+<a href='cplusplus-stl.htm#advanced-algorithms-and-utilities' class="nav-button toc-link">Index</a>
+<a href="cplusplus-stl-allocators-and-memory-management.htm" class="nav-button next">→</a>
+</div>
+
+    <h1 class="book-title-chapter" id = 'top'>Advanced Algorithms and Utilities</h1>
+    <h3 class="book-subtitle-chapter">C++ STL</h3>   
+    <!-- <h1 class ="chapter-title"></h1> -->
+    <h2 id='set-algorithms-std-set-union-std-set-intersection-std-set-difference'>8.1 Set Algorithms: <code>std::set_union</code>, <code>std::set_intersection</code>, <code>std::set_difference</code></h2><p>The STL provides a powerful set of <strong>set algorithms</strong>—<code>std::set_union</code>, <code>std::set_intersection</code>, and <code>std::set_difference</code>—to perform classic set operations on sorted ranges. These algorithms allow you to combine or compare two collections efficiently, producing a new sorted result that reflects union, intersection, or difference of the inputs.</p><h4 id="key-requirements">Key Requirements</h4><ul>
+ <li><strong>Sorted Input:</strong> All set algorithms require the input ranges to be sorted according to the same strict weak ordering (usually ascending order).</li>
+ <li><strong>Output Iterators:</strong> They output results through output iterators, so you can use containers like <code>std::vector</code> or <code>std::set</code> to store results.</li>
+ <li><strong>No Duplicates Assumed:</strong> Inputs are typically sets or sorted sequences without duplicates for correct logical set operations.</li>
+</ul><h4 id="std-set-union"><code>std::set_union</code></h4><p>Computes the union of two sorted ranges, producing all elements that appear in either range, without duplicates.</p><p><strong>Example:</strong></p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">📋</button>
+ <pre><code class="language-cpp">#include &lt;iostream&gt;
+#include &lt;vector&gt;
+#include &lt;algorithm&gt;
+
+int main() {
+    std::vector&lt;int&gt; set1 = {1, 3, 5, 7};
+    std::vector&lt;int&gt; set2 = {3, 4, 5, 6};
+
+    std::vector&lt;int&gt; result;
+    std::set_union(set1.begin(), set1.end(),
+                   set2.begin(), set2.end(),
+                   std::back_inserter(result));
+
+    for (int n : result) std::cout &lt;&lt; n &lt;&lt; " ";
+}</code></pre>
+</div><p><strong>Output:</strong></p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-bash">1 3 4 5 6 7</code></pre>
+</div><h4 id="std-set-intersection"><code>std::set_intersection</code></h4><p>Produces the intersection of two sorted ranges, outputting only elements found in both.</p><p><strong>Example:</strong></p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-cpp">std::vector&lt;int&gt; result;
+std::set_intersection(set1.begin(), set1.end(),
+                      set2.begin(), set2.end(),
+                      std::back_inserter(result));</code></pre>
+</div><p>Output:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-bash">3 5</code></pre>
+</div><h4 id="std-set-difference"><code>std::set_difference</code></h4><p>Calculates the difference between two sets—elements in the first range but not in the second.</p><p><strong>Example:</strong></p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-cpp">std::vector&lt;int&gt; result;
+std::set_difference(set1.begin(), set1.end(),
+                    set2.begin(), set2.end(),
+                    std::back_inserter(result));</code></pre>
+</div><p>Output:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-bash">1 7</code></pre>
+</div><h3 id="summary">Summary</h3><p>Set algorithms provide an efficient and convenient way to work with sorted collections as mathematical sets. By requiring sorted input ranges and using output iterators, these algorithms integrate seamlessly with STL containers such as <code>std::vector</code> and <code>std::set</code>. Whether you need to combine, intersect, or differentiate sets, these functions are fundamental tools for advanced data manipulation in C++.</p><div class = "chapter-navi-section">
+<a href="#top" class="nav-button prev">↑</a>
+<a href='cplusplus-stl.htm#advanced-algorithms-and-utilities' class="nav-button toc-link">Index</a>
+<a href="#bottom" class="nav-button next">↓</a>
+</div>
+<h2 id='numeric-algorithms-std-accumulate-std-inner-product'>8.2 Numeric Algorithms: <code>std::accumulate</code>, <code>std::inner_product</code></h2><p>The STL provides numeric algorithms designed to perform common mathematical operations on sequences of data. Two of the most widely used are <code>std::accumulate</code> and <code>std::inner_product</code>, which help simplify tasks like summation and dot product calculation.</p><h4 id="std-accumulate"><code>std::accumulate</code></h4><p><code>std::accumulate</code> computes the sum (or any other binary accumulation) of elements in a range. It takes a starting value and a binary operation (by default, addition), then applies the operation sequentially to combine all elements.</p><p><strong>Example: Summing Vector Elements</strong></p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">📋</button>
+ <pre><code class="language-cpp">#include &lt;iostream&gt;
+#include &lt;vector&gt;
+#include &lt;numeric&gt;  // for std::accumulate
+
+int main() {
+    std::vector&lt;int&gt; numbers = {1, 2, 3, 4, 5};
+
+    int sum = std::accumulate(numbers.begin(), numbers.end(), 0);
+    
+    std::cout &lt;&lt; "Sum: " &lt;&lt; sum &lt;&lt; std::endl;  // Output: Sum: 15
+}</code></pre>
+</div><p>You can also provide a custom binary operation. For instance, to multiply all elements:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-cpp">int product = std::accumulate(numbers.begin(), numbers.end(), 1, std::multiplies&lt;int&gt;());</code></pre>
+</div><h4 id="std-inner-product"><code>std::inner_product</code></h4><p><code>std::inner_product</code> calculates the dot product of two sequences. It multiplies corresponding elements pairwise and accumulates the results, optionally allowing custom binary operations for both multiplication and addition.</p><p><strong>Example: Calculating Dot Product</strong></p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">📋</button>
+ <pre><code class="language-cpp">#include &lt;iostream&gt;
+#include &lt;vector&gt;
+#include &lt;numeric&gt;
+
+int main() {
+    std::vector&lt;int&gt; v1 = {1, 2, 3};
+    std::vector&lt;int&gt; v2 = {4, 5, 6};
+
+    int dot = std::inner_product(v1.begin(), v1.end(), v2.begin(), 0);
+
+    std::cout &lt;&lt; "Dot product: " &lt;&lt; dot &lt;&lt; std::endl;  // Output: 32
+}</code></pre>
+</div><p>This computes <code>(1*4) + (2*5) + (3*6) = 32</code>.</p><p>You can customize both the multiplication and addition operations:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-cpp">int custom = std::inner_product(
+    v1.begin(), v1.end(), v2.begin(), 0,
+    std::plus&lt;&gt;(),         // addition operation
+    [](int a, int b) { return a * b; }  // multiplication operation
+);</code></pre>
+</div><h4 id="use-cases">Use Cases</h4><p>These numeric algorithms are essential in many fields:</p><ul>
+ <li><strong>Mathematics and statistics:</strong> Summation, averages, and weighted calculations.</li>
+ <li><strong>Physics and engineering:</strong> Dot products in vector calculations.</li>
+ <li><strong>Data analysis:</strong> Aggregating data values efficiently.</li>
+</ul><p>By abstracting these operations, STL lets you write concise, readable code that remains flexible through custom operations.</p><h3 id="summary">Summary</h3><p><code>std::accumulate</code> and <code>std::inner_product</code> simplify numerical computations on containers, allowing both default and customized operations. They are foundational tools for mathematical programming in C++, widely applicable across domains requiring efficient aggregation and product calculations.</p><div class = "chapter-navi-section">
+<a href="#top" class="nav-button prev">↑</a>
+<a href='cplusplus-stl.htm#advanced-algorithms-and-utilities' class="nav-button toc-link">Index</a>
+<a href="#bottom" class="nav-button next">↓</a>
+</div>
+<h2 id='permutations-and-combinations-std-next-permutation-std-prev-permutation'>8.3 Permutations and Combinations: <code>std::next_permutation</code>, <code>std::prev_permutation</code></h2><p>The STL algorithms <code>std::next_permutation</code> and <code>std::prev_permutation</code> provide an easy way to generate permutations of elements in lexicographical order. These tools are essential when you need to systematically explore all possible orderings or rearrangements of a collection, such as in combinatorial problems or backtracking algorithms.</p><h4 id="how-they-work">How They Work</h4><ul>
+ <li><p><strong><code>std::next_permutation</code></strong> rearranges the elements into the next lexicographically greater permutation. If the current permutation is the highest possible, it returns <code>false</code> and rearranges the sequence to the lowest permutation (sorted ascending).</p></li>
+ <li><p><strong><code>std::prev_permutation</code></strong> does the opposite, generating the lexicographically previous permutation, or returning <code>false</code> when at the lowest permutation and resetting to the highest.</p></li>
+</ul><p>Both functions operate in-place on a container range and require <strong>random access iterators</strong> (e.g., <code>std::vector</code>, <code>std::array</code>).</p><h4 id="example-generating-all-permutations">Example: Generating All Permutations</h4><p>The following example prints all permutations of the vector <code>{1, 2, 3}</code>:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">📋</button>
+ <pre><code class="language-cpp">#include &lt;iostream&gt;
+#include &lt;vector&gt;
+#include &lt;algorithm&gt;
+
+int main() {
+    std::vector&lt;int&gt; data = {1, 2, 3};
+
+    // The vector must be initially sorted for correct usage
+    std::sort(data.begin(), data.end());
+
+    do {
+        for (int x : data)
+            std::cout &lt;&lt; x &lt;&lt; " ";
+        std::cout &lt;&lt; "\n";
+    } while (std::next_permutation(data.begin(), data.end()));
+
+    return 0;
+}</code></pre>
+</div><p><strong>Output:</strong></p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-bash">1 2 3
+1 3 2
+2 1 3
+2 3 1
+3 1 2
+3 2 1</code></pre>
+</div><p>This example illustrates how <code>std::next_permutation</code> steps through all permutations in ascending lex order.</p><h4 id="applications">Applications</h4><ul>
+ <li><strong>Combinatorial problems:</strong> Enumerate permutations when solving puzzles, scheduling, or optimization.</li>
+ <li><strong>Backtracking:</strong> Generate permutations for exhaustive search, such as solving the Traveling Salesman Problem.</li>
+ <li><strong>Testing:</strong> Generate test cases covering different orderings.</li>
+</ul><h3 id="summary">Summary</h3><p><code>std::next_permutation</code> and <code>std::prev_permutation</code> are convenient STL algorithms for navigating permutations in lexicographical order. They allow you to generate all possible arrangements efficiently, which is invaluable in many mathematical, algorithmic, and practical programming scenarios.</p><div class = "chapter-navi-section">
+<a href="#top" class="nav-button prev">↑</a>
+<a href='cplusplus-stl.htm#advanced-algorithms-and-utilities' class="nav-button toc-link">Index</a>
+<a href="#bottom" class="nav-button next">↓</a>
+</div>
+<h2 id='algorithm-adaptors-and-bindings'>8.4 Algorithm Adaptors and Bindings</h2><p>The STL offers <strong>algorithm adaptors and bindings</strong> to make callable objects (functions, functors, lambdas) more flexible and compatible with algorithm requirements. These utilities help transform or adapt functions to match the signature or behavior expected by algorithms.</p><h4 id="std-bind"><code>std::bind</code></h4><p>One of the key adaptors is <code>std::bind</code>, which allows you to create new function objects by binding some arguments of a callable in advance, while leaving placeholders for others. This is useful to customize functions or member function calls without writing extra functors.</p><h4 id="how-std-bind-works">How <code>std::bind</code> Works</h4><ul>
+ <li>You specify the target callable (function, functor, or member function).</li>
+ <li>Bind some arguments to fixed values.</li>
+ <li>Use placeholders (<code>std::placeholders::_1</code>, <code>_2</code>, etc.) to represent parameters passed later during the call.</li>
+</ul><p>This results in a new callable object compatible with algorithms expecting a certain function signature.</p><h4 id="example-using-std-bind-with-member-functions">Example: Using <code>std::bind</code> with Member Functions</h4><p>Consider a class with a member function, and you want to call it on objects inside a container using an STL algorithm.</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">📋</button>
+ <pre><code class="language-cpp">#include &lt;iostream&gt;
+#include &lt;vector&gt;
+#include &lt;algorithm&gt;
+#include &lt;functional&gt;
+
+class Person {
+public:
+    Person(std::string n, int a) : name(n), age(a) {}
+    bool isOlderThan(int x) const { return age &gt; x; }
+    std::string name;
+    int age;
+};
+
+int main() {
+    std::vector&lt;Person&gt; people = {
+        {"Alice", 30}, {"Bob", 25}, {"Charlie", 35}
+    };
+
+    // Create a predicate that checks if Person is older than 28
+    auto olderThan28 = std::bind(&amp;Person::isOlderThan, std::placeholders::_1, 28);
+
+    // Count how many people are older than 28
+    int count = std::count_if(people.begin(), people.end(), olderThan28);
+
+    std::cout &lt;&lt; "People older than 28: " &lt;&lt; count &lt;&lt; std::endl;
+}</code></pre>
+</div><p><strong>Output:</strong></p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-bash">People older than 28: 2</code></pre>
+</div><p>Here, <code>std::bind</code> adapts the member function <code>isOlderThan</code> to be used as a unary predicate for <code>std::count_if</code>. The first argument (<code>std::placeholders::_1</code>) corresponds to the <code>Person</code> object, while <code>28</code> is bound as the fixed age to compare.</p><h4 id="other-adaptors">Other Adaptors</h4><p>Besides <code>std::bind</code>, STL offers other adaptors like:</p><ul>
+ <li><strong><code>std::function</code></strong>: A general-purpose polymorphic function wrapper.</li>
+ <li><strong>Function pointers and functor adapters</strong> for negation, composition, or argument swapping.</li>
+</ul><p>These tools enhance the expressiveness of STL algorithms, enabling more modular and readable code.</p><h3 id="summary">Summary</h3><p>Algorithm adaptors like <code>std::bind</code> enable flexible use of callable objects by fixing some arguments or rearranging parameters. This adaptability is crucial to seamlessly integrate custom behaviors and member functions with STL algorithms, boosting code reuse and clarity.</p><div class = "chapter-navi-section">
+<a href="#top" class="nav-button prev">↑</a>
+<a href='cplusplus-stl.htm#advanced-algorithms-and-utilities' class="nav-button toc-link">Index</a>
+<a href="#bottom" class="nav-button next">↓</a>
+</div>
+<h2 id='case-studies-applying-algorithms-in-complex-scenarios'>8.5 Case Studies: Applying Algorithms in Complex Scenarios</h2><p>In real-world programming, STL algorithms shine by combining their strengths to solve complex problems efficiently. This section presents practical case studies demonstrating how multiple algorithms and functors work together to process, filter, transform, and analyze data.</p><h4 id="case-study-1-filtering-and-transforming-a-dataset">Case Study 1: Filtering and Transforming a Dataset</h4><p>Suppose you have a list of sales amounts and want to:</p><ul>
+ <li>Filter out sales below a certain threshold.</li>
+ <li>Apply a 10% tax increase on the remaining sales.</li>
+ <li>Collect the results in a new container.</li>
+</ul><div class="code-block"><button class="copy-button" onclick="copyCode(this)">📋</button>
+ <pre><code class="language-cpp">#include &lt;iostream&gt;
+#include &lt;vector&gt;
+#include &lt;algorithm&gt;
+#include &lt;iterator&gt;
+
+int main() {
+    std::vector&lt;double&gt; sales = {100.0, 250.5, 75.25, 300.0, 50.0};
+    std::vector&lt;double&gt; filtered_sales;
+
+    // Step 1: Filter sales &gt;= 100
+    std::copy_if(sales.begin(), sales.end(),
+                 std::back_inserter(filtered_sales),
+                 [](double s) { return s &gt;= 100.0; });
+
+    // Step 2: Apply 10% tax increase
+    std::transform(filtered_sales.begin(), filtered_sales.end(),
+                   filtered_sales.begin(),
+                   [](double s) { return s * 1.10; });
+
+    // Print results
+    std::cout &lt;&lt; "Updated sales after filtering and tax:\n";
+    std::for_each(filtered_sales.begin(), filtered_sales.end(),
+                  [](double s) { std::cout &lt;&lt; s &lt;&lt; " "; });
+    std::cout &lt;&lt; "\n";
+}</code></pre>
+</div><p><strong>Explanation:</strong> <code>std::copy_if</code> filters sales above the threshold using a lambda predicate. Then, <code>std::transform</code> applies the tax increase in-place. Finally, <code>std::for_each</code> prints the modified values. This pipeline uses non-modifying and modifying algorithms to handle data cleanly.</p><h4 id="case-study-2-complex-set-operations-on-data">Case Study 2: Complex Set Operations on Data</h4><p>Consider two sorted datasets representing customer IDs of two different products’ buyers. We want to:</p><ul>
+ <li>Find customers who bought either product (union).</li>
+ <li>Find customers who bought both products (intersection).</li>
+ <li>Find customers who bought only the first product (difference).</li>
+</ul><div class="code-block"><button class="copy-button" onclick="copyCode(this)">📋</button>
+ <pre><code class="language-cpp">#include &lt;iostream&gt;
+#include &lt;vector&gt;
+#include &lt;algorithm&gt;
+
+int main() {
+    std::vector&lt;int&gt; productA = {101, 102, 105, 110};
+    std::vector&lt;int&gt; productB = {102, 104, 110, 115};
+
+    std::vector&lt;int&gt; union_result, intersection_result, difference_result;
+
+    std::set_union(productA.begin(), productA.end(),
+                   productB.begin(), productB.end(),
+                   std::back_inserter(union_result));
+
+    std::set_intersection(productA.begin(), productA.end(),
+                          productB.begin(), productB.end(),
+                          std::back_inserter(intersection_result));
+
+    std::set_difference(productA.begin(), productA.end(),
+                        productB.begin(), productB.end(),
+                        std::back_inserter(difference_result));
+
+    // Print results
+    std::cout &lt;&lt; "Union: ";
+    for (int id : union_result) std::cout &lt;&lt; id &lt;&lt; " ";
+    std::cout &lt;&lt; "\nIntersection: ";
+    for (int id : intersection_result) std::cout &lt;&lt; id &lt;&lt; " ";
+    std::cout &lt;&lt; "\nDifference (only product A): ";
+    for (int id : difference_result) std::cout &lt;&lt; id &lt;&lt; " ";
+    std::cout &lt;&lt; "\n";
+}</code></pre>
+</div><p><strong>Explanation:</strong> These algorithms operate on sorted sequences and produce new containers via output iterators. This approach efficiently handles membership and comparison problems often encountered in database and analytics software.</p><h3 id="design-rationale">Design Rationale</h3><ul>
+ <li><strong>Separation of Concerns:</strong> Use filtering, transforming, and set algorithms in modular steps for readability.</li>
+ <li><strong>Efficiency:</strong> Utilize in-place modifications and iterator-based insertion for performance.</li>
+ <li><strong>Reusability:</strong> Lambdas and functors enable customization without rewriting code.</li>
+ <li><strong>Safety:</strong> Algorithms enforce preconditions like sorted input to ensure correctness.</li>
+</ul><h3 id="summary">Summary</h3><p>Combining STL algorithms and functors allows for powerful, clear solutions to complex problems. By leveraging filtering, transformation, and set operations together, developers can write concise and efficient code for everyday real-world challenges.</p><div class = "chapter-navi-section">
+<a href="cplusplus-stl-functors-lambdas-and-predicates-in-stl.htm" class="nav-button prev">←</a>
+<a href='cplusplus-stl.htm#advanced-algorithms-and-utilities' class="nav-button toc-link">Index</a>
+<a href="cplusplus-stl-allocators-and-memory-management.htm" class="nav-button next">→</a>
+</div>
+<section class="download-section">
+  <div class="book-cover" style="background-color: #f9f6f1;border: 1px solid #ccc;"> 
+    <div class="book-cover-title" style="font-size: 20px;color: #333;top: 20px;">C++ STL</div>
+    <div class="book-cover-author">readbytes</div>
+    <div class="book-cover-bottom-stripe" style="background-color: #333;"></div>
+    <img class="book-cover-icon" style="width: 90px;height: 90px;top: 70px;" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFoAAABaCAYAAAA4qEECAAADK0lEQVR4Xu2cvWsTcRjHo+DkIKiTjiJugqTJ0cG/QcRZ/wJXQTd3ByeHDiLJnS84dHMVBHUSRQUH90pNfmfb6CKi8fqSaj93ae4lzzV3+X7gS9vkeZ7f7/lwEDq0jYYQQgghxFzQ9t0wbTzf3WO/SAllpg3niAlQYJa0uu4W54kxeA96ZykwU4JwnTPFGGLyMqd3nTNFAnFx2cOZIiee//UK5TLsEQWg3D1ZHpxgvShATLCeajsoWKKNaAfuDyVvZuGhu8paURBK1lNtBAVLtBEULNFGULBEG0HBlRfNRUrMqwW/f473GZFQvxXWVQbPD5e4zEGlcXt4eHQvvrdbU2W4zEGn5Yd3+NoovHul4DKzHN69UnCZWQ7vXim8IHzJhWY1vLtIQSRujSInhTNEBppL345R6LiwV+SAUpPCHpETimVYLwpAuRJtBOVKtBHNR4OTFCzRRlCwRBtBwRJtBAVLtBEULNFGeN3wPiVvp/+OtVmJ5qzvmdl1z1kzV8Ql53+q0/6az765gBLyConqN9i/X9hfeyiAYX0S7cCtsi9NOKf2UADDesL6LOGsWsPlx+V8d/Vo3t5x4bzyGA4P8TK1TuBeU0FpxC5T83D/0uBF6h7uXxq8SN3D/Utj80OHl6ltgvAX9y+V2IUm53eUQZQvUT4nvJ8x/e/R14+RiBeeHz4bZfPn6PW3bT908Z7s4d6Vgwsxix13mj15iGb94Ows4bxKwWUY1heF89OGcyoHFypjOZ4zKV7gVjijUjSfrJ/hUqOwdtrwvH2yzN7KkbDUTsKfrLWgufTmSPzsf2F9ZeFitVtwVqBgiTaCgiXaCAqWaCMoWKKNoGCJNoKCJdoICpZoIyhYoo2gYIk2goIl2ggKlmgjKFiijaBgiTaCgiXagLbfu0jBW+m6NdaKAsQEj9Jxl1krChATvBPWiQJ4fviJgiV6yiw+3ThOuRI9ZbzA3aRYSZ4iFx73T1FqUtg3l1DKbrr9960gvBt9f207/Rst332I1U0Iz5tbKGaa4VlzTSQk8X84Fw3PEY3p/70KTxA7UFTeeB13ibPFf1BY1nCeEEIIIYQowl8t5mhjJHw+fQAAAABJRU5ErkJggg=="/>
+  </div>
+  <div class="download-info">
+    <h2 id='bottom'>Download This Ebook</h2>
+    <p class="format-label">Available formats:</p>
+    <div class="download-buttons">
+      <a href="cplusplus-stl.pdf" class="download-button">📄 PDF</a>
+      <a href="cplusplus-stl.epub" class="download-button">📘 EPUB</a>
+    </div>
+  </div>
+</section><div class='related-books'>
+<h2>C++ Introduction Books</h2>
+<div class='related-book-list'>
+<a href="cplusplus-for-beginners.htm">
+<div class="book-cover" style="background-color: #f9f6f1;border: 1px solid #ccc;"> 
+    <div class="book-cover-title" style="font-size: 18px;color: #333;top: 20px;">C++ for Beginners</div>
+    <div class="book-cover-author">readbytes</div>
+    <div class="book-cover-bottom-stripe" style="background-color: #333;"></div>
+    <img class="book-cover-icon" style="width: 90px;height: 90px;top: 70px;" src="data:image/png;base64,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"/>
+  </div>
+</a>
+
+
+<a href="cplusplus-syntax.htm">
+<div class="book-cover" style="background-color: #f9f6f1;border: 1px solid #ccc;"> 
+    <div class="book-cover-title" style="font-size: 20px;color: #333;top: 20px;">C++ Syntax</div>
+    <div class="book-cover-author">readbytes</div>
+    <div class="book-cover-bottom-stripe" style="background-color: #333;"></div>
+    <img class="book-cover-icon" style="width: 90px;height: 90px;top: 70px;" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFoAAABaCAYAAAA4qEECAAAFZ0lEQVR4Xu2dy4scVRSH8ye0iYtkERcmzgjT2OYBuhNREMVXBh/TgsYQx5ULDYTgVl3EFyg6uFJBV76IEXdKXAVBJCgISSTRGRmZiZlADBo6M5kp+3ZbnXt/p7q6btWtc++pqQPfpu/p7vP7UnSqi+m6GzbkrMbYO50u0Tqjgx5Kqe4brSa8+XplFf0UroQ3GbDltqNRs70Y3Tw5G22//2SXU0Fyy5MXc6GyqYyYWwd9WdfGbW9uxRe9vvlBtOvZKLrpwTOiUDO7QjlALxu3zWxFf5mq++RF/YU27/40au39lwSQAspygXICwhfRY2rhv5Z6URxcEuoAQUkuQV/oM7HwSN45vUoGlwaKKQOrI1t9zuhPaD19mQwtEZRSFrq71M/sqh3JMSikTHSH6LdXeoN6Ag4rlV3Ta0RG2aTKjhfU/6Q4rGRQAgf62QhKHnzjk3wKlwRK4EI7qq99g4wf3NR8nwwqmfE9s0QAF8olOarjB1QDDisZDM+NIbqhXYXDQaWDwbnRPj46xtkGDiodDM6N7nYgWl2hwkEl09r7DwnOzZbbr131G4iemFokw0oGQ/ug2XVKRI9PzpJhJYOhfdB66m8qevsDp8iwksHQPqi8aAzsi1o0E7VoJioteuzh30lgX1RaNIb1SS2aiVo0E5UVPTH1Fwnrk8qKxqC+qUUzUYtmwovoL49dioYV9uZhx/4VEjRmWM2fp70uYRc9qrA/DxhSZ1RhvyuCEL1wfiU6PXulB/bnAUPqnJnv8+cSTtEv7HeFd9G4XpyzJGQaWLjuisqJxoCjeOVjc572y7THBayim4+cNUKdONkhPUXBgKO495AxUrTvVdrjAq+ij//k/i9UMeAo7jlojFSLzsLE4/ZfuyspuvXYb0Yo16IxXBZQ9DOv0x4XsIqeOjRvhPri20ukpwgYLgt3HTBGir75kfa4gFU01h373f5ZA4bLChauu4BNdPtF82hWhT1FuHVfh4TLCtbR47SnKKWKTqu5hWXSXwQMZsOBGZzOLOzPA7voNz66QPpcgMHy8Py7OG2/sC8P7KLjurK8RvqLgMFsmDmC05mF/XkoVbTOjinz1E4V9uSl6I+AsF6YoT1FYROtwLpzeo705AFD2YKF6y5gFf3oQfPM48h3w8+jD3+4ZIDrOnGYtz7vgyHTuBvOo7/+nva4gFW0zTdDLFyPGdN+BBQXhkyDfDN8jfa4gFW0zbWOH365bIDrMXqYE7/2wZBpoOhKXOuwEZ0VDGTLuhD98+kO6bEFA9lyXxWvRyuwcN0GdccFDGTLe1+Z87Rfoj0uEC0aw+QBC9dd4V10XMsraz2wPw0Mk4WVq33WcID/C/tdwS766uqwiP3C/jQwTBZGFfa7gl204rnDC5hvUNg7DAySlWH1yTHa6xIvol2AQUKnFs2ESNHjk3MkSOiIFI0hJFCLZqIWzYQ40c0nLpAQEhAnGgNIoRbNRC2aCVGid6b8CCh0RInG4SVRi2YiUXSIN68ae8juR0ChkSg6xNux4eDSSLwdW4g3GMTBpZF4g0EFBvUNDi4N3a0SHeRNYCfaS2RwaWii+1s/xQ+oRQzsCxxaIoOjGe8fHdKNunFoaWzSdh/SRQd363kcXBrax4a5eVm8EMJmCmn33pDA5t2f0aMZRStUM4bnBAeXhu4SPfdKb/C54Q0OLomRklWFsoUTDi8F3d11N759A/o1quF5UzIcXgq6sy7n0GtiwZN6L4RCygIDSAB9oc/UwiOba+NIDBEy+tmF1ZGMhZ/ZijK3Qh3f8wcJEyJOt0LVC19UR12harbPOdncFzfWDQGVTb8KlwT6KlyNertqHffbVSdVo96A3ar+A5kzbYSE7G+UAAAAAElFTkSuQmCC"/>
+  </div>
+</a>
+
+
+<a href="cplusplus-stl.htm">
+<div class="book-cover" style="background-color: #f9f6f1;border: 1px solid #ccc;"> 
+    <div class="book-cover-title" style="font-size: 20px;color: #333;top: 20px;">C++ STL</div>
+    <div class="book-cover-author">readbytes</div>
+    <div class="book-cover-bottom-stripe" style="background-color: #333;"></div>
+    <img class="book-cover-icon" style="width: 90px;height: 90px;top: 70px;" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFoAAABaCAYAAAA4qEECAAADK0lEQVR4Xu2cvWsTcRjHo+DkIKiTjiJugqTJ0cG/QcRZ/wJXQTd3ByeHDiLJnS84dHMVBHUSRQUH90pNfmfb6CKi8fqSaj93ae4lzzV3+X7gS9vkeZ7f7/lwEDq0jYYQQgghxFzQ9t0wbTzf3WO/SAllpg3niAlQYJa0uu4W54kxeA96ZykwU4JwnTPFGGLyMqd3nTNFAnFx2cOZIiee//UK5TLsEQWg3D1ZHpxgvShATLCeajsoWKKNaAfuDyVvZuGhu8paURBK1lNtBAVLtBEULNFGULBEG0HBlRfNRUrMqwW/f473GZFQvxXWVQbPD5e4zEGlcXt4eHQvvrdbU2W4zEGn5Yd3+NoovHul4DKzHN69UnCZWQ7vXim8IHzJhWY1vLtIQSRujSInhTNEBppL345R6LiwV+SAUpPCHpETimVYLwpAuRJtBOVKtBHNR4OTFCzRRlCwRBtBwRJtBAVLtBEULNFGeN3wPiVvp/+OtVmJ5qzvmdl1z1kzV8Ql53+q0/6az765gBLyConqN9i/X9hfeyiAYX0S7cCtsi9NOKf2UADDesL6LOGsWsPlx+V8d/Vo3t5x4bzyGA4P8TK1TuBeU0FpxC5T83D/0uBF6h7uXxq8SN3D/Utj80OHl6ltgvAX9y+V2IUm53eUQZQvUT4nvJ8x/e/R14+RiBeeHz4bZfPn6PW3bT908Z7s4d6Vgwsxix13mj15iGb94Ows4bxKwWUY1heF89OGcyoHFypjOZ4zKV7gVjijUjSfrJ/hUqOwdtrwvH2yzN7KkbDUTsKfrLWgufTmSPzsf2F9ZeFitVtwVqBgiTaCgiXaCAqWaCMoWKKNoGCJNoKCJdoICpZoIyhYoo2gYIk2goIl2ggKlmgjKFiijaBgiTaCgiXagLbfu0jBW+m6NdaKAsQEj9Jxl1krChATvBPWiQJ4fviJgiV6yiw+3ThOuRI9ZbzA3aRYSZ4iFx73T1FqUtg3l1DKbrr9960gvBt9f207/Rst332I1U0Iz5tbKGaa4VlzTSQk8X84Fw3PEY3p/70KTxA7UFTeeB13ibPFf1BY1nCeEEIIIYQowl8t5mhjJHw+fQAAAABJRU5ErkJggg=="/>
+  </div>
+</a>
+
+
+
+<a href='cplusplus.htm'><div class='book-cover' style='background-color: #f9f6f1;color: #111111;border: 1px solid #ccc;display: flex;justify-content: center;align-items: center;text-align: center;'>More C++ Books</div></a>
+</div>
+</div>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+  
+  <script>
+    function copyCode(button) {
+      const code = button.nextElementSibling.innerText;
+      navigator.clipboard.writeText(code).then(() => {
+        button.textContent = 'Copied!';
+        setTimeout(() => { button.textContent = 'Copy'; }, 1500);
+      });
+    }
+  </script>  
+<div id="floatingLog" aria-live="polite" role="alert"></div>
+<footer class="page-footer">
+    <nav>
+      <a href="https://readbytes.github.io">Home</a> | 
+      Email:<script language="JavaScript" type="text/javascript">
+var part1 = 'yinpeng';var part6 = '263';var part2 = Math.pow(2,6);var part3 = String.fromCharCode(part2);var part4 = 'hotmail dot com';var part5 = part1 + String.fromCharCode(part2) + part4;document.write(part1 + part6 + part3 + part4);
+</script>
+    </nav>
+  <p>© 2025 — All rights reserved.</p>    
+  </footer>
+
+</body>
+</html>

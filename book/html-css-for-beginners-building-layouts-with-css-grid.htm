@@ -1,0 +1,2296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>HTML CSS for Beginners Building Layouts with CSS Grid</title>
+<link rel='shortcut icon' href='https://java2s.com/style/favicon.ico'>
+<link href="https://fonts.googleapis.com/css2?family=Merriweather&display=swap" rel="stylesheet" />
+<link href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.css" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/theme/material.css"> <!-- Dark theme -->
+<script src="https://cdn.jsdelivr.net/npm/typescript@5/lib/typescript.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/htmlmixed/htmlmixed.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/xml/xml.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/css/css.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/javascript/javascript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/javascript/typescript.min.js"></script>
+<style>
+    #floatingLog {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: rgba(20, 20, 20, 0.95);
+      color: white;
+      font-family: monospace;
+      font-size: 14px;
+      padding: 16px 20px;
+      border-radius: 8px;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+      max-width: 80%;
+      max-height: 200px;
+      overflow-y: auto;
+      display: none;
+      z-index: 9999;
+      pointer-events: none;
+      white-space: pre-wrap;
+      text-align: center;
+    }
+</style>
+<script>
+  const codeMirrorMap = new Map();
+  const iframeMap = new Map();
+  
+ 
+
+  let dismissTimer;
+  function showFloatingLog(message) {
+	const floatingLog = document.getElementById('floatingLog');
+
+    if (floatingLog.style.display !== 'block') {
+      floatingLog.textContent = '';
+      floatingLog.style.display = 'block'; 
+    }
+
+    floatingLog.textContent += message + '\n';
+    floatingLog.scrollTop = floatingLog.scrollHeight; 
+    clearTimeout(dismissTimer);
+    dismissTimer = setTimeout(() => {
+      floatingLog.style.display = 'none';
+      floatingLog.textContent = '';
+    }, 2000);
+  }
+  window.addEventListener('message', (event) => {
+	    if (!iframeMap.has(event.source)) return;
+
+	    if (event.data?.type === 'console-log') {
+	      showFloatingLog(event.data.message);
+	    }
+  });  
+  function renderIframe(button,textarea_id, iframe_id) {
+      const html = codeMirrorMap.get(textarea_id).getValue();
+      const iframe = document.getElementById(iframe_id);
+  
+      const oldIframe = iframe;
+      const newIframe = document.createElement('iframe');
+      newIframe.className ="result_iframe";
+      
+      newIframe.id = iframe_id;
+      oldIframe.replaceWith(newIframe);
+ 
+
+      // Track the iframe in the map
+      iframeMap.set(newIframe.contentWindow, button);
+
+      const overrideScript = `
+        <script>
+          (function() {
+            const originalLog = console.log;
+            console.log = function(...args) {
+              originalLog.apply(console, args);
+              window.parent.postMessage({
+                type: 'console-log',
+                message: args.map(a => {
+                  try { return JSON.stringify(a); }
+                  catch { return String(a); }
+                }).join(' ')
+              }, '*');
+            };
+          })();
+        <\/script>
+      `;
+
+      const iframeHTML = `
+        <!DOCTYPE html>
+        <html>
+        <body>
+          ${overrideScript}
+          ${html}
+        </body>
+        </html>
+      `;
+ 
+      const doc = newIframe.contentDocument || newIframe.contentWindow.document;
+      doc.open();
+      doc.write(iframeHTML);
+      doc.close();
+
+      
+      setTimeout(() => {
+    	  newIframe.style.height = '0px';
+    	   let contentHeight = Math.max(doc.body.scrollHeight,doc.documentElement.scrollHeight);
+ 
+    	//   if(contentHeight < 150 || contentHeight > 600){
+    	//	   contentHeight = 600;
+    	 //  } 
+    	   newIframe.style.height = contentHeight + 'px';
+    	}, 50);      
+      
+  }
+  function renderIframeForClientTypescript(textarea_id, iframe_id) {
+      let code = codeMirrorMap.get(textarea_id).getValue();
+      code = ts.transpile(code);
+      const iframe = document.getElementById(iframe_id);
+      const doc = iframe.contentDocument || iframe.contentWindow.document;
+
+const html = `
+  <!DOCTYPE html>
+  <html>
+    <head>
+      <title>Output</title>
+      <style>
+        body { font-family: monospace; padding: 1em; background: #f4f4f4; color: #222; }
+        pre { white-space: pre-wrap; word-break: break-word; }
+        .error { color: red; }
+      </style>
+    </head>
+    <body>
+      <pre id="log"></pre>
+      <script>
+        (function(){
+          const logEl = document.getElementById('log');
+          const origLog = console.log;
+          const origError = console.error;
+
+          console.log = (...args) => {
+            logEl.textContent += args.join(' ') + '\\n';
+            origLog.apply(console, args);
+          };
+          console.table = (...args) => {
+            logEl.textContent += args.join(' ') + '\\n';
+            origLog.apply(console, args);
+          };
+
+          console.error = (...args) => {
+            logEl.innerHTML +='<span class="error">' + args.join(' ') + '</span>';
+            origError.apply(console, args);
+          };
+          window.addEventListener("error", function (event) {
+              console.error("Caught by event listener:", event.message);
+          });    
+          try {             
+              ${code};
+          } catch (err) {
+            console.error(err.stack || err.message);
+          }
+        })();
+      <\/script>
+    </body>
+  </html>
+`;
+
+      iframe.style.display = "block";
+      iframe.srcdoc = html;  
+  }
+
+    function renderIframeForClientJavascript(textarea_id, iframe_id) {
+        const code = codeMirrorMap.get(textarea_id).getValue();
+        const iframe = document.getElementById(iframe_id);
+        const doc = iframe.contentDocument || iframe.contentWindow.document;
+
+  const html = `
+    <!DOCTYPE html>
+    <html>
+      <head>
+        <title>Output</title>
+        <style>
+          body { font-family: monospace; padding: 1em; background: #1e1e1e; color: #eee; }
+          pre { white-space: pre-wrap; word-break: break-word; }
+          .error { color: red; }
+        </style>
+      </head>
+      <body>
+        <pre id="log"></pre>
+        <script>
+          (function(){
+            const logEl = document.getElementById('log');
+            const origLog = console.log;
+            const origError = console.error;
+
+            console.log = (...args) => {
+              logEl.textContent += args.join(' ') + '\\n';
+              origLog.apply(console, args);
+            };
+            console.table = (...args) => {
+              logEl.textContent += args.join(' ') + '\\n';
+              origLog.apply(console, args);
+            };
+
+            console.error = (...args) => {
+              logEl.innerHTML +='<span class="error">' + args.join(' ') + '</span>';
+              origError.apply(console, args);
+            };
+            window.addEventListener("error", function (event) {
+                console.error("Caught by event listener:", event.message);
+            });    
+            try {
+             ${code}; 
+            } catch (err) {
+              console.error(err.stack || err.message);
+            }
+          })();
+        <\/script>
+      </body>
+    </html>
+  `;
+        iframe.style.display = "block";
+        iframe.srcdoc = html;  
+    }
+    function toggleSnippetAndRefresh(id, textarea_id) {
+      const box = document.getElementById(id);
+      box.classList.toggle("open");
+      codeMirrorMap.get(textarea_id).refresh();
+    }
+
+  </script>
+  <script>
+  const mode = localStorage.getItem('mode') || 'light';
+  document.documentElement.classList.add(`${mode}-mode`);
+  </script>   
+<style> 
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: 'Merriweather', serif;
+  margin: 0;
+  padding: 2rem 1rem;
+  font-size: 15px;
+  line-height: 1.5;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+.container {
+  max-width: 700px;
+  margin: 0 auto;
+  padding: 1rem 2rem;
+  box-shadow: 0 0 15px rgba(0,0,0,0.1);
+}
+
+h1, h2, h3 {
+  font-weight: 600;
+  margin-top: 2.5rem;
+  margin-bottom: 1rem;
+  line-height: 1.2;
+}
+
+h1 { font-size: 1.8rem; }
+h2 { font-size: 1.4rem; }
+h3 { font-size: 1.2rem; }
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: sans-serif;
+  font-size: 1em;
+  margin: 1em 0;
+}
+
+th, td {
+  padding: 0.6em 1em;
+  text-align: left;
+  border: 1px solid;
+}
+
+tr:nth-child(even) {
+  background-color: inherit;
+}
+
+tr:hover {
+  background-color: inherit;
+}
+
+a {
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+code {
+  color: #d35400;
+}
+
+.book-title-chapter {
+  font-family: 'Merriweather', serif;
+  font-size: 2rem;
+  font-weight: bold;
+  text-align: center;
+  margin-bottom: 2rem;
+  border-bottom: 2px solid;
+  padding-bottom: 0.5rem;
+}
+
+.book-subtitle-chapter {
+  text-align: center;
+  font-size: 1rem;
+  margin-top: -1rem;
+  margin-bottom: 2rem;
+}
+
+.related-books {
+  margin-top: 40px;
+}
+
+.related-book-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+    .book-cover {
+      width: 130px;
+      height: 180px;
+      font-family: Arial, sans-serif;
+      position: relative;
+      overflow: hidden;      
+      line-height: normal;
+      box-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+    }
+    .book-cover-bottom-stripe {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      height: 5px;
+      width: 100%;
+    }
+    .book-cover-title {
+      position: absolute;
+      width: 100%;
+      text-align: center;
+      font-weight: bold;
+    }
+     
+    .book-cover-icon {
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      align-items: center;
+      justify-content: center; 
+    }
+
+    .book-cover-author {
+      position: absolute;
+      bottom: 10px;
+      width: 100%;
+      text-align: center;
+      font-size: 8px;
+      color: #333;
+    }
+
+.page-footer {
+  margin-top: 4rem;
+  padding: 1rem 0;
+  text-align: center;
+  font-size: 0.85rem;
+  border-top: 1px solid;
+}
+
+.chapter-navi-section {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 10px;
+}
+
+.nav-link {
+  color: inherit;
+  text-decoration: none;
+  opacity: 0.5;
+  transition: opacity 0.3s ease, text-decoration 0.3s ease;
+}
+
+.nav-link:hover {
+  opacity: 0.9;
+  text-decoration: underline;
+}
+
+.prev { text-align: left; }
+.toc-link { text-align: center; }
+.next { text-align: right; }
+
+.download-section {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2rem;
+  padding: 2rem 1rem;
+  max-width: 600px;
+  margin: 3rem auto;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+}
+
+.download-info h2 {
+  margin: 0 0 0.5rem;
+  font-size: 1.2rem;
+}
+
+.format-label {
+  margin: 0 0 0.5rem;
+  font-size: 0.95rem;
+}
+
+.download-buttons {
+  display: flex;
+  gap: 1rem;
+}
+
+.download-button {
+  background-color: #4A90E2;
+  color: white;
+  padding: 0.5em 1.2em;
+  border-radius: 25px;
+  font-size: 0.95rem;
+  text-decoration: none;
+  transition: background-color 0.3s ease;
+}
+
+.download-button:hover {
+  background-color: #357ABD;
+}
+
+.code-block {
+  position: relative;
+  margin-bottom: 1em;
+}
+
+.copy-button {
+  background: transparent;
+  color: white;
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  border: none;
+  padding: 4px 8px;
+  font-size: 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  z-index: 1;
+}
+
+.copy-button:hover {
+  background-color: #0056b3;
+}
+
+.snippet-container {
+  overflow: hidden;
+}
+
+.snippet-header {
+  padding: 0.75rem 1rem;
+  cursor: pointer;
+  font-size: 1rem;
+    background-color: #eeeeee;
+    color:  #111111; 
+    border-radius: 8px;
+    cursor: pointer;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);  
+}
+
+.snippet-body {
+  display: none;
+  font-family: monospace;
+}
+
+.snippet-container.open .snippet-body {
+  display: block;
+}
+
+.CodeMirror {
+  border: 2px solid #ccc;
+  border-radius: 4px;
+  resize: vertical;
+}
+
+/* === Light Mode === */
+html.light-mode {
+  background-color: #f8f7f5;
+  color: #333;
+}
+
+html.light-mode .container {
+  background: white;
+}
+
+html.light-mode .book-title-chapter {
+  color: #2c3e50;
+  border-color: #ccc;
+}
+html.light-mode .book-subtitle-chapter{
+  color: #888;
+}
+
+html.light-mode .page-footer,
+html.light-mode .series-name,
+html.light-mode .book-subtitle,
+html.light-mode .format-label {
+  color: #888;
+}
+
+html.light-mode .related-books h2 {
+  color: #333;
+  border-bottom: 2px solid #eee;
+}
+
+html.light-mode .book-title {
+  color: #fff;
+}
+
+html.light-mode .book-cover {
+  border: 1px solid #ccc;
+}
+
+html.light-mode th {
+  background-color: #f2f2f2;
+}
+
+html.light-mode tr:nth-child(even) {
+  background-color: #fafafa;
+}
+
+html.light-mode tr:hover {
+  background-color: #e6f7ff;
+}
+
+html.light-mode a,
+html.light-mode .page-footer a {
+  color: #000;
+}
+
+/* === Dark Mode === */
+html.dark-mode {
+  background-color: #181818;
+  color: #e0e0e0;
+}
+
+html.dark-mode .container {
+  background: #222;
+}
+
+html.dark-mode .book-title-chapter {
+  color: #ddd;
+  border-color: #444;
+}
+
+html.dark-mode .snippet-header {
+    background-color: #333;
+    color:  #ddd; 
+}
+
+
+html.dark-mode .book-subtitle-chapter,
+html.dark-mode .page-footer,
+html.dark-mode .series-name,
+html.dark-mode .book-subtitle,
+html.dark-mode .book-footer,
+html.dark-mode .format-label {
+  color: #aaa;
+}
+
+html.dark-mode .related-books h2 {
+  color: #ddd;
+  border-bottom: 2px solid #333;
+}
+
+html.dark-mode .book-title {
+  color: #fff;
+}
+
+html.dark-mode .book-cover {
+  border: 1px solid #555;
+}
+
+html.dark-mode th {
+  background-color: #333;
+  color: #fff;
+}
+
+html.dark-mode td {
+  border-color: #444;
+}
+
+html.dark-mode tr:nth-child(even) {
+  background-color: #2a2a2a;
+}
+
+html.dark-mode tr:hover {
+  background-color: #2c3e50;
+}
+
+html.dark-mode a,
+html.dark-mode .page-footer a {
+  color: #eee;
+}
+
+    .dialog-backdrop {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(0,0,0,0.5);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 10;
+    }
+
+    .dialog {
+      background: white;
+      padding: 20px;
+      width: 90vw;
+      height: 80vh;
+      border-radius: 8px;
+      box-shadow: 0 0 20px rgba(0,0,0,0.3);
+      display: flex;
+      flex-direction: column;
+    }
+    .dialog-content {
+      display: flex;
+      flex: 1;
+      gap: 20px;
+      margin-top: 10px;
+    }
+    .dialog h2 {
+      margin-top: 0;
+    }
+
+    .textarea_dialog {
+      width: 50%;
+      height: 100%;
+      resize: none;
+      font-family: monospace;
+      font-size: 14px;
+      padding: 10px;
+      box-sizing: border-box;
+      border: 1px solid #ccc;
+    }
+
+    .iframe_dialog {
+      width: 50%;
+      height: 100%;
+      border: 1px solid #ccc;
+    }
+    .controls_dialog {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 10px;
+    }    
+    button { padding: 0.5em 1em; background: green; color: white; border: none; cursor: pointer; }
+    button:hover { background: #1e7e34; }
+    .result_iframe { width:99%; height:200px; margin-top: 1em;  resize: both;border:1px solid #ccc;}        
+</style>
+</head>
+<body> 
+  <div class="container">
+    <div class = "chapter-navi-section">
+<a href="html-css-for-beginners-html5-apis-and-advanced-elements.htm" class="nav-button prev">←</a>
+<a href='html-css-for-beginners.htm#building-layouts-with-css-grid' class="nav-button toc-link">Index</a>
+<a href="html-css-for-beginners-accessibility-in-html-and-css.htm" class="nav-button next">→</a>
+</div>
+
+    <h1 class="book-title-chapter" id = 'top'>Building Layouts with CSS Grid</h1>
+    <h3 class="book-subtitle-chapter">HTML CSS for Beginners</h3>   
+    <!-- <h1 class ="chapter-title"></h1> -->
+    <h2 id='grid-container-and-grid-items-concepts'>11.1 Grid Container and Grid Items Concepts</h2><p>CSS Grid Layout is a powerful two-dimensional system for designing web layouts. It allows you to organize content into rows and columns easily and precisely.</p><h3 id="grid-container">Grid Container</h3><p>The <strong>grid container</strong> is the parent element that holds grid items. To make an element a grid container, you apply:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-css">display: grid;</code></pre>
+</div><p>This declaration transforms the element into a grid context, where its direct children automatically become <strong>grid items</strong>.</p><h3 id="key-container-properties">Key Container Properties</h3><ul>
+ <li><p><strong><code>grid-template-columns</code></strong> Defines the number and width of the columns. For example:</p>
+  <div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+   <pre><code class="language-css">grid-template-columns: 100px 200px 100px;</code></pre>
+  </div> <p>This creates three columns, with widths 100px, 200px, and 100px respectively.</p></li>
+ <li><p><strong><code>grid-template-rows</code></strong> Defines the number and height of the rows. For example:</p>
+  <div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+   <pre><code class="language-css">grid-template-rows: 50px 100px;</code></pre>
+  </div> <p>This creates two rows, 50px high and 100px high.</p></li>
+</ul><h3 id="grid-items">Grid Items</h3><p>The <strong>grid items</strong> are the immediate children inside the grid container. By default, they fill the grid cells in the order they appear in the HTML.</p><h3 id="simple-example-grid-container-with-multiple-items">Simple Example: Grid Container with Multiple Items</h3><p>HTML</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-html">&lt;div class="grid-container"&gt;
+  &lt;div class="item"&gt;Item 1&lt;/div&gt;
+  &lt;div class="item"&gt;Item 2&lt;/div&gt;
+  &lt;div class="item"&gt;Item 3&lt;/div&gt;
+  &lt;div class="item"&gt;Item 4&lt;/div&gt;
+&lt;/div&gt;</code></pre>
+</div><p>CSS</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-css">.grid-container {
+  display: grid;
+  grid-template-columns: 150px 150px;
+  grid-template-rows: 100px 100px;
+  gap: 10px; /* space between grid cells */
+  border: 2px solid #333;
+  padding: 10px;
+}
+
+.item {
+  background-color: #89CFF0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  border-radius: 5px;
+}</code></pre>
+</div><div class="snippet-container" id="6DLJY">
+ <div id="7PfDh_Dialog" class="dialog-backdrop">
+  <div class="dialog">
+   <h2>Dialog 1</h2>
+   <div class="controls"><button onclick="renderIframe(this,'5hNEB_Textarea','7PfDh_IFrame')">Run</button> <button onclick="closeAll()">Close</button>
+   </div>
+   <div class="dialog-content"><textarea id="5hNEB_Textarea" class="textarea_dialog" placeholder="Type HTML here...">&lt;!DOCTYPE html&gt;
+&lt;html lang="en"&gt;
+&lt;head&gt;
+  &lt;meta charset="UTF-8" /&gt;
+  &lt;title&gt;Simple Grid Container&lt;/title&gt;
+  &lt;style&gt;
+    .grid-container {
+      display: grid;
+      grid-template-columns: 150px 150px;
+      grid-template-rows: 100px 100px;
+      gap: 10px; /* space between grid cells */
+      border: 2px solid #333;
+      padding: 10px;
+      width: max-content;
+      margin: 40px auto;
+      font-family: Arial, sans-serif;
+    }
+
+    .item {
+      background-color: #89CFF0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      border-radius: 5px;
+      user-select: none;
+      font-size: 1.1rem;
+    }
+  &lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+
+  &lt;div class="grid-container"&gt;
+    &lt;div class="item"&gt;Item 1&lt;/div&gt;
+    &lt;div class="item"&gt;Item 2&lt;/div&gt;
+    &lt;div class="item"&gt;Item 3&lt;/div&gt;
+    &lt;div class="item"&gt;Item 4&lt;/div&gt;
+  &lt;/div&gt;
+
+&lt;/body&gt;
+&lt;/html&gt;</textarea> <iframe id="7PfDh_IFrame" class="iframe_dialog"></iframe>
+   </div>
+  </div>
+ </div>
+ <div class="snippet-header" onclick="toggleSnippetAndRefresh('6DLJY','5hNEB')">
+  Click to Try it <!--<span onclick="toggleSnippetAndRefresh('6DLJY','5hNEB')">Click
+			to Try it</span> --> <!-- <span onclick="openDialog('7PfDh_Dialog')">Dialog</span> -->
+ </div>
+ <div class="snippet-body"><textarea id="5hNEB">&lt;!DOCTYPE html&gt;
+&lt;html lang="en"&gt;
+&lt;head&gt;
+  &lt;meta charset="UTF-8" /&gt;
+  &lt;title&gt;Simple Grid Container&lt;/title&gt;
+  &lt;style&gt;
+    .grid-container {
+      display: grid;
+      grid-template-columns: 150px 150px;
+      grid-template-rows: 100px 100px;
+      gap: 10px; /* space between grid cells */
+      border: 2px solid #333;
+      padding: 10px;
+      width: max-content;
+      margin: 40px auto;
+      font-family: Arial, sans-serif;
+    }
+
+    .item {
+      background-color: #89CFF0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      border-radius: 5px;
+      user-select: none;
+      font-size: 1.1rem;
+    }
+  &lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+
+  &lt;div class="grid-container"&gt;
+    &lt;div class="item"&gt;Item 1&lt;/div&gt;
+    &lt;div class="item"&gt;Item 2&lt;/div&gt;
+    &lt;div class="item"&gt;Item 3&lt;/div&gt;
+    &lt;div class="item"&gt;Item 4&lt;/div&gt;
+  &lt;/div&gt;
+
+&lt;/body&gt;
+&lt;/html&gt;</textarea> <br> <button onclick="renderIframe(this,'5hNEB','7PfDh')">Run</button>
+  <div id="7PfDh_FloatingLog" class="floatingLog" aria-live="polite" role="alert"></div> <iframe id="7PfDh" class="result_iframe" style="display: none;"></iframe>
+  <script>
+			{
+				let editor = CodeMirror.fromTextArea(document
+						.getElementById("5hNEB"), {
+					mode : "htmlmixed",
+					lineNumbers : false,
+					tabSize : 2
+				});
+			    const mode = localStorage.getItem("mode") || "light";  
+			    const newTheme = mode === "dark" ? "material" : "default";
+			    editor.setOption("theme", newTheme);
+			    
+				codeMirrorMap.set("5hNEB", editor);
+
+				let editor1 = CodeMirror.fromTextArea(document.getElementById("5hNEB_Textarea"), {
+					mode : "htmlmixed",
+					lineNumbers : false,
+					tabSize : 2
+				});
+			    editor1.setOption("theme", newTheme);				
+				
+				codeMirrorMap.set("5hNEB_Textarea", editor1);
+			}
+		    function openDialog(id) {
+		        closeAll();
+		        document.getElementById(id).style.display = 'flex';
+		        setTimeout(() => {
+		        	 codeMirrorMap.get("5hNEB_Textarea").refresh();
+		        }, 100); // 100ms 
+		      }
+
+		      function closeAll() {
+		        document.querySelectorAll('.dialog-backdrop').forEach(el => {
+		          el.style.display = 'none';
+		        });
+		      }			
+		</script>
+ </div>
+</div><h3 id="result-explanation">Result Explanation</h3><ul>
+ <li><p>The <code>.grid-container</code> defines a 2-column by 2-row grid.</p></li>
+ <li><p>The 4 <code>.item</code> divs are placed sequentially in each grid cell:</p>
+  <ul>
+   <li>Item 1 in first row, first column</li>
+   <li>Item 2 in first row, second column</li>
+   <li>Item 3 in second row, first column</li>
+   <li>Item 4 in second row, second column</li>
+  </ul></li>
+ <li><p>The <code>gap</code> property adds spacing between the grid cells.</p></li>
+</ul><h3 id="summary">Summary</h3><p>By setting <code>display: grid</code> on a container, you enable the powerful grid layout system. The container’s direct children become grid items that are automatically positioned within the defined rows and columns. Using <code>grid-template-columns</code> and <code>grid-template-rows</code>, you control the size and structure of your grid layout.</p><div class = "chapter-navi-section">
+<a href="#top" class="nav-button prev">↑</a>
+<a href='html-css-for-beginners.htm#building-layouts-with-css-grid' class="nav-button toc-link">Index</a>
+<a href="#bottom" class="nav-button next">↓</a>
+</div>
+<h2 id='defining-rows-columns-and-gaps'>11.2 Defining Rows, Columns, and Gaps</h2><p>Once you create a grid container with <code>display: grid</code>, the next step is to define its structure by specifying the number and sizes of <strong>rows</strong> and <strong>columns</strong>. CSS Grid offers flexible units to control layout precisely.</p><h3 id="defining-columns-and-rows">Defining Columns and Rows</h3><p>You use two main properties:</p><ul>
+ <li><p><strong><code>grid-template-columns</code></strong> Specifies the number and width of columns.</p></li>
+ <li><p><strong><code>grid-template-rows</code></strong> Specifies the number and height of rows.</p></li>
+</ul><h3 id="common-units-used">Common Units Used</h3><ul>
+ <li><p><strong>Pixels (<code>px</code>)</strong>: Fixed size. Example: <code>100px</code> — exactly 100 pixels wide or tall.</p></li>
+ <li><p><strong>Percentages (<code>%</code>)</strong>: Relative to the grid container’s size. Example: <code>50%</code> — half the container’s width or height.</p></li>
+ <li><p><strong>Fractional units (<code>fr</code>)</strong>: A flexible unit representing a fraction of the available space. Example: <code>1fr 2fr</code> — the second column gets twice as much space as the first.</p></li>
+</ul><h3 id="example-fixed-and-flexible-columns">Example: Fixed and Flexible Columns</h3><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-css">.grid-container {
+  display: grid;
+  grid-template-columns: 150px 1fr 2fr;
+  grid-template-rows: 100px 200px;
+  gap: 15px;
+}</code></pre>
+</div><ul>
+ <li><p><strong>Columns</strong>:</p>
+  <ul>
+   <li>First column: fixed 150 pixels wide</li>
+   <li>Second column: takes 1 part of remaining space</li>
+   <li>Third column: takes 2 parts of remaining space (twice the width of the second)</li>
+  </ul></li>
+ <li><p><strong>Rows</strong>:</p>
+  <ul>
+   <li>First row: 100 pixels tall</li>
+   <li>Second row: 200 pixels tall</li>
+  </ul></li>
+ <li><p><strong>Gap</strong>: Adds 15 pixels spacing between rows and columns.</p></li>
+</ul><h3 id="the-gap-property">The <code>gap</code> Property</h3><p>To create spacing between grid items, use the <code>gap</code> property (previously called <code>grid-gap</code>):</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-css">gap: 10px; /* sets both row and column gaps */</code></pre>
+</div><p>You can also set row and column gaps separately:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-css">gap: 10px 20px; /* 10px row gap, 20px column gap */</code></pre>
+</div><p>This spacing helps keep layouts clean and readable.</p><h3 id="practical-example-two-column-grid-with-spacing">Practical Example: Two-Column Grid with Spacing</h3><p>CSS</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-css">.container {
+  display: grid;
+  grid-template-columns: 1fr 3fr; /* sidebar and main content */
+  grid-template-rows: auto; /* height adjusts automatically */
+  gap: 20px 30px; /* 20px row gap, 30px column gap */
+  padding: 10px;
+}</code></pre>
+</div><div class="snippet-container" id="2d86I">
+ <div id="i8gci_Dialog" class="dialog-backdrop">
+  <div class="dialog">
+   <h2>Dialog 1</h2>
+   <div class="controls"><button onclick="renderIframe(this,'IDwD8_Textarea','i8gci_IFrame')">Run</button> <button onclick="closeAll()">Close</button>
+   </div>
+   <div class="dialog-content"><textarea id="IDwD8_Textarea" class="textarea_dialog" placeholder="Type HTML here...">&lt;!DOCTYPE html&gt;
+&lt;html lang="en"&gt;
+&lt;head&gt;
+  &lt;meta charset="UTF-8" /&gt;
+  &lt;title&gt;Two-Column Grid Example&lt;/title&gt;
+  &lt;style&gt;
+    .container {
+      display: grid;
+      grid-template-columns: 1fr 3fr; /* sidebar and main content */
+      grid-template-rows: auto; /* height adjusts automatically */
+      gap: 20px 30px; /* 20px row gap, 30px column gap */
+      padding: 10px;
+      max-width: 800px;
+      margin: 40px auto;
+      font-family: Arial, sans-serif;
+      background: #f7f7f7;
+    }
+
+    .sidebar {
+      background-color: #ccc;
+      padding: 20px;
+      border-radius: 5px;
+    }
+
+    .main-content {
+      background-color: #ddd;
+      padding: 20px;
+      border-radius: 5px;
+    }
+  &lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+
+  &lt;div class="container"&gt;
+    &lt;div class="sidebar"&gt;Sidebar content&lt;/div&gt;
+    &lt;div class="main-content"&gt;
+      &lt;h2&gt;Main Content&lt;/h2&gt;
+      &lt;p&gt;This area takes 3 times the width of the sidebar.&lt;/p&gt;
+      &lt;p&gt;Spacing is controlled by grid gaps.&lt;/p&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+
+&lt;/body&gt;
+&lt;/html&gt;</textarea> <iframe id="i8gci_IFrame" class="iframe_dialog"></iframe>
+   </div>
+  </div>
+ </div>
+ <div class="snippet-header" onclick="toggleSnippetAndRefresh('2d86I','IDwD8')">
+  Click to Try it <!--<span onclick="toggleSnippetAndRefresh('2d86I','IDwD8')">Click
+			to Try it</span> --> <!-- <span onclick="openDialog('i8gci_Dialog')">Dialog</span> -->
+ </div>
+ <div class="snippet-body"><textarea id="IDwD8">&lt;!DOCTYPE html&gt;
+&lt;html lang="en"&gt;
+&lt;head&gt;
+  &lt;meta charset="UTF-8" /&gt;
+  &lt;title&gt;Two-Column Grid Example&lt;/title&gt;
+  &lt;style&gt;
+    .container {
+      display: grid;
+      grid-template-columns: 1fr 3fr; /* sidebar and main content */
+      grid-template-rows: auto; /* height adjusts automatically */
+      gap: 20px 30px; /* 20px row gap, 30px column gap */
+      padding: 10px;
+      max-width: 800px;
+      margin: 40px auto;
+      font-family: Arial, sans-serif;
+      background: #f7f7f7;
+    }
+
+    .sidebar {
+      background-color: #ccc;
+      padding: 20px;
+      border-radius: 5px;
+    }
+
+    .main-content {
+      background-color: #ddd;
+      padding: 20px;
+      border-radius: 5px;
+    }
+  &lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+
+  &lt;div class="container"&gt;
+    &lt;div class="sidebar"&gt;Sidebar content&lt;/div&gt;
+    &lt;div class="main-content"&gt;
+      &lt;h2&gt;Main Content&lt;/h2&gt;
+      &lt;p&gt;This area takes 3 times the width of the sidebar.&lt;/p&gt;
+      &lt;p&gt;Spacing is controlled by grid gaps.&lt;/p&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+
+&lt;/body&gt;
+&lt;/html&gt;</textarea> <br> <button onclick="renderIframe(this,'IDwD8','i8gci')">Run</button>
+  <div id="i8gci_FloatingLog" class="floatingLog" aria-live="polite" role="alert"></div> <iframe id="i8gci" class="result_iframe" style="display: none;"></iframe>
+  <script>
+			{
+				let editor = CodeMirror.fromTextArea(document
+						.getElementById("IDwD8"), {
+					mode : "htmlmixed",
+					lineNumbers : false,
+					tabSize : 2
+				});
+			    const mode = localStorage.getItem("mode") || "light";  
+			    const newTheme = mode === "dark" ? "material" : "default";
+			    editor.setOption("theme", newTheme);
+			    
+				codeMirrorMap.set("IDwD8", editor);
+
+				let editor1 = CodeMirror.fromTextArea(document.getElementById("IDwD8_Textarea"), {
+					mode : "htmlmixed",
+					lineNumbers : false,
+					tabSize : 2
+				});
+			    editor1.setOption("theme", newTheme);				
+				
+				codeMirrorMap.set("IDwD8_Textarea", editor1);
+			}
+		    function openDialog(id) {
+		        closeAll();
+		        document.getElementById(id).style.display = 'flex';
+		        setTimeout(() => {
+		        	 codeMirrorMap.get("IDwD8_Textarea").refresh();
+		        }, 100); // 100ms 
+		      }
+
+		      function closeAll() {
+		        document.querySelectorAll('.dialog-backdrop').forEach(el => {
+		          el.style.display = 'none';
+		        });
+		      }			
+		</script>
+ </div>
+</div><h3 id="explanation">Explanation</h3><ul>
+ <li>Sidebar (1fr) takes less space than main content (3fr).</li>
+ <li>Row heights adjust based on content.</li>
+ <li>Generous spacing separates the grid items vertically and horizontally.</li>
+</ul><h3 id="summary">Summary</h3><ul>
+ <li>Use <code>grid-template-columns</code> and <code>grid-template-rows</code> to set up your grid’s structure.</li>
+ <li>Combine fixed units (<code>px</code>), percentages (<code>%</code>), and flexible fractions (<code>fr</code>) for responsive layouts.</li>
+ <li>Use the <code>gap</code> property to add space between grid cells and improve visual clarity.</li>
+</ul><div class = "chapter-navi-section">
+<a href="#top" class="nav-button prev">↑</a>
+<a href='html-css-for-beginners.htm#building-layouts-with-css-grid' class="nav-button toc-link">Index</a>
+<a href="#bottom" class="nav-button next">↓</a>
+</div>
+<h2 id='placing-and-spanning-grid-items'>11.3 Placing and Spanning Grid Items</h2><p>One of the powerful features of CSS Grid is the ability to <strong>explicitly position</strong> grid items anywhere within the grid, and to make items <strong>span</strong> multiple rows or columns.</p><h3 id="explicit-placement-properties">Explicit Placement Properties</h3><p>You can control where a grid item starts and ends on both the <strong>columns</strong> and <strong>rows</strong> axes using these properties:</p><ul>
+ <li><code>grid-column-start</code></li>
+ <li><code>grid-column-end</code></li>
+ <li><code>grid-row-start</code></li>
+ <li><code>grid-row-end</code></li>
+</ul><p>Each property accepts a <strong>grid line number</strong>, starting from 1, or special keywords like <code>span</code> to indicate how many tracks to cover.</p><h3 id="placing-items-by-grid-lines">Placing Items by Grid Lines</h3><p>Consider a grid with 4 columns and 3 rows:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-css">.grid-container {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  grid-template-rows: repeat(3, 100px);
+  gap: 10px;
+}</code></pre>
+</div><h3 id="example-position-a-grid-item-in-column-2-row-1">Example: Position a grid item in column 2, row 1</h3><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-css">.item1 {
+  grid-column-start: 2;
+  grid-column-end: 3; /* occupies only one column */
+  grid-row-start: 1;
+  grid-row-end: 2;    /* occupies only one row */
+}</code></pre>
+</div><div class="snippet-container" id="UAStF">
+ <div id="f9hje_Dialog" class="dialog-backdrop">
+  <div class="dialog">
+   <h2>Dialog 1</h2>
+   <div class="controls"><button onclick="renderIframe(this,'plWPv_Textarea','f9hje_IFrame')">Run</button> <button onclick="closeAll()">Close</button>
+   </div>
+   <div class="dialog-content"><textarea id="plWPv_Textarea" class="textarea_dialog" placeholder="Type HTML here...">&lt;!DOCTYPE html&gt;
+&lt;html lang="en"&gt;
+&lt;head&gt;
+  &lt;meta charset="UTF-8" /&gt;
+  &lt;title&gt;Grid Item Positioning Example&lt;/title&gt;
+  &lt;style&gt;
+    .grid-container {
+      display: grid;
+      grid-template-columns: 100px 100px 100px;
+      grid-template-rows: 80px 80px;
+      gap: 10px;
+      padding: 10px;
+      width: max-content;
+      margin: 40px auto;
+      font-family: Arial, sans-serif;
+    }
+
+    .item1 {
+      background-color: #f39c12;
+      grid-column-start: 2;
+      grid-column-end: 3; /* occupies only one column */
+      grid-row-start: 1;
+      grid-row-end: 2;    /* occupies only one row */
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: bold;
+      border-radius: 5px;
+    }
+
+    .item2 {
+      background-color: #3498db;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: bold;
+      border-radius: 5px;
+    }
+
+    .item3 {
+      background-color: #2ecc71;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: bold;
+      border-radius: 5px;
+    }
+  &lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+
+  &lt;div class="grid-container"&gt;
+    &lt;div class="item2"&gt;Item 2&lt;/div&gt;
+    &lt;div class="item1"&gt;Item 1 (col 2, row 1)&lt;/div&gt;
+    &lt;div class="item3"&gt;Item 3&lt;/div&gt;
+  &lt;/div&gt;
+
+&lt;/body&gt;
+&lt;/html&gt;</textarea> <iframe id="f9hje_IFrame" class="iframe_dialog"></iframe>
+   </div>
+  </div>
+ </div>
+ <div class="snippet-header" onclick="toggleSnippetAndRefresh('UAStF','plWPv')">
+  Click to Try it <!--<span onclick="toggleSnippetAndRefresh('UAStF','plWPv')">Click
+			to Try it</span> --> <!-- <span onclick="openDialog('f9hje_Dialog')">Dialog</span> -->
+ </div>
+ <div class="snippet-body"><textarea id="plWPv">&lt;!DOCTYPE html&gt;
+&lt;html lang="en"&gt;
+&lt;head&gt;
+  &lt;meta charset="UTF-8" /&gt;
+  &lt;title&gt;Grid Item Positioning Example&lt;/title&gt;
+  &lt;style&gt;
+    .grid-container {
+      display: grid;
+      grid-template-columns: 100px 100px 100px;
+      grid-template-rows: 80px 80px;
+      gap: 10px;
+      padding: 10px;
+      width: max-content;
+      margin: 40px auto;
+      font-family: Arial, sans-serif;
+    }
+
+    .item1 {
+      background-color: #f39c12;
+      grid-column-start: 2;
+      grid-column-end: 3; /* occupies only one column */
+      grid-row-start: 1;
+      grid-row-end: 2;    /* occupies only one row */
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: bold;
+      border-radius: 5px;
+    }
+
+    .item2 {
+      background-color: #3498db;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: bold;
+      border-radius: 5px;
+    }
+
+    .item3 {
+      background-color: #2ecc71;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: bold;
+      border-radius: 5px;
+    }
+  &lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+
+  &lt;div class="grid-container"&gt;
+    &lt;div class="item2"&gt;Item 2&lt;/div&gt;
+    &lt;div class="item1"&gt;Item 1 (col 2, row 1)&lt;/div&gt;
+    &lt;div class="item3"&gt;Item 3&lt;/div&gt;
+  &lt;/div&gt;
+
+&lt;/body&gt;
+&lt;/html&gt;</textarea> <br> <button onclick="renderIframe(this,'plWPv','f9hje')">Run</button>
+  <div id="f9hje_FloatingLog" class="floatingLog" aria-live="polite" role="alert"></div> <iframe id="f9hje" class="result_iframe" style="display: none;"></iframe>
+  <script>
+			{
+				let editor = CodeMirror.fromTextArea(document
+						.getElementById("plWPv"), {
+					mode : "htmlmixed",
+					lineNumbers : false,
+					tabSize : 2
+				});
+			    const mode = localStorage.getItem("mode") || "light";  
+			    const newTheme = mode === "dark" ? "material" : "default";
+			    editor.setOption("theme", newTheme);
+			    
+				codeMirrorMap.set("plWPv", editor);
+
+				let editor1 = CodeMirror.fromTextArea(document.getElementById("plWPv_Textarea"), {
+					mode : "htmlmixed",
+					lineNumbers : false,
+					tabSize : 2
+				});
+			    editor1.setOption("theme", newTheme);				
+				
+				codeMirrorMap.set("plWPv_Textarea", editor1);
+			}
+		    function openDialog(id) {
+		        closeAll();
+		        document.getElementById(id).style.display = 'flex';
+		        setTimeout(() => {
+		        	 codeMirrorMap.get("plWPv_Textarea").refresh();
+		        }, 100); // 100ms 
+		      }
+
+		      function closeAll() {
+		        document.querySelectorAll('.dialog-backdrop').forEach(el => {
+		          el.style.display = 'none';
+		        });
+		      }			
+		</script>
+ </div>
+</div><h3 id="spanning-multiple-columns-or-rows">Spanning Multiple Columns or Rows</h3><p>You can make an item span multiple columns or rows using the <code>span</code> keyword.</p><h3 id="example-make-an-item-span-2-columns-and-3-rows">Example: Make an item span 2 columns and 3 rows</h3><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-css">.item2 {
+  grid-column: 1 / span 2;  /* starts at column 1 and spans 2 columns */
+  grid-row: 1 / span 3;     /* starts at row 1 and spans 3 rows */
+}</code></pre>
+</div><p>This is shorthand combining start and end:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-css">/* Equivalent longhand: */
+.item2 {
+  grid-column-start: 1;
+  grid-column-end: 3; /* 1 + 2 columns span = 3 */
+  grid-row-start: 1;
+  grid-row-end: 4;    /* 1 + 3 rows span = 4 */
+}</code></pre>
+</div><h3 id="common-layout-patterns">Common Layout Patterns</h3><h4 id="featured-content-spanning-full-width">Featured Content Spanning Full Width</h4><p>Imagine a page with a featured banner at the top spanning all columns:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-css">.featured {
+  grid-column: 1 / -1; /* spans from first to last column */
+  grid-row: 1;         /* first row */
+}</code></pre>
+</div><p>Here, <code>-1</code> refers to the last grid line.</p><h4 id="sidebar-spanning-multiple-rows">Sidebar Spanning Multiple Rows</h4><p>A sidebar on the left spanning the entire height of the content area:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-css">.sidebar {
+  grid-column: 1 / 2;  /* first column */
+  grid-row: 2 / 5;     /* spans rows 2 through 4 */
+}</code></pre>
+</div><h4 id="practical-example-grid-layout-with-featured-content-and-sidebar">Practical Example: Grid Layout with Featured Content and Sidebar</h4><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-css">.container {
+  display: grid;
+  grid-template-columns: 200px 1fr 1fr;
+  grid-template-rows: 150px 300px 300px;
+  gap: 20px;
+}
+
+.featured {
+  grid-column: 1 / -1; /* full width */
+  grid-row: 1;
+  background: lightblue;
+}
+
+.sidebar {
+  grid-column: 1 / 2;
+  grid-row: 2 / 4;
+  background: lightgray;
+}
+
+.content1 {
+  grid-column: 2 / 3;
+  grid-row: 2;
+  background: lightgreen;
+}
+
+.content2 {
+  grid-column: 3 / 4;
+  grid-row: 3;
+  background: lightcoral;
+}</code></pre>
+</div><p>This layout shows:</p><ul>
+ <li>A featured banner spanning all three columns on the first row.</li>
+ <li>A sidebar occupying the first column and spanning rows 2 and 3.</li>
+ <li>Two content blocks placed in the remaining grid cells.</li>
+</ul><div class="snippet-container" id="UbpA2">
+ <div id="rIU13_Dialog" class="dialog-backdrop">
+  <div class="dialog">
+   <h2>Dialog 1</h2>
+   <div class="controls"><button onclick="renderIframe(this,'6Bwf8_Textarea','rIU13_IFrame')">Run</button> <button onclick="closeAll()">Close</button>
+   </div>
+   <div class="dialog-content"><textarea id="6Bwf8_Textarea" class="textarea_dialog" placeholder="Type HTML here...">&lt;!DOCTYPE html&gt;
+&lt;html lang="en"&gt;
+&lt;head&gt;
+  &lt;meta charset="UTF-8" /&gt;
+  &lt;title&gt;Grid Layout: Featured + Sidebar + Content&lt;/title&gt;
+  &lt;style&gt;
+    .container {
+      display: grid;
+      grid-template-columns: 200px 1fr 1fr;
+      grid-template-rows: 150px 300px 300px;
+      gap: 20px;
+      max-width: 900px;
+      margin: 40px auto;
+      font-family: Arial, sans-serif;
+    }
+
+    .featured {
+      grid-column: 1 / -1; /* full width */
+      grid-row: 1;
+      background: lightblue;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      font-weight: bold;
+      border-radius: 8px;
+      padding: 10px;
+    }
+
+    .sidebar {
+      grid-column: 1 / 2;
+      grid-row: 2 / 4;
+      background: lightgray;
+      padding: 20px;
+      border-radius: 8px;
+      font-weight: 600;
+    }
+
+    .content1 {
+      grid-column: 2 / 3;
+      grid-row: 2;
+      background: lightgreen;
+      padding: 20px;
+      border-radius: 8px;
+    }
+
+    .content2 {
+      grid-column: 3 / 4;
+      grid-row: 3;
+      background: lightcoral;
+      padding: 20px;
+      border-radius: 8px;
+    }
+  &lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+
+  &lt;div class="container"&gt;
+    &lt;div class="featured"&gt;Featured Content (Full Width)&lt;/div&gt;
+    &lt;div class="sidebar"&gt;Sidebar (Spanning Rows 2-3)&lt;/div&gt;
+    &lt;div class="content1"&gt;Content Area 1 (Row 2, Column 2)&lt;/div&gt;
+    &lt;div class="content2"&gt;Content Area 2 (Row 3, Column 3)&lt;/div&gt;
+  &lt;/div&gt;
+
+&lt;/body&gt;
+&lt;/html&gt;</textarea> <iframe id="rIU13_IFrame" class="iframe_dialog"></iframe>
+   </div>
+  </div>
+ </div>
+ <div class="snippet-header" onclick="toggleSnippetAndRefresh('UbpA2','6Bwf8')">
+  Click to Try it <!--<span onclick="toggleSnippetAndRefresh('UbpA2','6Bwf8')">Click
+			to Try it</span> --> <!-- <span onclick="openDialog('rIU13_Dialog')">Dialog</span> -->
+ </div>
+ <div class="snippet-body"><textarea id="6Bwf8">&lt;!DOCTYPE html&gt;
+&lt;html lang="en"&gt;
+&lt;head&gt;
+  &lt;meta charset="UTF-8" /&gt;
+  &lt;title&gt;Grid Layout: Featured + Sidebar + Content&lt;/title&gt;
+  &lt;style&gt;
+    .container {
+      display: grid;
+      grid-template-columns: 200px 1fr 1fr;
+      grid-template-rows: 150px 300px 300px;
+      gap: 20px;
+      max-width: 900px;
+      margin: 40px auto;
+      font-family: Arial, sans-serif;
+    }
+
+    .featured {
+      grid-column: 1 / -1; /* full width */
+      grid-row: 1;
+      background: lightblue;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      font-weight: bold;
+      border-radius: 8px;
+      padding: 10px;
+    }
+
+    .sidebar {
+      grid-column: 1 / 2;
+      grid-row: 2 / 4;
+      background: lightgray;
+      padding: 20px;
+      border-radius: 8px;
+      font-weight: 600;
+    }
+
+    .content1 {
+      grid-column: 2 / 3;
+      grid-row: 2;
+      background: lightgreen;
+      padding: 20px;
+      border-radius: 8px;
+    }
+
+    .content2 {
+      grid-column: 3 / 4;
+      grid-row: 3;
+      background: lightcoral;
+      padding: 20px;
+      border-radius: 8px;
+    }
+  &lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+
+  &lt;div class="container"&gt;
+    &lt;div class="featured"&gt;Featured Content (Full Width)&lt;/div&gt;
+    &lt;div class="sidebar"&gt;Sidebar (Spanning Rows 2-3)&lt;/div&gt;
+    &lt;div class="content1"&gt;Content Area 1 (Row 2, Column 2)&lt;/div&gt;
+    &lt;div class="content2"&gt;Content Area 2 (Row 3, Column 3)&lt;/div&gt;
+  &lt;/div&gt;
+
+&lt;/body&gt;
+&lt;/html&gt;</textarea> <br> <button onclick="renderIframe(this,'6Bwf8','rIU13')">Run</button>
+  <div id="rIU13_FloatingLog" class="floatingLog" aria-live="polite" role="alert"></div> <iframe id="rIU13" class="result_iframe" style="display: none;"></iframe>
+  <script>
+			{
+				let editor = CodeMirror.fromTextArea(document
+						.getElementById("6Bwf8"), {
+					mode : "htmlmixed",
+					lineNumbers : false,
+					tabSize : 2
+				});
+			    const mode = localStorage.getItem("mode") || "light";  
+			    const newTheme = mode === "dark" ? "material" : "default";
+			    editor.setOption("theme", newTheme);
+			    
+				codeMirrorMap.set("6Bwf8", editor);
+
+				let editor1 = CodeMirror.fromTextArea(document.getElementById("6Bwf8_Textarea"), {
+					mode : "htmlmixed",
+					lineNumbers : false,
+					tabSize : 2
+				});
+			    editor1.setOption("theme", newTheme);				
+				
+				codeMirrorMap.set("6Bwf8_Textarea", editor1);
+			}
+		    function openDialog(id) {
+		        closeAll();
+		        document.getElementById(id).style.display = 'flex';
+		        setTimeout(() => {
+		        	 codeMirrorMap.get("6Bwf8_Textarea").refresh();
+		        }, 100); // 100ms 
+		      }
+
+		      function closeAll() {
+		        document.querySelectorAll('.dialog-backdrop').forEach(el => {
+		          el.style.display = 'none';
+		        });
+		      }			
+		</script>
+ </div>
+</div><h3 id="summary">Summary</h3><ul>
+ <li>Use <code>grid-column-start</code>, <code>grid-column-end</code>, <code>grid-row-start</code>, and <code>grid-row-end</code> to precisely place items.</li>
+ <li>The <code>span</code> keyword helps items cover multiple rows or columns.</li>
+ <li><code>-1</code> is a handy shortcut to refer to the last grid line.</li>
+ <li>Explicit placement enables complex and flexible layouts, such as sidebars, headers, and featured sections.</li>
+</ul><div class = "chapter-navi-section">
+<a href="#top" class="nav-button prev">↑</a>
+<a href='html-css-for-beginners.htm#building-layouts-with-css-grid' class="nav-button toc-link">Index</a>
+<a href="#bottom" class="nav-button next">↓</a>
+</div>
+<h2 id='responsive-grid-layout-patterns'>11.4 Responsive Grid Layout Patterns</h2><p>Creating layouts that <strong>adapt smoothly</strong> to different screen sizes is a core part of modern web design. CSS Grid, combined with <strong>media queries</strong>, offers a powerful way to build <strong>responsive grid layouts</strong> that look great on desktop, tablet, and mobile devices.</p><h3 id="combining-grid-with-media-queries">Combining Grid with Media Queries</h3><p>Media queries allow you to <strong>apply different CSS rules based on the viewport size</strong>. This means you can change the number of columns, row sizes, or gaps to better fit smaller or larger screens.</p><h3 id="example-multi-column-desktop-to-single-column-mobile">Example: Multi-Column Desktop to Single-Column Mobile</h3><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-css">.container {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr); /* 3 equal columns */
+  gap: 20px;
+}
+
+/* On screens narrower than 600px, switch to single column */
+@media (max-width: 600px) {
+  .container {
+    grid-template-columns: 1fr;  /* single column */
+  }
+}</code></pre>
+</div><div class="snippet-container" id="Y9dxF">
+ <div id="6fPm4_Dialog" class="dialog-backdrop">
+  <div class="dialog">
+   <h2>Dialog 1</h2>
+   <div class="controls"><button onclick="renderIframe(this,'aR0zP_Textarea','6fPm4_IFrame')">Run</button> <button onclick="closeAll()">Close</button>
+   </div>
+   <div class="dialog-content"><textarea id="aR0zP_Textarea" class="textarea_dialog" placeholder="Type HTML here...">&lt;!DOCTYPE html&gt;
+&lt;html lang="en"&gt;
+&lt;head&gt;
+  &lt;meta charset="UTF-8" /&gt;
+  &lt;title&gt;Responsive Multi-Column Grid&lt;/title&gt;
+  &lt;style&gt;
+    .container {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr); /* 3 equal columns */
+      gap: 20px;
+      max-width: 900px;
+      margin: 40px auto;
+      font-family: Arial, sans-serif;
+    }
+
+    .item {
+      background-color: #90caf9;
+      padding: 20px;
+      border-radius: 8px;
+      text-align: center;
+      font-weight: bold;
+      user-select: none;
+    }
+
+    /* On screens narrower than 600px, switch to single column */
+    @media (max-width: 600px) {
+      .container {
+        grid-template-columns: 1fr;  /* single column */
+      }
+    }
+  &lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+
+  &lt;div class="container"&gt;
+    &lt;div class="item"&gt;Column 1&lt;/div&gt;
+    &lt;div class="item"&gt;Column 2&lt;/div&gt;
+    &lt;div class="item"&gt;Column 3&lt;/div&gt;
+  &lt;/div&gt;
+
+&lt;/body&gt;
+&lt;/html&gt;</textarea> <iframe id="6fPm4_IFrame" class="iframe_dialog"></iframe>
+   </div>
+  </div>
+ </div>
+ <div class="snippet-header" onclick="toggleSnippetAndRefresh('Y9dxF','aR0zP')">
+  Click to Try it <!--<span onclick="toggleSnippetAndRefresh('Y9dxF','aR0zP')">Click
+			to Try it</span> --> <!-- <span onclick="openDialog('6fPm4_Dialog')">Dialog</span> -->
+ </div>
+ <div class="snippet-body"><textarea id="aR0zP">&lt;!DOCTYPE html&gt;
+&lt;html lang="en"&gt;
+&lt;head&gt;
+  &lt;meta charset="UTF-8" /&gt;
+  &lt;title&gt;Responsive Multi-Column Grid&lt;/title&gt;
+  &lt;style&gt;
+    .container {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr); /* 3 equal columns */
+      gap: 20px;
+      max-width: 900px;
+      margin: 40px auto;
+      font-family: Arial, sans-serif;
+    }
+
+    .item {
+      background-color: #90caf9;
+      padding: 20px;
+      border-radius: 8px;
+      text-align: center;
+      font-weight: bold;
+      user-select: none;
+    }
+
+    /* On screens narrower than 600px, switch to single column */
+    @media (max-width: 600px) {
+      .container {
+        grid-template-columns: 1fr;  /* single column */
+      }
+    }
+  &lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+
+  &lt;div class="container"&gt;
+    &lt;div class="item"&gt;Column 1&lt;/div&gt;
+    &lt;div class="item"&gt;Column 2&lt;/div&gt;
+    &lt;div class="item"&gt;Column 3&lt;/div&gt;
+  &lt;/div&gt;
+
+&lt;/body&gt;
+&lt;/html&gt;</textarea> <br> <button onclick="renderIframe(this,'aR0zP','6fPm4')">Run</button>
+  <div id="6fPm4_FloatingLog" class="floatingLog" aria-live="polite" role="alert"></div> <iframe id="6fPm4" class="result_iframe" style="display: none;"></iframe>
+  <script>
+			{
+				let editor = CodeMirror.fromTextArea(document
+						.getElementById("aR0zP"), {
+					mode : "htmlmixed",
+					lineNumbers : false,
+					tabSize : 2
+				});
+			    const mode = localStorage.getItem("mode") || "light";  
+			    const newTheme = mode === "dark" ? "material" : "default";
+			    editor.setOption("theme", newTheme);
+			    
+				codeMirrorMap.set("aR0zP", editor);
+
+				let editor1 = CodeMirror.fromTextArea(document.getElementById("aR0zP_Textarea"), {
+					mode : "htmlmixed",
+					lineNumbers : false,
+					tabSize : 2
+				});
+			    editor1.setOption("theme", newTheme);				
+				
+				codeMirrorMap.set("aR0zP_Textarea", editor1);
+			}
+		    function openDialog(id) {
+		        closeAll();
+		        document.getElementById(id).style.display = 'flex';
+		        setTimeout(() => {
+		        	 codeMirrorMap.get("aR0zP_Textarea").refresh();
+		        }, 100); // 100ms 
+		      }
+
+		      function closeAll() {
+		        document.querySelectorAll('.dialog-backdrop').forEach(el => {
+		          el.style.display = 'none';
+		        });
+		      }			
+		</script>
+ </div>
+</div><p><strong>How it works:</strong></p><ul>
+ <li>On desktop, <code>.container</code> has 3 columns.</li>
+ <li>On mobile devices (less than 600px wide), it switches to 1 column, stacking items vertically.</li>
+</ul><h3 id="flexible-columns-with-auto-fill-and-minmax">Flexible Columns with <code>auto-fill</code> and <code>minmax()</code></h3><p>Instead of fixed numbers of columns, CSS Grid offers functions like <code>auto-fill</code> and <code>minmax()</code> for <strong>dynamic column creation and sizing</strong>.</p><h3 id="syntax">Syntax:</h3><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-css">.container {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 15px;
+}</code></pre>
+</div><ul>
+ <li><code>auto-fill</code> automatically creates as many columns as will fit.</li>
+ <li><code>minmax(200px, 1fr)</code> means each column will be at least 200px wide but can grow to fill available space equally (<code>1fr</code>).</li>
+</ul><div class="snippet-container" id="SCMs6">
+ <div id="FWIET_Dialog" class="dialog-backdrop">
+  <div class="dialog">
+   <h2>Dialog 1</h2>
+   <div class="controls"><button onclick="renderIframe(this,'Onwpq_Textarea','FWIET_IFrame')">Run</button> <button onclick="closeAll()">Close</button>
+   </div>
+   <div class="dialog-content"><textarea id="Onwpq_Textarea" class="textarea_dialog" placeholder="Type HTML here...">&lt;!DOCTYPE html&gt;
+&lt;html lang="en"&gt;
+&lt;head&gt;
+  &lt;meta charset="UTF-8" /&gt;
+  &lt;title&gt;Flexible Columns with auto-fill and minmax&lt;/title&gt;
+  &lt;style&gt;
+    .container {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 15px;
+      max-width: 900px;
+      margin: 40px auto;
+      font-family: Arial, sans-serif;
+    }
+
+    .item {
+      background-color: #81c784;
+      padding: 20px;
+      border-radius: 8px;
+      text-align: center;
+      font-weight: bold;
+      user-select: none;
+      color: white;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+    }
+  &lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+
+  &lt;div class="container"&gt;
+    &lt;div class="item"&gt;Flexible 1&lt;/div&gt;
+    &lt;div class="item"&gt;Flexible 2&lt;/div&gt;
+    &lt;div class="item"&gt;Flexible 3&lt;/div&gt;
+    &lt;div class="item"&gt;Flexible 4&lt;/div&gt;
+    &lt;div class="item"&gt;Flexible 5&lt;/div&gt;
+    &lt;div class="item"&gt;Flexible 6&lt;/div&gt;
+  &lt;/div&gt;
+
+&lt;/body&gt;
+&lt;/html&gt;</textarea> <iframe id="FWIET_IFrame" class="iframe_dialog"></iframe>
+   </div>
+  </div>
+ </div>
+ <div class="snippet-header" onclick="toggleSnippetAndRefresh('SCMs6','Onwpq')">
+  Click to Try it <!--<span onclick="toggleSnippetAndRefresh('SCMs6','Onwpq')">Click
+			to Try it</span> --> <!-- <span onclick="openDialog('FWIET_Dialog')">Dialog</span> -->
+ </div>
+ <div class="snippet-body"><textarea id="Onwpq">&lt;!DOCTYPE html&gt;
+&lt;html lang="en"&gt;
+&lt;head&gt;
+  &lt;meta charset="UTF-8" /&gt;
+  &lt;title&gt;Flexible Columns with auto-fill and minmax&lt;/title&gt;
+  &lt;style&gt;
+    .container {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 15px;
+      max-width: 900px;
+      margin: 40px auto;
+      font-family: Arial, sans-serif;
+    }
+
+    .item {
+      background-color: #81c784;
+      padding: 20px;
+      border-radius: 8px;
+      text-align: center;
+      font-weight: bold;
+      user-select: none;
+      color: white;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+    }
+  &lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+
+  &lt;div class="container"&gt;
+    &lt;div class="item"&gt;Flexible 1&lt;/div&gt;
+    &lt;div class="item"&gt;Flexible 2&lt;/div&gt;
+    &lt;div class="item"&gt;Flexible 3&lt;/div&gt;
+    &lt;div class="item"&gt;Flexible 4&lt;/div&gt;
+    &lt;div class="item"&gt;Flexible 5&lt;/div&gt;
+    &lt;div class="item"&gt;Flexible 6&lt;/div&gt;
+  &lt;/div&gt;
+
+&lt;/body&gt;
+&lt;/html&gt;</textarea> <br> <button onclick="renderIframe(this,'Onwpq','FWIET')">Run</button>
+  <div id="FWIET_FloatingLog" class="floatingLog" aria-live="polite" role="alert"></div> <iframe id="FWIET" class="result_iframe" style="display: none;"></iframe>
+  <script>
+			{
+				let editor = CodeMirror.fromTextArea(document
+						.getElementById("Onwpq"), {
+					mode : "htmlmixed",
+					lineNumbers : false,
+					tabSize : 2
+				});
+			    const mode = localStorage.getItem("mode") || "light";  
+			    const newTheme = mode === "dark" ? "material" : "default";
+			    editor.setOption("theme", newTheme);
+			    
+				codeMirrorMap.set("Onwpq", editor);
+
+				let editor1 = CodeMirror.fromTextArea(document.getElementById("Onwpq_Textarea"), {
+					mode : "htmlmixed",
+					lineNumbers : false,
+					tabSize : 2
+				});
+			    editor1.setOption("theme", newTheme);				
+				
+				codeMirrorMap.set("Onwpq_Textarea", editor1);
+			}
+		    function openDialog(id) {
+		        closeAll();
+		        document.getElementById(id).style.display = 'flex';
+		        setTimeout(() => {
+		        	 codeMirrorMap.get("Onwpq_Textarea").refresh();
+		        }, 100); // 100ms 
+		      }
+
+		      function closeAll() {
+		        document.querySelectorAll('.dialog-backdrop').forEach(el => {
+		          el.style.display = 'none';
+		        });
+		      }			
+		</script>
+ </div>
+</div><h3 id="what-this-does">What this does:</h3><ul>
+ <li>On wide screens, many columns fit side-by-side.</li>
+ <li>On smaller screens, columns reduce in number as space shrinks, automatically wrapping content.</li>
+ <li>This creates a <strong>fluid, responsive grid without media queries</strong>.</li>
+</ul><h3 id="combining-both-techniques-for-best-responsiveness">Combining Both Techniques for Best Responsiveness</h3><p>You can use <code>auto-fill</code> with media queries for finer control:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-css">.container {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 10px;
+}
+
+@media (max-width: 400px) {
+  .container {
+    grid-template-columns: 1fr; /* single column on very small devices */
+  }
+}</code></pre>
+</div><h3 id="practical-use-cases">Practical Use Cases</h3><ul>
+ <li><strong>Image galleries</strong> that adjust the number of thumbnails based on screen width.</li>
+ <li><strong>Card layouts</strong> where the number of cards per row changes fluidly.</li>
+ <li><strong>Dashboards</strong> that rearrange panels from grid to stacked views on mobile.</li>
+</ul><h3 id="summary">Summary</h3><ul>
+ <li>Use <strong>media queries</strong> to switch grid layouts between different devices.</li>
+ <li>Use <code>repeat(auto-fill, minmax())</code> to create <strong>dynamic, flexible grids</strong> that adjust column count automatically.</li>
+ <li>Combining these techniques ensures your grid <strong>adapts perfectly from wide desktop screens down to narrow mobile phones</strong>, improving user experience everywhere.</li>
+</ul><div class = "chapter-navi-section">
+<a href="#top" class="nav-button prev">↑</a>
+<a href='html-css-for-beginners.htm#building-layouts-with-css-grid' class="nav-button toc-link">Index</a>
+<a href="#bottom" class="nav-button next">↓</a>
+</div>
+<h2 id='real-world-layout-examples-dashboard-gallery'>11.5 Real-World Layout Examples (Dashboard, Gallery)</h2><p>CSS Grid is a powerful layout system that makes building complex, practical layouts much easier compared to older methods like floats or positioning. In this section, we will walk through two common examples:</p><ul>
+ <li>A <strong>dashboard layout</strong> with header, sidebar, and main content</li>
+ <li>A responsive <strong>image gallery grid</strong></li>
+</ul><h3 id="example-1-dashboard-layout">Example 1: Dashboard Layout</h3><p>A typical dashboard often contains a top header, a sidebar navigation on the left, and a main content area. CSS Grid lets us define these areas clearly and position elements with just a few lines of code.</p><h3 id="step-1-html-structure">Step 1: HTML Structure</h3><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-html">&lt;div class="dashboard"&gt;
+  &lt;header&gt;Dashboard Header&lt;/header&gt;
+  &lt;nav class="sidebar"&gt;Sidebar Navigation&lt;/nav&gt;
+  &lt;main&gt;Main Content Area&lt;/main&gt;
+&lt;/div&gt;</code></pre>
+</div><h3 id="step-2-css-grid-layout">Step 2: CSS Grid Layout</h3><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-css">.dashboard {
+  display: grid;
+  grid-template-columns: 200px 1fr; /* Sidebar fixed width, main content flexible */
+  grid-template-rows: 60px 1fr;     /* Header height, rest fills */
+  grid-template-areas:
+    "header header"
+    "sidebar main";
+  height: 100vh; /* Full viewport height */
+  gap: 10px;
+}
+
+header {
+  grid-area: header;
+  background: #4a90e2;
+  color: white;
+  padding: 15px;
+  font-size: 1.5rem;
+}
+
+.sidebar {
+  grid-area: sidebar;
+  background: #f4f4f4;
+  padding: 15px;
+}
+
+main {
+  grid-area: main;
+  background: #fff;
+  padding: 15px;
+}</code></pre>
+</div><div class="snippet-container" id="sNmYf">
+ <div id="MlCK7_Dialog" class="dialog-backdrop">
+  <div class="dialog">
+   <h2>Dialog 1</h2>
+   <div class="controls"><button onclick="renderIframe(this,'xq75g_Textarea','MlCK7_IFrame')">Run</button> <button onclick="closeAll()">Close</button>
+   </div>
+   <div class="dialog-content"><textarea id="xq75g_Textarea" class="textarea_dialog" placeholder="Type HTML here...">&lt;!DOCTYPE html&gt;
+&lt;html lang="en"&gt;
+&lt;head&gt;
+  &lt;meta charset="UTF-8" /&gt;
+  &lt;title&gt;Dashboard Grid Layout&lt;/title&gt;
+  &lt;style&gt;
+    html, body {
+      margin: 0;
+      height: 100%;
+      font-family: Arial, sans-serif;
+    }
+    .dashboard {
+      display: grid;
+      grid-template-columns: 200px 1fr; /* Sidebar fixed width, main content flexible */
+      grid-template-rows: 60px 1fr;     /* Header height, rest fills */
+      grid-template-areas:
+        "header header"
+        "sidebar main";
+      height: 100vh; /* Full viewport height */
+      gap: 10px;
+      background: #e5e5e5;
+    }
+
+    header {
+      grid-area: header;
+      background: #4a90e2;
+      color: white;
+      padding: 15px;
+      font-size: 1.5rem;
+      display: flex;
+      align-items: center;
+    }
+
+    .sidebar {
+      grid-area: sidebar;
+      background: #f4f4f4;
+      padding: 15px;
+      box-shadow: inset 1px 0 0 #ccc;
+    }
+
+    main {
+      grid-area: main;
+      background: #fff;
+      padding: 15px;
+      box-shadow: 0 0 5px rgba(0,0,0,0.1);
+      overflow-y: auto;
+    }
+  &lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+
+  &lt;div class="dashboard"&gt;
+    &lt;header&gt;Dashboard Header&lt;/header&gt;
+    &lt;nav class="sidebar"&gt;Sidebar Navigation&lt;/nav&gt;
+    &lt;main&gt;Main Content Area&lt;/main&gt;
+  &lt;/div&gt;
+
+&lt;/body&gt;
+&lt;/html&gt;</textarea> <iframe id="MlCK7_IFrame" class="iframe_dialog"></iframe>
+   </div>
+  </div>
+ </div>
+ <div class="snippet-header" onclick="toggleSnippetAndRefresh('sNmYf','xq75g')">
+  Click to Try it <!--<span onclick="toggleSnippetAndRefresh('sNmYf','xq75g')">Click
+			to Try it</span> --> <!-- <span onclick="openDialog('MlCK7_Dialog')">Dialog</span> -->
+ </div>
+ <div class="snippet-body"><textarea id="xq75g">&lt;!DOCTYPE html&gt;
+&lt;html lang="en"&gt;
+&lt;head&gt;
+  &lt;meta charset="UTF-8" /&gt;
+  &lt;title&gt;Dashboard Grid Layout&lt;/title&gt;
+  &lt;style&gt;
+    html, body {
+      margin: 0;
+      height: 100%;
+      font-family: Arial, sans-serif;
+    }
+    .dashboard {
+      display: grid;
+      grid-template-columns: 200px 1fr; /* Sidebar fixed width, main content flexible */
+      grid-template-rows: 60px 1fr;     /* Header height, rest fills */
+      grid-template-areas:
+        "header header"
+        "sidebar main";
+      height: 100vh; /* Full viewport height */
+      gap: 10px;
+      background: #e5e5e5;
+    }
+
+    header {
+      grid-area: header;
+      background: #4a90e2;
+      color: white;
+      padding: 15px;
+      font-size: 1.5rem;
+      display: flex;
+      align-items: center;
+    }
+
+    .sidebar {
+      grid-area: sidebar;
+      background: #f4f4f4;
+      padding: 15px;
+      box-shadow: inset 1px 0 0 #ccc;
+    }
+
+    main {
+      grid-area: main;
+      background: #fff;
+      padding: 15px;
+      box-shadow: 0 0 5px rgba(0,0,0,0.1);
+      overflow-y: auto;
+    }
+  &lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+
+  &lt;div class="dashboard"&gt;
+    &lt;header&gt;Dashboard Header&lt;/header&gt;
+    &lt;nav class="sidebar"&gt;Sidebar Navigation&lt;/nav&gt;
+    &lt;main&gt;Main Content Area&lt;/main&gt;
+  &lt;/div&gt;
+
+&lt;/body&gt;
+&lt;/html&gt;</textarea> <br> <button onclick="renderIframe(this,'xq75g','MlCK7')">Run</button>
+  <div id="MlCK7_FloatingLog" class="floatingLog" aria-live="polite" role="alert"></div> <iframe id="MlCK7" class="result_iframe" style="display: none;"></iframe>
+  <script>
+			{
+				let editor = CodeMirror.fromTextArea(document
+						.getElementById("xq75g"), {
+					mode : "htmlmixed",
+					lineNumbers : false,
+					tabSize : 2
+				});
+			    const mode = localStorage.getItem("mode") || "light";  
+			    const newTheme = mode === "dark" ? "material" : "default";
+			    editor.setOption("theme", newTheme);
+			    
+				codeMirrorMap.set("xq75g", editor);
+
+				let editor1 = CodeMirror.fromTextArea(document.getElementById("xq75g_Textarea"), {
+					mode : "htmlmixed",
+					lineNumbers : false,
+					tabSize : 2
+				});
+			    editor1.setOption("theme", newTheme);				
+				
+				codeMirrorMap.set("xq75g_Textarea", editor1);
+			}
+		    function openDialog(id) {
+		        closeAll();
+		        document.getElementById(id).style.display = 'flex';
+		        setTimeout(() => {
+		        	 codeMirrorMap.get("xq75g_Textarea").refresh();
+		        }, 100); // 100ms 
+		      }
+
+		      function closeAll() {
+		        document.querySelectorAll('.dialog-backdrop').forEach(el => {
+		          el.style.display = 'none';
+		        });
+		      }			
+		</script>
+ </div>
+</div><h3 id="explanation">Explanation:</h3><ul>
+ <li>The <code>.dashboard</code> container defines a grid with two columns and two rows.</li>
+ <li>The <code>grid-template-areas</code> assign names to each grid section.</li>
+ <li>Elements are placed in the grid using these named areas.</li>
+ <li>Sidebar is fixed at 200px width; main content expands to fill remaining space.</li>
+ <li>Header spans both columns across the top.</li>
+</ul><h3 id="result">Result:</h3><p>The dashboard layout is clean and flexible. The main content automatically adjusts size based on the viewport, while the sidebar and header maintain fixed sizing.</p><h3 id="example-2-responsive-image-gallery">Example 2: Responsive Image Gallery</h3><p>An image gallery needs to display images in a grid that adapts to screen size.</p><h3 id="step-1-html-structure">Step 1: HTML Structure</h3><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-html">&lt;div class="gallery"&gt;
+  &lt;img src="image1.jpg" alt="Image 1 description"&gt;
+  &lt;img src="image2.jpg" alt="Image 2 description"&gt;
+  &lt;img src="image3.jpg" alt="Image 3 description"&gt;
+  &lt;img src="image4.jpg" alt="Image 4 description"&gt;
+  &lt;!-- Add more images as needed --&gt;
+&lt;/div&gt;</code></pre>
+</div><h3 id="step-2-css-grid-for-the-gallery">Step 2: CSS Grid for the Gallery</h3><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-css">.gallery {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 15px;
+  padding: 10px;
+}
+
+.gallery img {
+  width: 100%;
+  height: auto;
+  display: block;
+  border-radius: 8px;
+  object-fit: cover;
+}</code></pre>
+</div><div class="snippet-container" id="dKh4G">
+ <div id="luhZF_Dialog" class="dialog-backdrop">
+  <div class="dialog">
+   <h2>Dialog 1</h2>
+   <div class="controls"><button onclick="renderIframe(this,'Lx2S0_Textarea','luhZF_IFrame')">Run</button> <button onclick="closeAll()">Close</button>
+   </div>
+   <div class="dialog-content"><textarea id="Lx2S0_Textarea" class="textarea_dialog" placeholder="Type HTML here...">&lt;!DOCTYPE html&gt;
+&lt;html lang="en"&gt;
+&lt;head&gt;
+  &lt;meta charset="UTF-8" /&gt;
+  &lt;title&gt;Responsive Gallery Grid&lt;/title&gt;
+  &lt;style&gt;
+    .gallery {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+      gap: 15px;
+      padding: 10px;
+      max-width: 900px;
+      margin: 40px auto;
+    }
+
+    .gallery img {
+      width: 100%;
+      height: 150px;
+      display: block;
+      border-radius: 8px;
+      object-fit: cover;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+      user-select: none;
+    }
+  &lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+
+  &lt;div class="gallery"&gt;
+    &lt;img src="https://readbytes.github.io/images/60x60/1.png" alt="Image 1 description"&gt;
+    &lt;img src="https://readbytes.github.io/images/60x60/2.png" alt="Image 2 description"&gt;
+    &lt;img src="https://readbytes.github.io/images/60x60/3.png" alt="Image 3 description"&gt;
+    &lt;img src="https://readbytes.github.io/images/60x60/4.png" alt="Image 4 description"&gt;
+    &lt;img src="https://readbytes.github.io/images/60x60/5.png" alt="Image 5 description"&gt;
+    &lt;img src="https://readbytes.github.io/images/60x60/6.png" alt="Image 6 description"&gt;
+  &lt;/div&gt;
+
+&lt;/body&gt;
+&lt;/html&gt;</textarea> <iframe id="luhZF_IFrame" class="iframe_dialog"></iframe>
+   </div>
+  </div>
+ </div>
+ <div class="snippet-header" onclick="toggleSnippetAndRefresh('dKh4G','Lx2S0')">
+  Click to Try it <!--<span onclick="toggleSnippetAndRefresh('dKh4G','Lx2S0')">Click
+			to Try it</span> --> <!-- <span onclick="openDialog('luhZF_Dialog')">Dialog</span> -->
+ </div>
+ <div class="snippet-body"><textarea id="Lx2S0">&lt;!DOCTYPE html&gt;
+&lt;html lang="en"&gt;
+&lt;head&gt;
+  &lt;meta charset="UTF-8" /&gt;
+  &lt;title&gt;Responsive Gallery Grid&lt;/title&gt;
+  &lt;style&gt;
+    .gallery {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+      gap: 15px;
+      padding: 10px;
+      max-width: 900px;
+      margin: 40px auto;
+    }
+
+    .gallery img {
+      width: 100%;
+      height: 150px;
+      display: block;
+      border-radius: 8px;
+      object-fit: cover;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+      user-select: none;
+    }
+  &lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+
+  &lt;div class="gallery"&gt;
+    &lt;img src="https://readbytes.github.io/images/60x60/1.png" alt="Image 1 description"&gt;
+    &lt;img src="https://readbytes.github.io/images/60x60/2.png" alt="Image 2 description"&gt;
+    &lt;img src="https://readbytes.github.io/images/60x60/3.png" alt="Image 3 description"&gt;
+    &lt;img src="https://readbytes.github.io/images/60x60/4.png" alt="Image 4 description"&gt;
+    &lt;img src="https://readbytes.github.io/images/60x60/5.png" alt="Image 5 description"&gt;
+    &lt;img src="https://readbytes.github.io/images/60x60/6.png" alt="Image 6 description"&gt;
+  &lt;/div&gt;
+
+&lt;/body&gt;
+&lt;/html&gt;</textarea> <br> <button onclick="renderIframe(this,'Lx2S0','luhZF')">Run</button>
+  <div id="luhZF_FloatingLog" class="floatingLog" aria-live="polite" role="alert"></div> <iframe id="luhZF" class="result_iframe" style="display: none;"></iframe>
+  <script>
+			{
+				let editor = CodeMirror.fromTextArea(document
+						.getElementById("Lx2S0"), {
+					mode : "htmlmixed",
+					lineNumbers : false,
+					tabSize : 2
+				});
+			    const mode = localStorage.getItem("mode") || "light";  
+			    const newTheme = mode === "dark" ? "material" : "default";
+			    editor.setOption("theme", newTheme);
+			    
+				codeMirrorMap.set("Lx2S0", editor);
+
+				let editor1 = CodeMirror.fromTextArea(document.getElementById("Lx2S0_Textarea"), {
+					mode : "htmlmixed",
+					lineNumbers : false,
+					tabSize : 2
+				});
+			    editor1.setOption("theme", newTheme);				
+				
+				codeMirrorMap.set("Lx2S0_Textarea", editor1);
+			}
+		    function openDialog(id) {
+		        closeAll();
+		        document.getElementById(id).style.display = 'flex';
+		        setTimeout(() => {
+		        	 codeMirrorMap.get("Lx2S0_Textarea").refresh();
+		        }, 100); // 100ms 
+		      }
+
+		      function closeAll() {
+		        document.querySelectorAll('.dialog-backdrop').forEach(el => {
+		          el.style.display = 'none';
+		        });
+		      }			
+		</script>
+ </div>
+</div><h3 id="explanation">Explanation:</h3><ul>
+ <li><code>repeat(auto-fill, minmax(150px, 1fr))</code> creates as many columns as will fit, each at least 150px wide.</li>
+ <li><code>gap</code> adds space between images.</li>
+ <li>Images fill their grid cell width while keeping aspect ratio.</li>
+ <li>Rounded corners and <code>object-fit</code> enhance the visual appeal.</li>
+</ul><h3 id="responsive-behavior">Responsive Behavior:</h3><ul>
+ <li>On wide screens, many images fit side-by-side.</li>
+ <li>On smaller screens, the grid automatically reduces columns, stacking images vertically as needed.</li>
+</ul><h3 id="why-css-grid-simplifies-these-layouts">Why CSS Grid Simplifies These Layouts</h3><ul>
+ <li><strong>Clear, semantic layout structure</strong> with <code>grid-template-areas</code> (dashboard example).</li>
+ <li><strong>Dynamic column creation</strong> and automatic wrapping with <code>auto-fill</code> and <code>minmax()</code> (gallery example).</li>
+ <li><strong>Minimal code</strong> compared to floats, clearfix hacks, or flexbox alone for complex grids.</li>
+ <li><strong>Easy responsive design</strong> by combining grid properties with media queries or flexible sizing.</li>
+ <li>Improved readability and maintainability.</li>
+</ul><h3 id="summary">Summary</h3><p>In this section, you learned to build:</p><ul>
+ <li>A <strong>dashboard layout</strong> using named grid areas for clear page regions.</li>
+ <li>A <strong>responsive image gallery</strong> that automatically adapts to screen size using flexible grid columns.</li>
+</ul><p>CSS Grid makes these common layouts straightforward and clean, giving you powerful tools to design modern, responsive websites efficiently.</p><div class = "chapter-navi-section">
+<a href="html-css-for-beginners-html5-apis-and-advanced-elements.htm" class="nav-button prev">←</a>
+<a href='html-css-for-beginners.htm#building-layouts-with-css-grid' class="nav-button toc-link">Index</a>
+<a href="html-css-for-beginners-accessibility-in-html-and-css.htm" class="nav-button next">→</a>
+</div>
+<section class="download-section">
+  <div class="book-cover" style="background-color: #f9f6f1;border: 1px solid #ccc;"> 
+    <div class="book-cover-title" style="font-size: 18px;color: #333;top: 20px;">HTML CSS for Beginners</div>
+    <div class="book-cover-author">readbytes</div>
+    <div class="book-cover-bottom-stripe" style="background-color: #333;"></div>
+    <img class="book-cover-icon" style="width: 90px;height: 90px;top: 70px;" src="data:image/png;base64,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"/>
+  </div>
+  <div class="download-info">
+    <h2 id='bottom'>Download This Ebook</h2>
+    <p class="format-label">Available formats:</p>
+    <div class="download-buttons">
+      <a href="html-css-for-beginners.pdf" class="download-button">📄 PDF</a>
+      <a href="html-css-for-beginners.epub" class="download-button">📘 EPUB</a>
+    </div>
+  </div>
+</section><div class='related-books'>
+<h2>Web Front HTML CSS Books</h2>
+<div class='related-book-list'>
+<a href="html-css-for-beginners.htm">
+<div class="book-cover" style="background-color: #f9f6f1;border: 1px solid #ccc;"> 
+    <div class="book-cover-title" style="font-size: 18px;color: #333;top: 20px;">HTML CSS for Beginners</div>
+    <div class="book-cover-author">readbytes</div>
+    <div class="book-cover-bottom-stripe" style="background-color: #333;"></div>
+    <img class="book-cover-icon" style="width: 90px;height: 90px;top: 70px;" src="data:image/png;base64,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"/>
+  </div>
+</a>
+
+
+
+<a href='web-front.htm'><div class='book-cover' style='background-color: #f9f6f1;color: #111111;border: 1px solid #ccc;display: flex;justify-content: center;align-items: center;text-align: center;'>More Web Front Books</div></a>
+</div>
+</div>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+  
+  <script>
+    function copyCode(button) {
+      const code = button.nextElementSibling.innerText;
+      navigator.clipboard.writeText(code).then(() => {
+        button.textContent = 'Copied!';
+        setTimeout(() => { button.textContent = 'Copy'; }, 1500);
+      });
+    }
+  </script>  
+<div id="floatingLog" aria-live="polite" role="alert"></div>
+<footer class="page-footer">
+    <nav>
+      <a href="https://readbytes.github.io">Home</a> | 
+      Email:<script language="JavaScript" type="text/javascript">
+var part1 = 'yinpeng';var part6 = '263';var part2 = Math.pow(2,6);var part3 = String.fromCharCode(part2);var part4 = 'hotmail dot com';var part5 = part1 + String.fromCharCode(part2) + part4;document.write(part1 + part6 + part3 + part4);
+</script>
+    </nav>
+  <p>© 2025 — All rights reserved.</p>    
+  </footer>
+
+</body>
+</html>

@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Discover Web Front Books for Coders</title>
+  <link rel='shortcut icon' href='https://readbytes.github.io/resources/favicon.ico'>  
+  <style>
+    body {
+      font-family: 'Georgia', serif;
+      padding: 40px;
+      max-width: 800px;
+      margin: auto;
+      transition: background-color 0.3s, color 0.3s;
+    }
+
+    .light-mode {
+      background-color: #fdfdfd;
+      color: #333;
+    }
+
+    .dark-mode {
+      background-color: #121212;
+      color: #e0e0e0;
+    }
+
+    #mode-toggle {
+      background: #007cf0;
+      color: white;
+      border: none;
+      padding: 10px 16px;
+      border-radius: 6px;
+      font-size: 14px;
+      cursor: pointer;
+      z-index: 1000;
+    }
+
+    .book-cover {
+      width: 130px;
+      height: 180px;
+      font-family: Arial, sans-serif;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+    }
+    .book-cover-bottom-stripe {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      height: 5px;
+      width: 100%;
+    }
+    .book-cover-title {
+      position: absolute;
+      width: 100%;
+      text-align: center;
+      font-weight: bold;
+    }
+     
+    .book-cover-icon {
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      align-items: center;
+      justify-content: center; 
+    }
+
+    .book-cover-author {
+      position: absolute;
+      bottom: 10px;
+      width: 100%;
+      text-align: center;
+      font-size: 8px;
+      color: #333;
+    }
+    .related-books {
+      margin-top: 40px;
+    }
+
+    .related-books h2 {
+      font-size: 22px;
+      margin-bottom: 20px;
+      border-bottom: 2px solid #eee;
+      padding-bottom: 8px;
+    }
+
+    .light-mode .related-books h2 {
+      color: #333;
+      border-color: #eee;
+    }
+
+    .dark-mode .related-books h2 {
+      color: #ddd;
+      border-color: #333;
+    }
+
+    .related-book-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+
+    .site-footer {
+      margin-top: 60px;
+      padding: 20px 0;
+      border-top: 1px solid #eee;
+      text-align: center;
+      font-size: 14px;
+    }
+
+    .light-mode .site-footer {
+      color: #777;
+      border-color: #eee;
+    }
+
+    .dark-mode .site-footer {
+      color: #888;
+      border-color: #333;
+    }
+
+    .site-footer a {
+      text-decoration: none;
+    }
+
+    .light-mode a {
+      color: #555;
+    }
+
+    .dark-mode a {
+      color: #aaa;
+    }
+
+
+    .light-mode .site-footer a {
+      color: #555;
+    }
+
+    .dark-mode .site-footer a {
+      color: #aaa;
+    }
+
+    .site-footer a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+<button id="mode-toggle">Toggle Dark Mode</button>
+<h1>Web Front Books</h1><div class='related-books'>
+<h2>HTML CSS</h2>
+<div class='related-book-list'>
+<a href="html-css-for-beginners.htm">
+<div class="book-cover" style="background-color: #f9f6f1;border: 1px solid #ccc;"> 
+    <div class="book-cover-title" style="font-size: 18px;color: #333;top: 20px;">HTML CSS for Beginners</div>
+    <div class="book-cover-author">readbytes</div>
+    <div class="book-cover-bottom-stripe" style="background-color: #333;"></div>
+    <img class="book-cover-icon" style="width: 90px;height: 90px;top: 70px;" src="data:image/png;base64,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"/>
+  </div>
+</a>
+
+
+
+</div>
+</div>
+<footer class="site-footer">
+    <nav>
+      <a href="https://readbytes.github.io">Home</a> | 
+      Email:<script language="JavaScript" type="text/javascript">
+var part1 = 'yinpeng';var part6 = '263';var part2 = Math.pow(2,6);var part3 = String.fromCharCode(part2);var part4 = 'hotmail dot com';var part5 = part1 + String.fromCharCode(part2) + part4;document.write(part1 + part6 + part3 + part4);
+</script>
+    </nav>
+  <p>© 2025 — All rights reserved.</p>   
+</footer>
+  <script>
+    const toggleButton = document.getElementById('mode-toggle');
+    const body = document.body;
+
+    const savedMode = localStorage.getItem('mode') || 'light';
+    body.classList.add(savedMode + '-mode');
+
+    toggleButton.addEventListener('click', () => {
+      const isDark = body.classList.contains('dark-mode');
+      body.classList.toggle('dark-mode', !isDark);
+      body.classList.toggle('light-mode', isDark);
+      localStorage.setItem('mode', isDark ? 'light' : 'dark');
+    });
+  </script>
+</body>
+</html>

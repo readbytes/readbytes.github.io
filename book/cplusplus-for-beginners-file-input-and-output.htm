@@ -1,0 +1,1166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>C++ for Beginners File Input and Output</title>
+<link rel='shortcut icon' href='https://java2s.com/style/favicon.ico'>
+<link href="https://fonts.googleapis.com/css2?family=Merriweather&display=swap" rel="stylesheet" />
+<link href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+
+
+  <script>
+  const mode = localStorage.getItem('mode') || 'light';
+  document.documentElement.classList.add(`${mode}-mode`);
+  </script>   
+<style> 
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: 'Merriweather', serif;
+  margin: 0;
+  padding: 2rem 1rem;
+  font-size: 15px;
+  line-height: 1.5;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+.container {
+  max-width: 700px;
+  margin: 0 auto;
+  padding: 1rem 2rem;
+  box-shadow: 0 0 15px rgba(0,0,0,0.1);
+}
+
+h1, h2, h3 {
+  font-weight: 600;
+  margin-top: 2.5rem;
+  margin-bottom: 1rem;
+  line-height: 1.2;
+}
+
+h1 { font-size: 1.8rem; }
+h2 { font-size: 1.4rem; }
+h3 { font-size: 1.2rem; }
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: sans-serif;
+  font-size: 1em;
+  margin: 1em 0;
+}
+
+th, td {
+  padding: 0.6em 1em;
+  text-align: left;
+  border: 1px solid;
+}
+
+tr:nth-child(even) {
+  background-color: inherit;
+}
+
+tr:hover {
+  background-color: inherit;
+}
+
+a {
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+code {
+  color: #d35400;
+}
+
+.book-title-chapter {
+  font-family: 'Merriweather', serif;
+  font-size: 2rem;
+  font-weight: bold;
+  text-align: center;
+  margin-bottom: 2rem;
+  border-bottom: 2px solid;
+  padding-bottom: 0.5rem;
+}
+
+.book-subtitle-chapter {
+  text-align: center;
+  font-size: 1rem;
+  margin-top: -1rem;
+  margin-bottom: 2rem;
+}
+
+.related-books {
+  margin-top: 40px;
+}
+
+.related-book-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+    .book-cover {
+      width: 130px;
+      height: 180px;
+      font-family: Arial, sans-serif;
+      position: relative;
+      overflow: hidden;      
+      line-height: normal;
+      box-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+    }
+    .book-cover-bottom-stripe {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      height: 5px;
+      width: 100%;
+    }
+    .book-cover-title {
+      position: absolute;
+      width: 100%;
+      text-align: center;
+      font-weight: bold;
+    }
+     
+    .book-cover-icon {
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      align-items: center;
+      justify-content: center; 
+    }
+
+    .book-cover-author {
+      position: absolute;
+      bottom: 10px;
+      width: 100%;
+      text-align: center;
+      font-size: 8px;
+      color: #333;
+    }
+
+.page-footer {
+  margin-top: 4rem;
+  padding: 1rem 0;
+  text-align: center;
+  font-size: 0.85rem;
+  border-top: 1px solid;
+}
+
+.chapter-navi-section {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 10px;
+}
+
+.nav-link {
+  color: inherit;
+  text-decoration: none;
+  opacity: 0.5;
+  transition: opacity 0.3s ease, text-decoration 0.3s ease;
+}
+
+.nav-link:hover {
+  opacity: 0.9;
+  text-decoration: underline;
+}
+
+.prev { text-align: left; }
+.toc-link { text-align: center; }
+.next { text-align: right; }
+
+.download-section {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2rem;
+  padding: 2rem 1rem;
+  max-width: 600px;
+  margin: 3rem auto;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+}
+
+.download-info h2 {
+  margin: 0 0 0.5rem;
+  font-size: 1.2rem;
+}
+
+.format-label {
+  margin: 0 0 0.5rem;
+  font-size: 0.95rem;
+}
+
+.download-buttons {
+  display: flex;
+  gap: 1rem;
+}
+
+.download-button {
+  background-color: #4A90E2;
+  color: white;
+  padding: 0.5em 1.2em;
+  border-radius: 25px;
+  font-size: 0.95rem;
+  text-decoration: none;
+  transition: background-color 0.3s ease;
+}
+
+.download-button:hover {
+  background-color: #357ABD;
+}
+
+.code-block {
+  position: relative;
+  margin-bottom: 1em;
+}
+
+.copy-button {
+  background: transparent;
+  color: white;
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  border: none;
+  padding: 4px 8px;
+  font-size: 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  z-index: 1;
+}
+
+.copy-button:hover {
+  background-color: #0056b3;
+}
+
+.snippet-container {
+  overflow: hidden;
+}
+
+.snippet-header {
+  padding: 0.75rem 1rem;
+  cursor: pointer;
+  font-size: 1rem;
+    background-color: #eeeeee;
+    color:  #111111; 
+    border-radius: 8px;
+    cursor: pointer;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);  
+}
+
+.snippet-body {
+  display: none;
+  font-family: monospace;
+}
+
+.snippet-container.open .snippet-body {
+  display: block;
+}
+
+.CodeMirror {
+  border: 2px solid #ccc;
+  border-radius: 4px;
+  resize: vertical;
+}
+
+/* === Light Mode === */
+html.light-mode {
+  background-color: #f8f7f5;
+  color: #333;
+}
+
+html.light-mode .container {
+  background: white;
+}
+
+html.light-mode .book-title-chapter {
+  color: #2c3e50;
+  border-color: #ccc;
+}
+html.light-mode .book-subtitle-chapter{
+  color: #888;
+}
+
+html.light-mode .page-footer,
+html.light-mode .series-name,
+html.light-mode .book-subtitle,
+html.light-mode .format-label {
+  color: #888;
+}
+
+html.light-mode .related-books h2 {
+  color: #333;
+  border-bottom: 2px solid #eee;
+}
+
+html.light-mode .book-title {
+  color: #fff;
+}
+
+html.light-mode .book-cover {
+  border: 1px solid #ccc;
+}
+
+html.light-mode th {
+  background-color: #f2f2f2;
+}
+
+html.light-mode tr:nth-child(even) {
+  background-color: #fafafa;
+}
+
+html.light-mode tr:hover {
+  background-color: #e6f7ff;
+}
+
+html.light-mode a,
+html.light-mode .page-footer a {
+  color: #000;
+}
+
+/* === Dark Mode === */
+html.dark-mode {
+  background-color: #181818;
+  color: #e0e0e0;
+}
+
+html.dark-mode .container {
+  background: #222;
+}
+
+html.dark-mode .book-title-chapter {
+  color: #ddd;
+  border-color: #444;
+}
+
+html.dark-mode .snippet-header {
+    background-color: #333;
+    color:  #ddd; 
+}
+
+
+html.dark-mode .book-subtitle-chapter,
+html.dark-mode .page-footer,
+html.dark-mode .series-name,
+html.dark-mode .book-subtitle,
+html.dark-mode .book-footer,
+html.dark-mode .format-label {
+  color: #aaa;
+}
+
+html.dark-mode .related-books h2 {
+  color: #ddd;
+  border-bottom: 2px solid #333;
+}
+
+html.dark-mode .book-title {
+  color: #fff;
+}
+
+html.dark-mode .book-cover {
+  border: 1px solid #555;
+}
+
+html.dark-mode th {
+  background-color: #333;
+  color: #fff;
+}
+
+html.dark-mode td {
+  border-color: #444;
+}
+
+html.dark-mode tr:nth-child(even) {
+  background-color: #2a2a2a;
+}
+
+html.dark-mode tr:hover {
+  background-color: #2c3e50;
+}
+
+html.dark-mode a,
+html.dark-mode .page-footer a {
+  color: #eee;
+}
+
+    .dialog-backdrop {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(0,0,0,0.5);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 10;
+    }
+
+    .dialog {
+      background: white;
+      padding: 20px;
+      width: 90vw;
+      height: 80vh;
+      border-radius: 8px;
+      box-shadow: 0 0 20px rgba(0,0,0,0.3);
+      display: flex;
+      flex-direction: column;
+    }
+    .dialog-content {
+      display: flex;
+      flex: 1;
+      gap: 20px;
+      margin-top: 10px;
+    }
+    .dialog h2 {
+      margin-top: 0;
+    }
+
+    .textarea_dialog {
+      width: 50%;
+      height: 100%;
+      resize: none;
+      font-family: monospace;
+      font-size: 14px;
+      padding: 10px;
+      box-sizing: border-box;
+      border: 1px solid #ccc;
+    }
+
+    .iframe_dialog {
+      width: 50%;
+      height: 100%;
+      border: 1px solid #ccc;
+    }
+    .controls_dialog {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 10px;
+    }    
+    button { padding: 0.5em 1em; background: green; color: white; border: none; cursor: pointer; }
+    button:hover { background: #1e7e34; }
+    .result_iframe { width:99%; height:200px; margin-top: 1em;  resize: both;border:1px solid #ccc;}        
+</style>
+</head>
+<body> 
+  <div class="container">
+    <div class = "chapter-navi-section">
+<a href="cplusplus-for-beginners-standard-template-library-stl.htm" class="nav-button prev">←</a>
+<a href='cplusplus-for-beginners.htm#file-input-and-output' class="nav-button toc-link">Index</a>
+<a href="cplusplus-for-beginners-advanced-memory-management.htm" class="nav-button next">→</a>
+</div>
+
+    <h1 class="book-title-chapter" id = 'top'>File Input and Output</h1>
+    <h3 class="book-subtitle-chapter">C++ for Beginners</h3>   
+    <!-- <h1 class ="chapter-title"></h1> -->
+    <h2 id='reading-from-and-writing-to-files'>15.1 Reading from and Writing to Files</h2><p>File input/output (I/O) is a fundamental part of many programs that need to save data persistently or process information stored on disk. In C++, file I/O is done using <strong>file stream</strong> objects, which provide an interface similar to console input/output (<code>std::cin</code> and <code>std::cout</code>) but operate on files instead.</p><p>In this section, we will explore how to open files, read data from them, write data to them, and properly close them to ensure data integrity. We will also cover basic error checking and file modes to control how files are accessed.</p><h3 id="basic-concepts-of-file-i-o">Basic Concepts of File I/O</h3><ul>
+ <li><strong>Opening a file</strong>: You connect a file stream object to a file on disk.</li>
+ <li><strong>Reading from a file</strong>: You extract data from the file, typically line-by-line or word-by-word.</li>
+ <li><strong>Writing to a file</strong>: You send data to the file, creating or overwriting its contents.</li>
+ <li><strong>Closing a file</strong>: You disconnect the file stream to flush buffers and release system resources.</li>
+</ul><h3 id="file-stream-classes-in-c">File Stream Classes in C</h3><ul>
+ <li><strong><code>std::ifstream</code></strong>: Input file stream for reading files.</li>
+ <li><strong><code>std::ofstream</code></strong>: Output file stream for writing files.</li>
+ <li><strong><code>std::fstream</code></strong>: File stream for both reading and writing.</li>
+</ul><p>All are part of the <code>&lt;fstream&gt;</code> header and inherit from <code>std::istream</code> or <code>std::ostream</code>.</p><h3 id="opening-files">Opening Files</h3><p>Before reading or writing, you must open a file by associating a stream object with a file name.</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">📋</button>
+ <pre><code class="language-cpp">#include &lt;fstream&gt;
+#include &lt;iostream&gt;
+
+int main() {
+    std::ifstream inputFile("data.txt");  // Open file for reading
+
+    if (!inputFile) {
+        std::cerr &lt;&lt; "Error: Could not open file for reading.\n";
+        return 1;
+    }
+
+    // Use inputFile...
+
+    inputFile.close();  // Close the file
+}</code></pre>
+</div><ul>
+ <li>The file <code>"data.txt"</code> is opened for reading.</li>
+ <li>Always check if the file opened successfully by testing the stream object.</li>
+ <li>If the file does not exist or cannot be opened, the stream will be in a <strong>fail</strong> state.</li>
+</ul><h3 id="reading-from-files">Reading from Files</h3><h4 id="reading-line-by-line">Reading Line-by-Line</h4><p>The most common way to read text files is line-by-line using <code>std::getline</code>.</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">📋</button>
+ <pre><code class="language-cpp">#include &lt;fstream&gt;
+#include &lt;iostream&gt;
+#include &lt;string&gt;
+
+int main() {
+    std::ifstream inputFile("example.txt");
+    if (!inputFile) {
+        std::cerr &lt;&lt; "Cannot open file for reading.\n";
+        return 1;
+    }
+
+    std::string line;
+    while (std::getline(inputFile, line)) {
+        std::cout &lt;&lt; line &lt;&lt; std::endl;  // Process each line
+    }
+
+    inputFile.close();
+}</code></pre>
+</div><ul>
+ <li><code>std::getline</code> reads until it encounters a newline character.</li>
+ <li>This method is safe for any length of lines.</li>
+ <li>Use <code>while (std::getline(...))</code> to read until the end of the file.</li>
+</ul><h4 id="reading-word-by-word-or-character-by-character">Reading Word-by-Word or Character-by-Character</h4><p>You can also extract words or characters using the extraction operator (<code>&gt;&gt;</code>) or <code>get()</code>:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-cpp">std::string word;
+while (inputFile &gt;&gt; word) {
+    std::cout &lt;&lt; word &lt;&lt; std::endl;
+}</code></pre>
+</div><h4 id="writing-to-files">Writing to Files</h4><p>Use <code>std::ofstream</code> to write data to files. By default, opening a file with <code>ofstream</code> truncates (clears) the file contents or creates a new file if it does not exist.</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">📋</button>
+ <pre><code class="language-cpp">#include &lt;fstream&gt;
+#include &lt;iostream&gt;
+
+int main() {
+    std::ofstream outputFile("output.txt");
+    if (!outputFile) {
+        std::cerr &lt;&lt; "Failed to open file for writing.\n";
+        return 1;
+    }
+
+    outputFile &lt;&lt; "Hello, file!" &lt;&lt; std::endl;
+    outputFile &lt;&lt; "Writing multiple lines to a file." &lt;&lt; std::endl;
+
+    outputFile.close();
+}</code></pre>
+</div><ul>
+ <li>Writing is done just like using <code>std::cout</code>.</li>
+ <li>Remember to close the file to flush data to disk.</li>
+</ul><h3 id="file-modes-and-opening-options">File Modes and Opening Options</h3><p>When opening files, you can specify <strong>file modes</strong> to control the behavior of the file stream using <code>std::ios</code> flags:</p><table>
+ <thead>
+  <tr>
+   <th>Mode</th>
+   <th>Description</th>
+  </tr>
+ </thead>
+ <tbody>
+  <tr>
+   <td><code>std::ios::in</code></td>
+   <td>Open for reading (default for <code>ifstream</code>)</td>
+  </tr>
+  <tr>
+   <td><code>std::ios::out</code></td>
+   <td>Open for writing (default for <code>ofstream</code>)</td>
+  </tr>
+  <tr>
+   <td><code>std::ios::app</code></td>
+   <td>Append to the end of the file</td>
+  </tr>
+  <tr>
+   <td><code>std::ios::ate</code></td>
+   <td>Open and move to the end immediately</td>
+  </tr>
+  <tr>
+   <td><code>std::ios::trunc</code></td>
+   <td>Truncate file (default for <code>ofstream</code>)</td>
+  </tr>
+  <tr>
+   <td><code>std::ios::binary</code></td>
+   <td>Open in binary mode (no text translation)</td>
+  </tr>
+ </tbody>
+</table><h3 id="example-open-file-for-appending-text">Example: Open file for appending text</h3><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-cpp">std::ofstream logFile("log.txt", std::ios::app);
+if (logFile) {
+    logFile &lt;&lt; "New log entry" &lt;&lt; std::endl;
+}</code></pre>
+</div><p>This adds new content without overwriting existing data.</p><h3 id="combining-input-and-output-fstream">Combining Input and Output: <code>fstream</code></h3><p><code>std::fstream</code> can be used to open a file for both reading and writing.</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">📋</button>
+ <pre><code class="language-cpp">#include &lt;fstream&gt;
+#include &lt;iostream&gt;
+
+int main() {
+    std::fstream file("data.txt", std::ios::in | std::ios::out);
+    if (!file) {
+        std::cerr &lt;&lt; "Unable to open file for reading and writing.\n";
+        return 1;
+    }
+
+    // Use file for both reading and writing
+
+    file.close();
+}</code></pre>
+</div><p>Be careful managing file pointers when mixing reads and writes.</p><h3 id="error-checking-and-file-states">Error Checking and File States</h3><p>Always check if the file operations succeed to avoid unexpected behavior:</p><ul>
+ <li>Use <code>file.is_open()</code> to check if the file is open.</li>
+ <li>Test the stream in a boolean context (<code>if (file)</code>) to check if it's good.</li>
+ <li>Use <code>file.fail()</code> or <code>file.eof()</code> to detect errors or end-of-file.</li>
+</ul><h3 id="example-reading-and-writing-files-together">Example: Reading and Writing Files Together</h3><p>This example copies the content of one text file to another:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">📋</button>
+ <pre><code class="language-cpp">#include &lt;fstream&gt;
+#include &lt;iostream&gt;
+#include &lt;string&gt;
+
+int main() {
+    std::ifstream inputFile("input.txt");
+    std::ofstream outputFile("output.txt");
+
+    if (!inputFile) {
+        std::cerr &lt;&lt; "Error opening input file.\n";
+        return 1;
+    }
+    if (!outputFile) {
+        std::cerr &lt;&lt; "Error opening output file.\n";
+        return 1;
+    }
+
+    std::string line;
+    while (std::getline(inputFile, line)) {
+        outputFile &lt;&lt; line &lt;&lt; std::endl;
+    }
+
+    inputFile.close();
+    outputFile.close();
+
+    std::cout &lt;&lt; "File copied successfully.\n";
+}</code></pre>
+</div><h3 id="summary">Summary</h3><ul>
+ <li>File I/O in C++ is done using stream classes: <code>ifstream</code> for reading, <code>ofstream</code> for writing, and <code>fstream</code> for both.</li>
+ <li>Always open files using the appropriate modes and check for successful opening.</li>
+ <li>Use <code>std::getline</code> to read files line-by-line safely.</li>
+ <li>Write to files with <code>&lt;&lt;</code> operator as you do with <code>std::cout</code>.</li>
+ <li>Remember to close files to flush buffers and release resources.</li>
+ <li>Use file mode flags to control how files are opened (append, truncate, binary, etc.).</li>
+ <li>Proper error checking prevents unexpected program crashes or data loss.</li>
+</ul><p>Mastering file I/O lets you build programs that persist data, log information, or communicate with other applications effectively. Next, we will explore <strong>File Streams</strong> in detail, covering advanced techniques and best practices for robust file handling.</p><div class = "chapter-navi-section">
+<a href="#top" class="nav-button prev">↑</a>
+<a href='cplusplus-for-beginners.htm#file-input-and-output' class="nav-button toc-link">Index</a>
+<a href="#bottom" class="nav-button next">↓</a>
+</div>
+<h2 id='file-streams-ifstream-ofstream-fstream'>15.2 File Streams (<code>ifstream</code>, <code>ofstream</code>, <code>fstream</code>)</h2><p>In C++, file input and output operations are handled through specialized classes known as <strong>file streams</strong>. These classes provide an interface similar to the standard console streams (<code>std::cin</code>, <code>std::cout</code>), but operate on files stored on disk.</p><p>The three main file stream classes are:</p><ul>
+ <li><code>std::ifstream</code>: for <strong>input file streams</strong> (reading from files)</li>
+ <li><code>std::ofstream</code>: for <strong>output file streams</strong> (writing to files)</li>
+ <li><code>std::fstream</code>: for <strong>file streams</strong> that support both reading and writing</li>
+</ul><p>All of these classes are part of the <code>&lt;fstream&gt;</code> header and inherit from the standard stream classes (<code>std::istream</code>, <code>std::ostream</code>, or both).</p><h3 id="std-ifstream-input-file-stream"><code>std::ifstream</code> Input File Stream</h3><p>The <code>ifstream</code> class is designed for reading data from files. It inherits from <code>std::istream</code> and provides all the familiar input operations (like <code>operator&gt;&gt;</code> and <code>getline</code>) but reads from files instead of the keyboard.</p><h3 id="creating-an-ifstream-object">Creating an <code>ifstream</code> Object</h3><p>You can create an <code>ifstream</code> object in two ways:</p><ol>
+ <li><strong>Default constructor and then open:</strong></li>
+</ol><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-cpp">#include &lt;fstream&gt;
+
+std::ifstream inputFile;
+inputFile.open("data.txt");
+if (!inputFile) {
+    // Handle error
+}</code></pre>
+</div><ol start="2">
+ <li><strong>Constructor that opens a file immediately:</strong></li>
+</ol><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-cpp">std::ifstream inputFile("data.txt");
+if (!inputFile) {
+    // Handle error
+}</code></pre>
+</div><h3 id="common-member-functions-of-ifstream">Common Member Functions of <code>ifstream</code></h3><ul>
+ <li><code>open(filename)</code>: Opens the specified file.</li>
+ <li><code>close()</code>: Closes the file.</li>
+ <li><code>is_open()</code>: Returns <code>true</code> if the file is open.</li>
+ <li><code>fail()</code>: Returns <code>true</code> if the last I/O operation failed.</li>
+ <li><code>eof()</code>: Returns <code>true</code> if the end of file has been reached.</li>
+</ul><h3 id="reading-example">Reading Example</h3><div class="code-block"><button class="copy-button" onclick="copyCode(this)">📋</button>
+ <pre><code class="language-cpp">#include &lt;iostream&gt;
+#include &lt;fstream&gt;
+#include &lt;string&gt;
+
+int main() {
+    std::ifstream inputFile("example.txt");
+    if (!inputFile) {
+        std::cerr &lt;&lt; "Failed to open file for reading.\n";
+        return 1;
+    }
+
+    std::string line;
+    while (std::getline(inputFile, line)) {
+        std::cout &lt;&lt; line &lt;&lt; std::endl;
+    }
+
+    inputFile.close();
+    return 0;
+}</code></pre>
+</div><p>This program reads the file line-by-line and prints each line to the console.</p><h3 id="std-ofstream-output-file-stream"><code>std::ofstream</code> Output File Stream</h3><p>The <code>ofstream</code> class is used for writing data to files. It inherits from <code>std::ostream</code> and supports output operations (<code>operator&lt;&lt;</code>, <code>write</code>, etc.) that write to files instead of the console.</p><h3 id="creating-an-ofstream-object">Creating an <code>ofstream</code> Object</h3><p>Similar to <code>ifstream</code>, <code>ofstream</code> can be constructed empty and opened later, or opened directly upon construction:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-cpp">std::ofstream outputFile("output.txt");
+if (!outputFile) {
+    // Handle error
+}</code></pre>
+</div><h3 id="file-opening-modes-with-ofstream">File Opening Modes with <code>ofstream</code></h3><ul>
+ <li>By default, opening a file with <code>ofstream</code> <strong>truncates</strong> (clears) the file.</li>
+ <li>You can specify additional modes like <code>std::ios::app</code> to <strong>append</strong> instead of overwrite.</li>
+</ul><p>Example of appending to a file:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-cpp">std::ofstream logFile("log.txt", std::ios::app);</code></pre>
+</div><h3 id="writing-example">Writing Example</h3><div class="code-block"><button class="copy-button" onclick="copyCode(this)">📋</button>
+ <pre><code class="language-cpp">#include &lt;iostream&gt;
+#include &lt;fstream&gt;
+
+int main() {
+    std::ofstream outputFile("output.txt");
+    if (!outputFile) {
+        std::cerr &lt;&lt; "Failed to open file for writing.\n";
+        return 1;
+    }
+
+    outputFile &lt;&lt; "First line of text.\n";
+    outputFile &lt;&lt; "Second line of text.\n";
+
+    outputFile.close();
+    return 0;
+}</code></pre>
+</div><p>This program writes two lines to <code>output.txt</code>. If the file already exists, it will be overwritten unless opened in append mode.</p><h3 id="std-fstream-input-output-file-stream"><code>std::fstream</code> Input/Output File Stream</h3><p>The <code>fstream</code> class supports both reading and writing operations. It inherits from both <code>std::istream</code> and <code>std::ostream</code>, allowing you to open a file and perform input and output on the same stream.</p><h3 id="creating-an-fstream-object">Creating an <code>fstream</code> Object</h3><p>You must specify the file open mode explicitly when you want both input and output:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-cpp">std::fstream file("data.txt", std::ios::in | std::ios::out);
+if (!file) {
+    // Handle error
+}</code></pre>
+</div><p>If the file does not exist and you want to create it, include <code>std::ios::trunc</code> or <code>std::ios::out</code> in the mode.</p><h3 id="common-use-case">Common Use Case</h3><p><code>fstream</code> is useful when you need to modify an existing file without deleting its contents or to perform complex read/write operations within the same program.</p><h3 id="example-of-reading-and-writing-using-fstream">Example of Reading and Writing Using <code>fstream</code></h3><div class="code-block"><button class="copy-button" onclick="copyCode(this)">📋</button>
+ <pre><code class="language-cpp">#include &lt;iostream&gt;
+#include &lt;fstream&gt;
+#include &lt;string&gt;
+
+int main() {
+    std::fstream file("data.txt", std::ios::in | std::ios::out);
+    if (!file) {
+        std::cerr &lt;&lt; "Cannot open file for reading and writing.\n";
+        return 1;
+    }
+
+    // Read first line
+    std::string line;
+    if (std::getline(file, line)) {
+        std::cout &lt;&lt; "First line: " &lt;&lt; line &lt;&lt; std::endl;
+    }
+
+    // Move to end to write
+    file.clear();           // Clear EOF flag if reached
+    file.seekp(0, std::ios::end);
+    file &lt;&lt; "\nAdditional line added.";
+
+    file.close();
+    return 0;
+}</code></pre>
+</div><p>This example reads the first line of the file, then appends a new line at the end.</p><h3 id="summary-of-key-points">Summary of Key Points</h3><table>
+ <thead>
+  <tr>
+   <th>Class</th>
+   <th>Purpose</th>
+   <th>Base Classes</th>
+   <th>Typical Usage</th>
+  </tr>
+ </thead>
+ <tbody>
+  <tr>
+   <td><code>ifstream</code></td>
+   <td>Input from file</td>
+   <td><code>std::istream</code></td>
+   <td>Reading from text files</td>
+  </tr>
+  <tr>
+   <td><code>ofstream</code></td>
+   <td>Output to file</td>
+   <td><code>std::ostream</code></td>
+   <td>Writing/creating files</td>
+  </tr>
+  <tr>
+   <td><code>fstream</code></td>
+   <td>Both input and output</td>
+   <td><code>std::istream</code> and <code>std::ostream</code></td>
+   <td>Modifying files with read/write access</td>
+  </tr>
+ </tbody>
+</table><h3 id="important-member-functions-common-to-all">Important Member Functions (Common to all)</h3><ul>
+ <li><code>open(filename, mode)</code>: Open a file with specific mode.</li>
+ <li><code>close()</code>: Close the file stream.</li>
+ <li><code>is_open()</code>: Check if the file is open.</li>
+ <li><code>fail()</code>: Check if an error occurred.</li>
+ <li>Stream extraction (<code>&gt;&gt;</code>) and insertion (<code>&lt;&lt;</code>) operators for reading and writing respectively.</li>
+</ul><h3 id="practical-tips">Practical Tips</h3><ul>
+ <li>Always <strong>check if the file stream is open</strong> before performing operations to avoid runtime errors.</li>
+ <li>Remember to <strong>close files</strong> explicitly or let the destructor do it when the stream object goes out of scope.</li>
+ <li>Use <strong>file open modes</strong> to control behavior (append, binary mode, etc.).</li>
+ <li>When mixing reading and writing on the same <code>fstream</code>, use <code>clear()</code> and <code>seekg</code>/<code>seekp</code> carefully to manage file pointers.</li>
+</ul><h3 id="conclusion">Conclusion</h3><p>Understanding and using <code>ifstream</code>, <code>ofstream</code>, and <code>fstream</code> gives you powerful tools to read from and write to files in C++. These classes mirror the familiar syntax of console I/O, making file operations intuitive and flexible. Whether you need to read a configuration, log data, or modify files, mastering file streams is essential for real-world C++ programming.</p><p>In the next section, we will explore <strong>Binary File Handling</strong>, diving into how to read and write binary data efficiently with file streams.</p><div class = "chapter-navi-section">
+<a href="#top" class="nav-button prev">↑</a>
+<a href='cplusplus-for-beginners.htm#file-input-and-output' class="nav-button toc-link">Index</a>
+<a href="#bottom" class="nav-button next">↓</a>
+</div>
+<h2 id='binary-file-handling'>15.3 Binary File Handling</h2><p>In C++, file input and output usually involve working with <strong>text files</strong>, which store data as human-readable characters. However, some applications require handling <strong>binary files</strong>—files that contain raw bytes representing data in a compact and precise form. Examples include image files, audio files, serialized objects, and other non-text data formats.</p><p>This section introduces binary file operations in C++, explains their differences from text file handling, and shows how to use the <code>read()</code> and <code>write()</code> member functions of file streams for working with raw data.</p><h3 id="why-use-binary-files">Why Use Binary Files?</h3><p>Text files are easy to read and edit but store data inefficiently. For example, storing an integer <code>1234</code> in a text file writes the characters <code>'1'</code>, <code>'2'</code>, <code>'3'</code>, <code>'4'</code>, which take four bytes, plus possibly a newline. In contrast, a binary file stores the integer in its native binary format, usually 4 bytes (on most systems).</p><h3 id="when-to-use-binary-files">When to Use Binary Files?</h3><ul>
+ <li><strong>Performance and space efficiency:</strong> Binary files are more compact and faster to read/write because they don't involve formatting conversions.</li>
+ <li><strong>Exact representation:</strong> Data like floating-point numbers, structs, or raw buffers must be saved exactly as they are.</li>
+ <li><strong>Interoperability with other systems:</strong> Many file formats (images, audio, video) require binary access.</li>
+ <li><strong>Serialization:</strong> Saving program data in binary allows precise reconstruction later.</li>
+</ul><h3 id="opening-files-in-binary-mode">Opening Files in Binary Mode</h3><p>To work with binary files, you open files with the <code>std::ios::binary</code> flag in addition to the usual input/output modes.</p><p>Example:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-cpp">std::ofstream outFile("data.bin", std::ios::binary);
+std::ifstream inFile("data.bin", std::ios::binary);</code></pre>
+</div><p>Without the <code>binary</code> flag, the file is treated as text, and the system might perform newline translations or other conversions, corrupting binary data.</p><h3 id="reading-and-writing-binary-data-with-read-and-write">Reading and Writing Binary Data with <code>read()</code> and <code>write()</code></h3><p>The main difference between text and binary file I/O is in how data is transferred:</p><ul>
+ <li><strong>Text I/O</strong> uses formatted input/output operators like <code>&lt;&lt;</code> and <code>&gt;&gt;</code>.</li>
+ <li><strong>Binary I/O</strong> uses the unformatted member functions <code>write()</code> and <code>read()</code>, which operate on raw memory buffers.</li>
+</ul><h3 id="syntax">Syntax</h3><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-cpp">ostream.write(const char* buffer, std::streamsize size);
+istream.read(char* buffer, std::streamsize size);</code></pre>
+</div><ul>
+ <li><code>buffer</code>: pointer to the memory area to write/read.</li>
+ <li><code>size</code>: number of bytes to write/read.</li>
+</ul><h3 id="example-writing-and-reading-an-integer-in-binary">Example: Writing and Reading an Integer in Binary</h3><div class="code-block"><button class="copy-button" onclick="copyCode(this)">📋</button>
+ <pre><code class="language-cpp">#include &lt;iostream&gt;
+#include &lt;fstream&gt;
+
+int main() {
+    int number = 123456789;
+
+    // Writing integer to binary file
+    std::ofstream outFile("number.bin", std::ios::binary);
+    if (!outFile) {
+        std::cerr &lt;&lt; "Failed to open file for writing.\n";
+        return 1;
+    }
+    outFile.write(reinterpret_cast&lt;const char*&gt;(&amp;number), sizeof(number));
+    outFile.close();
+
+    // Reading integer from binary file
+    int readNumber = 0;
+    std::ifstream inFile("number.bin", std::ios::binary);
+    if (!inFile) {
+        std::cerr &lt;&lt; "Failed to open file for reading.\n";
+        return 1;
+    }
+    inFile.read(reinterpret_cast&lt;char*&gt;(&amp;readNumber), sizeof(readNumber));
+    inFile.close();
+
+    std::cout &lt;&lt; "Read number: " &lt;&lt; readNumber &lt;&lt; std::endl;
+    return 0;
+}</code></pre>
+</div><ul>
+ <li>We use <code>reinterpret_cast</code> to convert the pointer to a <code>char*</code> because <code>write()</code> and <code>read()</code> expect a pointer to a character buffer.</li>
+ <li><code>sizeof(number)</code> ensures the exact number of bytes for the data type is written/read.</li>
+</ul><h3 id="writing-and-reading-arrays-and-structures">Writing and Reading Arrays and Structures</h3><p>Binary files can store more complex data like arrays or structs, provided the memory layout is consistent.</p><h3 id="example-writing-and-reading-an-array">Example: Writing and Reading an Array</h3><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-cpp">int arr[5] = {1, 2, 3, 4, 5};
+
+std::ofstream outFile("array.bin", std::ios::binary);
+outFile.write(reinterpret_cast&lt;const char*&gt;(arr), sizeof(arr));
+outFile.close();
+
+int arrRead[5];
+std::ifstream inFile("array.bin", std::ios::binary);
+inFile.read(reinterpret_cast&lt;char*&gt;(arrRead), sizeof(arrRead));
+inFile.close();
+
+for (int i = 0; i &lt; 5; ++i) {
+    std::cout &lt;&lt; arrRead[i] &lt;&lt; " ";
+}</code></pre>
+</div><h3 id="example-writing-and-reading-a-struct">Example: Writing and Reading a Struct</h3><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-cpp">struct Point {
+    int x;
+    int y;
+};
+
+Point p1 = {10, 20};
+
+std::ofstream outFile("point.bin", std::ios::binary);
+outFile.write(reinterpret_cast&lt;const char*&gt;(&amp;p1), sizeof(p1));
+outFile.close();
+
+Point p2;
+std::ifstream inFile("point.bin", std::ios::binary);
+inFile.read(reinterpret_cast&lt;char*&gt;(&amp;p2), sizeof(p2));
+inFile.close();
+
+std::cout &lt;&lt; "Point read: (" &lt;&lt; p2.x &lt;&lt; ", " &lt;&lt; p2.y &lt;&lt; ")\n";</code></pre>
+</div><h3 id="important-considerations">Important Considerations</h3><h4 id="data-alignment-and-padding">Data Alignment and Padding</h4><p>Structures in C++ might have <strong>padding bytes</strong> inserted for alignment, meaning the memory layout can include unused bytes. This affects how data is written and read:</p><ul>
+ <li>Reading binary data written on one system may fail on another if the compiler applies different padding or alignment rules.</li>
+ <li>Use compiler-specific <strong>packing directives</strong> or manually serialize fields for portable binary formats.</li>
+</ul><h4 id="endianness-byte-order">Endianness (Byte Order)</h4><p>Different computer architectures store multi-byte values in different byte orders (little-endian or big-endian):</p><ul>
+ <li>If a binary file is shared between systems with different endianness, values may be misinterpreted.</li>
+ <li>Consider converting data to a standard byte order (like network byte order) before writing.</li>
+</ul><h4 id="portability-and-compatibility">Portability and Compatibility</h4><p>Binary files are <strong>not inherently portable</strong> across different platforms, compilers, or architectures without care. For cross-platform data exchange, consider:</p><ul>
+ <li>Standardized serialization libraries (e.g., Protocol Buffers, Boost.Serialization).</li>
+ <li>Text-based formats like JSON or XML (though less efficient).</li>
+</ul><h3 id="error-checking-with-binary-i-o">Error Checking with Binary I/O</h3><p>Always check the success of <code>read()</code> and <code>write()</code>:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-cpp">if (!outFile.write(reinterpret_cast&lt;const char*&gt;(&amp;number), sizeof(number))) {
+    std::cerr &lt;&lt; "Write failed.\n";
+}
+
+if (!inFile.read(reinterpret_cast&lt;char*&gt;(&amp;readNumber), sizeof(readNumber))) {
+    std::cerr &lt;&lt; "Read failed.\n";
+}</code></pre>
+</div><h3 id="summary">Summary</h3><table>
+ <thead>
+  <tr>
+   <th>Aspect</th>
+   <th>Text File I/O</th>
+   <th>Binary File I/O</th>
+  </tr>
+ </thead>
+ <tbody>
+  <tr>
+   <td>Data stored as</td>
+   <td>Characters readable by humans</td>
+   <td>Raw bytes (compact, exact representation)</td>
+  </tr>
+  <tr>
+   <td>File opening mode</td>
+   <td>Default</td>
+   <td>Use <code>std::ios::binary</code> flag</td>
+  </tr>
+  <tr>
+   <td>I/O functions</td>
+   <td>Formatted (<code>&lt;&lt;</code>, <code>&gt;&gt;</code>, <code>getline</code>)</td>
+   <td>Unformatted (<code>read()</code>, <code>write()</code>)</td>
+  </tr>
+  <tr>
+   <td>Use cases</td>
+   <td>Config files, logs, simple data</td>
+   <td>Images, audio, serialized objects, performance-critical data</td>
+  </tr>
+  <tr>
+   <td>Portability</td>
+   <td>High</td>
+   <td>Can be low; depends on platform and data layout</td>
+  </tr>
+ </tbody>
+</table><h3 id="conclusion">Conclusion</h3><p>Binary file handling in C++ gives you precise control over how data is stored and read from files, which is critical in many real-world applications such as image processing, network protocols, and serialization of complex objects. By mastering <code>read()</code> and <code>write()</code>, and understanding the nuances of data alignment and portability, you can implement efficient and reliable binary I/O in your programs.</p><p>In the next section, we will explore <strong>Practical File Processing Examples</strong>, tying together concepts from both text and binary file handling into real-world scenarios.</p><div class = "chapter-navi-section">
+<a href="#top" class="nav-button prev">↑</a>
+<a href='cplusplus-for-beginners.htm#file-input-and-output' class="nav-button toc-link">Index</a>
+<a href="#bottom" class="nav-button next">↓</a>
+</div>
+<h2 id='practical-file-processing-examples'>15.4 Practical File Processing Examples</h2><p>In this section, we will explore realistic examples that combine the core file input/output concepts you’ve learned. These hands-on scenarios include reading and parsing CSV files, logging application data, and copying files. Along the way, we’ll emphasize best practices for error handling, resource management, and writing clean, efficient code.</p><h3 id="parsing-a-csv-file">Parsing a CSV File</h3><p>CSV (Comma-Separated Values) is a popular format for tabular data where each line represents a row and each field is separated by commas. Parsing CSV files is a common task for processing data such as user records, financial data, or configuration parameters.</p><h3 id="example-reading-a-csv-file-and-summarizing-data">Example: Reading a CSV File and Summarizing Data</h3><p>Suppose we have a file named <code>sales.csv</code> with the following content:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-bash">Product,Quantity,Price
+Apple,10,0.5
+Banana,5,0.3
+Orange,8,0.7</code></pre>
+</div><p>We want to read this file, parse each line, and calculate the total sales for each product.</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">📋</button>
+ <pre><code class="language-cpp">#include &lt;iostream&gt;
+#include &lt;fstream&gt;
+#include &lt;sstream&gt;
+#include &lt;string&gt;
+
+int main() {
+    std::ifstream file("sales.csv");
+    if (!file) {
+        std::cerr &lt;&lt; "Error: Cannot open sales.csv\n";
+        return 1;
+    }
+
+    std::string line;
+    // Read the header line and ignore
+    std::getline(file, line);
+
+    while (std::getline(file, line)) {
+        std::stringstream ss(line);
+        std::string product;
+        int quantity;
+        double price;
+
+        // Parse the CSV line
+        std::getline(ss, product, ',');
+        std::string quantityStr, priceStr;
+        std::getline(ss, quantityStr, ',');
+        std::getline(ss, priceStr, ',');
+
+        try {
+            quantity = std::stoi(quantityStr);
+            price = std::stod(priceStr);
+        } catch (const std::exception&amp; e) {
+            std::cerr &lt;&lt; "Invalid number format in line: " &lt;&lt; line &lt;&lt; '\n';
+            continue; // Skip to next line
+        }
+
+        double totalSale = quantity * price;
+        std::cout &lt;&lt; "Product: " &lt;&lt; product 
+                  &lt;&lt; ", Total Sale: $" &lt;&lt; totalSale &lt;&lt; '\n';
+    }
+
+    file.close();
+    return 0;
+}</code></pre>
+</div><h3 id="key-points">Key points:</h3><ul>
+ <li><strong>Use <code>std::getline()</code></strong> to read lines from the file.</li>
+ <li><strong>Use <code>std::stringstream</code></strong> to parse each line by commas.</li>
+ <li><strong>Error handling</strong>: Check if the file opens successfully and catch exceptions during conversion.</li>
+ <li><strong>Resource management</strong>: Explicitly close the file (though RAII would close it automatically when <code>ifstream</code> goes out of scope).</li>
+</ul><h3 id="logging-application-data-to-a-file">Logging Application Data to a File</h3><p>Logging is essential for monitoring program behavior, debugging, and auditing. The example below shows how to write log messages with timestamps to a log file.</p><h3 id="example-simple-logger-writing-to-a-file">Example: Simple Logger Writing to a File</h3><div class="code-block"><button class="copy-button" onclick="copyCode(this)">📋</button>
+ <pre><code class="language-cpp">#include &lt;iostream&gt;
+#include &lt;fstream&gt;
+#include &lt;ctime&gt;
+#include &lt;string&gt;
+
+void logMessage(const std::string&amp; message, std::ofstream&amp; logFile) {
+    if (!logFile) {
+        std::cerr &lt;&lt; "Log file not open\n";
+        return;
+    }
+
+    // Get current time
+    std::time_t now = std::time(nullptr);
+    char timeStr[20];
+    std::strftime(timeStr, sizeof(timeStr), "%Y-%m-%d %H:%M:%S", std::localtime(&amp;now));
+
+    logFile &lt;&lt; "[" &lt;&lt; timeStr &lt;&lt; "] " &lt;&lt; message &lt;&lt; std::endl;
+}
+
+int main() {
+    std::ofstream logFile("app.log", std::ios::app); // Append mode
+    if (!logFile) {
+        std::cerr &lt;&lt; "Failed to open log file\n";
+        return 1;
+    }
+
+    logMessage("Application started", logFile);
+    logMessage("Performing some task", logFile);
+    logMessage("Application finished", logFile);
+
+    logFile.close();
+    return 0;
+}</code></pre>
+</div><h3 id="key-points">Key points:</h3><ul>
+ <li>Open the log file in <strong>append mode (<code>std::ios::app</code>)</strong> to avoid overwriting.</li>
+ <li>Use <strong>timestamps</strong> to record when events occur.</li>
+ <li>Check if the file is successfully opened before writing.</li>
+ <li>Writing to the log file uses the insertion operator (<code>&lt;&lt;</code>), just like standard output.</li>
+</ul><h3 id="copying-a-file-efficiently">Copying a File Efficiently</h3><p>Copying a file is a common task. This example shows how to read a source file and write its contents to a destination file efficiently using binary mode, which works well for all file types including text, images, and executables.</p><h3 id="example-file-copy-utility">Example: File Copy Utility</h3><div class="code-block"><button class="copy-button" onclick="copyCode(this)">📋</button>
+ <pre><code class="language-cpp">#include &lt;iostream&gt;
+#include &lt;fstream&gt;
+
+int main() {
+    std::ifstream source("source.txt", std::ios::binary);
+    if (!source) {
+        std::cerr &lt;&lt; "Error: Cannot open source file\n";
+        return 1;
+    }
+
+    std::ofstream dest("destination.txt", std::ios::binary);
+    if (!dest) {
+        std::cerr &lt;&lt; "Error: Cannot open destination file\n";
+        return 1;
+    }
+
+    // Buffer for copying
+    const size_t bufferSize = 4096;
+    char buffer[bufferSize];
+
+    while (source.read(buffer, bufferSize)) {
+        dest.write(buffer, source.gcount());
+    }
+    // Write any remaining bytes if the last read was partial
+    dest.write(buffer, source.gcount());
+
+    source.close();
+    dest.close();
+
+    std::cout &lt;&lt; "File copied successfully.\n";
+    return 0;
+}</code></pre>
+</div><h3 id="key-points">Key points:</h3><ul>
+ <li>Open files in <strong>binary mode</strong> to copy raw bytes correctly.</li>
+ <li>Use a <strong>buffer</strong> to read and write chunks rather than byte-by-byte for performance.</li>
+ <li>Use <code>gcount()</code> to know how many bytes were actually read on the last operation.</li>
+ <li>Check for file open errors before proceeding.</li>
+</ul><h3 id="best-practices-for-file-processing">Best Practices for File Processing</h3><h4 id="error-handling">Error Handling</h4><p>Always check if files are successfully opened before reading or writing to avoid crashes or undefined behavior.</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-cpp">if (!file) {
+    std::cerr &lt;&lt; "Failed to open file.\n";
+    // Handle error or exit
+}</code></pre>
+</div><p>Also, validate that I/O operations succeed:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-cpp">if (!file.read(buffer, size)) {
+    std::cerr &lt;&lt; "Error during read operation.\n";
+}</code></pre>
+</div><h4 id="resource-management">Resource Management</h4><ul>
+ <li>Use RAII: Prefer <strong>automatic variables</strong> for streams so files close automatically when they go out of scope.</li>
+ <li>Avoid manual calls to <code>close()</code> unless you want to close and reopen during the program.</li>
+</ul><h4 id="efficient-data-processing">Efficient Data Processing</h4><ul>
+ <li>Use buffered reads/writes instead of character-by-character to improve performance.</li>
+ <li>Use standard library utilities (<code>std::getline</code>, <code>std::stringstream</code>) for parsing text files.</li>
+ <li>Use binary mode when dealing with raw data.</li>
+</ul><h4 id="clean-and-modular-code">Clean and Modular Code</h4><ul>
+ <li>Separate file I/O logic from data processing logic.</li>
+ <li>Wrap file operations in functions to improve readability and reuse.</li>
+</ul><h3 id="summary">Summary</h3><p>This section provided practical examples demonstrating:</p><ul>
+ <li>Reading and parsing structured text files like CSV.</li>
+ <li>Logging runtime data to files with timestamps.</li>
+ <li>Copying files efficiently in binary mode.</li>
+ <li>Essential error checking and resource management techniques.</li>
+</ul><p>These examples are foundational for many real-world applications, and mastering these will give you the confidence to handle file operations in more complex programs.</p><p>In the next chapter, we will explore <strong>Advanced Topics</strong> including memory management, smart pointers, and best practices for modern C++ programming.</p><div class = "chapter-navi-section">
+<a href="cplusplus-for-beginners-standard-template-library-stl.htm" class="nav-button prev">←</a>
+<a href='cplusplus-for-beginners.htm#file-input-and-output' class="nav-button toc-link">Index</a>
+<a href="cplusplus-for-beginners-advanced-memory-management.htm" class="nav-button next">→</a>
+</div>
+<section class="download-section">
+  <div class="book-cover" style="background-color: #f9f6f1;border: 1px solid #ccc;"> 
+    <div class="book-cover-title" style="font-size: 18px;color: #333;top: 20px;">C++ for Beginners</div>
+    <div class="book-cover-author">readbytes</div>
+    <div class="book-cover-bottom-stripe" style="background-color: #333;"></div>
+    <img class="book-cover-icon" style="width: 90px;height: 90px;top: 70px;" src="data:image/png;base64,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"/>
+  </div>
+  <div class="download-info">
+    <h2 id='bottom'>Download This Ebook</h2>
+    <p class="format-label">Available formats:</p>
+    <div class="download-buttons">
+      <a href="cplusplus-for-beginners.pdf" class="download-button">📄 PDF</a>
+      <a href="cplusplus-for-beginners.epub" class="download-button">📘 EPUB</a>
+    </div>
+  </div>
+</section><div class='related-books'>
+<h2>C++ Introduction Books</h2>
+<div class='related-book-list'>
+<a href="cplusplus-for-beginners.htm">
+<div class="book-cover" style="background-color: #f9f6f1;border: 1px solid #ccc;"> 
+    <div class="book-cover-title" style="font-size: 18px;color: #333;top: 20px;">C++ for Beginners</div>
+    <div class="book-cover-author">readbytes</div>
+    <div class="book-cover-bottom-stripe" style="background-color: #333;"></div>
+    <img class="book-cover-icon" style="width: 90px;height: 90px;top: 70px;" src="data:image/png;base64,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"/>
+  </div>
+</a>
+
+
+<a href="cplusplus-syntax.htm">
+<div class="book-cover" style="background-color: #f9f6f1;border: 1px solid #ccc;"> 
+    <div class="book-cover-title" style="font-size: 20px;color: #333;top: 20px;">C++ Syntax</div>
+    <div class="book-cover-author">readbytes</div>
+    <div class="book-cover-bottom-stripe" style="background-color: #333;"></div>
+    <img class="book-cover-icon" style="width: 90px;height: 90px;top: 70px;" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFoAAABaCAYAAAA4qEECAAAFZ0lEQVR4Xu2dy4scVRSH8ye0iYtkERcmzgjT2OYBuhNREMVXBh/TgsYQx5ULDYTgVl3EFyg6uFJBV76IEXdKXAVBJCgISSTRGRmZiZlADBo6M5kp+3ZbnXt/p7q6btWtc++pqQPfpu/p7vP7UnSqi+m6GzbkrMbYO50u0Tqjgx5Kqe4brSa8+XplFf0UroQ3GbDltqNRs70Y3Tw5G22//2SXU0Fyy5MXc6GyqYyYWwd9WdfGbW9uxRe9vvlBtOvZKLrpwTOiUDO7QjlALxu3zWxFf5mq++RF/YU27/40au39lwSQAspygXICwhfRY2rhv5Z6URxcEuoAQUkuQV/oM7HwSN45vUoGlwaKKQOrI1t9zuhPaD19mQwtEZRSFrq71M/sqh3JMSikTHSH6LdXeoN6Ag4rlV3Ta0RG2aTKjhfU/6Q4rGRQAgf62QhKHnzjk3wKlwRK4EI7qq99g4wf3NR8nwwqmfE9s0QAF8olOarjB1QDDisZDM+NIbqhXYXDQaWDwbnRPj46xtkGDiodDM6N7nYgWl2hwkEl09r7DwnOzZbbr131G4iemFokw0oGQ/ug2XVKRI9PzpJhJYOhfdB66m8qevsDp8iwksHQPqi8aAzsi1o0E7VoJioteuzh30lgX1RaNIb1SS2aiVo0E5UVPTH1Fwnrk8qKxqC+qUUzUYtmwovoL49dioYV9uZhx/4VEjRmWM2fp70uYRc9qrA/DxhSZ1RhvyuCEL1wfiU6PXulB/bnAUPqnJnv8+cSTtEv7HeFd9G4XpyzJGQaWLjuisqJxoCjeOVjc572y7THBayim4+cNUKdONkhPUXBgKO495AxUrTvVdrjAq+ij//k/i9UMeAo7jlojFSLzsLE4/ZfuyspuvXYb0Yo16IxXBZQ9DOv0x4XsIqeOjRvhPri20ukpwgYLgt3HTBGir75kfa4gFU01h373f5ZA4bLChauu4BNdPtF82hWhT1FuHVfh4TLCtbR47SnKKWKTqu5hWXSXwQMZsOBGZzOLOzPA7voNz66QPpcgMHy8Py7OG2/sC8P7KLjurK8RvqLgMFsmDmC05mF/XkoVbTOjinz1E4V9uSl6I+AsF6YoT1FYROtwLpzeo705AFD2YKF6y5gFf3oQfPM48h3w8+jD3+4ZIDrOnGYtz7vgyHTuBvOo7/+nva4gFW0zTdDLFyPGdN+BBQXhkyDfDN8jfa4gFW0zbWOH365bIDrMXqYE7/2wZBpoOhKXOuwEZ0VDGTLuhD98+kO6bEFA9lyXxWvRyuwcN0GdccFDGTLe1+Z87Rfoj0uEC0aw+QBC9dd4V10XMsraz2wPw0Mk4WVq33WcID/C/tdwS766uqwiP3C/jQwTBZGFfa7gl204rnDC5hvUNg7DAySlWH1yTHa6xIvol2AQUKnFs2ESNHjk3MkSOiIFI0hJFCLZqIWzYQ40c0nLpAQEhAnGgNIoRbNRC2aCVGid6b8CCh0RInG4SVRi2YiUXSIN68ae8juR0ChkSg6xNux4eDSSLwdW4g3GMTBpZF4g0EFBvUNDi4N3a0SHeRNYCfaS2RwaWii+1s/xQ+oRQzsCxxaIoOjGe8fHdKNunFoaWzSdh/SRQd363kcXBrax4a5eVm8EMJmCmn33pDA5t2f0aMZRStUM4bnBAeXhu4SPfdKb/C54Q0OLomRklWFsoUTDi8F3d11N759A/o1quF5UzIcXgq6sy7n0GtiwZN6L4RCygIDSAB9oc/UwiOba+NIDBEy+tmF1ZGMhZ/ZijK3Qh3f8wcJEyJOt0LVC19UR12harbPOdncFzfWDQGVTb8KlwT6KlyNertqHffbVSdVo96A3ar+A5kzbYSE7G+UAAAAAElFTkSuQmCC"/>
+  </div>
+</a>
+
+
+<a href="cplusplus-stl.htm">
+<div class="book-cover" style="background-color: #f9f6f1;border: 1px solid #ccc;"> 
+    <div class="book-cover-title" style="font-size: 20px;color: #333;top: 20px;">C++ STL</div>
+    <div class="book-cover-author">readbytes</div>
+    <div class="book-cover-bottom-stripe" style="background-color: #333;"></div>
+    <img class="book-cover-icon" style="width: 90px;height: 90px;top: 70px;" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFoAAABaCAYAAAA4qEECAAADK0lEQVR4Xu2cvWsTcRjHo+DkIKiTjiJugqTJ0cG/QcRZ/wJXQTd3ByeHDiLJnS84dHMVBHUSRQUH90pNfmfb6CKi8fqSaj93ae4lzzV3+X7gS9vkeZ7f7/lwEDq0jYYQQgghxFzQ9t0wbTzf3WO/SAllpg3niAlQYJa0uu4W54kxeA96ZykwU4JwnTPFGGLyMqd3nTNFAnFx2cOZIiee//UK5TLsEQWg3D1ZHpxgvShATLCeajsoWKKNaAfuDyVvZuGhu8paURBK1lNtBAVLtBEULNFGULBEG0HBlRfNRUrMqwW/f473GZFQvxXWVQbPD5e4zEGlcXt4eHQvvrdbU2W4zEGn5Yd3+NoovHul4DKzHN69UnCZWQ7vXim8IHzJhWY1vLtIQSRujSInhTNEBppL345R6LiwV+SAUpPCHpETimVYLwpAuRJtBOVKtBHNR4OTFCzRRlCwRBtBwRJtBAVLtBEULNFGeN3wPiVvp/+OtVmJ5qzvmdl1z1kzV8Ql53+q0/6az765gBLyConqN9i/X9hfeyiAYX0S7cCtsi9NOKf2UADDesL6LOGsWsPlx+V8d/Vo3t5x4bzyGA4P8TK1TuBeU0FpxC5T83D/0uBF6h7uXxq8SN3D/Utj80OHl6ltgvAX9y+V2IUm53eUQZQvUT4nvJ8x/e/R14+RiBeeHz4bZfPn6PW3bT908Z7s4d6Vgwsxix13mj15iGb94Ows4bxKwWUY1heF89OGcyoHFypjOZ4zKV7gVjijUjSfrJ/hUqOwdtrwvH2yzN7KkbDUTsKfrLWgufTmSPzsf2F9ZeFitVtwVqBgiTaCgiXaCAqWaCMoWKKNoGCJNoKCJdoICpZoIyhYoo2gYIk2goIl2ggKlmgjKFiijaBgiTaCgiXagLbfu0jBW+m6NdaKAsQEj9Jxl1krChATvBPWiQJ4fviJgiV6yiw+3ThOuRI9ZbzA3aRYSZ4iFx73T1FqUtg3l1DKbrr9960gvBt9f207/Rst332I1U0Iz5tbKGaa4VlzTSQk8X84Fw3PEY3p/70KTxA7UFTeeB13ibPFf1BY1nCeEEIIIYQowl8t5mhjJHw+fQAAAABJRU5ErkJggg=="/>
+  </div>
+</a>
+
+
+
+<a href='cplusplus.htm'><div class='book-cover' style='background-color: #f9f6f1;color: #111111;border: 1px solid #ccc;display: flex;justify-content: center;align-items: center;text-align: center;'>More C++ Books</div></a>
+</div>
+</div>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+  
+  <script>
+    function copyCode(button) {
+      const code = button.nextElementSibling.innerText;
+      navigator.clipboard.writeText(code).then(() => {
+        button.textContent = 'Copied!';
+        setTimeout(() => { button.textContent = 'Copy'; }, 1500);
+      });
+    }
+  </script>  
+<div id="floatingLog" aria-live="polite" role="alert"></div>
+<footer class="page-footer">
+    <nav>
+      <a href="https://readbytes.github.io">Home</a> | 
+      Email:<script language="JavaScript" type="text/javascript">
+var part1 = 'yinpeng';var part6 = '263';var part2 = Math.pow(2,6);var part3 = String.fromCharCode(part2);var part4 = 'hotmail dot com';var part5 = part1 + String.fromCharCode(part2) + part4;document.write(part1 + part6 + part3 + part4);
+</script>
+    </nav>
+  <p>© 2025 — All rights reserved.</p>    
+  </footer>
+
+</body>
+</html>

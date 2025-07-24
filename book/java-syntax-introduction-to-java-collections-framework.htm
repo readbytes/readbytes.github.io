@@ -7,7 +7,244 @@
 <link href="https://fonts.googleapis.com/css2?family=Merriweather&display=swap" rel="stylesheet" />
 <link href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
 
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.css" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/theme/material.css"> <!-- Dark theme -->
+<script src="https://cdn.jsdelivr.net/npm/typescript@5/lib/typescript.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/htmlmixed/htmlmixed.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/xml/xml.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/css/css.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/javascript/javascript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/javascript/typescript.min.js"></script>
+<style>
+    #floatingLog {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: rgba(20, 20, 20, 0.95);
+      color: white;
+      font-family: monospace;
+      font-size: 14px;
+      padding: 16px 20px;
+      border-radius: 8px;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+      max-width: 80%;
+      max-height: 200px;
+      overflow-y: auto;
+      display: none;
+      z-index: 9999;
+      pointer-events: none;
+      white-space: pre-wrap;
+      text-align: center;
+    }
+</style>
+<script>
+  const codeMirrorMap = new Map();
+  const iframeMap = new Map();
+  
+ 
 
+  let dismissTimer;
+  function showFloatingLog(message) {
+	const floatingLog = document.getElementById('floatingLog');
+
+    if (floatingLog.style.display !== 'block') {
+      floatingLog.textContent = '';
+      floatingLog.style.display = 'block'; 
+    }
+
+    floatingLog.textContent += message + '\n';
+    floatingLog.scrollTop = floatingLog.scrollHeight; 
+    clearTimeout(dismissTimer);
+    dismissTimer = setTimeout(() => {
+      floatingLog.style.display = 'none';
+      floatingLog.textContent = '';
+    }, 2000);
+  }
+  window.addEventListener('message', (event) => {
+	    if (!iframeMap.has(event.source)) return;
+
+	    if (event.data?.type === 'console-log') {
+	      showFloatingLog(event.data.message);
+	    }
+  });  
+  function renderIframe(button,textarea_id, iframe_id) {
+      const html = codeMirrorMap.get(textarea_id).getValue();
+      const iframe = document.getElementById(iframe_id);
+  
+      const oldIframe = iframe;
+      const newIframe = document.createElement('iframe');
+      newIframe.className ="result_iframe";
+      
+      newIframe.id = iframe_id;
+      oldIframe.replaceWith(newIframe);
+ 
+
+      // Track the iframe in the map
+      iframeMap.set(newIframe.contentWindow, button);
+
+      const overrideScript = `
+        <script>
+          (function() {
+            const originalLog = console.log;
+            console.log = function(...args) {
+              originalLog.apply(console, args);
+              window.parent.postMessage({
+                type: 'console-log',
+                message: args.map(a => {
+                  try { return JSON.stringify(a); }
+                  catch { return String(a); }
+                }).join(' ')
+              }, '*');
+            };
+          })();
+        <\/script>
+      `;
+
+      const iframeHTML = `
+        <!DOCTYPE html>
+        <html>
+        <body>
+          ${overrideScript}
+          ${html}
+        </body>
+        </html>
+      `;
+ 
+      const doc = newIframe.contentDocument || newIframe.contentWindow.document;
+      doc.open();
+      doc.write(iframeHTML);
+      doc.close();
+
+      
+      setTimeout(() => {
+    	  newIframe.style.height = '0px';
+    	   let contentHeight = Math.max(doc.body.scrollHeight,doc.documentElement.scrollHeight);
+ 
+    	   if(contentHeight < 150 || contentHeight > 600){
+    		   contentHeight = 600;
+    	   } 
+    	   newIframe.style.height = contentHeight + 'px';
+    	}, 50);      
+      
+  }
+  function renderIframeForClientTypescript(textarea_id, iframe_id) {
+      let code = codeMirrorMap.get(textarea_id).getValue();
+      code = ts.transpile(code);
+      const iframe = document.getElementById(iframe_id);
+      const doc = iframe.contentDocument || iframe.contentWindow.document;
+
+const html = `
+  <!DOCTYPE html>
+  <html>
+    <head>
+      <title>Output</title>
+      <style>
+        body { font-family: monospace; padding: 1em; background: #f4f4f4; color: #222; }
+        pre { white-space: pre-wrap; word-break: break-word; }
+        .error { color: red; }
+      </style>
+    </head>
+    <body>
+      <pre id="log"></pre>
+      <script>
+        (function(){
+          const logEl = document.getElementById('log');
+          const origLog = console.log;
+          const origError = console.error;
+
+          console.log = (...args) => {
+            logEl.textContent += args.join(' ') + '\\n';
+            origLog.apply(console, args);
+          };
+          console.table = (...args) => {
+            logEl.textContent += args.join(' ') + '\\n';
+            origLog.apply(console, args);
+          };
+
+          console.error = (...args) => {
+            logEl.innerHTML +='<span class="error">' + args.join(' ') + '</span>';
+            origError.apply(console, args);
+          };
+          window.addEventListener("error", function (event) {
+              console.error("Caught by event listener:", event.message);
+          });    
+          try {             
+              ${code};
+          } catch (err) {
+            console.error(err.stack || err.message);
+          }
+        })();
+      <\/script>
+    </body>
+  </html>
+`;
+
+      iframe.style.display = "block";
+      iframe.srcdoc = html;  
+  }
+
+    function renderIframeForClientJavascript(textarea_id, iframe_id) {
+        const code = codeMirrorMap.get(textarea_id).getValue();
+        const iframe = document.getElementById(iframe_id);
+        const doc = iframe.contentDocument || iframe.contentWindow.document;
+
+  const html = `
+    <!DOCTYPE html>
+    <html>
+      <head>
+        <title>Output</title>
+        <style>
+          body { font-family: monospace; padding: 1em; background: #1e1e1e; color: #eee; }
+          pre { white-space: pre-wrap; word-break: break-word; }
+          .error { color: red; }
+        </style>
+      </head>
+      <body>
+        <pre id="log"></pre>
+        <script>
+          (function(){
+            const logEl = document.getElementById('log');
+            const origLog = console.log;
+            const origError = console.error;
+
+            console.log = (...args) => {
+              logEl.textContent += args.join(' ') + '\\n';
+              origLog.apply(console, args);
+            };
+            console.table = (...args) => {
+              logEl.textContent += args.join(' ') + '\\n';
+              origLog.apply(console, args);
+            };
+
+            console.error = (...args) => {
+              logEl.innerHTML +='<span class="error">' + args.join(' ') + '</span>';
+              origError.apply(console, args);
+            };
+            window.addEventListener("error", function (event) {
+                console.error("Caught by event listener:", event.message);
+            });    
+            try {
+             ${code}; 
+            } catch (err) {
+              console.error(err.stack || err.message);
+            }
+          })();
+        <\/script>
+      </body>
+    </html>
+  `;
+        iframe.style.display = "block";
+        iframe.srcdoc = html;  
+    }
+    function toggleSnippetAndRefresh(id, textarea_id) {
+      const box = document.getElementById(id);
+      box.classList.toggle("open");
+      codeMirrorMap.get(textarea_id).refresh();
+    }
+
+  </script>
   <script>
   const mode = localStorage.getItem('mode') || 'light';
   document.documentElement.classList.add(`${mode}-mode`);
@@ -462,280 +699,101 @@ html.dark-mode .page-footer a {
     <h1 class="book-title-chapter" id = 'top'>Introduction to Java Collections Framework</h1>
     <h3 class="book-subtitle-chapter">Java Syntax</h3>   
     <!-- <h1 class ="chapter-title"></h1> -->
-    <h2 id='what-are-collections'>1.1 What are Collections?</h2><div class="snippet-container" id="<!DOCTYPE html>
-<html lang=&quot;en&quot;>
-<head>
-  <meta charset=&quot;UTF-8&quot;>
-  <title>Bubble Sort Step Visualizer</title>
-  <style>
-    canvas {
-      border: 1px solid #ccc;
-      display: block;
-      margin: 20px auto;
-    }
-    button {
-      display: block;
-      margin: 0 auto;
-      padding: 10px 20px;
-      font-size: 16px;
-    }
-  </style>
-</head>
-<body>
+    <h2 id='what-are-collections'>1.1 What are Collections?</h2><div class="snippet-container" id="KkLjl">
+ <div id="gZJYX_Dialog" class="dialog-backdrop">
+  <div class="dialog">
+   <h2>Dialog 1</h2>
+   <div class="controls"><button onclick="renderIframe(this,'QtLLD_Textarea','gZJYX_IFrame')">Run</button> <button onclick="closeAll()">Close</button>
+   </div>
+   <div class="dialog-content"><textarea id="QtLLD_Textarea" class="textarea_dialog" placeholder="Type HTML here...">&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+  &lt;head&gt;
+    &lt;title&gt;My First Web Page&lt;/title&gt;
+  &lt;/head&gt;
+  &lt;body&gt;
+    &lt;h1&gt;Welcome to HTML!&lt;/h1&gt;
+    &lt;p&gt;This is my first web page.&lt;/p&gt;
+  &lt;/body&gt;
+&lt;/html&gt;</textarea> <iframe id="gZJYX_IFrame" class="iframe_dialog"></iframe>
+   </div>
+  </div>
+ </div>
+ <div class="snippet-header" onclick="toggleSnippetAndRefresh('KkLjl','QtLLD')">
+  Click to Try it <!--<span onclick="toggleSnippetAndRefresh('KkLjl','QtLLD')">Click
+			to Try it</span> --> <!-- <span onclick="openDialog('gZJYX_Dialog')">Dialog</span> -->
+ </div>
+ <div class="snippet-body"><textarea id="QtLLD">&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+  &lt;head&gt;
+    &lt;title&gt;My First Web Page&lt;/title&gt;
+  &lt;/head&gt;
+  &lt;body&gt;
+    &lt;h1&gt;Welcome to HTML!&lt;/h1&gt;
+    &lt;p&gt;This is my first web page.&lt;/p&gt;
+  &lt;/body&gt;
+&lt;/html&gt;</textarea> <br> <button onclick="renderIframe(this,'QtLLD','gZJYX')">Run</button>
+  <div id="gZJYX_FloatingLog" class="floatingLog" aria-live="polite" role="alert"></div> <iframe id="gZJYX" class="result_iframe" style="display: none;"></iframe>
+  <script>
+			{
+				let editor = CodeMirror.fromTextArea(document
+						.getElementById("QtLLD"), {
+					mode : "htmlmixed",
+					lineNumbers : false,
+					tabSize : 2
+				});
+			    const mode = localStorage.getItem("mode") || "light";  
+			    const newTheme = mode === "dark" ? "material" : "default";
+			    editor.setOption("theme", newTheme);
+			    
+				codeMirrorMap.set("QtLLD", editor);
 
-<canvas id=&quot;canvas&quot; width=&quot;500&quot; height=&quot;300&quot;></canvas>
-<button id=&quot;next&quot;>Next Step</button>
+				let editor1 = CodeMirror.fromTextArea(document.getElementById("QtLLD_Textarea"), {
+					mode : "htmlmixed",
+					lineNumbers : false,
+					tabSize : 2
+				});
+			    editor1.setOption("theme", newTheme);				
+				
+				codeMirrorMap.set("QtLLD_Textarea", editor1);
+			}
+		    function openDialog(id) {
+		        closeAll();
+		        document.getElementById(id).style.display = 'flex';
+		        setTimeout(() => {
+		        	 codeMirrorMap.get("QtLLD_Textarea").refresh();
+		        }, 100); // 100ms 
+		      }
 
-<script>
-const canvas = document.getElementById('canvas');
-const ctx = canvas.getContext('2d');
-const nextBtn = document.getElementById('next');
-
-// Settings
-const array = [100, 200, 80, 160, 120];
-const barWidth = 60;
-const spacing = 20;
-const baseY = 280;
-
-// Bubble Sort indices
-let i = 0;
-let j = 0;
-let phase = 'compare'; // 'compare' or 'swap'
-let animProgress = 0;
-let animationId = null;
-let isSwapping = false;
-
-function drawArray(highlightA = -1, highlightB = -1, swapProgress = 0) {
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-  array.forEach((height, idx) => {
-    const x = spacing + idx * (barWidth + spacing);
-    const y = baseY - height;
-
-    ctx.fillStyle = (idx === highlightA || idx === highlightB) ? 'red' : 'steelblue';
-
-    let offsetX = 0;
-    if (idx === highlightA &amp;&amp; swapProgress) offsetX = (barWidth + spacing) * swapProgress;
-    if (idx === highlightB &amp;&amp; swapProgress) offsetX = -(barWidth + spacing) * swapProgress;
-
-    ctx.fillRect(x + offsetX, y, barWidth, height);
-    ctx.fillStyle = 'black';
-    ctx.fillText(array[idx], x + offsetX + 20, baseY + 15);
-  });
-}
-
-function animateSwap(a, b, callback) {
-  isSwapping = true;
-  animProgress = 0;
-
-  function step() {
-    animProgress += 0.05;
-    if (animProgress >= 1) {
-      // Swap values in the array
-      [array[a], array[b]] = [array[b], array[a]];
-      isSwapping = false;
-      drawArray();
-      cancelAnimationFrame(animationId);
-      callback();
-      return;
-    }
-    drawArray(a, b, animProgress);
-    animationId = requestAnimationFrame(step);
-  }
-
-  step();
-}
-
-function stepSort() {
-  if (isSwapping) return;
-
-  if (i < array.length - 1) {
-    if (j < array.length - i - 1) {
-      const a = j;
-      const b = j + 1;
-
-      if (phase === 'compare') {
-        drawArray(a, b); // Highlight comparison
-        phase = 'swap';
-      } else if (phase === 'swap') {
-        if (array[a] > array[b]) {
-          animateSwap(a, b, () => {
-            j++;
-            phase = 'compare';
-          });
-        } else {
-          drawArray(); // No swap needed
-          j++;
-          phase = 'compare';
-        }
-      }
-    } else {
-      j = 0;
-      i++;
-    }
-  } else {
-    drawArray(); // Final state
-    nextBtn.disabled = true;
-  }
-}
-
-// Initial draw
-drawArray();
-
-// Button handler
-nextBtn.addEventListener('click', stepSort);
-</script>
-
-</body>
-</html>ID"><textarea id="STiwm" style="display: none;">&lt;!DOCTYPE html&gt;
-&lt;html lang="en"&gt;
-&lt;head&gt;
-  &lt;meta charset="UTF-8"&gt;
-  &lt;title&gt;Bubble Sort Step Visualizer&lt;/title&gt;
-  &lt;style&gt;
-    canvas {
-      border: 1px solid #ccc;
-      display: block;
-      margin: 20px auto;
-    }
-    button {
-      display: block;
-      margin: 0 auto;
-      padding: 10px 20px;
-      font-size: 16px;
-    }
-  &lt;/style&gt;
-&lt;/head&gt;
-&lt;body&gt;
-
-&lt;canvas id="canvas" width="500" height="300"&gt;&lt;/canvas&gt;
-&lt;button id="next"&gt;Next Step&lt;/button&gt;
-
-&lt;script&gt;
-const canvas = document.getElementById('canvas');
-const ctx = canvas.getContext('2d');
-const nextBtn = document.getElementById('next');
-
-// Settings
-const array = [100, 200, 80, 160, 120];
-const barWidth = 60;
-const spacing = 20;
-const baseY = 280;
-
-// Bubble Sort indices
-let i = 0;
-let j = 0;
-let phase = 'compare'; // 'compare' or 'swap'
-let animProgress = 0;
-let animationId = null;
-let isSwapping = false;
-
-function drawArray(highlightA = -1, highlightB = -1, swapProgress = 0) {
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-  array.forEach((height, idx) =&gt; {
-    const x = spacing + idx * (barWidth + spacing);
-    const y = baseY - height;
-
-    ctx.fillStyle = (idx === highlightA || idx === highlightB) ? 'red' : 'steelblue';
-
-    let offsetX = 0;
-    if (idx === highlightA &amp;&amp; swapProgress) offsetX = (barWidth + spacing) * swapProgress;
-    if (idx === highlightB &amp;&amp; swapProgress) offsetX = -(barWidth + spacing) * swapProgress;
-
-    ctx.fillRect(x + offsetX, y, barWidth, height);
-    ctx.fillStyle = 'black';
-    ctx.fillText(array[idx], x + offsetX + 20, baseY + 15);
-  });
-}
-
-function animateSwap(a, b, callback) {
-  isSwapping = true;
-  animProgress = 0;
-
-  function step() {
-    animProgress += 0.05;
-    if (animProgress &gt;= 1) {
-      // Swap values in the array
-      [array[a], array[b]] = [array[b], array[a]];
-      isSwapping = false;
-      drawArray();
-      cancelAnimationFrame(animationId);
-      callback();
-      return;
-    }
-    drawArray(a, b, animProgress);
-    animationId = requestAnimationFrame(step);
-  }
-
-  step();
-}
-
-function stepSort() {
-  if (isSwapping) return;
-
-  if (i &lt; array.length - 1) {
-    if (j &lt; array.length - i - 1) {
-      const a = j;
-      const b = j + 1;
-
-      if (phase === 'compare') {
-        drawArray(a, b); // Highlight comparison
-        phase = 'swap';
-      } else if (phase === 'swap') {
-        if (array[a] &gt; array[b]) {
-          animateSwap(a, b, () =&gt; {
-            j++;
-            phase = 'compare';
-          });
-        } else {
-          drawArray(); // No swap needed
-          j++;
-          phase = 'compare';
-        }
-      }
-    } else {
-      j = 0;
-      i++;
-    }
-  } else {
-    drawArray(); // Final state
-    nextBtn.disabled = true;
-  }
-}
-
-// Initial draw
-drawArray();
-
-// Button handler
-nextBtn.addEventListener('click', stepSort);
-&lt;/script&gt;
-
-&lt;/body&gt;
-&lt;/html&gt;</textarea> <iframe id="Ss94m" class="result_iframe" style="border:none;"></iframe>
- <script>{
-const textarea = document.getElementById("STiwm");
-const iframe = document.getElementById("Ss94m");
-const html = textarea.value;
-const iframeHTML = `${html}`;
-const doc = iframe.contentDocument || iframe.contentWindow.document;
-doc.open();
-doc.write(iframeHTML);
-doc.close();
-setTimeout(() => {
-//const contentHeight = doc.body.scrollHeight;
-//iframe.style.height = contentHeight + 'px';
-// Reset height to allow shrinking
-iframe.style.height = '0px';
-const contentHeight = Math.max(
-  doc.body.scrollHeight,
-  doc.documentElement.scrollHeight
-);
-iframe.style.height = contentHeight + 'px';
-
-
-
-}, 50);
-}
+		      function closeAll() {
+		        document.querySelectorAll('.dialog-backdrop').forEach(el => {
+		          el.style.display = 'none';
+		        });
+		      }			
 		</script>
+ </div>
+</div><div>
+ <div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+  <pre><code class="language-js">console.log("asdf");</code></pre>
+ </div>
+ <div class="snippet-container" id="MflLn">
+  <div class="snippet-header" onclick="toggleSnippetAndRefresh('MflLn','DkgNZ')">
+   Try it in editor
+  </div>
+  <div class="snippet-body"><textarea id="DkgNZ">console.log("asdf");</textarea> <br> <button onclick="renderIframeForClientJavascript('DkgNZ','c762I')">Run</button> <iframe id="c762I" class="result_iframe" style="display: none;"></iframe>
+   <script>
+  {let editor1 = CodeMirror.fromTextArea(document.getElementById("DkgNZ"), {
+    mode: "javascript",
+    lineNumbers:false,
+    tabSize: 2
+    });
+    const mode = localStorage.getItem("mode") || "light";  
+    const newTheme = mode === "dark" ? "material" : "default";
+    editor1.setOption("theme", newTheme);
+
+    codeMirrorMap.set("DkgNZ", editor1);}
+  </script>
+  </div>
+ </div>
 </div><div class = "chapter-navi-section">
 <a href="" class="nav-button prev"></a>
 <a href='java-syntax.htm#introduction-to-java-collections-framework' class="nav-button toc-link">Index</a>
