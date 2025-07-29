@@ -1,0 +1,915 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Python for Beginners Introduction to Python</title>
+<link rel='shortcut icon' href='https://readbytes.github.io/images/favicon.ico'>
+<link href="https://fonts.googleapis.com/css2?family=Merriweather&display=swap" rel="stylesheet" />
+<link href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.css" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/theme/dracula.min.css"><style>
+html {scroll-behavior: smooth;}  
+body {font-family: 'Merriweather', serif;;margin: 0;padding: 2rem 1rem;font-size: 15px;line-height: 1.5;transition: background-color 0.3s, color 0.3s;}
+.container {max-width: 750px;margin: 0 auto;padding: 1rem 2rem;}
+.light-mode {background-color: #f8f7f5;color: #333;} 
+.dark-mode {background-color: #121212;color: #e0e0e0;}
+a { text-decoration: none;transition: color 0.2s;}
+a:hover {text-decoration: underline;}
+.light-mode a {color: #555;}
+.dark-mode a {color: #aaa;}
+</style><style>
+.related-book-list {display: flex;flex-wrap: wrap;gap: 20px;}
+.related-books {margin-top: 40px;}
+.related-books h2 {font-size: 22px;margin-bottom: 20px;border-bottom: 2px solid #eee;padding-bottom: 8px;}
+.light-mode .related-books h2 {color: #333;border-color: #eee;}
+.dark-mode .related-books h2 {color: #ddd;border-color: #333;}
+</style><style>
+.book-cover {width: 130px;height: 180px;font-family: Arial, sans-serif;position: relative;overflow: hidden;box-shadow: 2px 2px 4px rgba(0,0,0,0.1);}
+.book-cover-bottom-stripe {position: absolute;bottom: 0;left: 0;height: 5px;width: 100%;}
+.book-cover-title {position: absolute;width: 100%;text-align: center;font-weight: bold;}
+.book-cover-icon {position: absolute;left: 50%;transform: translateX(-50%);display: flex;align-items: center;justify-content: center;}
+.book-cover-author {position: absolute;bottom: 10px;width: 100%;text-align: center;font-size: 8px;color: #333;}
+</style><style>
+.book-title-toc {font-size: 32px;font-weight: bold; }
+.book-subtitle-toc {font-size: 18px;margin-top: 8px;font-style: italic;}
+.book-header {text-align: center;margin-bottom: 40px;}
+
+.toc-container {border-radius: 10px;padding: 30px;margin-bottom: 40px;box-shadow: 0 8px 20px rgba(0,0,0,0.05);}
+h1 {font-size: 24px;text-align: center;margin-bottom: 30px;letter-spacing: 1px;padding-bottom: 10px;}
+.toc-list,.toc-section-list {list-style: none;padding: 0;margin: 0;}
+.toc-section-list {padding-left: 18px;margin-top: 6px;margin-bottom: 20px; }
+.toc-chapter {padding: 20px 0;}
+.chapter-title,.toc-section {display: flex;justify-content: space-between;padding-top: 4px;}
+.chapter-title {font-size: 17px;font-weight: bold;}
+.chapter-page,.section-page {font-style: italic;}
+ 
+ 
+.light-mode .book-title-toc,.light-mode .chapter-title,.light-mode .book-name {color: #222;}
+.light-mode .book-subtitle-toc,.light-mode .book-sub,.light-mode .chapter-page,.light-mode .section-page {color: #666;}
+.light-mode .toc-container { background: #fff;border: 1px solid #ddd;}
+.light-mode h1 {border-bottom: 2px solid #eee;color: #222;}
+.light-mode .toc-section {  color: #444;}
+
+.light-mode .book-cover { border: 1px solid #ccc;box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);}
+.light-mode .book-title,.light-mode .series-name {color: #fff;}
+.light-mode .book-subtitle,.light-mode .book-footer {color: #aaa;}
+
+.dark-mode .book-title-toc,.dark-mode .chapter-title,.dark-mode .book-name {color: #f5f5f5;}
+.dark-mode .book-subtitle-toc,.dark-mode .book-sub,.dark-mode .chapter-page,.dark-mode .section-page {color: #aaa;}
+.dark-mode .toc-container {background: #1e1e1e;border: 1px solid #444;}
+
+.dark-mode h1 {border-bottom: 2px solid #333;color: #eee;}
+.dark-mode .toc-section {color: #bbb;}
+
+.dark-mode .related-books h2 {color: #ddd;border-bottom: 2px solid #333;}
+.dark-mode .book-title,.dark-mode .series-name {color: #fff;}
+.dark-mode .book-subtitle,.dark-mode .book-footer {color: #bbb;}
+.dark-mode .toc-section {color: #ddd;}
+
+@media (max-width: 600px) {
+  .chapter-title,
+  .toc-section {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .chapter-page,
+  .section-page {
+    margin-top: 4px;
+  }
+}
+
+</style><style>
+.light-mode .container {box-shadow: 0 0 15px rgba(0,0,0,0.1);}
+.dark-mode .container {box-shadow: 0 0 15px rgba(255, 255, 255, 0.05);}
+
+h1, h2, h3 {font-weight: 600;margin-top: 2.5rem;margin-bottom: 1rem;line-height: 1.2;}
+h1 { font-size: 1.8rem; }
+h2 { font-size: 1.4rem; }
+h3 { font-size: 1.2rem; }
+
+table {width: 100%;border-collapse: collapse;font-family: sans-serif;font-size: 1em;margin: 1em 0;}
+th, td {padding: 0.6em 1em;text-align: left;border: 1px solid;}
+tr:nth-child(even) {  background-color: inherit;}
+tr:hover { background-color: inherit;}
+
+code {color: #d35400;}
+
+.chapter-navi-section {display: flex;justify-content: space-between;align-items: center;padding-bottom: 10px;padding-top: 10px;}
+.nav-link {color: inherit;text-decoration: none;opacity: 0.5;transition: opacity 0.3s ease, text-decoration 0.3s ease;}
+.nav-link:hover {opacity: 0.9;text-decoration: underline;}
+.prev { text-align: left; }
+.toc-link { text-align: center; }
+.next { text-align: right; }
+
+.download-section {display: flex;align-items: center;justify-content: center;gap: 2rem;padding: 2rem 1rem;max-width: 600px;margin: 3rem auto;border-radius: 12px;box-shadow: 0 4px 10px rgba(0,0,0,0.05);}
+.download-info h2 {margin: 0 0 0.5rem;font-size: 1.2rem;}
+.format-label {margin: 0 0 0.5rem;font-size: 0.95rem;}
+.download-buttons {display: flex;gap: 1rem;}
+.download-button {background-color: #4A90E2;color: white;padding: 0.5em 1.2em;border-radius: 25px;font-size: 0.95rem;text-decoration: none;transition: background-color 0.3s ease;}
+.download-button:hover {background-color: #357ABD;}
+
+.code-block {position: relative;margin-bottom: 1em;}
+.copy-button {background: transparent;color: white;position: absolute;top: 8px;right: 8px;border: none;padding: 4px 8px;font-size: 12px;border-radius: 4px;cursor: pointer;z-index: 1;}
+.copy-button:hover {background-color: #0056b3;}
+
+.snippet-container {overflow: hidden;}
+.snippet-header {padding: 0.75rem 1rem;cursor: pointer;font-size: 1rem;background-color: #eeeeee;color:  #111111; border-radius: 8px;cursor: pointer;box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+.snippet-body {display: none;font-family: monospace;}
+.snippet-container.open .snippet-body {display: block;}
+
+.CodeMirror {border: 2px solid #ccc;border-radius: 4px;resize: vertical;}
+
+.light-mode .format-label {color: #888;}
+.light-mode th {background-color: #f2f2f2;}
+.light-mode tr:nth-child(even) {background-color: #fafafa;}
+.light-mode tr:hover {background-color: #e6f7ff;}
+
+.dark-mode .snippet-header {background-color: #333;color:  #ddd; }
+.dark-mode .format-label {color: #aaa;}
+.dark-mode th {background-color: #333;color: #fff;}
+.dark-mode td {border-color: #444;}
+.dark-mode tr:nth-child(even) {background-color: #2a2a2a;}
+.dark-mode tr:hover {background-color: #2c3e50;}
+
+
+.button-group-run-edit {display: flex;width: 100%;gap: 1rem;}
+.button-run-edit {flex: 1;padding: 1rem;font-size: 1rem;font-weight: 600;border: none;border-radius: 8px;cursor: pointer;transition: background 0.3s, color 0.3s;}
+
+.light-mode .button-run-edit {background-color: #f0f0f0;color: #222;box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);}
+.light-mode .button-run-edit:hover {background-color: #e0e0e0;}
+
+.dark-mode .button-run-edit {background-color: #2a2a2a;color: #f5f5f5;box-shadow: 0 0 10px rgba(255, 255, 255, 0.05);}
+.dark-mode .button-run-edit:hover {background-color: #3a3a3a;}
+
+button { padding: 0.5em 1em; background: green; color: white; border: none; cursor: pointer; }
+button:hover { background: #1e7e34; }
+.result_iframe { width:99%; margin-top: 1em;  resize: both;background-color: #515b63;border:1px solid #ccc;}   
+
+.dialog-backdrop {position: fixed;top: 0;left: 0;width: 100vw;height: 100vh;background: rgba(0,0,0,0.5);display: none;justify-content: center;align-items: center;z-index: 10;}
+.dialog {background: #90979e;padding: 20px;width: 90vw;height: 80vh;border-radius: 8px;box-shadow: 0 0 20px rgba(0,0,0,0.3);display: flex;flex-direction: column;}
+.dialog-content {display: flex;gap: 20px;margin-top: 10px;height: calc(100% - 40px);}
+.editor-container, .preview-container {flex: 1;height: 100%;max-height: 100%;overflow: hidden; }
+.result_iframe_dialog {width: 100%;height: 100%;resize: both;border:1px solid #ccc;overflow: auto; }   
+.CodeMirror {width: 100% !important;height: 100% !important;}
+</style><script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/javascript/python.min.js"></script>
+<script src="https://cdn.jsdelivr.net/pyodide/v0.24.1/full/pyodide.js"></script>
+<script>
+const pythonCodeMirrorMap = new Map();
+let pyodide = null;
+let pyodideReady = false;
+async function main() {
+    pyodide = await loadPyodide();
+    
+    pyodideReady = true;
+}
+main();
+
+ async function runPythonCode(button,textarea_id, iframe_id) {
+        let code = pythonCodeMirrorMap.get(textarea_id).getValue();
+        const iframe = document.getElementById(iframe_id);
+        let doc = iframe.contentDocument || iframe.contentWindow.document;
+ 
+        let result = "";
+
+    if (!pyodideReady) {
+      result = "Pyodide is still loading... Wait for a while and click Run again.";
+    }else{
+    try {
+      await pyodide.runPythonAsync(`
+import sys
+from js import console
+
+class CaptureOutput:
+    def __init__(self):
+        self.data = []
+    def write(self, msg):
+        self.data.append(msg)
+    def flush(self):
+        pass
+
+sys.stdout = sys.stderr = capture = CaptureOutput()
+
+${code}
+
+output = "".join(capture.data)
+`);
+      result = pyodide.globals.get('output');
+ 
+      
+    } catch (err) {
+      result = "Error:\n" + err;
+ 
+    }
+    }
+
+ 
+
+      const html = `
+    <!DOCTYPE html>
+    <html>
+      <head>
+        <title>Output</title>
+        <style>
+          body { font-family: monospace; padding: 1em; background: #1e1e1e; color: #eee; }
+          pre { white-space: pre-wrap; word-break: break-word; }
+          .error { color: red; }
+        </style>
+      </head>
+      <body>
+        <pre id="log">${result} </pre>
+      </body>
+    </html>
+  `;
+        iframe.style.display = "block";
+        iframe.srcdoc = html;  
+        
+
+iframe.onload = function () {
+  const doc = iframe.contentDocument || iframe.contentWindow.document;
+  const contentHeight = Math.max(
+    doc.body.scrollHeight,
+    doc.documentElement.scrollHeight
+  );
+  iframe.style.height = contentHeight + 'px';
+};
+
+    }
+function openEditPythonCodeDialog(id, textarea_id) {
+		        closeAllPythonCodeDialog();
+		        document.getElementById(id).style.display = 'flex';
+         
+ 	        setTimeout(() => {
+		        	 pythonCodeMirrorMap.get(textarea_id).refresh();
+                   
+ 	        }, 100); // 100ms 
+}
+
+function closeAllPythonCodeDialog() {
+		        document.querySelectorAll('.dialog-backdrop').forEach(el => {
+		          el.style.display = 'none';
+		        });
+}		
+</script>
+</head>
+<body>
+<script>const mode = localStorage.getItem('mode') || 'light';document.documentElement.classList.add(`${mode}-mode`);</script>  
+<div class="container"><div class = "chapter-navi-section">
+<a href="" class="nav-button prev"></a>
+<a href='python-for-beginners.htm#introduction-to-python' class="nav-button toc-link">Index</a>
+<a href="python-for-beginners-basic-python-syntax-and-data-types.htm" class="nav-button next">→</a>
+</div>
+<div class='book-header'><h1 class='book-title-toc' id = 'top'>Introduction to Python</h1><h3 class='book-subtitle-toc'>Python for Beginners</h3></div><h2 id='what-is-python-and-why-learn-it'>1.1 What is Python and Why Learn It?</h2><p>Python is a high-level, interpreted programming language known for its simplicity, readability, and versatility. Created by Guido van Rossum and first released in 1991, Python was designed with the philosophy of making code easy to write and understand. Its guiding principles—captured in “The Zen of Python”—emphasize clarity, simplicity, and explicitness, making it one of the most accessible programming languages for beginners and professionals alike.</p><h3 id="the-origin-and-design-philosophy-of-python">The Origin and Design Philosophy of Python</h3><p>Python’s name is inspired by the British comedy group Monty Python, reflecting its creator’s desire for a language that is fun and approachable. Unlike many languages developed primarily for machine efficiency or complex features, Python focuses on human readability and straightforward syntax.</p><p>Key design philosophies include:</p><ul>
+ <li><strong>Readability counts</strong>: Python code looks clean and resembles plain English.</li>
+ <li><strong>Simple is better than complex</strong>: Python encourages writing clear and maintainable code.</li>
+ <li><strong>Explicit is better than implicit</strong>: Code behavior should be clear to readers and avoid hidden magic.</li>
+ <li><strong>Batteries included</strong>: Python ships with a large standard library, offering tools and modules for various tasks out of the box.</li>
+</ul><h3 id="key-features-that-make-python-popular">Key Features That Make Python Popular</h3><ul>
+ <li><strong>Easy to Learn and Use</strong>: Python’s syntax is concise and intuitive, allowing new programmers to start coding quickly without wrestling with complex rules.</li>
+ <li><strong>Interpreted Language</strong>: Python runs code line-by-line, making debugging easier and speeding up development cycles.</li>
+ <li><strong>Cross-Platform</strong>: Python runs on Windows, macOS, Linux, and many other platforms, ensuring portability.</li>
+ <li><strong>Dynamic Typing</strong>: Python handles variable types automatically, reducing the need for verbose declarations.</li>
+ <li><strong>Extensive Libraries and Frameworks</strong>: Python has rich libraries for web development (Django, Flask), data science (Pandas, NumPy), machine learning (TensorFlow, Scikit-learn), automation (Selenium, PyAutoGUI), and more.</li>
+ <li><strong>Strong Community Support</strong>: An active global community contributes to Python’s ecosystem, providing tutorials, open-source projects, and help forums.</li>
+</ul><h3 id="versatility-across-domains">Versatility Across Domains</h3><p>Python’s flexibility allows it to shine in many areas:</p><ul>
+ <li><strong>Web Development</strong>: Frameworks like Django and Flask help developers build scalable websites and APIs efficiently.</li>
+ <li><strong>Automation and Scripting</strong>: Python scripts automate repetitive tasks such as file management, data scraping, and testing.</li>
+ <li><strong>Data Science and Machine Learning</strong>: With powerful libraries, Python is the preferred language for analyzing large datasets, creating visualizations, and developing AI models.</li>
+ <li><strong>Education</strong>: Its beginner-friendly nature and interactive environments make Python ideal for teaching programming fundamentals.</li>
+ <li><strong>Game Development, Networking, IoT, and More</strong>: Python’s adaptability makes it suitable for diverse applications beyond these core areas.</li>
+</ul><h3 id="comparison-with-other-popular-languages">Comparison with Other Popular Languages</h3><ul>
+ <li><strong>Python vs. Java</strong>: Java is statically typed and requires verbose syntax, which can be daunting for beginners. Python’s dynamic typing and simpler syntax allow learners to focus on programming concepts without boilerplate code. Java excels in large-scale, performance-critical applications, but Python’s rapid prototyping is preferred for many projects.</li>
+ <li><strong>Python vs. C++</strong>: C++ is powerful and close to hardware, but it has a steep learning curve with complex syntax and manual memory management. Python abstracts these details, enabling faster development and reducing bugs, which is especially valuable for beginners.</li>
+ <li><strong>Community and Ecosystem</strong>: While Java and C++ have mature ecosystems, Python’s open-source libraries and frameworks grow rapidly, supported by a vibrant community that continually expands its capabilities.</li>
+</ul><h3 id="real-world-applications-built-with-python">Real-World Applications Built with Python</h3><p>Many prominent companies rely on Python for critical parts of their technology stacks:</p><ul>
+ <li><strong>Instagram and Spotify</strong> use Python for backend services and data analysis.</li>
+ <li><strong>Dropbox</strong> built its desktop client largely in Python.</li>
+ <li><strong>NASA</strong> employs Python for scientific computing and data visualization.</li>
+ <li><strong>Google</strong> incorporates Python for system building, automation, and AI research.</li>
+ <li><strong>YouTube</strong> uses Python for video processing and website management.</li>
+</ul><div class = "chapter-navi-section">
+<a href="#top" class="nav-button prev">↑</a>
+<a href='python-for-beginners.htm#introduction-to-python' class="nav-button toc-link">Index</a>
+<a href="#bottom" class="nav-button next">↓</a>
+</div>
+<h2 id='installing-python-and-setting-up-your-environment'>1.2 Installing Python and Setting Up Your Environment</h2><p>Welcome to the practical part of your Python journey! Before writing any code, you need to install Python and set up your working environment. This section will guide you step-by-step through installing Python on Windows, macOS, and Linux, introducing some popular tools to write Python code, verifying your installation, and writing your very first Python script.</p><h3 id="installing-python-on-different-platforms">Installing Python on Different Platforms</h3><h4 id="windows">Windows</h4><ol>
+ <li><p><strong>Download Python Installer</strong></p>
+  <ul>
+   <li>Go to the official Python website: <a href="https://www.python.org/downloads/">https://www.python.org/downloads/</a></li>
+   <li>Click the <strong>Download Python 3.x.x</strong> button (where 3.x.x is the latest version).</li>
+  </ul></li>
+ <li><p><strong>Run the Installer</strong></p>
+  <ul>
+   <li>Open the downloaded installer file.</li>
+   <li><strong>Important:</strong> Make sure to <strong>check the box</strong> that says <strong>Add Python 3.x to PATH</strong> at the bottom of the window.</li>
+   <li>Click <strong>Install Now</strong>.</li>
+   <li>Wait for the installation to complete.</li>
+  </ul></li>
+ <li><p><strong>Verify Installation</strong></p>
+  <ul>
+   <li><p>Open the Command Prompt (press <code>Win + R</code>, type <code>cmd</code>, and press Enter).</p></li>
+   <li><p>Type the following and press Enter:</p>
+    <div class="code-block">
+     <button class="copy-button" onclick="copyCode(this)">▯</button>
+     <pre><code class="language-bash">python --version</code></pre>
+    </div></li>
+   <li><p>You should see the Python version printed, for example:</p>
+    <div class="code-block">
+     <button class="copy-button" onclick="copyCode(this)">▯</button>
+     <pre><code class="language-bash">Python 3.11.2</code></pre>
+    </div></li>
+   <li><p>If it doesn't work, you may need to add Python to your PATH manually (see the <a href="#setting-environment-variables-on-windows">Environment Variables</a> section below).</p></li>
+  </ul></li>
+</ol><h4 id="macos">macOS</h4><ol>
+ <li><p><strong>Check if Python is Pre-installed</strong></p>
+  <ul>
+   <li><p>Open the Terminal (found in Applications &gt; Utilities).</p></li>
+   <li><p>Type:</p>
+    <div class="code-block">
+     <button class="copy-button" onclick="copyCode(this)">▯</button>
+     <pre><code class="language-bash">python3 --version</code></pre>
+    </div></li>
+   <li><p>macOS often comes with Python 2.x installed by default; Python 3 may not be installed.</p></li>
+  </ul></li>
+ <li><p><strong>Install Python 3 via Installer</strong></p>
+  <ul>
+   <li>Go to <a href="https://www.python.org/downloads/">https://www.python.org/downloads/</a></li>
+   <li>Download the latest macOS installer <code>.pkg</code> file.</li>
+   <li>Run the installer and follow the instructions.</li>
+  </ul></li>
+ <li><p><strong>Verify Installation</strong></p>
+  <ul>
+   <li><p>Open Terminal and type:</p>
+    <div class="code-block">
+     <button class="copy-button" onclick="copyCode(this)">▯</button>
+     <pre><code class="language-bash">python3 --version</code></pre>
+    </div></li>
+   <li><p>You should see the Python version displayed.</p></li>
+  </ul></li>
+ <li><p><strong>Alternative: Use Homebrew</strong></p>
+  <ul>
+   <li><p>If you have Homebrew installed, you can install Python using:</p>
+    <div class="code-block">
+     <button class="copy-button" onclick="copyCode(this)">▯</button>
+     <pre><code class="language-bash">brew install python</code></pre>
+    </div></li>
+   <li><p>Then verify with:</p>
+    <div class="code-block">
+     <button class="copy-button" onclick="copyCode(this)">▯</button>
+     <pre><code class="language-bash">python3 --version</code></pre>
+    </div></li>
+  </ul></li>
+</ol><h4 id="linux-ubuntu-debian">Linux (Ubuntu/Debian)</h4><ol>
+ <li><p><strong>Check if Python is Installed</strong></p>
+  <ul>
+   <li><p>Open Terminal.</p></li>
+   <li><p>Type:</p>
+    <div class="code-block">
+     <button class="copy-button" onclick="copyCode(this)">▯</button>
+     <pre><code class="language-bash">python3 --version</code></pre>
+    </div></li>
+   <li><p>If installed, you will see the version number.</p></li>
+  </ul></li>
+ <li><p><strong>Install Python 3</strong></p>
+  <ul>
+   <li><p>Update your package list:</p>
+    <div class="code-block">
+     <button class="copy-button" onclick="copyCode(this)">▯</button>
+     <pre><code class="language-bash">sudo apt update</code></pre>
+    </div></li>
+   <li><p>Install Python 3:</p>
+    <div class="code-block">
+     <button class="copy-button" onclick="copyCode(this)">▯</button>
+     <pre><code class="language-bash">sudo apt install python3</code></pre>
+    </div></li>
+   <li><p>You may also want to install the package manager for Python (pip):</p>
+    <div class="code-block">
+     <button class="copy-button" onclick="copyCode(this)">▯</button>
+     <pre><code class="language-bash">sudo apt install python3-pip</code></pre>
+    </div></li>
+  </ul></li>
+ <li><p><strong>Verify Installation</strong></p>
+  <ul>
+   <li><p>Type:</p>
+    <div class="code-block">
+     <button class="copy-button" onclick="copyCode(this)">▯</button>
+     <pre><code class="language-bash">python3 --version</code></pre>
+    </div></li>
+  </ul></li>
+</ol><h3 id="setting-environment-variables">Setting Environment Variables</h3><p>Most modern installers set the PATH environment variable automatically. However, if you encounter issues running <code>python</code> or <code>python3</code> from the terminal or command prompt, you may need to add Python to your PATH manually.</p><h4 id="setting-environment-variables-on-windows">Setting Environment Variables on Windows</h4><ol>
+ <li><p>Open <strong>Start Menu</strong>, search for <strong>Environment Variables</strong>, and select <strong>Edit the system environment variables</strong>.</p></li>
+ <li><p>In the <strong>System Properties</strong> window, click <strong>Environment Variables</strong>.</p></li>
+ <li><p>Under <strong>System variables</strong>, select <strong>Path</strong> and click <strong>Edit</strong>.</p></li>
+ <li><p>Click <strong>New</strong> and add the path to your Python installation folder, e.g., <code>C:\Users\YourUsername\AppData\Local\Programs\Python\Python3x\</code> and also the <code>Scripts</code> folder inside it, e.g., <code>C:\Users\YourUsername\AppData\Local\Programs\Python\Python3x\Scripts\</code>.</p></li>
+ <li><p>Click <strong>OK</strong> on all windows.</p></li>
+ <li><p>Restart Command Prompt and verify with:</p>
+  <div class="code-block">
+   <button class="copy-button" onclick="copyCode(this)">▯</button>
+   <pre><code class="language-bash">python --version</code></pre>
+  </div></li>
+</ol><h3 id="introducing-python-development-tools">Introducing Python Development Tools</h3><p>Once Python is installed, you need a way to write and run your programs. Here are some popular tools:</p><h4 id="idle-integrated-development-and-learning-environment">IDLE (Integrated Development and Learning Environment)</h4><ul>
+ <li>Comes pre-installed with Python.</li>
+ <li>To open, search for <strong>IDLE</strong> in your OS’s Start menu or applications.</li>
+ <li>It provides a simple Python shell and editor.</li>
+ <li>Great for beginners to quickly write and run scripts.</li>
+</ul><h4 id="visual-studio-code-vs-code">Visual Studio Code (VS Code)</h4><ul>
+ <li>A powerful, free code editor.</li>
+ <li>Download from <a href="https://code.visualstudio.com/">https://code.visualstudio.com/</a>.</li>
+ <li>Install the <strong>Python extension</strong> from Microsoft inside VS Code for enhanced Python support.</li>
+ <li>Offers features like syntax highlighting, debugging, and integrated terminal.</li>
+</ul><h4 id="jupyter-notebook">Jupyter Notebook</h4><ul>
+ <li><p>Interactive web-based environment popular in data science.</p></li>
+ <li><p>Install using pip:</p>
+  <div class="code-block">
+   <button class="copy-button" onclick="copyCode(this)">▯</button>
+   <pre><code class="language-bash">pip install notebook</code></pre>
+  </div></li>
+ <li><p>Run with:</p>
+  <div class="code-block">
+   <button class="copy-button" onclick="copyCode(this)">▯</button>
+   <pre><code class="language-bash">jupyter notebook</code></pre>
+  </div></li>
+ <li><p>Opens in your browser, allowing you to write and run Python code in small blocks (cells).</p></li>
+</ul><h3 id="writing-your-first-python-script">Writing Your First Python Script</h3><p>Let’s create a simple program to verify your setup!</p><ol>
+ <li><p>Open your preferred editor (IDLE, VS Code, or any text editor).</p></li>
+ <li><p>Create a new file named <code>hello.py</code>.</p></li>
+ <li><p>Type the following code:</p>
+  <div class="code-block">
+   <button class="copy-button" onclick="copyCode(this)">▯</button>
+   <pre><code class="language-python">print("Hello, Python world!")</code></pre>
+  </div></li>
+ <li><p>Save the file.</p></li>
+ <li><p>Run the script:</p>
+  <ul>
+   <li><p><strong>Using Command Line:</strong></p>
+    <ul>
+     <li><p>Open Command Prompt or Terminal.</p></li>
+     <li><p>Navigate to the folder where you saved <code>hello.py</code>:</p>
+      <div class="code-block">
+       <button class="copy-button" onclick="copyCode(this)">▯</button>
+       <pre><code class="language-bash">cd path/to/your/folder</code></pre>
+      </div></li>
+     <li><p>Run the script with:</p>
+      <div class="code-block">
+       <button class="copy-button" onclick="copyCode(this)">▯</button>
+       <pre><code class="language-bash">python hello.py</code></pre>
+      </div> <p>or on some systems:</p>
+      <div class="code-block">
+       <button class="copy-button" onclick="copyCode(this)">▯</button>
+       <pre><code class="language-bash">python3 hello.py</code></pre>
+      </div></li>
+    </ul></li>
+   <li><p><strong>Using IDLE:</strong></p>
+    <ul>
+     <li>Open <code>hello.py</code> in IDLE.</li>
+     <li>Press <code>F5</code> or select <strong>Run &gt; Run Module</strong>.</li>
+    </ul></li>
+  </ul></li>
+ <li><p>You should see the output:</p>
+  <div class="code-block">
+   <button class="copy-button" onclick="copyCode(this)">▯</button>
+   <pre><code class="language-bash">Hello, Python world!</code></pre>
+  </div></li>
+</ol><h3 id="summary">Summary</h3><ul>
+ <li>Download and install Python for your operating system.</li>
+ <li>Ensure Python is added to your system PATH.</li>
+ <li>Choose an editor or IDE like IDLE, VS Code, or Jupyter Notebook.</li>
+ <li>Verify the installation by running <code>python --version</code> or <code>python3 --version</code>.</li>
+ <li>Write and run your first Python program.</li>
+</ul><p>Now that Python is installed and your environment is ready, you’re set to explore the language and start programming!</p><div class = "chapter-navi-section">
+<a href="#top" class="nav-button prev">↑</a>
+<a href='python-for-beginners.htm#introduction-to-python' class="nav-button toc-link">Index</a>
+<a href="#bottom" class="nav-button next">↓</a>
+</div>
+<h2 id='writing-and-running-your-first-python-program'>1.3 Writing and Running Your First Python Program</h2><p>Now that you have Python installed and your environment set up, it’s time to write and run your very first Python program! This section will walk you through creating a simple <code>"Hello, world!"</code> script, running it using both the command line and an IDE, and understanding the basic structure of a Python program. We’ll also explore how to modify your script to interact with the user and perform simple calculations.</p><h3 id="creating-your-first-python-script-hello-world">Creating Your First Python Script: "Hello, world!"</h3><h4 id="step-1-write-your-code-in-a-py-file">Step 1: Write Your Code in a <code>.py</code> File</h4><ol>
+ <li><p>Open your preferred text editor or IDE (such as IDLE, Visual Studio Code, or any simple text editor like Notepad).</p></li>
+ <li><p>Create a new file and type the following code exactly:</p>
+  <div class="code-block">
+   <button class="copy-button" onclick="copyCode(this)">▯</button>
+   <pre><code class="language-python">print("Hello, world!")</code></pre>
+  </div></li>
+ <li><p>Save the file as <code>hello.py</code>. The <code>.py</code> extension tells your computer this is a Python script.</p></li>
+</ol><h4 id="step-2-run-the-script">Step 2: Run the Script</h4><p>You can run your Python program either via the command line or using an IDE.</p><h5>Running via Command Line</h5><ol>
+ <li><p>Open your terminal or command prompt.</p></li>
+ <li><p>Navigate to the folder where you saved <code>hello.py</code>. For example:</p>
+  <div class="code-block">
+   <button class="copy-button" onclick="copyCode(this)">▯</button>
+   <pre><code class="language-bash">cd path/to/your/folder</code></pre>
+  </div></li>
+ <li><p>Run the script by typing:</p>
+  <div class="code-block">
+   <button class="copy-button" onclick="copyCode(this)">▯</button>
+   <pre><code class="language-bash">python hello.py</code></pre>
+  </div> <p>or on some systems:</p>
+  <div class="code-block">
+   <button class="copy-button" onclick="copyCode(this)">▯</button>
+   <pre><code class="language-bash">python3 hello.py</code></pre>
+  </div></li>
+ <li><p>You should see the output:</p>
+  <div class="code-block">
+   <button class="copy-button" onclick="copyCode(this)">▯</button>
+   <pre><code class="language-bash">Hello, world!</code></pre>
+  </div></li>
+</ol><h5>Running in IDLE</h5><ol>
+ <li><p>Open IDLE.</p></li>
+ <li><p>From the menu, select <strong>File &gt; Open</strong>, then open <code>hello.py</code>.</p></li>
+ <li><p>Run the program by pressing <code>F5</code> or selecting <strong>Run &gt; Run Module</strong>.</p></li>
+ <li><p>The output will appear in the IDLE shell window:</p>
+  <div class="code-block">
+   <button class="copy-button" onclick="copyCode(this)">▯</button>
+   <pre><code class="language-bash">Hello, world!</code></pre>
+  </div></li>
+</ol><h3 id="anatomy-of-a-basic-python-script">Anatomy of a Basic Python Script</h3><p>Let's understand what happens in this simple script:</p><div>
+ <div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+  <pre><code class="language-python">print("Hello, world!")</code></pre>
+ </div>
+ <div class="snippet-container">
+  <div class="button-group-run-edit"><button class="button-run-edit" onclick="runPythonCode(this,'JdiYR','pYira')">Run</button> <button class="button-run-edit" onclick="openEditPythonCodeDialog('pYira_Dialog','JdiYR')">Edit</button>
+  </div> <iframe id="pYira" class="result_iframe" style="display: none;"></iframe>
+  <div id="pYira_Dialog" class="dialog-backdrop">
+   <div class="dialog">
+    <div class="controls"><button onclick="runPythonCode(this,'JdiYR','pYira_IFrame')">Run</button> <button onclick="closeAllPythonCodeDialog()">Close</button>
+    </div>
+    <div class="dialog-content">
+     <div class="editor-container">
+      <textarea id="JdiYR" class="textarea_dialog" placeholder="Type HTML here...">print("Hello, world!")</textarea>
+     </div>
+     <div class="preview-container">
+      <iframe id="pYira_IFrame" class="result_iframe_dialog" style="border: none;"></iframe>
+     </div>
+    </div>
+   </div>
+  </div>
+  <script>
+{
+let editor = CodeMirror.fromTextArea(document.getElementById("JdiYR"), {
+					mode : "python",
+					lineNumbers : false,
+          lineWrapping: true,
+					tabSize : 2
+});
+const darkmode = localStorage.getItem("mode") || "light";  
+const newTheme = darkmode === "dark" ? "dracula" : "default";
+editor.setSize("50%", "100%");
+editor.setOption("theme", newTheme);
+pythonCodeMirrorMap.set("JdiYR", editor);
+
+}
+
+
+</script>
+ </div>
+</div><ul>
+ <li><code>print()</code> is a built-in Python function that outputs text or other data to the console.</li>
+ <li>The text inside the parentheses and quotes — <code>"Hello, world!"</code> — is called a <strong>string</strong>.</li>
+ <li>When Python runs this script, it executes commands <strong>top to bottom</strong>. Here, it reads the <code>print()</code> function and displays the string on your screen.</li>
+</ul><h3 id="modifying-the-program">Modifying the Program</h3><h4 id="example-1-print-user-input">Example 1: Print User Input</h4><p>Let’s make the program interactive by asking for the user’s name and greeting them.</p><p>Update your script to:</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-python">name = input("Enter your name: ")
+print("Hello, " + name + "!")</code></pre>
+</div><p>Explanation:</p><ul>
+ <li><code>input()</code> pauses the program and waits for the user to type something.</li>
+ <li>Whatever the user types is stored in the variable <code>name</code>.</li>
+ <li>The <code>print()</code> function combines the string <code>"Hello, "</code> with the user’s input and an exclamation mark to greet them.</li>
+</ul><p>Try running the script now. You will see:</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-bash">Enter your name: Joe
+Hello, Joe!</code></pre>
+</div><h4 id="example-2-perform-a-basic-calculation">Example 2: Perform a Basic Calculation</h4><p>Let’s write a script that asks the user for two numbers and prints their sum.</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-python">num1 = input("Enter the first number: ")
+num2 = input("Enter the second number: ")
+
+# Convert input strings to integers
+num1 = int(num1)
+num2 = int(num2)
+
+total = num1 + num2
+print("The sum is:", total)</code></pre>
+</div><p>Explanation:</p><ul>
+ <li>The <code>input()</code> function returns text, so we convert the input to integers using <code>int()</code>.</li>
+ <li>We add the two numbers and store the result in <code>total</code>.</li>
+ <li>Finally, we print the sum.</li>
+</ul><p>Example run:</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-bash">Enter the first number: 5
+Enter the second number: 7
+The sum is: 12</code></pre>
+</div><h3 id="summary">Summary</h3><ul>
+ <li>Python scripts are saved with a <code>.py</code> extension.</li>
+ <li>You can run scripts from the command line using <code>python filename.py</code> or from an IDE like IDLE.</li>
+ <li>Python executes code from top to bottom.</li>
+ <li>The <code>print()</code> function outputs data to the screen.</li>
+ <li>You can interact with users using <code>input()</code>.</li>
+ <li>Python lets you perform calculations after converting input strings to numbers.</li>
+</ul><p>Congratulations! You’ve written and run your first Python programs. In the next sections, you will dive deeper into Python syntax and how to write more complex code.</p><div class = "chapter-navi-section">
+<a href="#top" class="nav-button prev">↑</a>
+<a href='python-for-beginners.htm#introduction-to-python' class="nav-button toc-link">Index</a>
+<a href="#bottom" class="nav-button next">↓</a>
+</div>
+<h2 id='understanding-python-syntax-and-indentation'>1.4 Understanding Python Syntax and Indentation</h2><p>Python is known for its clean and readable syntax, which makes it an excellent language for beginners. One of the unique features of Python compared to many other programming languages is its use of <strong>indentation</strong> (spaces or tabs at the start of a line) to define blocks of code instead of braces <code>{}</code> or keywords.</p><p>This section will introduce you to the basics of Python syntax, explain why indentation is crucial, and show how it controls the flow of your programs.</p><h3 id="pythons-syntax-rules-and-indentation">Pythons Syntax Rules and Indentation</h3><h4 id="what-is-indentation">What Is Indentation?</h4><p>Indentation is the space at the beginning of a line of code. In Python, indentation is <strong>not optional</strong>—it is part of the syntax. The amount of indentation you use is up to you (usually 4 spaces per level is the convention), but it must be <strong>consistent within a block</strong>.</p><h4 id="why-does-python-use-indentation">Why Does Python Use Indentation?</h4><p>Unlike many languages that use curly braces <code>{}</code> or keywords to mark the start and end of blocks of code, Python uses indentation to:</p><ul>
+ <li>Improve code readability.</li>
+ <li>Enforce a clean and uniform coding style.</li>
+ <li>Define where blocks of code begin and end.</li>
+</ul><p>For example, the body of an <code>if</code> statement, a loop, or a function is defined by indentation.</p><h3 id="how-indentation-defines-code-blocks">How Indentation Defines Code Blocks</h3><h4 id="correct-indentation-example">Correct Indentation Example</h4><div>
+ <div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+  <pre><code class="language-python">if 5 &gt; 2:
+    print("Five is greater than two!")
+    print("This line is also part of the if block.")
+
+print("This line is outside the if block.")</code></pre>
+ </div>
+ <div class="snippet-container">
+  <div class="button-group-run-edit"><button class="button-run-edit" onclick="runPythonCode(this,'4AbcC','UvRXs')">Run</button> <button class="button-run-edit" onclick="openEditPythonCodeDialog('UvRXs_Dialog','4AbcC')">Edit</button>
+  </div> <iframe id="UvRXs" class="result_iframe" style="display: none;"></iframe>
+  <div id="UvRXs_Dialog" class="dialog-backdrop">
+   <div class="dialog">
+    <div class="controls"><button onclick="runPythonCode(this,'4AbcC','UvRXs_IFrame')">Run</button> <button onclick="closeAllPythonCodeDialog()">Close</button>
+    </div>
+    <div class="dialog-content">
+     <div class="editor-container">
+      <textarea id="4AbcC" class="textarea_dialog" placeholder="Type HTML here...">if 5 &gt; 2:
+    print("Five is greater than two!")
+    print("This line is also part of the if block.")
+
+print("This line is outside the if block.")</textarea>
+     </div>
+     <div class="preview-container">
+      <iframe id="UvRXs_IFrame" class="result_iframe_dialog" style="border: none;"></iframe>
+     </div>
+    </div>
+   </div>
+  </div>
+  <script>
+{
+let editor = CodeMirror.fromTextArea(document.getElementById("4AbcC"), {
+					mode : "python",
+					lineNumbers : false,
+          lineWrapping: true,
+					tabSize : 2
+});
+const darkmode = localStorage.getItem("mode") || "light";  
+const newTheme = darkmode === "dark" ? "dracula" : "default";
+editor.setSize("50%", "100%");
+editor.setOption("theme", newTheme);
+pythonCodeMirrorMap.set("4AbcC", editor);
+
+}
+
+
+</script>
+ </div>
+</div><p>Output:</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-bash">Five is greater than two!
+This line is also part of the if block.
+This line is outside the if block.</code></pre>
+</div><p><strong>Explanation:</strong></p><ul>
+ <li>The two <code>print</code> statements indented under the <code>if</code> line belong to the <code>if</code> block.</li>
+ <li>The last <code>print</code> is not indented and therefore runs independently.</li>
+</ul><h4 id="incorrect-indentation-example">Incorrect Indentation Example</h4><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-python">if 5 &gt; 2:
+print("Five is greater than two!")
+    print("This will cause an error.")</code></pre>
+</div><p>This code will raise an <strong>IndentationError</strong>:</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-bash">IndentationError: expected an indented block</code></pre>
+</div><p>Because Python expects the lines inside the <code>if</code> block to be indented consistently.</p><h3 id="indentation-in-different-structures">Indentation in Different Structures</h3><h4 id="indentation-in-if-statements">Indentation in <code>if</code> Statements</h4><div>
+ <div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+  <pre><code class="language-python">age = 18
+
+if age &gt;= 18:
+    print("You are an adult.")
+else:
+    print("You are a minor.")</code></pre>
+ </div>
+ <div class="snippet-container">
+  <div class="button-group-run-edit"><button class="button-run-edit" onclick="runPythonCode(this,'BP3eX','9qLmn')">Run</button> <button class="button-run-edit" onclick="openEditPythonCodeDialog('9qLmn_Dialog','BP3eX')">Edit</button>
+  </div> <iframe id="9qLmn" class="result_iframe" style="display: none;"></iframe>
+  <div id="9qLmn_Dialog" class="dialog-backdrop">
+   <div class="dialog">
+    <div class="controls"><button onclick="runPythonCode(this,'BP3eX','9qLmn_IFrame')">Run</button> <button onclick="closeAllPythonCodeDialog()">Close</button>
+    </div>
+    <div class="dialog-content">
+     <div class="editor-container">
+      <textarea id="BP3eX" class="textarea_dialog" placeholder="Type HTML here...">age = 18
+
+if age &gt;= 18:
+    print("You are an adult.")
+else:
+    print("You are a minor.")</textarea>
+     </div>
+     <div class="preview-container">
+      <iframe id="9qLmn_IFrame" class="result_iframe_dialog" style="border: none;"></iframe>
+     </div>
+    </div>
+   </div>
+  </div>
+  <script>
+{
+let editor = CodeMirror.fromTextArea(document.getElementById("BP3eX"), {
+					mode : "python",
+					lineNumbers : false,
+          lineWrapping: true,
+					tabSize : 2
+});
+const darkmode = localStorage.getItem("mode") || "light";  
+const newTheme = darkmode === "dark" ? "dracula" : "default";
+editor.setSize("50%", "100%");
+editor.setOption("theme", newTheme);
+pythonCodeMirrorMap.set("BP3eX", editor);
+
+}
+
+
+</script>
+ </div>
+</div><ul>
+ <li>Both the <code>if</code> and <code>else</code> blocks have their own indented code.</li>
+ <li>Indentation defines which statements belong to which block.</li>
+</ul><h4 id="indentation-in-loops">Indentation in Loops</h4><div>
+ <div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+  <pre><code class="language-python">for i in range(3):
+    print("Iteration:", i)
+    print("Inside the loop")
+
+print("Outside the loop")</code></pre>
+ </div>
+ <div class="snippet-container">
+  <div class="button-group-run-edit"><button class="button-run-edit" onclick="runPythonCode(this,'7nrgj','twpcq')">Run</button> <button class="button-run-edit" onclick="openEditPythonCodeDialog('twpcq_Dialog','7nrgj')">Edit</button>
+  </div> <iframe id="twpcq" class="result_iframe" style="display: none;"></iframe>
+  <div id="twpcq_Dialog" class="dialog-backdrop">
+   <div class="dialog">
+    <div class="controls"><button onclick="runPythonCode(this,'7nrgj','twpcq_IFrame')">Run</button> <button onclick="closeAllPythonCodeDialog()">Close</button>
+    </div>
+    <div class="dialog-content">
+     <div class="editor-container">
+      <textarea id="7nrgj" class="textarea_dialog" placeholder="Type HTML here...">for i in range(3):
+    print("Iteration:", i)
+    print("Inside the loop")
+
+print("Outside the loop")</textarea>
+     </div>
+     <div class="preview-container">
+      <iframe id="twpcq_IFrame" class="result_iframe_dialog" style="border: none;"></iframe>
+     </div>
+    </div>
+   </div>
+  </div>
+  <script>
+{
+let editor = CodeMirror.fromTextArea(document.getElementById("7nrgj"), {
+					mode : "python",
+					lineNumbers : false,
+          lineWrapping: true,
+					tabSize : 2
+});
+const darkmode = localStorage.getItem("mode") || "light";  
+const newTheme = darkmode === "dark" ? "dracula" : "default";
+editor.setSize("50%", "100%");
+editor.setOption("theme", newTheme);
+pythonCodeMirrorMap.set("7nrgj", editor);
+
+}
+
+
+</script>
+ </div>
+</div><ul>
+ <li>The two print statements inside the loop are indented.</li>
+ <li>The last print is not indented, so it runs after the loop finishes.</li>
+</ul><h4 id="indentation-in-functions">Indentation in Functions</h4><div>
+ <div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+  <pre><code class="language-python">def greet(name):
+    print("Hello, " + name + "!")
+    print("Welcome to Python.")
+
+greet("Alice")</code></pre>
+ </div>
+ <div class="snippet-container">
+  <div class="button-group-run-edit"><button class="button-run-edit" onclick="runPythonCode(this,'aBqZn','l1tKo')">Run</button> <button class="button-run-edit" onclick="openEditPythonCodeDialog('l1tKo_Dialog','aBqZn')">Edit</button>
+  </div> <iframe id="l1tKo" class="result_iframe" style="display: none;"></iframe>
+  <div id="l1tKo_Dialog" class="dialog-backdrop">
+   <div class="dialog">
+    <div class="controls"><button onclick="runPythonCode(this,'aBqZn','l1tKo_IFrame')">Run</button> <button onclick="closeAllPythonCodeDialog()">Close</button>
+    </div>
+    <div class="dialog-content">
+     <div class="editor-container">
+      <textarea id="aBqZn" class="textarea_dialog" placeholder="Type HTML here...">def greet(name):
+    print("Hello, " + name + "!")
+    print("Welcome to Python.")
+
+greet("Alice")</textarea>
+     </div>
+     <div class="preview-container">
+      <iframe id="l1tKo_IFrame" class="result_iframe_dialog" style="border: none;"></iframe>
+     </div>
+    </div>
+   </div>
+  </div>
+  <script>
+{
+let editor = CodeMirror.fromTextArea(document.getElementById("aBqZn"), {
+					mode : "python",
+					lineNumbers : false,
+          lineWrapping: true,
+					tabSize : 2
+});
+const darkmode = localStorage.getItem("mode") || "light";  
+const newTheme = darkmode === "dark" ? "dracula" : "default";
+editor.setSize("50%", "100%");
+editor.setOption("theme", newTheme);
+pythonCodeMirrorMap.set("aBqZn", editor);
+
+}
+
+
+</script>
+ </div>
+</div><ul>
+ <li>The two <code>print</code> statements form the function body and are indented.</li>
+ <li>The call to <code>greet()</code> is not indented, so it runs after the function is defined.</li>
+</ul><h3 id="tips-for-working-with-indentation">Tips for Working with Indentation</h3><ul>
+ <li><strong>Use spaces, not tabs:</strong> The Python community recommends using 4 spaces per indentation level. Mixing tabs and spaces can cause errors.</li>
+ <li><strong>Be consistent:</strong> Indent all lines in a block by the same number of spaces.</li>
+ <li><strong>Your editor helps:</strong> Most code editors and IDEs (like VS Code or IDLE) automatically handle indentation for you.</li>
+ <li><strong>IndentationError</strong> means you have inconsistent or missing indentation—check your code carefully.</li>
+</ul><h3 id="summary">Summary</h3><ul>
+ <li>Python uses indentation to define blocks of code instead of braces.</li>
+ <li>Consistent indentation is mandatory and controls the program flow.</li>
+ <li>Indentation affects <code>if</code> statements, loops, functions, and other structures.</li>
+ <li>Always use the same number of spaces for each indentation level (4 spaces is standard).</li>
+ <li>Incorrect indentation causes errors and stops your program from running.</li>
+</ul><p>Mastering indentation is essential to writing clear, error-free Python code. It helps your programs run correctly and makes your code easier to read and maintain.</p><div class = "chapter-navi-section">
+<a href="" class="nav-button prev"></a>
+<a href='python-for-beginners.htm#introduction-to-python' class="nav-button toc-link">Index</a>
+<a href="python-for-beginners-basic-python-syntax-and-data-types.htm" class="nav-button next">→</a>
+</div>
+<section class="download-section">
+  <div class="book-cover" style="background-color: #f9f6f1;border: 1px solid #ccc;"> 
+    <div class="book-cover-title" style="font-size: 18px;color: #333;top: 20px;">Python for Beginners</div>
+    <div class="book-cover-author">readbytes</div>
+    <div class="book-cover-bottom-stripe" style="background-color: #333;"></div>
+    <img class="book-cover-icon" style="width: 90px;height: 90px;top: 70px;" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFoAAABaCAYAAAA4qEECAAAEPUlEQVR4Xu2bv4seVRSGX6OJhVok2IiLPxoLtREMglqGGJLCRgsL7VxUUDuRDbszs67VNsF/IL2VaKpgIE0QbCxsLEwRRNc2RBJRQzJ3xtndee/MNzN3zjnfwp4HnubO3HPOfbMJM8sEOMxk2OElJ5Uc93ipIqz3XXMmUuDXzkCbtdofW9ecBNqB/tux1vWH8FC05uyjCS3Dc9HasDvRmtMDBzVXZwEcVqoFbnNpZz8c2HyPcYvDS45THQHJ6pRs4mQUjKwH5PEvww/RcBm+59tUaR7JNFw6PFCflnDvuS6V8OC/N8zrfHmXAm/s3pfhD74sToYPoqDmW7/kmLM3wCW+1EuO33f3aRKHJKM5TeOv8SBfGmTvp+06XxKDA5LSlAJvVk0/x3G+NJrmnxwtOCApTZFqKlWniwLvRiHNtcB/3EaP8HYUmkqQ47eq1jYeKQ/xrVjdBg5qrqZINOUDaB2Ga8/VlLrpvL9CfACtw+Q4EtVPNcMnXF6X0HQu7WfvttJw/VRN2SpfSCSaZjgbHaTbu7w1ibjuNM2Z05iHH6sU4Z87rj3GpZDafM4vedbwBJebBdfv9wRvtaMe4A4vD5Lj546DjFeDDBeiPjmu8m3LoR5mlZcHiQ80zUNH6qE5uBTnslG+KQIP8HIv4S0wx1O8bEPqgTm0FKeQ42a0f2od3tdY4J/y6etlvl2WKYPuh4dN83Eu20m8r+15PMlbInhPl2p8jIeTGhT4NBoy1THwni4XEX5i+f4uvyrzUGELTw8O2QUPOMcx8J5+f2rtW8XRjnsWudLaL8Y6XqkaTCUeMNWL+ALPcvmIeJ+Om3iJW8vQfC8xFR5wyAKXucQkuJ6WGU5zaxkyvFU1kKTAL9EB5sL19Fzj1jIUeL9qIM1neOz/wW/xpSTiQHTM8A23liHDe1WDgw4HoqXaJxM5zlQNDjociKYqbOI1veKCcBiaqpDjeb3ignAYmqoQXoHVigvCYWiqhmpxITgMTdVQLS4Eh6GpGqrFheAwNFVDtbgQHIamaoTi63iBl5dCmCV8bMlwGEPBpNyz6N4NnOu9Npq6wTVenkyOR1F/RNN2CvUs9ZNQnxn+5G2dLAqOCTW5T9sVTD1LRChU4G9enkwdNA847qANOW7wUjIp/ReR4y9eGib8Z8bGZqD9a6lyyF11F5HjCi8lEz6Il/qlViDDd9UXspPgMCztI8eLpdulr4pY4J3SD6P1dD8qfYbHXgwf3lJG4+Nybb8c+6UVb7SU8aDdQQfhDW6ag/AGN81BeIOb5iC8wU1zMlygMbzjHxY28HZ0/uRA++DCHrQHrYYHbYQHbYQHbYQHbYQHbYQHbYQHbYQHbYQHbYQHbYQHbYQHbYQHbYQHbYQHbYQHbYQHbYQHbYQHbYQHbYQHbYQHbYQHbYQHbYQHbYQHbYQHbYQHbYQHbYQHbYQHbYRA0PcByjp3gyQxx4YAAAAASUVORK5CYII="/>
+  </div>
+  <div class="download-info">
+    <h2 id='bottom'>Download This Ebook</h2>
+    <p class="format-label">Available formats:</p>
+    <div class="download-buttons">
+      <a href="python-for-beginners.pdf" class="download-button">📄 PDF</a>
+      <a href="python-for-beginners.epub" class="download-button">📘 EPUB</a>
+    </div>
+  </div>
+</section><div class='related-books'>
+<h2>Python Introduction Books</h2>
+<div class='related-book-list'>
+<a href="python-for-beginners.htm">
+<div class="book-cover" style="background-color: #f9f6f1;border: 1px solid #ccc;"> 
+    <div class="book-cover-title" style="font-size: 18px;color: #333;top: 20px;">Python for Beginners</div>
+    <div class="book-cover-author">readbytes</div>
+    <div class="book-cover-bottom-stripe" style="background-color: #333;"></div>
+    <img class="book-cover-icon" style="width: 90px;height: 90px;top: 70px;" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFoAAABaCAYAAAA4qEECAAAEPUlEQVR4Xu2bv4seVRSGX6OJhVok2IiLPxoLtREMglqGGJLCRgsL7VxUUDuRDbszs67VNsF/IL2VaKpgIE0QbCxsLEwRRNc2RBJRQzJ3xtndee/MNzN3zjnfwp4HnubO3HPOfbMJM8sEOMxk2OElJ5Uc93ipIqz3XXMmUuDXzkCbtdofW9ecBNqB/tux1vWH8FC05uyjCS3Dc9HasDvRmtMDBzVXZwEcVqoFbnNpZz8c2HyPcYvDS45THQHJ6pRs4mQUjKwH5PEvww/RcBm+59tUaR7JNFw6PFCflnDvuS6V8OC/N8zrfHmXAm/s3pfhD74sToYPoqDmW7/kmLM3wCW+1EuO33f3aRKHJKM5TeOv8SBfGmTvp+06XxKDA5LSlAJvVk0/x3G+NJrmnxwtOCApTZFqKlWniwLvRiHNtcB/3EaP8HYUmkqQ47eq1jYeKQ/xrVjdBg5qrqZINOUDaB2Ga8/VlLrpvL9CfACtw+Q4EtVPNcMnXF6X0HQu7WfvttJw/VRN2SpfSCSaZjgbHaTbu7w1ibjuNM2Z05iHH6sU4Z87rj3GpZDafM4vedbwBJebBdfv9wRvtaMe4A4vD5Lj546DjFeDDBeiPjmu8m3LoR5mlZcHiQ80zUNH6qE5uBTnslG+KQIP8HIv4S0wx1O8bEPqgTm0FKeQ42a0f2od3tdY4J/y6etlvl2WKYPuh4dN83Eu20m8r+15PMlbInhPl2p8jIeTGhT4NBoy1THwni4XEX5i+f4uvyrzUGELTw8O2QUPOMcx8J5+f2rtW8XRjnsWudLaL8Y6XqkaTCUeMNWL+ALPcvmIeJ+Om3iJW8vQfC8xFR5wyAKXucQkuJ6WGU5zaxkyvFU1kKTAL9EB5sL19Fzj1jIUeL9qIM1neOz/wW/xpSTiQHTM8A23liHDe1WDgw4HoqXaJxM5zlQNDjociKYqbOI1veKCcBiaqpDjeb3ignAYmqoQXoHVigvCYWiqhmpxITgMTdVQLS4Eh6GpGqrFheAwNFVDtbgQHIamaoTi63iBl5dCmCV8bMlwGEPBpNyz6N4NnOu9Npq6wTVenkyOR1F/RNN2CvUs9ZNQnxn+5G2dLAqOCTW5T9sVTD1LRChU4G9enkwdNA847qANOW7wUjIp/ReR4y9eGib8Z8bGZqD9a6lyyF11F5HjCi8lEz6Il/qlViDDd9UXspPgMCztI8eLpdulr4pY4J3SD6P1dD8qfYbHXgwf3lJG4+Nybb8c+6UVb7SU8aDdQQfhDW6ag/AGN81BeIOb5iC8wU1zMlygMbzjHxY28HZ0/uRA++DCHrQHrYYHbYQHbYQHbYQHbYQHbYQHbYQHbYQHbYQHbYQHbYQHbYQHbYQHbYQHbYQHbYQHbYQHbYQHbYQHbYQHbYQHbYQHbYQHbYQHbYQHbYQHbYQHbYQHbYQHbYQHbYQHbYRA0PcByjp3gyQxx4YAAAAASUVORK5CYII="/>
+  </div>
+</a>
+
+
+
+<a href='python.htm'><div class='book-cover' style='background-color: #f9f6f1;color: #111111;border: 1px solid #ccc;display: flex;justify-content: center;align-items: center;text-align: center;'>More Python Books</div></a>
+</div>
+</div><script>
+function copyCode(button) {const code = button.nextElementSibling.innerText;navigator.clipboard.writeText(code).then(() => {button.textContent = 'Copied!';setTimeout(() => { button.textContent = 'Copy'; }, 1500);});}
+</script></div>
+<style>
+.site-footer {margin-top: 60px;padding: 20px 0;border-top: 1px solid #eee;text-align: center;font-size: 14px;}
+.site-footer a {text-decoration: none;}
+.light-mode .site-footer {color: #777;border-color: #eee;}
+.dark-mode .site-footer {color: #888;border-color: #333;}
+.light-mode .site-footer a {color: #555;}
+.dark-mode .site-footer a {color: #aaa;}
+.site-footer a:hover {text-decoration: underline;}    
+</style>
+<footer class="site-footer">
+<nav><a href="https://readbytes.github.io">Home</a> |Email:<script type="text/javascript">
+var part1 = 'yinpeng';var part6 = '263';var part2 = Math.pow(2,6);var part3 = String.fromCharCode(part2);var part4 = 'hotmail dot com';var part5 = part1 + String.fromCharCode(part2) + part4;document.write(part1 + part6 + part3 + part4);
+</script>
+| <a id="mode-toggle" href="#">Toggle Dark Mode</a>
+</nav><p>© 2025 — All rights reserved.</p></footer>
+<script>
+const toggleButton = document.getElementById('mode-toggle');
+const body = document.body;
+const savedMode = localStorage.getItem('mode') || 'light';
+body.classList.add(savedMode + '-mode');
+toggleButton.addEventListener('click', () => {
+      const isDark = body.classList.contains('dark-mode');
+      body.classList.toggle('dark-mode', !isDark);
+      body.classList.toggle('light-mode', isDark);
+      localStorage.setItem('mode', isDark ? 'light' : 'dark');
+});
+function copyCode(button) {const code = button.nextElementSibling.innerText;navigator.clipboard.writeText(code).then(() => {button.textContent = 'Copied!';setTimeout(() => { button.textContent = 'Copy'; }, 1500);});}
+</script>
+</body>
+</html>

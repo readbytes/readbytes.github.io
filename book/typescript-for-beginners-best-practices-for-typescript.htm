@@ -1,0 +1,695 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Typescript for Beginners Best Practices for TypeScript</title>
+<link rel='shortcut icon' href='https://readbytes.github.io/images/favicon.ico'>
+<link href="https://fonts.googleapis.com/css2?family=Merriweather&display=swap" rel="stylesheet" />
+<link href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.css" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/theme/dracula.min.css"><style>
+html {scroll-behavior: smooth;}  
+body {font-family: 'Merriweather', serif;;margin: 0;padding: 2rem 1rem;font-size: 15px;line-height: 1.5;transition: background-color 0.3s, color 0.3s;}
+.container {max-width: 750px;margin: 0 auto;padding: 1rem 2rem;}
+.light-mode {background-color: #f8f7f5;color: #333;} 
+.dark-mode {background-color: #121212;color: #e0e0e0;}
+a { text-decoration: none;transition: color 0.2s;}
+a:hover {text-decoration: underline;}
+.light-mode a {color: #555;}
+.dark-mode a {color: #aaa;}
+</style><style>
+.related-book-list {display: flex;flex-wrap: wrap;gap: 20px;}
+.related-books {margin-top: 40px;}
+.related-books h2 {font-size: 22px;margin-bottom: 20px;border-bottom: 2px solid #eee;padding-bottom: 8px;}
+.light-mode .related-books h2 {color: #333;border-color: #eee;}
+.dark-mode .related-books h2 {color: #ddd;border-color: #333;}
+</style><style>
+.book-cover {width: 130px;height: 180px;font-family: Arial, sans-serif;position: relative;overflow: hidden;box-shadow: 2px 2px 4px rgba(0,0,0,0.1);}
+.book-cover-bottom-stripe {position: absolute;bottom: 0;left: 0;height: 5px;width: 100%;}
+.book-cover-title {position: absolute;width: 100%;text-align: center;font-weight: bold;}
+.book-cover-icon {position: absolute;left: 50%;transform: translateX(-50%);display: flex;align-items: center;justify-content: center;}
+.book-cover-author {position: absolute;bottom: 10px;width: 100%;text-align: center;font-size: 8px;color: #333;}
+</style><style>
+.book-title-toc {font-size: 32px;font-weight: bold; }
+.book-subtitle-toc {font-size: 18px;margin-top: 8px;font-style: italic;}
+.book-header {text-align: center;margin-bottom: 40px;}
+
+.toc-container {border-radius: 10px;padding: 30px;margin-bottom: 40px;box-shadow: 0 8px 20px rgba(0,0,0,0.05);}
+h1 {font-size: 24px;text-align: center;margin-bottom: 30px;letter-spacing: 1px;padding-bottom: 10px;}
+.toc-list,.toc-section-list {list-style: none;padding: 0;margin: 0;}
+.toc-section-list {padding-left: 18px;margin-top: 6px;margin-bottom: 20px; }
+.toc-chapter {padding: 20px 0;}
+.chapter-title,.toc-section {display: flex;justify-content: space-between;padding-top: 4px;}
+.chapter-title {font-size: 17px;font-weight: bold;}
+.chapter-page,.section-page {font-style: italic;}
+ 
+ 
+.light-mode .book-title-toc,.light-mode .chapter-title,.light-mode .book-name {color: #222;}
+.light-mode .book-subtitle-toc,.light-mode .book-sub,.light-mode .chapter-page,.light-mode .section-page {color: #666;}
+.light-mode .toc-container { background: #fff;border: 1px solid #ddd;}
+.light-mode h1 {border-bottom: 2px solid #eee;color: #222;}
+.light-mode .toc-section {  color: #444;}
+
+.light-mode .book-cover { border: 1px solid #ccc;box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);}
+.light-mode .book-title,.light-mode .series-name {color: #fff;}
+.light-mode .book-subtitle,.light-mode .book-footer {color: #aaa;}
+
+.dark-mode .book-title-toc,.dark-mode .chapter-title,.dark-mode .book-name {color: #f5f5f5;}
+.dark-mode .book-subtitle-toc,.dark-mode .book-sub,.dark-mode .chapter-page,.dark-mode .section-page {color: #aaa;}
+.dark-mode .toc-container {background: #1e1e1e;border: 1px solid #444;}
+
+.dark-mode h1 {border-bottom: 2px solid #333;color: #eee;}
+.dark-mode .toc-section {color: #bbb;}
+
+.dark-mode .related-books h2 {color: #ddd;border-bottom: 2px solid #333;}
+.dark-mode .book-title,.dark-mode .series-name {color: #fff;}
+.dark-mode .book-subtitle,.dark-mode .book-footer {color: #bbb;}
+.dark-mode .toc-section {color: #ddd;}
+
+@media (max-width: 600px) {
+  .chapter-title,
+  .toc-section {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .chapter-page,
+  .section-page {
+    margin-top: 4px;
+  }
+}
+
+</style><style>
+.light-mode .container {box-shadow: 0 0 15px rgba(0,0,0,0.1);}
+.dark-mode .container {box-shadow: 0 0 15px rgba(255, 255, 255, 0.05);}
+
+h1, h2, h3 {font-weight: 600;margin-top: 2.5rem;margin-bottom: 1rem;line-height: 1.2;}
+h1 { font-size: 1.8rem; }
+h2 { font-size: 1.4rem; }
+h3 { font-size: 1.2rem; }
+
+table {width: 100%;border-collapse: collapse;font-family: sans-serif;font-size: 1em;margin: 1em 0;}
+th, td {padding: 0.6em 1em;text-align: left;border: 1px solid;}
+tr:nth-child(even) {  background-color: inherit;}
+tr:hover { background-color: inherit;}
+
+code {color: #d35400;}
+
+.chapter-navi-section {display: flex;justify-content: space-between;align-items: center;padding-bottom: 10px;padding-top: 10px;}
+.nav-link {color: inherit;text-decoration: none;opacity: 0.5;transition: opacity 0.3s ease, text-decoration 0.3s ease;}
+.nav-link:hover {opacity: 0.9;text-decoration: underline;}
+.prev { text-align: left; }
+.toc-link { text-align: center; }
+.next { text-align: right; }
+
+.download-section {display: flex;align-items: center;justify-content: center;gap: 2rem;padding: 2rem 1rem;max-width: 600px;margin: 3rem auto;border-radius: 12px;box-shadow: 0 4px 10px rgba(0,0,0,0.05);}
+.download-info h2 {margin: 0 0 0.5rem;font-size: 1.2rem;}
+.format-label {margin: 0 0 0.5rem;font-size: 0.95rem;}
+.download-buttons {display: flex;gap: 1rem;}
+.download-button {background-color: #4A90E2;color: white;padding: 0.5em 1.2em;border-radius: 25px;font-size: 0.95rem;text-decoration: none;transition: background-color 0.3s ease;}
+.download-button:hover {background-color: #357ABD;}
+
+.code-block {position: relative;margin-bottom: 1em;}
+.copy-button {background: transparent;color: white;position: absolute;top: 8px;right: 8px;border: none;padding: 4px 8px;font-size: 12px;border-radius: 4px;cursor: pointer;z-index: 1;}
+.copy-button:hover {background-color: #0056b3;}
+
+.snippet-container {overflow: hidden;}
+.snippet-header {padding: 0.75rem 1rem;cursor: pointer;font-size: 1rem;background-color: #eeeeee;color:  #111111; border-radius: 8px;cursor: pointer;box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+.snippet-body {display: none;font-family: monospace;}
+.snippet-container.open .snippet-body {display: block;}
+
+.CodeMirror {border: 2px solid #ccc;border-radius: 4px;resize: vertical;}
+
+.light-mode .format-label {color: #888;}
+.light-mode th {background-color: #f2f2f2;}
+.light-mode tr:nth-child(even) {background-color: #fafafa;}
+.light-mode tr:hover {background-color: #e6f7ff;}
+
+.dark-mode .snippet-header {background-color: #333;color:  #ddd; }
+.dark-mode .format-label {color: #aaa;}
+.dark-mode th {background-color: #333;color: #fff;}
+.dark-mode td {border-color: #444;}
+.dark-mode tr:nth-child(even) {background-color: #2a2a2a;}
+.dark-mode tr:hover {background-color: #2c3e50;}
+
+
+.button-group-run-edit {display: flex;width: 100%;gap: 1rem;}
+.button-run-edit {flex: 1;padding: 1rem;font-size: 1rem;font-weight: 600;border: none;border-radius: 8px;cursor: pointer;transition: background 0.3s, color 0.3s;}
+
+.light-mode .button-run-edit {background-color: #f0f0f0;color: #222;box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);}
+.light-mode .button-run-edit:hover {background-color: #e0e0e0;}
+
+.dark-mode .button-run-edit {background-color: #2a2a2a;color: #f5f5f5;box-shadow: 0 0 10px rgba(255, 255, 255, 0.05);}
+.dark-mode .button-run-edit:hover {background-color: #3a3a3a;}
+
+button { padding: 0.5em 1em; background: green; color: white; border: none; cursor: pointer; }
+button:hover { background: #1e7e34; }
+.result_iframe { width:99%; margin-top: 1em;  resize: both;background-color: #515b63;border:1px solid #ccc;}   
+
+.dialog-backdrop {position: fixed;top: 0;left: 0;width: 100vw;height: 100vh;background: rgba(0,0,0,0.5);display: none;justify-content: center;align-items: center;z-index: 10;}
+.dialog {background: #90979e;padding: 20px;width: 90vw;height: 80vh;border-radius: 8px;box-shadow: 0 0 20px rgba(0,0,0,0.3);display: flex;flex-direction: column;}
+.dialog-content {display: flex;gap: 20px;margin-top: 10px;height: calc(100% - 40px);}
+.editor-container, .preview-container {flex: 1;height: 100%;max-height: 100%;overflow: hidden; }
+.result_iframe_dialog {width: 100%;height: 100%;resize: both;border:1px solid #ccc;overflow: auto; }   
+.CodeMirror {width: 100% !important;height: 100% !important;}
+</style>
+</head>
+<body>
+<script>const mode = localStorage.getItem('mode') || 'light';document.documentElement.classList.add(`${mode}-mode`);</script>  
+<div class="container"><div class = "chapter-navi-section">
+<a href="typescript-for-beginners-testing-typescript-code.htm" class="nav-button prev">←</a>
+<a href='typescript-for-beginners.htm#best-practices-for-typescript' class="nav-button toc-link">Index</a>
+<a href="typescript-for-beginners-common-pitfalls-and-debugging-tips.htm" class="nav-button next">→</a>
+</div>
+<div class='book-header'><h1 class='book-title-toc' id = 'top'>Best Practices for TypeScript</h1><h3 class='book-subtitle-toc'>Typescript for Beginners</h3></div><h2 id='clean-type-definitions'>23.1 Clean Type Definitions</h2><p>Clean, explicit, and reusable type definitions are the foundation of high-quality TypeScript code. They make your code easier to understand, maintain, and scale—especially in collaborative environments or large projects.</p><p>In this section, you’ll learn:</p><ul>
+ <li>Why clean type definitions matter</li>
+ <li>How to simplify complex types</li>
+ <li>When to use interfaces vs type aliases</li>
+ <li>How to avoid redundancy and document your types</li>
+</ul><h3 id="why-clean-types-matter">Why Clean Types Matter</h3><p>When type definitions are messy, overly generic, or repetitive, they can:</p><ul>
+ <li>Increase cognitive load for other developers (and your future self)</li>
+ <li>Cause subtle bugs or inconsistencies</li>
+ <li>Make refactoring more difficult</li>
+ <li>Reduce the effectiveness of tooling like auto-completion and static analysis</li>
+</ul><p>Clean types offer the opposite:</p><p>✅ Better <strong>readability</strong> ✅ Stronger <strong>tooling support</strong> ✅ Easier <strong>collaboration</strong> ✅ Safer <strong>refactoring</strong></p><h3 id="simplifying-complex-types">Simplifying Complex Types</h3><p>Let’s say you’re working with a user object returned from an API:</p><h4 id="messy-approach">Messy Approach</h4><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-ts">function createUser(user: {
+  id: number;
+  name: string;
+  email: string;
+  isAdmin: boolean;
+}): void {
+  // ...
+}</code></pre>
+</div><p>This works, but it's verbose, hard to reuse, and doesn't convey intent clearly.</p><h4 id="clean-approach">Clean Approach</h4><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-ts">interface User {
+  id: number;
+  name: string;
+  email: string;
+  isAdmin: boolean;
+}
+
+function createUser(user: User): void {
+  // ...
+}</code></pre>
+</div><p>✅ <strong>Cleaner</strong>, <strong>easier to reuse</strong>, and <strong>self-documenting</strong>.</p><h3 id="reusing-and-composing-types">Reusing and Composing Types</h3><p>Avoid repeating type structures across your codebase. Instead, define them once and reuse.</p><h4 id="example-reusing-types-in-multiple-functions">Example: Reusing Types in Multiple Functions</h4><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-ts">interface Product {
+  id: string;
+  name: string;
+  price: number;
+}
+
+function getProductById(id: string): Product {
+  // ...
+}
+
+function calculateDiscount(product: Product): number {
+  // ...
+}</code></pre>
+</div><p>✅ If the <code>Product</code> shape changes, you only need to update it in one place.</p><p>You can also <strong>compose</strong> types to reduce duplication:</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-ts">interface Timestamps {
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+interface Order extends Timestamps {
+  id: string;
+  total: number;
+}</code></pre>
+</div><h3 id="interfaces-vs-type-aliases">Interfaces vs. Type Aliases</h3><p>Both <code>interface</code> and <code>type</code> can define object shapes, but they have different strengths.</p><table>
+ <thead>
+  <tr>
+   <th>Feature</th>
+   <th><code>interface</code></th>
+   <th><code>type</code></th>
+  </tr>
+ </thead>
+ <tbody>
+  <tr>
+   <td>Extending other types</td>
+   <td>✅ yes</td>
+   <td>✅ yes (with <code>&amp;</code>)</td>
+  </tr>
+  <tr>
+   <td>Declaration merging</td>
+   <td>✅ yes</td>
+   <td>❌ no</td>
+  </tr>
+  <tr>
+   <td>Unions and primitives</td>
+   <td>❌ no</td>
+   <td>✅ yes</td>
+  </tr>
+  <tr>
+   <td>IDE preference (autocomplete)</td>
+   <td>✅ often better</td>
+   <td>✅ good too</td>
+  </tr>
+ </tbody>
+</table><h4 id="use-interface-when">Use <code>interface</code> when:</h4><ul>
+ <li>Defining object structures, especially for classes or APIs</li>
+ <li>You expect other developers to extend the type</li>
+</ul><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-ts">interface Animal {
+  name: string;
+}
+
+interface Dog extends Animal {
+  breed: string;
+}</code></pre>
+</div><h4 id="use-type-when">Use <code>type</code> when:</h4><ul>
+ <li>Creating union types or more flexible compositions</li>
+ <li>Combining primitives, tuples, or functions</li>
+</ul><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-ts">type ID = string | number;
+
+type Callback = (data: string) =&gt; void;</code></pre>
+</div><h3 id="avoiding-redundancy">Avoiding Redundancy</h3><p>Duplicate type definitions often lead to bugs. Prefer DRY (Don't Repeat Yourself) principles for types.</p><h4 id="dont-do-this">Dont do this:</h4><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-ts">function getUser(): { id: number; name: string } {
+  return { id: 1, name: 'Alice' };
+}
+
+function showUser(user: { id: number; name: string }) {
+  console.log(user.name);
+}</code></pre>
+</div><h4 id="do-this">Do this:</h4><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-ts">interface User {
+  id: number;
+  name: string;
+}
+
+function getUser(): User {
+  return { id: 1, name: 'Alice' };
+}
+
+function showUser(user: User) {
+  console.log(user.name);
+}</code></pre>
+</div><p>✅ One definition = fewer bugs, better maintainability.</p><h3 id="documenting-types">Documenting Types</h3><p>Clear types are good—but <strong>documented</strong> types are even better.</p><p>You can add comments above your interfaces or fields to help other developers understand them:</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-ts">/**
+ * Represents a blog post.
+ */
+interface Post {
+  /** Unique post ID */
+  id: string;
+
+  /** Title of the post */
+  title: string;
+
+  /** Post content in Markdown format */
+  content: string;
+
+  /** Publication timestamp */
+  publishedAt: Date;
+}</code></pre>
+</div><p>Many editors like VSCode will show this documentation during hover or autocomplete, which is especially helpful in large teams.</p><h3 id="summary">Summary</h3><p>In this section, you learned how to write <strong>clean, maintainable, and reusable</strong> type definitions. Specifically:</p><ul>
+ <li>Clear type definitions make code easier to maintain and collaborate on</li>
+ <li>Use <code>interface</code> and <code>type</code> thoughtfully, depending on the use case</li>
+ <li>Avoid redundancy by reusing and composing types</li>
+ <li>Document types to improve readability and tooling support</li>
+</ul><p>Clean types are more than just “correct”—they are <strong>communicative</strong>, <strong>flexible</strong>, and a sign of thoughtful engineering. In the next section, we’ll dive into how to avoid the overuse of the <code>any</code> type, and what to use instead.</p><div class = "chapter-navi-section">
+<a href="#top" class="nav-button prev">↑</a>
+<a href='typescript-for-beginners.htm#best-practices-for-typescript' class="nav-button toc-link">Index</a>
+<a href="#bottom" class="nav-button next">↓</a>
+</div>
+<h2 id='avoiding-any'>23.2 Avoiding <code>any</code></h2><p>The <code>any</code> type in TypeScript is both powerful and dangerous. It tells the compiler to <strong>skip type checking</strong> for that variable, essentially opting out of TypeScript's strongest feature: <strong>type safety</strong>.</p><p>While <code>any</code> can be useful in rare cases—such as when migrating JavaScript code—overusing it defeats the purpose of using TypeScript in the first place.</p><p>In this section, you’ll learn:</p><ul>
+ <li>Why relying on <code>any</code> is risky</li>
+ <li>Safer alternatives like <code>unknown</code> and type guards</li>
+ <li>Strategies for minimizing <code>any</code> in real-world code</li>
+ <li>How to incrementally improve typing in large or legacy projects</li>
+</ul><h3 id="why-any-is-dangerous">Why <code>any</code> Is Dangerous</h3><p>When you use <code>any</code>, you’re telling TypeScript:</p><blockquote>
+ <p>"Trust me, I know what I’m doing. Don’t check this."</p>
+</blockquote><p>This disables all type checks and autocompletion for that value, which can lead to:</p><ul>
+ <li><strong>Runtime errors</strong> that TypeScript could have prevented</li>
+ <li><strong>Loss of tooling support</strong> (e.g., IntelliSense and refactoring)</li>
+ <li><strong>Hard-to-maintain code</strong> as the application grows</li>
+</ul><h4 id="example-the-problem-with-any">Example: The Problem with <code>any</code></h4><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-ts">function getLength(str: any): number {
+  return str.length;
+}
+
+getLength(42); // 💥 Runtime error: 42 has no 'length' property</code></pre>
+</div><p>The compiler doesn’t catch the error because <code>str</code> is <code>any</code>.</p><h3 id="use-unknown-instead-of-any">Use <code>unknown</code> Instead of <code>any</code></h3><p>If you truly don’t know the type yet, prefer <code>unknown</code> over <code>any</code>.</p><ul>
+ <li><code>unknown</code> is <strong>safe</strong>: it requires you to narrow the type before using it</li>
+ <li><code>any</code> is <strong>unsafe</strong>: it allows anything, including operations that might fail</li>
+</ul><h4 id="example-using-unknown">Example: Using <code>unknown</code></h4><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-ts">function processValue(value: unknown) {
+  if (typeof value === 'string') {
+    console.log(value.toUpperCase());
+  } else {
+    console.log('Not a string');
+  }
+}</code></pre>
+</div><p>✅ TypeScript forces you to check the type before using it—no more silent failures.</p><h3 id="use-type-guards-to-narrow-unknown">Use Type Guards to Narrow <code>unknown</code></h3><p>Type guards are functions or conditions that check and narrow types at runtime.</p><h4 id="example-type-guard-for-an-object-shape">Example: Type Guard for an Object Shape</h4><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-ts">interface User {
+  id: number;
+  name: string;
+}
+
+function isUser(value: unknown): value is User {
+  return (
+    typeof value === 'object' &amp;&amp;
+    value !== null &amp;&amp;
+    'id' in value &amp;&amp;
+    'name' in value
+  );
+}
+
+function greet(value: unknown) {
+  if (isUser(value)) {
+    console.log(`Hello, ${value.name}`);
+  } else {
+    console.log('Not a user');
+  }
+}</code></pre>
+</div><p>✅ TypeScript now knows <code>value</code> is a <code>User</code> inside the <code>if</code> block.</p><h3 id="gradually-replacing-any">Gradually Replacing <code>any</code></h3><p>In legacy projects or early development stages, <code>any</code> might be used temporarily. Here’s how to gradually replace it:</p><h4 id="use-type-annotations">Use Type Annotations</h4><p>Instead of:</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-ts">const data: any = fetchData();</code></pre>
+</div><p>Try:</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-ts">interface Product {
+  id: string;
+  price: number;
+}
+
+const data: Product = fetchData();</code></pre>
+</div><h4 id="use-as-const-for-literals">Use <code>as const</code> for literals</h4><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-ts">const config = {
+  mode: 'production',
+  retry: false,
+} as const;</code></pre>
+</div><p>This locks down the types to the most specific values.</p><h4 id="use-typeof-and-returntype">Use <code>typeof</code> and <code>ReturnType</code></h4><p>You can infer types from existing values or functions:</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-ts">const user = { id: 1, name: 'Alice' };
+type User = typeof user;
+
+function getUser(): User {
+  return user;
+}</code></pre>
+</div><h3 id="better-with-noimplicitany">Better with <code>noImplicitAny</code></h3><p>Enable <code>noImplicitAny</code> in your <code>tsconfig.json</code> to catch untyped variables automatically:</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-json">{
+  "compilerOptions": {
+    "noImplicitAny": true
+  }
+}</code></pre>
+</div><p>This helps you detect missing type annotations early, encouraging you to write more complete types.</p><h3 id="example-from-any-to-type-safe">Example: From <code>any</code> to Type-Safe</h3><h4 id="unchecked-any">Unchecked <code>any</code></h4><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-ts">function handleInput(input: any) {
+  console.log(input.toLowerCase());
+}</code></pre>
+</div><p>Mistakenly calling <code>handleInput(123)</code> causes a runtime error.</p><h4 id="safe-with-type-narrowing">Safe with Type Narrowing</h4><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-ts">function handleInput(input: unknown) {
+  if (typeof input === 'string') {
+    console.log(input.toLowerCase());
+  } else {
+    console.log('Invalid input');
+  }
+}</code></pre>
+</div><h3 id="summary">Summary</h3><p>Avoiding <code>any</code> is one of the simplest and most effective ways to improve the safety and quality of your TypeScript code. In this section, you learned:</p><ul>
+ <li>Why <code>any</code> should be avoided</li>
+ <li>How to use <code>unknown</code> and type guards for safer alternatives</li>
+ <li>Strategies to incrementally replace <code>any</code> in your codebase</li>
+ <li>How to enforce type safety with compiler options like <code>noImplicitAny</code></li>
+</ul><p>TypeScript is most powerful when it can protect you from mistakes—so give it as much information as possible. In the next section, we’ll explore <strong>progressive typing</strong> strategies for improving types in large or existing codebases.</p><div class = "chapter-navi-section">
+<a href="#top" class="nav-button prev">↑</a>
+<a href='typescript-for-beginners.htm#best-practices-for-typescript' class="nav-button toc-link">Index</a>
+<a href="#bottom" class="nav-button next">↓</a>
+</div>
+<h2 id='progressive-typing-in-large-codebases'>23.3 Progressive Typing in Large Codebases</h2><p>Adopting TypeScript in an existing JavaScript codebase—especially a large one—can feel overwhelming. However, TypeScript is designed to support <strong>gradual adoption</strong>, allowing teams to incrementally add types and gain benefits over time.</p><p>In this section, you’ll learn strategies for progressively introducing TypeScript, including:</p><ul>
+ <li>Using <code>allowJs</code> and <code>checkJs</code> to mix JavaScript and TypeScript</li>
+ <li>Adding types incrementally with JSDoc and type assertions</li>
+ <li>Balancing speed and type safety during a staged migration</li>
+</ul><h3 id="why-migrate-gradually">Why Migrate Gradually?</h3><p>In large codebases, rewriting everything in TypeScript all at once is often <strong>impractical and risky</strong>. A better approach is to <strong>adopt TypeScript one file, one module, or one feature at a time</strong>.</p><p>Benefits of progressive typing:</p><p>✅ Early access to TypeScript’s benefits ✅ Lower risk and minimal disruption ✅ Easier collaboration in teams ✅ Better long-term maintainability</p><h3 id="step-1-enable-javascript-support">Step 1: Enable JavaScript Support</h3><p>In <code>tsconfig.json</code>, you can configure TypeScript to work with <code>.js</code> files:</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-json">{
+  "compilerOptions": {
+    "allowJs": true,     // Let TypeScript process JavaScript files
+    "checkJs": true      // Type-check JavaScript files
+  },
+  "include": ["src/**/*"]
+}</code></pre>
+</div><ul>
+ <li><code>allowJs</code>: Allows JS files in the project</li>
+ <li><code>checkJs</code>: Enables type-checking for JS files (optional, but helpful)</li>
+</ul><p>Now you can run the TypeScript compiler over your existing JavaScript code and get type errors and warnings—<strong>without changing file extensions yet</strong>.</p><h3 id="step-2-use-jsdoc-comments-for-types">Step 2: Use JSDoc Comments for Types</h3><p>Without converting to <code>.ts</code>, you can start adding type information using <strong>JSDoc annotations</strong>:</p><h4 id="example-adding-jsdoc-to-javascript">Example: Adding JSDoc to JavaScript</h4><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-js">/**
+ * @param {string} name
+ * @returns {string}
+ */
+function greet(name) {
+  return `Hello, ${name}`;
+}</code></pre>
+</div><p>TypeScript will infer the types and provide autocomplete, error checking, and refactoring tools.</p><p>You can even define complex types inline or import them:</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-js">/**
+ * @typedef {Object} User
+ * @property {number} id
+ * @property {string} name
+ */
+
+/**
+ * @param {User} user
+ */
+function printUser(user) {
+  console.log(user.name);
+}</code></pre>
+</div><p>✅ This method gives you static type checking in JS without converting files right away.</p><h3 id="step-3-rename-files-gradually-to-ts-or-tsx">Step 3: Rename Files Gradually to <code>.ts</code> or <code>.tsx</code></h3><p>After type-checking JavaScript files and fixing the most obvious issues, you can start converting files one at a time:</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-bash">mv src/utils/math.js src/utils/math.ts</code></pre>
+</div><p>Or for React:</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-bash">mv src/components/Button.jsx src/components/Button.tsx</code></pre>
+</div><p>TypeScript will now enforce full type-checking on the renamed file.</p><h3 id="step-4-use-type-assertions-when-needed">Step 4: Use Type Assertions When Needed</h3><p>During migration, you might encounter untyped values. Instead of using <code>any</code>, use <strong>type assertions</strong> to tell TypeScript the expected type:</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-ts">const data = JSON.parse(rawData) as User;</code></pre>
+</div><p>This tells TypeScript to treat <code>data</code> as a <code>User</code>, even if the compiler can't infer it directly.</p><p>Be cautious: assertions override the compiler’s checks, so only use them when you're sure.</p><h3 id="step-5-introduce-type-definitions-gradually">Step 5: Introduce Type Definitions Gradually</h3><p>You don’t need to type everything at once. Focus on:</p><ol>
+ <li><strong>Public APIs</strong> (functions, classes, exports)</li>
+ <li><strong>Common data models</strong> (e.g. <code>User</code>, <code>Product</code>, <code>Order</code>)</li>
+ <li><strong>Frequently used utility functions</strong></li>
+</ol><p>As you convert files, you can extract types and interfaces into reusable type files (<code>types.ts</code>) and build from there.</p><h3 id="step-6-use-ts-nocheck-temporarily-sparingly">Step 6: Use <code>// @ts-nocheck</code> Temporarily (Sparingly)</h3><p>If you run into a file that’s too messy to type immediately, you can silence errors temporarily:</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-ts">// @ts-nocheck</code></pre>
+</div><p>This disables type checking in that file. It should be a <strong>temporary escape hatch</strong>, not a permanent solution. Prefer fixing type errors when possible.</p><h3 id="step-7-use-tools-and-linters-to-track-progress">Step 7: Use Tools and Linters to Track Progress</h3><ul>
+ <li><strong><code>tsc --noEmit</code></strong>: Run type checks without building files</li>
+ <li><strong>ESLint with <code>@typescript-eslint</code></strong>: Helps enforce typing rules and catch bad patterns</li>
+ <li><strong>ts-prune</strong>: Identifies unused types or exports</li>
+ <li><strong>Type Coverage Tools</strong>: Tools like <code>type-coverage</code> or <code>typescript-coverage-report</code> help track how much of your project is typed</li>
+</ul><h3 id="balancing-speed-and-safety">Balancing Speed and Safety</h3><p>Migrating a large codebase takes time. Here’s how to manage the balance:</p><table>
+ <thead>
+  <tr>
+   <th>Strategy</th>
+   <th>Speed ✅</th>
+   <th>Safety ✅</th>
+  </tr>
+ </thead>
+ <tbody>
+  <tr>
+   <td>Enable <code>allowJs</code></td>
+   <td>✅ Fast</td>
+   <td>⚠️ Basic type safety</td>
+  </tr>
+  <tr>
+   <td>Add JSDoc + <code>checkJs</code></td>
+   <td>✅ Fast</td>
+   <td>✅ Safer types</td>
+  </tr>
+  <tr>
+   <td>Rename to <code>.ts</code>/<code>.tsx</code></td>
+   <td>❌ Slower</td>
+   <td>✅ Full safety</td>
+  </tr>
+  <tr>
+   <td>Use assertions (<code>as Type</code>)</td>
+   <td>✅ Handy</td>
+   <td>⚠️ Use carefully</td>
+  </tr>
+  <tr>
+   <td>Skip-check with <code>@ts-nocheck</code></td>
+   <td>✅ Fast</td>
+   <td>❌ No safety</td>
+  </tr>
+ </tbody>
+</table><p>Choose the right mix depending on the complexity and criticality of the module you're converting.</p><h3 id="summary">Summary</h3><p>In this section, you learned how to <strong>incrementally migrate</strong> a large JavaScript codebase to TypeScript using:</p><ul>
+ <li><code>allowJs</code> and <code>checkJs</code> for mixed codebases</li>
+ <li>JSDoc comments to add types without file conversion</li>
+ <li>Type assertions and selective file renaming</li>
+ <li>Tools and strategies to balance speed with safety</li>
+</ul><p>With a progressive strategy, you can adopt TypeScript step-by-step—avoiding costly rewrites while still gaining all the benefits of type safety and better tooling.</p><p>In the next section, we’ll look at maintaining consistent and readable code with <strong>ESLint and TypeScript linting tools</strong>.</p><div class = "chapter-navi-section">
+<a href="#top" class="nav-button prev">↑</a>
+<a href='typescript-for-beginners.htm#best-practices-for-typescript' class="nav-button toc-link">Index</a>
+<a href="#bottom" class="nav-button next">↓</a>
+</div>
+<h2 id='code-style-and-linting-with-eslint'>23.4 Code Style and Linting with <code>ESLint</code></h2><p>Consistent code style and early error detection are essential for maintaining high-quality code—especially in team projects. <strong>ESLint</strong> is a popular, extensible tool that helps enforce coding standards and catch potential issues before they become bugs.</p><p>In this section, you’ll learn:</p><ul>
+ <li>What ESLint is and why it matters for TypeScript</li>
+ <li>How to configure ESLint with TypeScript support</li>
+ <li>Common linting errors and how to fix them</li>
+ <li>Benefits of using ESLint in team projects</li>
+</ul><h3 id="what-is-eslint">What is ESLint?</h3><p>ESLint is a static code analysis tool that checks your code for style issues and possible errors according to configurable rules. It helps you:</p><ul>
+ <li>Enforce consistent formatting and best practices</li>
+ <li>Catch potential bugs like unused variables, unreachable code, or incorrect types</li>
+ <li>Improve code readability and maintainability</li>
+ <li>Integrate with IDEs for instant feedback</li>
+</ul><p>When combined with TypeScript, ESLint becomes even more powerful by understanding type information and enforcing type-aware rules.</p><h3 id="setting-up-eslint-for-typescript">Setting Up ESLint for TypeScript</h3><p>Here’s how to set up ESLint in a TypeScript project.</p><h4 id="step-1-install-dependencies">Step 1: Install Dependencies</h4><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-bash">npm install --save-dev eslint @typescript-eslint/parser @typescript-eslint/eslint-plugin</code></pre>
+</div><ul>
+ <li><code>eslint</code>: Core linter</li>
+ <li><code>@typescript-eslint/parser</code>: Parses TypeScript code so ESLint can analyze it</li>
+ <li><code>@typescript-eslint/eslint-plugin</code>: Adds TypeScript-specific linting rules</li>
+</ul><h4 id="step-2-create-eslintrc-js-configuration">Step 2: Create <code>.eslintrc.js</code> Configuration</h4><p>Create or update your <code>.eslintrc.js</code> file with the following:</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-js">module.exports = {
+  parser: '@typescript-eslint/parser', // Specifies the ESLint parser for TS
+  parserOptions: {
+    ecmaVersion: 2020,                  // Allows modern ECMAScript features
+    sourceType: 'module',               // Allows use of imports
+  },
+  plugins: ['@typescript-eslint'],
+  extends: [
+    'eslint:recommended',               // Basic recommended rules
+    'plugin:@typescript-eslint/recommended', // TypeScript-specific recommended rules
+  ],
+  rules: {
+    // Customize or override rules here
+    '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
+    '@typescript-eslint/explicit-function-return-type': 'warn',
+  },
+};</code></pre>
+</div><h4 id="step-3-add-lint-script-to-package-json">Step 3: Add Lint Script to <code>package.json</code></h4><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-json">"scripts": {
+  "lint": "eslint 'src/**/*.{ts,tsx}'"
+}</code></pre>
+</div><p>Run linting with:</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-bash">npm run lint</code></pre>
+</div><h3 id="common-linting-errors-and-fixes">Common Linting Errors and Fixes</h3><p>Here are some typical linting errors you might encounter, and how to address them:</p><h4 id="unused-variables">Unused Variables</h4><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-ts">const unusedVar = 123;
+// ESLint error: 'unusedVar' is defined but never used.</code></pre>
+</div><p><strong>Fix:</strong> Remove unused variables or prefix them with <code>_</code> if necessary.</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-ts">const _unusedVar = 123;</code></pre>
+</div><h4 id="missing-return-types-on-functions">Missing Return Types on Functions</h4><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-ts">function greet(name: string) {
+  return `Hello, ${name}`;
+}
+// Warning: Missing explicit return type on function.</code></pre>
+</div><p><strong>Fix:</strong> Add explicit return type:</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-ts">function greet(name: string): string {
+  return `Hello, ${name}`;
+}</code></pre>
+</div><h4 id="improper-use-of-any">Improper Use of <code>any</code></h4><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-ts">function log(value: any) {
+  console.log(value);
+}
+// Warning: Avoid using 'any' types.</code></pre>
+</div><p><strong>Fix:</strong> Replace <code>any</code> with <code>unknown</code> or a specific type:</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-ts">function log(value: unknown) {
+  console.log(value);
+}</code></pre>
+</div><h4 id="consistent-semicolons-and-quotes">Consistent Semicolons and Quotes</h4><p>ESLint can enforce consistent use of semicolons and quotes:</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-ts">const message = "Hello world"
+// ESLint error: Missing semicolon</code></pre>
+</div><p><strong>Fix:</strong> Add semicolon or configure rule for no semicolon style.</p><h3 id="benefits-of-using-eslint-in-teams">Benefits of Using ESLint in Teams</h3><ul>
+ <li><strong>Consistency</strong>: Everyone writes code with the same style, making reviews easier.</li>
+ <li><strong>Early Bug Detection</strong>: Catch issues like unused variables or type mismatches before runtime.</li>
+ <li><strong>Better Onboarding</strong>: New team members get immediate feedback about style expectations.</li>
+ <li><strong>Improved Code Quality</strong>: Encourages best practices and discourages bad habits.</li>
+</ul><p>Many editors like VSCode support ESLint natively, showing lint errors inline as you type, which accelerates development and reduces frustration.</p><h3 id="summary">Summary</h3><p>In this section, you learned how to:</p><ul>
+ <li>Use ESLint to enforce consistent, readable code in TypeScript projects</li>
+ <li>Configure ESLint with <code>@typescript-eslint</code> parser and plugin</li>
+ <li>Identify and fix common linting errors</li>
+ <li>Understand the benefits of linting for individual developers and teams</li>
+</ul><p>ESLint is a valuable tool that complements TypeScript’s type system—helping you write clean, maintainable, and error-free code.</p><div class = "chapter-navi-section">
+<a href="typescript-for-beginners-testing-typescript-code.htm" class="nav-button prev">←</a>
+<a href='typescript-for-beginners.htm#best-practices-for-typescript' class="nav-button toc-link">Index</a>
+<a href="typescript-for-beginners-common-pitfalls-and-debugging-tips.htm" class="nav-button next">→</a>
+</div>
+<section class="download-section">
+  <div class="book-cover" style="background-color: #f9f6f1;border: 1px solid #ccc;"> 
+    <div class="book-cover-title" style="font-size: 18px;color: #333;top: 20px;">Typescript for Beginners</div>
+    <div class="book-cover-author">readbytes</div>
+    <div class="book-cover-bottom-stripe" style="background-color: #333;"></div>
+    <img class="book-cover-icon" style="width: 90px;height: 90px;top: 70px;" src="data:image/png;base64,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"/>
+  </div>
+  <div class="download-info">
+    <h2 id='bottom'>Download This Ebook</h2>
+    <p class="format-label">Available formats:</p>
+    <div class="download-buttons">
+      <a href="typescript-for-beginners.pdf" class="download-button">📄 PDF</a>
+      <a href="typescript-for-beginners.epub" class="download-button">📘 EPUB</a>
+    </div>
+  </div>
+</section><div class='related-books'>
+<h2>Typescript Introduction Books</h2>
+<div class='related-book-list'>
+<a href="typescript-for-beginners.htm">
+<div class="book-cover" style="background-color: #f9f6f1;border: 1px solid #ccc;"> 
+    <div class="book-cover-title" style="font-size: 18px;color: #333;top: 20px;">Typescript for Beginners</div>
+    <div class="book-cover-author">readbytes</div>
+    <div class="book-cover-bottom-stripe" style="background-color: #333;"></div>
+    <img class="book-cover-icon" style="width: 90px;height: 90px;top: 70px;" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFoAAABaCAYAAAA4qEECAAAKLUlEQVR4Xu2ce3BU5RXAM7W1tv1DqLt3kzUNm90kIAkPDY+IEgLWJNAHCbUVFcWACQFBCE14WYtFMhRmwGLQWjvtiBVboI+pICliO+OU2v6jtIOWSiC8hCL2HzoGwuRxu+funst3z3fv3e8+9pXe38wZ2HvP933n/O7NPu9uTo6Hh4dHdlMY8J0uDPhlkSjI85XT8R4mhAPSNiqxrrZGbn96PRf3feNrnHAIOqcHQ/TsbWJlUakisWxRoyfcDBQTCQY4eXbDk80QCoVucnIGJwpPdpSioO+OZErGcFu2k7smHFcUDN5B9yWFgoKbh6dCMhu0BrtAzT9rn2lV9g3sAbIwzhmplgzhVoMwh3y8RQmROaMP8ocwr/WdZfK9C+5KOMYV0iEZQ0RMIljRrOzCoG+kTm4/7Bs/uViRnDLRkcAtM9IlGcOpbCpaIzvgP8LmQSzaM1+VnDLRuDhtPtUBNURy/Y/S+kTQEw2xdO4EVrgSrOCUiQ4NGzYsEyRDoAhaowhGoiEuv/u4qeSUiM6Usxkj3uxnaJ2JMBMNkRGiH5hTzzWcrrB7VmeFaNpsOqO89DZbDWe06OjEJ90WjQ2xt59as5rLMws7DWe6aI0UkXiyrU13DM4Fcbq7W0bY7XSMUdhpeEiJZqXhuPElRertf75/VBVMsbIW5EUCgTJarxkZL3rqxHKuUb3AQvv7+jjhtVWV1KsumL9x/fe5+fm1pJ/Qes3IeNE106ZyjbLx9Lq1apHI91a1cdtEwXF0HV607y1arxlORVcvTLLoKbeP4xrFeKK5ybZQMxLJjot+ldZrhlPRNYumJle0UcNLG2MfP40OFVBPrmC2NmyH919ovWY4FV3deHfqRcPTMdg+siCf+nGNTy5d0l0bRdNaE+FUdDhPsrWuENGJD+s1i0UlG6MDbadhtWYdySKi4/sH6byugQUU5weVJg/9oZP6SDr0ANsRXZ6T8zkz2Wai7a4pDNuYWmSaoHXYaTw8fPjNRrKNRNtdS5jo5D1Wxdo5GDWVsUdzK+OuXbvmqHk92VT0VxumJF8yYLV5zHcyzgqQHw74N9G6RcE1/7r7QU50OBjA28fpONeBhe65607anyHpEB2N87RuK0THD8I8FWUjuPojqbom0EHzdLMp4dzY0yar4yA/FJA+oHVbJTrPdiqZ5iQVO82nEjeF5Ofnf8FVyTBRRJLq6XY9QpJU46bogYEB1w7clvaN7klJBuG8wAAUGAwGv0j36eH2We3WXPG6kvfiwSlnz561dD8UyvM1Q273iRPyhfPnHYlyetBwrJX60waItiobc52KcsLto0o0NZSWlt5I68woULRV2SXBoA/z4Wr9VMNKprVlJKxoq7KBdJ3VVmrMCKhou7LhGYQoD903h26ydLCs1pd2urq6Pk8l25Ft9azGfBoiDA4OxvIlKUDryFjOnDmzjwrGONXdjQKEnjJB7uG336ZeTFndslzetOEHdLMpVk6AjKAqJ+ezUDAVzMaR994TbgwOiOhZaRfRWjIOLJwKZuPHOzqUnLDkf5eOp+B8yeAfR44oc4cC/ifoulmBiOyqyRPjZ5OvkY6nJEN2b28vns0DdL2sQkR2WTgUa1aSxtLxFDdl/+2dv2TvXYYeIrIjebE3vwOBwJfoeArOt7y5mboTJhxfb8hIRkRkW2m8MP4AidH14YfUpS7smOh98s/pvEMCN2VXxZ/ZTCgdrY45dfIk9coBeR3PbhNeJ2txS3ah5P8z5NhFZI2sxw3ZuN8uf3zzoOn8Qwa7skO5/gankhGcpzBXusauMeSwIpuGW4wrKdbMG85N/OIpK7EqO1l8dE73oPbSerMaq7Ih+vv7VUkzplRw+83i2S2bGcXap3zwDh7dBhE90xto3VlHkPlEhQo2k60X98/+ptyyZLG8rvW7aixrapRnVlVxuWz86tVfaOQjcEBJ7t9p/VkBbRiCCsZoeXyJJq+m8m6NUKsB11uz88E1dmbARfBqviS10V4yErZBFj3ZnW+8oRFChbkRRvXowV7tRPvKKLDIzv37aA8KrOxkC6aBa0XycmlZHJgbCt4yivaYdkTPGieCF857UJ5eMVmeMn6sPGtGldy84FEuxyxm11arayei+NY8zN1Pe00bosW/9spOYcmLFzRoDoporG5Zwc1FA3MTMbdudixX8h+mPacc0aJXxh/wiqJnCm1cTwIbIowq+IpmzOjCEdzceuvI8ad9Rjz0rXolb6TPF6S9pwxREbt2vqzkjS2OcA1jsA9ESxYu4J76WYEVPmfWTG4tTnYCMI/2nxIKA77fixQJQF5RMJdrlDa8rq2Ve+pnVzbACqdr0rUTkTbZsOhtIxJ/CdOs0Qfq6zQydu/axUmmstlXjkLgNR0GNViW7fdXUhdJI7qgctmuEaw8iPElxVxz0yZNVPbBR11ASX5Qud04/2FOMpV9+tQp7YICGMn++r33cPW+uKODDlfA/dRH0oDFOrZtpXVwBesFNPfI/d9W/j/9zsma8TOnT1O2w1WfVDKV/du9ezRjRWBrgLsyWhuN3qtX6RTK9pDkW0SduE4o/qN5FCzOiMH4lfoY0KgeL2z/kZpDJWOURp9RwP75c79DhyeErWHtyha6WwVzfvfrvbrbqRfXgUXwz50uLoJILn5/20x29bTY9wrhhYUVRNZHxkQKldz/Xr6s2R4XbfkXxoSBSwZokWaFP7mqjW5SMBvDkkj2C89tF54LeGr1KsPcq1euyB+dO0c3686P26gf16CL4lWaerzZeUAtqHLSBM2+Sx9fVPcZjUcwh0rG6L5+YSUdqgIvXozW6+npMdyH0H31s2qV29SPa8Dky5oeMyxAD7YJ/E2OFzueU273fPqp8i+8WDEDx//r2DFONIZZLbC9LH43gDlXomcwW5sZv9mzm8uB21ElN1BHrqC32McXL2q2GVE+epSmMZQ7pijMNaEHjqurreYkm8nGK6UQtgaaawbkdmy9/kwLx1NHjqGFmX3fz+wBqnV57Jv+SMW4MYbzUOYyL3CoZCPZiW5Ttv5wk3xg3+t0MzcOv3hEPTkmttD1P/GJZbEriSjMVZy6+wHYDuPx/3p5J090yX86dEje+8vX5Jee3yFvfmaDvGblCrnx4XnqmKVNjdEH3FZ5S3u7vOuVnfKB/fvlo0ePqvvhY6x/X7igmV9vLWD92jWmdetth9vUk2NgUvyAExehCyOQhwci2+LYB+/TdhRe/ulLyn4WuB2SpDrqyjalOTk3sot0Rs8cWqBIwF0KvL8Bn1af6DrOlJw63jp4UF6xZLH6FoDVWLywQf7PJ5eUuXAb9WUZ+DFruhANeFB77JF5yl3GUAR+kmh6xSSub53oL7r1y/nUoSE6EyixeeMGWsP/PX19ffKkMaWcK4iIL8HvdESTXk/08byHOfDmGPWqCx3oYR3qVBc6yMM61KkudJCHdahTXeggD+tQp7rQQR7WoU51oYM8rEOdenh4eLjA/wBrhtNc7fSSeAAAAABJRU5ErkJggg=="/>
+  </div>
+</a>
+
+
+
+<a href='typescript.htm'><div class='book-cover' style='background-color: #f9f6f1;color: #111111;border: 1px solid #ccc;display: flex;justify-content: center;align-items: center;text-align: center;'>More Typescript Books</div></a>
+</div>
+</div><script>
+function copyCode(button) {const code = button.nextElementSibling.innerText;navigator.clipboard.writeText(code).then(() => {button.textContent = 'Copied!';setTimeout(() => { button.textContent = 'Copy'; }, 1500);});}
+</script></div>
+<style>
+.site-footer {margin-top: 60px;padding: 20px 0;border-top: 1px solid #eee;text-align: center;font-size: 14px;}
+.site-footer a {text-decoration: none;}
+.light-mode .site-footer {color: #777;border-color: #eee;}
+.dark-mode .site-footer {color: #888;border-color: #333;}
+.light-mode .site-footer a {color: #555;}
+.dark-mode .site-footer a {color: #aaa;}
+.site-footer a:hover {text-decoration: underline;}    
+</style>
+<footer class="site-footer">
+<nav><a href="https://readbytes.github.io">Home</a> |Email:<script type="text/javascript">
+var part1 = 'yinpeng';var part6 = '263';var part2 = Math.pow(2,6);var part3 = String.fromCharCode(part2);var part4 = 'hotmail dot com';var part5 = part1 + String.fromCharCode(part2) + part4;document.write(part1 + part6 + part3 + part4);
+</script>
+| <a id="mode-toggle" href="#">Toggle Dark Mode</a>
+</nav><p>© 2025 — All rights reserved.</p></footer>
+<script>
+const toggleButton = document.getElementById('mode-toggle');
+const body = document.body;
+const savedMode = localStorage.getItem('mode') || 'light';
+body.classList.add(savedMode + '-mode');
+toggleButton.addEventListener('click', () => {
+      const isDark = body.classList.contains('dark-mode');
+      body.classList.toggle('dark-mode', !isDark);
+      body.classList.toggle('light-mode', isDark);
+      localStorage.setItem('mode', isDark ? 'light' : 'dark');
+});
+function copyCode(button) {const code = button.nextElementSibling.innerText;navigator.clipboard.writeText(code).then(() => {button.textContent = 'Copied!';setTimeout(() => { button.textContent = 'Copy'; }, 1500);});}
+</script>
+</body>
+</html>

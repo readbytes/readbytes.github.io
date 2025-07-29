@@ -1,468 +1,171 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
+<meta charset="UTF-8">
 <title>jQuery In-Depth Writing Maintainable jQuery Code</title>
-<link rel='shortcut icon' href='https://java2s.com/style/favicon.ico'>
+<link rel='shortcut icon' href='https://readbytes.github.io/images/favicon.ico'>
 <link href="https://fonts.googleapis.com/css2?family=Merriweather&display=swap" rel="stylesheet" />
 <link href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.css" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/theme/dracula.min.css"><style>
+html {scroll-behavior: smooth;}  
+body {font-family: 'Merriweather', serif;;margin: 0;padding: 2rem 1rem;font-size: 15px;line-height: 1.5;transition: background-color 0.3s, color 0.3s;}
+.container {max-width: 750px;margin: 0 auto;padding: 1rem 2rem;}
+.light-mode {background-color: #f8f7f5;color: #333;} 
+.dark-mode {background-color: #121212;color: #e0e0e0;}
+a { text-decoration: none;transition: color 0.2s;}
+a:hover {text-decoration: underline;}
+.light-mode a {color: #555;}
+.dark-mode a {color: #aaa;}
+</style><style>
+.related-book-list {display: flex;flex-wrap: wrap;gap: 20px;}
+.related-books {margin-top: 40px;}
+.related-books h2 {font-size: 22px;margin-bottom: 20px;border-bottom: 2px solid #eee;padding-bottom: 8px;}
+.light-mode .related-books h2 {color: #333;border-color: #eee;}
+.dark-mode .related-books h2 {color: #ddd;border-color: #333;}
+</style><style>
+.book-cover {width: 130px;height: 180px;font-family: Arial, sans-serif;position: relative;overflow: hidden;box-shadow: 2px 2px 4px rgba(0,0,0,0.1);}
+.book-cover-bottom-stripe {position: absolute;bottom: 0;left: 0;height: 5px;width: 100%;}
+.book-cover-title {position: absolute;width: 100%;text-align: center;font-weight: bold;}
+.book-cover-icon {position: absolute;left: 50%;transform: translateX(-50%);display: flex;align-items: center;justify-content: center;}
+.book-cover-author {position: absolute;bottom: 10px;width: 100%;text-align: center;font-size: 8px;color: #333;}
+</style><style>
+.book-title-toc {font-size: 32px;font-weight: bold; }
+.book-subtitle-toc {font-size: 18px;margin-top: 8px;font-style: italic;}
+.book-header {text-align: center;margin-bottom: 40px;}
 
+.toc-container {border-radius: 10px;padding: 30px;margin-bottom: 40px;box-shadow: 0 8px 20px rgba(0,0,0,0.05);}
+h1 {font-size: 24px;text-align: center;margin-bottom: 30px;letter-spacing: 1px;padding-bottom: 10px;}
+.toc-list,.toc-section-list {list-style: none;padding: 0;margin: 0;}
+.toc-section-list {padding-left: 18px;margin-top: 6px;margin-bottom: 20px; }
+.toc-chapter {padding: 20px 0;}
+.chapter-title,.toc-section {display: flex;justify-content: space-between;padding-top: 4px;}
+.chapter-title {font-size: 17px;font-weight: bold;}
+.chapter-page,.section-page {font-style: italic;}
+ 
+ 
+.light-mode .book-title-toc,.light-mode .chapter-title,.light-mode .book-name {color: #222;}
+.light-mode .book-subtitle-toc,.light-mode .book-sub,.light-mode .chapter-page,.light-mode .section-page {color: #666;}
+.light-mode .toc-container { background: #fff;border: 1px solid #ddd;}
+.light-mode h1 {border-bottom: 2px solid #eee;color: #222;}
+.light-mode .toc-section {  color: #444;}
 
-  <script>
-  const mode = localStorage.getItem('mode') || 'light';
-  document.documentElement.classList.add(`${mode}-mode`);
-  </script>   
-<style> 
-html {
-  scroll-behavior: smooth;
+.light-mode .book-cover { border: 1px solid #ccc;box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);}
+.light-mode .book-title,.light-mode .series-name {color: #fff;}
+.light-mode .book-subtitle,.light-mode .book-footer {color: #aaa;}
+
+.dark-mode .book-title-toc,.dark-mode .chapter-title,.dark-mode .book-name {color: #f5f5f5;}
+.dark-mode .book-subtitle-toc,.dark-mode .book-sub,.dark-mode .chapter-page,.dark-mode .section-page {color: #aaa;}
+.dark-mode .toc-container {background: #1e1e1e;border: 1px solid #444;}
+
+.dark-mode h1 {border-bottom: 2px solid #333;color: #eee;}
+.dark-mode .toc-section {color: #bbb;}
+
+.dark-mode .related-books h2 {color: #ddd;border-bottom: 2px solid #333;}
+.dark-mode .book-title,.dark-mode .series-name {color: #fff;}
+.dark-mode .book-subtitle,.dark-mode .book-footer {color: #bbb;}
+.dark-mode .toc-section {color: #ddd;}
+
+@media (max-width: 600px) {
+  .chapter-title,
+  .toc-section {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .chapter-page,
+  .section-page {
+    margin-top: 4px;
+  }
 }
 
-body {
-  font-family: 'Merriweather', serif;
-  margin: 0;
-  padding: 2rem 1rem;
-  font-size: 15px;
-  line-height: 1.5;
-  transition: background-color 0.3s, color 0.3s;
-}
+</style><style>
+.light-mode .container {box-shadow: 0 0 15px rgba(0,0,0,0.1);}
+.dark-mode .container {box-shadow: 0 0 15px rgba(255, 255, 255, 0.05);}
 
-.container {
-  max-width: 700px;
-  margin: 0 auto;
-  padding: 1rem 2rem;
-  box-shadow: 0 0 15px rgba(0,0,0,0.1);
-}
-
-h1, h2, h3 {
-  font-weight: 600;
-  margin-top: 2.5rem;
-  margin-bottom: 1rem;
-  line-height: 1.2;
-}
-
+h1, h2, h3 {font-weight: 600;margin-top: 2.5rem;margin-bottom: 1rem;line-height: 1.2;}
 h1 { font-size: 1.8rem; }
 h2 { font-size: 1.4rem; }
 h3 { font-size: 1.2rem; }
 
-table {
-  width: 100%;
-  border-collapse: collapse;
-  font-family: sans-serif;
-  font-size: 1em;
-  margin: 1em 0;
-}
+table {width: 100%;border-collapse: collapse;font-family: sans-serif;font-size: 1em;margin: 1em 0;}
+th, td {padding: 0.6em 1em;text-align: left;border: 1px solid;}
+tr:nth-child(even) {  background-color: inherit;}
+tr:hover { background-color: inherit;}
 
-th, td {
-  padding: 0.6em 1em;
-  text-align: left;
-  border: 1px solid;
-}
+code {color: #d35400;}
 
-tr:nth-child(even) {
-  background-color: inherit;
-}
-
-tr:hover {
-  background-color: inherit;
-}
-
-a {
-  text-decoration: none;
-  transition: color 0.2s;
-}
-
-a:hover {
-  text-decoration: underline;
-}
-
-code {
-  color: #d35400;
-}
-
-.book-title-chapter {
-  font-family: 'Merriweather', serif;
-  font-size: 2rem;
-  font-weight: bold;
-  text-align: center;
-  margin-bottom: 2rem;
-  border-bottom: 2px solid;
-  padding-bottom: 0.5rem;
-}
-
-.book-subtitle-chapter {
-  text-align: center;
-  font-size: 1rem;
-  margin-top: -1rem;
-  margin-bottom: 2rem;
-}
-
-.related-books {
-  margin-top: 40px;
-}
-
-.related-book-list {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 20px;
-}
-
-    .book-cover {
-      width: 130px;
-      height: 180px;
-      font-family: Arial, sans-serif;
-      position: relative;
-      overflow: hidden;      
-      line-height: normal;
-      box-shadow: 2px 2px 4px rgba(0,0,0,0.1);
-    }
-    .book-cover-bottom-stripe {
-      position: absolute;
-      bottom: 0;
-      left: 0;
-      height: 5px;
-      width: 100%;
-    }
-    .book-cover-title {
-      position: absolute;
-      width: 100%;
-      text-align: center;
-      font-weight: bold;
-    }
-     
-    .book-cover-icon {
-      position: absolute;
-      left: 50%;
-      transform: translateX(-50%);
-      display: flex;
-      align-items: center;
-      justify-content: center; 
-    }
-
-    .book-cover-author {
-      position: absolute;
-      bottom: 10px;
-      width: 100%;
-      text-align: center;
-      font-size: 8px;
-      color: #333;
-    }
-
-.page-footer {
-  margin-top: 4rem;
-  padding: 1rem 0;
-  text-align: center;
-  font-size: 0.85rem;
-  border-top: 1px solid;
-}
-
-.chapter-navi-section {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding-bottom: 10px;
-}
-
-.nav-link {
-  color: inherit;
-  text-decoration: none;
-  opacity: 0.5;
-  transition: opacity 0.3s ease, text-decoration 0.3s ease;
-}
-
-.nav-link:hover {
-  opacity: 0.9;
-  text-decoration: underline;
-}
-
+.chapter-navi-section {display: flex;justify-content: space-between;align-items: center;padding-bottom: 10px;padding-top: 10px;}
+.nav-link {color: inherit;text-decoration: none;opacity: 0.5;transition: opacity 0.3s ease, text-decoration 0.3s ease;}
+.nav-link:hover {opacity: 0.9;text-decoration: underline;}
 .prev { text-align: left; }
 .toc-link { text-align: center; }
 .next { text-align: right; }
 
-.download-section {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 2rem;
-  padding: 2rem 1rem;
-  max-width: 600px;
-  margin: 3rem auto;
-  border-radius: 12px;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-}
+.download-section {display: flex;align-items: center;justify-content: center;gap: 2rem;padding: 2rem 1rem;max-width: 600px;margin: 3rem auto;border-radius: 12px;box-shadow: 0 4px 10px rgba(0,0,0,0.05);}
+.download-info h2 {margin: 0 0 0.5rem;font-size: 1.2rem;}
+.format-label {margin: 0 0 0.5rem;font-size: 0.95rem;}
+.download-buttons {display: flex;gap: 1rem;}
+.download-button {background-color: #4A90E2;color: white;padding: 0.5em 1.2em;border-radius: 25px;font-size: 0.95rem;text-decoration: none;transition: background-color 0.3s ease;}
+.download-button:hover {background-color: #357ABD;}
 
-.download-info h2 {
-  margin: 0 0 0.5rem;
-  font-size: 1.2rem;
-}
+.code-block {position: relative;margin-bottom: 1em;}
+.copy-button {background: transparent;color: white;position: absolute;top: 8px;right: 8px;border: none;padding: 4px 8px;font-size: 12px;border-radius: 4px;cursor: pointer;z-index: 1;}
+.copy-button:hover {background-color: #0056b3;}
 
-.format-label {
-  margin: 0 0 0.5rem;
-  font-size: 0.95rem;
-}
+.snippet-container {overflow: hidden;}
+.snippet-header {padding: 0.75rem 1rem;cursor: pointer;font-size: 1rem;background-color: #eeeeee;color:  #111111; border-radius: 8px;cursor: pointer;box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+.snippet-body {display: none;font-family: monospace;}
+.snippet-container.open .snippet-body {display: block;}
 
-.download-buttons {
-  display: flex;
-  gap: 1rem;
-}
+.CodeMirror {border: 2px solid #ccc;border-radius: 4px;resize: vertical;}
 
-.download-button {
-  background-color: #4A90E2;
-  color: white;
-  padding: 0.5em 1.2em;
-  border-radius: 25px;
-  font-size: 0.95rem;
-  text-decoration: none;
-  transition: background-color 0.3s ease;
-}
+.light-mode .format-label {color: #888;}
+.light-mode th {background-color: #f2f2f2;}
+.light-mode tr:nth-child(even) {background-color: #fafafa;}
+.light-mode tr:hover {background-color: #e6f7ff;}
 
-.download-button:hover {
-  background-color: #357ABD;
-}
-
-.code-block {
-  position: relative;
-  margin-bottom: 1em;
-}
-
-.copy-button {
-  background: transparent;
-  color: white;
-  position: absolute;
-  top: 8px;
-  right: 8px;
-  border: none;
-  padding: 4px 8px;
-  font-size: 12px;
-  border-radius: 4px;
-  cursor: pointer;
-  z-index: 1;
-}
-
-.copy-button:hover {
-  background-color: #0056b3;
-}
-
-.snippet-container {
-  overflow: hidden;
-}
-
-.snippet-header {
-  padding: 0.75rem 1rem;
-  cursor: pointer;
-  font-size: 1rem;
-    background-color: #eeeeee;
-    color:  #111111; 
-    border-radius: 8px;
-    cursor: pointer;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.1);  
-}
-
-.snippet-body {
-  display: none;
-  font-family: monospace;
-}
-
-.snippet-container.open .snippet-body {
-  display: block;
-}
-
-.CodeMirror {
-  border: 2px solid #ccc;
-  border-radius: 4px;
-  resize: vertical;
-}
-
-/* === Light Mode === */
-html.light-mode {
-  background-color: #f8f7f5;
-  color: #333;
-}
-
-html.light-mode .container {
-  background: white;
-}
-
-html.light-mode .book-title-chapter {
-  color: #2c3e50;
-  border-color: #ccc;
-}
-html.light-mode .book-subtitle-chapter{
-  color: #888;
-}
-
-html.light-mode .page-footer,
-html.light-mode .series-name,
-html.light-mode .book-subtitle,
-html.light-mode .format-label {
-  color: #888;
-}
-
-html.light-mode .related-books h2 {
-  color: #333;
-  border-bottom: 2px solid #eee;
-}
-
-html.light-mode .book-title {
-  color: #fff;
-}
-
-html.light-mode .book-cover {
-  border: 1px solid #ccc;
-}
-
-html.light-mode th {
-  background-color: #f2f2f2;
-}
-
-html.light-mode tr:nth-child(even) {
-  background-color: #fafafa;
-}
-
-html.light-mode tr:hover {
-  background-color: #e6f7ff;
-}
-
-html.light-mode a,
-html.light-mode .page-footer a {
-  color: #000;
-}
-
-/* === Dark Mode === */
-html.dark-mode {
-  background-color: #181818;
-  color: #e0e0e0;
-}
-
-html.dark-mode .container {
-  background: #222;
-}
-
-html.dark-mode .book-title-chapter {
-  color: #ddd;
-  border-color: #444;
-}
-
-html.dark-mode .snippet-header {
-    background-color: #333;
-    color:  #ddd; 
-}
+.dark-mode .snippet-header {background-color: #333;color:  #ddd; }
+.dark-mode .format-label {color: #aaa;}
+.dark-mode th {background-color: #333;color: #fff;}
+.dark-mode td {border-color: #444;}
+.dark-mode tr:nth-child(even) {background-color: #2a2a2a;}
+.dark-mode tr:hover {background-color: #2c3e50;}
 
 
-html.dark-mode .book-subtitle-chapter,
-html.dark-mode .page-footer,
-html.dark-mode .series-name,
-html.dark-mode .book-subtitle,
-html.dark-mode .book-footer,
-html.dark-mode .format-label {
-  color: #aaa;
-}
+.button-group-run-edit {display: flex;width: 100%;gap: 1rem;}
+.button-run-edit {flex: 1;padding: 1rem;font-size: 1rem;font-weight: 600;border: none;border-radius: 8px;cursor: pointer;transition: background 0.3s, color 0.3s;}
 
-html.dark-mode .related-books h2 {
-  color: #ddd;
-  border-bottom: 2px solid #333;
-}
+.light-mode .button-run-edit {background-color: #f0f0f0;color: #222;box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);}
+.light-mode .button-run-edit:hover {background-color: #e0e0e0;}
 
-html.dark-mode .book-title {
-  color: #fff;
-}
+.dark-mode .button-run-edit {background-color: #2a2a2a;color: #f5f5f5;box-shadow: 0 0 10px rgba(255, 255, 255, 0.05);}
+.dark-mode .button-run-edit:hover {background-color: #3a3a3a;}
 
-html.dark-mode .book-cover {
-  border: 1px solid #555;
-}
+button { padding: 0.5em 1em; background: green; color: white; border: none; cursor: pointer; }
+button:hover { background: #1e7e34; }
+.result_iframe { width:99%; margin-top: 1em;  resize: both;background-color: #515b63;border:1px solid #ccc;}   
 
-html.dark-mode th {
-  background-color: #333;
-  color: #fff;
-}
-
-html.dark-mode td {
-  border-color: #444;
-}
-
-html.dark-mode tr:nth-child(even) {
-  background-color: #2a2a2a;
-}
-
-html.dark-mode tr:hover {
-  background-color: #2c3e50;
-}
-
-html.dark-mode a,
-html.dark-mode .page-footer a {
-  color: #eee;
-}
-
-    .dialog-backdrop {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100vw;
-      height: 100vh;
-      background: rgba(0,0,0,0.5);
-      display: none;
-      justify-content: center;
-      align-items: center;
-      z-index: 10;
-    }
-
-    .dialog {
-      background: white;
-      padding: 20px;
-      width: 90vw;
-      height: 80vh;
-      border-radius: 8px;
-      box-shadow: 0 0 20px rgba(0,0,0,0.3);
-      display: flex;
-      flex-direction: column;
-    }
-    .dialog-content {
-      display: flex;
-      flex: 1;
-      gap: 20px;
-      margin-top: 10px;
-    }
-    .dialog h2 {
-      margin-top: 0;
-    }
-
-    .textarea_dialog {
-      width: 50%;
-      height: 100%;
-      resize: none;
-      font-family: monospace;
-      font-size: 14px;
-      padding: 10px;
-      box-sizing: border-box;
-      border: 1px solid #ccc;
-    }
-
-    .iframe_dialog {
-      width: 50%;
-      height: 100%;
-      border: 1px solid #ccc;
-    }
-    .controls_dialog {
-      display: flex;
-      justify-content: space-between;
-      margin-top: 10px;
-    }    
-    button { padding: 0.5em 1em; background: green; color: white; border: none; cursor: pointer; }
-    button:hover { background: #1e7e34; }
-    .result_iframe { width:99%; height:200px; margin-top: 1em;  resize: both;border:1px solid #ccc;}        
+.dialog-backdrop {position: fixed;top: 0;left: 0;width: 100vw;height: 100vh;background: rgba(0,0,0,0.5);display: none;justify-content: center;align-items: center;z-index: 10;}
+.dialog {background: #90979e;padding: 20px;width: 90vw;height: 80vh;border-radius: 8px;box-shadow: 0 0 20px rgba(0,0,0,0.3);display: flex;flex-direction: column;}
+.dialog-content {display: flex;gap: 20px;margin-top: 10px;height: calc(100% - 40px);}
+.editor-container, .preview-container {flex: 1;height: 100%;max-height: 100%;overflow: hidden; }
+.result_iframe_dialog {width: 100%;height: 100%;resize: both;border:1px solid #ccc;overflow: auto; }   
+.CodeMirror {width: 100% !important;height: 100% !important;}
 </style>
 </head>
-<body> 
-  <div class="container">
-    <div class = "chapter-navi-section">
+<body>
+<script>const mode = localStorage.getItem('mode') || 'light';document.documentElement.classList.add(`${mode}-mode`);</script>  
+<div class="container"><div class = "chapter-navi-section">
 <a href="jquery-in-depth-performance-optimization.htm" class="nav-button prev">←</a>
 <a href='jquery-in-depth.htm#writing-maintainable-jquery-code' class="nav-button toc-link">Index</a>
 <a href="jquery-in-depth-debugging-jquery-applications.htm" class="nav-button next">→</a>
 </div>
-
-    <h1 class="book-title-chapter" id = 'top'>Writing Maintainable jQuery Code</h1>
-    <h3 class="book-subtitle-chapter">jQuery In-Depth</h3>   
-    <!-- <h1 class ="chapter-title"></h1> -->
-    <h2 id='code-organization-patterns'>16.1 Code Organization Patterns</h2><p>Writing clean, modular, and maintainable jQuery code is crucial for building scalable web applications. As projects grow, unstructured jQuery scripts can quickly become tangled and hard to manage, leading to bugs and increased development time. To avoid this, adopting clear code organization patterns is essential.</p><p>This section explores common strategies to organize jQuery code effectively, including Immediately Invoked Function Expressions (IIFEs), modular structures, small reusable functions, and configuration objects. These approaches improve readability, maintainability, and future extensibility.</p><h3 id="using-iifes-immediately-invoked-function-expressions">Using IIFEs (Immediately Invoked Function Expressions)</h3><p>An IIFE is a function that runs as soon as it is defined. It creates a private scope, avoiding pollution of the global namespace—especially important in jQuery where <code>$</code> is commonly used.</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+<div class='book-header'><h1 class='book-title-toc' id = 'top'>Writing Maintainable jQuery Code</h1><h3 class='book-subtitle-toc'>jQuery In-Depth</h3></div><h2 id='code-organization-patterns'>16.1 Code Organization Patterns</h2><p>Writing clean, modular, and maintainable jQuery code is crucial for building scalable web applications. As projects grow, unstructured jQuery scripts can quickly become tangled and hard to manage, leading to bugs and increased development time. To avoid this, adopting clear code organization patterns is essential.</p><p>This section explores common strategies to organize jQuery code effectively, including Immediately Invoked Function Expressions (IIFEs), modular structures, small reusable functions, and configuration objects. These approaches improve readability, maintainability, and future extensibility.</p><h3 id="using-iifes-immediately-invoked-function-expressions">Using IIFEs (Immediately Invoked Function Expressions)</h3><p>An IIFE is a function that runs as soon as it is defined. It creates a private scope, avoiding pollution of the global namespace—especially important in jQuery where <code>$</code> is commonly used.</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-js">(function($) {
   // All your jQuery code here
   $(function() {
@@ -476,7 +179,8 @@ html.dark-mode .page-footer a {
  <li>Encapsulates code, preventing global variable conflicts.</li>
  <li>Allows you to safely use the <code>$</code> alias even if jQuery is in no-conflict mode.</li>
  <li>Groups related functionality within a clean scope.</li>
-</ul><h3 id="modular-encapsulated-structures">Modular, Encapsulated Structures</h3><p>Breaking your code into modules or “components” keeps different features separate and easier to maintain. While jQuery itself doesn’t enforce modules, you can simulate modularity using objects or closures.</p><p><strong>Example: Simple Tab Component</strong></p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</ul><h3 id="modular-encapsulated-structures">Modular, Encapsulated Structures</h3><p>Breaking your code into modules or “components” keeps different features separate and easier to maintain. While jQuery itself doesn’t enforce modules, you can simulate modularity using objects or closures.</p><p><strong>Example: Simple Tab Component</strong></p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-js">var Tabs = (function($) {
   function init(selector) {
     $(selector).find('.tab-links a').click(function(e) {
@@ -502,7 +206,8 @@ $(function() {
  <li>Encapsulates all tab-related logic inside the <code>Tabs</code> object.</li>
  <li>Exposes only the <code>init</code> method publicly.</li>
  <li>Avoids cluttering the global scope with multiple functions or variables.</li>
-</ul><h3 id="separating-logic-into-smaller-functions">Separating Logic into Smaller Functions</h3><p>Breaking down large blocks of code into small, single-purpose functions helps improve clarity and makes testing easier.</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</ul><h3 id="separating-logic-into-smaller-functions">Separating Logic into Smaller Functions</h3><p>Breaking down large blocks of code into small, single-purpose functions helps improve clarity and makes testing easier.</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-js">function showMessage(msg) {
   $('#message').text(msg).fadeIn();
 }
@@ -519,7 +224,8 @@ $('#submitBtn').click(function() {
     showMessage('Please enter a valid value.');
   }
 });</code></pre>
-</div><p>This approach allows you to reuse <code>showMessage</code> and <code>validateInput</code> in other parts of your app and keeps event handlers simple.</p><h3 id="configuration-objects-for-flexibility">Configuration Objects for Flexibility</h3><p>Using configuration objects to pass options into your functions or plugins makes your code more flexible and reusable.</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</div><p>This approach allows you to reuse <code>showMessage</code> and <code>validateInput</code> in other parts of your app and keeps event handlers simple.</p><h3 id="configuration-objects-for-flexibility">Configuration Objects for Flexibility</h3><p>Using configuration objects to pass options into your functions or plugins makes your code more flexible and reusable.</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-js">function setupTooltip(selector, options) {
   var settings = $.extend({
     color: 'black',
@@ -551,7 +257,8 @@ $(function() {
  <li>Centralizes default and user options.</li>
  <li>Makes it easier to extend and maintain.</li>
  <li>Improves readability by documenting parameters explicitly.</li>
-</ul><h3 id="combining-patterns-a-complete-example">Combining Patterns: A Complete Example</h3><p>Here’s an example combining IIFE, modular pattern, smaller functions, and configuration for a reusable dropdown menu:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</ul><h3 id="combining-patterns-a-complete-example">Combining Patterns: A Complete Example</h3><p>Here’s an example combining IIFE, modular pattern, smaller functions, and configuration for a reusable dropdown menu:</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-js">var DropdownMenu = (function($) {
   var defaults = {
     toggleClass: 'open',
@@ -610,7 +317,8 @@ $(function() {
 <a href='jquery-in-depth.htm#writing-maintainable-jquery-code' class="nav-button toc-link">Index</a>
 <a href="#bottom" class="nav-button next">↓</a>
 </div>
-<h2 id='using-data-attributes'>16.2 Using Data Attributes</h2><p>Modern web development encourages keeping HTML markup clean and semantic while still enabling dynamic behaviors in your JavaScript code. One effective way to achieve this separation of concerns is by using <strong>HTML5 data attributes</strong> (<code>data-*</code>). These attributes allow you to store custom, non-visible data directly on HTML elements without affecting their presentation or standard attributes.</p><p>jQuery provides a simple and efficient way to read and write these data attributes through the <code>.data()</code> method, promoting cleaner, more maintainable code with reduced coupling between your UI and JavaScript logic.</p><h3 id="what-are-data-attributes">What Are Data Attributes?</h3><p>Data attributes are custom attributes prefixed with <code>data-</code>, allowing you to embed extra information on any HTML element. For example:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+<h2 id='using-data-attributes'>16.2 Using Data Attributes</h2><p>Modern web development encourages keeping HTML markup clean and semantic while still enabling dynamic behaviors in your JavaScript code. One effective way to achieve this separation of concerns is by using <strong>HTML5 data attributes</strong> (<code>data-*</code>). These attributes allow you to store custom, non-visible data directly on HTML elements without affecting their presentation or standard attributes.</p><p>jQuery provides a simple and efficient way to read and write these data attributes through the <code>.data()</code> method, promoting cleaner, more maintainable code with reduced coupling between your UI and JavaScript logic.</p><h3 id="what-are-data-attributes">What Are Data Attributes?</h3><p>Data attributes are custom attributes prefixed with <code>data-</code>, allowing you to embed extra information on any HTML element. For example:</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-html">&lt;button id="btn1" data-user-id="123" data-role="admin"&gt;Click Me&lt;/button&gt;</code></pre>
 </div><p>Here, the button element has two data attributes:</p><ul>
  <li><code>data-user-id</code> with a value of <code>"123"</code></li>
@@ -620,22 +328,28 @@ $(function() {
  <li><strong>Flexibility</strong>: Easily add metadata without needing extra hidden fields or inline scripts.</li>
  <li><strong>Maintainability</strong>: Your JavaScript logic can work generically with elements by reading their data attributes, minimizing hard-coded dependencies.</li>
  <li><strong>State Management</strong>: Store element-specific states or config options directly on elements without cluttering your script.</li>
-</ul><h3 id="accessing-data-attributes-with-jquery-data">Accessing Data Attributes with jQuery <code>.data()</code></h3><p>jQuery simplifies working with data attributes through its <code>.data()</code> method. This method lets you <strong>get</strong> or <strong>set</strong> data values associated with elements, abstracting away direct attribute manipulation.</p><h4 id="reading-data">Reading Data</h4><p>Using <code>.data()</code> without parameters retrieves all data attributes as a JavaScript object:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</ul><h3 id="accessing-data-attributes-with-jquery-data">Accessing Data Attributes with jQuery <code>.data()</code></h3><p>jQuery simplifies working with data attributes through its <code>.data()</code> method. This method lets you <strong>get</strong> or <strong>set</strong> data values associated with elements, abstracting away direct attribute manipulation.</p><h4 id="reading-data">Reading Data</h4><p>Using <code>.data()</code> without parameters retrieves all data attributes as a JavaScript object:</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-js">var userData = $('#btn1').data();
 console.log(userData.userId); // Outputs: 123
 console.log(userData.role);   // Outputs: admin</code></pre>
-</div><p>Notice how <code>data-user-id</code> becomes <code>userId</code> in camelCase. jQuery automatically converts the dashed attribute names.</p><p>You can also get a specific value:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</div><p>Notice how <code>data-user-id</code> becomes <code>userId</code> in camelCase. jQuery automatically converts the dashed attribute names.</p><p>You can also get a specific value:</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-js">var role = $('#btn1').data('role');
 console.log(role); // Outputs: admin</code></pre>
-</div><h4 id="writing-data">Writing Data</h4><p>You can also set or update data values using <code>.data(key, value)</code>:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</div><h4 id="writing-data">Writing Data</h4><p>You can also set or update data values using <code>.data(key, value)</code>:</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-js">$('#btn1').data('role', 'superadmin');
 console.log($('#btn1').data('role')); // Outputs: superadmin</code></pre>
-</div><p>This updates the data internally in jQuery’s cache. Note that <code>.data()</code> may not immediately update the actual <code>data-*</code> attribute in the DOM but stores the value for jQuery’s use.</p><p>To explicitly update the attribute on the DOM element, you can use <code>.attr()</code>:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</div><p>This updates the data internally in jQuery’s cache. Note that <code>.data()</code> may not immediately update the actual <code>data-*</code> attribute in the DOM but stores the value for jQuery’s use.</p><p>To explicitly update the attribute on the DOM element, you can use <code>.attr()</code>:</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-js">$('#btn1').attr('data-role', 'superadmin');</code></pre>
-</div><p>However, <code>.data()</code> is generally preferred for internal data storage.</p><h3 id="practical-examples-using-data-attributes">Practical Examples Using Data Attributes</h3><p><strong>1. Storing Configuration Values</strong></p><p>Suppose you have multiple buttons that trigger AJAX calls with different endpoints stored on the element:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</div><p>However, <code>.data()</code> is generally preferred for internal data storage.</p><h3 id="practical-examples-using-data-attributes">Practical Examples Using Data Attributes</h3><p><strong>1. Storing Configuration Values</strong></p><p>Suppose you have multiple buttons that trigger AJAX calls with different endpoints stored on the element:</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-html">&lt;button class="api-call" data-endpoint="/users" data-method="GET"&gt;Get Users&lt;/button&gt;
 &lt;button class="api-call" data-endpoint="/posts" data-method="POST"&gt;Create Post&lt;/button&gt;</code></pre>
-</div><p>JavaScript can read these attributes dynamically:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</div><p>JavaScript can read these attributes dynamically:</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-js">$('.api-call').click(function() {
   var endpoint = $(this).data('endpoint');
   var method = $(this).data('method');
@@ -648,22 +362,26 @@ console.log($('#btn1').data('role')); // Outputs: superadmin</code></pre>
     }
   });
 });</code></pre>
-</div><p>This pattern avoids hardcoding URLs or methods inside the script and keeps the HTML declarative.</p><p><strong>2. Storing User or Item IDs</strong></p><p>When generating dynamic lists or tables, attaching IDs or states helps identify elements in event handlers.</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</div><p>This pattern avoids hardcoding URLs or methods inside the script and keeps the HTML declarative.</p><p><strong>2. Storing User or Item IDs</strong></p><p>When generating dynamic lists or tables, attaching IDs or states helps identify elements in event handlers.</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-html">&lt;tr data-user-id="42"&gt;
   &lt;td&gt;Jane Doe&lt;/td&gt;
   &lt;td&gt;&lt;button class="edit"&gt;Edit&lt;/button&gt;&lt;/td&gt;
 &lt;/tr&gt;</code></pre>
-</div><p>In jQuery:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</div><p>In jQuery:</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-js">$('.edit').click(function() {
   var userId = $(this).closest('tr').data('userId');
   alert('Editing user with ID: ' + userId);
 });</code></pre>
-</div><p>This technique allows efficient retrieval of contextual data without complicated DOM traversals or global variables.</p><p><strong>3. Managing Element-Specific States</strong></p><p>Data attributes can track UI states, such as toggles or validation flags.</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</div><p>This technique allows efficient retrieval of contextual data without complicated DOM traversals or global variables.</p><p><strong>3. Managing Element-Specific States</strong></p><p>Data attributes can track UI states, such as toggles or validation flags.</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-html">&lt;div class="toggle-section" data-expanded="false"&gt;
   &lt;h3&gt;Details&lt;/h3&gt;
   &lt;p&gt;Hidden content here.&lt;/p&gt;
 &lt;/div&gt;</code></pre>
-</div><p>jQuery can read and update this state to control UI:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</div><p>jQuery can read and update this state to control UI:</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-js">$('.toggle-section').click(function() {
   var expanded = $(this).data('expanded');
   $(this).data('expanded', !expanded);
@@ -692,18 +410,22 @@ console.log($('#btn1').data('role')); // Outputs: superadmin</code></pre>
  <li><strong>Reusability</strong>: JavaScript code bound externally can be reused across multiple pages or components without duplicating markup changes.</li>
  <li><strong>Testability</strong>: Isolated JavaScript logic is easier to unit test.</li>
  <li><strong>Compatibility</strong>: Modern frameworks, build tools, and best practices rely on clean separation for better integration.</li>
-</ul><h3 id="avoid-inline-event-handlers">Avoid Inline Event Handlers</h3><p>A common but poor practice is using <strong>inline event attributes</strong> directly in HTML elements, like this:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</ul><h3 id="avoid-inline-event-handlers">Avoid Inline Event Handlers</h3><p>A common but poor practice is using <strong>inline event attributes</strong> directly in HTML elements, like this:</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-html">&lt;button onclick="alert('Clicked!')"&gt;Click me&lt;/button&gt;</code></pre>
-</div><p>Or even more complex inline code:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</div><p>Or even more complex inline code:</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-html">&lt;a href="#" onclick="doSomething(); return false;"&gt;Link&lt;/a&gt;</code></pre>
 </div><p>Problems with this approach:</p><ul>
  <li>Mixing behavior and markup makes the HTML verbose and cluttered.</li>
  <li>It’s harder to update or debug event logic.</li>
  <li>Inline code often bypasses scoping and modularization.</li>
  <li>It doesn't support unobtrusive JavaScript principles, which aim to keep behavior separate from structure.</li>
-</ul><h3 id="bind-events-externally-with-jquery">Bind Events Externally with jQuery</h3><p>A cleaner practice is to keep your HTML free from any JavaScript and bind all events using jQuery selectors in your scripts:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</ul><h3 id="bind-events-externally-with-jquery">Bind Events Externally with jQuery</h3><p>A cleaner practice is to keep your HTML free from any JavaScript and bind all events using jQuery selectors in your scripts:</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-html">&lt;button id="myButton"&gt;Click me&lt;/button&gt;</code></pre>
-</div><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</div><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-js">$('#myButton').on('click', function() {
   alert('Clicked!');
 });</code></pre>
@@ -713,19 +435,22 @@ console.log($('#btn1').data('role')); // Outputs: superadmin</code></pre>
  <li>You can bind multiple events or delegate events dynamically.</li>
  <li>It’s easier to add/remove event listeners without modifying HTML.</li>
  <li>Supports chaining and modular code.</li>
-</ul><h3 id="example-poor-vs-clean-practice">Example: Poor vs. Clean Practice</h3><p><strong>Poor Practice (Inline Handler):</strong></p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</ul><h3 id="example-poor-vs-clean-practice">Example: Poor vs. Clean Practice</h3><p><strong>Poor Practice (Inline Handler):</strong></p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-html">&lt;ul&gt;
   &lt;li onclick="alert('Item 1 clicked')"&gt;Item 1&lt;/li&gt;
   &lt;li onclick="alert('Item 2 clicked')"&gt;Item 2&lt;/li&gt;
   &lt;li onclick="alert('Item 3 clicked')"&gt;Item 3&lt;/li&gt;
 &lt;/ul&gt;</code></pre>
-</div><p>This not only clutters the markup but also duplicates code and is hard to scale.</p><p><strong>Clean Practice (Event Binding):</strong></p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</div><p>This not only clutters the markup but also duplicates code and is hard to scale.</p><p><strong>Clean Practice (Event Binding):</strong></p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-html">&lt;ul id="itemList"&gt;
   &lt;li&gt;Item 1&lt;/li&gt;
   &lt;li&gt;Item 2&lt;/li&gt;
   &lt;li&gt;Item 3&lt;/li&gt;
 &lt;/ul&gt;</code></pre>
-</div><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</div><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-js">$('#itemList').on('click', 'li', function() {
   alert($(this).text() + ' clicked');
 });</code></pre>
@@ -774,9 +499,19 @@ console.log($('#btn1').data('role')); // Outputs: superadmin</code></pre>
 </a>
 
 
+<a href="javascript-html5-animation.htm">
+<div class="book-cover" style="background-color: #f9f6f1;border: 1px solid #ccc;"> 
+    <div class="book-cover-title" style="font-size: 16px;color: #333;top: 10px;">JavaScript HTML5 Animation</div>
+    <div class="book-cover-author">readbytes</div>
+    <div class="book-cover-bottom-stripe" style="background-color: #333;"></div>
+    <img class="book-cover-icon" style="width: 120px;height: 120px;top: 60px;" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFoAAABaCAYAAAA4qEECAAACw0lEQVR4Xu3WvWoUURjG8dXGS9BK7awECysR78Ab8RqUmZGE3QmKmEJUxEarFJJCFK0sbGzEThBEJFjEbbQwsOLOcZZl2cN/PvbMx+6cCc8PHpLs2fN+DAmbwUBERERERERERERERERERERERDYrDqaPRmFiFokjc4vvkZriKDmyH25hgmTMu3Vk6iKDgTnBO73HJV3CGq5YZ1V4v5dGoTnLxarErrW9bU7HobmRvv52GCaf06/f0t/+L7Ofd0Jzad4vW8MlcWAu2716hwv5HXOF8/dCdhH/wx28Nwqmj7lEX8JdvMbh82LjWZtJ/9up1Ie7eI3D58XGszZj+/3LrRf38VL6ofKKg+fFxrM28+Ng2efeKHueF+7kJQ5dFBvPug538hKHLooedEMcepGqeN8148P5/edPs2d2yvpwJy9xaC7mivdd41KDeD4Mkn3u5R0OXZSyRZvEpe6bl8v3zb7n+SzcyyvDoTnPgYti41nTvH+3uubD+/Pw9UW4m1fSAcccuCjrfNBthLt5hcOWZZMPuk4f7uYVDlsWG8/ajO3ge6VeP7mfN3KG7TyTyfJB7+9VetD+/lZzUF+y9ywxTx5kX18V7ucNDtr3cD8vjILkBQfte+5smXPcs3Mc8jgkjpKEe3aOQx6XcM/OccDjEu7ZOQ7YNKzvIv2c+Mg6TROG5iT7dIoDNou5xvqusrUaJko+sUenMgM2CGtXxXpNMgyT16zfKQ5YN6xbF+vWze6uOcXanUr/xP5yyBqZsm5dO6E5k1O/cljXCxyyalivqbTmH/aoGtb0AoeskvimucB6bWCfKmEtr3BYxxyxTpty+q1OZK6zjncyQ5dnwvvrkNO3JOYu73srO3xOtsxV3lunTP+c8E5vxKH5wGVGt81Fvm+T0hm+2vPEUfKP7xERERERERERERERERERERERERGRbv0HldRbu8sOVfIAAAAASUVORK5CYII="/>
+  </div>
+</a>
+
+
 <a href="javascript-dom-programming.htm">
 <div class="book-cover" style="background-color: #f9f6f1;border: 1px solid #ccc;"> 
-    <div class="book-cover-title" style="font-size: 16px;color: #333;top: 20px;">JavaScript DOM Programming</div>
+    <div class="book-cover-title" style="font-size: 16px;color: #333;top: 10px;">JavaScript DOM Programming</div>
     <div class="book-cover-author">readbytes</div>
     <div class="book-cover-bottom-stripe" style="background-color: #333;"></div>
     <img class="book-cover-icon" style="width: 90px;height: 90px;top: 60px;" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFoAAABaCAYAAAA4qEECAAADUklEQVR4Xu2dv47TQBDGI0RDczY9rwMlrwEFBweC/t4EXRwaXuI6WiSaOLkCIZ6BCqTgPRFr8zkbnPF4Zuydn/RVuzsz33eSlX/2LRYRm1Xxe1MVOzY19eL6/6NzfqCw/ilEvXc2Mwh7pNiuyks8O1T1snyNfVLgWQ5hjxbcyCHskaJelVd4drCW5Vvsk6JzlkHYo6XXph5Q6hwEfUZASDhLqUOZ+Ri96vTa1ANKHQ+aAKWOB02AUseDJkCp40EToNTxoAlQ6njQBCh1PGgClDrZBs0l7JEi23eGXMIeKTbVxSs8O1Trm4tL7JMCz3IIe7Rsq+IXbh6iUA97nALPDxXWP4W29w5xMVwbG67rOBVR76LNAA9aiKyCbq49L0QbRmgGHXuul8VLXB+F3IPGtdGIm0o21gpay+89Gs01gtbwecDPz08eSQ8hHTT6C55xjwh3q+IZDhO0u148wL0cSAR93cyOfoKCV9wryu528RCHmpuCR/StRvOy7w8OOHUFT+jTDHdV+RwHnpqCB/SVFRLXaGfhQYvhQQvhQQvhQQvhQf8DXyZNXehPnW+fisc45FwUvKFfNXC4uQn9qvD1Y1maG4qB2NP3xiOui1NX5Zv9QNuq+IDrU6Xx8n7vq16WV7guTvxKYH1TvsP1qWLOl7mBmDDny9xATJjzZW4gJsz5MjcQE+Z8mRuICXO+zA3EhDlf5gZiwpwvcwMxYc6XuYGYMOfL3EBMmPNlbiAmzPkyNxAT5nyZG4gJc778Y1Ih/IN/QeKh5ij0q8acv5z9YenL2T045NSF/rIhfiWQ9Q9oxsaDFsKDFsKDFsKDFsKDjqj9ZqFx8dvfRubWb+gcn+Yv/hSHuh9swrcoh9nRT5DaLcpf/KZ7GXAIXB8D6aADGj5btJprBB3Q8nvQGNfGRCvogLjntT+8SubhVVohBzSDDoh6F20GeNBCzCZo7Qeh4vmhwvqnEPWOmzmEPVJk9Vhj3Mgh7JHi4LLApTMuL52zDMIeLb029YBSh+v6G85S6lBmPkavOr029YBSx4MmQKnjQROg1PGgCVDqeNAEKHU8aAKUOh40AUodD5oApU62QXMJe6TI9p0hl7BHitz+XTX3j2DO+gHKkfODhPVPsRnZ+1+tJg8Iaaje6wAAAABJRU5ErkJggg=="/>
@@ -786,7 +521,7 @@ console.log($('#btn1').data('role')); // Outputs: superadmin</code></pre>
 
 <a href="javascript-data-visualization.htm">
 <div class="book-cover" style="background-color: #f9f6f1;border: 1px solid #ccc;"> 
-    <div class="book-cover-title" style="font-size: 16px;color: #333;top: 20px;">JavaScript Data Visualization</div>
+    <div class="book-cover-title" style="font-size: 16px;color: #333;top: 10px;">JavaScript Data Visualization</div>
     <div class="book-cover-author">readbytes</div>
     <div class="book-cover-bottom-stripe" style="background-color: #333;"></div>
     <img class="book-cover-icon" style="width: 90px;height: 90px;top: 60px;" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFoAAABaCAYAAAA4qEECAAAC0UlEQVR4Xu3dMWsUURSG4fwr2U6zJI0WKZSAaa0EG7tU2giWimLETrQQQRCxUDsbK3+IYOWCiFU06IQz356ZuffOvXdm4A28ze585OxDsLDZnR3zs1pf+rHavXhKWdpY2/Mf50HKEMgV+4cs/1z8/v6OMiTYm9Zfsz5M42r9VQNdLqArBXSlgK4U0JUCulKLgrb39aW7ObQY6PXl/S3Qrs6e1f3ULQZaMYfS/dTZ2xYDvff6g9tS7ge6YEBXCuhKAV0poCsFdKWArtQk0G9e3Tt9dnLc2+dPD1sboCOzv2Ool8/vujsFBtpJMYfydgoMtFMqWOpuLtnbgC6YvQ3ogtnbgC6YvQ3ogtnbgC6YvQ3ogtnbgC6YvQ3ogtnboqCvHR20xn11/UKF6gNL3Y1JP0dXV68fbG01+3wUtP6yvp4+OXZ3CtUHlrpL7ew/tvRz9KV7zT4LtGmW0O+/fnRr3l86tH4u/Xwhv88+C7QJ6MhdakBH7lIDOnKXGtCRu9SAjtylBnTkLjWgI3e67evnt7fnG6BH7EJqdkCP2IXU7IAesft169DN2wE9YqfAQDt35NgpMNDOHTl2Cgy0c0eOnQID7dxhXwvJ2ykw0M4d9rWQvJ0CA+3cYV8LydspMNDOHfa1C/cfuQ3tFBho5w77mgID/f99oCeGDsnbKXBp6JDUR7PPAm12QO8CvVXzfhe0QoWC6fOhOwUOhX7w4rGbt+vKPgu02QE9YqfAi4Meai7QITU7oEfsQmp2s4S+cfumW/P+XKDvXFm7ebtZQusBeshcoL8c7rt5O6BH7BQYaOeOHDsFBtq5I8dOgYF27sixU2CgnTty7BQYaOeOHDsFBtq5I8dOgRcHPVQXdEhT7Wb536RDAQ30Vs1uNtAUF9CVArpSQFcK6EoBXSmgK9WG5qtQi2RNV803KsuLlDn7RcpgF6qF3Pz8fWOjD1JyrS9g/wOlHj3Oru4PcQAAAABJRU5ErkJggg=="/>
@@ -847,30 +582,36 @@ console.log($('#btn1').data('role')); // Outputs: superadmin</code></pre>
 
 <a href='javascript.htm'><div class='book-cover' style='background-color: #f9f6f1;color: #111111;border: 1px solid #ccc;display: flex;justify-content: center;align-items: center;text-align: center;'>More Javascript Books</div></a>
 </div>
-</div>
-  </div>
-  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
-  
-  <script>
-    function copyCode(button) {
-      const code = button.nextElementSibling.innerText;
-      navigator.clipboard.writeText(code).then(() => {
-        button.textContent = 'Copied!';
-        setTimeout(() => { button.textContent = 'Copy'; }, 1500);
-      });
-    }
-  </script>  
-<div id="floatingLog" aria-live="polite" role="alert"></div>
-<footer class="page-footer">
-    <nav>
-      <a href="https://readbytes.github.io">Home</a> | 
-      Email:<script language="JavaScript" type="text/javascript">
+</div><script>
+function copyCode(button) {const code = button.nextElementSibling.innerText;navigator.clipboard.writeText(code).then(() => {button.textContent = 'Copied!';setTimeout(() => { button.textContent = 'Copy'; }, 1500);});}
+</script></div>
+<style>
+.site-footer {margin-top: 60px;padding: 20px 0;border-top: 1px solid #eee;text-align: center;font-size: 14px;}
+.site-footer a {text-decoration: none;}
+.light-mode .site-footer {color: #777;border-color: #eee;}
+.dark-mode .site-footer {color: #888;border-color: #333;}
+.light-mode .site-footer a {color: #555;}
+.dark-mode .site-footer a {color: #aaa;}
+.site-footer a:hover {text-decoration: underline;}    
+</style>
+<footer class="site-footer">
+<nav><a href="https://readbytes.github.io">Home</a> |Email:<script type="text/javascript">
 var part1 = 'yinpeng';var part6 = '263';var part2 = Math.pow(2,6);var part3 = String.fromCharCode(part2);var part4 = 'hotmail dot com';var part5 = part1 + String.fromCharCode(part2) + part4;document.write(part1 + part6 + part3 + part4);
 </script>
-    </nav>
-  <p>© 2025 — All rights reserved.</p>    
-  </footer>
-
+| <a id="mode-toggle" href="#">Toggle Dark Mode</a>
+</nav><p>© 2025 — All rights reserved.</p></footer>
+<script>
+const toggleButton = document.getElementById('mode-toggle');
+const body = document.body;
+const savedMode = localStorage.getItem('mode') || 'light';
+body.classList.add(savedMode + '-mode');
+toggleButton.addEventListener('click', () => {
+      const isDark = body.classList.contains('dark-mode');
+      body.classList.toggle('dark-mode', !isDark);
+      body.classList.toggle('light-mode', isDark);
+      localStorage.setItem('mode', isDark ? 'light' : 'dark');
+});
+function copyCode(button) {const code = button.nextElementSibling.innerText;navigator.clipboard.writeText(code).then(() => {button.textContent = 'Copied!';setTimeout(() => { button.textContent = 'Copy'; }, 1500);});}
+</script>
 </body>
 </html>

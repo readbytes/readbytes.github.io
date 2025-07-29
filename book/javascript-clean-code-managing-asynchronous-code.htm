@@ -1,478 +1,182 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
+<meta charset="UTF-8">
 <title>JavaScript Clean Code Managing Asynchronous Code</title>
-<link rel='shortcut icon' href='https://java2s.com/style/favicon.ico'>
+<link rel='shortcut icon' href='https://readbytes.github.io/images/favicon.ico'>
 <link href="https://fonts.googleapis.com/css2?family=Merriweather&display=swap" rel="stylesheet" />
 <link href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.css" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/theme/dracula.min.css"><style>
+html {scroll-behavior: smooth;}  
+body {font-family: 'Merriweather', serif;;margin: 0;padding: 2rem 1rem;font-size: 15px;line-height: 1.5;transition: background-color 0.3s, color 0.3s;}
+.container {max-width: 750px;margin: 0 auto;padding: 1rem 2rem;}
+.light-mode {background-color: #f8f7f5;color: #333;} 
+.dark-mode {background-color: #121212;color: #e0e0e0;}
+a { text-decoration: none;transition: color 0.2s;}
+a:hover {text-decoration: underline;}
+.light-mode a {color: #555;}
+.dark-mode a {color: #aaa;}
+</style><style>
+.related-book-list {display: flex;flex-wrap: wrap;gap: 20px;}
+.related-books {margin-top: 40px;}
+.related-books h2 {font-size: 22px;margin-bottom: 20px;border-bottom: 2px solid #eee;padding-bottom: 8px;}
+.light-mode .related-books h2 {color: #333;border-color: #eee;}
+.dark-mode .related-books h2 {color: #ddd;border-color: #333;}
+</style><style>
+.book-cover {width: 130px;height: 180px;font-family: Arial, sans-serif;position: relative;overflow: hidden;box-shadow: 2px 2px 4px rgba(0,0,0,0.1);}
+.book-cover-bottom-stripe {position: absolute;bottom: 0;left: 0;height: 5px;width: 100%;}
+.book-cover-title {position: absolute;width: 100%;text-align: center;font-weight: bold;}
+.book-cover-icon {position: absolute;left: 50%;transform: translateX(-50%);display: flex;align-items: center;justify-content: center;}
+.book-cover-author {position: absolute;bottom: 10px;width: 100%;text-align: center;font-size: 8px;color: #333;}
+</style><style>
+.book-title-toc {font-size: 32px;font-weight: bold; }
+.book-subtitle-toc {font-size: 18px;margin-top: 8px;font-style: italic;}
+.book-header {text-align: center;margin-bottom: 40px;}
 
+.toc-container {border-radius: 10px;padding: 30px;margin-bottom: 40px;box-shadow: 0 8px 20px rgba(0,0,0,0.05);}
+h1 {font-size: 24px;text-align: center;margin-bottom: 30px;letter-spacing: 1px;padding-bottom: 10px;}
+.toc-list,.toc-section-list {list-style: none;padding: 0;margin: 0;}
+.toc-section-list {padding-left: 18px;margin-top: 6px;margin-bottom: 20px; }
+.toc-chapter {padding: 20px 0;}
+.chapter-title,.toc-section {display: flex;justify-content: space-between;padding-top: 4px;}
+.chapter-title {font-size: 17px;font-weight: bold;}
+.chapter-page,.section-page {font-style: italic;}
+ 
+ 
+.light-mode .book-title-toc,.light-mode .chapter-title,.light-mode .book-name {color: #222;}
+.light-mode .book-subtitle-toc,.light-mode .book-sub,.light-mode .chapter-page,.light-mode .section-page {color: #666;}
+.light-mode .toc-container { background: #fff;border: 1px solid #ddd;}
+.light-mode h1 {border-bottom: 2px solid #eee;color: #222;}
+.light-mode .toc-section {  color: #444;}
 
-  <script>
-  const mode = localStorage.getItem('mode') || 'light';
-  document.documentElement.classList.add(`${mode}-mode`);
-  </script>   
-<style> 
-html {
-  scroll-behavior: smooth;
+.light-mode .book-cover { border: 1px solid #ccc;box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);}
+.light-mode .book-title,.light-mode .series-name {color: #fff;}
+.light-mode .book-subtitle,.light-mode .book-footer {color: #aaa;}
+
+.dark-mode .book-title-toc,.dark-mode .chapter-title,.dark-mode .book-name {color: #f5f5f5;}
+.dark-mode .book-subtitle-toc,.dark-mode .book-sub,.dark-mode .chapter-page,.dark-mode .section-page {color: #aaa;}
+.dark-mode .toc-container {background: #1e1e1e;border: 1px solid #444;}
+
+.dark-mode h1 {border-bottom: 2px solid #333;color: #eee;}
+.dark-mode .toc-section {color: #bbb;}
+
+.dark-mode .related-books h2 {color: #ddd;border-bottom: 2px solid #333;}
+.dark-mode .book-title,.dark-mode .series-name {color: #fff;}
+.dark-mode .book-subtitle,.dark-mode .book-footer {color: #bbb;}
+.dark-mode .toc-section {color: #ddd;}
+
+@media (max-width: 600px) {
+  .chapter-title,
+  .toc-section {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .chapter-page,
+  .section-page {
+    margin-top: 4px;
+  }
 }
 
-body {
-  font-family: 'Merriweather', serif;
-  margin: 0;
-  padding: 2rem 1rem;
-  font-size: 15px;
-  line-height: 1.5;
-  transition: background-color 0.3s, color 0.3s;
-}
+</style><style>
+.light-mode .container {box-shadow: 0 0 15px rgba(0,0,0,0.1);}
+.dark-mode .container {box-shadow: 0 0 15px rgba(255, 255, 255, 0.05);}
 
-.container {
-  max-width: 700px;
-  margin: 0 auto;
-  padding: 1rem 2rem;
-  box-shadow: 0 0 15px rgba(0,0,0,0.1);
-}
-
-h1, h2, h3 {
-  font-weight: 600;
-  margin-top: 2.5rem;
-  margin-bottom: 1rem;
-  line-height: 1.2;
-}
-
+h1, h2, h3 {font-weight: 600;margin-top: 2.5rem;margin-bottom: 1rem;line-height: 1.2;}
 h1 { font-size: 1.8rem; }
 h2 { font-size: 1.4rem; }
 h3 { font-size: 1.2rem; }
 
-table {
-  width: 100%;
-  border-collapse: collapse;
-  font-family: sans-serif;
-  font-size: 1em;
-  margin: 1em 0;
-}
+table {width: 100%;border-collapse: collapse;font-family: sans-serif;font-size: 1em;margin: 1em 0;}
+th, td {padding: 0.6em 1em;text-align: left;border: 1px solid;}
+tr:nth-child(even) {  background-color: inherit;}
+tr:hover { background-color: inherit;}
 
-th, td {
-  padding: 0.6em 1em;
-  text-align: left;
-  border: 1px solid;
-}
+code {color: #d35400;}
 
-tr:nth-child(even) {
-  background-color: inherit;
-}
-
-tr:hover {
-  background-color: inherit;
-}
-
-a {
-  text-decoration: none;
-  transition: color 0.2s;
-}
-
-a:hover {
-  text-decoration: underline;
-}
-
-code {
-  color: #d35400;
-}
-
-.book-title-chapter {
-  font-family: 'Merriweather', serif;
-  font-size: 2rem;
-  font-weight: bold;
-  text-align: center;
-  margin-bottom: 2rem;
-  border-bottom: 2px solid;
-  padding-bottom: 0.5rem;
-}
-
-.book-subtitle-chapter {
-  text-align: center;
-  font-size: 1rem;
-  margin-top: -1rem;
-  margin-bottom: 2rem;
-}
-
-.related-books {
-  margin-top: 40px;
-}
-
-.related-book-list {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 20px;
-}
-
-    .book-cover {
-      width: 130px;
-      height: 180px;
-      font-family: Arial, sans-serif;
-      position: relative;
-      overflow: hidden;      
-      line-height: normal;
-      box-shadow: 2px 2px 4px rgba(0,0,0,0.1);
-    }
-    .book-cover-bottom-stripe {
-      position: absolute;
-      bottom: 0;
-      left: 0;
-      height: 5px;
-      width: 100%;
-    }
-    .book-cover-title {
-      position: absolute;
-      width: 100%;
-      text-align: center;
-      font-weight: bold;
-    }
-     
-    .book-cover-icon {
-      position: absolute;
-      left: 50%;
-      transform: translateX(-50%);
-      display: flex;
-      align-items: center;
-      justify-content: center; 
-    }
-
-    .book-cover-author {
-      position: absolute;
-      bottom: 10px;
-      width: 100%;
-      text-align: center;
-      font-size: 8px;
-      color: #333;
-    }
-
-.page-footer {
-  margin-top: 4rem;
-  padding: 1rem 0;
-  text-align: center;
-  font-size: 0.85rem;
-  border-top: 1px solid;
-}
-
-.chapter-navi-section {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding-bottom: 10px;
-}
-
-.nav-link {
-  color: inherit;
-  text-decoration: none;
-  opacity: 0.5;
-  transition: opacity 0.3s ease, text-decoration 0.3s ease;
-}
-
-.nav-link:hover {
-  opacity: 0.9;
-  text-decoration: underline;
-}
-
+.chapter-navi-section {display: flex;justify-content: space-between;align-items: center;padding-bottom: 10px;padding-top: 10px;}
+.nav-link {color: inherit;text-decoration: none;opacity: 0.5;transition: opacity 0.3s ease, text-decoration 0.3s ease;}
+.nav-link:hover {opacity: 0.9;text-decoration: underline;}
 .prev { text-align: left; }
 .toc-link { text-align: center; }
 .next { text-align: right; }
 
-.download-section {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 2rem;
-  padding: 2rem 1rem;
-  max-width: 600px;
-  margin: 3rem auto;
-  border-radius: 12px;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-}
+.download-section {display: flex;align-items: center;justify-content: center;gap: 2rem;padding: 2rem 1rem;max-width: 600px;margin: 3rem auto;border-radius: 12px;box-shadow: 0 4px 10px rgba(0,0,0,0.05);}
+.download-info h2 {margin: 0 0 0.5rem;font-size: 1.2rem;}
+.format-label {margin: 0 0 0.5rem;font-size: 0.95rem;}
+.download-buttons {display: flex;gap: 1rem;}
+.download-button {background-color: #4A90E2;color: white;padding: 0.5em 1.2em;border-radius: 25px;font-size: 0.95rem;text-decoration: none;transition: background-color 0.3s ease;}
+.download-button:hover {background-color: #357ABD;}
 
-.download-info h2 {
-  margin: 0 0 0.5rem;
-  font-size: 1.2rem;
-}
+.code-block {position: relative;margin-bottom: 1em;}
+.copy-button {background: transparent;color: white;position: absolute;top: 8px;right: 8px;border: none;padding: 4px 8px;font-size: 12px;border-radius: 4px;cursor: pointer;z-index: 1;}
+.copy-button:hover {background-color: #0056b3;}
 
-.format-label {
-  margin: 0 0 0.5rem;
-  font-size: 0.95rem;
-}
+.snippet-container {overflow: hidden;}
+.snippet-header {padding: 0.75rem 1rem;cursor: pointer;font-size: 1rem;background-color: #eeeeee;color:  #111111; border-radius: 8px;cursor: pointer;box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+.snippet-body {display: none;font-family: monospace;}
+.snippet-container.open .snippet-body {display: block;}
 
-.download-buttons {
-  display: flex;
-  gap: 1rem;
-}
+.CodeMirror {border: 2px solid #ccc;border-radius: 4px;resize: vertical;}
 
-.download-button {
-  background-color: #4A90E2;
-  color: white;
-  padding: 0.5em 1.2em;
-  border-radius: 25px;
-  font-size: 0.95rem;
-  text-decoration: none;
-  transition: background-color 0.3s ease;
-}
+.light-mode .format-label {color: #888;}
+.light-mode th {background-color: #f2f2f2;}
+.light-mode tr:nth-child(even) {background-color: #fafafa;}
+.light-mode tr:hover {background-color: #e6f7ff;}
 
-.download-button:hover {
-  background-color: #357ABD;
-}
-
-.code-block {
-  position: relative;
-  margin-bottom: 1em;
-}
-
-.copy-button {
-  background: transparent;
-  color: white;
-  position: absolute;
-  top: 8px;
-  right: 8px;
-  border: none;
-  padding: 4px 8px;
-  font-size: 12px;
-  border-radius: 4px;
-  cursor: pointer;
-  z-index: 1;
-}
-
-.copy-button:hover {
-  background-color: #0056b3;
-}
-
-.snippet-container {
-  overflow: hidden;
-}
-
-.snippet-header {
-  padding: 0.75rem 1rem;
-  cursor: pointer;
-  font-size: 1rem;
-    background-color: #eeeeee;
-    color:  #111111; 
-    border-radius: 8px;
-    cursor: pointer;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.1);  
-}
-
-.snippet-body {
-  display: none;
-  font-family: monospace;
-}
-
-.snippet-container.open .snippet-body {
-  display: block;
-}
-
-.CodeMirror {
-  border: 2px solid #ccc;
-  border-radius: 4px;
-  resize: vertical;
-}
-
-/* === Light Mode === */
-html.light-mode {
-  background-color: #f8f7f5;
-  color: #333;
-}
-
-html.light-mode .container {
-  background: white;
-}
-
-html.light-mode .book-title-chapter {
-  color: #2c3e50;
-  border-color: #ccc;
-}
-html.light-mode .book-subtitle-chapter{
-  color: #888;
-}
-
-html.light-mode .page-footer,
-html.light-mode .series-name,
-html.light-mode .book-subtitle,
-html.light-mode .format-label {
-  color: #888;
-}
-
-html.light-mode .related-books h2 {
-  color: #333;
-  border-bottom: 2px solid #eee;
-}
-
-html.light-mode .book-title {
-  color: #fff;
-}
-
-html.light-mode .book-cover {
-  border: 1px solid #ccc;
-}
-
-html.light-mode th {
-  background-color: #f2f2f2;
-}
-
-html.light-mode tr:nth-child(even) {
-  background-color: #fafafa;
-}
-
-html.light-mode tr:hover {
-  background-color: #e6f7ff;
-}
-
-html.light-mode a,
-html.light-mode .page-footer a {
-  color: #000;
-}
-
-/* === Dark Mode === */
-html.dark-mode {
-  background-color: #181818;
-  color: #e0e0e0;
-}
-
-html.dark-mode .container {
-  background: #222;
-}
-
-html.dark-mode .book-title-chapter {
-  color: #ddd;
-  border-color: #444;
-}
-
-html.dark-mode .snippet-header {
-    background-color: #333;
-    color:  #ddd; 
-}
+.dark-mode .snippet-header {background-color: #333;color:  #ddd; }
+.dark-mode .format-label {color: #aaa;}
+.dark-mode th {background-color: #333;color: #fff;}
+.dark-mode td {border-color: #444;}
+.dark-mode tr:nth-child(even) {background-color: #2a2a2a;}
+.dark-mode tr:hover {background-color: #2c3e50;}
 
 
-html.dark-mode .book-subtitle-chapter,
-html.dark-mode .page-footer,
-html.dark-mode .series-name,
-html.dark-mode .book-subtitle,
-html.dark-mode .book-footer,
-html.dark-mode .format-label {
-  color: #aaa;
-}
+.button-group-run-edit {display: flex;width: 100%;gap: 1rem;}
+.button-run-edit {flex: 1;padding: 1rem;font-size: 1rem;font-weight: 600;border: none;border-radius: 8px;cursor: pointer;transition: background 0.3s, color 0.3s;}
 
-html.dark-mode .related-books h2 {
-  color: #ddd;
-  border-bottom: 2px solid #333;
-}
+.light-mode .button-run-edit {background-color: #f0f0f0;color: #222;box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);}
+.light-mode .button-run-edit:hover {background-color: #e0e0e0;}
 
-html.dark-mode .book-title {
-  color: #fff;
-}
+.dark-mode .button-run-edit {background-color: #2a2a2a;color: #f5f5f5;box-shadow: 0 0 10px rgba(255, 255, 255, 0.05);}
+.dark-mode .button-run-edit:hover {background-color: #3a3a3a;}
 
-html.dark-mode .book-cover {
-  border: 1px solid #555;
-}
+button { padding: 0.5em 1em; background: green; color: white; border: none; cursor: pointer; }
+button:hover { background: #1e7e34; }
+.result_iframe { width:99%; margin-top: 1em;  resize: both;background-color: #515b63;border:1px solid #ccc;}   
 
-html.dark-mode th {
-  background-color: #333;
-  color: #fff;
-}
-
-html.dark-mode td {
-  border-color: #444;
-}
-
-html.dark-mode tr:nth-child(even) {
-  background-color: #2a2a2a;
-}
-
-html.dark-mode tr:hover {
-  background-color: #2c3e50;
-}
-
-html.dark-mode a,
-html.dark-mode .page-footer a {
-  color: #eee;
-}
-
-    .dialog-backdrop {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100vw;
-      height: 100vh;
-      background: rgba(0,0,0,0.5);
-      display: none;
-      justify-content: center;
-      align-items: center;
-      z-index: 10;
-    }
-
-    .dialog {
-      background: white;
-      padding: 20px;
-      width: 90vw;
-      height: 80vh;
-      border-radius: 8px;
-      box-shadow: 0 0 20px rgba(0,0,0,0.3);
-      display: flex;
-      flex-direction: column;
-    }
-    .dialog-content {
-      display: flex;
-      flex: 1;
-      gap: 20px;
-      margin-top: 10px;
-    }
-    .dialog h2 {
-      margin-top: 0;
-    }
-
-    .textarea_dialog {
-      width: 50%;
-      height: 100%;
-      resize: none;
-      font-family: monospace;
-      font-size: 14px;
-      padding: 10px;
-      box-sizing: border-box;
-      border: 1px solid #ccc;
-    }
-
-    .iframe_dialog {
-      width: 50%;
-      height: 100%;
-      border: 1px solid #ccc;
-    }
-    .controls_dialog {
-      display: flex;
-      justify-content: space-between;
-      margin-top: 10px;
-    }    
-    button { padding: 0.5em 1em; background: green; color: white; border: none; cursor: pointer; }
-    button:hover { background: #1e7e34; }
-    .result_iframe { width:99%; height:200px; margin-top: 1em;  resize: both;border:1px solid #ccc;}        
+.dialog-backdrop {position: fixed;top: 0;left: 0;width: 100vw;height: 100vh;background: rgba(0,0,0,0.5);display: none;justify-content: center;align-items: center;z-index: 10;}
+.dialog {background: #90979e;padding: 20px;width: 90vw;height: 80vh;border-radius: 8px;box-shadow: 0 0 20px rgba(0,0,0,0.3);display: flex;flex-direction: column;}
+.dialog-content {display: flex;gap: 20px;margin-top: 10px;height: calc(100% - 40px);}
+.editor-container, .preview-container {flex: 1;height: 100%;max-height: 100%;overflow: hidden; }
+.result_iframe_dialog {width: 100%;height: 100%;resize: both;border:1px solid #ccc;overflow: auto; }   
+.CodeMirror {width: 100% !important;height: 100% !important;}
 </style>
 </head>
-<body> 
-  <div class="container">
-    <div class = "chapter-navi-section">
+<body>
+<script>const mode = localStorage.getItem('mode') || 'light';document.documentElement.classList.add(`${mode}-mode`);</script>  
+<div class="container"><div class = "chapter-navi-section">
 <a href="javascript-clean-code-writing-clean-classes.htm" class="nav-button prev">←</a>
 <a href='javascript-clean-code.htm#managing-asynchronous-code' class="nav-button toc-link">Index</a>
 <a href="javascript-clean-code-tests-and-code-that-tests-well.htm" class="nav-button next">→</a>
 </div>
-
-    <h1 class="book-title-chapter" id = 'top'>Managing Asynchronous Code</h1>
-    <h3 class="book-subtitle-chapter">JavaScript Clean Code</h3>   
-    <!-- <h1 class ="chapter-title"></h1> -->
-    <h2 id='clean-promises'>8.1 Clean Promises</h2><p>JavaScript Promises provide a powerful way to handle asynchronous operations, enabling you to write code that is easier to read and maintain compared to traditional callback patterns. Understanding how to use Promises effectively is key to managing asynchronous flows cleanly.</p><h3 id="what-is-a-promise">What Is a Promise?</h3><p>A Promise is an object representing the eventual completion (or failure) of an asynchronous operation and its resulting value. It can be in one of three states:</p><ul>
+<div class='book-header'><h1 class='book-title-toc' id = 'top'>Managing Asynchronous Code</h1><h3 class='book-subtitle-toc'>JavaScript Clean Code</h3></div><h2 id='clean-promises'>8.1 Clean Promises</h2><p>JavaScript Promises provide a powerful way to handle asynchronous operations, enabling you to write code that is easier to read and maintain compared to traditional callback patterns. Understanding how to use Promises effectively is key to managing asynchronous flows cleanly.</p><h3 id="what-is-a-promise">What Is a Promise?</h3><p>A Promise is an object representing the eventual completion (or failure) of an asynchronous operation and its resulting value. It can be in one of three states:</p><ul>
  <li><strong>Pending:</strong> The operation is ongoing.</li>
  <li><strong>Fulfilled:</strong> The operation completed successfully.</li>
  <li><strong>Rejected:</strong> The operation failed.</li>
-</ul><p>Promises allow you to register callbacks with <code>.then()</code> for success and <code>.catch()</code> for failure, making asynchronous code easier to structure.</p><h3 id="chaining-promises">Chaining Promises</h3><p>One of the biggest advantages of Promises is the ability to <strong>chain</strong> them, allowing multiple asynchronous operations to run in sequence with clear, readable flow.</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</ul><p>Promises allow you to register callbacks with <code>.then()</code> for success and <code>.catch()</code> for failure, making asynchronous code easier to structure.</p><h3 id="chaining-promises">Chaining Promises</h3><p>One of the biggest advantages of Promises is the ability to <strong>chain</strong> them, allowing multiple asynchronous operations to run in sequence with clear, readable flow.</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-js">fetchData()
   .then(data =&gt; processData(data))
   .then(result =&gt; saveResult(result))
   .then(() =&gt; console.log('All done!'))
   .catch(error =&gt; console.error('Error occurred:', error));</code></pre>
-</div><p>Each <code>.then()</code> returns a new Promise, enabling this flat chain style without deep nesting.</p><h3 id="common-pitfalls">Common Pitfalls</h3><h4 id="nested-then-calls">Nested <code>.then()</code> Calls</h4><p>Sometimes beginners nest <code>.then()</code> inside other <code>.then()</code> callbacks, creating a “callback pyramid” similar to classic callback hell:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</div><p>Each <code>.then()</code> returns a new Promise, enabling this flat chain style without deep nesting.</p><h3 id="common-pitfalls">Common Pitfalls</h3><h4 id="nested-then-calls">Nested <code>.then()</code> Calls</h4><p>Sometimes beginners nest <code>.then()</code> inside other <code>.then()</code> callbacks, creating a “callback pyramid” similar to classic callback hell:</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-js">fetchData()
   .then(data =&gt; {
     processData(data)
@@ -482,16 +186,19 @@ html.dark-mode .page-footer a {
       });
   })
   .catch(error =&gt; console.error(error));</code></pre>
-</div><p>This defeats the purpose of Promises by introducing unnecessary complexity and indentation.</p><h4 id="incomplete-or-missing-catch-handlers">Incomplete or Missing <code>.catch()</code> Handlers</h4><p>Failing to handle errors properly can cause <strong>unhandled promise rejections</strong>, making bugs harder to detect.</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</div><p>This defeats the purpose of Promises by introducing unnecessary complexity and indentation.</p><h4 id="incomplete-or-missing-catch-handlers">Incomplete or Missing <code>.catch()</code> Handlers</h4><p>Failing to handle errors properly can cause <strong>unhandled promise rejections</strong>, making bugs harder to detect.</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-js">fetchData()
   .then(data =&gt; processData(data)); // No .catch() here</code></pre>
-</div><p>Errors in any part of the chain will go unnoticed unless <code>.catch()</code> is attached.</p><h3 id="writing-clean-flat-promise-chains">Writing Clean, Flat Promise Chains</h3><p>To avoid nesting, always <strong>return Promises from <code>.then()</code> callbacks</strong> instead of nesting them:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</div><p>Errors in any part of the chain will go unnoticed unless <code>.catch()</code> is attached.</p><h3 id="writing-clean-flat-promise-chains">Writing Clean, Flat Promise Chains</h3><p>To avoid nesting, always <strong>return Promises from <code>.then()</code> callbacks</strong> instead of nesting them:</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-js">fetchData()
   .then(data =&gt; processData(data))   // returns a Promise
   .then(result =&gt; saveResult(result)) // returns a Promise
   .then(() =&gt; console.log('All done!'))
   .catch(error =&gt; console.error('Error:', error));</code></pre>
-</div><p>This keeps the chain flat and easy to read.</p><h3 id="proper-error-handling-with-catch">Proper Error Handling with <code>.catch()</code></h3><p>Attach a single <code>.catch()</code> at the end of the chain to handle any errors from any step:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</div><p>This keeps the chain flat and easy to read.</p><h3 id="proper-error-handling-with-catch">Proper Error Handling with <code>.catch()</code></h3><p>Attach a single <code>.catch()</code> at the end of the chain to handle any errors from any step:</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-js">doStep1()
   .then(() =&gt; doStep2())
   .then(() =&gt; doStep3())
@@ -504,12 +211,14 @@ html.dark-mode .page-footer a {
 <a href='javascript-clean-code.htm#managing-asynchronous-code' class="nav-button toc-link">Index</a>
 <a href="#bottom" class="nav-button next">↓</a>
 </div>
-<h2 id='using-async-await-effectively'>8.2 Using <code>async/await</code> Effectively</h2><p>Introduced in ES2017, the <code>async/await</code> syntax provides a more intuitive, synchronous-looking way to work with asynchronous code. It builds on Promises but allows you to write cleaner, more readable code by avoiding complex chains and deeply nested callbacks.</p><h3 id="how-async-await-improves-readability">How <code>async/await</code> Improves Readability</h3><p>With raw Promises, asynchronous operations are chained with <code>.then()</code> and <code>.catch()</code>, which can get cumbersome when dealing with multiple sequential steps:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+<h2 id='using-async-await-effectively'>8.2 Using <code>async/await</code> Effectively</h2><p>Introduced in ES2017, the <code>async/await</code> syntax provides a more intuitive, synchronous-looking way to work with asynchronous code. It builds on Promises but allows you to write cleaner, more readable code by avoiding complex chains and deeply nested callbacks.</p><h3 id="how-async-await-improves-readability">How <code>async/await</code> Improves Readability</h3><p>With raw Promises, asynchronous operations are chained with <code>.then()</code> and <code>.catch()</code>, which can get cumbersome when dealing with multiple sequential steps:</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-js">fetchData()
   .then(data =&gt; processData(data))
   .then(result =&gt; saveResult(result))
   .catch(err =&gt; console.error(err));</code></pre>
-</div><p>Using <code>async/await</code>, the same flow becomes:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</div><p>Using <code>async/await</code>, the same flow becomes:</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-js">async function run() {
   try {
     const data = await fetchData();
@@ -519,7 +228,8 @@ html.dark-mode .page-footer a {
     console.error(err);
   }
 }</code></pre>
-</div><p>The code looks more like synchronous logic, making it easier to follow and maintain.</p><h3 id="best-practices-for-error-handling-with-try-catch">Best Practices for Error Handling with <code>try/catch</code></h3><p>Wrap <code>await</code> expressions in <code>try/catch</code> blocks to handle errors cleanly. Without <code>try/catch</code>, an error inside an async function will reject its returned Promise, which can lead to unhandled promise rejections if not properly caught.</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</div><p>The code looks more like synchronous logic, making it easier to follow and maintain.</p><h3 id="best-practices-for-error-handling-with-try-catch">Best Practices for Error Handling with <code>try/catch</code></h3><p>Wrap <code>await</code> expressions in <code>try/catch</code> blocks to handle errors cleanly. Without <code>try/catch</code>, an error inside an async function will reject its returned Promise, which can lead to unhandled promise rejections if not properly caught.</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-js">async function loadUser() {
   try {
     const response = await fetch('/user');
@@ -531,12 +241,15 @@ html.dark-mode .page-footer a {
     // Optionally rethrow or handle gracefully
   }
 }</code></pre>
-</div><p>You can also catch errors when calling async functions:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</div><p>You can also catch errors when calling async functions:</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-js">loadUser().catch(err =&gt; console.error('Error:', err));</code></pre>
-</div><h3 id="sequential-vs-parallel-execution">Sequential vs Parallel Execution</h3><p><code>await</code> pauses execution until the Promise resolves. When you <code>await</code> multiple independent operations sequentially, you might introduce unnecessary delays:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</div><h3 id="sequential-vs-parallel-execution">Sequential vs Parallel Execution</h3><p><code>await</code> pauses execution until the Promise resolves. When you <code>await</code> multiple independent operations sequentially, you might introduce unnecessary delays:</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-js">const a = await fetchDataA();
 const b = await fetchDataB();</code></pre>
-</div><p>Here, <code>fetchDataB</code> starts only after <code>fetchDataA</code> completes.</p><p>If the operations are independent, run them <strong>in parallel</strong> by starting both Promises before awaiting:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</div><p>Here, <code>fetchDataB</code> starts only after <code>fetchDataA</code> completes.</p><p>If the operations are independent, run them <strong>in parallel</strong> by starting both Promises before awaiting:</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-js">const promiseA = fetchDataA();
 const promiseB = fetchDataB();
 
@@ -544,14 +257,16 @@ const a = await promiseA;
 const b = await promiseB;</code></pre>
 </div><p>This approach improves performance by not waiting for one operation to finish before starting the next.</p><h3 id="avoiding-common-mistakes">Avoiding Common Mistakes</h3><ul>
  <li><strong>Forgetting to <code>await</code>:</strong> Calling an async function without <code>await</code> returns a Promise but does not pause execution, potentially causing bugs.</li>
-</ul><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</ul><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-js">async function run() {
   const data = fetchData(); // Missing await!
   console.log(data);        // Logs a Promise, not the resolved value
 }</code></pre>
 </div><ul>
  <li><strong>Uncaught promise rejections:</strong> Always handle errors either with <code>try/catch</code> inside async functions or with <code>.catch()</code> when calling them.</li>
-</ul><h3 id="example-clean-async-function">Example: Clean Async Function</h3><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</ul><h3 id="example-clean-async-function">Example: Clean Async Function</h3><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-js">async function processOrder(orderId) {
   try {
     const order = await fetchOrder(orderId);
@@ -568,7 +283,8 @@ const b = await promiseB;</code></pre>
 <a href='javascript-clean-code.htm#managing-asynchronous-code' class="nav-button toc-link">Index</a>
 <a href="#bottom" class="nav-button next">↓</a>
 </div>
-<h2 id='avoiding-callback-pyramids'>8.3 Avoiding Callback Pyramids</h2><p>Callback pyramids, often called <strong>“callback hell”</strong>, occur when asynchronous operations are nested deeply within callbacks. This leads to code that is difficult to read, understand, and maintain. Before Promises and <code>async/await</code>, callbacks were the primary way to handle async tasks in JavaScript, but heavy nesting quickly turned into a mess.</p><h3 id="the-problem-with-callback-pyramids">The Problem with Callback Pyramids</h3><p>Imagine a sequence of async operations, each depending on the result of the previous one. Using callbacks, this might look like:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+<h2 id='avoiding-callback-pyramids'>8.3 Avoiding Callback Pyramids</h2><p>Callback pyramids, often called <strong>“callback hell”</strong>, occur when asynchronous operations are nested deeply within callbacks. This leads to code that is difficult to read, understand, and maintain. Before Promises and <code>async/await</code>, callbacks were the primary way to handle async tasks in JavaScript, but heavy nesting quickly turned into a mess.</p><h3 id="the-problem-with-callback-pyramids">The Problem with Callback Pyramids</h3><p>Imagine a sequence of async operations, each depending on the result of the previous one. Using callbacks, this might look like:</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-js">doStep1((err, result1) =&gt; {
   if (err) {
     console.error(err);
@@ -592,13 +308,15 @@ const b = await promiseB;</code></pre>
  <li><strong>Reduces readability:</strong> Indentation grows with each nested callback, making it hard to follow the flow.</li>
  <li><strong>Increases complexity:</strong> Error handling is duplicated and tangled.</li>
  <li><strong>Hard to maintain and debug:</strong> Changes often affect multiple nested levels.</li>
-</ul><h3 id="how-promises-solve-callback-hell">How Promises Solve Callback Hell</h3><p>Promises flatten the async flow by enabling chaining and centralized error handling. Here’s the same example using Promises:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</ul><h3 id="how-promises-solve-callback-hell">How Promises Solve Callback Hell</h3><p>Promises flatten the async flow by enabling chaining and centralized error handling. Here’s the same example using Promises:</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-js">doStep1()
   .then(result1 =&gt; doStep2(result1))
   .then(result2 =&gt; doStep3(result2))
   .then(result3 =&gt; console.log('Final result:', result3))
   .catch(err =&gt; console.error(err));</code></pre>
-</div><p>This <strong>flat chain</strong> improves clarity by eliminating nested indentation and consolidating error handling into one <code>.catch()</code> block.</p><h3 id="using-async-await-for-even-cleaner-code">Using <code>async/await</code> for Even Cleaner Code</h3><p>The <code>async/await</code> syntax takes this further by letting you write asynchronous code that looks synchronous:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</div><p>This <strong>flat chain</strong> improves clarity by eliminating nested indentation and consolidating error handling into one <code>.catch()</code> block.</p><h3 id="using-async-await-for-even-cleaner-code">Using <code>async/await</code> for Even Cleaner Code</h3><p>The <code>async/await</code> syntax takes this further by letting you write asynchronous code that looks synchronous:</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-js">async function runSteps() {
   try {
     const result1 = await doStep1();
@@ -620,13 +338,15 @@ runSteps();</code></pre>
 <a href='javascript-clean-code.htm#managing-asynchronous-code' class="nav-button toc-link">Index</a>
 <a href="#bottom" class="nav-button next">↓</a>
 </div>
-<h2 id='making-async-code-readable-and-testable'>8.4 Making Async Code Readable and Testable</h2><p>Writing asynchronous JavaScript that is both <strong>readable</strong> and <strong>testable</strong> can be challenging. Async flows introduce complexity that makes reasoning about behavior and writing effective unit tests harder. However, following good design practices and leveraging modern testing tools can greatly simplify this.</p><h3 id="separation-of-concerns-keep-logic-and-side-effects-separate">Separation of Concerns: Keep Logic and Side Effects Separate</h3><p>To write clean and testable async code, separate your business logic from I/O or external calls like network requests or database queries. This makes it easier to <strong>mock dependencies</strong> during testing and reduces the complexity of your async functions.</p><p>For example, instead of mixing data fetching and processing in one function:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+<h2 id='making-async-code-readable-and-testable'>8.4 Making Async Code Readable and Testable</h2><p>Writing asynchronous JavaScript that is both <strong>readable</strong> and <strong>testable</strong> can be challenging. Async flows introduce complexity that makes reasoning about behavior and writing effective unit tests harder. However, following good design practices and leveraging modern testing tools can greatly simplify this.</p><h3 id="separation-of-concerns-keep-logic-and-side-effects-separate">Separation of Concerns: Keep Logic and Side Effects Separate</h3><p>To write clean and testable async code, separate your business logic from I/O or external calls like network requests or database queries. This makes it easier to <strong>mock dependencies</strong> during testing and reduces the complexity of your async functions.</p><p>For example, instead of mixing data fetching and processing in one function:</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-js">async function fetchDataAndProcess(url) {
   const response = await fetch(url);
   const data = await response.json();
   return processData(data); // processData is pure and testable
 }</code></pre>
-</div><p>Refactor into:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</div><p>Refactor into:</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-js">async function fetchData(url, fetchFn) {
   const response = await fetchFn(url);
   return response.json();
@@ -636,7 +356,8 @@ function processData(data) {
   // Pure function with no side effects
   return data.map(item =&gt; item.value);
 }</code></pre>
-</div><p>You can now test <code>processData</code> independently and mock <code>fetchFn</code> when testing <code>fetchData</code>.</p><h3 id="mocking-async-calls-for-unit-testing">Mocking Async Calls for Unit Testing</h3><p>When testing async code, you want to avoid making real network requests or database calls. Instead, <strong>mock</strong> those async operations to control their behavior and make tests fast and reliable.</p><p>Using Jest, a popular testing framework, you can mock async functions easily:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</div><p>You can now test <code>processData</code> independently and mock <code>fetchFn</code> when testing <code>fetchData</code>.</p><h3 id="mocking-async-calls-for-unit-testing">Mocking Async Calls for Unit Testing</h3><p>When testing async code, you want to avoid making real network requests or database calls. Instead, <strong>mock</strong> those async operations to control their behavior and make tests fast and reliable.</p><p>Using Jest, a popular testing framework, you can mock async functions easily:</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-js">// fetchData.js
 export async function fetchData(url, fetchFn) {
   const response = await fetchFn(url);
@@ -661,7 +382,8 @@ test('fetchData returns parsed JSON', async () =&gt; {
  <li>Avoid mixing concerns.</li>
  <li>Return promises or values consistently.</li>
  <li>Handle errors appropriately.</li>
-</ul><p>Example of a clean, testable async function:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</ul><p>Example of a clean, testable async function:</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-js">async function getUserProfile(userId, apiClient) {
   try {
     const user = await apiClient.fetchUser(userId);
@@ -678,7 +400,8 @@ test('fetchData returns parsed JSON', async () =&gt; {
  <li>Use <code>async</code> functions in your tests.</li>
  <li>Await async function calls.</li>
  <li>Use <code>.resolves</code> and <code>.rejects</code> matchers to assert promise results.</li>
-</ul><p>Example:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</ul><p>Example:</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-js">test('getUserProfile returns correct data', async () =&gt; {
   const mockApi = {
     fetchUser: jest.fn().mockResolvedValue({
@@ -732,7 +455,7 @@ test('fetchData returns parsed JSON', async () =&gt; {
 
 <a href="javascript-coding-best-practices.htm">
 <div class="book-cover" style="background-color: #f9f6f1;border: 1px solid #ccc;"> 
-    <div class="book-cover-title" style="font-size: 16px;color: #333;top: 20px;">JavaScript Coding Best Practices</div>
+    <div class="book-cover-title" style="font-size: 16px;color: #333;top: 10px;">JavaScript Coding Best Practices</div>
     <div class="book-cover-author">readbytes</div>
     <div class="book-cover-bottom-stripe" style="background-color: #333;"></div>
     <img class="book-cover-icon" style="width: 80px;height: 80px;top: 80px;" src='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFoAAABaCAYAAAA4qEECAAADdklEQVR4Xu2dPW/UMBjHH0QRlRA7MDDBgBAbH4ABNsRCQXwHFpAQQwVKws1IwMaXYO/M1I0VWEC8bIgy81LO53sS54l9OSe2G7f/n/S/c2zXefpT4g6nXIkAAADkQUFvqKR9JECUyw4lbXYmIqGyaYpWHXtNBwhCST8XbpcH2jyIQ+1XvRS0VQ+8opPzvrfLvDfayLpRDpmKbpMh+lw90N1jkCFhlNvFsXqxieb2Np2tx0A/EJ0IiE6Et2iOKVqOmQEa6aNXNLdxRfsB0YmA6ER4i+bYRMs5MoqK7nf6x6ai76KS6cG1Mr2iuW0TDdxAdCIgOhHeojku0XJejMQ41x063rvmGOQaa4jeXry7Rd+a/9yLqGFk/5g09T/vjKmUdK2eMwRv0dx2iQZ2IDoR3qI5q0Tv07HO/IPIlJA1BRGt/rDI+QeRKSFr6hXN7VWiQReIToS36JLOrxT9mk7QjK63YiLHQiQHBojWcYmW88wTyL5QyQFZa69obrtEAzsQnQiIToS3aI5LtJw3NGPX8//Zm/U5Y2DWpegVzW2XaGAHohMB0YnwFs2xiZZzYkSf50un35YpIWvqFc1tm+jHdDpqfM71iE615h80QUUDNxCdCG/RHJdoOW9IFPpzuu7YmHRrfFn3xUbWsIbob4t3t+hd0g/DDEtF75brbHTGxqap8ceyb6Pui423aG67RAM7EJ0Ib9ElfXSKruirV44SA0Tr2ETLOX05SsjfuVc0t22igRuITgREJ8JbNMcULcfMAI300Sua27ii/YDoREB0IrxFI+PSKxqEBaITAdGJaIlG4mfxUtA9qugGEiHKrSEaW0csstyjO7djBmQnWn9GqZ98bR5S2pXTJkeGopXYX/VxRXtZXNUt0TO6KMcnh9wu5PFUKehCI7qkv3J8krDcXCQrKvpjis6jaEVBVxfJhdpv+yo5I+eBgSiXrbuvOfgtpCPj0zgl/pJu9QA9CEvzpQTLL+uu6F9jHgSBfSq3LWa0Zbn0kTEp6G5b8lRQxYXYwviWBQ5Cygm51qGipJ2gcvTtuyO7Ae9roQi93qFBSXlKV2T3YJ7RZYi2EUNKjDWz5gldiiJFrTmbrw2WxNpPY62bLVrIZ9k9mpI+QbRJTBkx186OmDJirp0FJT2o99BUqeihLOPwo//hWVdGzBT0QZYBAAAA/AcQ1vXmtMbyGwAAAABJRU5ErkJggg=='/>
@@ -773,30 +496,36 @@ test('fetchData returns parsed JSON', async () =&gt; {
 
 <a href='javascript.htm'><div class='book-cover' style='background-color: #f9f6f1;color: #111111;border: 1px solid #ccc;display: flex;justify-content: center;align-items: center;text-align: center;'>More Javascript Books</div></a>
 </div>
-</div>
-  </div>
-  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
-  
-  <script>
-    function copyCode(button) {
-      const code = button.nextElementSibling.innerText;
-      navigator.clipboard.writeText(code).then(() => {
-        button.textContent = 'Copied!';
-        setTimeout(() => { button.textContent = 'Copy'; }, 1500);
-      });
-    }
-  </script>  
-<div id="floatingLog" aria-live="polite" role="alert"></div>
-<footer class="page-footer">
-    <nav>
-      <a href="https://readbytes.github.io">Home</a> | 
-      Email:<script language="JavaScript" type="text/javascript">
+</div><script>
+function copyCode(button) {const code = button.nextElementSibling.innerText;navigator.clipboard.writeText(code).then(() => {button.textContent = 'Copied!';setTimeout(() => { button.textContent = 'Copy'; }, 1500);});}
+</script></div>
+<style>
+.site-footer {margin-top: 60px;padding: 20px 0;border-top: 1px solid #eee;text-align: center;font-size: 14px;}
+.site-footer a {text-decoration: none;}
+.light-mode .site-footer {color: #777;border-color: #eee;}
+.dark-mode .site-footer {color: #888;border-color: #333;}
+.light-mode .site-footer a {color: #555;}
+.dark-mode .site-footer a {color: #aaa;}
+.site-footer a:hover {text-decoration: underline;}    
+</style>
+<footer class="site-footer">
+<nav><a href="https://readbytes.github.io">Home</a> |Email:<script type="text/javascript">
 var part1 = 'yinpeng';var part6 = '263';var part2 = Math.pow(2,6);var part3 = String.fromCharCode(part2);var part4 = 'hotmail dot com';var part5 = part1 + String.fromCharCode(part2) + part4;document.write(part1 + part6 + part3 + part4);
 </script>
-    </nav>
-  <p>© 2025 — All rights reserved.</p>    
-  </footer>
-
+| <a id="mode-toggle" href="#">Toggle Dark Mode</a>
+</nav><p>© 2025 — All rights reserved.</p></footer>
+<script>
+const toggleButton = document.getElementById('mode-toggle');
+const body = document.body;
+const savedMode = localStorage.getItem('mode') || 'light';
+body.classList.add(savedMode + '-mode');
+toggleButton.addEventListener('click', () => {
+      const isDark = body.classList.contains('dark-mode');
+      body.classList.toggle('dark-mode', !isDark);
+      body.classList.toggle('light-mode', isDark);
+      localStorage.setItem('mode', isDark ? 'light' : 'dark');
+});
+function copyCode(button) {const code = button.nextElementSibling.innerText;navigator.clipboard.writeText(code).then(() => {button.textContent = 'Copied!';setTimeout(() => { button.textContent = 'Copy'; }, 1500);});}
+</script>
 </body>
 </html>

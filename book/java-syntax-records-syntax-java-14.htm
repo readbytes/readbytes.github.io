@@ -1,475 +1,179 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
+<meta charset="UTF-8">
 <title>Java Syntax Records Syntax (Java 14)</title>
-<link rel='shortcut icon' href='https://java2s.com/style/favicon.ico'>
+<link rel='shortcut icon' href='https://readbytes.github.io/images/favicon.ico'>
 <link href="https://fonts.googleapis.com/css2?family=Merriweather&display=swap" rel="stylesheet" />
 <link href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.css" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/theme/dracula.min.css"><style>
+html {scroll-behavior: smooth;}  
+body {font-family: 'Merriweather', serif;;margin: 0;padding: 2rem 1rem;font-size: 15px;line-height: 1.5;transition: background-color 0.3s, color 0.3s;}
+.container {max-width: 750px;margin: 0 auto;padding: 1rem 2rem;}
+.light-mode {background-color: #f8f7f5;color: #333;} 
+.dark-mode {background-color: #121212;color: #e0e0e0;}
+a { text-decoration: none;transition: color 0.2s;}
+a:hover {text-decoration: underline;}
+.light-mode a {color: #555;}
+.dark-mode a {color: #aaa;}
+</style><style>
+.related-book-list {display: flex;flex-wrap: wrap;gap: 20px;}
+.related-books {margin-top: 40px;}
+.related-books h2 {font-size: 22px;margin-bottom: 20px;border-bottom: 2px solid #eee;padding-bottom: 8px;}
+.light-mode .related-books h2 {color: #333;border-color: #eee;}
+.dark-mode .related-books h2 {color: #ddd;border-color: #333;}
+</style><style>
+.book-cover {width: 130px;height: 180px;font-family: Arial, sans-serif;position: relative;overflow: hidden;box-shadow: 2px 2px 4px rgba(0,0,0,0.1);}
+.book-cover-bottom-stripe {position: absolute;bottom: 0;left: 0;height: 5px;width: 100%;}
+.book-cover-title {position: absolute;width: 100%;text-align: center;font-weight: bold;}
+.book-cover-icon {position: absolute;left: 50%;transform: translateX(-50%);display: flex;align-items: center;justify-content: center;}
+.book-cover-author {position: absolute;bottom: 10px;width: 100%;text-align: center;font-size: 8px;color: #333;}
+</style><style>
+.book-title-toc {font-size: 32px;font-weight: bold; }
+.book-subtitle-toc {font-size: 18px;margin-top: 8px;font-style: italic;}
+.book-header {text-align: center;margin-bottom: 40px;}
 
+.toc-container {border-radius: 10px;padding: 30px;margin-bottom: 40px;box-shadow: 0 8px 20px rgba(0,0,0,0.05);}
+h1 {font-size: 24px;text-align: center;margin-bottom: 30px;letter-spacing: 1px;padding-bottom: 10px;}
+.toc-list,.toc-section-list {list-style: none;padding: 0;margin: 0;}
+.toc-section-list {padding-left: 18px;margin-top: 6px;margin-bottom: 20px; }
+.toc-chapter {padding: 20px 0;}
+.chapter-title,.toc-section {display: flex;justify-content: space-between;padding-top: 4px;}
+.chapter-title {font-size: 17px;font-weight: bold;}
+.chapter-page,.section-page {font-style: italic;}
+ 
+ 
+.light-mode .book-title-toc,.light-mode .chapter-title,.light-mode .book-name {color: #222;}
+.light-mode .book-subtitle-toc,.light-mode .book-sub,.light-mode .chapter-page,.light-mode .section-page {color: #666;}
+.light-mode .toc-container { background: #fff;border: 1px solid #ddd;}
+.light-mode h1 {border-bottom: 2px solid #eee;color: #222;}
+.light-mode .toc-section {  color: #444;}
 
-  <script>
-  const mode = localStorage.getItem('mode') || 'light';
-  document.documentElement.classList.add(`${mode}-mode`);
-  </script>   
-<style> 
-html {
-  scroll-behavior: smooth;
+.light-mode .book-cover { border: 1px solid #ccc;box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);}
+.light-mode .book-title,.light-mode .series-name {color: #fff;}
+.light-mode .book-subtitle,.light-mode .book-footer {color: #aaa;}
+
+.dark-mode .book-title-toc,.dark-mode .chapter-title,.dark-mode .book-name {color: #f5f5f5;}
+.dark-mode .book-subtitle-toc,.dark-mode .book-sub,.dark-mode .chapter-page,.dark-mode .section-page {color: #aaa;}
+.dark-mode .toc-container {background: #1e1e1e;border: 1px solid #444;}
+
+.dark-mode h1 {border-bottom: 2px solid #333;color: #eee;}
+.dark-mode .toc-section {color: #bbb;}
+
+.dark-mode .related-books h2 {color: #ddd;border-bottom: 2px solid #333;}
+.dark-mode .book-title,.dark-mode .series-name {color: #fff;}
+.dark-mode .book-subtitle,.dark-mode .book-footer {color: #bbb;}
+.dark-mode .toc-section {color: #ddd;}
+
+@media (max-width: 600px) {
+  .chapter-title,
+  .toc-section {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .chapter-page,
+  .section-page {
+    margin-top: 4px;
+  }
 }
 
-body {
-  font-family: 'Merriweather', serif;
-  margin: 0;
-  padding: 2rem 1rem;
-  font-size: 15px;
-  line-height: 1.5;
-  transition: background-color 0.3s, color 0.3s;
-}
+</style><style>
+.light-mode .container {box-shadow: 0 0 15px rgba(0,0,0,0.1);}
+.dark-mode .container {box-shadow: 0 0 15px rgba(255, 255, 255, 0.05);}
 
-.container {
-  max-width: 700px;
-  margin: 0 auto;
-  padding: 1rem 2rem;
-  box-shadow: 0 0 15px rgba(0,0,0,0.1);
-}
-
-h1, h2, h3 {
-  font-weight: 600;
-  margin-top: 2.5rem;
-  margin-bottom: 1rem;
-  line-height: 1.2;
-}
-
+h1, h2, h3 {font-weight: 600;margin-top: 2.5rem;margin-bottom: 1rem;line-height: 1.2;}
 h1 { font-size: 1.8rem; }
 h2 { font-size: 1.4rem; }
 h3 { font-size: 1.2rem; }
 
-table {
-  width: 100%;
-  border-collapse: collapse;
-  font-family: sans-serif;
-  font-size: 1em;
-  margin: 1em 0;
-}
+table {width: 100%;border-collapse: collapse;font-family: sans-serif;font-size: 1em;margin: 1em 0;}
+th, td {padding: 0.6em 1em;text-align: left;border: 1px solid;}
+tr:nth-child(even) {  background-color: inherit;}
+tr:hover { background-color: inherit;}
 
-th, td {
-  padding: 0.6em 1em;
-  text-align: left;
-  border: 1px solid;
-}
+code {color: #d35400;}
 
-tr:nth-child(even) {
-  background-color: inherit;
-}
-
-tr:hover {
-  background-color: inherit;
-}
-
-a {
-  text-decoration: none;
-  transition: color 0.2s;
-}
-
-a:hover {
-  text-decoration: underline;
-}
-
-code {
-  color: #d35400;
-}
-
-.book-title-chapter {
-  font-family: 'Merriweather', serif;
-  font-size: 2rem;
-  font-weight: bold;
-  text-align: center;
-  margin-bottom: 2rem;
-  border-bottom: 2px solid;
-  padding-bottom: 0.5rem;
-}
-
-.book-subtitle-chapter {
-  text-align: center;
-  font-size: 1rem;
-  margin-top: -1rem;
-  margin-bottom: 2rem;
-}
-
-.related-books {
-  margin-top: 40px;
-}
-
-.related-book-list {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 20px;
-}
-
-    .book-cover {
-      width: 130px;
-      height: 180px;
-      font-family: Arial, sans-serif;
-      position: relative;
-      overflow: hidden;      
-      line-height: normal;
-      box-shadow: 2px 2px 4px rgba(0,0,0,0.1);
-    }
-    .book-cover-bottom-stripe {
-      position: absolute;
-      bottom: 0;
-      left: 0;
-      height: 5px;
-      width: 100%;
-    }
-    .book-cover-title {
-      position: absolute;
-      width: 100%;
-      text-align: center;
-      font-weight: bold;
-    }
-     
-    .book-cover-icon {
-      position: absolute;
-      left: 50%;
-      transform: translateX(-50%);
-      display: flex;
-      align-items: center;
-      justify-content: center; 
-    }
-
-    .book-cover-author {
-      position: absolute;
-      bottom: 10px;
-      width: 100%;
-      text-align: center;
-      font-size: 8px;
-      color: #333;
-    }
-
-.page-footer {
-  margin-top: 4rem;
-  padding: 1rem 0;
-  text-align: center;
-  font-size: 0.85rem;
-  border-top: 1px solid;
-}
-
-.chapter-navi-section {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding-bottom: 10px;
-}
-
-.nav-link {
-  color: inherit;
-  text-decoration: none;
-  opacity: 0.5;
-  transition: opacity 0.3s ease, text-decoration 0.3s ease;
-}
-
-.nav-link:hover {
-  opacity: 0.9;
-  text-decoration: underline;
-}
-
+.chapter-navi-section {display: flex;justify-content: space-between;align-items: center;padding-bottom: 10px;padding-top: 10px;}
+.nav-link {color: inherit;text-decoration: none;opacity: 0.5;transition: opacity 0.3s ease, text-decoration 0.3s ease;}
+.nav-link:hover {opacity: 0.9;text-decoration: underline;}
 .prev { text-align: left; }
 .toc-link { text-align: center; }
 .next { text-align: right; }
 
-.download-section {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 2rem;
-  padding: 2rem 1rem;
-  max-width: 600px;
-  margin: 3rem auto;
-  border-radius: 12px;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-}
+.download-section {display: flex;align-items: center;justify-content: center;gap: 2rem;padding: 2rem 1rem;max-width: 600px;margin: 3rem auto;border-radius: 12px;box-shadow: 0 4px 10px rgba(0,0,0,0.05);}
+.download-info h2 {margin: 0 0 0.5rem;font-size: 1.2rem;}
+.format-label {margin: 0 0 0.5rem;font-size: 0.95rem;}
+.download-buttons {display: flex;gap: 1rem;}
+.download-button {background-color: #4A90E2;color: white;padding: 0.5em 1.2em;border-radius: 25px;font-size: 0.95rem;text-decoration: none;transition: background-color 0.3s ease;}
+.download-button:hover {background-color: #357ABD;}
 
-.download-info h2 {
-  margin: 0 0 0.5rem;
-  font-size: 1.2rem;
-}
+.code-block {position: relative;margin-bottom: 1em;}
+.copy-button {background: transparent;color: white;position: absolute;top: 8px;right: 8px;border: none;padding: 4px 8px;font-size: 12px;border-radius: 4px;cursor: pointer;z-index: 1;}
+.copy-button:hover {background-color: #0056b3;}
 
-.format-label {
-  margin: 0 0 0.5rem;
-  font-size: 0.95rem;
-}
+.snippet-container {overflow: hidden;}
+.snippet-header {padding: 0.75rem 1rem;cursor: pointer;font-size: 1rem;background-color: #eeeeee;color:  #111111; border-radius: 8px;cursor: pointer;box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+.snippet-body {display: none;font-family: monospace;}
+.snippet-container.open .snippet-body {display: block;}
 
-.download-buttons {
-  display: flex;
-  gap: 1rem;
-}
+.CodeMirror {border: 2px solid #ccc;border-radius: 4px;resize: vertical;}
 
-.download-button {
-  background-color: #4A90E2;
-  color: white;
-  padding: 0.5em 1.2em;
-  border-radius: 25px;
-  font-size: 0.95rem;
-  text-decoration: none;
-  transition: background-color 0.3s ease;
-}
+.light-mode .format-label {color: #888;}
+.light-mode th {background-color: #f2f2f2;}
+.light-mode tr:nth-child(even) {background-color: #fafafa;}
+.light-mode tr:hover {background-color: #e6f7ff;}
 
-.download-button:hover {
-  background-color: #357ABD;
-}
-
-.code-block {
-  position: relative;
-  margin-bottom: 1em;
-}
-
-.copy-button {
-  background: transparent;
-  color: white;
-  position: absolute;
-  top: 8px;
-  right: 8px;
-  border: none;
-  padding: 4px 8px;
-  font-size: 12px;
-  border-radius: 4px;
-  cursor: pointer;
-  z-index: 1;
-}
-
-.copy-button:hover {
-  background-color: #0056b3;
-}
-
-.snippet-container {
-  overflow: hidden;
-}
-
-.snippet-header {
-  padding: 0.75rem 1rem;
-  cursor: pointer;
-  font-size: 1rem;
-    background-color: #eeeeee;
-    color:  #111111; 
-    border-radius: 8px;
-    cursor: pointer;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.1);  
-}
-
-.snippet-body {
-  display: none;
-  font-family: monospace;
-}
-
-.snippet-container.open .snippet-body {
-  display: block;
-}
-
-.CodeMirror {
-  border: 2px solid #ccc;
-  border-radius: 4px;
-  resize: vertical;
-}
-
-/* === Light Mode === */
-html.light-mode {
-  background-color: #f8f7f5;
-  color: #333;
-}
-
-html.light-mode .container {
-  background: white;
-}
-
-html.light-mode .book-title-chapter {
-  color: #2c3e50;
-  border-color: #ccc;
-}
-html.light-mode .book-subtitle-chapter{
-  color: #888;
-}
-
-html.light-mode .page-footer,
-html.light-mode .series-name,
-html.light-mode .book-subtitle,
-html.light-mode .format-label {
-  color: #888;
-}
-
-html.light-mode .related-books h2 {
-  color: #333;
-  border-bottom: 2px solid #eee;
-}
-
-html.light-mode .book-title {
-  color: #fff;
-}
-
-html.light-mode .book-cover {
-  border: 1px solid #ccc;
-}
-
-html.light-mode th {
-  background-color: #f2f2f2;
-}
-
-html.light-mode tr:nth-child(even) {
-  background-color: #fafafa;
-}
-
-html.light-mode tr:hover {
-  background-color: #e6f7ff;
-}
-
-html.light-mode a,
-html.light-mode .page-footer a {
-  color: #000;
-}
-
-/* === Dark Mode === */
-html.dark-mode {
-  background-color: #181818;
-  color: #e0e0e0;
-}
-
-html.dark-mode .container {
-  background: #222;
-}
-
-html.dark-mode .book-title-chapter {
-  color: #ddd;
-  border-color: #444;
-}
-
-html.dark-mode .snippet-header {
-    background-color: #333;
-    color:  #ddd; 
-}
+.dark-mode .snippet-header {background-color: #333;color:  #ddd; }
+.dark-mode .format-label {color: #aaa;}
+.dark-mode th {background-color: #333;color: #fff;}
+.dark-mode td {border-color: #444;}
+.dark-mode tr:nth-child(even) {background-color: #2a2a2a;}
+.dark-mode tr:hover {background-color: #2c3e50;}
 
 
-html.dark-mode .book-subtitle-chapter,
-html.dark-mode .page-footer,
-html.dark-mode .series-name,
-html.dark-mode .book-subtitle,
-html.dark-mode .book-footer,
-html.dark-mode .format-label {
-  color: #aaa;
-}
+.button-group-run-edit {display: flex;width: 100%;gap: 1rem;}
+.button-run-edit {flex: 1;padding: 1rem;font-size: 1rem;font-weight: 600;border: none;border-radius: 8px;cursor: pointer;transition: background 0.3s, color 0.3s;}
 
-html.dark-mode .related-books h2 {
-  color: #ddd;
-  border-bottom: 2px solid #333;
-}
+.light-mode .button-run-edit {background-color: #f0f0f0;color: #222;box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);}
+.light-mode .button-run-edit:hover {background-color: #e0e0e0;}
 
-html.dark-mode .book-title {
-  color: #fff;
-}
+.dark-mode .button-run-edit {background-color: #2a2a2a;color: #f5f5f5;box-shadow: 0 0 10px rgba(255, 255, 255, 0.05);}
+.dark-mode .button-run-edit:hover {background-color: #3a3a3a;}
 
-html.dark-mode .book-cover {
-  border: 1px solid #555;
-}
+button { padding: 0.5em 1em; background: green; color: white; border: none; cursor: pointer; }
+button:hover { background: #1e7e34; }
+.result_iframe { width:99%; margin-top: 1em;  resize: both;background-color: #515b63;border:1px solid #ccc;}   
 
-html.dark-mode th {
-  background-color: #333;
-  color: #fff;
-}
-
-html.dark-mode td {
-  border-color: #444;
-}
-
-html.dark-mode tr:nth-child(even) {
-  background-color: #2a2a2a;
-}
-
-html.dark-mode tr:hover {
-  background-color: #2c3e50;
-}
-
-html.dark-mode a,
-html.dark-mode .page-footer a {
-  color: #eee;
-}
-
-    .dialog-backdrop {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100vw;
-      height: 100vh;
-      background: rgba(0,0,0,0.5);
-      display: none;
-      justify-content: center;
-      align-items: center;
-      z-index: 10;
-    }
-
-    .dialog {
-      background: white;
-      padding: 20px;
-      width: 90vw;
-      height: 80vh;
-      border-radius: 8px;
-      box-shadow: 0 0 20px rgba(0,0,0,0.3);
-      display: flex;
-      flex-direction: column;
-    }
-    .dialog-content {
-      display: flex;
-      flex: 1;
-      gap: 20px;
-      margin-top: 10px;
-    }
-    .dialog h2 {
-      margin-top: 0;
-    }
-
-    .textarea_dialog {
-      width: 50%;
-      height: 100%;
-      resize: none;
-      font-family: monospace;
-      font-size: 14px;
-      padding: 10px;
-      box-sizing: border-box;
-      border: 1px solid #ccc;
-    }
-
-    .iframe_dialog {
-      width: 50%;
-      height: 100%;
-      border: 1px solid #ccc;
-    }
-    .controls_dialog {
-      display: flex;
-      justify-content: space-between;
-      margin-top: 10px;
-    }    
-    button { padding: 0.5em 1em; background: green; color: white; border: none; cursor: pointer; }
-    button:hover { background: #1e7e34; }
-    .result_iframe { width:99%; height:200px; margin-top: 1em;  resize: both;border:1px solid #ccc;}        
+.dialog-backdrop {position: fixed;top: 0;left: 0;width: 100vw;height: 100vh;background: rgba(0,0,0,0.5);display: none;justify-content: center;align-items: center;z-index: 10;}
+.dialog {background: #90979e;padding: 20px;width: 90vw;height: 80vh;border-radius: 8px;box-shadow: 0 0 20px rgba(0,0,0,0.3);display: flex;flex-direction: column;}
+.dialog-content {display: flex;gap: 20px;margin-top: 10px;height: calc(100% - 40px);}
+.editor-container, .preview-container {flex: 1;height: 100%;max-height: 100%;overflow: hidden; }
+.result_iframe_dialog {width: 100%;height: 100%;resize: both;border:1px solid #ccc;overflow: auto; }   
+.CodeMirror {width: 100% !important;height: 100% !important;}
 </style>
 </head>
-<body> 
-  <div class="container">
-    <div class = "chapter-navi-section">
+<body>
+<script>const mode = localStorage.getItem('mode') || 'light';document.documentElement.classList.add(`${mode}-mode`);</script>  
+<div class="container"><div class = "chapter-navi-section">
 <a href="java-syntax-enums-syntax.htm" class="nav-button prev">←</a>
 <a href='java-syntax.htm#records-syntax-java-14' class="nav-button toc-link">Index</a>
 <a href="java-syntax-exception-handling-syntax.htm" class="nav-button next">→</a>
 </div>
-
-    <h1 class="book-title-chapter" id = 'top'>Records Syntax (Java 14)</h1>
-    <h3 class="book-subtitle-chapter">Java Syntax</h3>   
-    <!-- <h1 class ="chapter-title"></h1> -->
-    <h2 id='declaring-records'>12.1 Declaring Records</h2><p>Introduced in Java 14 as a preview feature and standardized in Java 16, <strong>records</strong> provide a compact syntax for declaring classes whose main purpose is to <strong>carry immutable data</strong>. Records automatically generate much of the boilerplate code that traditional Java classes require, such as constructors, getters, <code>equals()</code>, <code>hashCode()</code>, and <code>toString()</code>. This makes records ideal for modeling simple data aggregates with minimal fuss.</p><h4 id="basic-syntax">Basic Syntax</h4><p>Declaring a record is straightforward using the <code>record</code> keyword followed by the record name and a <strong>header</strong> listing its components (fields):</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+<div class='book-header'><h1 class='book-title-toc' id = 'top'>Records Syntax (Java 14)</h1><h3 class='book-subtitle-toc'>Java Syntax</h3></div><h2 id='declaring-records'>12.1 Declaring Records</h2><p>Introduced in Java 14 as a preview feature and standardized in Java 16, <strong>records</strong> provide a compact syntax for declaring classes whose main purpose is to <strong>carry immutable data</strong>. Records automatically generate much of the boilerplate code that traditional Java classes require, such as constructors, getters, <code>equals()</code>, <code>hashCode()</code>, and <code>toString()</code>. This makes records ideal for modeling simple data aggregates with minimal fuss.</p><h4 id="basic-syntax">Basic Syntax</h4><p>Declaring a record is straightforward using the <code>record</code> keyword followed by the record name and a <strong>header</strong> listing its components (fields):</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-java">public record Point(int x, int y) { }</code></pre>
 </div><p>This single line defines a record named <code>Point</code> with two components, <code>x</code> and <code>y</code>, both of type <code>int</code>.</p><h4 id="what-the-record-provides-automatically">What the Record Provides Automatically</h4><p>When you declare a record like the above, Java implicitly provides the following:</p><ul>
  <li><strong>A canonical constructor</strong> that takes parameters matching the components (<code>Point(int x, int y)</code>), initializing the fields.</li>
  <li><strong>Accessor methods</strong> for each component, named exactly as the components (<code>x()</code> and <code>y()</code>), which return the respective values.</li>
  <li><strong><code>equals(Object o)</code> and <code>hashCode()</code></strong> methods that consider all components, allowing meaningful equality checks and usage in hash-based collections.</li>
  <li><strong>A <code>toString()</code> method</strong> that returns a string representation of the record including component names and values, e.g., <code>Point[x=3, y=5]</code>.</li>
-</ul><p>These generated methods ensure your record is a fully functional, immutable data carrier with minimal manual coding.</p><h4 id="using-the-record">Using the Record</h4><p>Here's an example of how to use the <code>Point</code> record:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</ul><p>These generated methods ensure your record is a fully functional, immutable data carrier with minimal manual coding.</p><h4 id="using-the-record">Using the Record</h4><p>Here's an example of how to use the <code>Point</code> record:</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-java">public class Main {
     public static void main(String[] args) {
         Point p1 = new Point(3, 5);
@@ -482,14 +186,14 @@ html.dark-mode .page-footer a {
         System.out.println(p1.equals(p2)); // Prints: true
     }
 }</code></pre>
-</div><p>Notice that to access the values, you call <code>x()</code> and <code>y()</code>, not <code>getX()</code> or <code>getY()</code>. This naming convention differs from traditional JavaBeans getters but is consistent across all records.</p><div class="snippet-container" id="2hCfT">
- <div class="snippet-header" onclick="toggleSnippet('2hCfT')">
+</div><p>Notice that to access the values, you call <code>x()</code> and <code>y()</code>, not <code>getX()</code> or <code>getY()</code>. This naming convention differs from traditional JavaBeans getters but is consistent across all records.</p><div class="snippet-container" id="X6M5H">
+ <div class="snippet-header" onclick="toggleSnippet('X6M5H')">
   Click to view full runnable Code
  </div>
  <div class="snippet-body">
-  <div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
-   <pre><code class="language-java">
-public class Main {
+  <div class="code-block">
+   <button class="copy-button" onclick="copyCode(this)">▯</button>
+   <pre><code class="language-java">public class Main {
 
     // Record declaration
     public record Point(int x, int y) {}
@@ -505,8 +209,7 @@ public class Main {
         System.out.println("p1 equals p2? " + p1.equals(p2));  // equals()
         System.out.println("HashCode of p1: " + p1.hashCode()); // hashCode()
     }
-} 
-</code></pre>
+}</code></pre>
   </div>
  </div>
 </div><h4 id="immutability-by-design">Immutability by Design</h4><p>Records are <strong>implicitly final</strong>, which means you cannot extend a record class. Each component is also <strong>final</strong> and private under the hood, so once a record instance is created, its data cannot be changed.</p><p>This design enforces <strong>immutability</strong>, making records ideal for representing values or data transfer objects (DTOs) where thread safety and predictability are important.</p><h4 id="reflection-on-the-intent-of-records">Reflection on the Intent of Records</h4><p>Records represent a significant evolution in Java's approach to data modeling:</p><ul>
@@ -523,7 +226,8 @@ public class Main {
 <a href='java-syntax.htm#records-syntax-java-14' class="nav-button toc-link">Index</a>
 <a href="#bottom" class="nav-button next">↓</a>
 </div>
-<h2 id='compact-constructors'>12.2 Compact Constructors</h2><p>Records in Java automatically generate a <strong>canonical constructor</strong> matching the record components, which assigns parameter values to fields. However, sometimes you need to add <strong>validation</strong> or <strong>transformation logic</strong> when creating instances. For this purpose, Java allows you to define a <strong>compact constructor</strong> inside a record.</p><h4 id="what-is-a-compact-constructor">What Is a Compact Constructor?</h4><p>A compact constructor is a concise way to add code to the canonical constructor <strong>without repeating the parameter list or field assignments</strong>. It uses the record's component names directly and automatically assigns parameters to fields unless you explicitly override the assignments.</p><h4 id="example-compact-constructor-with-validation">Example: Compact Constructor with Validation</h4><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+<h2 id='compact-constructors'>12.2 Compact Constructors</h2><p>Records in Java automatically generate a <strong>canonical constructor</strong> matching the record components, which assigns parameter values to fields. However, sometimes you need to add <strong>validation</strong> or <strong>transformation logic</strong> when creating instances. For this purpose, Java allows you to define a <strong>compact constructor</strong> inside a record.</p><h4 id="what-is-a-compact-constructor">What Is a Compact Constructor?</h4><p>A compact constructor is a concise way to add code to the canonical constructor <strong>without repeating the parameter list or field assignments</strong>. It uses the record's component names directly and automatically assigns parameters to fields unless you explicitly override the assignments.</p><h4 id="example-compact-constructor-with-validation">Example: Compact Constructor with Validation</h4><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-java">public record Person(String name, int age) {
     public Person {
         if (name == null || name.isBlank()) {
@@ -539,7 +243,8 @@ public class Main {
  <li>We define a compact constructor with the syntax <code>public Person { ... }</code>.</li>
  <li>Inside, we validate the inputs.</li>
  <li>We <strong>do not need to write</strong> <code>this.name = name; this.age = age;</code> because this happens implicitly after the constructor body unless overridden.</li>
-</ul><h4 id="comparison-with-canonical-constructors">Comparison with Canonical Constructors</h4><p>A canonical constructor requires full parameter declaration and explicit field assignment:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</ul><h4 id="comparison-with-canonical-constructors">Comparison with Canonical Constructors</h4><p>A canonical constructor requires full parameter declaration and explicit field assignment:</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-java">public record Person(String name, int age) {
     public Person(String name, int age) {
         if (name == null || name.isBlank()) {
@@ -552,14 +257,14 @@ public class Main {
         this.age = age;
     }
 }</code></pre>
-</div><p>While this works, it is more verbose and repetitive, especially for records with many components.</p><div class="snippet-container" id="hCBjt">
- <div class="snippet-header" onclick="toggleSnippet('hCBjt')">
+</div><p>While this works, it is more verbose and repetitive, especially for records with many components.</p><div class="snippet-container" id="XlN5X">
+ <div class="snippet-header" onclick="toggleSnippet('XlN5X')">
   Click to view full runnable Code
  </div>
  <div class="snippet-body">
-  <div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
-   <pre><code class="language-java">
-public class Main {
+  <div class="code-block">
+   <button class="copy-button" onclick="copyCode(this)">▯</button>
+   <pre><code class="language-java">public class Main {
 
     public record Person(String name, int age) {
         public Person {
@@ -591,8 +296,7 @@ public class Main {
             System.out.println("Validation failed: " + e.getMessage());
         }
     }
-} 
-</code></pre>
+}</code></pre>
   </div>
  </div>
 </div><h4 id="reflection">Reflection</h4><p>Compact constructors keep records <strong>concise yet flexible</strong> by allowing you to insert validation, normalization, or other logic directly at the construction phase without sacrificing the brevity that makes records attractive. They promote clean and maintainable code, keeping the focus on data immutability and integrity.</p><div class = "chapter-navi-section">
@@ -600,7 +304,8 @@ public class Main {
 <a href='java-syntax.htm#records-syntax-java-14' class="nav-button toc-link">Index</a>
 <a href="#bottom" class="nav-button next">↓</a>
 </div>
-<h2 id='records-vs-classes'>12.3 Records vs Classes</h2><p>With the introduction of <strong>records</strong> in Java 14, a new concise syntax for data-carrying classes has emerged. Records provide a lightweight way to model <strong>immutable data aggregates</strong> while reducing boilerplate code common in plain old Java objects (POJOs). This section compares <strong>records</strong> with traditional <strong>classes</strong>, highlighting their syntax differences, capabilities, and limitations, and reflects on when to prefer records over classes.</p><h4 id="syntax-comparison">Syntax Comparison</h4><p><strong>Traditional Class:</strong></p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+<h2 id='records-vs-classes'>12.3 Records vs Classes</h2><p>With the introduction of <strong>records</strong> in Java 14, a new concise syntax for data-carrying classes has emerged. Records provide a lightweight way to model <strong>immutable data aggregates</strong> while reducing boilerplate code common in plain old Java objects (POJOs). This section compares <strong>records</strong> with traditional <strong>classes</strong>, highlighting their syntax differences, capabilities, and limitations, and reflects on when to prefer records over classes.</p><h4 id="syntax-comparison">Syntax Comparison</h4><p><strong>Traditional Class:</strong></p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-java">public class Person {
     private final String name;
     private final int age;
@@ -636,7 +341,8 @@ public class Main {
         return Objects.hash(name, age);
     }
 }</code></pre>
-</div><p><strong>Record:</strong></p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</div><p><strong>Record:</strong></p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-java">public record Person(String name, int age) {}</code></pre>
 </div><p>Notice how a record declaration is dramatically more concise, automatically generating:</p><ul>
  <li>A canonical constructor</li>
@@ -672,7 +378,8 @@ public class Main {
 <a href='java-syntax.htm#records-syntax-java-14' class="nav-button toc-link">Index</a>
 <a href="#bottom" class="nav-button next">↓</a>
 </div>
-<h2 id='using-records-for-data-aggregation'>12.4 Using Records for Data Aggregation</h2><p>Records are an elegant and concise way to group related data into a single, immutable object. This feature makes them ideal for <strong>data aggregation</strong>—combining multiple values into one logical unit that can be passed around your application safely and clearly.</p><h4 id="grouping-multiple-values-example-with-coordinates">Grouping Multiple Values: Example with Coordinates</h4><p>Imagine you are working on a program that processes points on a 2D plane. Traditionally, you might create a class like this:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+<h2 id='using-records-for-data-aggregation'>12.4 Using Records for Data Aggregation</h2><p>Records are an elegant and concise way to group related data into a single, immutable object. This feature makes them ideal for <strong>data aggregation</strong>—combining multiple values into one logical unit that can be passed around your application safely and clearly.</p><h4 id="grouping-multiple-values-example-with-coordinates">Grouping Multiple Values: Example with Coordinates</h4><p>Imagine you are working on a program that processes points on a 2D plane. Traditionally, you might create a class like this:</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-java">public class Point {
     private final double x;
     private final double y;
@@ -690,9 +397,11 @@ public class Main {
         return "(" + x + ", " + y + ")";
     }
 }</code></pre>
-</div><p>With records, this can be simplified drastically:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</div><p>With records, this can be simplified drastically:</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-java">public record Point(double x, double y) {}</code></pre>
-</div><p>This single line creates a fully immutable type with two components, <code>x</code> and <code>y</code>, and automatically generates constructor, accessor methods, <code>equals()</code>, <code>hashCode()</code>, and <code>toString()</code>.</p><h4 id="simplifying-method-returns">Simplifying Method Returns</h4><p>Records can make method signatures and implementations clearer by returning multiple values without needing to create separate classes manually:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</div><p>This single line creates a fully immutable type with two components, <code>x</code> and <code>y</code>, and automatically generates constructor, accessor methods, <code>equals()</code>, <code>hashCode()</code>, and <code>toString()</code>.</p><h4 id="simplifying-method-returns">Simplifying Method Returns</h4><p>Records can make method signatures and implementations clearer by returning multiple values without needing to create separate classes manually:</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-java">public class Geometry {
     public static Point midpoint(Point a, Point b) {
         return new Point(
@@ -701,9 +410,11 @@ public class Main {
         );
     }
 }</code></pre>
-</div><p>Here, <code>midpoint</code> returns a <code>Point</code> record that clearly groups the two coordinates. Before records, you might have returned an array or a custom class, both less clear or more verbose.</p><h4 id="grouping-complex-data-user-information">Grouping Complex Data: User Information</h4><p>Records also work well for aggregating more complex data, such as user profiles:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</div><p>Here, <code>midpoint</code> returns a <code>Point</code> record that clearly groups the two coordinates. Before records, you might have returned an array or a custom class, both less clear or more verbose.</p><h4 id="grouping-complex-data-user-information">Grouping Complex Data: User Information</h4><p>Records also work well for aggregating more complex data, such as user profiles:</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-java">public record User(String username, String email, int age) {}</code></pre>
-</div><p>In this example, a <code>User</code> record can be used throughout your application to represent user data consistently, safely, and without risk of accidental modification.</p><h4 id="using-records-in-collections">Using Records in Collections</h4><p>Records are especially powerful when used in collections like lists or maps:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</div><p>In this example, a <code>User</code> record can be used throughout your application to represent user data consistently, safely, and without risk of accidental modification.</p><h4 id="using-records-in-collections">Using Records in Collections</h4><p>Records are especially powerful when used in collections like lists or maps:</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-java">List&lt;User&gt; users = List.of(
     new User("alice", "alice@example.com", 30),
     new User("bob", "bob@example.com", 25)
@@ -713,18 +424,19 @@ Map&lt;String, Point&gt; cityCoordinates = Map.of(
     "New York", new Point(40.7128, -74.0060),
     "Los Angeles", new Point(34.0522, -118.2437)
 );</code></pre>
-</div><p>Because records provide reliable implementations of <code>equals()</code> and <code>hashCode()</code>, they work seamlessly as keys or values in collections without requiring extra code.</p><h4 id="records-and-functional-style-programming">Records and Functional-Style Programming</h4><p>Records promote <strong>functional programming principles</strong> in Java by emphasizing <strong>immutability</strong> and <strong>value-based equality</strong>. Since record components are <code>final</code>, you cannot change the state after construction, eliminating side effects and making your programs easier to reason about.</p><p>When paired with streams and lambda expressions, records enable concise, declarative code for data transformation and aggregation:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</div><p>Because records provide reliable implementations of <code>equals()</code> and <code>hashCode()</code>, they work seamlessly as keys or values in collections without requiring extra code.</p><h4 id="records-and-functional-style-programming">Records and Functional-Style Programming</h4><p>Records promote <strong>functional programming principles</strong> in Java by emphasizing <strong>immutability</strong> and <strong>value-based equality</strong>. Since record components are <code>final</code>, you cannot change the state after construction, eliminating side effects and making your programs easier to reason about.</p><p>When paired with streams and lambda expressions, records enable concise, declarative code for data transformation and aggregation:</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-java">List&lt;User&gt; adults = users.stream()
     .filter(user -&gt; user.age() &gt;= 18)
     .collect(Collectors.toList());</code></pre>
-</div><p>This code filters a list of immutable <code>User</code> records to those who are adults, leveraging the safety and clarity records provide.</p><div class="snippet-container" id="Nni2e">
- <div class="snippet-header" onclick="toggleSnippet('Nni2e')">
+</div><p>This code filters a list of immutable <code>User</code> records to those who are adults, leveraging the safety and clarity records provide.</p><div class="snippet-container" id="EFf8j">
+ <div class="snippet-header" onclick="toggleSnippet('EFf8j')">
   Click to view full runnable Code
  </div>
  <div class="snippet-body">
-  <div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
-   <pre><code class="language-java">
-import java.util.*;
+  <div class="code-block">
+   <button class="copy-button" onclick="copyCode(this)">▯</button>
+   <pre><code class="language-java">import java.util.*;
 import java.util.stream.Collectors;
 
 public class Main {
@@ -776,8 +488,7 @@ public class Main {
         cityCoordinates.forEach((city, point) -&gt;
             System.out.println(city + ": " + point));
     }
-} 
-</code></pre>
+}</code></pre>
   </div>
  </div>
 </div><h4 id="reflection-the-role-of-records-in-modern-java">Reflection: The Role of Records in Modern Java</h4><p>Records fill an important gap in Java by providing a <strong>native, language-level construct</strong> optimized for grouping data. They reduce boilerplate, improve readability, and support immutability, all of which are hallmarks of modern software design.</p><p>Using records for data aggregation helps developers:</p><ul>
@@ -840,7 +551,7 @@ public class Main {
 
 <a href="java-object-oriented-design.htm">
 <div class="book-cover" style="background-color: #f9f6f1;border: 1px solid #ccc;"> 
-    <div class="book-cover-title" style="font-size: 16px;color: #333;top: 20px;">Java Object-Oriented Design</div>
+    <div class="book-cover-title" style="font-size: 16px;color: #333;top: 10px;">Java Object-Oriented Design</div>
     <div class="book-cover-author">readbytes</div>
     <div class="book-cover-bottom-stripe" style="background-color: #333;"></div>
     <img class="book-cover-icon" style="width: 80px;height: 80px;top: 60px;" src="data:image/png;base64,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"/>
@@ -851,35 +562,38 @@ public class Main {
 
 <a href='java.htm'><div class='book-cover' style='background-color: #f9f6f1;color: #111111;border: 1px solid #ccc;display: flex;justify-content: center;align-items: center;text-align: center;'>More Java Books</div></a>
 </div>
-</div>
-  </div>
-  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
-    <script>
-  function toggleSnippet(id) {
-      const box = document.getElementById(id);
-      box.classList.toggle("open");
-  }  
-  </script>
-  <script>
-    function copyCode(button) {
-      const code = button.nextElementSibling.innerText;
-      navigator.clipboard.writeText(code).then(() => {
-        button.textContent = 'Copied!';
-        setTimeout(() => { button.textContent = 'Copy'; }, 1500);
-      });
-    }
-  </script>  
-<div id="floatingLog" aria-live="polite" role="alert"></div>
-<footer class="page-footer">
-    <nav>
-      <a href="https://readbytes.github.io">Home</a> | 
-      Email:<script language="JavaScript" type="text/javascript">
+</div><script>
+function copyCode(button) {const code = button.nextElementSibling.innerText;navigator.clipboard.writeText(code).then(() => {button.textContent = 'Copied!';setTimeout(() => { button.textContent = 'Copy'; }, 1500);});}
+</script><script>
+function toggleSnippet(id) {const box = document.getElementById(id);box.classList.toggle("open");}  
+</script></div>
+<style>
+.site-footer {margin-top: 60px;padding: 20px 0;border-top: 1px solid #eee;text-align: center;font-size: 14px;}
+.site-footer a {text-decoration: none;}
+.light-mode .site-footer {color: #777;border-color: #eee;}
+.dark-mode .site-footer {color: #888;border-color: #333;}
+.light-mode .site-footer a {color: #555;}
+.dark-mode .site-footer a {color: #aaa;}
+.site-footer a:hover {text-decoration: underline;}    
+</style>
+<footer class="site-footer">
+<nav><a href="https://readbytes.github.io">Home</a> |Email:<script type="text/javascript">
 var part1 = 'yinpeng';var part6 = '263';var part2 = Math.pow(2,6);var part3 = String.fromCharCode(part2);var part4 = 'hotmail dot com';var part5 = part1 + String.fromCharCode(part2) + part4;document.write(part1 + part6 + part3 + part4);
 </script>
-    </nav>
-  <p>© 2025 — All rights reserved.</p>    
-  </footer>
-
+| <a id="mode-toggle" href="#">Toggle Dark Mode</a>
+</nav><p>© 2025 — All rights reserved.</p></footer>
+<script>
+const toggleButton = document.getElementById('mode-toggle');
+const body = document.body;
+const savedMode = localStorage.getItem('mode') || 'light';
+body.classList.add(savedMode + '-mode');
+toggleButton.addEventListener('click', () => {
+      const isDark = body.classList.contains('dark-mode');
+      body.classList.toggle('dark-mode', !isDark);
+      body.classList.toggle('light-mode', isDark);
+      localStorage.setItem('mode', isDark ? 'light' : 'dark');
+});
+function copyCode(button) {const code = button.nextElementSibling.innerText;navigator.clipboard.writeText(code).then(() => {button.textContent = 'Copied!';setTimeout(() => { button.textContent = 'Copy'; }, 1500);});}
+</script>
 </body>
 </html>

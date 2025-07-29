@@ -1,0 +1,681 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Pandas for Data Science Visualization with Pandas</title>
+<link rel='shortcut icon' href='https://readbytes.github.io/images/favicon.ico'>
+<link href="https://fonts.googleapis.com/css2?family=Merriweather&display=swap" rel="stylesheet" />
+<link href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.css" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/theme/dracula.min.css"><style>
+html {scroll-behavior: smooth;}  
+body {font-family: 'Merriweather', serif;;margin: 0;padding: 2rem 1rem;font-size: 15px;line-height: 1.5;transition: background-color 0.3s, color 0.3s;}
+.container {max-width: 750px;margin: 0 auto;padding: 1rem 2rem;}
+.light-mode {background-color: #f8f7f5;color: #333;} 
+.dark-mode {background-color: #121212;color: #e0e0e0;}
+a { text-decoration: none;transition: color 0.2s;}
+a:hover {text-decoration: underline;}
+.light-mode a {color: #555;}
+.dark-mode a {color: #aaa;}
+</style><style>
+.related-book-list {display: flex;flex-wrap: wrap;gap: 20px;}
+.related-books {margin-top: 40px;}
+.related-books h2 {font-size: 22px;margin-bottom: 20px;border-bottom: 2px solid #eee;padding-bottom: 8px;}
+.light-mode .related-books h2 {color: #333;border-color: #eee;}
+.dark-mode .related-books h2 {color: #ddd;border-color: #333;}
+</style><style>
+.book-cover {width: 130px;height: 180px;font-family: Arial, sans-serif;position: relative;overflow: hidden;box-shadow: 2px 2px 4px rgba(0,0,0,0.1);}
+.book-cover-bottom-stripe {position: absolute;bottom: 0;left: 0;height: 5px;width: 100%;}
+.book-cover-title {position: absolute;width: 100%;text-align: center;font-weight: bold;}
+.book-cover-icon {position: absolute;left: 50%;transform: translateX(-50%);display: flex;align-items: center;justify-content: center;}
+.book-cover-author {position: absolute;bottom: 10px;width: 100%;text-align: center;font-size: 8px;color: #333;}
+</style><style>
+.book-title-toc {font-size: 32px;font-weight: bold; }
+.book-subtitle-toc {font-size: 18px;margin-top: 8px;font-style: italic;}
+.book-header {text-align: center;margin-bottom: 40px;}
+
+.toc-container {border-radius: 10px;padding: 30px;margin-bottom: 40px;box-shadow: 0 8px 20px rgba(0,0,0,0.05);}
+h1 {font-size: 24px;text-align: center;margin-bottom: 30px;letter-spacing: 1px;padding-bottom: 10px;}
+.toc-list,.toc-section-list {list-style: none;padding: 0;margin: 0;}
+.toc-section-list {padding-left: 18px;margin-top: 6px;margin-bottom: 20px; }
+.toc-chapter {padding: 20px 0;}
+.chapter-title,.toc-section {display: flex;justify-content: space-between;padding-top: 4px;}
+.chapter-title {font-size: 17px;font-weight: bold;}
+.chapter-page,.section-page {font-style: italic;}
+ 
+ 
+.light-mode .book-title-toc,.light-mode .chapter-title,.light-mode .book-name {color: #222;}
+.light-mode .book-subtitle-toc,.light-mode .book-sub,.light-mode .chapter-page,.light-mode .section-page {color: #666;}
+.light-mode .toc-container { background: #fff;border: 1px solid #ddd;}
+.light-mode h1 {border-bottom: 2px solid #eee;color: #222;}
+.light-mode .toc-section {  color: #444;}
+
+.light-mode .book-cover { border: 1px solid #ccc;box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);}
+.light-mode .book-title,.light-mode .series-name {color: #fff;}
+.light-mode .book-subtitle,.light-mode .book-footer {color: #aaa;}
+
+.dark-mode .book-title-toc,.dark-mode .chapter-title,.dark-mode .book-name {color: #f5f5f5;}
+.dark-mode .book-subtitle-toc,.dark-mode .book-sub,.dark-mode .chapter-page,.dark-mode .section-page {color: #aaa;}
+.dark-mode .toc-container {background: #1e1e1e;border: 1px solid #444;}
+
+.dark-mode h1 {border-bottom: 2px solid #333;color: #eee;}
+.dark-mode .toc-section {color: #bbb;}
+
+.dark-mode .related-books h2 {color: #ddd;border-bottom: 2px solid #333;}
+.dark-mode .book-title,.dark-mode .series-name {color: #fff;}
+.dark-mode .book-subtitle,.dark-mode .book-footer {color: #bbb;}
+.dark-mode .toc-section {color: #ddd;}
+
+@media (max-width: 600px) {
+  .chapter-title,
+  .toc-section {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .chapter-page,
+  .section-page {
+    margin-top: 4px;
+  }
+}
+
+</style><style>
+.light-mode .container {box-shadow: 0 0 15px rgba(0,0,0,0.1);}
+.dark-mode .container {box-shadow: 0 0 15px rgba(255, 255, 255, 0.05);}
+
+h1, h2, h3 {font-weight: 600;margin-top: 2.5rem;margin-bottom: 1rem;line-height: 1.2;}
+h1 { font-size: 1.8rem; }
+h2 { font-size: 1.4rem; }
+h3 { font-size: 1.2rem; }
+
+table {width: 100%;border-collapse: collapse;font-family: sans-serif;font-size: 1em;margin: 1em 0;}
+th, td {padding: 0.6em 1em;text-align: left;border: 1px solid;}
+tr:nth-child(even) {  background-color: inherit;}
+tr:hover { background-color: inherit;}
+
+code {color: #d35400;}
+
+.chapter-navi-section {display: flex;justify-content: space-between;align-items: center;padding-bottom: 10px;padding-top: 10px;}
+.nav-link {color: inherit;text-decoration: none;opacity: 0.5;transition: opacity 0.3s ease, text-decoration 0.3s ease;}
+.nav-link:hover {opacity: 0.9;text-decoration: underline;}
+.prev { text-align: left; }
+.toc-link { text-align: center; }
+.next { text-align: right; }
+
+.download-section {display: flex;align-items: center;justify-content: center;gap: 2rem;padding: 2rem 1rem;max-width: 600px;margin: 3rem auto;border-radius: 12px;box-shadow: 0 4px 10px rgba(0,0,0,0.05);}
+.download-info h2 {margin: 0 0 0.5rem;font-size: 1.2rem;}
+.format-label {margin: 0 0 0.5rem;font-size: 0.95rem;}
+.download-buttons {display: flex;gap: 1rem;}
+.download-button {background-color: #4A90E2;color: white;padding: 0.5em 1.2em;border-radius: 25px;font-size: 0.95rem;text-decoration: none;transition: background-color 0.3s ease;}
+.download-button:hover {background-color: #357ABD;}
+
+.code-block {position: relative;margin-bottom: 1em;}
+.copy-button {background: transparent;color: white;position: absolute;top: 8px;right: 8px;border: none;padding: 4px 8px;font-size: 12px;border-radius: 4px;cursor: pointer;z-index: 1;}
+.copy-button:hover {background-color: #0056b3;}
+
+.snippet-container {overflow: hidden;}
+.snippet-header {padding: 0.75rem 1rem;cursor: pointer;font-size: 1rem;background-color: #eeeeee;color:  #111111; border-radius: 8px;cursor: pointer;box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+.snippet-body {display: none;font-family: monospace;}
+.snippet-container.open .snippet-body {display: block;}
+
+.CodeMirror {border: 2px solid #ccc;border-radius: 4px;resize: vertical;}
+
+.light-mode .format-label {color: #888;}
+.light-mode th {background-color: #f2f2f2;}
+.light-mode tr:nth-child(even) {background-color: #fafafa;}
+.light-mode tr:hover {background-color: #e6f7ff;}
+
+.dark-mode .snippet-header {background-color: #333;color:  #ddd; }
+.dark-mode .format-label {color: #aaa;}
+.dark-mode th {background-color: #333;color: #fff;}
+.dark-mode td {border-color: #444;}
+.dark-mode tr:nth-child(even) {background-color: #2a2a2a;}
+.dark-mode tr:hover {background-color: #2c3e50;}
+
+
+.button-group-run-edit {display: flex;width: 100%;gap: 1rem;}
+.button-run-edit {flex: 1;padding: 1rem;font-size: 1rem;font-weight: 600;border: none;border-radius: 8px;cursor: pointer;transition: background 0.3s, color 0.3s;}
+
+.light-mode .button-run-edit {background-color: #f0f0f0;color: #222;box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);}
+.light-mode .button-run-edit:hover {background-color: #e0e0e0;}
+
+.dark-mode .button-run-edit {background-color: #2a2a2a;color: #f5f5f5;box-shadow: 0 0 10px rgba(255, 255, 255, 0.05);}
+.dark-mode .button-run-edit:hover {background-color: #3a3a3a;}
+
+button { padding: 0.5em 1em; background: green; color: white; border: none; cursor: pointer; }
+button:hover { background: #1e7e34; }
+.result_iframe { width:99%; margin-top: 1em;  resize: both;background-color: #515b63;border:1px solid #ccc;}   
+
+.dialog-backdrop {position: fixed;top: 0;left: 0;width: 100vw;height: 100vh;background: rgba(0,0,0,0.5);display: none;justify-content: center;align-items: center;z-index: 10;}
+.dialog {background: #90979e;padding: 20px;width: 90vw;height: 80vh;border-radius: 8px;box-shadow: 0 0 20px rgba(0,0,0,0.3);display: flex;flex-direction: column;}
+.dialog-content {display: flex;gap: 20px;margin-top: 10px;height: calc(100% - 40px);}
+.editor-container, .preview-container {flex: 1;height: 100%;max-height: 100%;overflow: hidden; }
+.result_iframe_dialog {width: 100%;height: 100%;resize: both;border:1px solid #ccc;overflow: auto; }   
+.CodeMirror {width: 100% !important;height: 100% !important;}
+</style><script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/javascript/python.min.js"></script>
+<script src="https://cdn.jsdelivr.net/pyodide/v0.24.1/full/pyodide.js"></script>
+<script>
+const pythonCodeMirrorMap = new Map();
+let pyodide = null;
+let pyodideReady = false;
+async function main() {
+    pyodide = await loadPyodide();
+    await pyodide.loadPackage(['numpy','pandas','matplotlib']);
+    pyodideReady = true;
+}
+main();
+
+ async function runPythonCode(button,textarea_id, iframe_id) {
+        let code = pythonCodeMirrorMap.get(textarea_id).getValue();
+        const iframe = document.getElementById(iframe_id);
+        let doc = iframe.contentDocument || iframe.contentWindow.document;
+ 
+        let result = "";
+
+    if (!pyodideReady) {
+      result = "Pyodide is still loading... Wait for a while and click Run again.";
+    }else{
+    try {
+      await pyodide.runPythonAsync(`
+import sys
+from js import console
+
+class CaptureOutput:
+    def __init__(self):
+        self.data = []
+    def write(self, msg):
+        self.data.append(msg)
+    def flush(self):
+        pass
+
+sys.stdout = sys.stderr = capture = CaptureOutput()
+
+${code}
+
+output = "".join(capture.data)
+`);
+      result = pyodide.globals.get('output');
+ 
+      
+    } catch (err) {
+      result = "Error:\n" + err;
+ 
+    }
+    }
+
+ 
+
+      const html = `
+    <!DOCTYPE html>
+    <html>
+      <head>
+        <title>Output</title>
+        <style>
+          body { font-family: monospace; padding: 1em; background: #1e1e1e; color: #eee; }
+          pre { white-space: pre-wrap; word-break: break-word; }
+          .error { color: red; }
+        </style>
+      </head>
+      <body>
+        <pre id="log">${result} </pre>
+      </body>
+    </html>
+  `;
+        iframe.style.display = "block";
+        iframe.srcdoc = html;  
+        
+
+iframe.onload = function () {
+  const doc = iframe.contentDocument || iframe.contentWindow.document;
+  const contentHeight = Math.max(
+    doc.body.scrollHeight,
+    doc.documentElement.scrollHeight
+  );
+  iframe.style.height = contentHeight + 'px';
+};
+
+    }
+function openEditPythonCodeDialog(id, textarea_id) {
+		        closeAllPythonCodeDialog();
+		        document.getElementById(id).style.display = 'flex';
+         
+ 	        setTimeout(() => {
+		        	 pythonCodeMirrorMap.get(textarea_id).refresh();
+                   
+ 	        }, 100); // 100ms 
+}
+
+function closeAllPythonCodeDialog() {
+		        document.querySelectorAll('.dialog-backdrop').forEach(el => {
+		          el.style.display = 'none';
+		        });
+}		
+</script>
+</head>
+<body>
+<script>const mode = localStorage.getItem('mode') || 'light';document.documentElement.classList.add(`${mode}-mode`);</script>  
+<div class="container"><div class = "chapter-navi-section">
+<a href="pandas-for-data-science-input-and-output-with-pandas.htm" class="nav-button prev">←</a>
+<a href='pandas-for-data-science.htm#visualization-with-pandas' class="nav-button toc-link">Index</a>
+<a href="pandas-for-data-science-performance-optimization-and-best-practices.htm" class="nav-button next">→</a>
+</div>
+<div class='book-header'><h1 class='book-title-toc' id = 'top'>Visualization with Pandas</h1><h3 class='book-subtitle-toc'>Pandas for Data Science</h3></div><h2 id='basic-plotting-with-pandas-plot'>11.1 Basic Plotting with Pandas <code>.plot()</code></h2><p>Pandas comes with built-in plotting capabilities that leverage the powerful Matplotlib library underneath. The <code>.plot()</code> method is available directly on Series and DataFrames, providing a convenient way to visualize data without switching contexts. This allows you to quickly explore your data’s distributions, relationships, and trends.</p><h3 id="common-plot-types-in-pandas">Common Plot Types in Pandas</h3><p>You can create a variety of plot types with <code>.plot()</code> by specifying the <code>kind</code> parameter. Here are some of the most common:</p><ul>
+ <li><strong>Line plot</strong> (<code>kind='line'</code>): Default for Series and DataFrames, ideal for time series or ordered data.</li>
+ <li><strong>Bar plot</strong> (<code>kind='bar'</code> or <code>barh</code> for horizontal): Useful for categorical comparisons.</li>
+ <li><strong>Histogram</strong> (<code>kind='hist'</code>): Shows distribution of a numeric variable.</li>
+ <li><strong>Box plot</strong> (<code>kind='box'</code>): Visualizes the distribution and identifies outliers.</li>
+ <li><strong>Scatter plot</strong> (<code>kind='scatter'</code>): Shows relationships between two numeric variables (DataFrame only).</li>
+</ul><h3 id="basic-plotting-examples">Basic Plotting Examples</h3><p>Let’s explore these plot types using a small example dataset.</p><div>
+ <div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+  <pre><code class="language-python">import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+
+# Sample DataFrame
+data = pd.DataFrame({
+    'Month': pd.date_range('2023-01-01', periods=6, freq='M'),
+    'Sales': [250, 300, 280, 350, 400, 420],
+    'Expenses': [200, 220, 210, 250, 270, 300],
+    'Category': ['A', 'B', 'A', 'B', 'A', 'B']
+})
+
+# Set Month as index for plotting
+data.set_index('Month', inplace=True)</code></pre>
+ </div>
+ <div class="snippet-container">
+  <div class="button-group-run-edit"><button class="button-run-edit" onclick="runPythonCode(this,'6n63t','QHEZ3')">Run</button> <button class="button-run-edit" onclick="openEditPythonCodeDialog('QHEZ3_Dialog','6n63t')">Edit</button>
+  </div> <iframe id="QHEZ3" class="result_iframe" style="display: none;"></iframe>
+  <div id="QHEZ3_Dialog" class="dialog-backdrop">
+   <div class="dialog">
+    <div class="controls"><button onclick="runPythonCode(this,'6n63t','QHEZ3_IFrame')">Run</button> <button onclick="closeAllPythonCodeDialog()">Close</button>
+    </div>
+    <div class="dialog-content">
+     <div class="editor-container">
+      <textarea id="6n63t" class="textarea_dialog" placeholder="Type HTML here...">import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+
+# Sample DataFrame
+data = pd.DataFrame({
+    'Month': pd.date_range('2023-01-01', periods=6, freq='M'),
+    'Sales': [250, 300, 280, 350, 400, 420],
+    'Expenses': [200, 220, 210, 250, 270, 300],
+    'Category': ['A', 'B', 'A', 'B', 'A', 'B']
+})
+
+# Set Month as index for plotting
+data.set_index('Month', inplace=True)</textarea>
+     </div>
+     <div class="preview-container">
+      <iframe id="QHEZ3_IFrame" class="result_iframe_dialog" style="border: none;"></iframe>
+     </div>
+    </div>
+   </div>
+  </div>
+  <script>
+{
+let editor = CodeMirror.fromTextArea(document.getElementById("6n63t"), {
+					mode : "python",
+					lineNumbers : false,
+          lineWrapping: true,
+					tabSize : 2
+});
+const darkmode = localStorage.getItem("mode") || "light";  
+const newTheme = darkmode === "dark" ? "dracula" : "default";
+editor.setSize("50%", "100%");
+editor.setOption("theme", newTheme);
+pythonCodeMirrorMap.set("6n63t", editor);
+
+}
+
+
+</script>
+ </div>
+</div><p><strong>1. Line Plot (Default)</strong></p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-python">data[['Sales', 'Expenses']].plot()
+plt.title('Sales and Expenses Over Time')
+plt.xlabel('Month')
+plt.ylabel('Amount')
+plt.show()</code></pre>
+</div><p>This line plot shows how sales and expenses vary across months, helping to identify trends.</p><p><strong>2. Bar Plot</strong></p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-python">data.groupby('Category')['Sales'].sum().plot(kind='bar', color='skyblue', figsize=(6,4))
+plt.title('Total Sales by Category')
+plt.xlabel('Category')
+plt.ylabel('Sales')
+plt.show()</code></pre>
+</div><p>Bar plots summarize categorical data—in this case, total sales per category.</p><p><strong>3. Histogram</strong></p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-python">data['Sales'].plot(kind='hist', bins=5, color='orange', alpha=0.7)
+plt.title('Sales Distribution')
+plt.xlabel('Sales Amount')
+plt.show()</code></pre>
+</div><p>Histograms reveal the distribution of sales amounts, useful for spotting skewness or clusters.</p><p><strong>4. Box Plot</strong></p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-python">data[['Sales', 'Expenses']].plot(kind='box')
+plt.title('Sales and Expenses Distribution')
+plt.show()</code></pre>
+</div><p>Box plots display quartiles and highlight potential outliers in the data.</p><p><strong>5. Scatter Plot</strong></p><p>Scatter plots require specifying <code>x</code> and <code>y</code> columns explicitly on a DataFrame:</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-python">data.plot(kind='scatter', x='Expenses', y='Sales', color='green')
+plt.title('Sales vs Expenses')
+plt.show()</code></pre>
+</div><p>This helps explore the relationship between expenses and sales.</p><h3 id="customizing-your-plots">Customizing Your Plots</h3><p>The <code>.plot()</code> method accepts several useful parameters:</p><ul>
+ <li><strong><code>color</code></strong>: Set the color of the plot elements.</li>
+ <li><strong><code>figsize</code></strong>: Specify the size of the figure in inches, e.g., <code>(8, 5)</code>.</li>
+ <li><strong><code>title</code></strong>: Add titles via Matplotlib’s <code>plt.title()</code>.</li>
+ <li><strong><code>alpha</code></strong>: Control transparency, helpful for overlapping data.</li>
+</ul><p>Example combining parameters:</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-python">data['Sales'].plot(kind='line', color='purple', figsize=(10,4), alpha=0.8)
+plt.title('Sales Over Time')
+plt.show()</code></pre>
+</div><h3 id="summary">Summary</h3><ul>
+ <li>Pandas <code>.plot()</code> offers quick, convenient visualization methods built on Matplotlib.</li>
+ <li>Choose plot types based on your data: line for trends, bar for categories, histograms and boxplots for distributions, scatter for relationships.</li>
+ <li>Customize plots with colors, figure sizes, and transparency to enhance readability.</li>
+ <li>These simple visualizations are a great first step toward understanding your data before more complex analysis or styling.</li>
+</ul><p>With these tools, you can rapidly generate insightful charts directly from your data frames and series—making exploration fast and interactive.</p><div class = "chapter-navi-section">
+<a href="#top" class="nav-button prev">↑</a>
+<a href='pandas-for-data-science.htm#visualization-with-pandas' class="nav-button toc-link">Index</a>
+<a href="#bottom" class="nav-button next">↓</a>
+</div>
+<h2 id='customizing-plots-titles-labels-and-styles'>11.2 Customizing Plots: Titles, Labels, and Styles</h2><p>While pandas' <code>.plot()</code> method allows for quick visualizations, customizing your plots is crucial for making them presentation-ready and easier to interpret. You can enhance your plots by adding titles, axis labels, legends, and gridlines, as well as adjusting styles such as colors, line types, and markers. These customizations use a combination of <code>.plot()</code> parameters and Matplotlib functions (<code>matplotlib.pyplot</code>).</p><h3 id="basic-plot-customization">Basic Plot Customization</h3><p>Let’s start with a basic line plot using a sample dataset:</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-python">import pandas as pd
+import matplotlib.pyplot as plt
+
+data = pd.DataFrame({
+    'Month': pd.date_range('2023-01-01', periods=6, freq='M'),
+    'Revenue': [2500, 2700, 2600, 2900, 3100, 3300],
+    'Profit': [500, 600, 550, 650, 700, 750]
+})
+data.set_index('Month', inplace=True)
+
+# Basic line plot
+data.plot()
+plt.show()</code></pre>
+</div><h3 id="adding-titles-and-axis-labels">Adding Titles and Axis Labels</h3><p>To make plots informative, add titles and axis labels using Matplotlib functions:</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-python">ax = data.plot(figsize=(8, 4))
+plt.title('Monthly Revenue and Profit (2023)', fontsize=14)
+plt.xlabel('Month')
+plt.ylabel('Amount ($)')
+plt.grid(True)
+plt.legend(title='Metrics')
+plt.tight_layout()
+plt.show()</code></pre>
+</div><ul>
+ <li><code>plt.title()</code> adds a main title.</li>
+ <li><code>plt.xlabel()</code> and <code>plt.ylabel()</code> set axis labels.</li>
+ <li><code>plt.grid(True)</code> adds gridlines for readability.</li>
+ <li><code>plt.legend(title=...)</code> customizes the legend.</li>
+</ul><h3 id="changing-colors-line-styles-and-markers">Changing Colors, Line Styles, and Markers</h3><p>Pandas allows color, line style, and marker control via the <code>plot()</code> method:</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-python">data.plot(
+    figsize=(8, 4),
+    color=['#1f77b4', '#ff7f0e'],
+    linestyle='--',
+    marker='o'
+)
+plt.title('Revenue vs Profit')
+plt.grid(True)
+plt.show()</code></pre>
+</div><ul>
+ <li><code>color</code>: Accepts a list of color codes or names.</li>
+ <li><code>linestyle</code>: <code>'--'</code>, <code>'-'</code>, <code>':'</code>, etc.</li>
+ <li><code>marker</code>: <code>'o'</code> for circle, <code>'s'</code> for square, <code>'x'</code> for cross, etc.</li>
+</ul><p>You can mix these in custom line settings by plotting columns individually:</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-python">ax = data['Revenue'].plot(color='green', linestyle='-', marker='s', label='Revenue')
+data['Profit'].plot(ax=ax, color='blue', linestyle='--', marker='o', label='Profit')
+plt.title('Styled Revenue and Profit Lines')
+plt.legend()
+plt.show()</code></pre>
+</div><h3 id="using-styles-and-themes">Using Styles and Themes</h3><p>Matplotlib supports built-in styles to change the overall look:</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-python">plt.style.use('ggplot')  # Options: 'seaborn', 'fivethirtyeight', 'classic', etc.
+data.plot()
+plt.title('Styled with ggplot')
+plt.show()</code></pre>
+</div><p>Try different styles to match the tone of your presentation or report.</p><h3 id="saving-plots-to-files">Saving Plots to Files</h3><p>Use <code>plt.savefig()</code> to export your customized plots:</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-python">ax = data.plot()
+plt.title('Monthly Business Performance')
+plt.savefig('monthly_performance.png', dpi=300, bbox_inches='tight')</code></pre>
+</div><ul>
+ <li><code>dpi=300</code> ensures high-resolution output.</li>
+ <li><code>bbox_inches='tight'</code> trims whitespace.</li>
+</ul><p>You can save in different formats: <code>.png</code>, <code>.jpg</code>, <code>.svg</code>, <code>.pdf</code>.</p><h3 id="summary">Summary</h3><p>Customizing plots improves their effectiveness and readability. Here are key takeaways:</p><ul>
+ <li>Use <code>plt.title()</code>, <code>xlabel()</code>, and <code>ylabel()</code> for annotations.</li>
+ <li>Style with <code>color</code>, <code>linestyle</code>, and <code>marker</code> parameters.</li>
+ <li>Use <code>plt.style.use()</code> to switch themes.</li>
+ <li>Always <code>savefig()</code> for reusable or report-ready graphics.</li>
+</ul><p>With these tools, you can transform basic plots into clear, compelling visualizations suited for both exploratory analysis and polished presentations.</p><div class = "chapter-navi-section">
+<a href="#top" class="nav-button prev">↑</a>
+<a href='pandas-for-data-science.htm#visualization-with-pandas' class="nav-button toc-link">Index</a>
+<a href="#bottom" class="nav-button next">↓</a>
+</div>
+<h2 id='integrating-with-matplotlib-and-seaborn'>11.3 Integrating with Matplotlib and Seaborn</h2><p>While pandas' built-in <code>.plot()</code> method provides a fast and convenient way to visualize data, integrating with <strong>Matplotlib</strong> and <strong>Seaborn</strong> unlocks more powerful and flexible visualization tools. These libraries are particularly useful when you need customized layouts, complex plots, or statistical visualizations beyond what <code>.plot()</code> can offer.</p><h3 id="extending-pandas-plots-with-matplotlib">Extending Pandas Plots with Matplotlib</h3><p>Every pandas plot returns a <strong>Matplotlib Axes object</strong>, which allows further customization using Matplotlib commands. This is useful when you need precise control over plot elements like annotations, multiple subplots, or layout adjustments.</p><p><strong>Example: Subplots with Matplotlib Axes</strong></p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-python">import pandas as pd
+import matplotlib.pyplot as plt
+
+df = pd.DataFrame({
+    'Month': pd.date_range('2023-01-01', periods=6, freq='M'),
+    'Revenue': [2500, 2700, 2600, 2900, 3100, 3300],
+    'Profit': [500, 600, 550, 650, 700, 750]
+})
+df.set_index('Month', inplace=True)
+
+fig, axes = plt.subplots(2, 1, figsize=(8, 6), sharex=True)
+
+df['Revenue'].plot(ax=axes[0], color='blue', title='Monthly Revenue')
+df['Profit'].plot(ax=axes[1], color='green', title='Monthly Profit')
+
+axes[0].set_ylabel('Revenue ($)')
+axes[1].set_ylabel('Profit ($)')
+plt.tight_layout()
+plt.show()</code></pre>
+</div><h3 id="introducing-seaborn-for-statistical-plots">Introducing Seaborn for Statistical Plots</h3><p><a href="https://seaborn.pydata.org"><strong>Seaborn</strong></a> is built on top of Matplotlib and integrates well with pandas. It offers attractive default themes and statistical visualizations like:</p><ul>
+ <li><strong>Heatmaps</strong> for correlation or frequency tables</li>
+ <li><strong>Pairplots</strong> to explore relationships between multiple variables</li>
+ <li><strong>Regression plots</strong> for linear trend analysis</li>
+</ul><p>To use Seaborn, you must import it and optionally set a theme:</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-python">import seaborn as sns
+sns.set_theme(style="whitegrid")</code></pre>
+</div><h3 id="example-heatmap-from-correlation-matrix">Example: Heatmap from Correlation Matrix</h3><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-python">import seaborn as sns
+import matplotlib.pyplot as plt
+
+# Correlation heatmap
+corr = df.corr()
+sns.heatmap(corr, annot=True, cmap='coolwarm')
+plt.title('Correlation Heatmap')
+plt.show()</code></pre>
+</div><p>Heatmaps are great for identifying strong relationships or redundancies between numeric variables.</p><h3 id="example-pairplot-to-explore-relationships">Example: Pairplot to Explore Relationships</h3><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-python"># Add a category for illustration
+df['Region'] = ['East', 'West', 'East', 'West', 'East', 'West']
+
+sns.pairplot(df, hue='Region')
+plt.suptitle('Pairwise Plots by Region', y=1.02)
+plt.show()</code></pre>
+</div><p>Pairplots show scatter plots and histograms for each variable combination, with optional grouping via <code>hue</code>.</p><h3 id="example-regression-plot">Example: Regression Plot</h3><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-python">sns.regplot(x='Revenue', y='Profit', data=df, marker='o')
+plt.title('Revenue vs. Profit Regression')
+plt.show()</code></pre>
+</div><p>Seaborn automatically fits and plots a regression line with confidence intervals—helpful for detecting trends.</p><h3 id="when-to-use-pandas-matplotlib-or-seaborn">When to Use Pandas, Matplotlib, or Seaborn</h3><table>
+ <thead>
+  <tr>
+   <th>Task</th>
+   <th>Preferred Tool</th>
+  </tr>
+ </thead>
+ <tbody>
+  <tr>
+   <td>Quick exploration</td>
+   <td><code>pandas.plot()</code></td>
+  </tr>
+  <tr>
+   <td>Multi-axes/subplots</td>
+   <td><code>matplotlib.pyplot</code></td>
+  </tr>
+  <tr>
+   <td>Statistical or complex plots</td>
+   <td><code>seaborn</code></td>
+  </tr>
+  <tr>
+   <td>Full layout and figure control</td>
+   <td><code>matplotlib.pyplot</code></td>
+  </tr>
+  <tr>
+   <td>Publication-quality visuals</td>
+   <td><code>seaborn</code> + <code>matplotlib</code></td>
+  </tr>
+ </tbody>
+</table><h3 id="summary">Summary</h3><ul>
+ <li><strong>Matplotlib</strong> extends <code>.plot()</code> with full control over plot structure, annotations, and layout.</li>
+ <li><strong>Seaborn</strong> adds expressive statistical plots that look great by default.</li>
+ <li>You can manipulate pandas data and seamlessly pass it into Seaborn for visualization.</li>
+</ul><p>By combining pandas for data wrangling and Seaborn/Matplotlib for visualization, you gain a robust and professional workflow suitable for both analysis and reporting.</p><div class = "chapter-navi-section">
+<a href="#top" class="nav-button prev">↑</a>
+<a href='pandas-for-data-science.htm#visualization-with-pandas' class="nav-button toc-link">Index</a>
+<a href="#bottom" class="nav-button next">↓</a>
+</div>
+<h2 id='practical-examples-exploratory-data-analysis'>11.4 Practical Examples: Exploratory Data Analysis</h2><p>Exploratory Data Analysis (EDA) is a critical step in any data science project. It helps you understand your data’s structure, detect anomalies, test hypotheses, and uncover relationships using summaries and visualizations. In this section, we’ll walk through a practical EDA workflow using a real-world dataset: a fictional retail sales dataset.</p><h3 id="step-1-load-and-inspect-the-data">Step 1: Load and Inspect the Data</h3><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-python">import pandas as pd
+
+# Simulated retail sales data
+data = pd.DataFrame({
+    'OrderDate': pd.date_range('2023-01-01', periods=12, freq='M'),
+    'Region': ['North', 'South', 'East', 'West'] * 3,
+    'Category': ['Electronics', 'Furniture', 'Office Supplies'] * 4,
+    'Sales': [2000, 1800, 1500, 2200, 1700, 1600, 2100, 1900, 1550, 2300, 1750, 1650],
+    'Profit': [300, 200, 100, 400, 150, 120, 350, 180, 130, 420, 160, 140]
+})
+data['OrderDate'] = pd.to_datetime(data['OrderDate'])
+data.set_index('OrderDate', inplace=True)
+data.head()</code></pre>
+</div><h3 id="step-2-time-series-trend-analysis">Step 2: Time Series Trend Analysis</h3><p>Let’s analyze monthly sales and profit trends.</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-python">import matplotlib.pyplot as plt
+
+data[['Sales', 'Profit']].plot(figsize=(10, 5), marker='o', title='Monthly Sales and Profit')
+plt.ylabel('Amount ($)')
+plt.grid(True)
+plt.tight_layout()
+plt.show()</code></pre>
+</div><p><strong>Interpretation</strong>: This line plot reveals fluctuations over time. You may notice sales peak mid-year while profits vary independently, indicating possible changes in margins or costs.</p><h3 id="step-3-compare-categories">Step 3: Compare Categories</h3><p>Group and compare total sales by product category.</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-python">category_sales = data.groupby('Category')['Sales'].sum().sort_values()
+
+category_sales.plot(kind='barh', color='skyblue', title='Total Sales by Category')
+plt.xlabel('Total Sales')
+plt.tight_layout()
+plt.show()</code></pre>
+</div><p><strong>Interpretation</strong>: Bar plots are great for comparing categories. Here, you might find that Electronics lead in revenue, but it’s also useful to compare with profits to see which category is more efficient.</p><h3 id="step-4-regional-profit-comparison">Step 4: Regional Profit Comparison</h3><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-python">region_profit = data.groupby('Region')['Profit'].mean()
+
+region_profit.plot(kind='bar', color='orange', title='Average Profit by Region')
+plt.ylabel('Avg Profit')
+plt.tight_layout()
+plt.show()</code></pre>
+</div><p><strong>Interpretation</strong>: This comparison may reveal which regions are most profitable, helping guide strategic decisions such as investment or marketing.</p><h3 id="step-5-correlation-analysis">Step 5: Correlation Analysis</h3><p>We use a heatmap to examine relationships between numerical features.</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-python">import seaborn as sns
+
+corr = data[['Sales', 'Profit']].corr()
+sns.heatmap(corr, annot=True, cmap='coolwarm', fmt=".2f")
+plt.title('Correlation Matrix')
+plt.show()</code></pre>
+</div><p><strong>Interpretation</strong>: A strong positive correlation between Sales and Profit would suggest that as sales rise, so does profit. Weak correlation might prompt deeper analysis.</p><h3 id="step-6-multi-factor-analysis">Step 6: Multi-Factor Analysis</h3><p>We can use pivot tables to examine average sales by both region and category.</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-python">pivot = pd.pivot_table(data, values='Sales', index='Region', columns='Category', aggfunc='mean')
+pivot.plot(kind='bar', figsize=(10, 5), title='Avg Sales by Region and Category')
+plt.ylabel('Avg Sales')
+plt.tight_layout()
+plt.show()</code></pre>
+</div><p><strong>Interpretation</strong>: This visualization helps identify which category performs best in each region—valuable for targeted marketing.</p><h3 id="summary">Summary</h3><p>In this example, we:</p><ul>
+ <li>Explored time trends with line plots</li>
+ <li>Compared categories and regions using bar charts</li>
+ <li>Investigated relationships with heatmaps</li>
+ <li>Used pivot tables for multi-dimensional insights</li>
+</ul><p>This end-to-end EDA workflow combines pandas for data wrangling and Matplotlib/Seaborn for visualization, enabling clear and actionable insights. Effective EDA isn’t just about code—it’s about using visual storytelling to understand and communicate your data.</p><div class = "chapter-navi-section">
+<a href="pandas-for-data-science-input-and-output-with-pandas.htm" class="nav-button prev">←</a>
+<a href='pandas-for-data-science.htm#visualization-with-pandas' class="nav-button toc-link">Index</a>
+<a href="pandas-for-data-science-performance-optimization-and-best-practices.htm" class="nav-button next">→</a>
+</div>
+<section class="download-section">
+  <div class="book-cover" style="background-color: #f9f6f1;border: 1px solid #ccc;"> 
+    <div class="book-cover-title" style="font-size: 18px;color: #333;top: 20px;">Pandas for Data Science</div>
+    <div class="book-cover-author">readbytes</div>
+    <div class="book-cover-bottom-stripe" style="background-color: #333;"></div>
+    <img class="book-cover-icon" style="width: 90px;height: 90px;top: 70px;" src="data:image/png;base64,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"/>
+  </div>
+  <div class="download-info">
+    <h2 id='bottom'>Download This Ebook</h2>
+    <p class="format-label">Available formats:</p>
+    <div class="download-buttons">
+      <a href="pandas-for-data-science.pdf" class="download-button">📄 PDF</a>
+      <a href="pandas-for-data-science.epub" class="download-button">📘 EPUB</a>
+    </div>
+  </div>
+</section><div class='related-books'>
+<h2>Python Data Science Books</h2>
+<div class='related-book-list'>
+<a href="pandas-for-data-science.htm">
+<div class="book-cover" style="background-color: #f9f6f1;border: 1px solid #ccc;"> 
+    <div class="book-cover-title" style="font-size: 18px;color: #333;top: 20px;">Pandas for Data Science</div>
+    <div class="book-cover-author">readbytes</div>
+    <div class="book-cover-bottom-stripe" style="background-color: #333;"></div>
+    <img class="book-cover-icon" style="width: 90px;height: 90px;top: 70px;" src="data:image/png;base64,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"/>
+  </div>
+</a>
+
+
+
+<a href='python.htm'><div class='book-cover' style='background-color: #f9f6f1;color: #111111;border: 1px solid #ccc;display: flex;justify-content: center;align-items: center;text-align: center;'>More Python Books</div></a>
+</div>
+</div><script>
+function copyCode(button) {const code = button.nextElementSibling.innerText;navigator.clipboard.writeText(code).then(() => {button.textContent = 'Copied!';setTimeout(() => { button.textContent = 'Copy'; }, 1500);});}
+</script></div>
+<style>
+.site-footer {margin-top: 60px;padding: 20px 0;border-top: 1px solid #eee;text-align: center;font-size: 14px;}
+.site-footer a {text-decoration: none;}
+.light-mode .site-footer {color: #777;border-color: #eee;}
+.dark-mode .site-footer {color: #888;border-color: #333;}
+.light-mode .site-footer a {color: #555;}
+.dark-mode .site-footer a {color: #aaa;}
+.site-footer a:hover {text-decoration: underline;}    
+</style>
+<footer class="site-footer">
+<nav><a href="https://readbytes.github.io">Home</a> |Email:<script type="text/javascript">
+var part1 = 'yinpeng';var part6 = '263';var part2 = Math.pow(2,6);var part3 = String.fromCharCode(part2);var part4 = 'hotmail dot com';var part5 = part1 + String.fromCharCode(part2) + part4;document.write(part1 + part6 + part3 + part4);
+</script>
+| <a id="mode-toggle" href="#">Toggle Dark Mode</a>
+</nav><p>© 2025 — All rights reserved.</p></footer>
+<script>
+const toggleButton = document.getElementById('mode-toggle');
+const body = document.body;
+const savedMode = localStorage.getItem('mode') || 'light';
+body.classList.add(savedMode + '-mode');
+toggleButton.addEventListener('click', () => {
+      const isDark = body.classList.contains('dark-mode');
+      body.classList.toggle('dark-mode', !isDark);
+      body.classList.toggle('light-mode', isDark);
+      localStorage.setItem('mode', isDark ? 'light' : 'dark');
+});
+function copyCode(button) {const code = button.nextElementSibling.innerText;navigator.clipboard.writeText(code).then(() => {button.textContent = 'Copied!';setTimeout(() => { button.textContent = 'Copy'; }, 1500);});}
+</script>
+</body>
+</html>

@@ -1,275 +1,74 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Table of Content for Java Regex</title>
-  <script>
-  const mode = localStorage.getItem('mode') || 'light';
-  document.documentElement.classList.add(`${mode}-mode`);
-  </script>  
-  <link rel='shortcut icon' href='https://java2s.com/style/favicon.ico'>  
-  <style>
-body {
-  font-family: 'Georgia', serif;
-  padding: 40px;
-  max-width: 800px;
-  margin: auto;
-  transition: background-color 0.3s, color 0.3s;
-}
-  .book-title-toc {
-      font-size: 32px;
-      font-weight: bold; 
-    }
+<meta charset="UTF-8">
+<title>Table of Content for Java Regex</title>
+<link rel='shortcut icon' href='https://readbytes.github.io/images/favicon.ico'>
+<link href="https://fonts.googleapis.com/css2?family=Merriweather&display=swap" rel="stylesheet" />
+<link href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.css" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/theme/dracula.min.css"><style>
+html {scroll-behavior: smooth;}  
+body {font-family: 'Merriweather', serif;;margin: 0;padding: 2rem 1rem;font-size: 15px;line-height: 1.5;transition: background-color 0.3s, color 0.3s;}
+.container {max-width: 750px;margin: 0 auto;padding: 1rem 2rem;}
+.light-mode {background-color: #f8f7f5;color: #333;} 
+.dark-mode {background-color: #121212;color: #e0e0e0;}
+a { text-decoration: none;transition: color 0.2s;}
+a:hover {text-decoration: underline;}
+.light-mode a {color: #555;}
+.dark-mode a {color: #aaa;}
+</style><style>
+.related-book-list {display: flex;flex-wrap: wrap;gap: 20px;}
+.related-books {margin-top: 40px;}
+.related-books h2 {font-size: 22px;margin-bottom: 20px;border-bottom: 2px solid #eee;padding-bottom: 8px;}
+.light-mode .related-books h2 {color: #333;border-color: #eee;}
+.dark-mode .related-books h2 {color: #ddd;border-color: #333;}
+</style><style>
+.book-cover {width: 130px;height: 180px;font-family: Arial, sans-serif;position: relative;overflow: hidden;box-shadow: 2px 2px 4px rgba(0,0,0,0.1);}
+.book-cover-bottom-stripe {position: absolute;bottom: 0;left: 0;height: 5px;width: 100%;}
+.book-cover-title {position: absolute;width: 100%;text-align: center;font-weight: bold;}
+.book-cover-icon {position: absolute;left: 50%;transform: translateX(-50%);display: flex;align-items: center;justify-content: center;}
+.book-cover-author {position: absolute;bottom: 10px;width: 100%;text-align: center;font-size: 8px;color: #333;}
+</style><style>
+.book-title-toc {font-size: 32px;font-weight: bold; }
+.book-subtitle-toc {font-size: 18px;margin-top: 8px;font-style: italic;}
+.book-header {text-align: center;margin-bottom: 40px;}
 
-    .book-subtitle-toc {
-      font-size: 18px; 
-      margin-top: 8px;
-      font-style: italic;
-    }
-.book-header {
-  text-align: center;
-  margin-bottom: 40px;
-}
+.toc-container {border-radius: 10px;padding: 30px;margin-bottom: 40px;box-shadow: 0 8px 20px rgba(0,0,0,0.05);}
+h1 {font-size: 24px;text-align: center;margin-bottom: 30px;letter-spacing: 1px;padding-bottom: 10px;}
+.toc-list,.toc-section-list {list-style: none;padding: 0;margin: 0;}
+.toc-section-list {padding-left: 18px;margin-top: 6px;margin-bottom: 20px; }
+.toc-chapter {padding: 20px 0;}
+.chapter-title,.toc-section {display: flex;justify-content: space-between;padding-top: 4px;}
+.chapter-title {font-size: 17px;font-weight: bold;}
+.chapter-page,.section-page {font-style: italic;}
+ 
+ 
+.light-mode .book-title-toc,.light-mode .chapter-title,.light-mode .book-name {color: #222;}
+.light-mode .book-subtitle-toc,.light-mode .book-sub,.light-mode .chapter-page,.light-mode .section-page {color: #666;}
+.light-mode .toc-container { background: #fff;border: 1px solid #ddd;}
+.light-mode h1 {border-bottom: 2px solid #eee;color: #222;}
+.light-mode .toc-section {  color: #444;}
 
-.toc-container {
-  border-radius: 10px;
-  padding: 30px;
-  margin-bottom: 40px;
-  box-shadow: 0 8px 20px rgba(0,0,0,0.05);
-}
+.light-mode .book-cover { border: 1px solid #ccc;box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);}
+.light-mode .book-title,.light-mode .series-name {color: #fff;}
+.light-mode .book-subtitle,.light-mode .book-footer {color: #aaa;}
 
-h1 {
-  font-size: 24px;
-  text-align: center;
-  margin-bottom: 30px;
-  letter-spacing: 1px;
-  padding-bottom: 10px;
-}
+.dark-mode .book-title-toc,.dark-mode .chapter-title,.dark-mode .book-name {color: #f5f5f5;}
+.dark-mode .book-subtitle-toc,.dark-mode .book-sub,.dark-mode .chapter-page,.dark-mode .section-page {color: #aaa;}
+.dark-mode .toc-container {background: #1e1e1e;border: 1px solid #444;}
 
-.toc-list,
-.toc-section-list {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-}
+.dark-mode h1 {border-bottom: 2px solid #333;color: #eee;}
+.dark-mode .toc-section {color: #bbb;}
 
-.toc-section-list {
-  padding-left: 18px;
-  margin-top: 6px;
-  margin-bottom: 20px; 
-}
+.dark-mode .related-books h2 {color: #ddd;border-bottom: 2px solid #333;}
+.dark-mode .book-title,.dark-mode .series-name {color: #fff;}
+.dark-mode .book-subtitle,.dark-mode .book-footer {color: #bbb;}
+.dark-mode .toc-section {color: #ddd;}
 
-.toc-chapter {
-  padding: 20px 0;
-}
-
-.chapter-title,
-.toc-section {
-  display: flex;
-  justify-content: space-between;
-  padding-top: 4px;
-}
-
-.chapter-title {
-  font-size: 17px;
-  font-weight: bold;
-}
-
-.chapter-page,
-.section-page {
-  font-style: italic;
-}
-
-.related-books {
-  margin-top: 40px;
-}
-
-.related-book-list {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 20px;
-}
-    .book-cover {
-      width: 130px;
-      height: 180px;
-      font-family: Arial, sans-serif;
-      position: relative;
-      overflow: hidden;
-      box-shadow: 2px 2px 4px rgba(0,0,0,0.1);
-    }
-    .book-cover-bottom-stripe {
-      position: absolute;
-      bottom: 0;
-      left: 0;
-      height: 5px;
-      width: 100%;
-    }
-    .book-cover-title {
-      position: absolute;
-      width: 100%;
-      text-align: center;
-      font-weight: bold;
-    }
-     
-    .book-cover-icon {
-      position: absolute;
-      left: 50%;
-      transform: translateX(-50%);
-      display: flex;
-      align-items: center;
-      justify-content: center; 
-    }
-
-    .book-cover-author {
-      position: absolute;
-      bottom: 10px;
-      width: 100%;
-      text-align: center;
-      font-size: 8px;
-      color: #333;
-    }
-
-a {
-  text-decoration: none;
-  transition: color 0.2s;
-}
-
-a:hover {
-  text-decoration: underline;
-}
-.site-footer {
-  margin-top: 60px;
-  padding: 20px 0;
-  border-top: 1px solid #eee;
-  text-align: center;
-  font-size: 14px; 
-}
-/* === Light Mode === */
-html.light-mode {
-  background-color: #fdfdfd;
-  color: #333;
-}
-
-.light-mode .book-title-toc,
-.light-mode .chapter-title,
-.light-mode .book-name {
-  color: #222;
-}
-
-.light-mode .book-subtitle-toc,
-.light-mode .book-sub,
-.light-mode .chapter-page,
-.light-mode .section-page {
-  color: #666;
-}
-
-.light-mode .toc-container {
-  background: #fff;
-  border: 1px solid #ddd;
-}
-
-.light-mode h1 {
-  border-bottom: 2px solid #eee;
-  color: #222;
-}
-
-.light-mode .toc-section {
-  color: #444;
-}
-
-.light-mode .related-books h2 {
-  color: #333;
-  border-bottom: 2px solid #eee;
-}
-
-.light-mode .book-cover { 
-  border: 1px solid #ccc;
-  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
-}
-
-.light-mode .book-title,
-.light-mode .series-name {
-  color: #fff;
-}
-
-.light-mode .book-subtitle,
-.light-mode .book-footer {
-  color: #aaa;
-}
-
-.light-mode .site-footer {
-  color: #777;
-  border-color: #eee;
-}
-
-.light-mode a {
-  color: #555;
-}
-
-/* === Dark Mode === */
-html.dark-mode {
-  background-color: #121212;
-  color: #e0e0e0;
-}
-
-.dark-mode .book-title-toc,
-.dark-mode .chapter-title,
-.dark-mode .book-name {
-  color: #f5f5f5;
-}
-
-.dark-mode .book-subtitle-toc,
-.dark-mode .book-sub,
-.dark-mode .chapter-page,
-.dark-mode .section-page {
-  color: #aaa;
-}
-
-.dark-mode .toc-container {
-  background: #1e1e1e;
-  border: 1px solid #444;
-}
-
-.dark-mode h1 {
-  border-bottom: 2px solid #333;
-  color: #eee;
-}
-
-.dark-mode .toc-section {
-  color: #bbb;
-}
-
-.dark-mode .related-books h2 {
-  color: #ddd;
-  border-bottom: 2px solid #333;
-}
-
-
-.dark-mode .book-title,
-.dark-mode .series-name {
-  color: #fff;
-}
-
-.dark-mode .book-subtitle,
-.dark-mode .book-footer {
-  color: #bbb;
-}
-
-.dark-mode .site-footer {
-  color: #aaa;
-  border-color: #333;
-}
-
-.dark-mode .toc-section {
-  color: #ddd;
-}
-
-
-.dark-mode a {
-  color: #aaa;
-}
-
-/* === Responsive === */
 @media (max-width: 600px) {
   .chapter-title,
   .toc-section {
@@ -282,35 +81,17 @@ html.dark-mode {
     margin-top: 4px;
   }
 }
-  </style>
+
+</style>
 </head>
 <body>
-<button onclick="toggleMode()">Toggle Mode</button>
-<script>
-function toggleMode() {
-    const html = document.documentElement;
-    const isDark = html.classList.contains('dark-mode');
-
-    html.classList.toggle('dark-mode', !isDark);
-    html.classList.toggle('light-mode', isDark);
-
-    localStorage.setItem('mode', isDark ? 'light' : 'dark');
-  }
-</script>
-<div class="book-header">
-  <div class="book-title-toc">Java Regex</div>
-  <div class="book-subtitle-toc">From Basics to Advanced</div>
-</div>
-
-<div class="toc-container">
-  <h1>Table of Contents</h1>
-  <ul class="toc-list">
-    <li class='toc-chapter'><a href='java-regex-introduction-to-regular-expressions-in-java.htm'>
+<script>const mode = localStorage.getItem('mode') || 'light';document.documentElement.classList.add(`${mode}-mode`);</script>  
+<div class="container"><div class='book-header'><h1 class='book-title-toc' id = 'top'>Java Regex</h1><h3 class='book-subtitle-toc'>From Basics to Advanced</h3></div><div class='toc-container'><h1>Table of Contents</h1><ul class='toc-list'><li class='toc-chapter'><a href='java-regex-introduction-to-regular-expressions-in-java.htm'>
 <div class='chapter-title'>
 <span id='introduction-to-regular-expressions-in-java'>Chapter 1 : Introduction to Regular Expressions in Java </span>
 <span class='chapter-page'>1</span>
 </div>
-</a><ul class="toc-section-list"><li class="toc-section">
+</a><ul class='toc-section-list'><li class="toc-section">
 <a href='java-regex-introduction-to-regular-expressions-in-java.htm#what-is-a-regular-expression'>
 <span>What is a Regular Expression?</span></a>
 <span class='section-page'>1</span>
@@ -331,7 +112,7 @@ function toggleMode() {
 <span id='basic-regex-syntax-and-patterns'>Chapter 2 : Basic Regex Syntax and Patterns </span>
 <span class='chapter-page'>6</span>
 </div>
-</a><ul class="toc-section-list"><li class="toc-section">
+</a><ul class='toc-section-list'><li class="toc-section">
 <a href='java-regex-basic-regex-syntax-and-patterns.htm#literal-characters-and-metacharacters'>
 <span>Literal characters and metacharacters</span></a>
 <span class='section-page'>6</span>
@@ -356,7 +137,7 @@ function toggleMode() {
 <span id='pattern-and-matcher-classes'>Chapter 3 : Pattern and Matcher Classes </span>
 <span class='chapter-page'>14</span>
 </div>
-</a><ul class="toc-section-list"><li class="toc-section">
+</a><ul class='toc-section-list'><li class="toc-section">
 <a href='java-regex-pattern-and-matcher-classes.htm#understanding-pattern-and-matcher-classes'>
 <span>Understanding <code>Pattern</code> and <code>Matcher</code> classes</span></a>
 <span class='section-page'>14</span>
@@ -381,7 +162,7 @@ function toggleMode() {
 <span id='grouping-and-capturing'>Chapter 4 : Grouping and Capturing </span>
 <span class='chapter-page'>23</span>
 </div>
-</a><ul class="toc-section-list"><li class="toc-section">
+</a><ul class='toc-section-list'><li class="toc-section">
 <a href='java-regex-grouping-and-capturing.htm#capturing-groups-and-backreferences'>
 <span>Capturing groups and backreferences</span></a>
 <span class='section-page'>23</span>
@@ -402,7 +183,7 @@ function toggleMode() {
 <span id='character-classes-and-posix-character-classes'>Chapter 5 : Character Classes and POSIX Character Classes </span>
 <span class='chapter-page'>29</span>
 </div>
-</a><ul class="toc-section-list"><li class="toc-section">
+</a><ul class='toc-section-list'><li class="toc-section">
 <a href='java-regex-character-classes-and-posix-character-classes.htm#custom-character-classes-abc-and-ranges-a-z'>
 <span>Custom character classes <code>[abc]</code> and ranges <code>[a-z]</code></span></a>
 <span class='section-page'>29</span>
@@ -423,7 +204,7 @@ function toggleMode() {
 <span id='advanced-quantifiers-and-lazy-matching'>Chapter 6 : Advanced Quantifiers and Lazy Matching </span>
 <span class='chapter-page'>35</span>
 </div>
-</a><ul class="toc-section-list"><li class="toc-section">
+</a><ul class='toc-section-list'><li class="toc-section">
 <a href='java-regex-advanced-quantifiers-and-lazy-matching.htm#greedy-vs-reluctant-quantifiers'>
 <span>Greedy vs. reluctant quantifiers</span></a>
 <span class='section-page'>35</span>
@@ -444,7 +225,7 @@ function toggleMode() {
 <span id='boundary-matchers-and-word-boundaries'>Chapter 7 : Boundary Matchers and Word Boundaries </span>
 <span class='chapter-page'>42</span>
 </div>
-</a><ul class="toc-section-list"><li class="toc-section">
+</a><ul class='toc-section-list'><li class="toc-section">
 <a href='java-regex-boundary-matchers-and-word-boundaries.htm#word-boundaries-b-and-b'>
 <span>Word boundaries <code>\b</code> and <code>\B</code></span></a>
 <span class='section-page'>42</span>
@@ -461,7 +242,7 @@ function toggleMode() {
 <span id='lookahead-and-lookbehind-assertions'>Chapter 8 : Lookahead and Lookbehind Assertions </span>
 <span class='chapter-page'>46</span>
 </div>
-</a><ul class="toc-section-list"><li class="toc-section">
+</a><ul class='toc-section-list'><li class="toc-section">
 <a href='java-regex-lookahead-and-lookbehind-assertions.htm#positive-lookahead'>
 <span>Positive lookahead <code>(?=...)</code></span></a>
 <span class='section-page'>46</span>
@@ -486,7 +267,7 @@ function toggleMode() {
 <span id='unicode-and-internationalization-in-regex'>Chapter 9 : Unicode and Internationalization in Regex </span>
 <span class='chapter-page'>55</span>
 </div>
-</a><ul class="toc-section-list"><li class="toc-section">
+</a><ul class='toc-section-list'><li class="toc-section">
 <a href='java-regex-unicode-and-internationalization-in-regex.htm#unicode-character-classes-and-scripts-p-isgreek-etc'>
 <span>Unicode character classes and scripts <code>\p{IsGreek}</code>, etc.</span></a>
 <span class='section-page'>55</span>
@@ -507,7 +288,7 @@ function toggleMode() {
 <span id='regex-performance-and-optimization'>Chapter 10 : Regex Performance and Optimization </span>
 <span class='chapter-page'>64</span>
 </div>
-</a><ul class="toc-section-list"><li class="toc-section">
+</a><ul class='toc-section-list'><li class="toc-section">
 <a href='java-regex-regex-performance-and-optimization.htm#common-performance-pitfalls'>
 <span>Common performance pitfalls</span></a>
 <span class='section-page'>64</span>
@@ -528,7 +309,7 @@ function toggleMode() {
 <span id='input-validation-with-regex'>Chapter 11 : Input Validation with Regex </span>
 <span class='chapter-page'>72</span>
 </div>
-</a><ul class="toc-section-list"><li class="toc-section">
+</a><ul class='toc-section-list'><li class="toc-section">
 <a href='java-regex-input-validation-with-regex.htm#validating-emails-phone-numbers-postal-codes'>
 <span>Validating emails, phone numbers, postal codes</span></a>
 <span class='section-page'>72</span>
@@ -545,7 +326,7 @@ function toggleMode() {
 <span id='text-searching-and-extraction'>Chapter 12 : Text Searching and Extraction </span>
 <span class='chapter-page'>78</span>
 </div>
-</a><ul class="toc-section-list"><li class="toc-section">
+</a><ul class='toc-section-list'><li class="toc-section">
 <a href='java-regex-text-searching-and-extraction.htm#searching-multiple-occurrences'>
 <span>Searching multiple occurrences</span></a>
 <span class='section-page'>78</span>
@@ -562,7 +343,7 @@ function toggleMode() {
 <span id='data-cleaning-and-transformation'>Chapter 13 : Data Cleaning and Transformation </span>
 <span class='chapter-page'>84</span>
 </div>
-</a><ul class="toc-section-list"><li class="toc-section">
+</a><ul class='toc-section-list'><li class="toc-section">
 <a href='java-regex-data-cleaning-and-transformation.htm#removing-unwanted-characters'>
 <span>Removing unwanted characters</span></a>
 <span class='section-page'>84</span>
@@ -579,7 +360,7 @@ function toggleMode() {
 <span id='parsing-and-tokenizing-with-regex'>Chapter 14 : Parsing and Tokenizing with Regex </span>
 <span class='chapter-page'>91</span>
 </div>
-</a><ul class="toc-section-list"><li class="toc-section">
+</a><ul class='toc-section-list'><li class="toc-section">
 <a href='java-regex-parsing-and-tokenizing-with-regex.htm#splitting-strings-by-patterns'>
 <span>Splitting strings by patterns</span></a>
 <span class='section-page'>91</span>
@@ -596,7 +377,7 @@ function toggleMode() {
 <span id='regex-debugging-and-testing-tools'>Chapter 15 : Regex Debugging and Testing Tools </span>
 <span class='chapter-page'>98</span>
 </div>
-</a><ul class="toc-section-list"><li class="toc-section">
+</a><ul class='toc-section-list'><li class="toc-section">
 <a href='java-regex-regex-debugging-and-testing-tools.htm#using-online-regex-testers-and-java-ide-regex-support'>
 <span>Using online regex testers and Java IDE regex support</span></a>
 <span class='section-page'>98</span>
@@ -613,7 +394,7 @@ function toggleMode() {
 <span id='integrating-regex-with-java-streams-and-lambdas'>Chapter 16 : Integrating Regex with Java Streams and Lambdas </span>
 <span class='chapter-page'>103</span>
 </div>
-</a><ul class="toc-section-list"><li class="toc-section">
+</a><ul class='toc-section-list'><li class="toc-section">
 <a href='java-regex-integrating-regex-with-java-streams-and-lambdas.htm#using-regex-with-stream-api'>
 <span>Using regex with <code>Stream</code> API</span></a>
 <span class='section-page'>104</span>
@@ -630,7 +411,7 @@ function toggleMode() {
 <span id='appendices'>Chapter 17 : Appendices </span>
 <span class='chapter-page'>111</span>
 </div>
-</a><ul class="toc-section-list"><li class="toc-section">
+</a><ul class='toc-section-list'><li class="toc-section">
 <a href='java-regex-appendices.htm#regex-syntax-quick-reference'>
 <span>Regex Syntax Quick Reference</span></a>
 <span class='section-page'>111</span>
@@ -646,11 +427,7 @@ function toggleMode() {
 <a href='java-regex-appendices.htm#glossary-of-terms'>
 <span>Glossary of Terms</span></a>
 <span class='section-page'>116</span>
-</li></ul></li>
-  </ul>
-</div>
-
-<div class='related-books'>
+</li></ul></li></ul></div><div class='related-books'>
 <h2>Java In-Depth Books</h2>
 <div class='related-book-list'>
 <a href="java-io-and-nio.htm">
@@ -706,16 +483,34 @@ function toggleMode() {
 
 <a href='java.htm'><div class='book-cover' style='background-color: #f9f6f1;color: #111111;border: 1px solid #ccc;display: flex;justify-content: center;align-items: center;text-align: center;'>More Java Books</div></a>
 </div>
-</div>
+</div></div>
+<style>
+.site-footer {margin-top: 60px;padding: 20px 0;border-top: 1px solid #eee;text-align: center;font-size: 14px;}
+.site-footer a {text-decoration: none;}
+.light-mode .site-footer {color: #777;border-color: #eee;}
+.dark-mode .site-footer {color: #888;border-color: #333;}
+.light-mode .site-footer a {color: #555;}
+.dark-mode .site-footer a {color: #aaa;}
+.site-footer a:hover {text-decoration: underline;}    
+</style>
 <footer class="site-footer">
-    <nav>
-      <a href="https://readbytes.github.io">Home</a> | 
-      Email:<script language="JavaScript" type="text/javascript">
+<nav><a href="https://readbytes.github.io">Home</a> |Email:<script type="text/javascript">
 var part1 = 'yinpeng';var part6 = '263';var part2 = Math.pow(2,6);var part3 = String.fromCharCode(part2);var part4 = 'hotmail dot com';var part5 = part1 + String.fromCharCode(part2) + part4;document.write(part1 + part6 + part3 + part4);
 </script>
-    </nav>
-  <p>© 2025 — All rights reserved.</p>   
-</footer>
-
+| <a id="mode-toggle" href="#">Toggle Dark Mode</a>
+</nav><p>© 2025 — All rights reserved.</p></footer>
+<script>
+const toggleButton = document.getElementById('mode-toggle');
+const body = document.body;
+const savedMode = localStorage.getItem('mode') || 'light';
+body.classList.add(savedMode + '-mode');
+toggleButton.addEventListener('click', () => {
+      const isDark = body.classList.contains('dark-mode');
+      body.classList.toggle('dark-mode', !isDark);
+      body.classList.toggle('light-mode', isDark);
+      localStorage.setItem('mode', isDark ? 'light' : 'dark');
+});
+function copyCode(button) {const code = button.nextElementSibling.innerText;navigator.clipboard.writeText(code).then(() => {button.textContent = 'Copied!';setTimeout(() => { button.textContent = 'Copy'; }, 1500);});}
+</script>
 </body>
 </html>

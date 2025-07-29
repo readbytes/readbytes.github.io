@@ -1,468 +1,171 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
+<meta charset="UTF-8">
 <title>Java Syntax Methods and Scope</title>
-<link rel='shortcut icon' href='https://java2s.com/style/favicon.ico'>
+<link rel='shortcut icon' href='https://readbytes.github.io/images/favicon.ico'>
 <link href="https://fonts.googleapis.com/css2?family=Merriweather&display=swap" rel="stylesheet" />
 <link href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.css" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/theme/dracula.min.css"><style>
+html {scroll-behavior: smooth;}  
+body {font-family: 'Merriweather', serif;;margin: 0;padding: 2rem 1rem;font-size: 15px;line-height: 1.5;transition: background-color 0.3s, color 0.3s;}
+.container {max-width: 750px;margin: 0 auto;padding: 1rem 2rem;}
+.light-mode {background-color: #f8f7f5;color: #333;} 
+.dark-mode {background-color: #121212;color: #e0e0e0;}
+a { text-decoration: none;transition: color 0.2s;}
+a:hover {text-decoration: underline;}
+.light-mode a {color: #555;}
+.dark-mode a {color: #aaa;}
+</style><style>
+.related-book-list {display: flex;flex-wrap: wrap;gap: 20px;}
+.related-books {margin-top: 40px;}
+.related-books h2 {font-size: 22px;margin-bottom: 20px;border-bottom: 2px solid #eee;padding-bottom: 8px;}
+.light-mode .related-books h2 {color: #333;border-color: #eee;}
+.dark-mode .related-books h2 {color: #ddd;border-color: #333;}
+</style><style>
+.book-cover {width: 130px;height: 180px;font-family: Arial, sans-serif;position: relative;overflow: hidden;box-shadow: 2px 2px 4px rgba(0,0,0,0.1);}
+.book-cover-bottom-stripe {position: absolute;bottom: 0;left: 0;height: 5px;width: 100%;}
+.book-cover-title {position: absolute;width: 100%;text-align: center;font-weight: bold;}
+.book-cover-icon {position: absolute;left: 50%;transform: translateX(-50%);display: flex;align-items: center;justify-content: center;}
+.book-cover-author {position: absolute;bottom: 10px;width: 100%;text-align: center;font-size: 8px;color: #333;}
+</style><style>
+.book-title-toc {font-size: 32px;font-weight: bold; }
+.book-subtitle-toc {font-size: 18px;margin-top: 8px;font-style: italic;}
+.book-header {text-align: center;margin-bottom: 40px;}
 
+.toc-container {border-radius: 10px;padding: 30px;margin-bottom: 40px;box-shadow: 0 8px 20px rgba(0,0,0,0.05);}
+h1 {font-size: 24px;text-align: center;margin-bottom: 30px;letter-spacing: 1px;padding-bottom: 10px;}
+.toc-list,.toc-section-list {list-style: none;padding: 0;margin: 0;}
+.toc-section-list {padding-left: 18px;margin-top: 6px;margin-bottom: 20px; }
+.toc-chapter {padding: 20px 0;}
+.chapter-title,.toc-section {display: flex;justify-content: space-between;padding-top: 4px;}
+.chapter-title {font-size: 17px;font-weight: bold;}
+.chapter-page,.section-page {font-style: italic;}
+ 
+ 
+.light-mode .book-title-toc,.light-mode .chapter-title,.light-mode .book-name {color: #222;}
+.light-mode .book-subtitle-toc,.light-mode .book-sub,.light-mode .chapter-page,.light-mode .section-page {color: #666;}
+.light-mode .toc-container { background: #fff;border: 1px solid #ddd;}
+.light-mode h1 {border-bottom: 2px solid #eee;color: #222;}
+.light-mode .toc-section {  color: #444;}
 
-  <script>
-  const mode = localStorage.getItem('mode') || 'light';
-  document.documentElement.classList.add(`${mode}-mode`);
-  </script>   
-<style> 
-html {
-  scroll-behavior: smooth;
+.light-mode .book-cover { border: 1px solid #ccc;box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);}
+.light-mode .book-title,.light-mode .series-name {color: #fff;}
+.light-mode .book-subtitle,.light-mode .book-footer {color: #aaa;}
+
+.dark-mode .book-title-toc,.dark-mode .chapter-title,.dark-mode .book-name {color: #f5f5f5;}
+.dark-mode .book-subtitle-toc,.dark-mode .book-sub,.dark-mode .chapter-page,.dark-mode .section-page {color: #aaa;}
+.dark-mode .toc-container {background: #1e1e1e;border: 1px solid #444;}
+
+.dark-mode h1 {border-bottom: 2px solid #333;color: #eee;}
+.dark-mode .toc-section {color: #bbb;}
+
+.dark-mode .related-books h2 {color: #ddd;border-bottom: 2px solid #333;}
+.dark-mode .book-title,.dark-mode .series-name {color: #fff;}
+.dark-mode .book-subtitle,.dark-mode .book-footer {color: #bbb;}
+.dark-mode .toc-section {color: #ddd;}
+
+@media (max-width: 600px) {
+  .chapter-title,
+  .toc-section {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .chapter-page,
+  .section-page {
+    margin-top: 4px;
+  }
 }
 
-body {
-  font-family: 'Merriweather', serif;
-  margin: 0;
-  padding: 2rem 1rem;
-  font-size: 15px;
-  line-height: 1.5;
-  transition: background-color 0.3s, color 0.3s;
-}
+</style><style>
+.light-mode .container {box-shadow: 0 0 15px rgba(0,0,0,0.1);}
+.dark-mode .container {box-shadow: 0 0 15px rgba(255, 255, 255, 0.05);}
 
-.container {
-  max-width: 700px;
-  margin: 0 auto;
-  padding: 1rem 2rem;
-  box-shadow: 0 0 15px rgba(0,0,0,0.1);
-}
-
-h1, h2, h3 {
-  font-weight: 600;
-  margin-top: 2.5rem;
-  margin-bottom: 1rem;
-  line-height: 1.2;
-}
-
+h1, h2, h3 {font-weight: 600;margin-top: 2.5rem;margin-bottom: 1rem;line-height: 1.2;}
 h1 { font-size: 1.8rem; }
 h2 { font-size: 1.4rem; }
 h3 { font-size: 1.2rem; }
 
-table {
-  width: 100%;
-  border-collapse: collapse;
-  font-family: sans-serif;
-  font-size: 1em;
-  margin: 1em 0;
-}
+table {width: 100%;border-collapse: collapse;font-family: sans-serif;font-size: 1em;margin: 1em 0;}
+th, td {padding: 0.6em 1em;text-align: left;border: 1px solid;}
+tr:nth-child(even) {  background-color: inherit;}
+tr:hover { background-color: inherit;}
 
-th, td {
-  padding: 0.6em 1em;
-  text-align: left;
-  border: 1px solid;
-}
+code {color: #d35400;}
 
-tr:nth-child(even) {
-  background-color: inherit;
-}
-
-tr:hover {
-  background-color: inherit;
-}
-
-a {
-  text-decoration: none;
-  transition: color 0.2s;
-}
-
-a:hover {
-  text-decoration: underline;
-}
-
-code {
-  color: #d35400;
-}
-
-.book-title-chapter {
-  font-family: 'Merriweather', serif;
-  font-size: 2rem;
-  font-weight: bold;
-  text-align: center;
-  margin-bottom: 2rem;
-  border-bottom: 2px solid;
-  padding-bottom: 0.5rem;
-}
-
-.book-subtitle-chapter {
-  text-align: center;
-  font-size: 1rem;
-  margin-top: -1rem;
-  margin-bottom: 2rem;
-}
-
-.related-books {
-  margin-top: 40px;
-}
-
-.related-book-list {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 20px;
-}
-
-    .book-cover {
-      width: 130px;
-      height: 180px;
-      font-family: Arial, sans-serif;
-      position: relative;
-      overflow: hidden;      
-      line-height: normal;
-      box-shadow: 2px 2px 4px rgba(0,0,0,0.1);
-    }
-    .book-cover-bottom-stripe {
-      position: absolute;
-      bottom: 0;
-      left: 0;
-      height: 5px;
-      width: 100%;
-    }
-    .book-cover-title {
-      position: absolute;
-      width: 100%;
-      text-align: center;
-      font-weight: bold;
-    }
-     
-    .book-cover-icon {
-      position: absolute;
-      left: 50%;
-      transform: translateX(-50%);
-      display: flex;
-      align-items: center;
-      justify-content: center; 
-    }
-
-    .book-cover-author {
-      position: absolute;
-      bottom: 10px;
-      width: 100%;
-      text-align: center;
-      font-size: 8px;
-      color: #333;
-    }
-
-.page-footer {
-  margin-top: 4rem;
-  padding: 1rem 0;
-  text-align: center;
-  font-size: 0.85rem;
-  border-top: 1px solid;
-}
-
-.chapter-navi-section {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding-bottom: 10px;
-}
-
-.nav-link {
-  color: inherit;
-  text-decoration: none;
-  opacity: 0.5;
-  transition: opacity 0.3s ease, text-decoration 0.3s ease;
-}
-
-.nav-link:hover {
-  opacity: 0.9;
-  text-decoration: underline;
-}
-
+.chapter-navi-section {display: flex;justify-content: space-between;align-items: center;padding-bottom: 10px;padding-top: 10px;}
+.nav-link {color: inherit;text-decoration: none;opacity: 0.5;transition: opacity 0.3s ease, text-decoration 0.3s ease;}
+.nav-link:hover {opacity: 0.9;text-decoration: underline;}
 .prev { text-align: left; }
 .toc-link { text-align: center; }
 .next { text-align: right; }
 
-.download-section {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 2rem;
-  padding: 2rem 1rem;
-  max-width: 600px;
-  margin: 3rem auto;
-  border-radius: 12px;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-}
+.download-section {display: flex;align-items: center;justify-content: center;gap: 2rem;padding: 2rem 1rem;max-width: 600px;margin: 3rem auto;border-radius: 12px;box-shadow: 0 4px 10px rgba(0,0,0,0.05);}
+.download-info h2 {margin: 0 0 0.5rem;font-size: 1.2rem;}
+.format-label {margin: 0 0 0.5rem;font-size: 0.95rem;}
+.download-buttons {display: flex;gap: 1rem;}
+.download-button {background-color: #4A90E2;color: white;padding: 0.5em 1.2em;border-radius: 25px;font-size: 0.95rem;text-decoration: none;transition: background-color 0.3s ease;}
+.download-button:hover {background-color: #357ABD;}
 
-.download-info h2 {
-  margin: 0 0 0.5rem;
-  font-size: 1.2rem;
-}
+.code-block {position: relative;margin-bottom: 1em;}
+.copy-button {background: transparent;color: white;position: absolute;top: 8px;right: 8px;border: none;padding: 4px 8px;font-size: 12px;border-radius: 4px;cursor: pointer;z-index: 1;}
+.copy-button:hover {background-color: #0056b3;}
 
-.format-label {
-  margin: 0 0 0.5rem;
-  font-size: 0.95rem;
-}
+.snippet-container {overflow: hidden;}
+.snippet-header {padding: 0.75rem 1rem;cursor: pointer;font-size: 1rem;background-color: #eeeeee;color:  #111111; border-radius: 8px;cursor: pointer;box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+.snippet-body {display: none;font-family: monospace;}
+.snippet-container.open .snippet-body {display: block;}
 
-.download-buttons {
-  display: flex;
-  gap: 1rem;
-}
+.CodeMirror {border: 2px solid #ccc;border-radius: 4px;resize: vertical;}
 
-.download-button {
-  background-color: #4A90E2;
-  color: white;
-  padding: 0.5em 1.2em;
-  border-radius: 25px;
-  font-size: 0.95rem;
-  text-decoration: none;
-  transition: background-color 0.3s ease;
-}
+.light-mode .format-label {color: #888;}
+.light-mode th {background-color: #f2f2f2;}
+.light-mode tr:nth-child(even) {background-color: #fafafa;}
+.light-mode tr:hover {background-color: #e6f7ff;}
 
-.download-button:hover {
-  background-color: #357ABD;
-}
-
-.code-block {
-  position: relative;
-  margin-bottom: 1em;
-}
-
-.copy-button {
-  background: transparent;
-  color: white;
-  position: absolute;
-  top: 8px;
-  right: 8px;
-  border: none;
-  padding: 4px 8px;
-  font-size: 12px;
-  border-radius: 4px;
-  cursor: pointer;
-  z-index: 1;
-}
-
-.copy-button:hover {
-  background-color: #0056b3;
-}
-
-.snippet-container {
-  overflow: hidden;
-}
-
-.snippet-header {
-  padding: 0.75rem 1rem;
-  cursor: pointer;
-  font-size: 1rem;
-    background-color: #eeeeee;
-    color:  #111111; 
-    border-radius: 8px;
-    cursor: pointer;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.1);  
-}
-
-.snippet-body {
-  display: none;
-  font-family: monospace;
-}
-
-.snippet-container.open .snippet-body {
-  display: block;
-}
-
-.CodeMirror {
-  border: 2px solid #ccc;
-  border-radius: 4px;
-  resize: vertical;
-}
-
-/* === Light Mode === */
-html.light-mode {
-  background-color: #f8f7f5;
-  color: #333;
-}
-
-html.light-mode .container {
-  background: white;
-}
-
-html.light-mode .book-title-chapter {
-  color: #2c3e50;
-  border-color: #ccc;
-}
-html.light-mode .book-subtitle-chapter{
-  color: #888;
-}
-
-html.light-mode .page-footer,
-html.light-mode .series-name,
-html.light-mode .book-subtitle,
-html.light-mode .format-label {
-  color: #888;
-}
-
-html.light-mode .related-books h2 {
-  color: #333;
-  border-bottom: 2px solid #eee;
-}
-
-html.light-mode .book-title {
-  color: #fff;
-}
-
-html.light-mode .book-cover {
-  border: 1px solid #ccc;
-}
-
-html.light-mode th {
-  background-color: #f2f2f2;
-}
-
-html.light-mode tr:nth-child(even) {
-  background-color: #fafafa;
-}
-
-html.light-mode tr:hover {
-  background-color: #e6f7ff;
-}
-
-html.light-mode a,
-html.light-mode .page-footer a {
-  color: #000;
-}
-
-/* === Dark Mode === */
-html.dark-mode {
-  background-color: #181818;
-  color: #e0e0e0;
-}
-
-html.dark-mode .container {
-  background: #222;
-}
-
-html.dark-mode .book-title-chapter {
-  color: #ddd;
-  border-color: #444;
-}
-
-html.dark-mode .snippet-header {
-    background-color: #333;
-    color:  #ddd; 
-}
+.dark-mode .snippet-header {background-color: #333;color:  #ddd; }
+.dark-mode .format-label {color: #aaa;}
+.dark-mode th {background-color: #333;color: #fff;}
+.dark-mode td {border-color: #444;}
+.dark-mode tr:nth-child(even) {background-color: #2a2a2a;}
+.dark-mode tr:hover {background-color: #2c3e50;}
 
 
-html.dark-mode .book-subtitle-chapter,
-html.dark-mode .page-footer,
-html.dark-mode .series-name,
-html.dark-mode .book-subtitle,
-html.dark-mode .book-footer,
-html.dark-mode .format-label {
-  color: #aaa;
-}
+.button-group-run-edit {display: flex;width: 100%;gap: 1rem;}
+.button-run-edit {flex: 1;padding: 1rem;font-size: 1rem;font-weight: 600;border: none;border-radius: 8px;cursor: pointer;transition: background 0.3s, color 0.3s;}
 
-html.dark-mode .related-books h2 {
-  color: #ddd;
-  border-bottom: 2px solid #333;
-}
+.light-mode .button-run-edit {background-color: #f0f0f0;color: #222;box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);}
+.light-mode .button-run-edit:hover {background-color: #e0e0e0;}
 
-html.dark-mode .book-title {
-  color: #fff;
-}
+.dark-mode .button-run-edit {background-color: #2a2a2a;color: #f5f5f5;box-shadow: 0 0 10px rgba(255, 255, 255, 0.05);}
+.dark-mode .button-run-edit:hover {background-color: #3a3a3a;}
 
-html.dark-mode .book-cover {
-  border: 1px solid #555;
-}
+button { padding: 0.5em 1em; background: green; color: white; border: none; cursor: pointer; }
+button:hover { background: #1e7e34; }
+.result_iframe { width:99%; margin-top: 1em;  resize: both;background-color: #515b63;border:1px solid #ccc;}   
 
-html.dark-mode th {
-  background-color: #333;
-  color: #fff;
-}
-
-html.dark-mode td {
-  border-color: #444;
-}
-
-html.dark-mode tr:nth-child(even) {
-  background-color: #2a2a2a;
-}
-
-html.dark-mode tr:hover {
-  background-color: #2c3e50;
-}
-
-html.dark-mode a,
-html.dark-mode .page-footer a {
-  color: #eee;
-}
-
-    .dialog-backdrop {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100vw;
-      height: 100vh;
-      background: rgba(0,0,0,0.5);
-      display: none;
-      justify-content: center;
-      align-items: center;
-      z-index: 10;
-    }
-
-    .dialog {
-      background: white;
-      padding: 20px;
-      width: 90vw;
-      height: 80vh;
-      border-radius: 8px;
-      box-shadow: 0 0 20px rgba(0,0,0,0.3);
-      display: flex;
-      flex-direction: column;
-    }
-    .dialog-content {
-      display: flex;
-      flex: 1;
-      gap: 20px;
-      margin-top: 10px;
-    }
-    .dialog h2 {
-      margin-top: 0;
-    }
-
-    .textarea_dialog {
-      width: 50%;
-      height: 100%;
-      resize: none;
-      font-family: monospace;
-      font-size: 14px;
-      padding: 10px;
-      box-sizing: border-box;
-      border: 1px solid #ccc;
-    }
-
-    .iframe_dialog {
-      width: 50%;
-      height: 100%;
-      border: 1px solid #ccc;
-    }
-    .controls_dialog {
-      display: flex;
-      justify-content: space-between;
-      margin-top: 10px;
-    }    
-    button { padding: 0.5em 1em; background: green; color: white; border: none; cursor: pointer; }
-    button:hover { background: #1e7e34; }
-    .result_iframe { width:99%; height:200px; margin-top: 1em;  resize: both;border:1px solid #ccc;}        
+.dialog-backdrop {position: fixed;top: 0;left: 0;width: 100vw;height: 100vh;background: rgba(0,0,0,0.5);display: none;justify-content: center;align-items: center;z-index: 10;}
+.dialog {background: #90979e;padding: 20px;width: 90vw;height: 80vh;border-radius: 8px;box-shadow: 0 0 20px rgba(0,0,0,0.3);display: flex;flex-direction: column;}
+.dialog-content {display: flex;gap: 20px;margin-top: 10px;height: calc(100% - 40px);}
+.editor-container, .preview-container {flex: 1;height: 100%;max-height: 100%;overflow: hidden; }
+.result_iframe_dialog {width: 100%;height: 100%;resize: both;border:1px solid #ccc;overflow: auto; }   
+.CodeMirror {width: 100% !important;height: 100% !important;}
 </style>
 </head>
-<body> 
-  <div class="container">
-    <div class = "chapter-navi-section">
+<body>
+<script>const mode = localStorage.getItem('mode') || 'light';document.documentElement.classList.add(`${mode}-mode`);</script>  
+<div class="container"><div class = "chapter-navi-section">
 <a href="java-syntax-control-flow-syntax.htm" class="nav-button prev">←</a>
 <a href='java-syntax.htm#methods-and-scope' class="nav-button toc-link">Index</a>
 <a href="java-syntax-classes-objects-and-members.htm" class="nav-button next">→</a>
 </div>
-
-    <h1 class="book-title-chapter" id = 'top'>Methods and Scope</h1>
-    <h3 class="book-subtitle-chapter">Java Syntax</h3>   
-    <!-- <h1 class ="chapter-title"></h1> -->
-    <h2 id='method-declaration-syntax'>5.1 Method Declaration Syntax</h2><p>In Java, a method is a reusable block of code that performs a specific task. Methods are declared inside classes and can accept parameters, return values, or perform actions without returning anything.</p><h4 id="basic-syntax">Basic Syntax</h4><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+<div class='book-header'><h1 class='book-title-toc' id = 'top'>Methods and Scope</h1><h3 class='book-subtitle-toc'>Java Syntax</h3></div><h2 id='method-declaration-syntax'>5.1 Method Declaration Syntax</h2><p>In Java, a method is a reusable block of code that performs a specific task. Methods are declared inside classes and can accept parameters, return values, or perform actions without returning anything.</p><h4 id="basic-syntax">Basic Syntax</h4><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-java">accessModifier returnType methodName(parameterList) {
     // method body
 }</code></pre>
@@ -471,7 +174,8 @@ html.dark-mode .page-footer a {
  <li><strong>returnType</strong>: Type of value returned (e.g., <code>int</code>, <code>void</code>, <code>String</code>).</li>
  <li><strong>methodName</strong>: Follows camelCase convention and describes what the method does.</li>
  <li><strong>parameterList</strong>: A comma-separated list of input variables with type annotations.</li>
-</ul><h4 id="example">Example</h4><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</ul><h4 id="example">Example</h4><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-java">public class Calculator {
     
     public int add(int a, int b) {
@@ -489,7 +193,8 @@ html.dark-mode .page-footer a {
  <li>It returns an <code>int</code>,</li>
  <li>It takes two <code>int</code> parameters, and</li>
  <li>It returns the sum of those two values.</li>
-</ul><h4 id="method-signature">Method Signature</h4><p>The <em>method signature</em> consists of the method's name and parameter types. It's how the Java compiler differentiates methods. For example:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</ul><h4 id="method-signature">Method Signature</h4><p>The <em>method signature</em> consists of the method's name and parameter types. It's how the Java compiler differentiates methods. For example:</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-java">public void log(String message)
 public void log(String message, int level)</code></pre>
 </div><p>These are two different methods due to different parameter lists.</p><h4 id="reflection">Reflection</h4><p>Good method naming is crucial—names should be descriptive but concise. Avoid overly generic names like <code>doStuff()</code> or <code>handle()</code> unless within a very narrow, self-evident context.</p><p>Access modifiers affect code organization. Use <code>private</code> for helper methods and <code>public</code> for functionality exposed to other classes.</p><p>A well-declared method improves code clarity, modularity, and testability. Understanding method declaration syntax lays the groundwork for building scalable, maintainable Java applications.</p><div class = "chapter-navi-section">
@@ -497,38 +202,43 @@ public void log(String message, int level)</code></pre>
 <a href='java-syntax.htm#methods-and-scope' class="nav-button toc-link">Index</a>
 <a href="#bottom" class="nav-button next">↓</a>
 </div>
-<h2 id='parameters-return-types-and-return'>5.2 Parameters, Return Types, and <code>return</code></h2><p>In Java, methods can accept <em>parameters</em> (inputs) and optionally <em>return</em> a value. These features enable methods to process dynamic data and produce results, supporting modular, reusable code.</p><h4 id="defining-parameters">Defining Parameters</h4><p>Parameters are defined inside parentheses in the method declaration. Each parameter has a type and a name:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+<h2 id='parameters-return-types-and-return'>5.2 Parameters, Return Types, and <code>return</code></h2><p>In Java, methods can accept <em>parameters</em> (inputs) and optionally <em>return</em> a value. These features enable methods to process dynamic data and produce results, supporting modular, reusable code.</p><h4 id="defining-parameters">Defining Parameters</h4><p>Parameters are defined inside parentheses in the method declaration. Each parameter has a type and a name:</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-java">public void greet(String name) {
     System.out.println("Hello, " + name + "!");
 }</code></pre>
-</div><p>The <code>greet</code> method takes one parameter, <code>name</code>, of type <code>String</code>.</p><p>You can define multiple parameters by separating them with commas:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</div><p>The <code>greet</code> method takes one parameter, <code>name</code>, of type <code>String</code>.</p><p>You can define multiple parameters by separating them with commas:</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-java">public int multiply(int a, int b) {
     return a * b;
 }</code></pre>
 </div><h4 id="return-types-and-return">Return Types and <code>return</code></h4><p>Every method must declare a return type:</p><ul>
  <li>Use <code>void</code> if the method does not return a value.</li>
  <li>Specify a type (<code>int</code>, <code>double</code>, <code>String</code>, etc.) if it returns a value.</li>
-</ul><p>Example with return value:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</ul><p>Example with return value:</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-java">public double areaOfCircle(double radius) {
     return Math.PI * radius * radius;
 }</code></pre>
 </div><p>The <code>return</code> statement:</p><ul>
  <li>Ends the method's execution.</li>
  <li>Sends a value back to the caller.</li>
-</ul><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</ul><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-java">int result = multiply(4, 5);  // result = 20</code></pre>
-</div><p><strong>Important</strong>: If a method has a return type other than <code>void</code>, it <em>must</em> include a <code>return</code> statement that returns a matching type. Missing a return in such cases causes a compilation error.</p><p>Example of a void method:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</div><p><strong>Important</strong>: If a method has a return type other than <code>void</code>, it <em>must</em> include a <code>return</code> statement that returns a matching type. Missing a return in such cases causes a compilation error.</p><p>Example of a void method:</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-java">public void printLine() {
     System.out.println("----------");
 }</code></pre>
-</div><div class="snippet-container" id="WcejS">
- <div class="snippet-header" onclick="toggleSnippet('WcejS')">
+</div><div class="snippet-container" id="eLVBL">
+ <div class="snippet-header" onclick="toggleSnippet('eLVBL')">
   Click to view full runnable Code
  </div>
  <div class="snippet-body">
-  <div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
-   <pre><code class="language-java">
-public class MethodExample {
+  <div class="code-block">
+   <button class="copy-button" onclick="copyCode(this)">▯</button>
+   <pre><code class="language-java">public class MethodExample {
 
     // Method with one parameter, no return (void)
     public void greet(String name) {
@@ -563,8 +273,7 @@ public class MethodExample {
 
         example.printLine();
     }
-} 
-</code></pre>
+}</code></pre>
   </div>
  </div>
 </div><h4 id="reflection">Reflection</h4><p>Choosing meaningful parameter names improves code clarity. Avoid vague names like <code>x</code> or <code>val</code> unless in mathematical or short-lived contexts.</p><p>A well-designed method should:</p><ul>
@@ -576,7 +285,8 @@ public class MethodExample {
 <a href='java-syntax.htm#methods-and-scope' class="nav-button toc-link">Index</a>
 <a href="#bottom" class="nav-button next">↓</a>
 </div>
-<h2 id='method-overloading'>5.3 Method Overloading</h2><p><strong>Method overloading</strong> allows you to define multiple methods with the same name but different parameter lists in the same class. This enables flexibility while keeping method names intuitive and consistent.</p><h4 id="basic-syntax-and-examples">Basic Syntax and Examples</h4><p>Java distinguishes overloaded methods by the <strong>number</strong>, <strong>type</strong>, or <strong>order</strong> of parameters.</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+<h2 id='method-overloading'>5.3 Method Overloading</h2><p><strong>Method overloading</strong> allows you to define multiple methods with the same name but different parameter lists in the same class. This enables flexibility while keeping method names intuitive and consistent.</p><h4 id="basic-syntax-and-examples">Basic Syntax and Examples</h4><p>Java distinguishes overloaded methods by the <strong>number</strong>, <strong>type</strong>, or <strong>order</strong> of parameters.</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-java">public class Printer {
 
     // Overloaded methods
@@ -604,14 +314,16 @@ public class MethodExample {
         p.print(100, "Score");
     }
 }</code></pre>
-</div><p>Each method has a unique signature (name + parameter types), even though they all share the same name.</p><h4 id="how-java-chooses-the-right-method">How Java Chooses the Right Method</h4><p>At compile time, Java selects the method that best matches the provided argument types. If multiple methods match equally well, a compilation error may occur due to ambiguity.</p><p>For example:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</div><p>Each method has a unique signature (name + parameter types), even though they all share the same name.</p><h4 id="how-java-chooses-the-right-method">How Java Chooses the Right Method</h4><p>At compile time, Java selects the method that best matches the provided argument types. If multiple methods match equally well, a compilation error may occur due to ambiguity.</p><p>For example:</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-java">p.print(10);  // Calls print(int number)</code></pre>
 </div><p>If only <code>print(String)</code> existed, Java would convert <code>10</code> to a <code>String</code> and call that one. But with both versions, it chooses the exact type match.</p><h4 id="reflection">Reflection</h4><p>Method overloading can improve <strong>code readability</strong> and <strong>flexibility</strong>, especially for utility methods or constructors. However, excessive or confusing overloads can make code harder to maintain. Be cautious when overloading methods with subtle differences in parameter types, like <code>float</code> vs. <code>double</code>, or argument order, as these can lead to unintended calls and hard-to-spot bugs.</p><p>Use overloading when it genuinely simplifies usage—not just to show off multiple method forms.</p><div class = "chapter-navi-section">
 <a href="#top" class="nav-button prev">↑</a>
 <a href='java-syntax.htm#methods-and-scope' class="nav-button toc-link">Index</a>
 <a href="#bottom" class="nav-button next">↓</a>
 </div>
-<h2 id='recursion-syntax'>5.4 Recursion Syntax</h2><p><strong>Recursion</strong> is the process in which a method calls itself to solve a smaller part of the problem. It is a powerful concept, but must be used carefully to avoid stack overflow errors due to infinite recursion.</p><h4 id="example-factorial-calculation">Example: Factorial Calculation</h4><p>Here's a classic example using recursion to calculate the factorial of a number:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+<h2 id='recursion-syntax'>5.4 Recursion Syntax</h2><p><strong>Recursion</strong> is the process in which a method calls itself to solve a smaller part of the problem. It is a powerful concept, but must be used carefully to avoid stack overflow errors due to infinite recursion.</p><h4 id="example-factorial-calculation">Example: Factorial Calculation</h4><p>Here's a classic example using recursion to calculate the factorial of a number:</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-java">public class RecursionExample {
 
     public static int factorial(int n) {
@@ -636,7 +348,8 @@ public class MethodExample {
 </ul><p><strong>Avoid recursion when:</strong></p><ul>
  <li>The depth of recursion is large and could lead to stack overflow.</li>
  <li>An iterative approach is simpler and more efficient in terms of memory.</li>
-</ul><p>For instance, computing the nth Fibonacci number recursively is readable but inefficient due to redundant calculations:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</ul><p>For instance, computing the nth Fibonacci number recursively is readable but inefficient due to redundant calculations:</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-java">public static int fibonacci(int n) {
     if (n &lt;= 1) return n;
     return fibonacci(n - 1) + fibonacci(n - 2);
@@ -648,7 +361,8 @@ public class MethodExample {
 </div>
 <h2 id='scope-rules-and-variable-lifetime'>5.5 Scope Rules and Variable Lifetime</h2><p>In Java, <strong>scope</strong> refers to the region of the program where a variable is accessible. Java enforces strict scoping rules to promote clarity and reduce errors. Understanding variable scope is crucial for writing safe and predictable code.</p><h3 id="types-of-scope">Types of Scope</h3><ol>
  <li><p><strong>Block Scope</strong> A variable declared inside a pair of <code>{}</code> braces is visible only within that block.</p>
-  <div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+  <div class="code-block">
+   <button class="copy-button" onclick="copyCode(this)">▯</button>
    <pre><code class="language-java">if (true) {
     int x = 5;
     System.out.println(x); // Valid
@@ -656,7 +370,8 @@ public class MethodExample {
 // System.out.println(x); // Error: x is out of scope</code></pre>
   </div></li>
  <li><p><strong>Method Scope</strong> A variable declared within a method exists only for the duration of that method call.</p>
-  <div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+  <div class="code-block">
+   <button class="copy-button" onclick="copyCode(this)">▯</button>
    <pre><code class="language-java">public void show() {
     int y = 10;
     System.out.println(y);
@@ -664,7 +379,8 @@ public class MethodExample {
 // y cannot be accessed outside the method</code></pre>
   </div></li>
  <li><p><strong>Class Scope (Instance and Static Fields)</strong> Variables declared directly in a class are accessible by all methods within that class, depending on access modifiers.</p>
-  <div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+  <div class="code-block">
+   <button class="copy-button" onclick="copyCode(this)">▯</button>
    <pre><code class="language-java">public class Counter {
     private int count = 0; // Instance variable (class scope)
 
@@ -681,7 +397,8 @@ public class MethodExample {
  <li><strong>Local variables</strong> (declared in methods/blocks) exist temporarily—created when the block/method is entered and destroyed when exited.</li>
  <li><strong>Instance variables</strong> persist as long as the object exists.</li>
  <li><strong>Static variables</strong> exist for the life of the class in memory.</li>
-</ul><h3 id="shadowing-and-naming-conflicts">Shadowing and Naming Conflicts</h3><p><strong>Shadowing</strong> happens when a variable declared in a nested block or method has the same name as one in an outer scope. The inner variable "shadows" the outer one, potentially causing confusion:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</ul><h3 id="shadowing-and-naming-conflicts">Shadowing and Naming Conflicts</h3><p><strong>Shadowing</strong> happens when a variable declared in a nested block or method has the same name as one in an outer scope. The inner variable "shadows" the outer one, potentially causing confusion:</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-java">public class ShadowExample {
     int value = 10;
 
@@ -690,16 +407,17 @@ public class MethodExample {
         System.out.println(value); // Prints 20
     }
 }</code></pre>
-</div><p>Use the <code>this</code> keyword to refer to the instance variable when it's shadowed:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</div><p>Use the <code>this</code> keyword to refer to the instance variable when it's shadowed:</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-java">System.out.println(this.value); // Refers to instance variable</code></pre>
-</div><div class="snippet-container" id="83JEe">
- <div class="snippet-header" onclick="toggleSnippet('83JEe')">
+</div><div class="snippet-container" id="Osq9Y">
+ <div class="snippet-header" onclick="toggleSnippet('Osq9Y')">
   Click to view full runnable Code
  </div>
  <div class="snippet-body">
-  <div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
-   <pre><code class="language-java">
-public class ScopeExample {
+  <div class="code-block">
+   <button class="copy-button" onclick="copyCode(this)">▯</button>
+   <pre><code class="language-java">public class ScopeExample {
 
     // Class scope (instance variable)
     private int count = 0;
@@ -745,8 +463,7 @@ public class ScopeExample {
 
         example.demonstrateShadowing();
     }
-} 
-</code></pre>
+}</code></pre>
   </div>
  </div>
 </div><h3 id="reflection">Reflection</h3><p>Being mindful of scope helps avoid <strong>naming collisions</strong>, <strong>unexpected behavior</strong>, and <strong>memory leaks</strong>. Always declare variables in the narrowest scope needed, use meaningful names, and avoid shadowing unless there's a good reason. Proper scoping leads to more readable, maintainable, and bug-resistant code.</p><div class = "chapter-navi-section">
@@ -804,7 +521,7 @@ public class ScopeExample {
 
 <a href="java-object-oriented-design.htm">
 <div class="book-cover" style="background-color: #f9f6f1;border: 1px solid #ccc;"> 
-    <div class="book-cover-title" style="font-size: 16px;color: #333;top: 20px;">Java Object-Oriented Design</div>
+    <div class="book-cover-title" style="font-size: 16px;color: #333;top: 10px;">Java Object-Oriented Design</div>
     <div class="book-cover-author">readbytes</div>
     <div class="book-cover-bottom-stripe" style="background-color: #333;"></div>
     <img class="book-cover-icon" style="width: 80px;height: 80px;top: 60px;" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFoAAABaCAYAAAA4qEECAAAGz0lEQVR4Xu2cUWsUVxiGJ0oSFJSCXnmjTZHaCyNYUFtpSYuNK4GWVizU0tvSm14I2d2k2Y2B/ACvhOqF0qq0lFb/gILUQgtNdldLUclNoSIxGlFrbTVJp3s2zGb2/ebMnjPnfJs5ax54aDMzu/PNw7jZbCbjeWlk6FqPlyufrXrDy5b/q/7Xj3Vxmxu1x2QnXsKnW0Hw6URnNdAIiWfPkdo+nkvGxlZ5udLFiCjMVvcp9t325MuH6cEvk2KWtiNbPkMONC1mK2dwXPfITV4gB5ZeL+D46Wew9FrEgbihmN0J8uWHZHjXFMeQWvIT28nAriuOKVXkKj+SIdvG6rGlglx5ng7Xdi7gYbcWOlB723LG/FVkiOdFcewtQSHyC6PXWF1frCi5Kk9ns2JLYuNOI+Rm+vZtJRcWFvhis4I7k8gNBpUpQgvciq3x7oIbDCozCC1YzRN7HjOZkStfidiJVG4wqMxwaEHnEJ3V2HzlCuZKRoKf+LjBoDIxtIDlzB6c7MVs+uCTKsgNBpUZFVrQPUxnNtaIhB8QcYNBZcpCCxjO7EeYTw2Djzq5waAy40ILrL9mD15L8BErPomG3GBQmc1CC6y/9dPC8Dcj3GBQmSqhBZZja/ymhj5YS24wqEzV0AKrsZWw8ItUbjCoTJ3QAovfIM9iVgp9kLbcYFCZuqEF1r5BxmLpugtuMKjM2bt3E+nlSuSYEvgx5l2CbpxIbjCobb39Rd/LTpLj0jaS2mVaERsnkBsMY9taaKHpmR15+ZnFa+G4wTC2rYeundkmsSsXMbO1lw0hNxjGtg2hTc/sBhYvnaUbJZQbDGNbEtok9th3XUuhLV+fzA2GsS2JbBI7WyqEQ9MNDOQGw9iWBDaNvRI6WhIX1X3rtxI6WhI2Sp0zu8bg1RfJCkO5wTC2JVFlqp7ZR37tEWez+OsnutJAbjCMbUnQOFXO7Gz5nAgt/myMrjSQGwxjWxKzmc1/qLlZDV1ZiFhhJDcYxrYkpIqxZ3a1MV1oLjcYxrYkoqpxsckCC3KDYWxLAuooi00WWJAbDGNbEk/XqNhkgQW5wTC2JeGSiG/9MJINucEwtiXRkho+szGSDbnBMLYlwUwMzmyMZENuMIxtSSxTxZmNkWzIDYaxLQllw2pt5QvMVeUGw9iWRDJ3TpzRUxjKVG4wjG0jQpk6JX4E/xpDmcoNhrFtRChDC6eqoSdfwVCmcoNhbEtDGZoZf3nlg/8ISShTV37DEi0JZSpXaM/b5bYYytQ6+UqBxDIRB3dNDGVif2FkKfTY710klok4uGtiLBNfPQH33MNYJuLgromxTCTkSpdJsKTi4K6JsZKaKVzCzFX8DhIsqTi4a2KwpHpeB1ZeBIMlFQdv4s6dn+A7OP/p02dkOxn37j2ob7Nly3u4ugY+V6wYLKlSslcPkmhJxMFjPH78e2zSQE/P+/VtA+7cue/fujXjz84+DG25GDNFoT/EvI1gtCTi4DEGTE7eaFg+NzdPIgVs3/5Rfdn09CzZLur5cXmsNJq+TcmWviLhdMXBJR479k1siIA1a95o+Hpg4Ii/detBf9u2Q/Vlvb2HyePDj8HlsWI0XfuLivc7xXC64uASxVkcFyJARA1/jVy//gd5LD4HLo8Vw+mqTLZynsTTEQeXeOLE+dgQAWvXvtnwdfil49mzufpyfHz4Mbg8Vgyn5w+YMx6MpyMOLnH16j31ECdPXmhYNzNzn0QKCIcWLyvh7TZtGvC7uvbW/r+7e2/DOmVpPHW1GZzYTQKqioPHODX1Zz2G4MmTfxu+7uv7rL5twOPH//iPHv1dM0x4m/n5pW+mAtxvrBhP1QNH92BGNXLlv0hEFXHwJhaLXzZECdi8+d2G7eLo7Hy9ts34+Clc5W/YsI/sM1YMqGbCG6MEYEQVcXBFxT/5jRvf8Ts6dpN1uq5f/5a/bl0fWa4kjdhcYwZ/6yUhm4mDuyZGbO4OzJaMfOVnEjNOHNw1acgYRy3f9ljc2heDysTBXZPElFmwfIPBAAwqEwd3TRJUIisYNUoc3DUxaJTsKNzW2Ht7yG0xKhp5ewgOVGLjcO1iyyKHwbjo/lE6qMsuK9kmV6PisE7K9e5Cl1z5JxI4bOZoxPDO+Ase7vKSL+0ggV0/szNfWLhdMRfirrMY2b0z2/ADolaRu7qHRHbmzB7ZhYeTfsRf9WPoWuwUvhvpH1W4zWXayZZP09gRB7s8nsZx3WeofCg1sTOFD3C89sP3O7x85VLLX0b6i5c96WVa7Y64ZDgzOkyi2DPnHfi8G3e7gqB/eFs10DlP/NlYprgQEQ8V29ys/gT3rbdvrAefLg38D//WQ8dyRJ7yAAAAAElFTkSuQmCC"/>
@@ -815,35 +532,38 @@ public class ScopeExample {
 
 <a href='java.htm'><div class='book-cover' style='background-color: #f9f6f1;color: #111111;border: 1px solid #ccc;display: flex;justify-content: center;align-items: center;text-align: center;'>More Java Books</div></a>
 </div>
-</div>
-  </div>
-  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
-    <script>
-  function toggleSnippet(id) {
-      const box = document.getElementById(id);
-      box.classList.toggle("open");
-  }  
-  </script>
-  <script>
-    function copyCode(button) {
-      const code = button.nextElementSibling.innerText;
-      navigator.clipboard.writeText(code).then(() => {
-        button.textContent = 'Copied!';
-        setTimeout(() => { button.textContent = 'Copy'; }, 1500);
-      });
-    }
-  </script>  
-<div id="floatingLog" aria-live="polite" role="alert"></div>
-<footer class="page-footer">
-    <nav>
-      <a href="https://readbytes.github.io">Home</a> | 
-      Email:<script language="JavaScript" type="text/javascript">
+</div><script>
+function copyCode(button) {const code = button.nextElementSibling.innerText;navigator.clipboard.writeText(code).then(() => {button.textContent = 'Copied!';setTimeout(() => { button.textContent = 'Copy'; }, 1500);});}
+</script><script>
+function toggleSnippet(id) {const box = document.getElementById(id);box.classList.toggle("open");}  
+</script></div>
+<style>
+.site-footer {margin-top: 60px;padding: 20px 0;border-top: 1px solid #eee;text-align: center;font-size: 14px;}
+.site-footer a {text-decoration: none;}
+.light-mode .site-footer {color: #777;border-color: #eee;}
+.dark-mode .site-footer {color: #888;border-color: #333;}
+.light-mode .site-footer a {color: #555;}
+.dark-mode .site-footer a {color: #aaa;}
+.site-footer a:hover {text-decoration: underline;}    
+</style>
+<footer class="site-footer">
+<nav><a href="https://readbytes.github.io">Home</a> |Email:<script type="text/javascript">
 var part1 = 'yinpeng';var part6 = '263';var part2 = Math.pow(2,6);var part3 = String.fromCharCode(part2);var part4 = 'hotmail dot com';var part5 = part1 + String.fromCharCode(part2) + part4;document.write(part1 + part6 + part3 + part4);
 </script>
-    </nav>
-  <p>© 2025 — All rights reserved.</p>    
-  </footer>
-
+| <a id="mode-toggle" href="#">Toggle Dark Mode</a>
+</nav><p>© 2025 — All rights reserved.</p></footer>
+<script>
+const toggleButton = document.getElementById('mode-toggle');
+const body = document.body;
+const savedMode = localStorage.getItem('mode') || 'light';
+body.classList.add(savedMode + '-mode');
+toggleButton.addEventListener('click', () => {
+      const isDark = body.classList.contains('dark-mode');
+      body.classList.toggle('dark-mode', !isDark);
+      body.classList.toggle('light-mode', isDark);
+      localStorage.setItem('mode', isDark ? 'light' : 'dark');
+});
+function copyCode(button) {const code = button.nextElementSibling.innerText;navigator.clipboard.writeText(code).then(() => {button.textContent = 'Copied!';setTimeout(() => { button.textContent = 'Copy'; }, 1500);});}
+</script>
 </body>
 </html>

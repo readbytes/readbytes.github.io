@@ -1,0 +1,1468 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Pandas for Data Science Pandas Data Structures in Depth</title>
+<link rel='shortcut icon' href='https://readbytes.github.io/images/favicon.ico'>
+<link href="https://fonts.googleapis.com/css2?family=Merriweather&display=swap" rel="stylesheet" />
+<link href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.css" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/theme/dracula.min.css"><style>
+html {scroll-behavior: smooth;}  
+body {font-family: 'Merriweather', serif;;margin: 0;padding: 2rem 1rem;font-size: 15px;line-height: 1.5;transition: background-color 0.3s, color 0.3s;}
+.container {max-width: 750px;margin: 0 auto;padding: 1rem 2rem;}
+.light-mode {background-color: #f8f7f5;color: #333;} 
+.dark-mode {background-color: #121212;color: #e0e0e0;}
+a { text-decoration: none;transition: color 0.2s;}
+a:hover {text-decoration: underline;}
+.light-mode a {color: #555;}
+.dark-mode a {color: #aaa;}
+</style><style>
+.related-book-list {display: flex;flex-wrap: wrap;gap: 20px;}
+.related-books {margin-top: 40px;}
+.related-books h2 {font-size: 22px;margin-bottom: 20px;border-bottom: 2px solid #eee;padding-bottom: 8px;}
+.light-mode .related-books h2 {color: #333;border-color: #eee;}
+.dark-mode .related-books h2 {color: #ddd;border-color: #333;}
+</style><style>
+.book-cover {width: 130px;height: 180px;font-family: Arial, sans-serif;position: relative;overflow: hidden;box-shadow: 2px 2px 4px rgba(0,0,0,0.1);}
+.book-cover-bottom-stripe {position: absolute;bottom: 0;left: 0;height: 5px;width: 100%;}
+.book-cover-title {position: absolute;width: 100%;text-align: center;font-weight: bold;}
+.book-cover-icon {position: absolute;left: 50%;transform: translateX(-50%);display: flex;align-items: center;justify-content: center;}
+.book-cover-author {position: absolute;bottom: 10px;width: 100%;text-align: center;font-size: 8px;color: #333;}
+</style><style>
+.book-title-toc {font-size: 32px;font-weight: bold; }
+.book-subtitle-toc {font-size: 18px;margin-top: 8px;font-style: italic;}
+.book-header {text-align: center;margin-bottom: 40px;}
+
+.toc-container {border-radius: 10px;padding: 30px;margin-bottom: 40px;box-shadow: 0 8px 20px rgba(0,0,0,0.05);}
+h1 {font-size: 24px;text-align: center;margin-bottom: 30px;letter-spacing: 1px;padding-bottom: 10px;}
+.toc-list,.toc-section-list {list-style: none;padding: 0;margin: 0;}
+.toc-section-list {padding-left: 18px;margin-top: 6px;margin-bottom: 20px; }
+.toc-chapter {padding: 20px 0;}
+.chapter-title,.toc-section {display: flex;justify-content: space-between;padding-top: 4px;}
+.chapter-title {font-size: 17px;font-weight: bold;}
+.chapter-page,.section-page {font-style: italic;}
+ 
+ 
+.light-mode .book-title-toc,.light-mode .chapter-title,.light-mode .book-name {color: #222;}
+.light-mode .book-subtitle-toc,.light-mode .book-sub,.light-mode .chapter-page,.light-mode .section-page {color: #666;}
+.light-mode .toc-container { background: #fff;border: 1px solid #ddd;}
+.light-mode h1 {border-bottom: 2px solid #eee;color: #222;}
+.light-mode .toc-section {  color: #444;}
+
+.light-mode .book-cover { border: 1px solid #ccc;box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);}
+.light-mode .book-title,.light-mode .series-name {color: #fff;}
+.light-mode .book-subtitle,.light-mode .book-footer {color: #aaa;}
+
+.dark-mode .book-title-toc,.dark-mode .chapter-title,.dark-mode .book-name {color: #f5f5f5;}
+.dark-mode .book-subtitle-toc,.dark-mode .book-sub,.dark-mode .chapter-page,.dark-mode .section-page {color: #aaa;}
+.dark-mode .toc-container {background: #1e1e1e;border: 1px solid #444;}
+
+.dark-mode h1 {border-bottom: 2px solid #333;color: #eee;}
+.dark-mode .toc-section {color: #bbb;}
+
+.dark-mode .related-books h2 {color: #ddd;border-bottom: 2px solid #333;}
+.dark-mode .book-title,.dark-mode .series-name {color: #fff;}
+.dark-mode .book-subtitle,.dark-mode .book-footer {color: #bbb;}
+.dark-mode .toc-section {color: #ddd;}
+
+@media (max-width: 600px) {
+  .chapter-title,
+  .toc-section {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .chapter-page,
+  .section-page {
+    margin-top: 4px;
+  }
+}
+
+</style><style>
+.light-mode .container {box-shadow: 0 0 15px rgba(0,0,0,0.1);}
+.dark-mode .container {box-shadow: 0 0 15px rgba(255, 255, 255, 0.05);}
+
+h1, h2, h3 {font-weight: 600;margin-top: 2.5rem;margin-bottom: 1rem;line-height: 1.2;}
+h1 { font-size: 1.8rem; }
+h2 { font-size: 1.4rem; }
+h3 { font-size: 1.2rem; }
+
+table {width: 100%;border-collapse: collapse;font-family: sans-serif;font-size: 1em;margin: 1em 0;}
+th, td {padding: 0.6em 1em;text-align: left;border: 1px solid;}
+tr:nth-child(even) {  background-color: inherit;}
+tr:hover { background-color: inherit;}
+
+code {color: #d35400;}
+
+.chapter-navi-section {display: flex;justify-content: space-between;align-items: center;padding-bottom: 10px;padding-top: 10px;}
+.nav-link {color: inherit;text-decoration: none;opacity: 0.5;transition: opacity 0.3s ease, text-decoration 0.3s ease;}
+.nav-link:hover {opacity: 0.9;text-decoration: underline;}
+.prev { text-align: left; }
+.toc-link { text-align: center; }
+.next { text-align: right; }
+
+.download-section {display: flex;align-items: center;justify-content: center;gap: 2rem;padding: 2rem 1rem;max-width: 600px;margin: 3rem auto;border-radius: 12px;box-shadow: 0 4px 10px rgba(0,0,0,0.05);}
+.download-info h2 {margin: 0 0 0.5rem;font-size: 1.2rem;}
+.format-label {margin: 0 0 0.5rem;font-size: 0.95rem;}
+.download-buttons {display: flex;gap: 1rem;}
+.download-button {background-color: #4A90E2;color: white;padding: 0.5em 1.2em;border-radius: 25px;font-size: 0.95rem;text-decoration: none;transition: background-color 0.3s ease;}
+.download-button:hover {background-color: #357ABD;}
+
+.code-block {position: relative;margin-bottom: 1em;}
+.copy-button {background: transparent;color: white;position: absolute;top: 8px;right: 8px;border: none;padding: 4px 8px;font-size: 12px;border-radius: 4px;cursor: pointer;z-index: 1;}
+.copy-button:hover {background-color: #0056b3;}
+
+.snippet-container {overflow: hidden;}
+.snippet-header {padding: 0.75rem 1rem;cursor: pointer;font-size: 1rem;background-color: #eeeeee;color:  #111111; border-radius: 8px;cursor: pointer;box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+.snippet-body {display: none;font-family: monospace;}
+.snippet-container.open .snippet-body {display: block;}
+
+.CodeMirror {border: 2px solid #ccc;border-radius: 4px;resize: vertical;}
+
+.light-mode .format-label {color: #888;}
+.light-mode th {background-color: #f2f2f2;}
+.light-mode tr:nth-child(even) {background-color: #fafafa;}
+.light-mode tr:hover {background-color: #e6f7ff;}
+
+.dark-mode .snippet-header {background-color: #333;color:  #ddd; }
+.dark-mode .format-label {color: #aaa;}
+.dark-mode th {background-color: #333;color: #fff;}
+.dark-mode td {border-color: #444;}
+.dark-mode tr:nth-child(even) {background-color: #2a2a2a;}
+.dark-mode tr:hover {background-color: #2c3e50;}
+
+
+.button-group-run-edit {display: flex;width: 100%;gap: 1rem;}
+.button-run-edit {flex: 1;padding: 1rem;font-size: 1rem;font-weight: 600;border: none;border-radius: 8px;cursor: pointer;transition: background 0.3s, color 0.3s;}
+
+.light-mode .button-run-edit {background-color: #f0f0f0;color: #222;box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);}
+.light-mode .button-run-edit:hover {background-color: #e0e0e0;}
+
+.dark-mode .button-run-edit {background-color: #2a2a2a;color: #f5f5f5;box-shadow: 0 0 10px rgba(255, 255, 255, 0.05);}
+.dark-mode .button-run-edit:hover {background-color: #3a3a3a;}
+
+button { padding: 0.5em 1em; background: green; color: white; border: none; cursor: pointer; }
+button:hover { background: #1e7e34; }
+.result_iframe { width:99%; margin-top: 1em;  resize: both;background-color: #515b63;border:1px solid #ccc;}   
+
+.dialog-backdrop {position: fixed;top: 0;left: 0;width: 100vw;height: 100vh;background: rgba(0,0,0,0.5);display: none;justify-content: center;align-items: center;z-index: 10;}
+.dialog {background: #90979e;padding: 20px;width: 90vw;height: 80vh;border-radius: 8px;box-shadow: 0 0 20px rgba(0,0,0,0.3);display: flex;flex-direction: column;}
+.dialog-content {display: flex;gap: 20px;margin-top: 10px;height: calc(100% - 40px);}
+.editor-container, .preview-container {flex: 1;height: 100%;max-height: 100%;overflow: hidden; }
+.result_iframe_dialog {width: 100%;height: 100%;resize: both;border:1px solid #ccc;overflow: auto; }   
+.CodeMirror {width: 100% !important;height: 100% !important;}
+</style><script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/javascript/python.min.js"></script>
+<script src="https://cdn.jsdelivr.net/pyodide/v0.24.1/full/pyodide.js"></script>
+<script>
+const pythonCodeMirrorMap = new Map();
+let pyodide = null;
+let pyodideReady = false;
+async function main() {
+    pyodide = await loadPyodide();
+    await pyodide.loadPackage(['numpy','pandas','matplotlib']);
+    pyodideReady = true;
+}
+main();
+
+ async function runPythonCode(button,textarea_id, iframe_id) {
+        let code = pythonCodeMirrorMap.get(textarea_id).getValue();
+        const iframe = document.getElementById(iframe_id);
+        let doc = iframe.contentDocument || iframe.contentWindow.document;
+ 
+        let result = "";
+
+    if (!pyodideReady) {
+      result = "Pyodide is still loading... Wait for a while and click Run again.";
+    }else{
+    try {
+      await pyodide.runPythonAsync(`
+import sys
+from js import console
+
+class CaptureOutput:
+    def __init__(self):
+        self.data = []
+    def write(self, msg):
+        self.data.append(msg)
+    def flush(self):
+        pass
+
+sys.stdout = sys.stderr = capture = CaptureOutput()
+
+${code}
+
+output = "".join(capture.data)
+`);
+      result = pyodide.globals.get('output');
+ 
+      
+    } catch (err) {
+      result = "Error:\n" + err;
+ 
+    }
+    }
+
+ 
+
+      const html = `
+    <!DOCTYPE html>
+    <html>
+      <head>
+        <title>Output</title>
+        <style>
+          body { font-family: monospace; padding: 1em; background: #1e1e1e; color: #eee; }
+          pre { white-space: pre-wrap; word-break: break-word; }
+          .error { color: red; }
+        </style>
+      </head>
+      <body>
+        <pre id="log">${result} </pre>
+      </body>
+    </html>
+  `;
+        iframe.style.display = "block";
+        iframe.srcdoc = html;  
+        
+
+iframe.onload = function () {
+  const doc = iframe.contentDocument || iframe.contentWindow.document;
+  const contentHeight = Math.max(
+    doc.body.scrollHeight,
+    doc.documentElement.scrollHeight
+  );
+  iframe.style.height = contentHeight + 'px';
+};
+
+    }
+function openEditPythonCodeDialog(id, textarea_id) {
+		        closeAllPythonCodeDialog();
+		        document.getElementById(id).style.display = 'flex';
+         
+ 	        setTimeout(() => {
+		        	 pythonCodeMirrorMap.get(textarea_id).refresh();
+                   
+ 	        }, 100); // 100ms 
+}
+
+function closeAllPythonCodeDialog() {
+		        document.querySelectorAll('.dialog-backdrop').forEach(el => {
+		          el.style.display = 'none';
+		        });
+}		
+</script>
+</head>
+<body>
+<script>const mode = localStorage.getItem('mode') || 'light';document.documentElement.classList.add(`${mode}-mode`);</script>  
+<div class="container"><div class = "chapter-navi-section">
+<a href="pandas-for-data-science-introduction-to-pandas.htm" class="nav-button prev">←</a>
+<a href='pandas-for-data-science.htm#pandas-data-structures-in-depth' class="nav-button toc-link">Index</a>
+<a href="pandas-for-data-science-data-selection-and-indexing.htm" class="nav-button next">→</a>
+</div>
+<div class='book-header'><h1 class='book-title-toc' id = 'top'>Pandas Data Structures in Depth</h1><h3 class='book-subtitle-toc'>Pandas for Data Science</h3></div><h2 id='series-creation-indexing-and-basic-operations'>2.1 Series: Creation, Indexing, and Basic Operations</h2><p>The <strong>Series</strong> is the fundamental one-dimensional labeled data structure in Pandas. It holds data of any type (integers, floats, strings, Python objects) along with an associated index that labels each element. In this section, we will explore multiple ways to create a Series, how to access and manipulate its elements through indexing and slicing, and perform basic operations like arithmetic and aggregation.</p><h3 id="creating-a-series">Creating a Series</h3><h4 id="from-a-list">From a List</h4><p>The simplest way to create a Series is by passing a Python list:</p><div>
+ <div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+  <pre><code class="language-python">import pandas as pd
+
+data_list = [10, 20, 30, 40, 50]
+series_from_list = pd.Series(data_list)
+print(series_from_list)</code></pre>
+ </div>
+ <div class="snippet-container">
+  <div class="button-group-run-edit"><button class="button-run-edit" onclick="runPythonCode(this,'95mgi','qQDfy')">Run</button> <button class="button-run-edit" onclick="openEditPythonCodeDialog('qQDfy_Dialog','95mgi')">Edit</button>
+  </div> <iframe id="qQDfy" class="result_iframe" style="display: none;"></iframe>
+  <div id="qQDfy_Dialog" class="dialog-backdrop">
+   <div class="dialog">
+    <div class="controls"><button onclick="runPythonCode(this,'95mgi','qQDfy_IFrame')">Run</button> <button onclick="closeAllPythonCodeDialog()">Close</button>
+    </div>
+    <div class="dialog-content">
+     <div class="editor-container">
+      <textarea id="95mgi" class="textarea_dialog" placeholder="Type HTML here...">import pandas as pd
+
+data_list = [10, 20, 30, 40, 50]
+series_from_list = pd.Series(data_list)
+print(series_from_list)</textarea>
+     </div>
+     <div class="preview-container">
+      <iframe id="qQDfy_IFrame" class="result_iframe_dialog" style="border: none;"></iframe>
+     </div>
+    </div>
+   </div>
+  </div>
+  <script>
+{
+let editor = CodeMirror.fromTextArea(document.getElementById("95mgi"), {
+					mode : "python",
+					lineNumbers : false,
+          lineWrapping: true,
+					tabSize : 2
+});
+const darkmode = localStorage.getItem("mode") || "light";  
+const newTheme = darkmode === "dark" ? "dracula" : "default";
+editor.setSize("50%", "100%");
+editor.setOption("theme", newTheme);
+pythonCodeMirrorMap.set("95mgi", editor);
+
+}
+
+
+</script>
+ </div>
+</div><p><strong>Output:</strong></p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-bash">0    10
+1    20
+2    30
+3    40
+4    50
+dtype: int64</code></pre>
+</div><p>Here, Pandas automatically assigns integer indices starting from 0.</p><h4 id="from-a-numpy-array">From a NumPy Array</h4><p>You can also create a Series from a NumPy array:</p><div>
+ <div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+  <pre><code class="language-python">import numpy as np
+
+data_array = np.array([1.5, 2.5, 3.5, 4.5])
+series_from_array = pd.Series(data_array)
+print(series_from_array)</code></pre>
+ </div>
+ <div class="snippet-container">
+  <div class="button-group-run-edit"><button class="button-run-edit" onclick="runPythonCode(this,'W41Nb','NJKHk')">Run</button> <button class="button-run-edit" onclick="openEditPythonCodeDialog('NJKHk_Dialog','W41Nb')">Edit</button>
+  </div> <iframe id="NJKHk" class="result_iframe" style="display: none;"></iframe>
+  <div id="NJKHk_Dialog" class="dialog-backdrop">
+   <div class="dialog">
+    <div class="controls"><button onclick="runPythonCode(this,'W41Nb','NJKHk_IFrame')">Run</button> <button onclick="closeAllPythonCodeDialog()">Close</button>
+    </div>
+    <div class="dialog-content">
+     <div class="editor-container">
+      <textarea id="W41Nb" class="textarea_dialog" placeholder="Type HTML here...">import numpy as np
+
+data_array = np.array([1.5, 2.5, 3.5, 4.5])
+series_from_array = pd.Series(data_array)
+print(series_from_array)</textarea>
+     </div>
+     <div class="preview-container">
+      <iframe id="NJKHk_IFrame" class="result_iframe_dialog" style="border: none;"></iframe>
+     </div>
+    </div>
+   </div>
+  </div>
+  <script>
+{
+let editor = CodeMirror.fromTextArea(document.getElementById("W41Nb"), {
+					mode : "python",
+					lineNumbers : false,
+          lineWrapping: true,
+					tabSize : 2
+});
+const darkmode = localStorage.getItem("mode") || "light";  
+const newTheme = darkmode === "dark" ? "dracula" : "default";
+editor.setSize("50%", "100%");
+editor.setOption("theme", newTheme);
+pythonCodeMirrorMap.set("W41Nb", editor);
+
+}
+
+
+</script>
+ </div>
+</div><p><strong>Output:</strong></p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-bash">0    1.5
+1    2.5
+2    3.5
+3    4.5
+dtype: float64</code></pre>
+</div><h4 id="from-a-dictionary">From a Dictionary</h4><p>When creating a Series from a dictionary, the keys become the index labels and the values become the Series data:</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-python">import pandas as pd
+
+data_dict = {'a': 100, 'b': 200, 'c': 300}
+series_from_dict = pd.Series(data_dict)
+print(series_from_dict)</code></pre>
+</div><p><strong>Output:</strong></p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-bash">a    100
+b    200
+c    300
+dtype: int64</code></pre>
+</div><h4 id="custom-indexing-on-creation">Custom Indexing on Creation</h4><p>You can specify a custom index explicitly, which allows for more meaningful labels:</p><div>
+ <div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+  <pre><code class="language-python">import pandas as pd
+series_custom_index = pd.Series([5, 10, 15], index=['x', 'y', 'z'])
+print(series_custom_index)</code></pre>
+ </div>
+ <div class="snippet-container">
+  <div class="button-group-run-edit"><button class="button-run-edit" onclick="runPythonCode(this,'QbQxj','LaKXX')">Run</button> <button class="button-run-edit" onclick="openEditPythonCodeDialog('LaKXX_Dialog','QbQxj')">Edit</button>
+  </div> <iframe id="LaKXX" class="result_iframe" style="display: none;"></iframe>
+  <div id="LaKXX_Dialog" class="dialog-backdrop">
+   <div class="dialog">
+    <div class="controls"><button onclick="runPythonCode(this,'QbQxj','LaKXX_IFrame')">Run</button> <button onclick="closeAllPythonCodeDialog()">Close</button>
+    </div>
+    <div class="dialog-content">
+     <div class="editor-container">
+      <textarea id="QbQxj" class="textarea_dialog" placeholder="Type HTML here...">import pandas as pd
+series_custom_index = pd.Series([5, 10, 15], index=['x', 'y', 'z'])
+print(series_custom_index)</textarea>
+     </div>
+     <div class="preview-container">
+      <iframe id="LaKXX_IFrame" class="result_iframe_dialog" style="border: none;"></iframe>
+     </div>
+    </div>
+   </div>
+  </div>
+  <script>
+{
+let editor = CodeMirror.fromTextArea(document.getElementById("QbQxj"), {
+					mode : "python",
+					lineNumbers : false,
+          lineWrapping: true,
+					tabSize : 2
+});
+const darkmode = localStorage.getItem("mode") || "light";  
+const newTheme = darkmode === "dark" ? "dracula" : "default";
+editor.setSize("50%", "100%");
+editor.setOption("theme", newTheme);
+pythonCodeMirrorMap.set("QbQxj", editor);
+
+}
+
+
+</script>
+ </div>
+</div><h3 id="indexing-and-accessing-elements">Indexing and Accessing Elements</h3><p>You can access Series elements similarly to Python lists, but Pandas also supports label-based access using <code>.loc</code> and position-based access using <code>.iloc</code>.</p><div>
+ <div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+  <pre><code class="language-python">import pandas as pd
+
+s = pd.Series([100, 200, 300], index=['a', 'b', 'c'])
+
+# Access by position (integer location)
+print(s[0])       # Output: 100
+
+# Access by label
+print(s['b'])     # Output: 200
+
+# Multiple elements by labels
+print(s[['a', 'c']])</code></pre>
+ </div>
+ <div class="snippet-container">
+  <div class="button-group-run-edit"><button class="button-run-edit" onclick="runPythonCode(this,'wZpSh','ZYIxK')">Run</button> <button class="button-run-edit" onclick="openEditPythonCodeDialog('ZYIxK_Dialog','wZpSh')">Edit</button>
+  </div> <iframe id="ZYIxK" class="result_iframe" style="display: none;"></iframe>
+  <div id="ZYIxK_Dialog" class="dialog-backdrop">
+   <div class="dialog">
+    <div class="controls"><button onclick="runPythonCode(this,'wZpSh','ZYIxK_IFrame')">Run</button> <button onclick="closeAllPythonCodeDialog()">Close</button>
+    </div>
+    <div class="dialog-content">
+     <div class="editor-container">
+      <textarea id="wZpSh" class="textarea_dialog" placeholder="Type HTML here...">import pandas as pd
+
+s = pd.Series([100, 200, 300], index=['a', 'b', 'c'])
+
+# Access by position (integer location)
+print(s[0])       # Output: 100
+
+# Access by label
+print(s['b'])     # Output: 200
+
+# Multiple elements by labels
+print(s[['a', 'c']])</textarea>
+     </div>
+     <div class="preview-container">
+      <iframe id="ZYIxK_IFrame" class="result_iframe_dialog" style="border: none;"></iframe>
+     </div>
+    </div>
+   </div>
+  </div>
+  <script>
+{
+let editor = CodeMirror.fromTextArea(document.getElementById("wZpSh"), {
+					mode : "python",
+					lineNumbers : false,
+          lineWrapping: true,
+					tabSize : 2
+});
+const darkmode = localStorage.getItem("mode") || "light";  
+const newTheme = darkmode === "dark" ? "dracula" : "default";
+editor.setSize("50%", "100%");
+editor.setOption("theme", newTheme);
+pythonCodeMirrorMap.set("wZpSh", editor);
+
+}
+
+
+</script>
+ </div>
+</div><p>Output:</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-bash">a    100
+c    300
+dtype: int64</code></pre>
+</div><h4 id="slicing">Slicing</h4><p>You can slice a Series using both labels and positions:</p><div>
+ <div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+  <pre><code class="language-python">import pandas as pd
+
+s = pd.Series([100, 200, 300], index=['a', 'b', 'c'])
+print(s[1:3])        # Slicing by position (like Python slicing)
+
+print(s['a':'c'])    # Slicing by label (inclusive of end label)</code></pre>
+ </div>
+ <div class="snippet-container">
+  <div class="button-group-run-edit"><button class="button-run-edit" onclick="runPythonCode(this,'Ngflf','Bn6i1')">Run</button> <button class="button-run-edit" onclick="openEditPythonCodeDialog('Bn6i1_Dialog','Ngflf')">Edit</button>
+  </div> <iframe id="Bn6i1" class="result_iframe" style="display: none;"></iframe>
+  <div id="Bn6i1_Dialog" class="dialog-backdrop">
+   <div class="dialog">
+    <div class="controls"><button onclick="runPythonCode(this,'Ngflf','Bn6i1_IFrame')">Run</button> <button onclick="closeAllPythonCodeDialog()">Close</button>
+    </div>
+    <div class="dialog-content">
+     <div class="editor-container">
+      <textarea id="Ngflf" class="textarea_dialog" placeholder="Type HTML here...">import pandas as pd
+
+s = pd.Series([100, 200, 300], index=['a', 'b', 'c'])
+print(s[1:3])        # Slicing by position (like Python slicing)
+
+print(s['a':'c'])    # Slicing by label (inclusive of end label)</textarea>
+     </div>
+     <div class="preview-container">
+      <iframe id="Bn6i1_IFrame" class="result_iframe_dialog" style="border: none;"></iframe>
+     </div>
+    </div>
+   </div>
+  </div>
+  <script>
+{
+let editor = CodeMirror.fromTextArea(document.getElementById("Ngflf"), {
+					mode : "python",
+					lineNumbers : false,
+          lineWrapping: true,
+					tabSize : 2
+});
+const darkmode = localStorage.getItem("mode") || "light";  
+const newTheme = darkmode === "dark" ? "dracula" : "default";
+editor.setSize("50%", "100%");
+editor.setOption("theme", newTheme);
+pythonCodeMirrorMap.set("Ngflf", editor);
+
+}
+
+
+</script>
+ </div>
+</div><h3 id="basic-operations-on-series">Basic Operations on Series</h3><h4 id="arithmetic-operations">Arithmetic Operations</h4><p>Series support element-wise arithmetic operations. Operations align automatically based on index labels:</p><div>
+ <div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+  <pre><code class="language-python">import pandas as pd
+
+s1 = pd.Series([1, 2, 3], index=['a', 'b', 'c'])
+s2 = pd.Series([4, 5, 6], index=['a', 'b', 'c'])
+
+print(s1 + s2)</code></pre>
+ </div>
+ <div class="snippet-container">
+  <div class="button-group-run-edit"><button class="button-run-edit" onclick="runPythonCode(this,'F0vcL','xuoV7')">Run</button> <button class="button-run-edit" onclick="openEditPythonCodeDialog('xuoV7_Dialog','F0vcL')">Edit</button>
+  </div> <iframe id="xuoV7" class="result_iframe" style="display: none;"></iframe>
+  <div id="xuoV7_Dialog" class="dialog-backdrop">
+   <div class="dialog">
+    <div class="controls"><button onclick="runPythonCode(this,'F0vcL','xuoV7_IFrame')">Run</button> <button onclick="closeAllPythonCodeDialog()">Close</button>
+    </div>
+    <div class="dialog-content">
+     <div class="editor-container">
+      <textarea id="F0vcL" class="textarea_dialog" placeholder="Type HTML here...">import pandas as pd
+
+s1 = pd.Series([1, 2, 3], index=['a', 'b', 'c'])
+s2 = pd.Series([4, 5, 6], index=['a', 'b', 'c'])
+
+print(s1 + s2)</textarea>
+     </div>
+     <div class="preview-container">
+      <iframe id="xuoV7_IFrame" class="result_iframe_dialog" style="border: none;"></iframe>
+     </div>
+    </div>
+   </div>
+  </div>
+  <script>
+{
+let editor = CodeMirror.fromTextArea(document.getElementById("F0vcL"), {
+					mode : "python",
+					lineNumbers : false,
+          lineWrapping: true,
+					tabSize : 2
+});
+const darkmode = localStorage.getItem("mode") || "light";  
+const newTheme = darkmode === "dark" ? "dracula" : "default";
+editor.setSize("50%", "100%");
+editor.setOption("theme", newTheme);
+pythonCodeMirrorMap.set("F0vcL", editor);
+
+}
+
+
+</script>
+ </div>
+</div><p>Output:</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-bash">a    5
+b    7
+c    9
+dtype: int64</code></pre>
+</div><p>If indices don’t match, Pandas fills missing labels with <code>NaN</code>:</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-python">s3 = pd.Series([7, 8], index=['a', 'd'])
+print(s1 + s3)</code></pre>
+</div><p>Output:</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-bash">a     8.0
+b     NaN
+c     NaN
+d     NaN
+dtype: float64</code></pre>
+</div><h4 id="aggregation-functions">Aggregation Functions</h4><p>You can apply common aggregation functions such as:</p><ul>
+ <li><code>.sum()</code>: sum of all elements</li>
+ <li><code>.mean()</code>: average value</li>
+ <li><code>.min()</code> / <code>.max()</code>: minimum and maximum</li>
+ <li><code>.std()</code>: standard deviation</li>
+</ul><p>Example:</p><div>
+ <div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+  <pre><code class="language-python">import pandas as pd
+
+
+data = pd.Series([10, 20, 30, 40, 50])
+print("Sum:", data.sum())
+print("Mean:", data.mean())
+print("Max:", data.max())</code></pre>
+ </div>
+ <div class="snippet-container">
+  <div class="button-group-run-edit"><button class="button-run-edit" onclick="runPythonCode(this,'sfKQG','pdnAa')">Run</button> <button class="button-run-edit" onclick="openEditPythonCodeDialog('pdnAa_Dialog','sfKQG')">Edit</button>
+  </div> <iframe id="pdnAa" class="result_iframe" style="display: none;"></iframe>
+  <div id="pdnAa_Dialog" class="dialog-backdrop">
+   <div class="dialog">
+    <div class="controls"><button onclick="runPythonCode(this,'sfKQG','pdnAa_IFrame')">Run</button> <button onclick="closeAllPythonCodeDialog()">Close</button>
+    </div>
+    <div class="dialog-content">
+     <div class="editor-container">
+      <textarea id="sfKQG" class="textarea_dialog" placeholder="Type HTML here...">import pandas as pd
+
+
+data = pd.Series([10, 20, 30, 40, 50])
+print("Sum:", data.sum())
+print("Mean:", data.mean())
+print("Max:", data.max())</textarea>
+     </div>
+     <div class="preview-container">
+      <iframe id="pdnAa_IFrame" class="result_iframe_dialog" style="border: none;"></iframe>
+     </div>
+    </div>
+   </div>
+  </div>
+  <script>
+{
+let editor = CodeMirror.fromTextArea(document.getElementById("sfKQG"), {
+					mode : "python",
+					lineNumbers : false,
+          lineWrapping: true,
+					tabSize : 2
+});
+const darkmode = localStorage.getItem("mode") || "light";  
+const newTheme = darkmode === "dark" ? "dracula" : "default";
+editor.setSize("50%", "100%");
+editor.setOption("theme", newTheme);
+pythonCodeMirrorMap.set("sfKQG", editor);
+
+}
+
+
+</script>
+ </div>
+</div><p>Output:</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-bash">Sum: 150
+Mean: 30.0
+Max: 50</code></pre>
+</div><h3 id="series-with-diverse-data-types">Series with Diverse Data Types</h3><p>Series can hold data of different types, including strings:</p><div>
+ <div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+  <pre><code class="language-python">import pandas as pd
+
+mixed_series = pd.Series(['apple', 'banana', 'cherry'])
+print(mixed_series)</code></pre>
+ </div>
+ <div class="snippet-container">
+  <div class="button-group-run-edit"><button class="button-run-edit" onclick="runPythonCode(this,'Y7ATD','4xKfm')">Run</button> <button class="button-run-edit" onclick="openEditPythonCodeDialog('4xKfm_Dialog','Y7ATD')">Edit</button>
+  </div> <iframe id="4xKfm" class="result_iframe" style="display: none;"></iframe>
+  <div id="4xKfm_Dialog" class="dialog-backdrop">
+   <div class="dialog">
+    <div class="controls"><button onclick="runPythonCode(this,'Y7ATD','4xKfm_IFrame')">Run</button> <button onclick="closeAllPythonCodeDialog()">Close</button>
+    </div>
+    <div class="dialog-content">
+     <div class="editor-container">
+      <textarea id="Y7ATD" class="textarea_dialog" placeholder="Type HTML here...">import pandas as pd
+
+mixed_series = pd.Series(['apple', 'banana', 'cherry'])
+print(mixed_series)</textarea>
+     </div>
+     <div class="preview-container">
+      <iframe id="4xKfm_IFrame" class="result_iframe_dialog" style="border: none;"></iframe>
+     </div>
+    </div>
+   </div>
+  </div>
+  <script>
+{
+let editor = CodeMirror.fromTextArea(document.getElementById("Y7ATD"), {
+					mode : "python",
+					lineNumbers : false,
+          lineWrapping: true,
+					tabSize : 2
+});
+const darkmode = localStorage.getItem("mode") || "light";  
+const newTheme = darkmode === "dark" ? "dracula" : "default";
+editor.setSize("50%", "100%");
+editor.setOption("theme", newTheme);
+pythonCodeMirrorMap.set("Y7ATD", editor);
+
+}
+
+
+</script>
+ </div>
+</div><p>Output:</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-bash">0     apple
+1    banana
+2    cherry
+dtype: object</code></pre>
+</div><h3 id="summary">Summary</h3><ul>
+ <li>You can create Series from lists, arrays, and dictionaries.</li>
+ <li>Series have labeled indices which make data access intuitive.</li>
+ <li>Use <code>.loc</code> for label-based and <code>.iloc</code> for position-based indexing.</li>
+ <li>Series support element-wise arithmetic operations aligned by index.</li>
+ <li>Aggregation functions simplify statistical summaries.</li>
+ <li>Series handle diverse data types, making them flexible for many applications.</li>
+</ul><p>Try creating Series with your own data and experiment with indexing and operations to build a solid foundation for your Pandas journey!</p><div class = "chapter-navi-section">
+<a href="#top" class="nav-button prev">↑</a>
+<a href='pandas-for-data-science.htm#pandas-data-structures-in-depth' class="nav-button toc-link">Index</a>
+<a href="#bottom" class="nav-button next">↓</a>
+</div>
+<h2 id='dataframe-creation-from-lists-dicts-and-arrays'>2.2 DataFrame: Creation from Lists, Dicts, and Arrays</h2><p>The <strong>DataFrame</strong> is the most commonly used data structure in Pandas—a two-dimensional, size-mutable, and heterogeneous tabular data structure with labeled rows and columns. This section explores how to create DataFrames from different data sources including lists, dictionaries, and NumPy arrays, while highlighting how column and row labels are assigned and how the input format influences the resulting DataFrame structure.</p><h3 id="creating-a-dataframe-from-a-list-of-lists">Creating a DataFrame from a List of Lists</h3><p>One straightforward way to create a DataFrame is by passing a list of lists, where each inner list represents a row.</p><div>
+ <div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+  <pre><code class="language-python">import pandas as pd
+
+data = [
+    [101, 'Alice', 25],
+    [102, 'Bob', 30],
+    [103, 'Charlie', 22]
+]
+
+df = pd.DataFrame(data, columns=['ID', 'Name', 'Age'])
+print(df)</code></pre>
+ </div>
+ <div class="snippet-container">
+  <div class="button-group-run-edit"><button class="button-run-edit" onclick="runPythonCode(this,'ZnfIH','JheGD')">Run</button> <button class="button-run-edit" onclick="openEditPythonCodeDialog('JheGD_Dialog','ZnfIH')">Edit</button>
+  </div> <iframe id="JheGD" class="result_iframe" style="display: none;"></iframe>
+  <div id="JheGD_Dialog" class="dialog-backdrop">
+   <div class="dialog">
+    <div class="controls"><button onclick="runPythonCode(this,'ZnfIH','JheGD_IFrame')">Run</button> <button onclick="closeAllPythonCodeDialog()">Close</button>
+    </div>
+    <div class="dialog-content">
+     <div class="editor-container">
+      <textarea id="ZnfIH" class="textarea_dialog" placeholder="Type HTML here...">import pandas as pd
+
+data = [
+    [101, 'Alice', 25],
+    [102, 'Bob', 30],
+    [103, 'Charlie', 22]
+]
+
+df = pd.DataFrame(data, columns=['ID', 'Name', 'Age'])
+print(df)</textarea>
+     </div>
+     <div class="preview-container">
+      <iframe id="JheGD_IFrame" class="result_iframe_dialog" style="border: none;"></iframe>
+     </div>
+    </div>
+   </div>
+  </div>
+  <script>
+{
+let editor = CodeMirror.fromTextArea(document.getElementById("ZnfIH"), {
+					mode : "python",
+					lineNumbers : false,
+          lineWrapping: true,
+					tabSize : 2
+});
+const darkmode = localStorage.getItem("mode") || "light";  
+const newTheme = darkmode === "dark" ? "dracula" : "default";
+editor.setSize("50%", "100%");
+editor.setOption("theme", newTheme);
+pythonCodeMirrorMap.set("ZnfIH", editor);
+
+}
+
+
+</script>
+ </div>
+</div><p><strong>Output:</strong></p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-bash">ID     Name  Age
+0  101    Alice   25
+1  102      Bob   30
+2  103  Charlie   22</code></pre>
+</div><ul>
+ <li><strong>Columns:</strong> We explicitly assign column labels with the <code>columns</code> parameter.</li>
+ <li><strong>Rows:</strong> Since no index is provided, Pandas automatically assigns a default integer index starting at 0.</li>
+</ul><h3 id="creating-a-dataframe-from-a-dictionary-of-lists">Creating a DataFrame from a Dictionary of Lists</h3><p>More commonly, data comes in the form of a dictionary where each key represents a column, and its value is a list of column entries.</p><div>
+ <div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+  <pre><code class="language-python">import pandas as pd
+
+data_dict = {
+    'ID': [201, 202, 203],
+    'Name': ['David', 'Eva', 'Frank'],
+    'Age': [28, 24, 27]
+}
+
+df_dict = pd.DataFrame(data_dict)
+print(df_dict)</code></pre>
+ </div>
+ <div class="snippet-container">
+  <div class="button-group-run-edit"><button class="button-run-edit" onclick="runPythonCode(this,'qj9NU','u477Z')">Run</button> <button class="button-run-edit" onclick="openEditPythonCodeDialog('u477Z_Dialog','qj9NU')">Edit</button>
+  </div> <iframe id="u477Z" class="result_iframe" style="display: none;"></iframe>
+  <div id="u477Z_Dialog" class="dialog-backdrop">
+   <div class="dialog">
+    <div class="controls"><button onclick="runPythonCode(this,'qj9NU','u477Z_IFrame')">Run</button> <button onclick="closeAllPythonCodeDialog()">Close</button>
+    </div>
+    <div class="dialog-content">
+     <div class="editor-container">
+      <textarea id="qj9NU" class="textarea_dialog" placeholder="Type HTML here...">import pandas as pd
+
+data_dict = {
+    'ID': [201, 202, 203],
+    'Name': ['David', 'Eva', 'Frank'],
+    'Age': [28, 24, 27]
+}
+
+df_dict = pd.DataFrame(data_dict)
+print(df_dict)</textarea>
+     </div>
+     <div class="preview-container">
+      <iframe id="u477Z_IFrame" class="result_iframe_dialog" style="border: none;"></iframe>
+     </div>
+    </div>
+   </div>
+  </div>
+  <script>
+{
+let editor = CodeMirror.fromTextArea(document.getElementById("qj9NU"), {
+					mode : "python",
+					lineNumbers : false,
+          lineWrapping: true,
+					tabSize : 2
+});
+const darkmode = localStorage.getItem("mode") || "light";  
+const newTheme = darkmode === "dark" ? "dracula" : "default";
+editor.setSize("50%", "100%");
+editor.setOption("theme", newTheme);
+pythonCodeMirrorMap.set("qj9NU", editor);
+
+}
+
+
+</script>
+ </div>
+</div><p><strong>Output:</strong></p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-bash">ID   Name  Age
+0  201  David   28
+1  202    Eva   24
+2  203  Frank   27</code></pre>
+</div><ul>
+ <li><strong>Column labels:</strong> Taken directly from the dictionary keys.</li>
+ <li><strong>Row labels:</strong> Default integer index assigned if not specified.</li>
+</ul><h3 id="creating-a-dataframe-from-numpy-arrays">Creating a DataFrame from NumPy Arrays</h3><p>You can also create DataFrames from NumPy arrays, which are useful if you’re working with numerical data generated or processed by NumPy.</p><div>
+ <div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+  <pre><code class="language-python">import numpy as np
+import pandas as pd
+
+data_array = np.array([
+    [1, 2, 3],
+    [4, 5, 6],
+    [7, 8, 9]
+])
+
+df_array = pd.DataFrame(data_array, columns=['A', 'B', 'C'])
+print(df_array)</code></pre>
+ </div>
+ <div class="snippet-container">
+  <div class="button-group-run-edit"><button class="button-run-edit" onclick="runPythonCode(this,'rHhLM','S42mu')">Run</button> <button class="button-run-edit" onclick="openEditPythonCodeDialog('S42mu_Dialog','rHhLM')">Edit</button>
+  </div> <iframe id="S42mu" class="result_iframe" style="display: none;"></iframe>
+  <div id="S42mu_Dialog" class="dialog-backdrop">
+   <div class="dialog">
+    <div class="controls"><button onclick="runPythonCode(this,'rHhLM','S42mu_IFrame')">Run</button> <button onclick="closeAllPythonCodeDialog()">Close</button>
+    </div>
+    <div class="dialog-content">
+     <div class="editor-container">
+      <textarea id="rHhLM" class="textarea_dialog" placeholder="Type HTML here...">import numpy as np
+import pandas as pd
+
+data_array = np.array([
+    [1, 2, 3],
+    [4, 5, 6],
+    [7, 8, 9]
+])
+
+df_array = pd.DataFrame(data_array, columns=['A', 'B', 'C'])
+print(df_array)</textarea>
+     </div>
+     <div class="preview-container">
+      <iframe id="S42mu_IFrame" class="result_iframe_dialog" style="border: none;"></iframe>
+     </div>
+    </div>
+   </div>
+  </div>
+  <script>
+{
+let editor = CodeMirror.fromTextArea(document.getElementById("rHhLM"), {
+					mode : "python",
+					lineNumbers : false,
+          lineWrapping: true,
+					tabSize : 2
+});
+const darkmode = localStorage.getItem("mode") || "light";  
+const newTheme = darkmode === "dark" ? "dracula" : "default";
+editor.setSize("50%", "100%");
+editor.setOption("theme", newTheme);
+pythonCodeMirrorMap.set("rHhLM", editor);
+
+}
+
+
+</script>
+ </div>
+</div><p><strong>Output:</strong></p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-bash">A  B  C
+0  1  2  3
+1  4  5  6
+2  7  8  9</code></pre>
+</div><ul>
+ <li><strong>Columns:</strong> You need to provide column labels explicitly as NumPy arrays don’t have named columns.</li>
+ <li><strong>Rows:</strong> Integer indices are automatically assigned.</li>
+</ul><h3 id="customizing-row-index-labels">Customizing Row Index Labels</h3><p>You can provide custom row indices with the <code>index</code> parameter to assign meaningful row labels:</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-python">df_custom_index = pd.DataFrame(data_dict, index=['a', 'b', 'c'])
+print(df_custom_index)</code></pre>
+</div><p><strong>Output:</strong></p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-bash">ID   Name  Age
+a  201  David   28
+b  202    Eva   24
+c  203  Frank   27</code></pre>
+</div><p>This is especially useful when your data rows represent identifiable entities like dates, IDs, or categories.</p><h3 id="how-input-format-affects-dataframe-structure">How Input Format Affects DataFrame Structure</h3><ul>
+ <li><strong>List of lists:</strong> Treated as rows; requires specifying columns for clarity.</li>
+ <li><strong>Dictionary of lists:</strong> Keys become columns; lengths of lists must be equal, or Pandas will raise an error.</li>
+ <li><strong>NumPy arrays:</strong> Numeric data without labels, so column and row labels need to be provided.</li>
+</ul><h3 id="summary">Summary</h3><p>Creating DataFrames is flexible and adapts to your data’s original structure:</p><table>
+ <thead>
+  <tr>
+   <th>Input Type</th>
+   <th>Structure Created</th>
+   <th>Labeling</th>
+  </tr>
+ </thead>
+ <tbody>
+  <tr>
+   <td>List of lists</td>
+   <td>Rows from each inner list</td>
+   <td>Columns need to be specified manually</td>
+  </tr>
+  <tr>
+   <td>Dictionary of lists</td>
+   <td>Columns from dict keys</td>
+   <td>Rows get default integer index unless specified</td>
+  </tr>
+  <tr>
+   <td>NumPy arrays</td>
+   <td>Numeric matrix</td>
+   <td>Requires explicit column and optional row labels</td>
+  </tr>
+ </tbody>
+</table><p>Experiment with different inputs and labels to see how the DataFrame shape and labeling behave. Mastery of these creation methods lays the foundation for effective data handling in Pandas.</p><div class = "chapter-navi-section">
+<a href="#top" class="nav-button prev">↑</a>
+<a href='pandas-for-data-science.htm#pandas-data-structures-in-depth' class="nav-button toc-link">Index</a>
+<a href="#bottom" class="nav-button next">↓</a>
+</div>
+<h2 id='index-objects-importance-and-custom-indexing'>2.3 Index Objects: Importance and Custom Indexing</h2><p>In pandas, <strong>Index objects</strong> are the backbone of how data is aligned and retrieved. Whether working with a <code>Series</code> or a <code>DataFrame</code>, the index provides a <strong>label-based mechanism</strong> to access rows and ensures consistent data alignment across operations such as joins, filters, or merges.</p><p>An <code>Index</code> behaves like an immutable array or set of labels. It can hold any hashable Python object (strings, numbers, timestamps, etc.), and it's optimized for <strong>fast lookups</strong> and <strong>automatic alignment</strong> of data. For example, when performing arithmetic between two Series or DataFrames, pandas aligns values using their indexes rather than their physical position.</p><p>Let’s explore the creation and customization of Index objects.</p><h4 id="creating-a-custom-index">Creating a Custom Index</h4><div>
+ <div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+  <pre><code class="language-python">import pandas as pd
+
+data = pd.Series([100, 200, 300], index=['a', 'b', 'c'])
+print(data)</code></pre>
+ </div>
+ <div class="snippet-container">
+  <div class="button-group-run-edit"><button class="button-run-edit" onclick="runPythonCode(this,'BrcSy','UGTwM')">Run</button> <button class="button-run-edit" onclick="openEditPythonCodeDialog('UGTwM_Dialog','BrcSy')">Edit</button>
+  </div> <iframe id="UGTwM" class="result_iframe" style="display: none;"></iframe>
+  <div id="UGTwM_Dialog" class="dialog-backdrop">
+   <div class="dialog">
+    <div class="controls"><button onclick="runPythonCode(this,'BrcSy','UGTwM_IFrame')">Run</button> <button onclick="closeAllPythonCodeDialog()">Close</button>
+    </div>
+    <div class="dialog-content">
+     <div class="editor-container">
+      <textarea id="BrcSy" class="textarea_dialog" placeholder="Type HTML here...">import pandas as pd
+
+data = pd.Series([100, 200, 300], index=['a', 'b', 'c'])
+print(data)</textarea>
+     </div>
+     <div class="preview-container">
+      <iframe id="UGTwM_IFrame" class="result_iframe_dialog" style="border: none;"></iframe>
+     </div>
+    </div>
+   </div>
+  </div>
+  <script>
+{
+let editor = CodeMirror.fromTextArea(document.getElementById("BrcSy"), {
+					mode : "python",
+					lineNumbers : false,
+          lineWrapping: true,
+					tabSize : 2
+});
+const darkmode = localStorage.getItem("mode") || "light";  
+const newTheme = darkmode === "dark" ? "dracula" : "default";
+editor.setSize("50%", "100%");
+editor.setOption("theme", newTheme);
+pythonCodeMirrorMap.set("BrcSy", editor);
+
+}
+
+
+</script>
+ </div>
+</div><p><strong>Output:</strong></p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-bash">a    100
+b    200
+c    300
+dtype: int64</code></pre>
+</div><p>Here, we assigned a custom index (<code>'a'</code>, <code>'b'</code>, <code>'c'</code>) instead of the default integer index. This allows us to access values using labels:</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-python">print(data['b'])  # Output: 200</code></pre>
+</div><h4 id="setting-and-resetting-the-index-in-dataframes">Setting and Resetting the Index in DataFrames</h4><p>In <code>DataFrame</code>s, indexes can be customized using the <code>.set_index()</code> method, and reverted with <code>.reset_index()</code>.</p><div>
+ <div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+  <pre><code class="language-python">import pandas as pd
+
+df = pd.DataFrame({
+    'Name': ['Alice', 'Bob', 'Charlie'],
+    'Age': [25, 30, 35]
+})
+df = df.set_index('Name')
+print(df)</code></pre>
+ </div>
+ <div class="snippet-container">
+  <div class="button-group-run-edit"><button class="button-run-edit" onclick="runPythonCode(this,'KmPWP','WZcf3')">Run</button> <button class="button-run-edit" onclick="openEditPythonCodeDialog('WZcf3_Dialog','KmPWP')">Edit</button>
+  </div> <iframe id="WZcf3" class="result_iframe" style="display: none;"></iframe>
+  <div id="WZcf3_Dialog" class="dialog-backdrop">
+   <div class="dialog">
+    <div class="controls"><button onclick="runPythonCode(this,'KmPWP','WZcf3_IFrame')">Run</button> <button onclick="closeAllPythonCodeDialog()">Close</button>
+    </div>
+    <div class="dialog-content">
+     <div class="editor-container">
+      <textarea id="KmPWP" class="textarea_dialog" placeholder="Type HTML here...">import pandas as pd
+
+df = pd.DataFrame({
+    'Name': ['Alice', 'Bob', 'Charlie'],
+    'Age': [25, 30, 35]
+})
+df = df.set_index('Name')
+print(df)</textarea>
+     </div>
+     <div class="preview-container">
+      <iframe id="WZcf3_IFrame" class="result_iframe_dialog" style="border: none;"></iframe>
+     </div>
+    </div>
+   </div>
+  </div>
+  <script>
+{
+let editor = CodeMirror.fromTextArea(document.getElementById("KmPWP"), {
+					mode : "python",
+					lineNumbers : false,
+          lineWrapping: true,
+					tabSize : 2
+});
+const darkmode = localStorage.getItem("mode") || "light";  
+const newTheme = darkmode === "dark" ? "dracula" : "default";
+editor.setSize("50%", "100%");
+editor.setOption("theme", newTheme);
+pythonCodeMirrorMap.set("KmPWP", editor);
+
+}
+
+
+</script>
+ </div>
+</div><p><strong>Output:</strong></p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-bash">Age
+Name         
+Alice     25
+Bob       30
+Charlie   35</code></pre>
+</div><p>Now, <code>'Name'</code> is the index. To bring it back as a regular column:</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-python">df = df.reset_index()
+print(df)</code></pre>
+</div><h4 id="index-uniqueness">Index Uniqueness</h4><p>Indexes <strong>do not have to be unique</strong>, but unique indexes enable faster and more predictable lookups. When duplicate labels exist, selecting a label returns <strong>multiple rows</strong>.</p><div>
+ <div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+  <pre><code class="language-python">import pandas as pd
+s = pd.Series([1, 2, 3], index=['x', 'x', 'y'])
+print(s['x'])  # Returns a Series with both 'x' entries</code></pre>
+ </div>
+ <div class="snippet-container">
+  <div class="button-group-run-edit"><button class="button-run-edit" onclick="runPythonCode(this,'IdWGY','FcCFi')">Run</button> <button class="button-run-edit" onclick="openEditPythonCodeDialog('FcCFi_Dialog','IdWGY')">Edit</button>
+  </div> <iframe id="FcCFi" class="result_iframe" style="display: none;"></iframe>
+  <div id="FcCFi_Dialog" class="dialog-backdrop">
+   <div class="dialog">
+    <div class="controls"><button onclick="runPythonCode(this,'IdWGY','FcCFi_IFrame')">Run</button> <button onclick="closeAllPythonCodeDialog()">Close</button>
+    </div>
+    <div class="dialog-content">
+     <div class="editor-container">
+      <textarea id="IdWGY" class="textarea_dialog" placeholder="Type HTML here...">import pandas as pd
+s = pd.Series([1, 2, 3], index=['x', 'x', 'y'])
+print(s['x'])  # Returns a Series with both 'x' entries</textarea>
+     </div>
+     <div class="preview-container">
+      <iframe id="FcCFi_IFrame" class="result_iframe_dialog" style="border: none;"></iframe>
+     </div>
+    </div>
+   </div>
+  </div>
+  <script>
+{
+let editor = CodeMirror.fromTextArea(document.getElementById("IdWGY"), {
+					mode : "python",
+					lineNumbers : false,
+          lineWrapping: true,
+					tabSize : 2
+});
+const darkmode = localStorage.getItem("mode") || "light";  
+const newTheme = darkmode === "dark" ? "dracula" : "default";
+editor.setSize("50%", "100%");
+editor.setOption("theme", newTheme);
+pythonCodeMirrorMap.set("IdWGY", editor);
+
+}
+
+
+</script>
+ </div>
+</div><p>You can check for uniqueness:</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-python">print(s.index.is_unique)  # Output: False</code></pre>
+</div><h4 id="introduction-to-multiindex-hierarchical-indexing">Introduction to MultiIndex (Hierarchical Indexing)</h4><p>A <strong>MultiIndex</strong> allows more than one index level, enabling complex data structures like pivot tables.</p><div>
+ <div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+  <pre><code class="language-python">import pandas as pd
+arrays = [
+    ['Math', 'Math', 'Science', 'Science'],
+    ['Alice', 'Bob', 'Alice', 'Bob']
+]
+index = pd.MultiIndex.from_arrays(arrays, names=['Subject', 'Student'])
+scores = pd.Series([90, 85, 95, 80], index=index)
+print(scores)</code></pre>
+ </div>
+ <div class="snippet-container">
+  <div class="button-group-run-edit"><button class="button-run-edit" onclick="runPythonCode(this,'Z11co','5KNp0')">Run</button> <button class="button-run-edit" onclick="openEditPythonCodeDialog('5KNp0_Dialog','Z11co')">Edit</button>
+  </div> <iframe id="5KNp0" class="result_iframe" style="display: none;"></iframe>
+  <div id="5KNp0_Dialog" class="dialog-backdrop">
+   <div class="dialog">
+    <div class="controls"><button onclick="runPythonCode(this,'Z11co','5KNp0_IFrame')">Run</button> <button onclick="closeAllPythonCodeDialog()">Close</button>
+    </div>
+    <div class="dialog-content">
+     <div class="editor-container">
+      <textarea id="Z11co" class="textarea_dialog" placeholder="Type HTML here...">import pandas as pd
+arrays = [
+    ['Math', 'Math', 'Science', 'Science'],
+    ['Alice', 'Bob', 'Alice', 'Bob']
+]
+index = pd.MultiIndex.from_arrays(arrays, names=['Subject', 'Student'])
+scores = pd.Series([90, 85, 95, 80], index=index)
+print(scores)</textarea>
+     </div>
+     <div class="preview-container">
+      <iframe id="5KNp0_IFrame" class="result_iframe_dialog" style="border: none;"></iframe>
+     </div>
+    </div>
+   </div>
+  </div>
+  <script>
+{
+let editor = CodeMirror.fromTextArea(document.getElementById("Z11co"), {
+					mode : "python",
+					lineNumbers : false,
+          lineWrapping: true,
+					tabSize : 2
+});
+const darkmode = localStorage.getItem("mode") || "light";  
+const newTheme = darkmode === "dark" ? "dracula" : "default";
+editor.setSize("50%", "100%");
+editor.setOption("theme", newTheme);
+pythonCodeMirrorMap.set("Z11co", editor);
+
+}
+
+
+</script>
+ </div>
+</div><p><strong>Output:</strong></p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-bash">Subject  Student
+Math     Alice      90
+         Bob        85
+Science  Alice      95
+         Bob        80
+dtype: int64</code></pre>
+</div><p>This format makes it easy to slice data across multiple dimensions:</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-python">print(scores['Math'])  # All Math scores
+print(scores[:, 'Alice'])  # All scores for Alice</code></pre>
+</div><h3 id="summary">Summary</h3><p>Pandas Index objects provide powerful capabilities for data labeling, alignment, and retrieval. With features like custom indexing, label-based access, index resetting, and multi-level indexes, you gain precise control over your data structure—an essential skill for effective data analysis.</p><div class = "chapter-navi-section">
+<a href="#top" class="nav-button prev">↑</a>
+<a href='pandas-for-data-science.htm#pandas-data-structures-in-depth' class="nav-button toc-link">Index</a>
+<a href="#bottom" class="nav-button next">↓</a>
+</div>
+<h2 id='practical-examples-simple-data-exploration'>2.4 Practical Examples: Simple Data Exploration</h2><p>In this section, we'll put together the foundational knowledge you've gained about <code>Series</code>, <code>DataFrame</code>, and indexing by walking through simple, hands-on examples of data exploration. These small but powerful techniques are commonly used at the start of any data analysis process.</p><p>We’ll begin by creating a small dataset and then demonstrate how to explore and manipulate it using pandas.</p><h4 id="step-1-create-a-sample-dataset">Step 1: Create a Sample Dataset</h4><p>Let’s create a <code>DataFrame</code> containing fictional student exam data:</p><div>
+ <div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+  <pre><code class="language-python">import pandas as pd
+
+data = {
+    'Student': ['Alice', 'Bob', 'Charlie', 'David', 'Eva'],
+    'Subject': ['Math', 'Science', 'Math', 'History', 'Science'],
+    'Score': [88, 92, 95, 70, 85],
+    'Passed': [True, True, True, False, True]
+}
+
+df = pd.DataFrame(data)
+print(df)</code></pre>
+ </div>
+ <div class="snippet-container">
+  <div class="button-group-run-edit"><button class="button-run-edit" onclick="runPythonCode(this,'9dTj0','BeEf1')">Run</button> <button class="button-run-edit" onclick="openEditPythonCodeDialog('BeEf1_Dialog','9dTj0')">Edit</button>
+  </div> <iframe id="BeEf1" class="result_iframe" style="display: none;"></iframe>
+  <div id="BeEf1_Dialog" class="dialog-backdrop">
+   <div class="dialog">
+    <div class="controls"><button onclick="runPythonCode(this,'9dTj0','BeEf1_IFrame')">Run</button> <button onclick="closeAllPythonCodeDialog()">Close</button>
+    </div>
+    <div class="dialog-content">
+     <div class="editor-container">
+      <textarea id="9dTj0" class="textarea_dialog" placeholder="Type HTML here...">import pandas as pd
+
+data = {
+    'Student': ['Alice', 'Bob', 'Charlie', 'David', 'Eva'],
+    'Subject': ['Math', 'Science', 'Math', 'History', 'Science'],
+    'Score': [88, 92, 95, 70, 85],
+    'Passed': [True, True, True, False, True]
+}
+
+df = pd.DataFrame(data)
+print(df)</textarea>
+     </div>
+     <div class="preview-container">
+      <iframe id="BeEf1_IFrame" class="result_iframe_dialog" style="border: none;"></iframe>
+     </div>
+    </div>
+   </div>
+  </div>
+  <script>
+{
+let editor = CodeMirror.fromTextArea(document.getElementById("9dTj0"), {
+					mode : "python",
+					lineNumbers : false,
+          lineWrapping: true,
+					tabSize : 2
+});
+const darkmode = localStorage.getItem("mode") || "light";  
+const newTheme = darkmode === "dark" ? "dracula" : "default";
+editor.setSize("50%", "100%");
+editor.setOption("theme", newTheme);
+pythonCodeMirrorMap.set("9dTj0", editor);
+
+}
+
+
+</script>
+ </div>
+</div><p><strong>Output:</strong></p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-bash">Student  Subject  Score  Passed
+0   Alice     Math     88    True
+1     Bob  Science     92    True
+2 Charlie     Math     95    True
+3   David  History     70   False
+4     Eva  Science     85    True</code></pre>
+</div><h4 id="step-2-basic-data-exploration">Step 2: Basic Data Exploration</h4><p>Use pandas methods to quickly understand the structure and contents of your data.</p><div>
+ <div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+  <pre><code class="language-python">import pandas as pd
+
+data = {
+    'Student': ['Alice', 'Bob', 'Charlie', 'David', 'Eva'],
+    'Subject': ['Math', 'Science', 'Math', 'History', 'Science'],
+    'Score': [88, 92, 95, 70, 85],
+    'Passed': [True, True, True, False, True]
+}
+
+df = pd.DataFrame(data)
+
+# First few rows
+print(df.head())</code></pre>
+ </div>
+ <div class="snippet-container">
+  <div class="button-group-run-edit"><button class="button-run-edit" onclick="runPythonCode(this,'QjKOp','HbXEa')">Run</button> <button class="button-run-edit" onclick="openEditPythonCodeDialog('HbXEa_Dialog','QjKOp')">Edit</button>
+  </div> <iframe id="HbXEa" class="result_iframe" style="display: none;"></iframe>
+  <div id="HbXEa_Dialog" class="dialog-backdrop">
+   <div class="dialog">
+    <div class="controls"><button onclick="runPythonCode(this,'QjKOp','HbXEa_IFrame')">Run</button> <button onclick="closeAllPythonCodeDialog()">Close</button>
+    </div>
+    <div class="dialog-content">
+     <div class="editor-container">
+      <textarea id="QjKOp" class="textarea_dialog" placeholder="Type HTML here...">import pandas as pd
+
+data = {
+    'Student': ['Alice', 'Bob', 'Charlie', 'David', 'Eva'],
+    'Subject': ['Math', 'Science', 'Math', 'History', 'Science'],
+    'Score': [88, 92, 95, 70, 85],
+    'Passed': [True, True, True, False, True]
+}
+
+df = pd.DataFrame(data)
+
+# First few rows
+print(df.head())</textarea>
+     </div>
+     <div class="preview-container">
+      <iframe id="HbXEa_IFrame" class="result_iframe_dialog" style="border: none;"></iframe>
+     </div>
+    </div>
+   </div>
+  </div>
+  <script>
+{
+let editor = CodeMirror.fromTextArea(document.getElementById("QjKOp"), {
+					mode : "python",
+					lineNumbers : false,
+          lineWrapping: true,
+					tabSize : 2
+});
+const darkmode = localStorage.getItem("mode") || "light";  
+const newTheme = darkmode === "dark" ? "dracula" : "default";
+editor.setSize("50%", "100%");
+editor.setOption("theme", newTheme);
+pythonCodeMirrorMap.set("QjKOp", editor);
+
+}
+
+
+</script>
+ </div>
+</div><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-python"># Summary of column types and non-null values
+print(df.info())</code></pre>
+</div><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-python"># Statistical summary of numerical columns
+print(df.describe())</code></pre>
+</div><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-python"># Unique values in a column
+print(df['Subject'].unique())</code></pre>
+</div><h4 id="step-3-accessing-data-with-series">Step 3: Accessing Data with Series</h4><p>You can extract a column as a <code>Series</code> for further inspection:</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-python">scores = df['Score']
+print(type(scores))  # &lt;class 'pandas.core.series.Series'&gt;
+print(scores.mean())  # Average score</code></pre>
+</div><p>You can also filter rows using boolean conditions:</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-python">print(df[df['Score'] &gt; 90])  # Students scoring above 90</code></pre>
+</div><h4 id="step-4-custom-indexing">Step 4: Custom Indexing</h4><p>To make lookups and sorting easier, set a more meaningful index:</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-python">df_indexed = df.set_index('Student')
+print(df_indexed)</code></pre>
+</div><p><strong>Output:</strong></p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-bash">Subject  Score  Passed
+Student                         
+Alice       Math     88    True
+Bob      Science     92    True
+Charlie     Math     95    True
+David    History     70   False
+Eva      Science     85    True</code></pre>
+</div><p>Now you can access rows by student name:</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-python">print(df_indexed.loc['Charlie'])</code></pre>
+</div><p>You can always reset the index if needed:</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-python">df_reset = df_indexed.reset_index()
+print(df_reset.head())</code></pre>
+</div><h3 id="summary">Summary</h3><p>These basic operations—viewing, summarizing, filtering, and indexing—form the foundation of data exploration with pandas. With just a few lines of code, you can gain immediate insights into your dataset and prepare it for deeper analysis. The more you practice these techniques, the more natural and efficient your data analysis will become.</p><div class = "chapter-navi-section">
+<a href="pandas-for-data-science-introduction-to-pandas.htm" class="nav-button prev">←</a>
+<a href='pandas-for-data-science.htm#pandas-data-structures-in-depth' class="nav-button toc-link">Index</a>
+<a href="pandas-for-data-science-data-selection-and-indexing.htm" class="nav-button next">→</a>
+</div>
+<section class="download-section">
+  <div class="book-cover" style="background-color: #f9f6f1;border: 1px solid #ccc;"> 
+    <div class="book-cover-title" style="font-size: 18px;color: #333;top: 20px;">Pandas for Data Science</div>
+    <div class="book-cover-author">readbytes</div>
+    <div class="book-cover-bottom-stripe" style="background-color: #333;"></div>
+    <img class="book-cover-icon" style="width: 90px;height: 90px;top: 70px;" src="data:image/png;base64,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"/>
+  </div>
+  <div class="download-info">
+    <h2 id='bottom'>Download This Ebook</h2>
+    <p class="format-label">Available formats:</p>
+    <div class="download-buttons">
+      <a href="pandas-for-data-science.pdf" class="download-button">📄 PDF</a>
+      <a href="pandas-for-data-science.epub" class="download-button">📘 EPUB</a>
+    </div>
+  </div>
+</section><div class='related-books'>
+<h2>Python Data Science Books</h2>
+<div class='related-book-list'>
+<a href="pandas-for-data-science.htm">
+<div class="book-cover" style="background-color: #f9f6f1;border: 1px solid #ccc;"> 
+    <div class="book-cover-title" style="font-size: 18px;color: #333;top: 20px;">Pandas for Data Science</div>
+    <div class="book-cover-author">readbytes</div>
+    <div class="book-cover-bottom-stripe" style="background-color: #333;"></div>
+    <img class="book-cover-icon" style="width: 90px;height: 90px;top: 70px;" src="data:image/png;base64,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"/>
+  </div>
+</a>
+
+
+
+<a href='python.htm'><div class='book-cover' style='background-color: #f9f6f1;color: #111111;border: 1px solid #ccc;display: flex;justify-content: center;align-items: center;text-align: center;'>More Python Books</div></a>
+</div>
+</div><script>
+function copyCode(button) {const code = button.nextElementSibling.innerText;navigator.clipboard.writeText(code).then(() => {button.textContent = 'Copied!';setTimeout(() => { button.textContent = 'Copy'; }, 1500);});}
+</script></div>
+<style>
+.site-footer {margin-top: 60px;padding: 20px 0;border-top: 1px solid #eee;text-align: center;font-size: 14px;}
+.site-footer a {text-decoration: none;}
+.light-mode .site-footer {color: #777;border-color: #eee;}
+.dark-mode .site-footer {color: #888;border-color: #333;}
+.light-mode .site-footer a {color: #555;}
+.dark-mode .site-footer a {color: #aaa;}
+.site-footer a:hover {text-decoration: underline;}    
+</style>
+<footer class="site-footer">
+<nav><a href="https://readbytes.github.io">Home</a> |Email:<script type="text/javascript">
+var part1 = 'yinpeng';var part6 = '263';var part2 = Math.pow(2,6);var part3 = String.fromCharCode(part2);var part4 = 'hotmail dot com';var part5 = part1 + String.fromCharCode(part2) + part4;document.write(part1 + part6 + part3 + part4);
+</script>
+| <a id="mode-toggle" href="#">Toggle Dark Mode</a>
+</nav><p>© 2025 — All rights reserved.</p></footer>
+<script>
+const toggleButton = document.getElementById('mode-toggle');
+const body = document.body;
+const savedMode = localStorage.getItem('mode') || 'light';
+body.classList.add(savedMode + '-mode');
+toggleButton.addEventListener('click', () => {
+      const isDark = body.classList.contains('dark-mode');
+      body.classList.toggle('dark-mode', !isDark);
+      body.classList.toggle('light-mode', isDark);
+      localStorage.setItem('mode', isDark ? 'light' : 'dark');
+});
+function copyCode(button) {const code = button.nextElementSibling.innerText;navigator.clipboard.writeText(code).then(() => {button.textContent = 'Copied!';setTimeout(() => { button.textContent = 'Copy'; }, 1500);});}
+</script>
+</body>
+</html>

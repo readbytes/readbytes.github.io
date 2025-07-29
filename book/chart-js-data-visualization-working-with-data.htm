@@ -1,21 +1,281 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
+<meta charset="UTF-8">
 <title>Chart.js Data Visualization Working with Data</title>
-<link rel='shortcut icon' href='https://java2s.com/style/favicon.ico'>
+<link rel='shortcut icon' href='https://readbytes.github.io/images/favicon.ico'>
 <link href="https://fonts.googleapis.com/css2?family=Merriweather&display=swap" rel="stylesheet" />
 <link href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
-
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.css" />
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/theme/material.css"> <!-- Dark theme -->
-<script src="https://cdn.jsdelivr.net/npm/typescript@5/lib/typescript.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/htmlmixed/htmlmixed.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/theme/dracula.min.css"><style>
+html {scroll-behavior: smooth;}  
+body {font-family: 'Merriweather', serif;;margin: 0;padding: 2rem 1rem;font-size: 15px;line-height: 1.5;transition: background-color 0.3s, color 0.3s;}
+.container {max-width: 750px;margin: 0 auto;padding: 1rem 2rem;}
+.light-mode {background-color: #f8f7f5;color: #333;} 
+.dark-mode {background-color: #121212;color: #e0e0e0;}
+a { text-decoration: none;transition: color 0.2s;}
+a:hover {text-decoration: underline;}
+.light-mode a {color: #555;}
+.dark-mode a {color: #aaa;}
+</style><style>
+.related-book-list {display: flex;flex-wrap: wrap;gap: 20px;}
+.related-books {margin-top: 40px;}
+.related-books h2 {font-size: 22px;margin-bottom: 20px;border-bottom: 2px solid #eee;padding-bottom: 8px;}
+.light-mode .related-books h2 {color: #333;border-color: #eee;}
+.dark-mode .related-books h2 {color: #ddd;border-color: #333;}
+</style><style>
+.book-cover {width: 130px;height: 180px;font-family: Arial, sans-serif;position: relative;overflow: hidden;box-shadow: 2px 2px 4px rgba(0,0,0,0.1);}
+.book-cover-bottom-stripe {position: absolute;bottom: 0;left: 0;height: 5px;width: 100%;}
+.book-cover-title {position: absolute;width: 100%;text-align: center;font-weight: bold;}
+.book-cover-icon {position: absolute;left: 50%;transform: translateX(-50%);display: flex;align-items: center;justify-content: center;}
+.book-cover-author {position: absolute;bottom: 10px;width: 100%;text-align: center;font-size: 8px;color: #333;}
+</style><style>
+.book-title-toc {font-size: 32px;font-weight: bold; }
+.book-subtitle-toc {font-size: 18px;margin-top: 8px;font-style: italic;}
+.book-header {text-align: center;margin-bottom: 40px;}
+
+.toc-container {border-radius: 10px;padding: 30px;margin-bottom: 40px;box-shadow: 0 8px 20px rgba(0,0,0,0.05);}
+h1 {font-size: 24px;text-align: center;margin-bottom: 30px;letter-spacing: 1px;padding-bottom: 10px;}
+.toc-list,.toc-section-list {list-style: none;padding: 0;margin: 0;}
+.toc-section-list {padding-left: 18px;margin-top: 6px;margin-bottom: 20px; }
+.toc-chapter {padding: 20px 0;}
+.chapter-title,.toc-section {display: flex;justify-content: space-between;padding-top: 4px;}
+.chapter-title {font-size: 17px;font-weight: bold;}
+.chapter-page,.section-page {font-style: italic;}
+ 
+ 
+.light-mode .book-title-toc,.light-mode .chapter-title,.light-mode .book-name {color: #222;}
+.light-mode .book-subtitle-toc,.light-mode .book-sub,.light-mode .chapter-page,.light-mode .section-page {color: #666;}
+.light-mode .toc-container { background: #fff;border: 1px solid #ddd;}
+.light-mode h1 {border-bottom: 2px solid #eee;color: #222;}
+.light-mode .toc-section {  color: #444;}
+
+.light-mode .book-cover { border: 1px solid #ccc;box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);}
+.light-mode .book-title,.light-mode .series-name {color: #fff;}
+.light-mode .book-subtitle,.light-mode .book-footer {color: #aaa;}
+
+.dark-mode .book-title-toc,.dark-mode .chapter-title,.dark-mode .book-name {color: #f5f5f5;}
+.dark-mode .book-subtitle-toc,.dark-mode .book-sub,.dark-mode .chapter-page,.dark-mode .section-page {color: #aaa;}
+.dark-mode .toc-container {background: #1e1e1e;border: 1px solid #444;}
+
+.dark-mode h1 {border-bottom: 2px solid #333;color: #eee;}
+.dark-mode .toc-section {color: #bbb;}
+
+.dark-mode .related-books h2 {color: #ddd;border-bottom: 2px solid #333;}
+.dark-mode .book-title,.dark-mode .series-name {color: #fff;}
+.dark-mode .book-subtitle,.dark-mode .book-footer {color: #bbb;}
+.dark-mode .toc-section {color: #ddd;}
+
+@media (max-width: 600px) {
+  .chapter-title,
+  .toc-section {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .chapter-page,
+  .section-page {
+    margin-top: 4px;
+  }
+}
+
+</style><style>
+.light-mode .container {box-shadow: 0 0 15px rgba(0,0,0,0.1);}
+.dark-mode .container {box-shadow: 0 0 15px rgba(255, 255, 255, 0.05);}
+
+h1, h2, h3 {font-weight: 600;margin-top: 2.5rem;margin-bottom: 1rem;line-height: 1.2;}
+h1 { font-size: 1.8rem; }
+h2 { font-size: 1.4rem; }
+h3 { font-size: 1.2rem; }
+
+table {width: 100%;border-collapse: collapse;font-family: sans-serif;font-size: 1em;margin: 1em 0;}
+th, td {padding: 0.6em 1em;text-align: left;border: 1px solid;}
+tr:nth-child(even) {  background-color: inherit;}
+tr:hover { background-color: inherit;}
+
+code {color: #d35400;}
+
+.chapter-navi-section {display: flex;justify-content: space-between;align-items: center;padding-bottom: 10px;padding-top: 10px;}
+.nav-link {color: inherit;text-decoration: none;opacity: 0.5;transition: opacity 0.3s ease, text-decoration 0.3s ease;}
+.nav-link:hover {opacity: 0.9;text-decoration: underline;}
+.prev { text-align: left; }
+.toc-link { text-align: center; }
+.next { text-align: right; }
+
+.download-section {display: flex;align-items: center;justify-content: center;gap: 2rem;padding: 2rem 1rem;max-width: 600px;margin: 3rem auto;border-radius: 12px;box-shadow: 0 4px 10px rgba(0,0,0,0.05);}
+.download-info h2 {margin: 0 0 0.5rem;font-size: 1.2rem;}
+.format-label {margin: 0 0 0.5rem;font-size: 0.95rem;}
+.download-buttons {display: flex;gap: 1rem;}
+.download-button {background-color: #4A90E2;color: white;padding: 0.5em 1.2em;border-radius: 25px;font-size: 0.95rem;text-decoration: none;transition: background-color 0.3s ease;}
+.download-button:hover {background-color: #357ABD;}
+
+.code-block {position: relative;margin-bottom: 1em;}
+.copy-button {background: transparent;color: white;position: absolute;top: 8px;right: 8px;border: none;padding: 4px 8px;font-size: 12px;border-radius: 4px;cursor: pointer;z-index: 1;}
+.copy-button:hover {background-color: #0056b3;}
+
+.snippet-container {overflow: hidden;}
+.snippet-header {padding: 0.75rem 1rem;cursor: pointer;font-size: 1rem;background-color: #eeeeee;color:  #111111; border-radius: 8px;cursor: pointer;box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+.snippet-body {display: none;font-family: monospace;}
+.snippet-container.open .snippet-body {display: block;}
+
+.CodeMirror {border: 2px solid #ccc;border-radius: 4px;resize: vertical;}
+
+.light-mode .format-label {color: #888;}
+.light-mode th {background-color: #f2f2f2;}
+.light-mode tr:nth-child(even) {background-color: #fafafa;}
+.light-mode tr:hover {background-color: #e6f7ff;}
+
+.dark-mode .snippet-header {background-color: #333;color:  #ddd; }
+.dark-mode .format-label {color: #aaa;}
+.dark-mode th {background-color: #333;color: #fff;}
+.dark-mode td {border-color: #444;}
+.dark-mode tr:nth-child(even) {background-color: #2a2a2a;}
+.dark-mode tr:hover {background-color: #2c3e50;}
+
+
+.button-group-run-edit {display: flex;width: 100%;gap: 1rem;}
+.button-run-edit {flex: 1;padding: 1rem;font-size: 1rem;font-weight: 600;border: none;border-radius: 8px;cursor: pointer;transition: background 0.3s, color 0.3s;}
+
+.light-mode .button-run-edit {background-color: #f0f0f0;color: #222;box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);}
+.light-mode .button-run-edit:hover {background-color: #e0e0e0;}
+
+.dark-mode .button-run-edit {background-color: #2a2a2a;color: #f5f5f5;box-shadow: 0 0 10px rgba(255, 255, 255, 0.05);}
+.dark-mode .button-run-edit:hover {background-color: #3a3a3a;}
+
+button { padding: 0.5em 1em; background: green; color: white; border: none; cursor: pointer; }
+button:hover { background: #1e7e34; }
+.result_iframe { width:99%; margin-top: 1em;  resize: both;background-color: #515b63;border:1px solid #ccc;}   
+
+.dialog-backdrop {position: fixed;top: 0;left: 0;width: 100vw;height: 100vh;background: rgba(0,0,0,0.5);display: none;justify-content: center;align-items: center;z-index: 10;}
+.dialog {background: #90979e;padding: 20px;width: 90vw;height: 80vh;border-radius: 8px;box-shadow: 0 0 20px rgba(0,0,0,0.3);display: flex;flex-direction: column;}
+.dialog-content {display: flex;gap: 20px;margin-top: 10px;height: calc(100% - 40px);}
+.editor-container, .preview-container {flex: 1;height: 100%;max-height: 100%;overflow: hidden; }
+.result_iframe_dialog {width: 100%;height: 100%;resize: both;border:1px solid #ccc;overflow: auto; }   
+.CodeMirror {width: 100% !important;height: 100% !important;}
+</style><script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/htmlmixed/htmlmixed.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/xml/xml.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/css/css.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/javascript/javascript.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/javascript/typescript.min.js"></script>
+<script>
+  const htmlCodeMirrorMap = new Map();
+  const htmlCodeIFrameMap = new Map();
+  let dismissTimer;
+  function showFloatingLog(message) {
+	const floatingLog = document.getElementById('floatingLog');
+
+    if (floatingLog.style.display !== 'block') {
+      floatingLog.textContent = '';
+      floatingLog.style.display = 'block'; 
+    }
+
+    floatingLog.textContent += message + '\n';
+    floatingLog.scrollTop = floatingLog.scrollHeight; 
+    clearTimeout(dismissTimer);
+    dismissTimer = setTimeout(() => {
+      floatingLog.style.display = 'none';
+      floatingLog.textContent = '';
+    }, 2000);
+  }
+  window.addEventListener('message', (event) => {
+	    if (!htmlCodeIFrameMap.has(event.source)) return;
+
+	    if (event.data?.type === 'console-log') {
+	      showFloatingLog(event.data.message);
+	    }
+  });      
+  function runHtmlCode(button,textarea_id, iframe_id, isInDialog) {
+      const html = htmlCodeMirrorMap.get(textarea_id).getValue();
+      const iframe = document.getElementById(iframe_id);
+  
+      const oldIframe = iframe;
+      const newIframe = document.createElement('iframe');
+
+      if(isInDialog){
+         newIframe.className ="result_iframe_dialog";
+      }else{
+         newIframe.className ="result_iframe";
+      }
+      
+      
+      newIframe.id = iframe_id;
+      oldIframe.replaceWith(newIframe);
+ 
+
+      // Track the iframe in the map
+      htmlCodeIFrameMap.set(newIframe.contentWindow, button);
+
+      const overrideScript = `
+        <script>
+          (function() {
+            const originalLog = console.log;
+            console.log = function(...args) {
+              originalLog.apply(console, args);
+              window.parent.postMessage({
+                type: 'console-log',
+                message: args.map(a => {
+                  try { return JSON.stringify(a); }
+                  catch { return String(a); }
+                }).join(' ')
+              }, '*');
+            };
+          })();
+        <\/script>
+      `;
+ 
+      const iframeHTML = `
+        <!DOCTYPE html>
+        <html>
+        <body>
+          ${overrideScript}
+          ${html}
+        </body>
+        </html>
+      `;
+ 
+      const doc = newIframe.contentDocument || newIframe.contentWindow.document;
+      doc.open();
+      doc.write(iframeHTML);
+      doc.close();
+
+if(!isInDialog){ 
+newIframe.onload = function () {
+ 
+    const doc = newIframe.contentDocument || newIframe.contentWindow.document;
+    // Give a short delay to ensure layout is complete
+    setTimeout(() => {
+      const body = doc.body;
+      const html = doc.documentElement;
+
+      const height = Math.max(
+        body.scrollHeight, body.offsetHeight,
+        html.clientHeight, html.scrollHeight, html.offsetHeight
+      );
+
+      newIframe.style.height = height + 'px';
+    }, 50);
+};
+
+}
+      
+  }  
+function openEditHtmlCodeDialog(id, textarea_id) {
+		        closeAllHtmlCodeDialog();
+		        document.getElementById(id).style.display = 'flex';
+         
+ 	        setTimeout(() => {
+		        	 htmlCodeMirrorMap.get(textarea_id).refresh();
+                   
+ 	        }, 100); // 100ms 
+}
+
+function closeAllHtmlCodeDialog() {
+		        document.querySelectorAll('.dialog-backdrop').forEach(el => {
+		          el.style.display = 'none';
+		        });
+}		
+</script> 
 <style>
     #floatingLog {
       position: fixed;
@@ -39,679 +299,30 @@
       text-align: center;
     }
 </style>
-<script>
-  const codeMirrorMap = new Map();
-  const iframeMap = new Map();
-  
- 
-
-  let dismissTimer;
-  function showFloatingLog(message) {
-	const floatingLog = document.getElementById('floatingLog');
-
-    if (floatingLog.style.display !== 'block') {
-      floatingLog.textContent = '';
-      floatingLog.style.display = 'block'; 
-    }
-
-    floatingLog.textContent += message + '\n';
-    floatingLog.scrollTop = floatingLog.scrollHeight; 
-    clearTimeout(dismissTimer);
-    dismissTimer = setTimeout(() => {
-      floatingLog.style.display = 'none';
-      floatingLog.textContent = '';
-    }, 2000);
-  }
-  window.addEventListener('message', (event) => {
-	    if (!iframeMap.has(event.source)) return;
-
-	    if (event.data?.type === 'console-log') {
-	      showFloatingLog(event.data.message);
-	    }
-  });  
-  function renderIframe(button,textarea_id, iframe_id) {
-      const html = codeMirrorMap.get(textarea_id).getValue();
-      const iframe = document.getElementById(iframe_id);
-  
-      const oldIframe = iframe;
-      const newIframe = document.createElement('iframe');
-      newIframe.className ="result_iframe";
-      
-      newIframe.id = iframe_id;
-      oldIframe.replaceWith(newIframe);
- 
-
-      // Track the iframe in the map
-      iframeMap.set(newIframe.contentWindow, button);
-
-      const overrideScript = `
-        <script>
-          (function() {
-            const originalLog = console.log;
-            console.log = function(...args) {
-              originalLog.apply(console, args);
-              window.parent.postMessage({
-                type: 'console-log',
-                message: args.map(a => {
-                  try { return JSON.stringify(a); }
-                  catch { return String(a); }
-                }).join(' ')
-              }, '*');
-            };
-          })();
-        <\/script>
-      `;
-
-      const iframeHTML = `
-        <!DOCTYPE html>
-        <html>
-        <body>
-          ${overrideScript}
-          ${html}
-        </body>
-        </html>
-      `;
- 
-      const doc = newIframe.contentDocument || newIframe.contentWindow.document;
-      doc.open();
-      doc.write(iframeHTML);
-      doc.close();
-
-      
-      setTimeout(() => {
-    	  newIframe.style.height = '0px';
-    	   let contentHeight = Math.max(doc.body.scrollHeight,doc.documentElement.scrollHeight);
- 
-    	//   if(contentHeight < 150 || contentHeight > 600){
-    	//	   contentHeight = 600;
-    	 //  } 
-    	   newIframe.style.height = contentHeight + 'px';
-    	}, 50);      
-      
-  }
-  function renderIframeForClientTypescript(textarea_id, iframe_id) {
-      let code = codeMirrorMap.get(textarea_id).getValue();
-      code = ts.transpile(code);
-      const iframe = document.getElementById(iframe_id);
-      const doc = iframe.contentDocument || iframe.contentWindow.document;
-
-const html = `
-  <!DOCTYPE html>
-  <html>
-    <head>
-      <title>Output</title>
-      <style>
-        body { font-family: monospace; padding: 1em; background: #f4f4f4; color: #222; }
-        pre { white-space: pre-wrap; word-break: break-word; }
-        .error { color: red; }
-      </style>
-    </head>
-    <body>
-      <pre id="log"></pre>
-      <script>
-        (function(){
-          const logEl = document.getElementById('log');
-          const origLog = console.log;
-          const origError = console.error;
-
-          console.log = (...args) => {
-            logEl.textContent += args.join(' ') + '\\n';
-            origLog.apply(console, args);
-          };
-          console.table = (...args) => {
-            logEl.textContent += args.join(' ') + '\\n';
-            origLog.apply(console, args);
-          };
-
-          console.error = (...args) => {
-            logEl.innerHTML +='<span class="error">' + args.join(' ') + '</span>';
-            origError.apply(console, args);
-          };
-          window.addEventListener("error", function (event) {
-              console.error("Caught by event listener:", event.message);
-          });    
-          try {             
-              ${code};
-          } catch (err) {
-            console.error(err.stack || err.message);
-          }
-        })();
-      <\/script>
-    </body>
-  </html>
-`;
-
-      iframe.style.display = "block";
-      iframe.srcdoc = html;  
-  }
-
-    function renderIframeForClientJavascript(textarea_id, iframe_id) {
-        const code = codeMirrorMap.get(textarea_id).getValue();
-        const iframe = document.getElementById(iframe_id);
-        const doc = iframe.contentDocument || iframe.contentWindow.document;
-
-  const html = `
-    <!DOCTYPE html>
-    <html>
-      <head>
-        <title>Output</title>
-        <style>
-          body { font-family: monospace; padding: 1em; background: #1e1e1e; color: #eee; }
-          pre { white-space: pre-wrap; word-break: break-word; }
-          .error { color: red; }
-        </style>
-      </head>
-      <body>
-        <pre id="log"></pre>
-        <script>
-          (function(){
-            const logEl = document.getElementById('log');
-            const origLog = console.log;
-            const origError = console.error;
-
-            console.log = (...args) => {
-              logEl.textContent += args.join(' ') + '\\n';
-              origLog.apply(console, args);
-            };
-            console.table = (...args) => {
-              logEl.textContent += args.join(' ') + '\\n';
-              origLog.apply(console, args);
-            };
-
-            console.error = (...args) => {
-              logEl.innerHTML +='<span class="error">' + args.join(' ') + '</span>';
-              origError.apply(console, args);
-            };
-            window.addEventListener("error", function (event) {
-                console.error("Caught by event listener:", event.message);
-            });    
-            try {
-             ${code}; 
-            } catch (err) {
-              console.error(err.stack || err.message);
-            }
-          })();
-        <\/script>
-      </body>
-    </html>
-  `;
-        iframe.style.display = "block";
-        iframe.srcdoc = html;  
-    }
-    function toggleSnippetAndRefresh(id, textarea_id) {
-      const box = document.getElementById(id);
-      box.classList.toggle("open");
-      codeMirrorMap.get(textarea_id).refresh();
-    }
-
-  </script>
-  <script>
-  const mode = localStorage.getItem('mode') || 'light';
-  document.documentElement.classList.add(`${mode}-mode`);
-  </script>   
-<style> 
-html {
-  scroll-behavior: smooth;
-}
-
-body {
-  font-family: 'Merriweather', serif;
-  margin: 0;
-  padding: 2rem 1rem;
-  font-size: 15px;
-  line-height: 1.5;
-  transition: background-color 0.3s, color 0.3s;
-}
-
-.container {
-  max-width: 700px;
-  margin: 0 auto;
-  padding: 1rem 2rem;
-  box-shadow: 0 0 15px rgba(0,0,0,0.1);
-}
-
-h1, h2, h3 {
-  font-weight: 600;
-  margin-top: 2.5rem;
-  margin-bottom: 1rem;
-  line-height: 1.2;
-}
-
-h1 { font-size: 1.8rem; }
-h2 { font-size: 1.4rem; }
-h3 { font-size: 1.2rem; }
-
-table {
-  width: 100%;
-  border-collapse: collapse;
-  font-family: sans-serif;
-  font-size: 1em;
-  margin: 1em 0;
-}
-
-th, td {
-  padding: 0.6em 1em;
-  text-align: left;
-  border: 1px solid;
-}
-
-tr:nth-child(even) {
-  background-color: inherit;
-}
-
-tr:hover {
-  background-color: inherit;
-}
-
-a {
-  text-decoration: none;
-  transition: color 0.2s;
-}
-
-a:hover {
-  text-decoration: underline;
-}
-
-code {
-  color: #d35400;
-}
-
-.book-title-chapter {
-  font-family: 'Merriweather', serif;
-  font-size: 2rem;
-  font-weight: bold;
-  text-align: center;
-  margin-bottom: 2rem;
-  border-bottom: 2px solid;
-  padding-bottom: 0.5rem;
-}
-
-.book-subtitle-chapter {
-  text-align: center;
-  font-size: 1rem;
-  margin-top: -1rem;
-  margin-bottom: 2rem;
-}
-
-.related-books {
-  margin-top: 40px;
-}
-
-.related-book-list {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 20px;
-}
-
-    .book-cover {
-      width: 130px;
-      height: 180px;
-      font-family: Arial, sans-serif;
-      position: relative;
-      overflow: hidden;      
-      line-height: normal;
-      box-shadow: 2px 2px 4px rgba(0,0,0,0.1);
-    }
-    .book-cover-bottom-stripe {
-      position: absolute;
-      bottom: 0;
-      left: 0;
-      height: 5px;
-      width: 100%;
-    }
-    .book-cover-title {
-      position: absolute;
-      width: 100%;
-      text-align: center;
-      font-weight: bold;
-    }
-     
-    .book-cover-icon {
-      position: absolute;
-      left: 50%;
-      transform: translateX(-50%);
-      display: flex;
-      align-items: center;
-      justify-content: center; 
-    }
-
-    .book-cover-author {
-      position: absolute;
-      bottom: 10px;
-      width: 100%;
-      text-align: center;
-      font-size: 8px;
-      color: #333;
-    }
-
-.page-footer {
-  margin-top: 4rem;
-  padding: 1rem 0;
-  text-align: center;
-  font-size: 0.85rem;
-  border-top: 1px solid;
-}
-
-.chapter-navi-section {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding-bottom: 10px;
-}
-
-.nav-link {
-  color: inherit;
-  text-decoration: none;
-  opacity: 0.5;
-  transition: opacity 0.3s ease, text-decoration 0.3s ease;
-}
-
-.nav-link:hover {
-  opacity: 0.9;
-  text-decoration: underline;
-}
-
-.prev { text-align: left; }
-.toc-link { text-align: center; }
-.next { text-align: right; }
-
-.download-section {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 2rem;
-  padding: 2rem 1rem;
-  max-width: 600px;
-  margin: 3rem auto;
-  border-radius: 12px;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-}
-
-.download-info h2 {
-  margin: 0 0 0.5rem;
-  font-size: 1.2rem;
-}
-
-.format-label {
-  margin: 0 0 0.5rem;
-  font-size: 0.95rem;
-}
-
-.download-buttons {
-  display: flex;
-  gap: 1rem;
-}
-
-.download-button {
-  background-color: #4A90E2;
-  color: white;
-  padding: 0.5em 1.2em;
-  border-radius: 25px;
-  font-size: 0.95rem;
-  text-decoration: none;
-  transition: background-color 0.3s ease;
-}
-
-.download-button:hover {
-  background-color: #357ABD;
-}
-
-.code-block {
-  position: relative;
-  margin-bottom: 1em;
-}
-
-.copy-button {
-  background: transparent;
-  color: white;
-  position: absolute;
-  top: 8px;
-  right: 8px;
-  border: none;
-  padding: 4px 8px;
-  font-size: 12px;
-  border-radius: 4px;
-  cursor: pointer;
-  z-index: 1;
-}
-
-.copy-button:hover {
-  background-color: #0056b3;
-}
-
-.snippet-container {
-  overflow: hidden;
-}
-
-.snippet-header {
-  padding: 0.75rem 1rem;
-  cursor: pointer;
-  font-size: 1rem;
-    background-color: #eeeeee;
-    color:  #111111; 
-    border-radius: 8px;
-    cursor: pointer;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.1);  
-}
-
-.snippet-body {
-  display: none;
-  font-family: monospace;
-}
-
-.snippet-container.open .snippet-body {
-  display: block;
-}
-
-.CodeMirror {
-  border: 2px solid #ccc;
-  border-radius: 4px;
-  resize: vertical;
-}
-
-/* === Light Mode === */
-html.light-mode {
-  background-color: #f8f7f5;
-  color: #333;
-}
-
-html.light-mode .container {
-  background: white;
-}
-
-html.light-mode .book-title-chapter {
-  color: #2c3e50;
-  border-color: #ccc;
-}
-html.light-mode .book-subtitle-chapter{
-  color: #888;
-}
-
-html.light-mode .page-footer,
-html.light-mode .series-name,
-html.light-mode .book-subtitle,
-html.light-mode .format-label {
-  color: #888;
-}
-
-html.light-mode .related-books h2 {
-  color: #333;
-  border-bottom: 2px solid #eee;
-}
-
-html.light-mode .book-title {
-  color: #fff;
-}
-
-html.light-mode .book-cover {
-  border: 1px solid #ccc;
-}
-
-html.light-mode th {
-  background-color: #f2f2f2;
-}
-
-html.light-mode tr:nth-child(even) {
-  background-color: #fafafa;
-}
-
-html.light-mode tr:hover {
-  background-color: #e6f7ff;
-}
-
-html.light-mode a,
-html.light-mode .page-footer a {
-  color: #000;
-}
-
-/* === Dark Mode === */
-html.dark-mode {
-  background-color: #181818;
-  color: #e0e0e0;
-}
-
-html.dark-mode .container {
-  background: #222;
-}
-
-html.dark-mode .book-title-chapter {
-  color: #ddd;
-  border-color: #444;
-}
-
-html.dark-mode .snippet-header {
-    background-color: #333;
-    color:  #ddd; 
-}
-
-
-html.dark-mode .book-subtitle-chapter,
-html.dark-mode .page-footer,
-html.dark-mode .series-name,
-html.dark-mode .book-subtitle,
-html.dark-mode .book-footer,
-html.dark-mode .format-label {
-  color: #aaa;
-}
-
-html.dark-mode .related-books h2 {
-  color: #ddd;
-  border-bottom: 2px solid #333;
-}
-
-html.dark-mode .book-title {
-  color: #fff;
-}
-
-html.dark-mode .book-cover {
-  border: 1px solid #555;
-}
-
-html.dark-mode th {
-  background-color: #333;
-  color: #fff;
-}
-
-html.dark-mode td {
-  border-color: #444;
-}
-
-html.dark-mode tr:nth-child(even) {
-  background-color: #2a2a2a;
-}
-
-html.dark-mode tr:hover {
-  background-color: #2c3e50;
-}
-
-html.dark-mode a,
-html.dark-mode .page-footer a {
-  color: #eee;
-}
-
-    .dialog-backdrop {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100vw;
-      height: 100vh;
-      background: rgba(0,0,0,0.5);
-      display: none;
-      justify-content: center;
-      align-items: center;
-      z-index: 10;
-    }
-
-    .dialog {
-      background: white;
-      padding: 20px;
-      width: 90vw;
-      height: 80vh;
-      border-radius: 8px;
-      box-shadow: 0 0 20px rgba(0,0,0,0.3);
-      display: flex;
-      flex-direction: column;
-    }
-    .dialog-content {
-      display: flex;
-      flex: 1;
-      gap: 20px;
-      margin-top: 10px;
-    }
-    .dialog h2 {
-      margin-top: 0;
-    }
-
-    .textarea_dialog {
-      width: 50%;
-      height: 100%;
-      resize: none;
-      font-family: monospace;
-      font-size: 14px;
-      padding: 10px;
-      box-sizing: border-box;
-      border: 1px solid #ccc;
-    }
-
-    .iframe_dialog {
-      width: 50%;
-      height: 100%;
-      border: 1px solid #ccc;
-    }
-    .controls_dialog {
-      display: flex;
-      justify-content: space-between;
-      margin-top: 10px;
-    }    
-    button { padding: 0.5em 1em; background: green; color: white; border: none; cursor: pointer; }
-    button:hover { background: #1e7e34; }
-    .result_iframe { width:99%; height:200px; margin-top: 1em;  resize: both;border:1px solid #ccc;}        
-</style>
 </head>
-<body> 
-  <div class="container">
-    <div class = "chapter-navi-section">
+<body>
+<script>const mode = localStorage.getItem('mode') || 'light';document.documentElement.classList.add(`${mode}-mode`);</script>  
+<div class="container"><div class = "chapter-navi-section">
 <a href="chart-js-data-visualization-advanced-chart-options.htm" class="nav-button prev">←</a>
 <a href='chart-js-data-visualization.htm#working-with-data' class="nav-button toc-link">Index</a>
 <a href="chart-js-data-visualization-interactivity-and-plugins.htm" class="nav-button next">→</a>
 </div>
-
-    <h1 class="book-title-chapter" id = 'top'>Working with Data</h1>
-    <h3 class="book-subtitle-chapter">Chart.js Data Visualization</h3>   
-    <!-- <h1 class ="chapter-title"></h1> -->
-    <h2 id='dynamic-data-updates'>6.1 Dynamic Data Updates</h2><p>One of the powerful features of Chart.js is the ability to <strong>update your charts dynamically</strong> after they have been rendered. This is essential for interactive dashboards, live data feeds, or any situation where the data changes over time.</p><p>Chart.js provides a straightforward API to modify the data and re-render the chart without recreating it from scratch. Key methods include updating the <code>chart.data</code> object and calling <code>chart.update()</code> to reflect changes on the screen.</p><h3 id="how-dynamic-updates-work">How Dynamic Updates Work</h3><p>After you create a chart instance, the chart’s data is stored inside the <code>chart.data</code> object, which contains:</p><ul>
+<div class='book-header'><h1 class='book-title-toc' id = 'top'>Working with Data</h1><h3 class='book-subtitle-toc'>Chart.js Data Visualization</h3></div><h2 id='dynamic-data-updates'>6.1 Dynamic Data Updates</h2><p>One of the powerful features of Chart.js is the ability to <strong>update your charts dynamically</strong> after they have been rendered. This is essential for interactive dashboards, live data feeds, or any situation where the data changes over time.</p><p>Chart.js provides a straightforward API to modify the data and re-render the chart without recreating it from scratch. Key methods include updating the <code>chart.data</code> object and calling <code>chart.update()</code> to reflect changes on the screen.</p><h3 id="how-dynamic-updates-work">How Dynamic Updates Work</h3><p>After you create a chart instance, the chart’s data is stored inside the <code>chart.data</code> object, which contains:</p><ul>
  <li><code>datasets</code> — An array of datasets shown on the chart.</li>
  <li><code>labels</code> — The labels for the chart’s axes (often the X-axis).</li>
-</ul><p>To update or add data dynamically, you modify these properties and then call:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</ul><p>To update or add data dynamically, you modify these properties and then call:</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-js">chart.update();</code></pre>
 </div><p>This triggers Chart.js to animate and redraw the chart based on the new data.</p><h3 id="common-data-update-methods">Common Data Update Methods</h3><ul>
  <li><strong>Add a new data point</strong>: Append a value to a dataset's <code>data</code> array and add a corresponding label.</li>
  <li><strong>Add a new dataset</strong>: Push a new dataset object to <code>chart.data.datasets</code>.</li>
  <li><strong>Remove or modify data</strong>: Remove or change entries within <code>chart.data.datasets</code> or <code>chart.data.labels</code>.</li>
-</ul><h3 id="practical-example-adding-data-points-on-button-click">Practical Example: Adding Data Points on Button Click</h3><p>Let's create a simple line chart where clicking a button adds a new point with random data.</p><h3 id="html-setup">HTML Setup</h3><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</ul><h3 id="practical-example-adding-data-points-on-button-click">Practical Example: Adding Data Points on Button Click</h3><p>Let's create a simple line chart where clicking a button adds a new point with random data.</p><h3 id="html-setup">HTML Setup</h3><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-html">&lt;canvas id="lineChart" width="600" height="400"&gt;&lt;/canvas&gt;
 &lt;button id="addDataBtn"&gt;Add Data Point&lt;/button&gt;</code></pre>
-</div><h3 id="javascript-setup">JavaScript Setup</h3><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</div><h3 id="javascript-setup">JavaScript Setup</h3><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-js">const ctx = document.getElementById('lineChart').getContext('2d');
 
 const lineChart = new Chart(ctx, {
@@ -761,13 +372,16 @@ document.getElementById('addDataBtn').addEventListener('click', () =&gt; {
   // Update chart to reflect changes
   lineChart.update();
 });</code></pre>
-</div><div class="snippet-container" id="d1FhZ">
- <div id="GUbzC_Dialog" class="dialog-backdrop">
+</div><div class="snippet-container">
+ <div class="button-group-run-edit"><button class="button-run-edit" onclick="runHtmlCode(this,'cz6fL','cYBAj', false)">Run</button> <button class="button-run-edit" onclick="openEditHtmlCodeDialog('cYBAj_Dialog','cz6fL')">Edit</button>
+ </div> <iframe id="cYBAj" class="result_iframe" style="display: none;"></iframe>
+ <div id="cYBAj_Dialog" class="dialog-backdrop">
   <div class="dialog">
-   <h2>Dialog 1</h2>
-   <div class="controls"><button onclick="renderIframe(this,'PxgAQ_Textarea','GUbzC_IFrame')">Run</button> <button onclick="closeAll()">Close</button>
+   <div class="controls"><button onclick="runHtmlCode(this,'cz6fL','cYBAj_IFrame', true)">Run</button> <button onclick="closeAllHtmlCodeDialog()">Close</button>
    </div>
-   <div class="dialog-content"><textarea id="PxgAQ_Textarea" class="textarea_dialog" placeholder="Type HTML here...">&lt;!DOCTYPE html&gt;
+   <div class="dialog-content">
+    <div class="editor-container">
+     <textarea id="cz6fL" class="textarea_dialog" placeholder="Type HTML here...">&lt;!DOCTYPE html&gt;
 &lt;html lang="en"&gt;
 &lt;head&gt;
   &lt;meta charset="UTF-8" /&gt;
@@ -877,164 +491,30 @@ document.getElementById('addDataBtn').addEventListener('click', () =&gt; {
   &lt;/script&gt;
 
 &lt;/body&gt;
-&lt;/html&gt;</textarea> <iframe id="GUbzC_IFrame" class="iframe_dialog"></iframe>
+&lt;/html&gt;</textarea>
+    </div>
+    <div class="preview-container">
+     <iframe id="cYBAj_IFrame" class="result_iframe_dialog" style="border: none;"></iframe>
+    </div>
    </div>
   </div>
  </div>
- <div class="snippet-header" onclick="toggleSnippetAndRefresh('d1FhZ','PxgAQ')">
-  Click to Try it <!--<span onclick="toggleSnippetAndRefresh('d1FhZ','PxgAQ')">Click
-			to Try it</span> --> <!-- <span onclick="openDialog('GUbzC_Dialog')">Dialog</span> -->
- </div>
- <div class="snippet-body"><textarea id="PxgAQ">&lt;!DOCTYPE html&gt;
-&lt;html lang="en"&gt;
-&lt;head&gt;
-  &lt;meta charset="UTF-8" /&gt;
-  &lt;title&gt;Line Chart: Add Data Points&lt;/title&gt;
-  &lt;script src="https://cdn.jsdelivr.net/npm/chart.js"&gt;&lt;/script&gt;
-  &lt;style&gt;
-    body {
-      font-family: Arial, sans-serif;
-      padding: 2rem;
-      background: #f3f4f6;
-    }
-    canvas {
-      display: block;
-      max-width: 700px;
-      height: 400px;
-      margin-bottom: 1rem;
-    }
-    button {
-      padding: 0.6rem 1.2rem;
-      font-size: 1rem;
-      background-color: #3b82f6;
-      border: none;
-      color: white;
-      border-radius: 5px;
-      cursor: pointer;
-    }
-    button:hover {
-      background-color: #2563eb;
-    }
-  &lt;/style&gt;
-&lt;/head&gt;
-&lt;body&gt;
-
-  &lt;canvas id="lineChart" width="600" height="400"&gt;&lt;/canvas&gt;
-  &lt;button id="addDataBtn"&gt;Add Data Point&lt;/button&gt;
-
-  &lt;script&gt;
-    const ctx = document.getElementById('lineChart').getContext('2d');
-
-    const lineChart = new Chart(ctx, {
-      type: 'line',
-      data: {
-        labels: ['January', 'February', 'March', 'April'],
-        datasets: [{
-          label: 'Sales',
-          data: [65, 59, 80, 81],
-          borderColor: 'rgba(75, 192, 192, 1)',
-          fill: false,
-          tension: 0.3
-        }]
-      },
-      options: {
-        responsive: true,
-        animation: {
-          duration: 500,
-          easing: 'easeOutQuad'
-        },
-        plugins: {
-          title: {
-            display: true,
-            text: 'Sales Over Months'
-          }
-        },
-        scales: {
-          y: {
-            beginAtZero: true,
-            title: {
-              display: true,
-              text: 'Sales Value'
-            }
-          },
-          x: {
-            title: {
-              display: true,
-              text: 'Month'
-            }
-          }
-        }
-      }
-    });
-
-    // Generate random sales value between 50 and 100
-    function getRandomSales() {
-      return Math.floor(Math.random() * 50) + 50;
-    }
-
-    const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August'];
-    let nextMonthIndex = 4;
-
-    document.getElementById('addDataBtn').addEventListener('click', () =&gt; {
-      if (nextMonthIndex &gt;= months.length) {
-        alert('No more months available');
-        return;
-      }
-
-      // Add new label
-      lineChart.data.labels.push(months[nextMonthIndex]);
-
-      // Add new data point
-      lineChart.data.datasets[0].data.push(getRandomSales());
-
-      nextMonthIndex++;
-
-      // Update the chart with animation
-      lineChart.update();
-    });
-  &lt;/script&gt;
-
-&lt;/body&gt;
-&lt;/html&gt;</textarea> <br> <button onclick="renderIframe(this,'PxgAQ','GUbzC')">Run</button>
-  <div id="GUbzC_FloatingLog" class="floatingLog" aria-live="polite" role="alert"></div> <iframe id="GUbzC" class="result_iframe" style="display: none;"></iframe>
-  <script>
-			{
-				let editor = CodeMirror.fromTextArea(document
-						.getElementById("PxgAQ"), {
+ <script>
+{
+let editor = CodeMirror.fromTextArea(document.getElementById("cz6fL"), {
 					mode : "htmlmixed",
 					lineNumbers : false,
+                    lineWrapping: true,
 					tabSize : 2
-				});
-			    const mode = localStorage.getItem("mode") || "light";  
-			    const newTheme = mode === "dark" ? "material" : "default";
-			    editor.setOption("theme", newTheme);
-			    
-				codeMirrorMap.set("PxgAQ", editor);
+});
+const darkmode = localStorage.getItem("mode") || "light";  
+const newTheme = darkmode === "dark" ? "dracula" : "default";
+editor.setSize("50%", "100%");
+editor.setOption("theme", newTheme);
+htmlCodeMirrorMap.set("cz6fL", editor);
+}
 
-				let editor1 = CodeMirror.fromTextArea(document.getElementById("PxgAQ_Textarea"), {
-					mode : "htmlmixed",
-					lineNumbers : false,
-					tabSize : 2
-				});
-			    editor1.setOption("theme", newTheme);				
-				
-				codeMirrorMap.set("PxgAQ_Textarea", editor1);
-			}
-		    function openDialog(id) {
-		        closeAll();
-		        document.getElementById(id).style.display = 'flex';
-		        setTimeout(() => {
-		        	 codeMirrorMap.get("PxgAQ_Textarea").refresh();
-		        }, 100); // 100ms 
-		      }
-
-		      function closeAll() {
-		        document.querySelectorAll('.dialog-backdrop').forEach(el => {
-		          el.style.display = 'none';
-		        });
-		      }			
-		</script>
- </div>
+</script>
 </div><h3 id="explanation">Explanation</h3><ul>
  <li><p>The chart initializes with 4 months of sales data.</p></li>
  <li><p>When the <strong>Add Data Point</strong> button is clicked:</p>
@@ -1074,19 +554,22 @@ document.getElementById('addDataBtn').addEventListener('click', () =&gt; {
 <a href='chart-js-data-visualization.htm#working-with-data' class="nav-button toc-link">Index</a>
 <a href="#bottom" class="nav-button next">↓</a>
 </div>
-<h2 id='loading-external-data-json-api'>6.2 Loading External Data (JSON, API)</h2><p>In real-world applications, data often comes from external sources such as JSON files or REST APIs. Chart.js can easily integrate with these sources by fetching data asynchronously, transforming it as needed, and rendering charts dynamically.</p><p>This section guides you through loading external data using JavaScript’s native <code>fetch()</code> API, mapping the data to Chart.js datasets, and handling asynchronous rendering.</p><h3 id="fetching-data-with-fetch">Fetching Data with <code>fetch()</code></h3><p>The <code>fetch()</code> function allows you to make HTTP requests and retrieve data asynchronously in JSON or other formats.</p><h3 id="basic-fetch-example">Basic Fetch Example</h3><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+<h2 id='loading-external-data-json-api'>6.2 Loading External Data (JSON, API)</h2><p>In real-world applications, data often comes from external sources such as JSON files or REST APIs. Chart.js can easily integrate with these sources by fetching data asynchronously, transforming it as needed, and rendering charts dynamically.</p><p>This section guides you through loading external data using JavaScript’s native <code>fetch()</code> API, mapping the data to Chart.js datasets, and handling asynchronous rendering.</p><h3 id="fetching-data-with-fetch">Fetching Data with <code>fetch()</code></h3><p>The <code>fetch()</code> function allows you to make HTTP requests and retrieve data asynchronously in JSON or other formats.</p><h3 id="basic-fetch-example">Basic Fetch Example</h3><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-js">fetch('data/sales.json')
   .then(response =&gt; response.json())
   .then(data =&gt; {
     console.log(data); // Inspect fetched JSON
   })
   .catch(error =&gt; console.error('Error fetching data:', error));</code></pre>
-</div><h3 id="mapping-external-data-to-chart-js">Mapping External Data to Chart.js</h3><p>Suppose the external JSON data looks like this:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</div><h3 id="mapping-external-data-to-chart-js">Mapping External Data to Chart.js</h3><p>Suppose the external JSON data looks like this:</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-json">{
   "labels": ["January", "February", "March", "April"],
   "sales": [120, 150, 170, 140]
 }</code></pre>
-</div><p>You can use this data to populate Chart.js:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</div><p>You can use this data to populate Chart.js:</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-js">fetch('data/sales.json')
   .then(response =&gt; response.json())
   .then(data =&gt; {
@@ -1111,7 +594,8 @@ document.getElementById('addDataBtn').addEventListener('click', () =&gt; {
       }
     });
   });</code></pre>
-</div><h3 id="handling-asynchronous-rendering">Handling Asynchronous Rendering</h3><p>Because fetching data is asynchronous, you must create or update the chart <strong>inside the <code>.then()</code> callback</strong> after data is loaded.</p><h3 id="option-1-create-chart-after-fetch">Option 1: Create Chart After Fetch</h3><p>Create the chart only once data is available, as shown above.</p><h3 id="option-2-create-chart-first-update-later">Option 2: Create Chart First, Update Later</h3><p>Alternatively, initialize an empty chart and update it after fetching data:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</div><h3 id="handling-asynchronous-rendering">Handling Asynchronous Rendering</h3><p>Because fetching data is asynchronous, you must create or update the chart <strong>inside the <code>.then()</code> callback</strong> after data is loaded.</p><h3 id="option-1-create-chart-after-fetch">Option 1: Create Chart After Fetch</h3><p>Create the chart only once data is available, as shown above.</p><h3 id="option-2-create-chart-first-update-later">Option 2: Create Chart First, Update Later</h3><p>Alternatively, initialize an empty chart and update it after fetching data:</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-js">const ctx = document.getElementById('myChart').getContext('2d');
 
 const chart = new Chart(ctx, {
@@ -1134,7 +618,8 @@ fetch('data/sales.json')
     chart.data.datasets[0].data = data.sales;
     chart.update();
   });</code></pre>
-</div><p>This approach is useful when you want the chart structure upfront, perhaps showing a loading spinner or placeholder.</p><h3 id="fetching-data-from-rest-apis">Fetching Data from REST APIs</h3><p>The process is the same for REST APIs that return JSON. For example:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</div><p>This approach is useful when you want the chart structure upfront, perhaps showing a loading spinner or placeholder.</p><h3 id="fetching-data-from-rest-apis">Fetching Data from REST APIs</h3><p>The process is the same for REST APIs that return JSON. For example:</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-js">fetch('https://api.example.com/sales')
   .then(response =&gt; response.json())
   .then(apiData =&gt; {
@@ -1143,7 +628,8 @@ fetch('data/sales.json')
     chart.data.datasets[0].data = apiData.values;
     chart.update();
   });</code></pre>
-</div><p>Make sure to adjust the mapping depending on your API’s response format.</p><h3 id="error-handling">Error Handling</h3><p>Always handle network errors gracefully to improve user experience:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</div><p>Make sure to adjust the mapping depending on your API’s response format.</p><h3 id="error-handling">Error Handling</h3><p>Always handle network errors gracefully to improve user experience:</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-js">fetch('data/sales.json')
   .then(res =&gt; {
     if (!res.ok) throw new Error('Network response was not ok');
@@ -1189,7 +675,8 @@ fetch('data/sales.json')
  <li><strong>Aggregate or group:</strong> Summarize detailed data into meaningful buckets.</li>
  <li><strong>Format data:</strong> Convert raw timestamps into readable labels.</li>
  <li><strong>Sort:</strong> Display data in chronological or value order for clarity.</li>
-</ul><h3 id="example-dataset-transactions">Example Dataset: Transactions</h3><p>Consider an array of sales transactions with date and amount:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</ul><h3 id="example-dataset-transactions">Example Dataset: Transactions</h3><p>Consider an array of sales transactions with date and amount:</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-js">const transactions = [
   { date: '2024-01-15', amount: 200 },
   { date: '2024-02-05', amount: 150 },
@@ -1198,7 +685,8 @@ fetch('data/sales.json')
   { date: '2024-02-20', amount: 400 },
   { date: '2024-03-15', amount: 100 }
 ];</code></pre>
-</div><h3 id="goal-filter-transactions-to-only-show-sales-in-february-and-march-above-100-then-aggregate-by-month-for-charting">Goal: Filter transactions to only show sales in February and March above 100, then aggregate by month for charting.</h3><h4 id="step-1-filter-by-date-and-amount">Step 1: Filter by Date and Amount</h4><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</div><h3 id="goal-filter-transactions-to-only-show-sales-in-february-and-march-above-100-then-aggregate-by-month-for-charting">Goal: Filter transactions to only show sales in February and March above 100, then aggregate by month for charting.</h3><h4 id="step-1-filter-by-date-and-amount">Step 1: Filter by Date and Amount</h4><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-js">const filtered = transactions.filter(t =&gt; {
   const month = new Date(t.date).getMonth() + 1; // JS months 0-based
   return (month === 2 || month === 3) &amp;&amp; t.amount &gt; 100;
@@ -1206,18 +694,22 @@ fetch('data/sales.json')
 </div><ul>
  <li>We extract the month from the date.</li>
  <li>Keep only February (2) or March (3) sales above 100.</li>
-</ul><h4 id="step-2-group-and-sum-sales-by-month">Step 2: Group and Sum Sales by Month</h4><p>We want total sales per month:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</ul><h4 id="step-2-group-and-sum-sales-by-month">Step 2: Group and Sum Sales by Month</h4><p>We want total sales per month:</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-js">const salesByMonth = filtered.reduce((acc, curr) =&gt; {
   const month = new Date(curr.date).toLocaleString('default', { month: 'short' });
   acc[month] = (acc[month] || 0) + curr.amount;
   return acc;
 }, {});</code></pre>
-</div><p>Result:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</div><p>Result:</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-js">// salesByMonth = { Feb: 550, Mar: 100 }</code></pre>
-</div><h4 id="step-3-prepare-data-for-chart-js">Step 3: Prepare Data for Chart.js</h4><p>Extract labels and data arrays:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</div><h4 id="step-3-prepare-data-for-chart-js">Step 3: Prepare Data for Chart.js</h4><p>Extract labels and data arrays:</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-js">const labels = Object.keys(salesByMonth);      // ['Feb', 'Mar']
 const data = Object.values(salesByMonth);      // [550, 100]</code></pre>
-</div><h4 id="final-chart-data-object">Final Chart Data Object</h4><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</div><h4 id="final-chart-data-object">Final Chart Data Object</h4><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-js">const chartData = {
   labels: labels,
   datasets: [{
@@ -1226,7 +718,8 @@ const data = Object.values(salesByMonth);      // [550, 100]</code></pre>
     backgroundColor: ['#3b82f6', '#f59e0b'],
   }]
 };</code></pre>
-</div><h4 id="putting-it-all-together-in-chart-js">Putting It All Together in Chart.js</h4><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</div><h4 id="putting-it-all-together-in-chart-js">Putting It All Together in Chart.js</h4><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-js">const ctx = document.getElementById('myChart').getContext('2d');
 
 const chart = new Chart(ctx, {
@@ -1239,13 +732,16 @@ const chart = new Chart(ctx, {
     }
   }
 });</code></pre>
-</div><div class="snippet-container" id="xw8Ll">
- <div id="XurB3_Dialog" class="dialog-backdrop">
+</div><div class="snippet-container">
+ <div class="button-group-run-edit"><button class="button-run-edit" onclick="runHtmlCode(this,'c4POw','daZoP', false)">Run</button> <button class="button-run-edit" onclick="openEditHtmlCodeDialog('daZoP_Dialog','c4POw')">Edit</button>
+ </div> <iframe id="daZoP" class="result_iframe" style="display: none;"></iframe>
+ <div id="daZoP_Dialog" class="dialog-backdrop">
   <div class="dialog">
-   <h2>Dialog 1</h2>
-   <div class="controls"><button onclick="renderIframe(this,'sIkm9_Textarea','XurB3_IFrame')">Run</button> <button onclick="closeAll()">Close</button>
+   <div class="controls"><button onclick="runHtmlCode(this,'c4POw','daZoP_IFrame', true)">Run</button> <button onclick="closeAllHtmlCodeDialog()">Close</button>
    </div>
-   <div class="dialog-content"><textarea id="sIkm9_Textarea" class="textarea_dialog" placeholder="Type HTML here...">&lt;!DOCTYPE html&gt;
+   <div class="dialog-content">
+    <div class="editor-container">
+     <textarea id="c4POw" class="textarea_dialog" placeholder="Type HTML here...">&lt;!DOCTYPE html&gt;
 &lt;html lang="en"&gt;
 &lt;head&gt;
   &lt;meta charset="UTF-8" /&gt;
@@ -1344,153 +840,30 @@ const chart = new Chart(ctx, {
   &lt;/script&gt;
 
 &lt;/body&gt;
-&lt;/html&gt;</textarea> <iframe id="XurB3_IFrame" class="iframe_dialog"></iframe>
+&lt;/html&gt;</textarea>
+    </div>
+    <div class="preview-container">
+     <iframe id="daZoP_IFrame" class="result_iframe_dialog" style="border: none;"></iframe>
+    </div>
    </div>
   </div>
  </div>
- <div class="snippet-header" onclick="toggleSnippetAndRefresh('xw8Ll','sIkm9')">
-  Click to Try it <!--<span onclick="toggleSnippetAndRefresh('xw8Ll','sIkm9')">Click
-			to Try it</span> --> <!-- <span onclick="openDialog('XurB3_Dialog')">Dialog</span> -->
- </div>
- <div class="snippet-body"><textarea id="sIkm9">&lt;!DOCTYPE html&gt;
-&lt;html lang="en"&gt;
-&lt;head&gt;
-  &lt;meta charset="UTF-8" /&gt;
-  &lt;title&gt;Filtered Sales Bar Chart&lt;/title&gt;
-  &lt;script src="https://cdn.jsdelivr.net/npm/chart.js"&gt;&lt;/script&gt;
-  &lt;style&gt;
-    body {
-      font-family: Arial, sans-serif;
-      padding: 2rem;
-      background: #f9fafb;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-    }
-    canvas {
-      max-width: 600px;
-      width: 100%;
-      height: 400px;
-    }
-  &lt;/style&gt;
-&lt;/head&gt;
-&lt;body&gt;
-
-  &lt;canvas id="myChart"&gt;&lt;/canvas&gt;
-
-  &lt;script&gt;
-    // Step 0: Dataset
-    const transactions = [
-      { date: '2024-01-15', amount: 200 },
-      { date: '2024-02-05', amount: 150 },
-      { date: '2024-01-25', amount: 300 },
-      { date: '2024-03-10', amount: 50 },
-      { date: '2024-02-20', amount: 400 },
-      { date: '2024-03-15', amount: 100 }
-    ];
-
-    // Step 1: Filter by month (Feb or Mar) and amount &gt; 100
-    const filtered = transactions.filter(t =&gt; {
-      const month = new Date(t.date).getMonth() + 1; // 1-based
-      return (month === 2 || month === 3) &amp;&amp; t.amount &gt; 100;
-    });
-
-    // Step 2: Aggregate sales by month short name
-    const salesByMonth = filtered.reduce((acc, curr) =&gt; {
-      const month = new Date(curr.date).toLocaleString('default', { month: 'short' });
-      acc[month] = (acc[month] || 0) + curr.amount;
-      return acc;
-    }, {});
-
-    // Step 3: Extract labels and data arrays
-    const labels = Object.keys(salesByMonth);    // e.g. ['Feb', 'Mar']
-    const data = Object.values(salesByMonth);    // e.g. [550, 100]
-
-    // Chart data object
-    const chartData = {
-      labels: labels,
-      datasets: [{
-        label: 'Filtered Sales',
-        data: data,
-        backgroundColor: ['#3b82f6', '#f59e0b']
-      }]
-    };
-
-    // Chart initialization
-    const ctx = document.getElementById('myChart').getContext('2d');
-    new Chart(ctx, {
-      type: 'bar',
-      data: chartData,
-      options: {
-        responsive: true,
-        plugins: {
-          legend: { display: false },
-          title: {
-            display: true,
-            text: 'Filtered Sales for Feb and Mar &gt; $100'
-          }
-        },
-        scales: {
-          y: {
-            beginAtZero: true,
-            title: {
-              display: true,
-              text: 'Sales Amount ($)'
-            }
-          },
-          x: {
-            title: {
-              display: true,
-              text: 'Month'
-            }
-          }
-        }
-      }
-    });
-  &lt;/script&gt;
-
-&lt;/body&gt;
-&lt;/html&gt;</textarea> <br> <button onclick="renderIframe(this,'sIkm9','XurB3')">Run</button>
-  <div id="XurB3_FloatingLog" class="floatingLog" aria-live="polite" role="alert"></div> <iframe id="XurB3" class="result_iframe" style="display: none;"></iframe>
-  <script>
-			{
-				let editor = CodeMirror.fromTextArea(document
-						.getElementById("sIkm9"), {
+ <script>
+{
+let editor = CodeMirror.fromTextArea(document.getElementById("c4POw"), {
 					mode : "htmlmixed",
 					lineNumbers : false,
+                    lineWrapping: true,
 					tabSize : 2
-				});
-			    const mode = localStorage.getItem("mode") || "light";  
-			    const newTheme = mode === "dark" ? "material" : "default";
-			    editor.setOption("theme", newTheme);
-			    
-				codeMirrorMap.set("sIkm9", editor);
+});
+const darkmode = localStorage.getItem("mode") || "light";  
+const newTheme = darkmode === "dark" ? "dracula" : "default";
+editor.setSize("50%", "100%");
+editor.setOption("theme", newTheme);
+htmlCodeMirrorMap.set("c4POw", editor);
+}
 
-				let editor1 = CodeMirror.fromTextArea(document.getElementById("sIkm9_Textarea"), {
-					mode : "htmlmixed",
-					lineNumbers : false,
-					tabSize : 2
-				});
-			    editor1.setOption("theme", newTheme);				
-				
-				codeMirrorMap.set("sIkm9_Textarea", editor1);
-			}
-		    function openDialog(id) {
-		        closeAll();
-		        document.getElementById(id).style.display = 'flex';
-		        setTimeout(() => {
-		        	 codeMirrorMap.get("sIkm9_Textarea").refresh();
-		        }, 100); // 100ms 
-		      }
-
-		      function closeAll() {
-		        document.querySelectorAll('.dialog-backdrop').forEach(el => {
-		          el.style.display = 'none';
-		        });
-		      }			
-		</script>
- </div>
+</script>
 </div><h3 id="summary-filtering-and-transforming-data">Summary: Filtering and Transforming Data</h3><table>
  <thead>
   <tr>
@@ -1526,9 +899,11 @@ const chart = new Chart(ctx, {
 <a href='chart-js-data-visualization.htm#working-with-data' class="nav-button toc-link">Index</a>
 <a href="#bottom" class="nav-button next">↓</a>
 </div>
-<h2 id='real-time-charting-with-live-data'>6.4 Real-Time Charting with Live Data</h2><p>Real-time charts enable you to visualize data that changes continuously, such as live sensor readings, stock prices, or user activity. Chart.js, combined with JavaScript’s timing and networking features, makes it easy to build charts that update dynamically as new data arrives.</p><p>In this section, you’ll learn how to implement real-time updating charts using either <strong>polling with <code>setInterval</code></strong> or <strong>WebSocket streams</strong>, including how to add new data points while removing old ones for a smooth, live visualization.</p><h3 id="method-1-polling-with-setinterval">Method 1: Polling with <code>setInterval</code></h3><p>Polling involves periodically fetching or generating new data and updating the chart at fixed intervals.</p><h3 id="example-real-time-line-chart-with-random-data">Example: Real-Time Line Chart with Random Data</h3><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+<h2 id='real-time-charting-with-live-data'>6.4 Real-Time Charting with Live Data</h2><p>Real-time charts enable you to visualize data that changes continuously, such as live sensor readings, stock prices, or user activity. Chart.js, combined with JavaScript’s timing and networking features, makes it easy to build charts that update dynamically as new data arrives.</p><p>In this section, you’ll learn how to implement real-time updating charts using either <strong>polling with <code>setInterval</code></strong> or <strong>WebSocket streams</strong>, including how to add new data points while removing old ones for a smooth, live visualization.</p><h3 id="method-1-polling-with-setinterval">Method 1: Polling with <code>setInterval</code></h3><p>Polling involves periodically fetching or generating new data and updating the chart at fixed intervals.</p><h3 id="example-real-time-line-chart-with-random-data">Example: Real-Time Line Chart with Random Data</h3><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-html">&lt;canvas id="realtimeChart" width="600" height="400"&gt;&lt;/canvas&gt;</code></pre>
-</div><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</div><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-js">const ctx = document.getElementById('realtimeChart').getContext('2d');
 
 const maxPoints = 20; // maximum number of points shown on chart
@@ -1594,7 +969,8 @@ setInterval(() =&gt; {
  <li>Every second, a new timestamp label and random value are added.</li>
  <li>If the data exceeds <code>maxPoints</code>, the oldest point is removed to keep the chart size manageable.</li>
  <li>Animations are disabled (<code>update('none')</code>) for smooth real-time updates.</li>
-</ul><h3 id="method-2-real-time-data-via-websockets">Method 2: Real-Time Data via WebSockets</h3><p>For truly live streaming data, WebSockets provide a persistent connection allowing the server to push data instantly.</p><h3 id="example-listening-for-data-and-updating-chart">Example: Listening for Data and Updating Chart</h3><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</ul><h3 id="method-2-real-time-data-via-websockets">Method 2: Real-Time Data via WebSockets</h3><p>For truly live streaming data, WebSockets provide a persistent connection allowing the server to push data instantly.</p><h3 id="example-listening-for-data-and-updating-chart">Example: Listening for Data and Updating Chart</h3><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-js">const socket = new WebSocket('wss://example.com/live-data');
 
 socket.addEventListener('message', event =&gt; {
@@ -1707,9 +1083,19 @@ socket.addEventListener('message', event =&gt; {
 </a>
 
 
+<a href="javascript-html5-animation.htm">
+<div class="book-cover" style="background-color: #f9f6f1;border: 1px solid #ccc;"> 
+    <div class="book-cover-title" style="font-size: 16px;color: #333;top: 10px;">JavaScript HTML5 Animation</div>
+    <div class="book-cover-author">readbytes</div>
+    <div class="book-cover-bottom-stripe" style="background-color: #333;"></div>
+    <img class="book-cover-icon" style="width: 120px;height: 120px;top: 60px;" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFoAAABaCAYAAAA4qEECAAACw0lEQVR4Xu3WvWoUURjG8dXGS9BK7awECysR78Ab8RqUmZGE3QmKmEJUxEarFJJCFK0sbGzEThBEJFjEbbQwsOLOcZZl2cN/PvbMx+6cCc8PHpLs2fN+DAmbwUBERERERERERERERERERERERDYrDqaPRmFiFokjc4vvkZriKDmyH25hgmTMu3Vk6iKDgTnBO73HJV3CGq5YZ1V4v5dGoTnLxarErrW9bU7HobmRvv52GCaf06/f0t/+L7Ofd0Jzad4vW8MlcWAu2716hwv5HXOF8/dCdhH/wx28Nwqmj7lEX8JdvMbh82LjWZtJ/9up1Ie7eI3D58XGszZj+/3LrRf38VL6ofKKg+fFxrM28+Ng2efeKHueF+7kJQ5dFBvPug538hKHLooedEMcepGqeN8148P5/edPs2d2yvpwJy9xaC7mivdd41KDeD4Mkn3u5R0OXZSyRZvEpe6bl8v3zb7n+SzcyyvDoTnPgYti41nTvH+3uubD+/Pw9UW4m1fSAcccuCjrfNBthLt5hcOWZZMPuk4f7uYVDlsWG8/ajO3ge6VeP7mfN3KG7TyTyfJB7+9VetD+/lZzUF+y9ywxTx5kX18V7ucNDtr3cD8vjILkBQfte+5smXPcs3Mc8jgkjpKEe3aOQx6XcM/OccDjEu7ZOQ7YNKzvIv2c+Mg6TROG5iT7dIoDNou5xvqusrUaJko+sUenMgM2CGtXxXpNMgyT16zfKQ5YN6xbF+vWze6uOcXanUr/xP5yyBqZsm5dO6E5k1O/cljXCxyyalivqbTmH/aoGtb0AoeskvimucB6bWCfKmEtr3BYxxyxTpty+q1OZK6zjncyQ5dnwvvrkNO3JOYu73srO3xOtsxV3lunTP+c8E5vxKH5wGVGt81Fvm+T0hm+2vPEUfKP7xERERERERERERERERERERERERGRbv0HldRbu8sOVfIAAAAASUVORK5CYII="/>
+  </div>
+</a>
+
+
 <a href="javascript-dom-programming.htm">
 <div class="book-cover" style="background-color: #f9f6f1;border: 1px solid #ccc;"> 
-    <div class="book-cover-title" style="font-size: 16px;color: #333;top: 20px;">JavaScript DOM Programming</div>
+    <div class="book-cover-title" style="font-size: 16px;color: #333;top: 10px;">JavaScript DOM Programming</div>
     <div class="book-cover-author">readbytes</div>
     <div class="book-cover-bottom-stripe" style="background-color: #333;"></div>
     <img class="book-cover-icon" style="width: 90px;height: 90px;top: 60px;" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFoAAABaCAYAAAA4qEECAAADUklEQVR4Xu2dv47TQBDGI0RDczY9rwMlrwEFBweC/t4EXRwaXuI6WiSaOLkCIZ6BCqTgPRFr8zkbnPF4Zuydn/RVuzsz33eSlX/2LRYRm1Xxe1MVOzY19eL6/6NzfqCw/ilEvXc2Mwh7pNiuyks8O1T1snyNfVLgWQ5hjxbcyCHskaJelVd4drCW5Vvsk6JzlkHYo6XXph5Q6hwEfUZASDhLqUOZ+Ri96vTa1ANKHQ+aAKWOB02AUseDJkCp40EToNTxoAlQ6njQBCh1PGgClDrZBs0l7JEi23eGXMIeKTbVxSs8O1Trm4tL7JMCz3IIe7Rsq+IXbh6iUA97nALPDxXWP4W29w5xMVwbG67rOBVR76LNAA9aiKyCbq49L0QbRmgGHXuul8VLXB+F3IPGtdGIm0o21gpay+89Gs01gtbwecDPz08eSQ8hHTT6C55xjwh3q+IZDhO0u148wL0cSAR93cyOfoKCV9wryu528RCHmpuCR/StRvOy7w8OOHUFT+jTDHdV+RwHnpqCB/SVFRLXaGfhQYvhQQvhQQvhQQvhQf8DXyZNXehPnW+fisc45FwUvKFfNXC4uQn9qvD1Y1maG4qB2NP3xiOui1NX5Zv9QNuq+IDrU6Xx8n7vq16WV7guTvxKYH1TvsP1qWLOl7mBmDDny9xATJjzZW4gJsz5MjcQE+Z8mRuICXO+zA3EhDlf5gZiwpwvcwMxYc6XuYGYMOfL3EBMmPNlbiAmzPkyNxAT5nyZG4gJc778Y1Ih/IN/QeKh5ij0q8acv5z9YenL2T045NSF/rIhfiWQ9Q9oxsaDFsKDFsKDFsKDFsKDjqj9ZqFx8dvfRubWb+gcn+Yv/hSHuh9swrcoh9nRT5DaLcpf/KZ7GXAIXB8D6aADGj5btJprBB3Q8nvQGNfGRCvogLjntT+8SubhVVohBzSDDoh6F20GeNBCzCZo7Qeh4vmhwvqnEPWOmzmEPVJk9Vhj3Mgh7JHi4LLApTMuL52zDMIeLb029YBSh+v6G85S6lBmPkavOr029YBSx4MmQKnjQROg1PGgCVDqeNAEKHU8aAKUOh40AUodD5oApU62QXMJe6TI9p0hl7BHitz+XTX3j2DO+gHKkfODhPVPsRnZ+1+tJg8Iaaje6wAAAABJRU5ErkJggg=="/>
@@ -1719,7 +1105,7 @@ socket.addEventListener('message', event =&gt; {
 
 <a href="javascript-data-visualization.htm">
 <div class="book-cover" style="background-color: #f9f6f1;border: 1px solid #ccc;"> 
-    <div class="book-cover-title" style="font-size: 16px;color: #333;top: 20px;">JavaScript Data Visualization</div>
+    <div class="book-cover-title" style="font-size: 16px;color: #333;top: 10px;">JavaScript Data Visualization</div>
     <div class="book-cover-author">readbytes</div>
     <div class="book-cover-bottom-stripe" style="background-color: #333;"></div>
     <img class="book-cover-icon" style="width: 90px;height: 90px;top: 60px;" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFoAAABaCAYAAAA4qEECAAAC0UlEQVR4Xu3dMWsUURSG4fwr2U6zJI0WKZSAaa0EG7tU2giWimLETrQQQRCxUDsbK3+IYOWCiFU06IQz356ZuffOvXdm4A28ze585OxDsLDZnR3zs1pf+rHavXhKWdpY2/Mf50HKEMgV+4cs/1z8/v6OMiTYm9Zfsz5M42r9VQNdLqArBXSlgK4U0JUCulKLgrb39aW7ObQY6PXl/S3Qrs6e1f3ULQZaMYfS/dTZ2xYDvff6g9tS7ge6YEBXCuhKAV0poCsFdKWArtQk0G9e3Tt9dnLc2+dPD1sboCOzv2Ool8/vujsFBtpJMYfydgoMtFMqWOpuLtnbgC6YvQ3ogtnbgC6YvQ3ogtnbgC6YvQ3ogtnbgC6YvQ3ogtnboqCvHR20xn11/UKF6gNL3Y1JP0dXV68fbG01+3wUtP6yvp4+OXZ3CtUHlrpL7ew/tvRz9KV7zT4LtGmW0O+/fnRr3l86tH4u/Xwhv88+C7QJ6MhdakBH7lIDOnKXGtCRu9SAjtylBnTkLjWgI3e67evnt7fnG6BH7EJqdkCP2IXU7IAesft169DN2wE9YqfAQDt35NgpMNDOHTl2Cgy0c0eOnQID7dxhXwvJ2ykw0M4d9rWQvJ0CA+3cYV8LydspMNDOHfa1C/cfuQ3tFBho5w77mgID/f99oCeGDsnbKXBp6JDUR7PPAm12QO8CvVXzfhe0QoWC6fOhOwUOhX7w4rGbt+vKPgu02QE9YqfAi4Meai7QITU7oEfsQmp2s4S+cfumW/P+XKDvXFm7ebtZQusBeshcoL8c7rt5O6BH7BQYaOeOHDsFBtq5I8dOgYF27sixU2CgnTty7BQYaOeOHDsFBtq5I8dOgRcHPVQXdEhT7Wb536RDAQ30Vs1uNtAUF9CVArpSQFcK6EoBXSmgK9WG5qtQi2RNV803KsuLlDn7RcpgF6qF3Pz8fWOjD1JyrS9g/wOlHj3Oru4PcQAAAABJRU5ErkJggg=="/>
@@ -1780,30 +1166,36 @@ socket.addEventListener('message', event =&gt; {
 
 <a href='javascript.htm'><div class='book-cover' style='background-color: #f9f6f1;color: #111111;border: 1px solid #ccc;display: flex;justify-content: center;align-items: center;text-align: center;'>More Javascript Books</div></a>
 </div>
-</div>
-  </div>
-  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
-  
-  <script>
-    function copyCode(button) {
-      const code = button.nextElementSibling.innerText;
-      navigator.clipboard.writeText(code).then(() => {
-        button.textContent = 'Copied!';
-        setTimeout(() => { button.textContent = 'Copy'; }, 1500);
-      });
-    }
-  </script>  
-<div id="floatingLog" aria-live="polite" role="alert"></div>
-<footer class="page-footer">
-    <nav>
-      <a href="https://readbytes.github.io">Home</a> | 
-      Email:<script language="JavaScript" type="text/javascript">
+</div><script>
+function copyCode(button) {const code = button.nextElementSibling.innerText;navigator.clipboard.writeText(code).then(() => {button.textContent = 'Copied!';setTimeout(() => { button.textContent = 'Copy'; }, 1500);});}
+</script><div id="floatingLog" aria-live="polite" role="alert"></div></div>
+<style>
+.site-footer {margin-top: 60px;padding: 20px 0;border-top: 1px solid #eee;text-align: center;font-size: 14px;}
+.site-footer a {text-decoration: none;}
+.light-mode .site-footer {color: #777;border-color: #eee;}
+.dark-mode .site-footer {color: #888;border-color: #333;}
+.light-mode .site-footer a {color: #555;}
+.dark-mode .site-footer a {color: #aaa;}
+.site-footer a:hover {text-decoration: underline;}    
+</style>
+<footer class="site-footer">
+<nav><a href="https://readbytes.github.io">Home</a> |Email:<script type="text/javascript">
 var part1 = 'yinpeng';var part6 = '263';var part2 = Math.pow(2,6);var part3 = String.fromCharCode(part2);var part4 = 'hotmail dot com';var part5 = part1 + String.fromCharCode(part2) + part4;document.write(part1 + part6 + part3 + part4);
 </script>
-    </nav>
-  <p>© 2025 — All rights reserved.</p>    
-  </footer>
-
+| <a id="mode-toggle" href="#">Toggle Dark Mode</a>
+</nav><p>© 2025 — All rights reserved.</p></footer>
+<script>
+const toggleButton = document.getElementById('mode-toggle');
+const body = document.body;
+const savedMode = localStorage.getItem('mode') || 'light';
+body.classList.add(savedMode + '-mode');
+toggleButton.addEventListener('click', () => {
+      const isDark = body.classList.contains('dark-mode');
+      body.classList.toggle('dark-mode', !isDark);
+      body.classList.toggle('light-mode', isDark);
+      localStorage.setItem('mode', isDark ? 'light' : 'dark');
+});
+function copyCode(button) {const code = button.nextElementSibling.innerText;navigator.clipboard.writeText(code).then(() => {button.textContent = 'Copied!';setTimeout(() => { button.textContent = 'Copy'; }, 1500);});}
+</script>
 </body>
 </html>

@@ -1,21 +1,281 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
+<meta charset="UTF-8">
 <title>JavaScript Canvas Programming Images and Patterns</title>
-<link rel='shortcut icon' href='https://java2s.com/style/favicon.ico'>
+<link rel='shortcut icon' href='https://readbytes.github.io/images/favicon.ico'>
 <link href="https://fonts.googleapis.com/css2?family=Merriweather&display=swap" rel="stylesheet" />
 <link href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
-
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.css" />
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/theme/material.css"> <!-- Dark theme -->
-<script src="https://cdn.jsdelivr.net/npm/typescript@5/lib/typescript.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/htmlmixed/htmlmixed.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/theme/dracula.min.css"><style>
+html {scroll-behavior: smooth;}  
+body {font-family: 'Merriweather', serif;;margin: 0;padding: 2rem 1rem;font-size: 15px;line-height: 1.5;transition: background-color 0.3s, color 0.3s;}
+.container {max-width: 750px;margin: 0 auto;padding: 1rem 2rem;}
+.light-mode {background-color: #f8f7f5;color: #333;} 
+.dark-mode {background-color: #121212;color: #e0e0e0;}
+a { text-decoration: none;transition: color 0.2s;}
+a:hover {text-decoration: underline;}
+.light-mode a {color: #555;}
+.dark-mode a {color: #aaa;}
+</style><style>
+.related-book-list {display: flex;flex-wrap: wrap;gap: 20px;}
+.related-books {margin-top: 40px;}
+.related-books h2 {font-size: 22px;margin-bottom: 20px;border-bottom: 2px solid #eee;padding-bottom: 8px;}
+.light-mode .related-books h2 {color: #333;border-color: #eee;}
+.dark-mode .related-books h2 {color: #ddd;border-color: #333;}
+</style><style>
+.book-cover {width: 130px;height: 180px;font-family: Arial, sans-serif;position: relative;overflow: hidden;box-shadow: 2px 2px 4px rgba(0,0,0,0.1);}
+.book-cover-bottom-stripe {position: absolute;bottom: 0;left: 0;height: 5px;width: 100%;}
+.book-cover-title {position: absolute;width: 100%;text-align: center;font-weight: bold;}
+.book-cover-icon {position: absolute;left: 50%;transform: translateX(-50%);display: flex;align-items: center;justify-content: center;}
+.book-cover-author {position: absolute;bottom: 10px;width: 100%;text-align: center;font-size: 8px;color: #333;}
+</style><style>
+.book-title-toc {font-size: 32px;font-weight: bold; }
+.book-subtitle-toc {font-size: 18px;margin-top: 8px;font-style: italic;}
+.book-header {text-align: center;margin-bottom: 40px;}
+
+.toc-container {border-radius: 10px;padding: 30px;margin-bottom: 40px;box-shadow: 0 8px 20px rgba(0,0,0,0.05);}
+h1 {font-size: 24px;text-align: center;margin-bottom: 30px;letter-spacing: 1px;padding-bottom: 10px;}
+.toc-list,.toc-section-list {list-style: none;padding: 0;margin: 0;}
+.toc-section-list {padding-left: 18px;margin-top: 6px;margin-bottom: 20px; }
+.toc-chapter {padding: 20px 0;}
+.chapter-title,.toc-section {display: flex;justify-content: space-between;padding-top: 4px;}
+.chapter-title {font-size: 17px;font-weight: bold;}
+.chapter-page,.section-page {font-style: italic;}
+ 
+ 
+.light-mode .book-title-toc,.light-mode .chapter-title,.light-mode .book-name {color: #222;}
+.light-mode .book-subtitle-toc,.light-mode .book-sub,.light-mode .chapter-page,.light-mode .section-page {color: #666;}
+.light-mode .toc-container { background: #fff;border: 1px solid #ddd;}
+.light-mode h1 {border-bottom: 2px solid #eee;color: #222;}
+.light-mode .toc-section {  color: #444;}
+
+.light-mode .book-cover { border: 1px solid #ccc;box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);}
+.light-mode .book-title,.light-mode .series-name {color: #fff;}
+.light-mode .book-subtitle,.light-mode .book-footer {color: #aaa;}
+
+.dark-mode .book-title-toc,.dark-mode .chapter-title,.dark-mode .book-name {color: #f5f5f5;}
+.dark-mode .book-subtitle-toc,.dark-mode .book-sub,.dark-mode .chapter-page,.dark-mode .section-page {color: #aaa;}
+.dark-mode .toc-container {background: #1e1e1e;border: 1px solid #444;}
+
+.dark-mode h1 {border-bottom: 2px solid #333;color: #eee;}
+.dark-mode .toc-section {color: #bbb;}
+
+.dark-mode .related-books h2 {color: #ddd;border-bottom: 2px solid #333;}
+.dark-mode .book-title,.dark-mode .series-name {color: #fff;}
+.dark-mode .book-subtitle,.dark-mode .book-footer {color: #bbb;}
+.dark-mode .toc-section {color: #ddd;}
+
+@media (max-width: 600px) {
+  .chapter-title,
+  .toc-section {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .chapter-page,
+  .section-page {
+    margin-top: 4px;
+  }
+}
+
+</style><style>
+.light-mode .container {box-shadow: 0 0 15px rgba(0,0,0,0.1);}
+.dark-mode .container {box-shadow: 0 0 15px rgba(255, 255, 255, 0.05);}
+
+h1, h2, h3 {font-weight: 600;margin-top: 2.5rem;margin-bottom: 1rem;line-height: 1.2;}
+h1 { font-size: 1.8rem; }
+h2 { font-size: 1.4rem; }
+h3 { font-size: 1.2rem; }
+
+table {width: 100%;border-collapse: collapse;font-family: sans-serif;font-size: 1em;margin: 1em 0;}
+th, td {padding: 0.6em 1em;text-align: left;border: 1px solid;}
+tr:nth-child(even) {  background-color: inherit;}
+tr:hover { background-color: inherit;}
+
+code {color: #d35400;}
+
+.chapter-navi-section {display: flex;justify-content: space-between;align-items: center;padding-bottom: 10px;padding-top: 10px;}
+.nav-link {color: inherit;text-decoration: none;opacity: 0.5;transition: opacity 0.3s ease, text-decoration 0.3s ease;}
+.nav-link:hover {opacity: 0.9;text-decoration: underline;}
+.prev { text-align: left; }
+.toc-link { text-align: center; }
+.next { text-align: right; }
+
+.download-section {display: flex;align-items: center;justify-content: center;gap: 2rem;padding: 2rem 1rem;max-width: 600px;margin: 3rem auto;border-radius: 12px;box-shadow: 0 4px 10px rgba(0,0,0,0.05);}
+.download-info h2 {margin: 0 0 0.5rem;font-size: 1.2rem;}
+.format-label {margin: 0 0 0.5rem;font-size: 0.95rem;}
+.download-buttons {display: flex;gap: 1rem;}
+.download-button {background-color: #4A90E2;color: white;padding: 0.5em 1.2em;border-radius: 25px;font-size: 0.95rem;text-decoration: none;transition: background-color 0.3s ease;}
+.download-button:hover {background-color: #357ABD;}
+
+.code-block {position: relative;margin-bottom: 1em;}
+.copy-button {background: transparent;color: white;position: absolute;top: 8px;right: 8px;border: none;padding: 4px 8px;font-size: 12px;border-radius: 4px;cursor: pointer;z-index: 1;}
+.copy-button:hover {background-color: #0056b3;}
+
+.snippet-container {overflow: hidden;}
+.snippet-header {padding: 0.75rem 1rem;cursor: pointer;font-size: 1rem;background-color: #eeeeee;color:  #111111; border-radius: 8px;cursor: pointer;box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+.snippet-body {display: none;font-family: monospace;}
+.snippet-container.open .snippet-body {display: block;}
+
+.CodeMirror {border: 2px solid #ccc;border-radius: 4px;resize: vertical;}
+
+.light-mode .format-label {color: #888;}
+.light-mode th {background-color: #f2f2f2;}
+.light-mode tr:nth-child(even) {background-color: #fafafa;}
+.light-mode tr:hover {background-color: #e6f7ff;}
+
+.dark-mode .snippet-header {background-color: #333;color:  #ddd; }
+.dark-mode .format-label {color: #aaa;}
+.dark-mode th {background-color: #333;color: #fff;}
+.dark-mode td {border-color: #444;}
+.dark-mode tr:nth-child(even) {background-color: #2a2a2a;}
+.dark-mode tr:hover {background-color: #2c3e50;}
+
+
+.button-group-run-edit {display: flex;width: 100%;gap: 1rem;}
+.button-run-edit {flex: 1;padding: 1rem;font-size: 1rem;font-weight: 600;border: none;border-radius: 8px;cursor: pointer;transition: background 0.3s, color 0.3s;}
+
+.light-mode .button-run-edit {background-color: #f0f0f0;color: #222;box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);}
+.light-mode .button-run-edit:hover {background-color: #e0e0e0;}
+
+.dark-mode .button-run-edit {background-color: #2a2a2a;color: #f5f5f5;box-shadow: 0 0 10px rgba(255, 255, 255, 0.05);}
+.dark-mode .button-run-edit:hover {background-color: #3a3a3a;}
+
+button { padding: 0.5em 1em; background: green; color: white; border: none; cursor: pointer; }
+button:hover { background: #1e7e34; }
+.result_iframe { width:99%; margin-top: 1em;  resize: both;background-color: #515b63;border:1px solid #ccc;}   
+
+.dialog-backdrop {position: fixed;top: 0;left: 0;width: 100vw;height: 100vh;background: rgba(0,0,0,0.5);display: none;justify-content: center;align-items: center;z-index: 10;}
+.dialog {background: #90979e;padding: 20px;width: 90vw;height: 80vh;border-radius: 8px;box-shadow: 0 0 20px rgba(0,0,0,0.3);display: flex;flex-direction: column;}
+.dialog-content {display: flex;gap: 20px;margin-top: 10px;height: calc(100% - 40px);}
+.editor-container, .preview-container {flex: 1;height: 100%;max-height: 100%;overflow: hidden; }
+.result_iframe_dialog {width: 100%;height: 100%;resize: both;border:1px solid #ccc;overflow: auto; }   
+.CodeMirror {width: 100% !important;height: 100% !important;}
+</style><script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/htmlmixed/htmlmixed.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/xml/xml.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/css/css.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/javascript/javascript.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/javascript/typescript.min.js"></script>
+<script>
+  const htmlCodeMirrorMap = new Map();
+  const htmlCodeIFrameMap = new Map();
+  let dismissTimer;
+  function showFloatingLog(message) {
+	const floatingLog = document.getElementById('floatingLog');
+
+    if (floatingLog.style.display !== 'block') {
+      floatingLog.textContent = '';
+      floatingLog.style.display = 'block'; 
+    }
+
+    floatingLog.textContent += message + '\n';
+    floatingLog.scrollTop = floatingLog.scrollHeight; 
+    clearTimeout(dismissTimer);
+    dismissTimer = setTimeout(() => {
+      floatingLog.style.display = 'none';
+      floatingLog.textContent = '';
+    }, 2000);
+  }
+  window.addEventListener('message', (event) => {
+	    if (!htmlCodeIFrameMap.has(event.source)) return;
+
+	    if (event.data?.type === 'console-log') {
+	      showFloatingLog(event.data.message);
+	    }
+  });      
+  function runHtmlCode(button,textarea_id, iframe_id, isInDialog) {
+      const html = htmlCodeMirrorMap.get(textarea_id).getValue();
+      const iframe = document.getElementById(iframe_id);
+  
+      const oldIframe = iframe;
+      const newIframe = document.createElement('iframe');
+
+      if(isInDialog){
+         newIframe.className ="result_iframe_dialog";
+      }else{
+         newIframe.className ="result_iframe";
+      }
+      
+      
+      newIframe.id = iframe_id;
+      oldIframe.replaceWith(newIframe);
+ 
+
+      // Track the iframe in the map
+      htmlCodeIFrameMap.set(newIframe.contentWindow, button);
+
+      const overrideScript = `
+        <script>
+          (function() {
+            const originalLog = console.log;
+            console.log = function(...args) {
+              originalLog.apply(console, args);
+              window.parent.postMessage({
+                type: 'console-log',
+                message: args.map(a => {
+                  try { return JSON.stringify(a); }
+                  catch { return String(a); }
+                }).join(' ')
+              }, '*');
+            };
+          })();
+        <\/script>
+      `;
+ 
+      const iframeHTML = `
+        <!DOCTYPE html>
+        <html>
+        <body>
+          ${overrideScript}
+          ${html}
+        </body>
+        </html>
+      `;
+ 
+      const doc = newIframe.contentDocument || newIframe.contentWindow.document;
+      doc.open();
+      doc.write(iframeHTML);
+      doc.close();
+
+if(!isInDialog){ 
+newIframe.onload = function () {
+ 
+    const doc = newIframe.contentDocument || newIframe.contentWindow.document;
+    // Give a short delay to ensure layout is complete
+    setTimeout(() => {
+      const body = doc.body;
+      const html = doc.documentElement;
+
+      const height = Math.max(
+        body.scrollHeight, body.offsetHeight,
+        html.clientHeight, html.scrollHeight, html.offsetHeight
+      );
+
+      newIframe.style.height = height + 'px';
+    }, 50);
+};
+
+}
+      
+  }  
+function openEditHtmlCodeDialog(id, textarea_id) {
+		        closeAllHtmlCodeDialog();
+		        document.getElementById(id).style.display = 'flex';
+         
+ 	        setTimeout(() => {
+		        	 htmlCodeMirrorMap.get(textarea_id).refresh();
+                   
+ 	        }, 100); // 100ms 
+}
+
+function closeAllHtmlCodeDialog() {
+		        document.querySelectorAll('.dialog-backdrop').forEach(el => {
+		          el.style.display = 'none';
+		        });
+}		
+</script> 
 <style>
     #floatingLog {
       position: fixed;
@@ -39,708 +299,66 @@
       text-align: center;
     }
 </style>
-<script>
-  const codeMirrorMap = new Map();
-  const iframeMap = new Map();
-  
- 
-
-  let dismissTimer;
-  function showFloatingLog(message) {
-	const floatingLog = document.getElementById('floatingLog');
-
-    if (floatingLog.style.display !== 'block') {
-      floatingLog.textContent = '';
-      floatingLog.style.display = 'block'; 
-    }
-
-    floatingLog.textContent += message + '\n';
-    floatingLog.scrollTop = floatingLog.scrollHeight; 
-    clearTimeout(dismissTimer);
-    dismissTimer = setTimeout(() => {
-      floatingLog.style.display = 'none';
-      floatingLog.textContent = '';
-    }, 2000);
-  }
-  window.addEventListener('message', (event) => {
-	    if (!iframeMap.has(event.source)) return;
-
-	    if (event.data?.type === 'console-log') {
-	      showFloatingLog(event.data.message);
-	    }
-  });  
-  function renderIframe(button,textarea_id, iframe_id) {
-      const html = codeMirrorMap.get(textarea_id).getValue();
-      const iframe = document.getElementById(iframe_id);
-  
-      const oldIframe = iframe;
-      const newIframe = document.createElement('iframe');
-      newIframe.className ="result_iframe";
-      
-      newIframe.id = iframe_id;
-      oldIframe.replaceWith(newIframe);
- 
-
-      // Track the iframe in the map
-      iframeMap.set(newIframe.contentWindow, button);
-
-      const overrideScript = `
-        <script>
-          (function() {
-            const originalLog = console.log;
-            console.log = function(...args) {
-              originalLog.apply(console, args);
-              window.parent.postMessage({
-                type: 'console-log',
-                message: args.map(a => {
-                  try { return JSON.stringify(a); }
-                  catch { return String(a); }
-                }).join(' ')
-              }, '*');
-            };
-          })();
-        <\/script>
-      `;
-
-      const iframeHTML = `
-        <!DOCTYPE html>
-        <html>
-        <body>
-          ${overrideScript}
-          ${html}
-        </body>
-        </html>
-      `;
- 
-      const doc = newIframe.contentDocument || newIframe.contentWindow.document;
-      doc.open();
-      doc.write(iframeHTML);
-      doc.close();
-
-      
-      setTimeout(() => {
-    	  newIframe.style.height = '0px';
-    	   let contentHeight = Math.max(doc.body.scrollHeight,doc.documentElement.scrollHeight);
- 
-    	//   if(contentHeight < 150 || contentHeight > 600){
-    	//	   contentHeight = 600;
-    	 //  } 
-    	   newIframe.style.height = contentHeight + 'px';
-    	}, 50);      
-      
-  }
-  function renderIframeForClientTypescript(textarea_id, iframe_id) {
-      let code = codeMirrorMap.get(textarea_id).getValue();
-      code = ts.transpile(code);
-      const iframe = document.getElementById(iframe_id);
-      const doc = iframe.contentDocument || iframe.contentWindow.document;
-
-const html = `
-  <!DOCTYPE html>
-  <html>
-    <head>
-      <title>Output</title>
-      <style>
-        body { font-family: monospace; padding: 1em; background: #f4f4f4; color: #222; }
-        pre { white-space: pre-wrap; word-break: break-word; }
-        .error { color: red; }
-      </style>
-    </head>
-    <body>
-      <pre id="log"></pre>
-      <script>
-        (function(){
-          const logEl = document.getElementById('log');
-          const origLog = console.log;
-          const origError = console.error;
-
-          console.log = (...args) => {
-            logEl.textContent += args.join(' ') + '\\n';
-            origLog.apply(console, args);
-          };
-          console.table = (...args) => {
-            logEl.textContent += args.join(' ') + '\\n';
-            origLog.apply(console, args);
-          };
-
-          console.error = (...args) => {
-            logEl.innerHTML +='<span class="error">' + args.join(' ') + '</span>';
-            origError.apply(console, args);
-          };
-          window.addEventListener("error", function (event) {
-              console.error("Caught by event listener:", event.message);
-          });    
-          try {             
-              ${code};
-          } catch (err) {
-            console.error(err.stack || err.message);
-          }
-        })();
-      <\/script>
-    </body>
-  </html>
-`;
-
-      iframe.style.display = "block";
-      iframe.srcdoc = html;  
-  }
-
-    function renderIframeForClientJavascript(textarea_id, iframe_id) {
-        const code = codeMirrorMap.get(textarea_id).getValue();
-        const iframe = document.getElementById(iframe_id);
-        const doc = iframe.contentDocument || iframe.contentWindow.document;
-
-  const html = `
-    <!DOCTYPE html>
-    <html>
-      <head>
-        <title>Output</title>
-        <style>
-          body { font-family: monospace; padding: 1em; background: #1e1e1e; color: #eee; }
-          pre { white-space: pre-wrap; word-break: break-word; }
-          .error { color: red; }
-        </style>
-      </head>
-      <body>
-        <pre id="log"></pre>
-        <script>
-          (function(){
-            const logEl = document.getElementById('log');
-            const origLog = console.log;
-            const origError = console.error;
-
-            console.log = (...args) => {
-              logEl.textContent += args.join(' ') + '\\n';
-              origLog.apply(console, args);
-            };
-            console.table = (...args) => {
-              logEl.textContent += args.join(' ') + '\\n';
-              origLog.apply(console, args);
-            };
-
-            console.error = (...args) => {
-              logEl.innerHTML +='<span class="error">' + args.join(' ') + '</span>';
-              origError.apply(console, args);
-            };
-            window.addEventListener("error", function (event) {
-                console.error("Caught by event listener:", event.message);
-            });    
-            try {
-             ${code}; 
-            } catch (err) {
-              console.error(err.stack || err.message);
-            }
-          })();
-        <\/script>
-      </body>
-    </html>
-  `;
-        iframe.style.display = "block";
-        iframe.srcdoc = html;  
-    }
-    function toggleSnippetAndRefresh(id, textarea_id) {
-      const box = document.getElementById(id);
-      box.classList.toggle("open");
-      codeMirrorMap.get(textarea_id).refresh();
-    }
-
-  </script>
-  <script>
-  const mode = localStorage.getItem('mode') || 'light';
-  document.documentElement.classList.add(`${mode}-mode`);
-  </script>   
-<style> 
-html {
-  scroll-behavior: smooth;
-}
-
-body {
-  font-family: 'Merriweather', serif;
-  margin: 0;
-  padding: 2rem 1rem;
-  font-size: 15px;
-  line-height: 1.5;
-  transition: background-color 0.3s, color 0.3s;
-}
-
-.container {
-  max-width: 700px;
-  margin: 0 auto;
-  padding: 1rem 2rem;
-  box-shadow: 0 0 15px rgba(0,0,0,0.1);
-}
-
-h1, h2, h3 {
-  font-weight: 600;
-  margin-top: 2.5rem;
-  margin-bottom: 1rem;
-  line-height: 1.2;
-}
-
-h1 { font-size: 1.8rem; }
-h2 { font-size: 1.4rem; }
-h3 { font-size: 1.2rem; }
-
-table {
-  width: 100%;
-  border-collapse: collapse;
-  font-family: sans-serif;
-  font-size: 1em;
-  margin: 1em 0;
-}
-
-th, td {
-  padding: 0.6em 1em;
-  text-align: left;
-  border: 1px solid;
-}
-
-tr:nth-child(even) {
-  background-color: inherit;
-}
-
-tr:hover {
-  background-color: inherit;
-}
-
-a {
-  text-decoration: none;
-  transition: color 0.2s;
-}
-
-a:hover {
-  text-decoration: underline;
-}
-
-code {
-  color: #d35400;
-}
-
-.book-title-chapter {
-  font-family: 'Merriweather', serif;
-  font-size: 2rem;
-  font-weight: bold;
-  text-align: center;
-  margin-bottom: 2rem;
-  border-bottom: 2px solid;
-  padding-bottom: 0.5rem;
-}
-
-.book-subtitle-chapter {
-  text-align: center;
-  font-size: 1rem;
-  margin-top: -1rem;
-  margin-bottom: 2rem;
-}
-
-.related-books {
-  margin-top: 40px;
-}
-
-.related-book-list {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 20px;
-}
-
-    .book-cover {
-      width: 130px;
-      height: 180px;
-      font-family: Arial, sans-serif;
-      position: relative;
-      overflow: hidden;      
-      line-height: normal;
-      box-shadow: 2px 2px 4px rgba(0,0,0,0.1);
-    }
-    .book-cover-bottom-stripe {
-      position: absolute;
-      bottom: 0;
-      left: 0;
-      height: 5px;
-      width: 100%;
-    }
-    .book-cover-title {
-      position: absolute;
-      width: 100%;
-      text-align: center;
-      font-weight: bold;
-    }
-     
-    .book-cover-icon {
-      position: absolute;
-      left: 50%;
-      transform: translateX(-50%);
-      display: flex;
-      align-items: center;
-      justify-content: center; 
-    }
-
-    .book-cover-author {
-      position: absolute;
-      bottom: 10px;
-      width: 100%;
-      text-align: center;
-      font-size: 8px;
-      color: #333;
-    }
-
-.page-footer {
-  margin-top: 4rem;
-  padding: 1rem 0;
-  text-align: center;
-  font-size: 0.85rem;
-  border-top: 1px solid;
-}
-
-.chapter-navi-section {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding-bottom: 10px;
-}
-
-.nav-link {
-  color: inherit;
-  text-decoration: none;
-  opacity: 0.5;
-  transition: opacity 0.3s ease, text-decoration 0.3s ease;
-}
-
-.nav-link:hover {
-  opacity: 0.9;
-  text-decoration: underline;
-}
-
-.prev { text-align: left; }
-.toc-link { text-align: center; }
-.next { text-align: right; }
-
-.download-section {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 2rem;
-  padding: 2rem 1rem;
-  max-width: 600px;
-  margin: 3rem auto;
-  border-radius: 12px;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-}
-
-.download-info h2 {
-  margin: 0 0 0.5rem;
-  font-size: 1.2rem;
-}
-
-.format-label {
-  margin: 0 0 0.5rem;
-  font-size: 0.95rem;
-}
-
-.download-buttons {
-  display: flex;
-  gap: 1rem;
-}
-
-.download-button {
-  background-color: #4A90E2;
-  color: white;
-  padding: 0.5em 1.2em;
-  border-radius: 25px;
-  font-size: 0.95rem;
-  text-decoration: none;
-  transition: background-color 0.3s ease;
-}
-
-.download-button:hover {
-  background-color: #357ABD;
-}
-
-.code-block {
-  position: relative;
-  margin-bottom: 1em;
-}
-
-.copy-button {
-  background: transparent;
-  color: white;
-  position: absolute;
-  top: 8px;
-  right: 8px;
-  border: none;
-  padding: 4px 8px;
-  font-size: 12px;
-  border-radius: 4px;
-  cursor: pointer;
-  z-index: 1;
-}
-
-.copy-button:hover {
-  background-color: #0056b3;
-}
-
-.snippet-container {
-  overflow: hidden;
-}
-
-.snippet-header {
-  padding: 0.75rem 1rem;
-  cursor: pointer;
-  font-size: 1rem;
-    background-color: #eeeeee;
-    color:  #111111; 
-    border-radius: 8px;
-    cursor: pointer;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.1);  
-}
-
-.snippet-body {
-  display: none;
-  font-family: monospace;
-}
-
-.snippet-container.open .snippet-body {
-  display: block;
-}
-
-.CodeMirror {
-  border: 2px solid #ccc;
-  border-radius: 4px;
-  resize: vertical;
-}
-
-/* === Light Mode === */
-html.light-mode {
-  background-color: #f8f7f5;
-  color: #333;
-}
-
-html.light-mode .container {
-  background: white;
-}
-
-html.light-mode .book-title-chapter {
-  color: #2c3e50;
-  border-color: #ccc;
-}
-html.light-mode .book-subtitle-chapter{
-  color: #888;
-}
-
-html.light-mode .page-footer,
-html.light-mode .series-name,
-html.light-mode .book-subtitle,
-html.light-mode .format-label {
-  color: #888;
-}
-
-html.light-mode .related-books h2 {
-  color: #333;
-  border-bottom: 2px solid #eee;
-}
-
-html.light-mode .book-title {
-  color: #fff;
-}
-
-html.light-mode .book-cover {
-  border: 1px solid #ccc;
-}
-
-html.light-mode th {
-  background-color: #f2f2f2;
-}
-
-html.light-mode tr:nth-child(even) {
-  background-color: #fafafa;
-}
-
-html.light-mode tr:hover {
-  background-color: #e6f7ff;
-}
-
-html.light-mode a,
-html.light-mode .page-footer a {
-  color: #000;
-}
-
-/* === Dark Mode === */
-html.dark-mode {
-  background-color: #181818;
-  color: #e0e0e0;
-}
-
-html.dark-mode .container {
-  background: #222;
-}
-
-html.dark-mode .book-title-chapter {
-  color: #ddd;
-  border-color: #444;
-}
-
-html.dark-mode .snippet-header {
-    background-color: #333;
-    color:  #ddd; 
-}
-
-
-html.dark-mode .book-subtitle-chapter,
-html.dark-mode .page-footer,
-html.dark-mode .series-name,
-html.dark-mode .book-subtitle,
-html.dark-mode .book-footer,
-html.dark-mode .format-label {
-  color: #aaa;
-}
-
-html.dark-mode .related-books h2 {
-  color: #ddd;
-  border-bottom: 2px solid #333;
-}
-
-html.dark-mode .book-title {
-  color: #fff;
-}
-
-html.dark-mode .book-cover {
-  border: 1px solid #555;
-}
-
-html.dark-mode th {
-  background-color: #333;
-  color: #fff;
-}
-
-html.dark-mode td {
-  border-color: #444;
-}
-
-html.dark-mode tr:nth-child(even) {
-  background-color: #2a2a2a;
-}
-
-html.dark-mode tr:hover {
-  background-color: #2c3e50;
-}
-
-html.dark-mode a,
-html.dark-mode .page-footer a {
-  color: #eee;
-}
-
-    .dialog-backdrop {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100vw;
-      height: 100vh;
-      background: rgba(0,0,0,0.5);
-      display: none;
-      justify-content: center;
-      align-items: center;
-      z-index: 10;
-    }
-
-    .dialog {
-      background: white;
-      padding: 20px;
-      width: 90vw;
-      height: 80vh;
-      border-radius: 8px;
-      box-shadow: 0 0 20px rgba(0,0,0,0.3);
-      display: flex;
-      flex-direction: column;
-    }
-    .dialog-content {
-      display: flex;
-      flex: 1;
-      gap: 20px;
-      margin-top: 10px;
-    }
-    .dialog h2 {
-      margin-top: 0;
-    }
-
-    .textarea_dialog {
-      width: 50%;
-      height: 100%;
-      resize: none;
-      font-family: monospace;
-      font-size: 14px;
-      padding: 10px;
-      box-sizing: border-box;
-      border: 1px solid #ccc;
-    }
-
-    .iframe_dialog {
-      width: 50%;
-      height: 100%;
-      border: 1px solid #ccc;
-    }
-    .controls_dialog {
-      display: flex;
-      justify-content: space-between;
-      margin-top: 10px;
-    }    
-    button { padding: 0.5em 1em; background: green; color: white; border: none; cursor: pointer; }
-    button:hover { background: #1e7e34; }
-    .result_iframe { width:99%; height:200px; margin-top: 1em;  resize: both;border:1px solid #ccc;}        
-</style>
 </head>
-<body> 
-  <div class="container">
-    <div class = "chapter-navi-section">
+<body>
+<script>const mode = localStorage.getItem('mode') || 'light';document.documentElement.classList.add(`${mode}-mode`);</script>  
+<div class="container"><div class = "chapter-navi-section">
 <a href="javascript-canvas-programming-paths-and-complex-shapes.htm" class="nav-button prev">←</a>
 <a href='javascript-canvas-programming.htm#images-and-patterns' class="nav-button toc-link">Index</a>
 <a href="javascript-canvas-programming-transformations.htm" class="nav-button next">→</a>
 </div>
-
-    <h1 class="book-title-chapter" id = 'top'>Images and Patterns</h1>
-    <h3 class="book-subtitle-chapter">JavaScript Canvas Programming</h3>   
-    <!-- <h1 class ="chapter-title"></h1> -->
-    <h2 id='loading-and-drawing-images-on-canvas'>5.1 Loading and Drawing Images on Canvas</h2><p>Images play a crucial role in canvas graphics, allowing you to combine pictures with your drawings, create textures, or build complex scenes. This section explains how to <strong>load external images</strong> and draw them onto the canvas using JavaScript.</p><h3 id="loading-images">Loading Images</h3><p>You can load images in two common ways:</p><h3 id="using-the-image-constructor-in-javascript">Using the <code>Image()</code> Constructor in JavaScript</h3><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+<div class='book-header'><h1 class='book-title-toc' id = 'top'>Images and Patterns</h1><h3 class='book-subtitle-toc'>JavaScript Canvas Programming</h3></div><h2 id='loading-and-drawing-images-on-canvas'>5.1 Loading and Drawing Images on Canvas</h2><p>Images play a crucial role in canvas graphics, allowing you to combine pictures with your drawings, create textures, or build complex scenes. This section explains how to <strong>load external images</strong> and draw them onto the canvas using JavaScript.</p><h3 id="loading-images">Loading Images</h3><p>You can load images in two common ways:</p><h3 id="using-the-image-constructor-in-javascript">Using the <code>Image()</code> Constructor in JavaScript</h3><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-js">const img = new Image();
 img.src = 'path/to/image.jpg';</code></pre>
 </div><ul>
  <li>The image starts loading asynchronously when you set the <code>src</code> property.</li>
  <li>You must wait for the image to finish loading before drawing it on the canvas.</li>
  <li>Use the <code>onload</code> event to know when the image is ready.</li>
-</ul><h3 id="using-an-html-img-element">Using an HTML <code>img</code> Element</h3><p>You can also place an <code>&lt;img&gt;</code> tag in your HTML and access it in JavaScript:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</ul><h3 id="using-an-html-img-element">Using an HTML <code>img</code> Element</h3><p>You can also place an <code>&lt;img&gt;</code> tag in your HTML and access it in JavaScript:</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-html">&lt;img id="myImage" src="path/to/image.jpg" style="display:none" /&gt;</code></pre>
-</div><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</div><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-js">const img = document.getElementById('myImage');
 img.onload = function() {
   // draw image here
 };</code></pre>
-</div><p>The advantage is easier HTML management, but the principle is the same: wait for loading before drawing.</p><h3 id="drawing-images-with-drawimage">Drawing Images with <code>drawImage()</code></h3><p>Once loaded, you use the canvas <strong>2D context’s</strong> <code>drawImage()</code> method to render the image.</p><h3 id="basic-syntax">Basic Syntax:</h3><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</div><p>The advantage is easier HTML management, but the principle is the same: wait for loading before drawing.</p><h3 id="drawing-images-with-drawimage">Drawing Images with <code>drawImage()</code></h3><p>Once loaded, you use the canvas <strong>2D context’s</strong> <code>drawImage()</code> method to render the image.</p><h3 id="basic-syntax">Basic Syntax:</h3><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-js">ctx.drawImage(image, dx, dy);</code></pre>
 </div><ul>
  <li>Draws the whole image at canvas coordinates <code>(dx, dy)</code>.</li>
  <li>The image is drawn at its natural size.</li>
-</ul><h3 id="drawing-the-whole-image-example">Drawing the Whole Image Example:</h3><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</ul><h3 id="drawing-the-whole-image-example">Drawing the Whole Image Example:</h3><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-js">const img = new Image();
 img.src = 'flower.jpg';
 img.onload = () =&gt; {
   ctx.drawImage(img, 0, 0);
 };</code></pre>
-</div><p>This draws the image at the top-left corner <code>(0, 0)</code> using its original size.</p><h3 id="drawing-and-scaling-the-image">Drawing and Scaling the Image:</h3><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</div><p>This draws the image at the top-left corner <code>(0, 0)</code> using its original size.</p><h3 id="drawing-and-scaling-the-image">Drawing and Scaling the Image:</h3><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-js">ctx.drawImage(img, dx, dy, dWidth, dHeight);</code></pre>
 </div><ul>
  <li>Draws and <strong>scales</strong> the image to the width and height specified.</li>
  <li>Useful for resizing or fitting the image into a particular canvas area.</li>
-</ul><p>Example:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</ul><p>Example:</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-js">ctx.drawImage(img, 10, 10, 200, 150);</code></pre>
-</div><p>Draws the image at <code>(10, 10)</code> scaled to <code>200px</code> wide and <code>150px</code> tall.</p><h3 id="cropping-source-and-destination-rectangles">Cropping (Source and Destination Rectangles)</h3><p><code>drawImage()</code> can also draw <strong>cropped</strong> portions of the image:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</div><p>Draws the image at <code>(10, 10)</code> scaled to <code>200px</code> wide and <code>150px</code> tall.</p><h3 id="cropping-source-and-destination-rectangles">Cropping (Source and Destination Rectangles)</h3><p><code>drawImage()</code> can also draw <strong>cropped</strong> portions of the image:</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-js">ctx.drawImage(img, sx, sy, sWidth, sHeight, dx, dy, dWidth, dHeight);</code></pre>
 </div><ul>
  <li><code>(sx, sy)</code> — top-left coordinates of the source rectangle on the image.</li>
  <li><code>(sWidth, sHeight)</code> — size of the cropped rectangle.</li>
  <li><code>(dx, dy)</code> — destination coordinates on the canvas.</li>
  <li><code>(dWidth, dHeight)</code> — size to draw the cropped area on the canvas.</li>
-</ul><p>Example — drawing just a 100x100 portion of the image, scaled:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</ul><p>Example — drawing just a 100x100 portion of the image, scaled:</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-js">ctx.drawImage(img, 50, 50, 100, 100, 10, 10, 200, 200);</code></pre>
-</div><h3 id="image-smoothing">Image Smoothing</h3><p>By default, canvas <strong>smooths images when scaling</strong>, creating a nicer effect.</p><p>You can control this with:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</div><h3 id="image-smoothing">Image Smoothing</h3><p>By default, canvas <strong>smooths images when scaling</strong>, creating a nicer effect.</p><p>You can control this with:</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-js">ctx.imageSmoothingEnabled = true;  // Default is true
 ctx.imageSmoothingQuality = 'high'; // Options: 'low', 'medium', 'high'</code></pre>
 </div><p>Set to <code>false</code> for pixelated, sharp edges (useful for pixel art).</p><h3 id="performance-tips-for-large-images">Performance Tips for Large Images</h3><ul>
@@ -749,7 +367,8 @@ ctx.imageSmoothingQuality = 'high'; // Options: 'low', 'medium', 'high'</code></
  <li>Cache images in variables to avoid repeated loading.</li>
  <li>Use compressed image formats (JPEG, PNG) optimized for web.</li>
  <li>Avoid drawing images before they are fully loaded to prevent errors.</li>
-</ul><h3 id="complete-example">Complete Example</h3><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</ul><h3 id="complete-example">Complete Example</h3><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-html">&lt;canvas id="canvas" width="400" height="300"&gt;&lt;/canvas&gt;
 &lt;script&gt;
   const canvas = document.getElementById('canvas');
@@ -769,13 +388,16 @@ ctx.imageSmoothingQuality = 'high'; // Options: 'low', 'medium', 'high'</code></
     ctx.drawImage(img, 50, 50, 100, 100, 10, 160, 100, 100);
   };
 &lt;/script&gt;</code></pre>
-</div><div class="snippet-container" id="0NhFF">
- <div id="8kohE_Dialog" class="dialog-backdrop">
+</div><div class="snippet-container">
+ <div class="button-group-run-edit"><button class="button-run-edit" onclick="runHtmlCode(this,'R04QB','phWbc', false)">Run</button> <button class="button-run-edit" onclick="openEditHtmlCodeDialog('phWbc_Dialog','R04QB')">Edit</button>
+ </div> <iframe id="phWbc" class="result_iframe" style="display: none;"></iframe>
+ <div id="phWbc_Dialog" class="dialog-backdrop">
   <div class="dialog">
-   <h2>Dialog 1</h2>
-   <div class="controls"><button onclick="renderIframe(this,'R8TtS_Textarea','8kohE_IFrame')">Run</button> <button onclick="closeAll()">Close</button>
+   <div class="controls"><button onclick="runHtmlCode(this,'R04QB','phWbc_IFrame', true)">Run</button> <button onclick="closeAllHtmlCodeDialog()">Close</button>
    </div>
-   <div class="dialog-content"><textarea id="R8TtS_Textarea" class="textarea_dialog" placeholder="Type HTML here...">&lt;!DOCTYPE html&gt;
+   <div class="dialog-content">
+    <div class="editor-container">
+     <textarea id="R04QB" class="textarea_dialog" placeholder="Type HTML here...">&lt;!DOCTYPE html&gt;
 &lt;html lang="en"&gt;
 &lt;head&gt;
   &lt;meta charset="UTF-8"&gt;
@@ -804,83 +426,30 @@ ctx.imageSmoothingQuality = 'high'; // Options: 'low', 'medium', 'high'</code></
 &lt;/script&gt;
 
 &lt;/body&gt;
-&lt;/html&gt;</textarea> <iframe id="8kohE_IFrame" class="iframe_dialog"></iframe>
+&lt;/html&gt;</textarea>
+    </div>
+    <div class="preview-container">
+     <iframe id="phWbc_IFrame" class="result_iframe_dialog" style="border: none;"></iframe>
+    </div>
    </div>
   </div>
  </div>
- <div class="snippet-header" onclick="toggleSnippetAndRefresh('0NhFF','R8TtS')">
-  Click to Try it <!--<span onclick="toggleSnippetAndRefresh('0NhFF','R8TtS')">Click
-			to Try it</span> --> <!-- <span onclick="openDialog('8kohE_Dialog')">Dialog</span> -->
- </div>
- <div class="snippet-body"><textarea id="R8TtS">&lt;!DOCTYPE html&gt;
-&lt;html lang="en"&gt;
-&lt;head&gt;
-  &lt;meta charset="UTF-8"&gt;
-&lt;/head&gt;
-&lt;body&gt;
-
-&lt;canvas id="myCanvas" width="400" height="200" style="border:1px solid #ccc;"&gt;&lt;/canvas&gt;
-
-&lt;script&gt;
-  const canvas = document.getElementById("myCanvas");
-  const ctx = canvas.getContext("2d");
-
-  const img = new Image();
-  img.src = 'https://readbytes.github.io/60x60/1.png';
-
-  img.onload = () =&gt; {
-    // Draw entire image at (0,0)
-    ctx.drawImage(img, 0, 0);
-
-    // Draw scaled version at (210, 10)
-    ctx.drawImage(img, 210, 10, 150, 100);
-
-    // Draw cropped portion (100x100 area starting at 50,50) scaled to 100x100 at (10, 160)
-    ctx.drawImage(img, 50, 50, 100, 100, 10, 160, 100, 100);
-  };
-&lt;/script&gt;
-
-&lt;/body&gt;
-&lt;/html&gt;</textarea> <br> <button onclick="renderIframe(this,'R8TtS','8kohE')">Run</button>
-  <div id="8kohE_FloatingLog" class="floatingLog" aria-live="polite" role="alert"></div> <iframe id="8kohE" class="result_iframe" style="display: none;"></iframe>
-  <script>
-			{
-				let editor = CodeMirror.fromTextArea(document
-						.getElementById("R8TtS"), {
+ <script>
+{
+let editor = CodeMirror.fromTextArea(document.getElementById("R04QB"), {
 					mode : "htmlmixed",
 					lineNumbers : false,
+                    lineWrapping: true,
 					tabSize : 2
-				});
-			    const mode = localStorage.getItem("mode") || "light";  
-			    const newTheme = mode === "dark" ? "material" : "default";
-			    editor.setOption("theme", newTheme);
-			    
-				codeMirrorMap.set("R8TtS", editor);
+});
+const darkmode = localStorage.getItem("mode") || "light";  
+const newTheme = darkmode === "dark" ? "dracula" : "default";
+editor.setSize("50%", "100%");
+editor.setOption("theme", newTheme);
+htmlCodeMirrorMap.set("R04QB", editor);
+}
 
-				let editor1 = CodeMirror.fromTextArea(document.getElementById("R8TtS_Textarea"), {
-					mode : "htmlmixed",
-					lineNumbers : false,
-					tabSize : 2
-				});
-			    editor1.setOption("theme", newTheme);				
-				
-				codeMirrorMap.set("R8TtS_Textarea", editor1);
-			}
-		    function openDialog(id) {
-		        closeAll();
-		        document.getElementById(id).style.display = 'flex';
-		        setTimeout(() => {
-		        	 codeMirrorMap.get("R8TtS_Textarea").refresh();
-		        }, 100); // 100ms 
-		      }
-
-		      function closeAll() {
-		        document.querySelectorAll('.dialog-backdrop').forEach(el => {
-		          el.style.display = 'none';
-		        });
-		      }			
-		</script>
- </div>
+</script>
 </div><h3 id="summary">Summary</h3><ul>
  <li><p>Load images asynchronously using the <code>Image()</code> constructor or <code>&lt;img&gt;</code> element.</p></li>
  <li><p>Always wait for the image to finish loading (<code>onload</code>) before drawing.</p></li>
@@ -897,7 +466,8 @@ ctx.imageSmoothingQuality = 'high'; // Options: 'low', 'medium', 'high'</code></
 <a href='javascript-canvas-programming.htm#images-and-patterns' class="nav-button toc-link">Index</a>
 <a href="#bottom" class="nav-button next">↓</a>
 </div>
-<h2 id='using-images-as-patterns'>5.2 Using Images as Patterns</h2><p>In addition to drawing whole images on the canvas, you can use images to create <strong>repeatable patterns</strong> that fill shapes, backgrounds, or even text. This is done with the powerful <code>createPattern()</code> method.</p><h3 id="what-is-createpattern">What Is <code>createPattern()</code>?</h3><p>The <code>createPattern()</code> method takes an image (or canvas) and generates a <strong>pattern object</strong> that can be used as a fill style. Instead of painting a single image, the pattern repeats the image across the filled area according to a specified repeat mode.</p><h3 id="syntax">Syntax:</h3><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+<h2 id='using-images-as-patterns'>5.2 Using Images as Patterns</h2><p>In addition to drawing whole images on the canvas, you can use images to create <strong>repeatable patterns</strong> that fill shapes, backgrounds, or even text. This is done with the powerful <code>createPattern()</code> method.</p><h3 id="what-is-createpattern">What Is <code>createPattern()</code>?</h3><p>The <code>createPattern()</code> method takes an image (or canvas) and generates a <strong>pattern object</strong> that can be used as a fill style. Instead of painting a single image, the pattern repeats the image across the filled area according to a specified repeat mode.</p><h3 id="syntax">Syntax:</h3><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-js">const pattern = ctx.createPattern(image, repetition);</code></pre>
 </div><ul>
  <li><p><code>image</code>: An <code>HTMLImageElement</code>, <code>&lt;canvas&gt;</code>, or <code>&lt;video&gt;</code> element.</p></li>
@@ -908,7 +478,8 @@ ctx.imageSmoothingQuality = 'high'; // Options: 'low', 'medium', 'high'</code></
    <li><code>'repeat-y'</code> — repeats vertically only.</li>
    <li><code>'no-repeat'</code> — no repetition; draws image once.</li>
   </ul></li>
-</ul><h3 id="using-patterns-as-fill-styles">Using Patterns as Fill Styles</h3><p>Once created, assign the pattern to <code>ctx.fillStyle</code> and use <code>fill()</code> or other fill methods to apply it.</p><h3 id="example-1-filling-the-canvas-background-with-a-repeating-pattern">Example 1: Filling the Canvas Background with a Repeating Pattern</h3><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</ul><h3 id="using-patterns-as-fill-styles">Using Patterns as Fill Styles</h3><p>Once created, assign the pattern to <code>ctx.fillStyle</code> and use <code>fill()</code> or other fill methods to apply it.</p><h3 id="example-1-filling-the-canvas-background-with-a-repeating-pattern">Example 1: Filling the Canvas Background with a Repeating Pattern</h3><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-js">const canvas = document.getElementById('canvas');
 const ctx = canvas.getContext('2d');
 
@@ -920,13 +491,16 @@ img.onload = () =&gt; {
   ctx.fillStyle = pattern;
   ctx.fillRect(0, 0, canvas.width, canvas.height);
 };</code></pre>
-</div><p>This will tile the pattern image across the entire canvas area.</p><div class="snippet-container" id="mohuN">
- <div id="0Mux0_Dialog" class="dialog-backdrop">
+</div><p>This will tile the pattern image across the entire canvas area.</p><div class="snippet-container">
+ <div class="button-group-run-edit"><button class="button-run-edit" onclick="runHtmlCode(this,'UeyvU','nCipc', false)">Run</button> <button class="button-run-edit" onclick="openEditHtmlCodeDialog('nCipc_Dialog','UeyvU')">Edit</button>
+ </div> <iframe id="nCipc" class="result_iframe" style="display: none;"></iframe>
+ <div id="nCipc_Dialog" class="dialog-backdrop">
   <div class="dialog">
-   <h2>Dialog 1</h2>
-   <div class="controls"><button onclick="renderIframe(this,'Q7N8q_Textarea','0Mux0_IFrame')">Run</button> <button onclick="closeAll()">Close</button>
+   <div class="controls"><button onclick="runHtmlCode(this,'UeyvU','nCipc_IFrame', true)">Run</button> <button onclick="closeAllHtmlCodeDialog()">Close</button>
    </div>
-   <div class="dialog-content"><textarea id="Q7N8q_Textarea" class="textarea_dialog" placeholder="Type HTML here...">&lt;!DOCTYPE html&gt;
+   <div class="dialog-content">
+    <div class="editor-container">
+     <textarea id="UeyvU" class="textarea_dialog" placeholder="Type HTML here...">&lt;!DOCTYPE html&gt;
 &lt;html lang="en"&gt;
 &lt;head&gt;
   &lt;meta charset="UTF-8"&gt;
@@ -951,87 +525,40 @@ img.onload = () =&gt; {
 &lt;/script&gt;
 
 &lt;/body&gt;
-&lt;/html&gt;</textarea> <iframe id="0Mux0_IFrame" class="iframe_dialog"></iframe>
+&lt;/html&gt;</textarea>
+    </div>
+    <div class="preview-container">
+     <iframe id="nCipc_IFrame" class="result_iframe_dialog" style="border: none;"></iframe>
+    </div>
    </div>
   </div>
  </div>
- <div class="snippet-header" onclick="toggleSnippetAndRefresh('mohuN','Q7N8q')">
-  Click to Try it <!--<span onclick="toggleSnippetAndRefresh('mohuN','Q7N8q')">Click
-			to Try it</span> --> <!-- <span onclick="openDialog('0Mux0_Dialog')">Dialog</span> -->
- </div>
- <div class="snippet-body"><textarea id="Q7N8q">&lt;!DOCTYPE html&gt;
-&lt;html lang="en"&gt;
-&lt;head&gt;
-  &lt;meta charset="UTF-8"&gt;
-&lt;/head&gt;
-&lt;body&gt;
-
-&lt;canvas id="myCanvas" width="400" height="200" style="border:1px solid #ccc;"&gt;&lt;/canvas&gt;
-
-&lt;script&gt;
-  const canvas = document.getElementById("myCanvas");
-  const ctx = canvas.getContext("2d");
-
-const img = new Image();
-img.src = 'https://readbytes.github.io/60x60/1.png';
-
-img.onload = () =&gt; {
-  const pattern = ctx.createPattern(img, 'repeat');
-  ctx.fillStyle = pattern;
-  ctx.fillRect(0, 0, canvas.width, canvas.height);
-};
-
-&lt;/script&gt;
-
-&lt;/body&gt;
-&lt;/html&gt;</textarea> <br> <button onclick="renderIframe(this,'Q7N8q','0Mux0')">Run</button>
-  <div id="0Mux0_FloatingLog" class="floatingLog" aria-live="polite" role="alert"></div> <iframe id="0Mux0" class="result_iframe" style="display: none;"></iframe>
-  <script>
-			{
-				let editor = CodeMirror.fromTextArea(document
-						.getElementById("Q7N8q"), {
+ <script>
+{
+let editor = CodeMirror.fromTextArea(document.getElementById("UeyvU"), {
 					mode : "htmlmixed",
 					lineNumbers : false,
+                    lineWrapping: true,
 					tabSize : 2
-				});
-			    const mode = localStorage.getItem("mode") || "light";  
-			    const newTheme = mode === "dark" ? "material" : "default";
-			    editor.setOption("theme", newTheme);
-			    
-				codeMirrorMap.set("Q7N8q", editor);
+});
+const darkmode = localStorage.getItem("mode") || "light";  
+const newTheme = darkmode === "dark" ? "dracula" : "default";
+editor.setSize("50%", "100%");
+editor.setOption("theme", newTheme);
+htmlCodeMirrorMap.set("UeyvU", editor);
+}
 
-				let editor1 = CodeMirror.fromTextArea(document.getElementById("Q7N8q_Textarea"), {
-					mode : "htmlmixed",
-					lineNumbers : false,
-					tabSize : 2
-				});
-			    editor1.setOption("theme", newTheme);				
-				
-				codeMirrorMap.set("Q7N8q_Textarea", editor1);
-			}
-		    function openDialog(id) {
-		        closeAll();
-		        document.getElementById(id).style.display = 'flex';
-		        setTimeout(() => {
-		        	 codeMirrorMap.get("Q7N8q_Textarea").refresh();
-		        }, 100); // 100ms 
-		      }
-
-		      function closeAll() {
-		        document.querySelectorAll('.dialog-backdrop').forEach(el => {
-		          el.style.display = 'none';
-		        });
-		      }			
-		</script>
- </div>
-</div><h3 id="example-2-filling-a-shape-with-a-pattern-circle">Example 2: Filling a Shape with a Pattern (Circle)</h3><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</script>
+</div><h3 id="example-2-filling-a-shape-with-a-pattern-circle">Example 2: Filling a Shape with a Pattern (Circle)</h3><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-js">ctx.beginPath();
 ctx.arc(150, 150, 100, 0, 2 * Math.PI);
 ctx.closePath();
 
 ctx.fillStyle = pattern;
 ctx.fill();</code></pre>
-</div><p>Here, the circle is filled with the repeating image pattern.</p><h3 id="example-3-different-repeat-modes">Example 3: Different Repeat Modes</h3><p>Try changing the repeat mode to see how the pattern behaves:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</div><p>Here, the circle is filled with the repeating image pattern.</p><h3 id="example-3-different-repeat-modes">Example 3: Different Repeat Modes</h3><p>Try changing the repeat mode to see how the pattern behaves:</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-js">// Horizontal repeat only
 const patternX = ctx.createPattern(img, 'repeat-x');
 
@@ -1040,7 +567,8 @@ const patternY = ctx.createPattern(img, 'repeat-y');
 
 // No repeat (single image)
 const patternNone = ctx.createPattern(img, 'no-repeat');</code></pre>
-</div><p>Assign these to <code>fillStyle</code> to observe the effect on fills.</p><h3 id="transparency">Transparency</h3><p>Patterns respect the transparency of the image file (like PNGs with alpha). Use transparent images for layered effects or subtle textures.</p><h3 id="rotation">Rotation</h3><p>Canvas patterns <strong>do not have built-in rotation</strong>, but you can rotate the canvas context before filling:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</div><p>Assign these to <code>fillStyle</code> to observe the effect on fills.</p><h3 id="transparency">Transparency</h3><p>Patterns respect the transparency of the image file (like PNGs with alpha). Use transparent images for layered effects or subtle textures.</p><h3 id="rotation">Rotation</h3><p>Canvas patterns <strong>do not have built-in rotation</strong>, but you can rotate the canvas context before filling:</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-js">ctx.save(); // Save current state
 ctx.translate(centerX, centerY); // Move origin to center
 ctx.rotate(Math.PI / 4);         // Rotate 45 degrees
@@ -1050,13 +578,16 @@ ctx.fillStyle = pattern;
 ctx.fillRect(0, 0, canvas.width, canvas.height);
 
 ctx.restore(); // Restore original state</code></pre>
-</div><p>This rotates the entire coordinate system, causing the pattern to appear rotated.</p><div class="snippet-container" id="tMAVP">
- <div id="oHfVn_Dialog" class="dialog-backdrop">
+</div><p>This rotates the entire coordinate system, causing the pattern to appear rotated.</p><div class="snippet-container">
+ <div class="button-group-run-edit"><button class="button-run-edit" onclick="runHtmlCode(this,'jIcbn','aCjDu', false)">Run</button> <button class="button-run-edit" onclick="openEditHtmlCodeDialog('aCjDu_Dialog','jIcbn')">Edit</button>
+ </div> <iframe id="aCjDu" class="result_iframe" style="display: none;"></iframe>
+ <div id="aCjDu_Dialog" class="dialog-backdrop">
   <div class="dialog">
-   <h2>Dialog 1</h2>
-   <div class="controls"><button onclick="renderIframe(this,'qtBJu_Textarea','oHfVn_IFrame')">Run</button> <button onclick="closeAll()">Close</button>
+   <div class="controls"><button onclick="runHtmlCode(this,'jIcbn','aCjDu_IFrame', true)">Run</button> <button onclick="closeAllHtmlCodeDialog()">Close</button>
    </div>
-   <div class="dialog-content"><textarea id="qtBJu_Textarea" class="textarea_dialog" placeholder="Type HTML here...">&lt;!DOCTYPE html&gt;
+   <div class="dialog-content">
+    <div class="editor-container">
+     <textarea id="jIcbn" class="textarea_dialog" placeholder="Type HTML here...">&lt;!DOCTYPE html&gt;
 &lt;html lang="en"&gt;
 &lt;head&gt;
   &lt;meta charset="UTF-8"&gt;
@@ -1088,86 +619,30 @@ ctx.restore(); // Restore original state
 &lt;/script&gt;
 
 &lt;/body&gt;
-&lt;/html&gt;</textarea> <iframe id="oHfVn_IFrame" class="iframe_dialog"></iframe>
+&lt;/html&gt;</textarea>
+    </div>
+    <div class="preview-container">
+     <iframe id="aCjDu_IFrame" class="result_iframe_dialog" style="border: none;"></iframe>
+    </div>
    </div>
   </div>
  </div>
- <div class="snippet-header" onclick="toggleSnippetAndRefresh('tMAVP','qtBJu')">
-  Click to Try it <!--<span onclick="toggleSnippetAndRefresh('tMAVP','qtBJu')">Click
-			to Try it</span> --> <!-- <span onclick="openDialog('oHfVn_Dialog')">Dialog</span> -->
- </div>
- <div class="snippet-body"><textarea id="qtBJu">&lt;!DOCTYPE html&gt;
-&lt;html lang="en"&gt;
-&lt;head&gt;
-  &lt;meta charset="UTF-8"&gt;
-&lt;/head&gt;
-&lt;body&gt;
-
-&lt;canvas id="myCanvas" width="400" height="200" style="border:1px solid #ccc;"&gt;&lt;/canvas&gt;
-
-&lt;script&gt;
-  const canvas = document.getElementById("myCanvas");
-  const ctx = canvas.getContext("2d");
-const img = new Image();
-img.src = 'https://readbytes.github.io/60x60/1.png';
-
-img.onload = () =&gt; {
-  const pattern = ctx.createPattern(img, 'repeat');
-  ctx.fillStyle = pattern;
-  ctx.fillRect(0, 0, canvas.width, canvas.height);
-};
-ctx.save(); // Save current state
-ctx.translate(centerX, centerY); // Move origin to center
-ctx.rotate(Math.PI / 4);         // Rotate 45 degrees
-ctx.translate(-centerX, -centerY); // Move origin back
-
-ctx.fillStyle = pattern;
-ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-ctx.restore(); // Restore original state
-&lt;/script&gt;
-
-&lt;/body&gt;
-&lt;/html&gt;</textarea> <br> <button onclick="renderIframe(this,'qtBJu','oHfVn')">Run</button>
-  <div id="oHfVn_FloatingLog" class="floatingLog" aria-live="polite" role="alert"></div> <iframe id="oHfVn" class="result_iframe" style="display: none;"></iframe>
-  <script>
-			{
-				let editor = CodeMirror.fromTextArea(document
-						.getElementById("qtBJu"), {
+ <script>
+{
+let editor = CodeMirror.fromTextArea(document.getElementById("jIcbn"), {
 					mode : "htmlmixed",
 					lineNumbers : false,
+                    lineWrapping: true,
 					tabSize : 2
-				});
-			    const mode = localStorage.getItem("mode") || "light";  
-			    const newTheme = mode === "dark" ? "material" : "default";
-			    editor.setOption("theme", newTheme);
-			    
-				codeMirrorMap.set("qtBJu", editor);
+});
+const darkmode = localStorage.getItem("mode") || "light";  
+const newTheme = darkmode === "dark" ? "dracula" : "default";
+editor.setSize("50%", "100%");
+editor.setOption("theme", newTheme);
+htmlCodeMirrorMap.set("jIcbn", editor);
+}
 
-				let editor1 = CodeMirror.fromTextArea(document.getElementById("qtBJu_Textarea"), {
-					mode : "htmlmixed",
-					lineNumbers : false,
-					tabSize : 2
-				});
-			    editor1.setOption("theme", newTheme);				
-				
-				codeMirrorMap.set("qtBJu_Textarea", editor1);
-			}
-		    function openDialog(id) {
-		        closeAll();
-		        document.getElementById(id).style.display = 'flex';
-		        setTimeout(() => {
-		        	 codeMirrorMap.get("qtBJu_Textarea").refresh();
-		        }, 100); // 100ms 
-		      }
-
-		      function closeAll() {
-		        document.querySelectorAll('.dialog-backdrop').forEach(el => {
-		          el.style.display = 'none';
-		        });
-		      }			
-		</script>
- </div>
+</script>
 </div><h3 id="summary">Summary</h3><ul>
  <li>Use <code>createPattern(image, repetition)</code> to turn images into repeatable fill styles.</li>
  <li>Supported repetition modes: <code>'repeat'</code>, <code>'repeat-x'</code>, <code>'repeat-y'</code>, and <code>'no-repeat'</code>.</li>
@@ -1180,7 +655,8 @@ ctx.restore(); // Restore original state
 <a href='javascript-canvas-programming.htm#images-and-patterns' class="nav-button toc-link">Index</a>
 <a href="#bottom" class="nav-button next">↓</a>
 </div>
-<h2 id='manipulating-image-pixels-with-getimagedata-and-putimagedata'>5.3 Manipulating Image Pixels with <code>getImageData()</code> and <code>putImageData()</code></h2><h3 id="manipulating-image-pixels-with-getimagedata-and-putimagedata">Manipulating Image Pixels with <code>getImageData()</code> and <code>putImageData()</code></h3><p>One of the most powerful features of the HTML5 canvas is the ability to <strong>access and manipulate raw pixel data</strong>. This allows you to implement custom image processing effects like grayscale conversion, color inversion, brightness adjustments, and much more.</p><h3 id="what-is-getimagedata">What is <code>getImageData()</code>?</h3><p>The <code>getImageData()</code> method retrieves an object containing the pixel data from a specified rectangle of the canvas.</p><h3 id="syntax">Syntax:</h3><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+<h2 id='manipulating-image-pixels-with-getimagedata-and-putimagedata'>5.3 Manipulating Image Pixels with <code>getImageData()</code> and <code>putImageData()</code></h2><h3 id="manipulating-image-pixels-with-getimagedata-and-putimagedata">Manipulating Image Pixels with <code>getImageData()</code> and <code>putImageData()</code></h3><p>One of the most powerful features of the HTML5 canvas is the ability to <strong>access and manipulate raw pixel data</strong>. This allows you to implement custom image processing effects like grayscale conversion, color inversion, brightness adjustments, and much more.</p><h3 id="what-is-getimagedata">What is <code>getImageData()</code>?</h3><p>The <code>getImageData()</code> method retrieves an object containing the pixel data from a specified rectangle of the canvas.</p><h3 id="syntax">Syntax:</h3><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-js">const imageData = ctx.getImageData(x, y, width, height);</code></pre>
 </div><ul>
  <li><code>x</code>, <code>y</code>: The coordinates of the top-left corner of the rectangle.</li>
@@ -1197,14 +673,16 @@ ctx.restore(); // Restore original state
    <li><code>A</code> (alpha/opacity)</li>
   </ul></li>
  <li><p>The length of <code>.data</code> is <code>width * height * 4</code>.</p></li>
-</ul><p>For example, the pixel at <code>(px, py)</code> is at index:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</ul><p>For example, the pixel at <code>(px, py)</code> is at index:</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-js">const index = (py * width + px) * 4;</code></pre>
 </div><ul>
  <li>Red is at <code>index</code></li>
  <li>Green at <code>index + 1</code></li>
  <li>Blue at <code>index + 2</code></li>
  <li>Alpha at <code>index + 3</code></li>
-</ul><h3 id="modifying-pixels-reading-and-writing">Modifying Pixels: Reading and Writing</h3><p>You can loop through the pixel array to read or modify colors:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</ul><h3 id="modifying-pixels-reading-and-writing">Modifying Pixels: Reading and Writing</h3><p>You can loop through the pixel array to read or modify colors:</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-js">const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
 const data = imageData.data;
 
@@ -1214,7 +692,8 @@ for (let i = 0; i &lt; data.length; i += 4) {
 }
 
 ctx.putImageData(imageData, 0, 0);</code></pre>
-</div><p>After modification, use <code>putImageData()</code> to write the pixel data back to the canvas.</p><h3 id="example-1-grayscale-filter">Example 1: Grayscale Filter</h3><p>Convert each pixel to grayscale by averaging its red, green, and blue values:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</div><p>After modification, use <code>putImageData()</code> to write the pixel data back to the canvas.</p><h3 id="example-1-grayscale-filter">Example 1: Grayscale Filter</h3><p>Convert each pixel to grayscale by averaging its red, green, and blue values:</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-js">for (let i = 0; i &lt; data.length; i += 4) {
   const r = data[i];
   const g = data[i + 1];
@@ -1228,13 +707,16 @@ ctx.putImageData(imageData, 0, 0);</code></pre>
   // Alpha remains unchanged
 }
 ctx.putImageData(imageData, 0, 0);</code></pre>
-</div><div class="snippet-container" id="CahT8">
- <div id="a2zVz_Dialog" class="dialog-backdrop">
+</div><div class="snippet-container">
+ <div class="button-group-run-edit"><button class="button-run-edit" onclick="runHtmlCode(this,'4mjgt','M4My5', false)">Run</button> <button class="button-run-edit" onclick="openEditHtmlCodeDialog('M4My5_Dialog','4mjgt')">Edit</button>
+ </div> <iframe id="M4My5" class="result_iframe" style="display: none;"></iframe>
+ <div id="M4My5_Dialog" class="dialog-backdrop">
   <div class="dialog">
-   <h2>Dialog 1</h2>
-   <div class="controls"><button onclick="renderIframe(this,'vS2Nh_Textarea','a2zVz_IFrame')">Run</button> <button onclick="closeAll()">Close</button>
+   <div class="controls"><button onclick="runHtmlCode(this,'4mjgt','M4My5_IFrame', true)">Run</button> <button onclick="closeAllHtmlCodeDialog()">Close</button>
    </div>
-   <div class="dialog-content"><textarea id="vS2Nh_Textarea" class="textarea_dialog" placeholder="Type HTML here...">&lt;!DOCTYPE html&gt;
+   <div class="dialog-content">
+    <div class="editor-container">
+     <textarea id="4mjgt" class="textarea_dialog" placeholder="Type HTML here...">&lt;!DOCTYPE html&gt;
 &lt;html lang="en"&gt;
 &lt;head&gt;
   &lt;meta charset="UTF-8"&gt;
@@ -1263,97 +745,48 @@ ctx.putImageData(imageData, 0, 0);
 &lt;/script&gt;
 
 &lt;/body&gt;
-&lt;/html&gt;</textarea> <iframe id="a2zVz_IFrame" class="iframe_dialog"></iframe>
+&lt;/html&gt;</textarea>
+    </div>
+    <div class="preview-container">
+     <iframe id="M4My5_IFrame" class="result_iframe_dialog" style="border: none;"></iframe>
+    </div>
    </div>
   </div>
  </div>
- <div class="snippet-header" onclick="toggleSnippetAndRefresh('CahT8','vS2Nh')">
-  Click to Try it <!--<span onclick="toggleSnippetAndRefresh('CahT8','vS2Nh')">Click
-			to Try it</span> --> <!-- <span onclick="openDialog('a2zVz_Dialog')">Dialog</span> -->
- </div>
- <div class="snippet-body"><textarea id="vS2Nh">&lt;!DOCTYPE html&gt;
-&lt;html lang="en"&gt;
-&lt;head&gt;
-  &lt;meta charset="UTF-8"&gt;
-&lt;/head&gt;
-&lt;body&gt;
-
-&lt;canvas id="myCanvas" width="400" height="200" style="border:1px solid #ccc;"&gt;&lt;/canvas&gt;
-
-&lt;script&gt;
-  const canvas = document.getElementById("myCanvas");
-  const ctx = canvas.getContext("2d");
-
-for (let i = 0; i &lt; data.length; i += 4) {
-  const r = data[i];
-  const g = data[i + 1];
-  const b = data[i + 2];
-
-  const avg = (r + g + b) / 3;
-
-  data[i] = avg;     // Red
-  data[i + 1] = avg; // Green
-  data[i + 2] = avg; // Blue
-  // Alpha remains unchanged
+ <script>
+{
+let editor = CodeMirror.fromTextArea(document.getElementById("4mjgt"), {
+					mode : "htmlmixed",
+					lineNumbers : false,
+                    lineWrapping: true,
+					tabSize : 2
+});
+const darkmode = localStorage.getItem("mode") || "light";  
+const newTheme = darkmode === "dark" ? "dracula" : "default";
+editor.setSize("50%", "100%");
+editor.setOption("theme", newTheme);
+htmlCodeMirrorMap.set("4mjgt", editor);
 }
-ctx.putImageData(imageData, 0, 0);
-&lt;/script&gt;
 
-&lt;/body&gt;
-&lt;/html&gt;</textarea> <br> <button onclick="renderIframe(this,'vS2Nh','a2zVz')">Run</button>
-  <div id="a2zVz_FloatingLog" class="floatingLog" aria-live="polite" role="alert"></div> <iframe id="a2zVz" class="result_iframe" style="display: none;"></iframe>
-  <script>
-			{
-				let editor = CodeMirror.fromTextArea(document
-						.getElementById("vS2Nh"), {
-					mode : "htmlmixed",
-					lineNumbers : false,
-					tabSize : 2
-				});
-			    const mode = localStorage.getItem("mode") || "light";  
-			    const newTheme = mode === "dark" ? "material" : "default";
-			    editor.setOption("theme", newTheme);
-			    
-				codeMirrorMap.set("vS2Nh", editor);
-
-				let editor1 = CodeMirror.fromTextArea(document.getElementById("vS2Nh_Textarea"), {
-					mode : "htmlmixed",
-					lineNumbers : false,
-					tabSize : 2
-				});
-			    editor1.setOption("theme", newTheme);				
-				
-				codeMirrorMap.set("vS2Nh_Textarea", editor1);
-			}
-		    function openDialog(id) {
-		        closeAll();
-		        document.getElementById(id).style.display = 'flex';
-		        setTimeout(() => {
-		        	 codeMirrorMap.get("vS2Nh_Textarea").refresh();
-		        }, 100); // 100ms 
-		      }
-
-		      function closeAll() {
-		        document.querySelectorAll('.dialog-backdrop').forEach(el => {
-		          el.style.display = 'none';
-		        });
-		      }			
-		</script>
- </div>
-</div><h3 id="example-2-color-inversion">Example 2: Color Inversion</h3><p>Invert colors by subtracting each RGB value from 255:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</script>
+</div><h3 id="example-2-color-inversion">Example 2: Color Inversion</h3><p>Invert colors by subtracting each RGB value from 255:</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-js">for (let i = 0; i &lt; data.length; i += 4) {
   data[i] = 255 - data[i];       // Red
   data[i + 1] = 255 - data[i + 1]; // Green
   data[i + 2] = 255 - data[i + 2]; // Blue
 }
 ctx.putImageData(imageData, 0, 0);</code></pre>
-</div><div class="snippet-container" id="lMGAo">
- <div id="IJPVR_Dialog" class="dialog-backdrop">
+</div><div class="snippet-container">
+ <div class="button-group-run-edit"><button class="button-run-edit" onclick="runHtmlCode(this,'dJwHu','rxd4z', false)">Run</button> <button class="button-run-edit" onclick="openEditHtmlCodeDialog('rxd4z_Dialog','dJwHu')">Edit</button>
+ </div> <iframe id="rxd4z" class="result_iframe" style="display: none;"></iframe>
+ <div id="rxd4z_Dialog" class="dialog-backdrop">
   <div class="dialog">
-   <h2>Dialog 1</h2>
-   <div class="controls"><button onclick="renderIframe(this,'0Nshx_Textarea','IJPVR_IFrame')">Run</button> <button onclick="closeAll()">Close</button>
+   <div class="controls"><button onclick="runHtmlCode(this,'dJwHu','rxd4z_IFrame', true)">Run</button> <button onclick="closeAllHtmlCodeDialog()">Close</button>
    </div>
-   <div class="dialog-content"><textarea id="0Nshx_Textarea" class="textarea_dialog" placeholder="Type HTML here...">&lt;!DOCTYPE html&gt;
+   <div class="dialog-content">
+    <div class="editor-container">
+     <textarea id="dJwHu" class="textarea_dialog" placeholder="Type HTML here...">&lt;!DOCTYPE html&gt;
 &lt;html lang="en"&gt;
 &lt;head&gt;
   &lt;meta charset="UTF-8"&gt;
@@ -1375,77 +808,32 @@ ctx.putImageData(imageData, 0, 0);
 &lt;/script&gt;
 
 &lt;/body&gt;
-&lt;/html&gt;</textarea> <iframe id="IJPVR_IFrame" class="iframe_dialog"></iframe>
+&lt;/html&gt;</textarea>
+    </div>
+    <div class="preview-container">
+     <iframe id="rxd4z_IFrame" class="result_iframe_dialog" style="border: none;"></iframe>
+    </div>
    </div>
   </div>
  </div>
- <div class="snippet-header" onclick="toggleSnippetAndRefresh('lMGAo','0Nshx')">
-  Click to Try it <!--<span onclick="toggleSnippetAndRefresh('lMGAo','0Nshx')">Click
-			to Try it</span> --> <!-- <span onclick="openDialog('IJPVR_Dialog')">Dialog</span> -->
- </div>
- <div class="snippet-body"><textarea id="0Nshx">&lt;!DOCTYPE html&gt;
-&lt;html lang="en"&gt;
-&lt;head&gt;
-  &lt;meta charset="UTF-8"&gt;
-&lt;/head&gt;
-&lt;body&gt;
-
-&lt;canvas id="myCanvas" width="400" height="200" style="border:1px solid #ccc;"&gt;&lt;/canvas&gt;
-
-&lt;script&gt;
-  const canvas = document.getElementById("myCanvas");
-  const ctx = canvas.getContext("2d");
-
-for (let i = 0; i &lt; data.length; i += 4) {
-  data[i] = 255 - data[i];       // Red
-  data[i + 1] = 255 - data[i + 1]; // Green
-  data[i + 2] = 255 - data[i + 2]; // Blue
+ <script>
+{
+let editor = CodeMirror.fromTextArea(document.getElementById("dJwHu"), {
+					mode : "htmlmixed",
+					lineNumbers : false,
+                    lineWrapping: true,
+					tabSize : 2
+});
+const darkmode = localStorage.getItem("mode") || "light";  
+const newTheme = darkmode === "dark" ? "dracula" : "default";
+editor.setSize("50%", "100%");
+editor.setOption("theme", newTheme);
+htmlCodeMirrorMap.set("dJwHu", editor);
 }
-ctx.putImageData(imageData, 0, 0);
-&lt;/script&gt;
 
-&lt;/body&gt;
-&lt;/html&gt;</textarea> <br> <button onclick="renderIframe(this,'0Nshx','IJPVR')">Run</button>
-  <div id="IJPVR_FloatingLog" class="floatingLog" aria-live="polite" role="alert"></div> <iframe id="IJPVR" class="result_iframe" style="display: none;"></iframe>
-  <script>
-			{
-				let editor = CodeMirror.fromTextArea(document
-						.getElementById("0Nshx"), {
-					mode : "htmlmixed",
-					lineNumbers : false,
-					tabSize : 2
-				});
-			    const mode = localStorage.getItem("mode") || "light";  
-			    const newTheme = mode === "dark" ? "material" : "default";
-			    editor.setOption("theme", newTheme);
-			    
-				codeMirrorMap.set("0Nshx", editor);
-
-				let editor1 = CodeMirror.fromTextArea(document.getElementById("0Nshx_Textarea"), {
-					mode : "htmlmixed",
-					lineNumbers : false,
-					tabSize : 2
-				});
-			    editor1.setOption("theme", newTheme);				
-				
-				codeMirrorMap.set("0Nshx_Textarea", editor1);
-			}
-		    function openDialog(id) {
-		        closeAll();
-		        document.getElementById(id).style.display = 'flex';
-		        setTimeout(() => {
-		        	 codeMirrorMap.get("0Nshx_Textarea").refresh();
-		        }, 100); // 100ms 
-		      }
-
-		      function closeAll() {
-		        document.querySelectorAll('.dialog-backdrop').forEach(el => {
-		          el.style.display = 'none';
-		        });
-		      }			
-		</script>
- </div>
-</div><h3 id="example-3-brightness-adjustment">Example 3: Brightness Adjustment</h3><p>Increase or decrease brightness by adding a value to RGB channels (clamping between 0 and 255):</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</script>
+</div><h3 id="example-3-brightness-adjustment">Example 3: Brightness Adjustment</h3><p>Increase or decrease brightness by adding a value to RGB channels (clamping between 0 and 255):</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-js">const brightness = 40; // Positive to brighten, negative to darken
 
 for (let i = 0; i &lt; data.length; i += 4) {
@@ -1454,13 +842,16 @@ for (let i = 0; i &lt; data.length; i += 4) {
   data[i + 2] = Math.min(255, Math.max(0, data[i + 2] + brightness)); // Blue
 }
 ctx.putImageData(imageData, 0, 0);</code></pre>
-</div><div class="snippet-container" id="4mXyX">
- <div id="EWsdL_Dialog" class="dialog-backdrop">
+</div><div class="snippet-container">
+ <div class="button-group-run-edit"><button class="button-run-edit" onclick="runHtmlCode(this,'51ZmN','dECpA', false)">Run</button> <button class="button-run-edit" onclick="openEditHtmlCodeDialog('dECpA_Dialog','51ZmN')">Edit</button>
+ </div> <iframe id="dECpA" class="result_iframe" style="display: none;"></iframe>
+ <div id="dECpA_Dialog" class="dialog-backdrop">
   <div class="dialog">
-   <h2>Dialog 1</h2>
-   <div class="controls"><button onclick="renderIframe(this,'ltnHU_Textarea','EWsdL_IFrame')">Run</button> <button onclick="closeAll()">Close</button>
+   <div class="controls"><button onclick="runHtmlCode(this,'51ZmN','dECpA_IFrame', true)">Run</button> <button onclick="closeAllHtmlCodeDialog()">Close</button>
    </div>
-   <div class="dialog-content"><textarea id="ltnHU_Textarea" class="textarea_dialog" placeholder="Type HTML here...">&lt;!DOCTYPE html&gt;
+   <div class="dialog-content">
+    <div class="editor-container">
+     <textarea id="51ZmN" class="textarea_dialog" placeholder="Type HTML here...">&lt;!DOCTYPE html&gt;
 &lt;html lang="en"&gt;
 &lt;head&gt;
   &lt;meta charset="UTF-8"&gt;
@@ -1484,78 +875,30 @@ ctx.putImageData(imageData, 0, 0);
 &lt;/script&gt;
 
 &lt;/body&gt;
-&lt;/html&gt;</textarea> <iframe id="EWsdL_IFrame" class="iframe_dialog"></iframe>
+&lt;/html&gt;</textarea>
+    </div>
+    <div class="preview-container">
+     <iframe id="dECpA_IFrame" class="result_iframe_dialog" style="border: none;"></iframe>
+    </div>
    </div>
   </div>
  </div>
- <div class="snippet-header" onclick="toggleSnippetAndRefresh('4mXyX','ltnHU')">
-  Click to Try it <!--<span onclick="toggleSnippetAndRefresh('4mXyX','ltnHU')">Click
-			to Try it</span> --> <!-- <span onclick="openDialog('EWsdL_Dialog')">Dialog</span> -->
- </div>
- <div class="snippet-body"><textarea id="ltnHU">&lt;!DOCTYPE html&gt;
-&lt;html lang="en"&gt;
-&lt;head&gt;
-  &lt;meta charset="UTF-8"&gt;
-&lt;/head&gt;
-&lt;body&gt;
-
-&lt;canvas id="myCanvas" width="400" height="200" style="border:1px solid #ccc;"&gt;&lt;/canvas&gt;
-
-&lt;script&gt;
-  const canvas = document.getElementById("myCanvas");
-  const ctx = canvas.getContext("2d");
-
-const brightness = 40; // Positive to brighten, negative to darken
-
-for (let i = 0; i &lt; data.length; i += 4) {
-  data[i] = Math.min(255, Math.max(0, data[i] + brightness));     // Red
-  data[i + 1] = Math.min(255, Math.max(0, data[i + 1] + brightness)); // Green
-  data[i + 2] = Math.min(255, Math.max(0, data[i + 2] + brightness)); // Blue
+ <script>
+{
+let editor = CodeMirror.fromTextArea(document.getElementById("51ZmN"), {
+					mode : "htmlmixed",
+					lineNumbers : false,
+                    lineWrapping: true,
+					tabSize : 2
+});
+const darkmode = localStorage.getItem("mode") || "light";  
+const newTheme = darkmode === "dark" ? "dracula" : "default";
+editor.setSize("50%", "100%");
+editor.setOption("theme", newTheme);
+htmlCodeMirrorMap.set("51ZmN", editor);
 }
-ctx.putImageData(imageData, 0, 0);
-&lt;/script&gt;
 
-&lt;/body&gt;
-&lt;/html&gt;</textarea> <br> <button onclick="renderIframe(this,'ltnHU','EWsdL')">Run</button>
-  <div id="EWsdL_FloatingLog" class="floatingLog" aria-live="polite" role="alert"></div> <iframe id="EWsdL" class="result_iframe" style="display: none;"></iframe>
-  <script>
-			{
-				let editor = CodeMirror.fromTextArea(document
-						.getElementById("ltnHU"), {
-					mode : "htmlmixed",
-					lineNumbers : false,
-					tabSize : 2
-				});
-			    const mode = localStorage.getItem("mode") || "light";  
-			    const newTheme = mode === "dark" ? "material" : "default";
-			    editor.setOption("theme", newTheme);
-			    
-				codeMirrorMap.set("ltnHU", editor);
-
-				let editor1 = CodeMirror.fromTextArea(document.getElementById("ltnHU_Textarea"), {
-					mode : "htmlmixed",
-					lineNumbers : false,
-					tabSize : 2
-				});
-			    editor1.setOption("theme", newTheme);				
-				
-				codeMirrorMap.set("ltnHU_Textarea", editor1);
-			}
-		    function openDialog(id) {
-		        closeAll();
-		        document.getElementById(id).style.display = 'flex';
-		        setTimeout(() => {
-		        	 codeMirrorMap.get("ltnHU_Textarea").refresh();
-		        }, 100); // 100ms 
-		      }
-
-		      function closeAll() {
-		        document.querySelectorAll('.dialog-backdrop').forEach(el => {
-		          el.style.display = 'none';
-		        });
-		      }			
-		</script>
- </div>
+</script>
 </div><h3 id="performance-considerations">Performance Considerations</h3><ul>
  <li>Pixel manipulation can be <strong>computationally expensive</strong>, especially for large canvases or frequent updates.</li>
  <li>Avoid calling <code>getImageData()</code> and <code>putImageData()</code> repeatedly inside animation loops unless necessary.</li>
@@ -1576,7 +919,8 @@ ctx.putImageData(imageData, 0, 0);
  <li>Upload an image,</li>
  <li>Apply basic filters (grayscale, sepia, invert),</li>
  <li>Download the edited image.</li>
-</ul><p>We'll combine the techniques you've learned: loading images, pixel manipulation with <code>getImageData()</code>/<code>putImageData()</code>, and drawing on canvas.</p><h3 id="step-1-html-setup">Step 1: HTML Setup</h3><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</ul><p>We'll combine the techniques you've learned: loading images, pixel manipulation with <code>getImageData()</code>/<code>putImageData()</code>, and drawing on canvas.</p><h3 id="step-1-html-setup">Step 1: HTML Setup</h3><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-html">&lt;input type="file" id="upload" accept="image/*" /&gt;
 &lt;br /&gt;
 
@@ -1589,7 +933,8 @@ ctx.putImageData(imageData, 0, 0);
 &lt;br /&gt;&lt;br /&gt;
 
 &lt;canvas id="canvas" width="500" height="400" style="border:1px solid #ccc;"&gt;&lt;/canvas&gt;</code></pre>
-</div><h3 id="step-2-javascript-core-logic">Step 2: JavaScript Core Logic</h3><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</div><h3 id="step-2-javascript-core-logic">Step 2: JavaScript Core Logic</h3><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-js">const canvas = document.getElementById('canvas');
 const ctx = canvas.getContext('2d');
 
@@ -1685,13 +1030,16 @@ downloadBtn.addEventListener('click', () =&gt; {
  <li><p><strong>Filter Pipeline:</strong> The <code>applyFilter()</code> function copies the original pixel data, applies the filter, and updates the canvas with <code>putImageData()</code>.</p></li>
  <li><p><strong>Reset:</strong> Restores the original image from saved pixel data.</p></li>
  <li><p><strong>Download:</strong> Converts the canvas content to a PNG data URL and triggers a download.</p></li>
-</ol><div class="snippet-container" id="qi7Ru">
- <div id="kO2SJ_Dialog" class="dialog-backdrop">
+</ol><div class="snippet-container">
+ <div class="button-group-run-edit"><button class="button-run-edit" onclick="runHtmlCode(this,'rdCnP','qHWBj', false)">Run</button> <button class="button-run-edit" onclick="openEditHtmlCodeDialog('qHWBj_Dialog','rdCnP')">Edit</button>
+ </div> <iframe id="qHWBj" class="result_iframe" style="display: none;"></iframe>
+ <div id="qHWBj_Dialog" class="dialog-backdrop">
   <div class="dialog">
-   <h2>Dialog 1</h2>
-   <div class="controls"><button onclick="renderIframe(this,'09QFF_Textarea','kO2SJ_IFrame')">Run</button> <button onclick="closeAll()">Close</button>
+   <div class="controls"><button onclick="runHtmlCode(this,'rdCnP','qHWBj_IFrame', true)">Run</button> <button onclick="closeAllHtmlCodeDialog()">Close</button>
    </div>
-   <div class="dialog-content"><textarea id="09QFF_Textarea" class="textarea_dialog" placeholder="Type HTML here...">&lt;!DOCTYPE html&gt;
+   <div class="dialog-content">
+    <div class="editor-container">
+     <textarea id="rdCnP" class="textarea_dialog" placeholder="Type HTML here...">&lt;!DOCTYPE html&gt;
 &lt;html lang="en"&gt;
 &lt;head&gt;
   &lt;meta charset="UTF-8"&gt;
@@ -1803,166 +1151,30 @@ downloadBtn.addEventListener('click', () =&gt; {
 &lt;/script&gt;
 
 &lt;/body&gt;
-&lt;/html&gt;</textarea> <iframe id="kO2SJ_IFrame" class="iframe_dialog"></iframe>
+&lt;/html&gt;</textarea>
+    </div>
+    <div class="preview-container">
+     <iframe id="qHWBj_IFrame" class="result_iframe_dialog" style="border: none;"></iframe>
+    </div>
    </div>
   </div>
  </div>
- <div class="snippet-header" onclick="toggleSnippetAndRefresh('qi7Ru','09QFF')">
-  Click to Try it <!--<span onclick="toggleSnippetAndRefresh('qi7Ru','09QFF')">Click
-			to Try it</span> --> <!-- <span onclick="openDialog('kO2SJ_Dialog')">Dialog</span> -->
- </div>
- <div class="snippet-body"><textarea id="09QFF">&lt;!DOCTYPE html&gt;
-&lt;html lang="en"&gt;
-&lt;head&gt;
-  &lt;meta charset="UTF-8"&gt;
-  &lt;title&gt;Image Filter Editor&lt;/title&gt;
-  &lt;style&gt;
-    body {
-      font-family: sans-serif;
-      padding: 1rem;
-    }
-    canvas {
-      display: block;
-      margin-top: 1rem;
-    }
-    button {
-      margin-right: 0.5rem;
-    }
-  &lt;/style&gt;
-&lt;/head&gt;
-&lt;body&gt;
-
-&lt;h2&gt;Image Filter Editor&lt;/h2&gt;
-
-&lt;input type="file" id="upload" accept="image/*" /&gt;
-&lt;br&gt;&lt;br&gt;
-
-&lt;button id="grayscale"&gt;Grayscale&lt;/button&gt;
-&lt;button id="sepia"&gt;Sepia&lt;/button&gt;
-&lt;button id="invert"&gt;Invert&lt;/button&gt;
-&lt;button id="reset"&gt;Reset&lt;/button&gt;
-&lt;button id="download"&gt;Download&lt;/button&gt;
-
-&lt;canvas id="canvas" width="500" height="400" style="border:1px solid #ccc;"&gt;&lt;/canvas&gt;
-
-&lt;script&gt;
-  const canvas = document.getElementById('canvas');
-  const ctx = canvas.getContext('2d');
-
-  const uploadInput = document.getElementById('upload');
-  const grayscaleBtn = document.getElementById('grayscale');
-  const sepiaBtn = document.getElementById('sepia');
-  const invertBtn = document.getElementById('invert');
-  const resetBtn = document.getElementById('reset');
-  const downloadBtn = document.getElementById('download');
-
-  let originalImageData = null;
-
-  // Load and draw uploaded image
-  uploadInput.addEventListener('change', (e) =&gt; {
-    const file = e.target.files[0];
-    if (!file) return;
-
-    const img = new Image();
-    img.onload = () =&gt; {
-      canvas.width = img.width;
-      canvas.height = img.height;
-      ctx.drawImage(img, 0, 0);
-      originalImageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-    };
-    img.src = URL.createObjectURL(file);
-  });
-
-  function applyFilter(filterFn) {
-    if (!originalImageData) return;
-    const imageData = ctx.createImageData(originalImageData);
-    imageData.data.set(originalImageData.data);
-    const data = imageData.data;
-
-    for (let i = 0; i &lt; data.length; i += 4) {
-      filterFn(data, i);
-    }
-
-    ctx.putImageData(imageData, 0, 0);
-  }
-
-  function grayscale(data, i) {
-    const avg = (data[i] + data[i + 1] + data[i + 2]) / 3;
-    data[i] = data[i + 1] = data[i + 2] = avg;
-  }
-
-  function sepia(data, i) {
-    const r = data[i], g = data[i + 1], b = data[i + 2];
-    data[i]     = Math.min(255, 0.393 * r + 0.769 * g + 0.189 * b);
-    data[i + 1] = Math.min(255, 0.349 * r + 0.686 * g + 0.168 * b);
-    data[i + 2] = Math.min(255, 0.272 * r + 0.534 * g + 0.131 * b);
-  }
-
-  function invert(data, i) {
-    data[i]     = 255 - data[i];
-    data[i + 1] = 255 - data[i + 1];
-    data[i + 2] = 255 - data[i + 2];
-  }
-
-  grayscaleBtn.addEventListener('click', () =&gt; applyFilter(grayscale));
-  sepiaBtn.addEventListener('click', () =&gt; applyFilter(sepia));
-  invertBtn.addEventListener('click', () =&gt; applyFilter(invert));
-
-  resetBtn.addEventListener('click', () =&gt; {
-    if (originalImageData) {
-      ctx.putImageData(originalImageData, 0, 0);
-    }
-  });
-
-  downloadBtn.addEventListener('click', () =&gt; {
-    const link = document.createElement('a');
-    link.download = 'edited-image.png';
-    link.href = canvas.toDataURL();
-    link.click();
-  });
-&lt;/script&gt;
-
-&lt;/body&gt;
-&lt;/html&gt;</textarea> <br> <button onclick="renderIframe(this,'09QFF','kO2SJ')">Run</button>
-  <div id="kO2SJ_FloatingLog" class="floatingLog" aria-live="polite" role="alert"></div> <iframe id="kO2SJ" class="result_iframe" style="display: none;"></iframe>
-  <script>
-			{
-				let editor = CodeMirror.fromTextArea(document
-						.getElementById("09QFF"), {
+ <script>
+{
+let editor = CodeMirror.fromTextArea(document.getElementById("rdCnP"), {
 					mode : "htmlmixed",
 					lineNumbers : false,
+                    lineWrapping: true,
 					tabSize : 2
-				});
-			    const mode = localStorage.getItem("mode") || "light";  
-			    const newTheme = mode === "dark" ? "material" : "default";
-			    editor.setOption("theme", newTheme);
-			    
-				codeMirrorMap.set("09QFF", editor);
+});
+const darkmode = localStorage.getItem("mode") || "light";  
+const newTheme = darkmode === "dark" ? "dracula" : "default";
+editor.setSize("50%", "100%");
+editor.setOption("theme", newTheme);
+htmlCodeMirrorMap.set("rdCnP", editor);
+}
 
-				let editor1 = CodeMirror.fromTextArea(document.getElementById("09QFF_Textarea"), {
-					mode : "htmlmixed",
-					lineNumbers : false,
-					tabSize : 2
-				});
-			    editor1.setOption("theme", newTheme);				
-				
-				codeMirrorMap.set("09QFF_Textarea", editor1);
-			}
-		    function openDialog(id) {
-		        closeAll();
-		        document.getElementById(id).style.display = 'flex';
-		        setTimeout(() => {
-		        	 codeMirrorMap.get("09QFF_Textarea").refresh();
-		        }, 100); // 100ms 
-		      }
-
-		      function closeAll() {
-		        document.querySelectorAll('.dialog-backdrop').forEach(el => {
-		          el.style.display = 'none';
-		        });
-		      }			
-		</script>
- </div>
+</script>
 </div><h3 id="summary">Summary</h3><ul>
  <li>This editor combines <strong>image loading</strong>, <strong>pixel manipulation</strong>, and <strong>canvas drawing</strong>.</li>
  <li>Filters like grayscale, sepia, and invert modify pixels by adjusting RGBA values.</li>
@@ -2002,9 +1214,19 @@ downloadBtn.addEventListener('click', () =&gt; {
 </a>
 
 
+<a href="javascript-html5-animation.htm">
+<div class="book-cover" style="background-color: #f9f6f1;border: 1px solid #ccc;"> 
+    <div class="book-cover-title" style="font-size: 16px;color: #333;top: 10px;">JavaScript HTML5 Animation</div>
+    <div class="book-cover-author">readbytes</div>
+    <div class="book-cover-bottom-stripe" style="background-color: #333;"></div>
+    <img class="book-cover-icon" style="width: 120px;height: 120px;top: 60px;" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFoAAABaCAYAAAA4qEECAAACw0lEQVR4Xu3WvWoUURjG8dXGS9BK7awECysR78Ab8RqUmZGE3QmKmEJUxEarFJJCFK0sbGzEThBEJFjEbbQwsOLOcZZl2cN/PvbMx+6cCc8PHpLs2fN+DAmbwUBERERERERERERERERERERERDYrDqaPRmFiFokjc4vvkZriKDmyH25hgmTMu3Vk6iKDgTnBO73HJV3CGq5YZ1V4v5dGoTnLxarErrW9bU7HobmRvv52GCaf06/f0t/+L7Ofd0Jzad4vW8MlcWAu2716hwv5HXOF8/dCdhH/wx28Nwqmj7lEX8JdvMbh82LjWZtJ/9up1Ie7eI3D58XGszZj+/3LrRf38VL6ofKKg+fFxrM28+Ng2efeKHueF+7kJQ5dFBvPug538hKHLooedEMcepGqeN8148P5/edPs2d2yvpwJy9xaC7mivdd41KDeD4Mkn3u5R0OXZSyRZvEpe6bl8v3zb7n+SzcyyvDoTnPgYti41nTvH+3uubD+/Pw9UW4m1fSAcccuCjrfNBthLt5hcOWZZMPuk4f7uYVDlsWG8/ajO3ge6VeP7mfN3KG7TyTyfJB7+9VetD+/lZzUF+y9ywxTx5kX18V7ucNDtr3cD8vjILkBQfte+5smXPcs3Mc8jgkjpKEe3aOQx6XcM/OccDjEu7ZOQ7YNKzvIv2c+Mg6TROG5iT7dIoDNou5xvqusrUaJko+sUenMgM2CGtXxXpNMgyT16zfKQ5YN6xbF+vWze6uOcXanUr/xP5yyBqZsm5dO6E5k1O/cljXCxyyalivqbTmH/aoGtb0AoeskvimucB6bWCfKmEtr3BYxxyxTpty+q1OZK6zjncyQ5dnwvvrkNO3JOYu73srO3xOtsxV3lunTP+c8E5vxKH5wGVGt81Fvm+T0hm+2vPEUfKP7xERERERERERERERERERERERERGRbv0HldRbu8sOVfIAAAAASUVORK5CYII="/>
+  </div>
+</a>
+
+
 <a href="javascript-dom-programming.htm">
 <div class="book-cover" style="background-color: #f9f6f1;border: 1px solid #ccc;"> 
-    <div class="book-cover-title" style="font-size: 16px;color: #333;top: 20px;">JavaScript DOM Programming</div>
+    <div class="book-cover-title" style="font-size: 16px;color: #333;top: 10px;">JavaScript DOM Programming</div>
     <div class="book-cover-author">readbytes</div>
     <div class="book-cover-bottom-stripe" style="background-color: #333;"></div>
     <img class="book-cover-icon" style="width: 90px;height: 90px;top: 60px;" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFoAAABaCAYAAAA4qEECAAADUklEQVR4Xu2dv47TQBDGI0RDczY9rwMlrwEFBweC/t4EXRwaXuI6WiSaOLkCIZ6BCqTgPRFr8zkbnPF4Zuydn/RVuzsz33eSlX/2LRYRm1Xxe1MVOzY19eL6/6NzfqCw/ilEvXc2Mwh7pNiuyks8O1T1snyNfVLgWQ5hjxbcyCHskaJelVd4drCW5Vvsk6JzlkHYo6XXph5Q6hwEfUZASDhLqUOZ+Ri96vTa1ANKHQ+aAKWOB02AUseDJkCp40EToNTxoAlQ6njQBCh1PGgClDrZBs0l7JEi23eGXMIeKTbVxSs8O1Trm4tL7JMCz3IIe7Rsq+IXbh6iUA97nALPDxXWP4W29w5xMVwbG67rOBVR76LNAA9aiKyCbq49L0QbRmgGHXuul8VLXB+F3IPGtdGIm0o21gpay+89Gs01gtbwecDPz08eSQ8hHTT6C55xjwh3q+IZDhO0u148wL0cSAR93cyOfoKCV9wryu528RCHmpuCR/StRvOy7w8OOHUFT+jTDHdV+RwHnpqCB/SVFRLXaGfhQYvhQQvhQQvhQQvhQf8DXyZNXehPnW+fisc45FwUvKFfNXC4uQn9qvD1Y1maG4qB2NP3xiOui1NX5Zv9QNuq+IDrU6Xx8n7vq16WV7guTvxKYH1TvsP1qWLOl7mBmDDny9xATJjzZW4gJsz5MjcQE+Z8mRuICXO+zA3EhDlf5gZiwpwvcwMxYc6XuYGYMOfL3EBMmPNlbiAmzPkyNxAT5nyZG4gJc778Y1Ih/IN/QeKh5ij0q8acv5z9YenL2T045NSF/rIhfiWQ9Q9oxsaDFsKDFsKDFsKDFsKDjqj9ZqFx8dvfRubWb+gcn+Yv/hSHuh9swrcoh9nRT5DaLcpf/KZ7GXAIXB8D6aADGj5btJprBB3Q8nvQGNfGRCvogLjntT+8SubhVVohBzSDDoh6F20GeNBCzCZo7Qeh4vmhwvqnEPWOmzmEPVJk9Vhj3Mgh7JHi4LLApTMuL52zDMIeLb029YBSh+v6G85S6lBmPkavOr029YBSx4MmQKnjQROg1PGgCVDqeNAEKHU8aAKUOh40AUodD5oApU62QXMJe6TI9p0hl7BHitz+XTX3j2DO+gHKkfODhPVPsRnZ+1+tJg8Iaaje6wAAAABJRU5ErkJggg=="/>
@@ -2014,7 +1236,7 @@ downloadBtn.addEventListener('click', () =&gt; {
 
 <a href="javascript-data-visualization.htm">
 <div class="book-cover" style="background-color: #f9f6f1;border: 1px solid #ccc;"> 
-    <div class="book-cover-title" style="font-size: 16px;color: #333;top: 20px;">JavaScript Data Visualization</div>
+    <div class="book-cover-title" style="font-size: 16px;color: #333;top: 10px;">JavaScript Data Visualization</div>
     <div class="book-cover-author">readbytes</div>
     <div class="book-cover-bottom-stripe" style="background-color: #333;"></div>
     <img class="book-cover-icon" style="width: 90px;height: 90px;top: 60px;" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFoAAABaCAYAAAA4qEECAAAC0UlEQVR4Xu3dMWsUURSG4fwr2U6zJI0WKZSAaa0EG7tU2giWimLETrQQQRCxUDsbK3+IYOWCiFU06IQz356ZuffOvXdm4A28ze585OxDsLDZnR3zs1pf+rHavXhKWdpY2/Mf50HKEMgV+4cs/1z8/v6OMiTYm9Zfsz5M42r9VQNdLqArBXSlgK4U0JUCulKLgrb39aW7ObQY6PXl/S3Qrs6e1f3ULQZaMYfS/dTZ2xYDvff6g9tS7ge6YEBXCuhKAV0poCsFdKWArtQk0G9e3Tt9dnLc2+dPD1sboCOzv2Ool8/vujsFBtpJMYfydgoMtFMqWOpuLtnbgC6YvQ3ogtnbgC6YvQ3ogtnbgC6YvQ3ogtnbgC6YvQ3ogtnboqCvHR20xn11/UKF6gNL3Y1JP0dXV68fbG01+3wUtP6yvp4+OXZ3CtUHlrpL7ew/tvRz9KV7zT4LtGmW0O+/fnRr3l86tH4u/Xwhv88+C7QJ6MhdakBH7lIDOnKXGtCRu9SAjtylBnTkLjWgI3e67evnt7fnG6BH7EJqdkCP2IXU7IAesft169DN2wE9YqfAQDt35NgpMNDOHTl2Cgy0c0eOnQID7dxhXwvJ2ykw0M4d9rWQvJ0CA+3cYV8LydspMNDOHfa1C/cfuQ3tFBho5w77mgID/f99oCeGDsnbKXBp6JDUR7PPAm12QO8CvVXzfhe0QoWC6fOhOwUOhX7w4rGbt+vKPgu02QE9YqfAi4Meai7QITU7oEfsQmp2s4S+cfumW/P+XKDvXFm7ebtZQusBeshcoL8c7rt5O6BH7BQYaOeOHDsFBtq5I8dOgYF27sixU2CgnTty7BQYaOeOHDsFBtq5I8dOgRcHPVQXdEhT7Wb536RDAQ30Vs1uNtAUF9CVArpSQFcK6EoBXSmgK9WG5qtQi2RNV803KsuLlDn7RcpgF6qF3Pz8fWOjD1JyrS9g/wOlHj3Oru4PcQAAAABJRU5ErkJggg=="/>
@@ -2075,30 +1297,36 @@ downloadBtn.addEventListener('click', () =&gt; {
 
 <a href='javascript.htm'><div class='book-cover' style='background-color: #f9f6f1;color: #111111;border: 1px solid #ccc;display: flex;justify-content: center;align-items: center;text-align: center;'>More Javascript Books</div></a>
 </div>
-</div>
-  </div>
-  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
-  
-  <script>
-    function copyCode(button) {
-      const code = button.nextElementSibling.innerText;
-      navigator.clipboard.writeText(code).then(() => {
-        button.textContent = 'Copied!';
-        setTimeout(() => { button.textContent = 'Copy'; }, 1500);
-      });
-    }
-  </script>  
-<div id="floatingLog" aria-live="polite" role="alert"></div>
-<footer class="page-footer">
-    <nav>
-      <a href="https://readbytes.github.io">Home</a> | 
-      Email:<script language="JavaScript" type="text/javascript">
+</div><script>
+function copyCode(button) {const code = button.nextElementSibling.innerText;navigator.clipboard.writeText(code).then(() => {button.textContent = 'Copied!';setTimeout(() => { button.textContent = 'Copy'; }, 1500);});}
+</script><div id="floatingLog" aria-live="polite" role="alert"></div></div>
+<style>
+.site-footer {margin-top: 60px;padding: 20px 0;border-top: 1px solid #eee;text-align: center;font-size: 14px;}
+.site-footer a {text-decoration: none;}
+.light-mode .site-footer {color: #777;border-color: #eee;}
+.dark-mode .site-footer {color: #888;border-color: #333;}
+.light-mode .site-footer a {color: #555;}
+.dark-mode .site-footer a {color: #aaa;}
+.site-footer a:hover {text-decoration: underline;}    
+</style>
+<footer class="site-footer">
+<nav><a href="https://readbytes.github.io">Home</a> |Email:<script type="text/javascript">
 var part1 = 'yinpeng';var part6 = '263';var part2 = Math.pow(2,6);var part3 = String.fromCharCode(part2);var part4 = 'hotmail dot com';var part5 = part1 + String.fromCharCode(part2) + part4;document.write(part1 + part6 + part3 + part4);
 </script>
-    </nav>
-  <p>© 2025 — All rights reserved.</p>    
-  </footer>
-
+| <a id="mode-toggle" href="#">Toggle Dark Mode</a>
+</nav><p>© 2025 — All rights reserved.</p></footer>
+<script>
+const toggleButton = document.getElementById('mode-toggle');
+const body = document.body;
+const savedMode = localStorage.getItem('mode') || 'light';
+body.classList.add(savedMode + '-mode');
+toggleButton.addEventListener('click', () => {
+      const isDark = body.classList.contains('dark-mode');
+      body.classList.toggle('dark-mode', !isDark);
+      body.classList.toggle('light-mode', isDark);
+      localStorage.setItem('mode', isDark ? 'light' : 'dark');
+});
+function copyCode(button) {const code = button.nextElementSibling.innerText;navigator.clipboard.writeText(code).then(() => {button.textContent = 'Copied!';setTimeout(() => { button.textContent = 'Copy'; }, 1500);});}
+</script>
 </body>
 </html>

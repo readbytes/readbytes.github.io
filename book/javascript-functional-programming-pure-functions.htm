@@ -1,192 +1,165 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
+<meta charset="UTF-8">
 <title>JavaScript Functional Programming Pure Functions</title>
-<link rel='shortcut icon' href='https://java2s.com/style/favicon.ico'>
+<link rel='shortcut icon' href='https://readbytes.github.io/images/favicon.ico'>
 <link href="https://fonts.googleapis.com/css2?family=Merriweather&display=swap" rel="stylesheet" />
 <link href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
-
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.css" />
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/theme/material.css"> <!-- Dark theme -->
-<script src="https://cdn.jsdelivr.net/npm/typescript@5/lib/typescript.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/htmlmixed/htmlmixed.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/xml/xml.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/css/css.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/javascript/javascript.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/javascript/typescript.min.js"></script>
-<style>
-    #floatingLog {
-      position: fixed;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      background: rgba(20, 20, 20, 0.95);
-      color: white;
-      font-family: monospace;
-      font-size: 14px;
-      padding: 16px 20px;
-      border-radius: 8px;
-      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
-      max-width: 80%;
-      max-height: 200px;
-      overflow-y: auto;
-      display: none;
-      z-index: 9999;
-      pointer-events: none;
-      white-space: pre-wrap;
-      text-align: center;
-    }
-</style>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/theme/dracula.min.css"><style>
+html {scroll-behavior: smooth;}  
+body {font-family: 'Merriweather', serif;;margin: 0;padding: 2rem 1rem;font-size: 15px;line-height: 1.5;transition: background-color 0.3s, color 0.3s;}
+.container {max-width: 750px;margin: 0 auto;padding: 1rem 2rem;}
+.light-mode {background-color: #f8f7f5;color: #333;} 
+.dark-mode {background-color: #121212;color: #e0e0e0;}
+a { text-decoration: none;transition: color 0.2s;}
+a:hover {text-decoration: underline;}
+.light-mode a {color: #555;}
+.dark-mode a {color: #aaa;}
+</style><style>
+.related-book-list {display: flex;flex-wrap: wrap;gap: 20px;}
+.related-books {margin-top: 40px;}
+.related-books h2 {font-size: 22px;margin-bottom: 20px;border-bottom: 2px solid #eee;padding-bottom: 8px;}
+.light-mode .related-books h2 {color: #333;border-color: #eee;}
+.dark-mode .related-books h2 {color: #ddd;border-color: #333;}
+</style><style>
+.book-cover {width: 130px;height: 180px;font-family: Arial, sans-serif;position: relative;overflow: hidden;box-shadow: 2px 2px 4px rgba(0,0,0,0.1);}
+.book-cover-bottom-stripe {position: absolute;bottom: 0;left: 0;height: 5px;width: 100%;}
+.book-cover-title {position: absolute;width: 100%;text-align: center;font-weight: bold;}
+.book-cover-icon {position: absolute;left: 50%;transform: translateX(-50%);display: flex;align-items: center;justify-content: center;}
+.book-cover-author {position: absolute;bottom: 10px;width: 100%;text-align: center;font-size: 8px;color: #333;}
+</style><style>
+.book-title-toc {font-size: 32px;font-weight: bold; }
+.book-subtitle-toc {font-size: 18px;margin-top: 8px;font-style: italic;}
+.book-header {text-align: center;margin-bottom: 40px;}
+
+.toc-container {border-radius: 10px;padding: 30px;margin-bottom: 40px;box-shadow: 0 8px 20px rgba(0,0,0,0.05);}
+h1 {font-size: 24px;text-align: center;margin-bottom: 30px;letter-spacing: 1px;padding-bottom: 10px;}
+.toc-list,.toc-section-list {list-style: none;padding: 0;margin: 0;}
+.toc-section-list {padding-left: 18px;margin-top: 6px;margin-bottom: 20px; }
+.toc-chapter {padding: 20px 0;}
+.chapter-title,.toc-section {display: flex;justify-content: space-between;padding-top: 4px;}
+.chapter-title {font-size: 17px;font-weight: bold;}
+.chapter-page,.section-page {font-style: italic;}
+ 
+ 
+.light-mode .book-title-toc,.light-mode .chapter-title,.light-mode .book-name {color: #222;}
+.light-mode .book-subtitle-toc,.light-mode .book-sub,.light-mode .chapter-page,.light-mode .section-page {color: #666;}
+.light-mode .toc-container { background: #fff;border: 1px solid #ddd;}
+.light-mode h1 {border-bottom: 2px solid #eee;color: #222;}
+.light-mode .toc-section {  color: #444;}
+
+.light-mode .book-cover { border: 1px solid #ccc;box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);}
+.light-mode .book-title,.light-mode .series-name {color: #fff;}
+.light-mode .book-subtitle,.light-mode .book-footer {color: #aaa;}
+
+.dark-mode .book-title-toc,.dark-mode .chapter-title,.dark-mode .book-name {color: #f5f5f5;}
+.dark-mode .book-subtitle-toc,.dark-mode .book-sub,.dark-mode .chapter-page,.dark-mode .section-page {color: #aaa;}
+.dark-mode .toc-container {background: #1e1e1e;border: 1px solid #444;}
+
+.dark-mode h1 {border-bottom: 2px solid #333;color: #eee;}
+.dark-mode .toc-section {color: #bbb;}
+
+.dark-mode .related-books h2 {color: #ddd;border-bottom: 2px solid #333;}
+.dark-mode .book-title,.dark-mode .series-name {color: #fff;}
+.dark-mode .book-subtitle,.dark-mode .book-footer {color: #bbb;}
+.dark-mode .toc-section {color: #ddd;}
+
+@media (max-width: 600px) {
+  .chapter-title,
+  .toc-section {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .chapter-page,
+  .section-page {
+    margin-top: 4px;
+  }
+}
+
+</style><style>
+.light-mode .container {box-shadow: 0 0 15px rgba(0,0,0,0.1);}
+.dark-mode .container {box-shadow: 0 0 15px rgba(255, 255, 255, 0.05);}
+
+h1, h2, h3 {font-weight: 600;margin-top: 2.5rem;margin-bottom: 1rem;line-height: 1.2;}
+h1 { font-size: 1.8rem; }
+h2 { font-size: 1.4rem; }
+h3 { font-size: 1.2rem; }
+
+table {width: 100%;border-collapse: collapse;font-family: sans-serif;font-size: 1em;margin: 1em 0;}
+th, td {padding: 0.6em 1em;text-align: left;border: 1px solid;}
+tr:nth-child(even) {  background-color: inherit;}
+tr:hover { background-color: inherit;}
+
+code {color: #d35400;}
+
+.chapter-navi-section {display: flex;justify-content: space-between;align-items: center;padding-bottom: 10px;padding-top: 10px;}
+.nav-link {color: inherit;text-decoration: none;opacity: 0.5;transition: opacity 0.3s ease, text-decoration 0.3s ease;}
+.nav-link:hover {opacity: 0.9;text-decoration: underline;}
+.prev { text-align: left; }
+.toc-link { text-align: center; }
+.next { text-align: right; }
+
+.download-section {display: flex;align-items: center;justify-content: center;gap: 2rem;padding: 2rem 1rem;max-width: 600px;margin: 3rem auto;border-radius: 12px;box-shadow: 0 4px 10px rgba(0,0,0,0.05);}
+.download-info h2 {margin: 0 0 0.5rem;font-size: 1.2rem;}
+.format-label {margin: 0 0 0.5rem;font-size: 0.95rem;}
+.download-buttons {display: flex;gap: 1rem;}
+.download-button {background-color: #4A90E2;color: white;padding: 0.5em 1.2em;border-radius: 25px;font-size: 0.95rem;text-decoration: none;transition: background-color 0.3s ease;}
+.download-button:hover {background-color: #357ABD;}
+
+.code-block {position: relative;margin-bottom: 1em;}
+.copy-button {background: transparent;color: white;position: absolute;top: 8px;right: 8px;border: none;padding: 4px 8px;font-size: 12px;border-radius: 4px;cursor: pointer;z-index: 1;}
+.copy-button:hover {background-color: #0056b3;}
+
+.snippet-container {overflow: hidden;}
+.snippet-header {padding: 0.75rem 1rem;cursor: pointer;font-size: 1rem;background-color: #eeeeee;color:  #111111; border-radius: 8px;cursor: pointer;box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+.snippet-body {display: none;font-family: monospace;}
+.snippet-container.open .snippet-body {display: block;}
+
+.CodeMirror {border: 2px solid #ccc;border-radius: 4px;resize: vertical;}
+
+.light-mode .format-label {color: #888;}
+.light-mode th {background-color: #f2f2f2;}
+.light-mode tr:nth-child(even) {background-color: #fafafa;}
+.light-mode tr:hover {background-color: #e6f7ff;}
+
+.dark-mode .snippet-header {background-color: #333;color:  #ddd; }
+.dark-mode .format-label {color: #aaa;}
+.dark-mode th {background-color: #333;color: #fff;}
+.dark-mode td {border-color: #444;}
+.dark-mode tr:nth-child(even) {background-color: #2a2a2a;}
+.dark-mode tr:hover {background-color: #2c3e50;}
+
+
+.button-group-run-edit {display: flex;width: 100%;gap: 1rem;}
+.button-run-edit {flex: 1;padding: 1rem;font-size: 1rem;font-weight: 600;border: none;border-radius: 8px;cursor: pointer;transition: background 0.3s, color 0.3s;}
+
+.light-mode .button-run-edit {background-color: #f0f0f0;color: #222;box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);}
+.light-mode .button-run-edit:hover {background-color: #e0e0e0;}
+
+.dark-mode .button-run-edit {background-color: #2a2a2a;color: #f5f5f5;box-shadow: 0 0 10px rgba(255, 255, 255, 0.05);}
+.dark-mode .button-run-edit:hover {background-color: #3a3a3a;}
+
+button { padding: 0.5em 1em; background: green; color: white; border: none; cursor: pointer; }
+button:hover { background: #1e7e34; }
+.result_iframe { width:99%; margin-top: 1em;  resize: both;background-color: #515b63;border:1px solid #ccc;}   
+
+.dialog-backdrop {position: fixed;top: 0;left: 0;width: 100vw;height: 100vh;background: rgba(0,0,0,0.5);display: none;justify-content: center;align-items: center;z-index: 10;}
+.dialog {background: #90979e;padding: 20px;width: 90vw;height: 80vh;border-radius: 8px;box-shadow: 0 0 20px rgba(0,0,0,0.3);display: flex;flex-direction: column;}
+.dialog-content {display: flex;gap: 20px;margin-top: 10px;height: calc(100% - 40px);}
+.editor-container, .preview-container {flex: 1;height: 100%;max-height: 100%;overflow: hidden; }
+.result_iframe_dialog {width: 100%;height: 100%;resize: both;border:1px solid #ccc;overflow: auto; }   
+.CodeMirror {width: 100% !important;height: 100% !important;}
+</style><script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/javascript/javascript.min.js"></script>
 <script>
-  const codeMirrorMap = new Map();
-  const iframeMap = new Map();
-  
- 
-
-  let dismissTimer;
-  function showFloatingLog(message) {
-	const floatingLog = document.getElementById('floatingLog');
-
-    if (floatingLog.style.display !== 'block') {
-      floatingLog.textContent = '';
-      floatingLog.style.display = 'block'; 
-    }
-
-    floatingLog.textContent += message + '\n';
-    floatingLog.scrollTop = floatingLog.scrollHeight; 
-    clearTimeout(dismissTimer);
-    dismissTimer = setTimeout(() => {
-      floatingLog.style.display = 'none';
-      floatingLog.textContent = '';
-    }, 2000);
-  }
-  window.addEventListener('message', (event) => {
-	    if (!iframeMap.has(event.source)) return;
-
-	    if (event.data?.type === 'console-log') {
-	      showFloatingLog(event.data.message);
-	    }
-  });  
-  function renderIframe(button,textarea_id, iframe_id) {
-      const html = codeMirrorMap.get(textarea_id).getValue();
-      const iframe = document.getElementById(iframe_id);
-  
-      const oldIframe = iframe;
-      const newIframe = document.createElement('iframe');
-      newIframe.className ="result_iframe";
-      
-      newIframe.id = iframe_id;
-      oldIframe.replaceWith(newIframe);
- 
-
-      // Track the iframe in the map
-      iframeMap.set(newIframe.contentWindow, button);
-
-      const overrideScript = `
-        <script>
-          (function() {
-            const originalLog = console.log;
-            console.log = function(...args) {
-              originalLog.apply(console, args);
-              window.parent.postMessage({
-                type: 'console-log',
-                message: args.map(a => {
-                  try { return JSON.stringify(a); }
-                  catch { return String(a); }
-                }).join(' ')
-              }, '*');
-            };
-          })();
-        <\/script>
-      `;
-
-      const iframeHTML = `
-        <!DOCTYPE html>
-        <html>
-        <body>
-          ${overrideScript}
-          ${html}
-        </body>
-        </html>
-      `;
- 
-      const doc = newIframe.contentDocument || newIframe.contentWindow.document;
-      doc.open();
-      doc.write(iframeHTML);
-      doc.close();
-
-      
-      setTimeout(() => {
-    	  newIframe.style.height = '0px';
-    	   let contentHeight = Math.max(doc.body.scrollHeight,doc.documentElement.scrollHeight);
- 
-    	//   if(contentHeight < 150 || contentHeight > 600){
-    	//	   contentHeight = 600;
-    	 //  } 
-    	   newIframe.style.height = contentHeight + 'px';
-    	}, 50);      
-      
-  }
-  function renderIframeForClientTypescript(textarea_id, iframe_id) {
-      let code = codeMirrorMap.get(textarea_id).getValue();
-      code = ts.transpile(code);
-      const iframe = document.getElementById(iframe_id);
-      const doc = iframe.contentDocument || iframe.contentWindow.document;
-
-const html = `
-  <!DOCTYPE html>
-  <html>
-    <head>
-      <title>Output</title>
-      <style>
-        body { font-family: monospace; padding: 1em; background: #f4f4f4; color: #222; }
-        pre { white-space: pre-wrap; word-break: break-word; }
-        .error { color: red; }
-      </style>
-    </head>
-    <body>
-      <pre id="log"></pre>
-      <script>
-        (function(){
-          const logEl = document.getElementById('log');
-          const origLog = console.log;
-          const origError = console.error;
-
-          console.log = (...args) => {
-            logEl.textContent += args.join(' ') + '\\n';
-            origLog.apply(console, args);
-          };
-          console.table = (...args) => {
-            logEl.textContent += args.join(' ') + '\\n';
-            origLog.apply(console, args);
-          };
-
-          console.error = (...args) => {
-            logEl.innerHTML +='<span class="error">' + args.join(' ') + '</span>';
-            origError.apply(console, args);
-          };
-          window.addEventListener("error", function (event) {
-              console.error("Caught by event listener:", event.message);
-          });    
-          try {             
-              ${code};
-          } catch (err) {
-            console.error(err.stack || err.message);
-          }
-        })();
-      <\/script>
-    </body>
-  </html>
-`;
-
-      iframe.style.display = "block";
-      iframe.srcdoc = html;  
-  }
-
-    function renderIframeForClientJavascript(textarea_id, iframe_id) {
-        const code = codeMirrorMap.get(textarea_id).getValue();
+  const javascriptCodeMirrorMap = new Map();
+  function runJavascriptCode(button,textarea_id, iframe_id) {
+        const code = javascriptCodeMirrorMap.get(textarea_id).getValue();
         const iframe = document.getElementById(iframe_id);
         const doc = iframe.contentDocument || iframe.contentWindow.document;
 
@@ -237,469 +210,41 @@ const html = `
   `;
         iframe.style.display = "block";
         iframe.srcdoc = html;  
+iframe.onload = function () {
+  const doc = iframe.contentDocument || iframe.contentWindow.document;
+  const contentHeight = Math.max(
+    doc.body.scrollHeight,
+    doc.documentElement.scrollHeight
+  );
+  iframe.style.height = contentHeight + 'px';
+};
+        
     }
-    function toggleSnippetAndRefresh(id, textarea_id) {
-      const box = document.getElementById(id);
-      box.classList.toggle("open");
-      codeMirrorMap.get(textarea_id).refresh();
-    }
-
-  </script>
-  <script>
-  const mode = localStorage.getItem('mode') || 'light';
-  document.documentElement.classList.add(`${mode}-mode`);
-  </script>   
-<style> 
-html {
-  scroll-behavior: smooth;
+function openEditJavascriptCodeDialog(id, textarea_id) {
+		        closeAllJavascriptCodeDialog();
+		        document.getElementById(id).style.display = 'flex';
+         
+ 	        setTimeout(() => {
+		        	 javascriptCodeMirrorMap.get(textarea_id).refresh();
+                   
+ 	        }, 100); // 100ms 
 }
 
-body {
-  font-family: 'Merriweather', serif;
-  margin: 0;
-  padding: 2rem 1rem;
-  font-size: 15px;
-  line-height: 1.5;
-  transition: background-color 0.3s, color 0.3s;
-}
-
-.container {
-  max-width: 700px;
-  margin: 0 auto;
-  padding: 1rem 2rem;
-  box-shadow: 0 0 15px rgba(0,0,0,0.1);
-}
-
-h1, h2, h3 {
-  font-weight: 600;
-  margin-top: 2.5rem;
-  margin-bottom: 1rem;
-  line-height: 1.2;
-}
-
-h1 { font-size: 1.8rem; }
-h2 { font-size: 1.4rem; }
-h3 { font-size: 1.2rem; }
-
-table {
-  width: 100%;
-  border-collapse: collapse;
-  font-family: sans-serif;
-  font-size: 1em;
-  margin: 1em 0;
-}
-
-th, td {
-  padding: 0.6em 1em;
-  text-align: left;
-  border: 1px solid;
-}
-
-tr:nth-child(even) {
-  background-color: inherit;
-}
-
-tr:hover {
-  background-color: inherit;
-}
-
-a {
-  text-decoration: none;
-  transition: color 0.2s;
-}
-
-a:hover {
-  text-decoration: underline;
-}
-
-code {
-  color: #d35400;
-}
-
-.book-title-chapter {
-  font-family: 'Merriweather', serif;
-  font-size: 2rem;
-  font-weight: bold;
-  text-align: center;
-  margin-bottom: 2rem;
-  border-bottom: 2px solid;
-  padding-bottom: 0.5rem;
-}
-
-.book-subtitle-chapter {
-  text-align: center;
-  font-size: 1rem;
-  margin-top: -1rem;
-  margin-bottom: 2rem;
-}
-
-.related-books {
-  margin-top: 40px;
-}
-
-.related-book-list {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 20px;
-}
-
-    .book-cover {
-      width: 130px;
-      height: 180px;
-      font-family: Arial, sans-serif;
-      position: relative;
-      overflow: hidden;      
-      line-height: normal;
-      box-shadow: 2px 2px 4px rgba(0,0,0,0.1);
-    }
-    .book-cover-bottom-stripe {
-      position: absolute;
-      bottom: 0;
-      left: 0;
-      height: 5px;
-      width: 100%;
-    }
-    .book-cover-title {
-      position: absolute;
-      width: 100%;
-      text-align: center;
-      font-weight: bold;
-    }
-     
-    .book-cover-icon {
-      position: absolute;
-      left: 50%;
-      transform: translateX(-50%);
-      display: flex;
-      align-items: center;
-      justify-content: center; 
-    }
-
-    .book-cover-author {
-      position: absolute;
-      bottom: 10px;
-      width: 100%;
-      text-align: center;
-      font-size: 8px;
-      color: #333;
-    }
-
-.page-footer {
-  margin-top: 4rem;
-  padding: 1rem 0;
-  text-align: center;
-  font-size: 0.85rem;
-  border-top: 1px solid;
-}
-
-.chapter-navi-section {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding-bottom: 10px;
-}
-
-.nav-link {
-  color: inherit;
-  text-decoration: none;
-  opacity: 0.5;
-  transition: opacity 0.3s ease, text-decoration 0.3s ease;
-}
-
-.nav-link:hover {
-  opacity: 0.9;
-  text-decoration: underline;
-}
-
-.prev { text-align: left; }
-.toc-link { text-align: center; }
-.next { text-align: right; }
-
-.download-section {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 2rem;
-  padding: 2rem 1rem;
-  max-width: 600px;
-  margin: 3rem auto;
-  border-radius: 12px;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-}
-
-.download-info h2 {
-  margin: 0 0 0.5rem;
-  font-size: 1.2rem;
-}
-
-.format-label {
-  margin: 0 0 0.5rem;
-  font-size: 0.95rem;
-}
-
-.download-buttons {
-  display: flex;
-  gap: 1rem;
-}
-
-.download-button {
-  background-color: #4A90E2;
-  color: white;
-  padding: 0.5em 1.2em;
-  border-radius: 25px;
-  font-size: 0.95rem;
-  text-decoration: none;
-  transition: background-color 0.3s ease;
-}
-
-.download-button:hover {
-  background-color: #357ABD;
-}
-
-.code-block {
-  position: relative;
-  margin-bottom: 1em;
-}
-
-.copy-button {
-  background: transparent;
-  color: white;
-  position: absolute;
-  top: 8px;
-  right: 8px;
-  border: none;
-  padding: 4px 8px;
-  font-size: 12px;
-  border-radius: 4px;
-  cursor: pointer;
-  z-index: 1;
-}
-
-.copy-button:hover {
-  background-color: #0056b3;
-}
-
-.snippet-container {
-  overflow: hidden;
-}
-
-.snippet-header {
-  padding: 0.75rem 1rem;
-  cursor: pointer;
-  font-size: 1rem;
-    background-color: #eeeeee;
-    color:  #111111; 
-    border-radius: 8px;
-    cursor: pointer;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.1);  
-}
-
-.snippet-body {
-  display: none;
-  font-family: monospace;
-}
-
-.snippet-container.open .snippet-body {
-  display: block;
-}
-
-.CodeMirror {
-  border: 2px solid #ccc;
-  border-radius: 4px;
-  resize: vertical;
-}
-
-/* === Light Mode === */
-html.light-mode {
-  background-color: #f8f7f5;
-  color: #333;
-}
-
-html.light-mode .container {
-  background: white;
-}
-
-html.light-mode .book-title-chapter {
-  color: #2c3e50;
-  border-color: #ccc;
-}
-html.light-mode .book-subtitle-chapter{
-  color: #888;
-}
-
-html.light-mode .page-footer,
-html.light-mode .series-name,
-html.light-mode .book-subtitle,
-html.light-mode .format-label {
-  color: #888;
-}
-
-html.light-mode .related-books h2 {
-  color: #333;
-  border-bottom: 2px solid #eee;
-}
-
-html.light-mode .book-title {
-  color: #fff;
-}
-
-html.light-mode .book-cover {
-  border: 1px solid #ccc;
-}
-
-html.light-mode th {
-  background-color: #f2f2f2;
-}
-
-html.light-mode tr:nth-child(even) {
-  background-color: #fafafa;
-}
-
-html.light-mode tr:hover {
-  background-color: #e6f7ff;
-}
-
-html.light-mode a,
-html.light-mode .page-footer a {
-  color: #000;
-}
-
-/* === Dark Mode === */
-html.dark-mode {
-  background-color: #181818;
-  color: #e0e0e0;
-}
-
-html.dark-mode .container {
-  background: #222;
-}
-
-html.dark-mode .book-title-chapter {
-  color: #ddd;
-  border-color: #444;
-}
-
-html.dark-mode .snippet-header {
-    background-color: #333;
-    color:  #ddd; 
-}
-
-
-html.dark-mode .book-subtitle-chapter,
-html.dark-mode .page-footer,
-html.dark-mode .series-name,
-html.dark-mode .book-subtitle,
-html.dark-mode .book-footer,
-html.dark-mode .format-label {
-  color: #aaa;
-}
-
-html.dark-mode .related-books h2 {
-  color: #ddd;
-  border-bottom: 2px solid #333;
-}
-
-html.dark-mode .book-title {
-  color: #fff;
-}
-
-html.dark-mode .book-cover {
-  border: 1px solid #555;
-}
-
-html.dark-mode th {
-  background-color: #333;
-  color: #fff;
-}
-
-html.dark-mode td {
-  border-color: #444;
-}
-
-html.dark-mode tr:nth-child(even) {
-  background-color: #2a2a2a;
-}
-
-html.dark-mode tr:hover {
-  background-color: #2c3e50;
-}
-
-html.dark-mode a,
-html.dark-mode .page-footer a {
-  color: #eee;
-}
-
-    .dialog-backdrop {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100vw;
-      height: 100vh;
-      background: rgba(0,0,0,0.5);
-      display: none;
-      justify-content: center;
-      align-items: center;
-      z-index: 10;
-    }
-
-    .dialog {
-      background: white;
-      padding: 20px;
-      width: 90vw;
-      height: 80vh;
-      border-radius: 8px;
-      box-shadow: 0 0 20px rgba(0,0,0,0.3);
-      display: flex;
-      flex-direction: column;
-    }
-    .dialog-content {
-      display: flex;
-      flex: 1;
-      gap: 20px;
-      margin-top: 10px;
-    }
-    .dialog h2 {
-      margin-top: 0;
-    }
-
-    .textarea_dialog {
-      width: 50%;
-      height: 100%;
-      resize: none;
-      font-family: monospace;
-      font-size: 14px;
-      padding: 10px;
-      box-sizing: border-box;
-      border: 1px solid #ccc;
-    }
-
-    .iframe_dialog {
-      width: 50%;
-      height: 100%;
-      border: 1px solid #ccc;
-    }
-    .controls_dialog {
-      display: flex;
-      justify-content: space-between;
-      margin-top: 10px;
-    }    
-    button { padding: 0.5em 1em; background: green; color: white; border: none; cursor: pointer; }
-    button:hover { background: #1e7e34; }
-    .result_iframe { width:99%; height:200px; margin-top: 1em;  resize: both;border:1px solid #ccc;}        
-</style>
+function closeAllJavascriptCodeDialog() {
+		        document.querySelectorAll('.dialog-backdrop').forEach(el => {
+		          el.style.display = 'none';
+		        });
+}		
+</script>
 </head>
-<body> 
-  <div class="container">
-    <div class = "chapter-navi-section">
+<body>
+<script>const mode = localStorage.getItem('mode') || 'light';document.documentElement.classList.add(`${mode}-mode`);</script>  
+<div class="container"><div class = "chapter-navi-section">
 <a href="javascript-functional-programming-immutability-and-side-effects.htm" class="nav-button prev">←</a>
 <a href='javascript-functional-programming.htm#pure-functions' class="nav-button toc-link">Index</a>
 <a href="javascript-functional-programming-higher-order-functions.htm" class="nav-button next">→</a>
 </div>
-
-    <h1 class="book-title-chapter" id = 'top'>Pure Functions</h1>
-    <h3 class="book-subtitle-chapter">JavaScript Functional Programming</h3>   
-    <!-- <h1 class ="chapter-title"></h1> -->
-    <h2 id='what-makes-a-function-pure'>4.1 What Makes a Function Pure?</h2><p>In functional programming, a <strong>pure function</strong> is the foundation for writing predictable and maintainable code. But what exactly makes a function <em>pure</em>?</p><h4 id="definition-of-a-pure-function">Definition of a Pure Function</h4><p>A function is considered <strong>pure</strong> if it meets two essential criteria:</p><ol>
+<div class='book-header'><h1 class='book-title-toc' id = 'top'>Pure Functions</h1><h3 class='book-subtitle-toc'>JavaScript Functional Programming</h3></div><h2 id='what-makes-a-function-pure'>4.1 What Makes a Function Pure?</h2><p>In functional programming, a <strong>pure function</strong> is the foundation for writing predictable and maintainable code. But what exactly makes a function <em>pure</em>?</p><h4 id="definition-of-a-pure-function">Definition of a Pure Function</h4><p>A function is considered <strong>pure</strong> if it meets two essential criteria:</p><ol>
  <li><strong>Deterministic output:</strong> For the <strong>same inputs</strong>, it always returns the <strong>same output</strong>.</li>
  <li><strong>No side effects:</strong> It does <strong>not modify anything outside its scope</strong> or interact with the outside world (no changing variables, no I/O, no state mutation).</li>
 </ol><h4 id="why-these-criteria-matter">Why These Criteria Matter</h4><ul>
@@ -714,29 +259,45 @@ html.dark-mode .page-footer a {
 console.log(add(2, 3)); // 5
 console.log(add(2, 3)); // 5 (always the same output)</code></pre>
  </div>
- <div class="snippet-container" id="d7rIy">
-  <div class="snippet-header" onclick="toggleSnippetAndRefresh('d7rIy','CaGkV')">
-   Try it in editor
-  </div>
-  <div class="snippet-body"><textarea id="CaGkV">function add(a, b) {
+ <div class="snippet-container">
+  <div class="button-group-run-edit"><button class="button-run-edit" onclick="runJavascriptCode(this,'wPbae','ueig1')">Run</button> <button class="button-run-edit" onclick="openEditJavascriptCodeDialog('ueig1_Dialog','wPbae')">Edit</button>
+  </div> <iframe id="ueig1" class="result_iframe" style="display: none;"></iframe>
+  <div id="ueig1_Dialog" class="dialog-backdrop">
+   <div class="dialog">
+    <div class="controls"><button onclick="runJavascriptCode(this,'wPbae','ueig1_IFrame')">Run</button> <button onclick="closeAllJavascriptCodeDialog()">Close</button>
+    </div>
+    <div class="dialog-content">
+     <div class="editor-container">
+      <textarea id="wPbae" class="textarea_dialog" placeholder="Type HTML here...">function add(a, b) {
   return a + b;
 }
 
 console.log(add(2, 3)); // 5
-console.log(add(2, 3)); // 5 (always the same output)</textarea> <br> <button onclick="renderIframeForClientJavascript('CaGkV','dnhto')">Run</button> <iframe id="dnhto" class="result_iframe" style="display: none;"></iframe>
-   <script>
-  {let editor1 = CodeMirror.fromTextArea(document.getElementById("CaGkV"), {
-    mode: "javascript",
-    lineNumbers:false,
-    tabSize: 2
-    });
-    const mode = localStorage.getItem("mode") || "light";  
-    const newTheme = mode === "dark" ? "material" : "default";
-    editor1.setOption("theme", newTheme);
-
-    codeMirrorMap.set("CaGkV", editor1);}
-  </script>
+console.log(add(2, 3)); // 5 (always the same output)</textarea>
+     </div>
+     <div class="preview-container">
+      <iframe id="ueig1_IFrame" class="result_iframe_dialog" style="border: none;"></iframe>
+     </div>
+    </div>
+   </div>
   </div>
+  <script>
+{
+let editor = CodeMirror.fromTextArea(document.getElementById("wPbae"), {
+					mode : "javascript",
+					lineNumbers : false,
+          lineWrapping: true,
+					tabSize : 2
+});
+
+const darkmode = localStorage.getItem("mode") || "light";  
+const newTheme = darkmode === "dark" ? "dracula" : "default";
+editor.setSize("50%", "100%");
+editor.setOption("theme", newTheme);
+javascriptCodeMirrorMap.set("wPbae", editor);
+}
+
+</script>
  </div>
 </div><ul>
  <li>Always returns the same result for inputs <code>(2, 3)</code>.</li>
@@ -755,11 +316,16 @@ function increment() {
 console.log(increment()); // 1
 console.log(increment()); // 2 (different output for no input)</code></pre>
  </div>
- <div class="snippet-container" id="0oDKT">
-  <div class="snippet-header" onclick="toggleSnippetAndRefresh('0oDKT','ywyyO')">
-   Try it in editor
-  </div>
-  <div class="snippet-body"><textarea id="ywyyO">let counter = 0;
+ <div class="snippet-container">
+  <div class="button-group-run-edit"><button class="button-run-edit" onclick="runJavascriptCode(this,'RmNGc','8Gz8c')">Run</button> <button class="button-run-edit" onclick="openEditJavascriptCodeDialog('8Gz8c_Dialog','RmNGc')">Edit</button>
+  </div> <iframe id="8Gz8c" class="result_iframe" style="display: none;"></iframe>
+  <div id="8Gz8c_Dialog" class="dialog-backdrop">
+   <div class="dialog">
+    <div class="controls"><button onclick="runJavascriptCode(this,'RmNGc','8Gz8c_IFrame')">Run</button> <button onclick="closeAllJavascriptCodeDialog()">Close</button>
+    </div>
+    <div class="dialog-content">
+     <div class="editor-container">
+      <textarea id="RmNGc" class="textarea_dialog" placeholder="Type HTML here...">let counter = 0;
 
 function increment() {
   counter += 1; // Modifies external state (side effect)
@@ -767,27 +333,39 @@ function increment() {
 }
 
 console.log(increment()); // 1
-console.log(increment()); // 2 (different output for no input)</textarea> <br> <button onclick="renderIframeForClientJavascript('ywyyO','qVpIl')">Run</button> <iframe id="qVpIl" class="result_iframe" style="display: none;"></iframe>
-   <script>
-  {let editor1 = CodeMirror.fromTextArea(document.getElementById("ywyyO"), {
-    mode: "javascript",
-    lineNumbers:false,
-    tabSize: 2
-    });
-    const mode = localStorage.getItem("mode") || "light";  
-    const newTheme = mode === "dark" ? "material" : "default";
-    editor1.setOption("theme", newTheme);
-
-    codeMirrorMap.set("ywyyO", editor1);}
-  </script>
+console.log(increment()); // 2 (different output for no input)</textarea>
+     </div>
+     <div class="preview-container">
+      <iframe id="8Gz8c_IFrame" class="result_iframe_dialog" style="border: none;"></iframe>
+     </div>
+    </div>
+   </div>
   </div>
+  <script>
+{
+let editor = CodeMirror.fromTextArea(document.getElementById("RmNGc"), {
+					mode : "javascript",
+					lineNumbers : false,
+          lineWrapping: true,
+					tabSize : 2
+});
+
+const darkmode = localStorage.getItem("mode") || "light";  
+const newTheme = darkmode === "dark" ? "dracula" : "default";
+editor.setSize("50%", "100%");
+editor.setOption("theme", newTheme);
+javascriptCodeMirrorMap.set("RmNGc", editor);
+}
+
+</script>
  </div>
 </div><ul>
  <li>The output depends on external variable <code>counter</code>.</li>
  <li>Calling it twice with the same inputs (none in this case) produces different results.</li>
 </ul><ol start="2">
  <li>Function with side effect (console logging):</li>
-</ol><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</ol><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-js">function greet(name) {
   console.log(`Hello, ${name}!`); // Side effect: output to console
   return `Hello, ${name}!`;
@@ -817,29 +395,45 @@ console.log(increment()); // 2 (different output for no input)</textarea> <br> <
 console.log(multiply(2, 3)); // 6
 console.log(multiply(2, 3)); // 6 again — always the same output</code></pre>
  </div>
- <div class="snippet-container" id="oRdPZ">
-  <div class="snippet-header" onclick="toggleSnippetAndRefresh('oRdPZ','DPXvJ')">
-   Try it in editor
-  </div>
-  <div class="snippet-body"><textarea id="DPXvJ">function multiply(a, b) {
+ <div class="snippet-container">
+  <div class="button-group-run-edit"><button class="button-run-edit" onclick="runJavascriptCode(this,'Of3pb','akztb')">Run</button> <button class="button-run-edit" onclick="openEditJavascriptCodeDialog('akztb_Dialog','Of3pb')">Edit</button>
+  </div> <iframe id="akztb" class="result_iframe" style="display: none;"></iframe>
+  <div id="akztb_Dialog" class="dialog-backdrop">
+   <div class="dialog">
+    <div class="controls"><button onclick="runJavascriptCode(this,'Of3pb','akztb_IFrame')">Run</button> <button onclick="closeAllJavascriptCodeDialog()">Close</button>
+    </div>
+    <div class="dialog-content">
+     <div class="editor-container">
+      <textarea id="Of3pb" class="textarea_dialog" placeholder="Type HTML here...">function multiply(a, b) {
   return a * b;
 }
 
 console.log(multiply(2, 3)); // 6
-console.log(multiply(2, 3)); // 6 again — always the same output</textarea> <br> <button onclick="renderIframeForClientJavascript('DPXvJ','mz7Jm')">Run</button> <iframe id="mz7Jm" class="result_iframe" style="display: none;"></iframe>
-   <script>
-  {let editor1 = CodeMirror.fromTextArea(document.getElementById("DPXvJ"), {
-    mode: "javascript",
-    lineNumbers:false,
-    tabSize: 2
-    });
-    const mode = localStorage.getItem("mode") || "light";  
-    const newTheme = mode === "dark" ? "material" : "default";
-    editor1.setOption("theme", newTheme);
-
-    codeMirrorMap.set("DPXvJ", editor1);}
-  </script>
+console.log(multiply(2, 3)); // 6 again — always the same output</textarea>
+     </div>
+     <div class="preview-container">
+      <iframe id="akztb_IFrame" class="result_iframe_dialog" style="border: none;"></iframe>
+     </div>
+    </div>
+   </div>
   </div>
+  <script>
+{
+let editor = CodeMirror.fromTextArea(document.getElementById("Of3pb"), {
+					mode : "javascript",
+					lineNumbers : false,
+          lineWrapping: true,
+					tabSize : 2
+});
+
+const darkmode = localStorage.getItem("mode") || "light";  
+const newTheme = darkmode === "dark" ? "dracula" : "default";
+editor.setSize("50%", "100%");
+editor.setOption("theme", newTheme);
+javascriptCodeMirrorMap.set("Of3pb", editor);
+}
+
+</script>
  </div>
 </div><p>No matter how many times or where you call <code>multiply(2, 3)</code>, the output is always <code>6</code>.</p><p><strong>Non-deterministic example:</strong></p><div>
  <div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
@@ -850,31 +444,48 @@ console.log(multiply(2, 3)); // 6 again — always the same output</textarea> <b
 console.log(randomNumber()); // e.g., 0.43
 console.log(randomNumber()); // e.g., 0.79 (different every time)</code></pre>
  </div>
- <div class="snippet-container" id="4z7Jk">
-  <div class="snippet-header" onclick="toggleSnippetAndRefresh('4z7Jk','zQ9Sa')">
-   Try it in editor
-  </div>
-  <div class="snippet-body"><textarea id="zQ9Sa">function randomNumber() {
+ <div class="snippet-container">
+  <div class="button-group-run-edit"><button class="button-run-edit" onclick="runJavascriptCode(this,'giLMK','ug8yB')">Run</button> <button class="button-run-edit" onclick="openEditJavascriptCodeDialog('ug8yB_Dialog','giLMK')">Edit</button>
+  </div> <iframe id="ug8yB" class="result_iframe" style="display: none;"></iframe>
+  <div id="ug8yB_Dialog" class="dialog-backdrop">
+   <div class="dialog">
+    <div class="controls"><button onclick="runJavascriptCode(this,'giLMK','ug8yB_IFrame')">Run</button> <button onclick="closeAllJavascriptCodeDialog()">Close</button>
+    </div>
+    <div class="dialog-content">
+     <div class="editor-container">
+      <textarea id="giLMK" class="textarea_dialog" placeholder="Type HTML here...">function randomNumber() {
   return Math.random();
 }
 
 console.log(randomNumber()); // e.g., 0.43
-console.log(randomNumber()); // e.g., 0.79 (different every time)</textarea> <br> <button onclick="renderIframeForClientJavascript('zQ9Sa','41xVM')">Run</button> <iframe id="41xVM" class="result_iframe" style="display: none;"></iframe>
-   <script>
-  {let editor1 = CodeMirror.fromTextArea(document.getElementById("zQ9Sa"), {
-    mode: "javascript",
-    lineNumbers:false,
-    tabSize: 2
-    });
-    const mode = localStorage.getItem("mode") || "light";  
-    const newTheme = mode === "dark" ? "material" : "default";
-    editor1.setOption("theme", newTheme);
-
-    codeMirrorMap.set("zQ9Sa", editor1);}
-  </script>
+console.log(randomNumber()); // e.g., 0.79 (different every time)</textarea>
+     </div>
+     <div class="preview-container">
+      <iframe id="ug8yB_IFrame" class="result_iframe_dialog" style="border: none;"></iframe>
+     </div>
+    </div>
+   </div>
   </div>
+  <script>
+{
+let editor = CodeMirror.fromTextArea(document.getElementById("giLMK"), {
+					mode : "javascript",
+					lineNumbers : false,
+          lineWrapping: true,
+					tabSize : 2
+});
+
+const darkmode = localStorage.getItem("mode") || "light";  
+const newTheme = darkmode === "dark" ? "dracula" : "default";
+editor.setSize("50%", "100%");
+editor.setOption("theme", newTheme);
+javascriptCodeMirrorMap.set("giLMK", editor);
+}
+
+</script>
  </div>
-</div><p><code>randomNumber</code> is not deterministic because it does not depend on input and produces different results each time.</p><h4 id="referential-transparency-expressions-can-be-replaced-by-their-values">Referential Transparency: Expressions Can Be Replaced by Their Values</h4><p>An expression is <strong>referentially transparent</strong> if you can replace it with its corresponding value without changing the behavior of the program.</p><p>This means you can substitute a function call with its output value safely.</p><p><strong>Example:</strong></p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</div><p><code>randomNumber</code> is not deterministic because it does not depend on input and produces different results each time.</p><h4 id="referential-transparency-expressions-can-be-replaced-by-their-values">Referential Transparency: Expressions Can Be Replaced by Their Values</h4><p>An expression is <strong>referentially transparent</strong> if you can replace it with its corresponding value without changing the behavior of the program.</p><p>This means you can substitute a function call with its output value safely.</p><p><strong>Example:</strong></p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-js">const result = multiply(4, 5); // result = 20
 const area = result * 10;      // area = 200
 
@@ -884,7 +495,8 @@ const areaDirect = 20 * 10;    // Same as above, no difference in behavior</code
  <li><strong>Simplified reasoning:</strong> You understand the program’s flow better when you can substitute expressions with values.</li>
  <li><strong>Code optimization:</strong> Compilers or JavaScript engines can cache (memoize) results or eliminate redundant calls.</li>
  <li><strong>Refactoring safety:</strong> Changing or rearranging code without unintended side effects.</li>
-</ul><h4 id="referential-transparency-in-code-before-and-after-replacement">Referential Transparency in Code: Before and After Replacement</h4><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</ul><h4 id="referential-transparency-in-code-before-and-after-replacement">Referential Transparency in Code: Before and After Replacement</h4><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-js">function square(x) {
   return x * x;
 }
@@ -919,11 +531,16 @@ function addToTotal(amount) {
 console.log(addToTotal(5));  // 5
 console.log(addToTotal(3));  // 8 (output depends on external state)</code></pre>
  </div>
- <div class="snippet-container" id="R08AT">
-  <div class="snippet-header" onclick="toggleSnippetAndRefresh('R08AT','fa6dr')">
-   Try it in editor
-  </div>
-  <div class="snippet-body"><textarea id="fa6dr">let total = 0;
+ <div class="snippet-container">
+  <div class="button-group-run-edit"><button class="button-run-edit" onclick="runJavascriptCode(this,'wiqLS','w6d3R')">Run</button> <button class="button-run-edit" onclick="openEditJavascriptCodeDialog('w6d3R_Dialog','wiqLS')">Edit</button>
+  </div> <iframe id="w6d3R" class="result_iframe" style="display: none;"></iframe>
+  <div id="w6d3R_Dialog" class="dialog-backdrop">
+   <div class="dialog">
+    <div class="controls"><button onclick="runJavascriptCode(this,'wiqLS','w6d3R_IFrame')">Run</button> <button onclick="closeAllJavascriptCodeDialog()">Close</button>
+    </div>
+    <div class="dialog-content">
+     <div class="editor-container">
+      <textarea id="wiqLS" class="textarea_dialog" placeholder="Type HTML here...">let total = 0;
 
 function addToTotal(amount) {
   total += amount;  // Side effect: modifies external variable
@@ -931,20 +548,31 @@ function addToTotal(amount) {
 }
 
 console.log(addToTotal(5));  // 5
-console.log(addToTotal(3));  // 8 (output depends on external state)</textarea> <br> <button onclick="renderIframeForClientJavascript('fa6dr','pta2v')">Run</button> <iframe id="pta2v" class="result_iframe" style="display: none;"></iframe>
-   <script>
-  {let editor1 = CodeMirror.fromTextArea(document.getElementById("fa6dr"), {
-    mode: "javascript",
-    lineNumbers:false,
-    tabSize: 2
-    });
-    const mode = localStorage.getItem("mode") || "light";  
-    const newTheme = mode === "dark" ? "material" : "default";
-    editor1.setOption("theme", newTheme);
-
-    codeMirrorMap.set("fa6dr", editor1);}
-  </script>
+console.log(addToTotal(3));  // 8 (output depends on external state)</textarea>
+     </div>
+     <div class="preview-container">
+      <iframe id="w6d3R_IFrame" class="result_iframe_dialog" style="border: none;"></iframe>
+     </div>
+    </div>
+   </div>
   </div>
+  <script>
+{
+let editor = CodeMirror.fromTextArea(document.getElementById("wiqLS"), {
+					mode : "javascript",
+					lineNumbers : false,
+          lineWrapping: true,
+					tabSize : 2
+});
+
+const darkmode = localStorage.getItem("mode") || "light";  
+const newTheme = darkmode === "dark" ? "dracula" : "default";
+editor.setSize("50%", "100%");
+editor.setOption("theme", newTheme);
+javascriptCodeMirrorMap.set("wiqLS", editor);
+}
+
+</script>
  </div>
 </div><p><strong>Problems:</strong></p><ul>
  <li>The function changes <code>total</code> outside its scope.</li>
@@ -961,11 +589,16 @@ const total2 = add(total1, 3);
 console.log(total1); // 5
 console.log(total2); // 8</code></pre>
  </div>
- <div class="snippet-container" id="qMkl3">
-  <div class="snippet-header" onclick="toggleSnippetAndRefresh('qMkl3','rkD3w')">
-   Try it in editor
-  </div>
-  <div class="snippet-body"><textarea id="rkD3w">function add(currentTotal, amount) {
+ <div class="snippet-container">
+  <div class="button-group-run-edit"><button class="button-run-edit" onclick="runJavascriptCode(this,'Tusmx','QRbty')">Run</button> <button class="button-run-edit" onclick="openEditJavascriptCodeDialog('QRbty_Dialog','Tusmx')">Edit</button>
+  </div> <iframe id="QRbty" class="result_iframe" style="display: none;"></iframe>
+  <div id="QRbty_Dialog" class="dialog-backdrop">
+   <div class="dialog">
+    <div class="controls"><button onclick="runJavascriptCode(this,'Tusmx','QRbty_IFrame')">Run</button> <button onclick="closeAllJavascriptCodeDialog()">Close</button>
+    </div>
+    <div class="dialog-content">
+     <div class="editor-container">
+      <textarea id="Tusmx" class="textarea_dialog" placeholder="Type HTML here...">function add(currentTotal, amount) {
   return currentTotal + amount; // No side effect
 }
 
@@ -973,22 +606,34 @@ const total1 = add(0, 5);
 const total2 = add(total1, 3);
 
 console.log(total1); // 5
-console.log(total2); // 8</textarea> <br> <button onclick="renderIframeForClientJavascript('rkD3w','H0xiE')">Run</button> <iframe id="H0xiE" class="result_iframe" style="display: none;"></iframe>
-   <script>
-  {let editor1 = CodeMirror.fromTextArea(document.getElementById("rkD3w"), {
-    mode: "javascript",
-    lineNumbers:false,
-    tabSize: 2
-    });
-    const mode = localStorage.getItem("mode") || "light";  
-    const newTheme = mode === "dark" ? "material" : "default";
-    editor1.setOption("theme", newTheme);
-
-    codeMirrorMap.set("rkD3w", editor1);}
-  </script>
+console.log(total2); // 8</textarea>
+     </div>
+     <div class="preview-container">
+      <iframe id="QRbty_IFrame" class="result_iframe_dialog" style="border: none;"></iframe>
+     </div>
+    </div>
+   </div>
   </div>
+  <script>
+{
+let editor = CodeMirror.fromTextArea(document.getElementById("Tusmx"), {
+					mode : "javascript",
+					lineNumbers : false,
+          lineWrapping: true,
+					tabSize : 2
+});
+
+const darkmode = localStorage.getItem("mode") || "light";  
+const newTheme = darkmode === "dark" ? "dracula" : "default";
+editor.setSize("50%", "100%");
+editor.setOption("theme", newTheme);
+javascriptCodeMirrorMap.set("Tusmx", editor);
+}
+
+</script>
  </div>
-</div><p>Now, the function depends solely on inputs and returns a new result without modifying external data.</p><h4 id="example-2-impure-function-with-console-logging">Example 2: Impure Function with Console Logging</h4><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</div><p>Now, the function depends solely on inputs and returns a new result without modifying external data.</p><h4 id="example-2-impure-function-with-console-logging">Example 2: Impure Function with Console Logging</h4><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-js">function greet(name) {
   console.log(`Hello, ${name}!`);  // Side effect: logs to console
   return `Hello, ${name}!`;
@@ -1002,29 +647,45 @@ console.log(total2); // 8</textarea> <br> <button onclick="renderIframeForClient
 const message = greet('Alice');
 console.log(message);         // Side effect happens outside</code></pre>
  </div>
- <div class="snippet-container" id="gliGj">
-  <div class="snippet-header" onclick="toggleSnippetAndRefresh('gliGj','DBp2g')">
-   Try it in editor
-  </div>
-  <div class="snippet-body"><textarea id="DBp2g">function greet(name) {
+ <div class="snippet-container">
+  <div class="button-group-run-edit"><button class="button-run-edit" onclick="runJavascriptCode(this,'RFr4U','NGNFe')">Run</button> <button class="button-run-edit" onclick="openEditJavascriptCodeDialog('NGNFe_Dialog','RFr4U')">Edit</button>
+  </div> <iframe id="NGNFe" class="result_iframe" style="display: none;"></iframe>
+  <div id="NGNFe_Dialog" class="dialog-backdrop">
+   <div class="dialog">
+    <div class="controls"><button onclick="runJavascriptCode(this,'RFr4U','NGNFe_IFrame')">Run</button> <button onclick="closeAllJavascriptCodeDialog()">Close</button>
+    </div>
+    <div class="dialog-content">
+     <div class="editor-container">
+      <textarea id="RFr4U" class="textarea_dialog" placeholder="Type HTML here...">function greet(name) {
   return `Hello, ${name}!`;  // Pure: returns string based on input
 }
 
 const message = greet('Alice');
-console.log(message);         // Side effect happens outside</textarea> <br> <button onclick="renderIframeForClientJavascript('DBp2g','MhS2S')">Run</button> <iframe id="MhS2S" class="result_iframe" style="display: none;"></iframe>
-   <script>
-  {let editor1 = CodeMirror.fromTextArea(document.getElementById("DBp2g"), {
-    mode: "javascript",
-    lineNumbers:false,
-    tabSize: 2
-    });
-    const mode = localStorage.getItem("mode") || "light";  
-    const newTheme = mode === "dark" ? "material" : "default";
-    editor1.setOption("theme", newTheme);
-
-    codeMirrorMap.set("DBp2g", editor1);}
-  </script>
+console.log(message);         // Side effect happens outside</textarea>
+     </div>
+     <div class="preview-container">
+      <iframe id="NGNFe_IFrame" class="result_iframe_dialog" style="border: none;"></iframe>
+     </div>
+    </div>
+   </div>
   </div>
+  <script>
+{
+let editor = CodeMirror.fromTextArea(document.getElementById("RFr4U"), {
+					mode : "javascript",
+					lineNumbers : false,
+          lineWrapping: true,
+					tabSize : 2
+});
+
+const darkmode = localStorage.getItem("mode") || "light";  
+const newTheme = darkmode === "dark" ? "dracula" : "default";
+editor.setSize("50%", "100%");
+editor.setOption("theme", newTheme);
+javascriptCodeMirrorMap.set("RFr4U", editor);
+}
+
+</script>
  </div>
 </div><p>This approach keeps <code>greet</code> pure and confines side effects to the caller.</p><h4 id="example-3-mutating-an-object-inside-a-function">Example 3: Mutating an Object Inside a Function</h4><div>
  <div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
@@ -1038,11 +699,16 @@ updateUserName(user, 'Alice');
 
 console.log(user.name); // 'Alice' (original object mutated)</code></pre>
  </div>
- <div class="snippet-container" id="rhxoM">
-  <div class="snippet-header" onclick="toggleSnippetAndRefresh('rhxoM','eO6dd')">
-   Try it in editor
-  </div>
-  <div class="snippet-body"><textarea id="eO6dd">function updateUserName(user, newName) {
+ <div class="snippet-container">
+  <div class="button-group-run-edit"><button class="button-run-edit" onclick="runJavascriptCode(this,'c0I2N','k1Pn3')">Run</button> <button class="button-run-edit" onclick="openEditJavascriptCodeDialog('k1Pn3_Dialog','c0I2N')">Edit</button>
+  </div> <iframe id="k1Pn3" class="result_iframe" style="display: none;"></iframe>
+  <div id="k1Pn3_Dialog" class="dialog-backdrop">
+   <div class="dialog">
+    <div class="controls"><button onclick="runJavascriptCode(this,'c0I2N','k1Pn3_IFrame')">Run</button> <button onclick="closeAllJavascriptCodeDialog()">Close</button>
+    </div>
+    <div class="dialog-content">
+     <div class="editor-container">
+      <textarea id="c0I2N" class="textarea_dialog" placeholder="Type HTML here...">function updateUserName(user, newName) {
   user.name = newName;  // Mutation of external object
   return user;
 }
@@ -1050,20 +716,31 @@ console.log(user.name); // 'Alice' (original object mutated)</code></pre>
 const user = { name: 'Bob' };
 updateUserName(user, 'Alice');
 
-console.log(user.name); // 'Alice' (original object mutated)</textarea> <br> <button onclick="renderIframeForClientJavascript('eO6dd','Asmse')">Run</button> <iframe id="Asmse" class="result_iframe" style="display: none;"></iframe>
-   <script>
-  {let editor1 = CodeMirror.fromTextArea(document.getElementById("eO6dd"), {
-    mode: "javascript",
-    lineNumbers:false,
-    tabSize: 2
-    });
-    const mode = localStorage.getItem("mode") || "light";  
-    const newTheme = mode === "dark" ? "material" : "default";
-    editor1.setOption("theme", newTheme);
-
-    codeMirrorMap.set("eO6dd", editor1);}
-  </script>
+console.log(user.name); // 'Alice' (original object mutated)</textarea>
+     </div>
+     <div class="preview-container">
+      <iframe id="k1Pn3_IFrame" class="result_iframe_dialog" style="border: none;"></iframe>
+     </div>
+    </div>
+   </div>
   </div>
+  <script>
+{
+let editor = CodeMirror.fromTextArea(document.getElementById("c0I2N"), {
+					mode : "javascript",
+					lineNumbers : false,
+          lineWrapping: true,
+					tabSize : 2
+});
+
+const darkmode = localStorage.getItem("mode") || "light";  
+const newTheme = darkmode === "dark" ? "dracula" : "default";
+editor.setSize("50%", "100%");
+editor.setOption("theme", newTheme);
+javascriptCodeMirrorMap.set("c0I2N", editor);
+}
+
+</script>
  </div>
 </div><h4 id="refactoring-with-immutable-updates">Refactoring with Immutable Updates</h4><p>Return a new object instead of mutating the input:</p><div>
  <div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
@@ -1077,11 +754,16 @@ const updatedUser = updateUserName(user, 'Alice');
 console.log(user.name);        // 'Bob' (original unchanged)
 console.log(updatedUser.name); // 'Alice'</code></pre>
  </div>
- <div class="snippet-container" id="OyhI4">
-  <div class="snippet-header" onclick="toggleSnippetAndRefresh('OyhI4','WfT2h')">
-   Try it in editor
-  </div>
-  <div class="snippet-body"><textarea id="WfT2h">function updateUserName(user, newName) {
+ <div class="snippet-container">
+  <div class="button-group-run-edit"><button class="button-run-edit" onclick="runJavascriptCode(this,'5OHHX','aMv8U')">Run</button> <button class="button-run-edit" onclick="openEditJavascriptCodeDialog('aMv8U_Dialog','5OHHX')">Edit</button>
+  </div> <iframe id="aMv8U" class="result_iframe" style="display: none;"></iframe>
+  <div id="aMv8U_Dialog" class="dialog-backdrop">
+   <div class="dialog">
+    <div class="controls"><button onclick="runJavascriptCode(this,'5OHHX','aMv8U_IFrame')">Run</button> <button onclick="closeAllJavascriptCodeDialog()">Close</button>
+    </div>
+    <div class="dialog-content">
+     <div class="editor-container">
+      <textarea id="5OHHX" class="textarea_dialog" placeholder="Type HTML here...">function updateUserName(user, newName) {
   return { ...user, name: newName };  // Returns a new object
 }
 
@@ -1089,20 +771,31 @@ const user = { name: 'Bob' };
 const updatedUser = updateUserName(user, 'Alice');
 
 console.log(user.name);        // 'Bob' (original unchanged)
-console.log(updatedUser.name); // 'Alice'</textarea> <br> <button onclick="renderIframeForClientJavascript('WfT2h','UbRjc')">Run</button> <iframe id="UbRjc" class="result_iframe" style="display: none;"></iframe>
-   <script>
-  {let editor1 = CodeMirror.fromTextArea(document.getElementById("WfT2h"), {
-    mode: "javascript",
-    lineNumbers:false,
-    tabSize: 2
-    });
-    const mode = localStorage.getItem("mode") || "light";  
-    const newTheme = mode === "dark" ? "material" : "default";
-    editor1.setOption("theme", newTheme);
-
-    codeMirrorMap.set("WfT2h", editor1);}
-  </script>
+console.log(updatedUser.name); // 'Alice'</textarea>
+     </div>
+     <div class="preview-container">
+      <iframe id="aMv8U_IFrame" class="result_iframe_dialog" style="border: none;"></iframe>
+     </div>
+    </div>
+   </div>
   </div>
+  <script>
+{
+let editor = CodeMirror.fromTextArea(document.getElementById("5OHHX"), {
+					mode : "javascript",
+					lineNumbers : false,
+          lineWrapping: true,
+					tabSize : 2
+});
+
+const darkmode = localStorage.getItem("mode") || "light";  
+const newTheme = darkmode === "dark" ? "dracula" : "default";
+editor.setSize("50%", "100%");
+editor.setOption("theme", newTheme);
+javascriptCodeMirrorMap.set("5OHHX", editor);
+}
+
+</script>
  </div>
 </div><h3 id="summary-refactoring-steps">Summary: Refactoring Steps</h3><ol>
  <li><strong>Identify side effects:</strong> Look for external state modifications, I/O, or dependencies beyond input parameters.</li>
@@ -1185,30 +878,36 @@ console.log(updatedUser.name); // 'Alice'</textarea> <br> <button onclick="rende
 
 <a href='javascript.htm'><div class='book-cover' style='background-color: #f9f6f1;color: #111111;border: 1px solid #ccc;display: flex;justify-content: center;align-items: center;text-align: center;'>More Javascript Books</div></a>
 </div>
-</div>
-  </div>
-  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
-  
-  <script>
-    function copyCode(button) {
-      const code = button.nextElementSibling.innerText;
-      navigator.clipboard.writeText(code).then(() => {
-        button.textContent = 'Copied!';
-        setTimeout(() => { button.textContent = 'Copy'; }, 1500);
-      });
-    }
-  </script>  
-<div id="floatingLog" aria-live="polite" role="alert"></div>
-<footer class="page-footer">
-    <nav>
-      <a href="https://readbytes.github.io">Home</a> | 
-      Email:<script language="JavaScript" type="text/javascript">
+</div><script>
+function copyCode(button) {const code = button.nextElementSibling.innerText;navigator.clipboard.writeText(code).then(() => {button.textContent = 'Copied!';setTimeout(() => { button.textContent = 'Copy'; }, 1500);});}
+</script></div>
+<style>
+.site-footer {margin-top: 60px;padding: 20px 0;border-top: 1px solid #eee;text-align: center;font-size: 14px;}
+.site-footer a {text-decoration: none;}
+.light-mode .site-footer {color: #777;border-color: #eee;}
+.dark-mode .site-footer {color: #888;border-color: #333;}
+.light-mode .site-footer a {color: #555;}
+.dark-mode .site-footer a {color: #aaa;}
+.site-footer a:hover {text-decoration: underline;}    
+</style>
+<footer class="site-footer">
+<nav><a href="https://readbytes.github.io">Home</a> |Email:<script type="text/javascript">
 var part1 = 'yinpeng';var part6 = '263';var part2 = Math.pow(2,6);var part3 = String.fromCharCode(part2);var part4 = 'hotmail dot com';var part5 = part1 + String.fromCharCode(part2) + part4;document.write(part1 + part6 + part3 + part4);
 </script>
-    </nav>
-  <p>© 2025 — All rights reserved.</p>    
-  </footer>
-
+| <a id="mode-toggle" href="#">Toggle Dark Mode</a>
+</nav><p>© 2025 — All rights reserved.</p></footer>
+<script>
+const toggleButton = document.getElementById('mode-toggle');
+const body = document.body;
+const savedMode = localStorage.getItem('mode') || 'light';
+body.classList.add(savedMode + '-mode');
+toggleButton.addEventListener('click', () => {
+      const isDark = body.classList.contains('dark-mode');
+      body.classList.toggle('dark-mode', !isDark);
+      body.classList.toggle('light-mode', isDark);
+      localStorage.setItem('mode', isDark ? 'light' : 'dark');
+});
+function copyCode(button) {const code = button.nextElementSibling.innerText;navigator.clipboard.writeText(code).then(() => {button.textContent = 'Copied!';setTimeout(() => { button.textContent = 'Copy'; }, 1500);});}
+</script>
 </body>
 </html>

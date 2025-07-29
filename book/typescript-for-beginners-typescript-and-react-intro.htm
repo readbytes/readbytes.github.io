@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Typescript for Beginners TypeScript and React (Intro)</title>
+<link rel='shortcut icon' href='https://readbytes.github.io/images/favicon.ico'>
+<link href="https://fonts.googleapis.com/css2?family=Merriweather&display=swap" rel="stylesheet" />
+<link href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.css" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/theme/dracula.min.css"><style>
+html {scroll-behavior: smooth;}  
+body {font-family: 'Merriweather', serif;;margin: 0;padding: 2rem 1rem;font-size: 15px;line-height: 1.5;transition: background-color 0.3s, color 0.3s;}
+.container {max-width: 750px;margin: 0 auto;padding: 1rem 2rem;}
+.light-mode {background-color: #f8f7f5;color: #333;} 
+.dark-mode {background-color: #121212;color: #e0e0e0;}
+a { text-decoration: none;transition: color 0.2s;}
+a:hover {text-decoration: underline;}
+.light-mode a {color: #555;}
+.dark-mode a {color: #aaa;}
+</style><style>
+.related-book-list {display: flex;flex-wrap: wrap;gap: 20px;}
+.related-books {margin-top: 40px;}
+.related-books h2 {font-size: 22px;margin-bottom: 20px;border-bottom: 2px solid #eee;padding-bottom: 8px;}
+.light-mode .related-books h2 {color: #333;border-color: #eee;}
+.dark-mode .related-books h2 {color: #ddd;border-color: #333;}
+</style><style>
+.book-cover {width: 130px;height: 180px;font-family: Arial, sans-serif;position: relative;overflow: hidden;box-shadow: 2px 2px 4px rgba(0,0,0,0.1);}
+.book-cover-bottom-stripe {position: absolute;bottom: 0;left: 0;height: 5px;width: 100%;}
+.book-cover-title {position: absolute;width: 100%;text-align: center;font-weight: bold;}
+.book-cover-icon {position: absolute;left: 50%;transform: translateX(-50%);display: flex;align-items: center;justify-content: center;}
+.book-cover-author {position: absolute;bottom: 10px;width: 100%;text-align: center;font-size: 8px;color: #333;}
+</style><style>
+.book-title-toc {font-size: 32px;font-weight: bold; }
+.book-subtitle-toc {font-size: 18px;margin-top: 8px;font-style: italic;}
+.book-header {text-align: center;margin-bottom: 40px;}
+
+.toc-container {border-radius: 10px;padding: 30px;margin-bottom: 40px;box-shadow: 0 8px 20px rgba(0,0,0,0.05);}
+h1 {font-size: 24px;text-align: center;margin-bottom: 30px;letter-spacing: 1px;padding-bottom: 10px;}
+.toc-list,.toc-section-list {list-style: none;padding: 0;margin: 0;}
+.toc-section-list {padding-left: 18px;margin-top: 6px;margin-bottom: 20px; }
+.toc-chapter {padding: 20px 0;}
+.chapter-title,.toc-section {display: flex;justify-content: space-between;padding-top: 4px;}
+.chapter-title {font-size: 17px;font-weight: bold;}
+.chapter-page,.section-page {font-style: italic;}
+ 
+ 
+.light-mode .book-title-toc,.light-mode .chapter-title,.light-mode .book-name {color: #222;}
+.light-mode .book-subtitle-toc,.light-mode .book-sub,.light-mode .chapter-page,.light-mode .section-page {color: #666;}
+.light-mode .toc-container { background: #fff;border: 1px solid #ddd;}
+.light-mode h1 {border-bottom: 2px solid #eee;color: #222;}
+.light-mode .toc-section {  color: #444;}
+
+.light-mode .book-cover { border: 1px solid #ccc;box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);}
+.light-mode .book-title,.light-mode .series-name {color: #fff;}
+.light-mode .book-subtitle,.light-mode .book-footer {color: #aaa;}
+
+.dark-mode .book-title-toc,.dark-mode .chapter-title,.dark-mode .book-name {color: #f5f5f5;}
+.dark-mode .book-subtitle-toc,.dark-mode .book-sub,.dark-mode .chapter-page,.dark-mode .section-page {color: #aaa;}
+.dark-mode .toc-container {background: #1e1e1e;border: 1px solid #444;}
+
+.dark-mode h1 {border-bottom: 2px solid #333;color: #eee;}
+.dark-mode .toc-section {color: #bbb;}
+
+.dark-mode .related-books h2 {color: #ddd;border-bottom: 2px solid #333;}
+.dark-mode .book-title,.dark-mode .series-name {color: #fff;}
+.dark-mode .book-subtitle,.dark-mode .book-footer {color: #bbb;}
+.dark-mode .toc-section {color: #ddd;}
+
+@media (max-width: 600px) {
+  .chapter-title,
+  .toc-section {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .chapter-page,
+  .section-page {
+    margin-top: 4px;
+  }
+}
+
+</style><style>
+.light-mode .container {box-shadow: 0 0 15px rgba(0,0,0,0.1);}
+.dark-mode .container {box-shadow: 0 0 15px rgba(255, 255, 255, 0.05);}
+
+h1, h2, h3 {font-weight: 600;margin-top: 2.5rem;margin-bottom: 1rem;line-height: 1.2;}
+h1 { font-size: 1.8rem; }
+h2 { font-size: 1.4rem; }
+h3 { font-size: 1.2rem; }
+
+table {width: 100%;border-collapse: collapse;font-family: sans-serif;font-size: 1em;margin: 1em 0;}
+th, td {padding: 0.6em 1em;text-align: left;border: 1px solid;}
+tr:nth-child(even) {  background-color: inherit;}
+tr:hover { background-color: inherit;}
+
+code {color: #d35400;}
+
+.chapter-navi-section {display: flex;justify-content: space-between;align-items: center;padding-bottom: 10px;padding-top: 10px;}
+.nav-link {color: inherit;text-decoration: none;opacity: 0.5;transition: opacity 0.3s ease, text-decoration 0.3s ease;}
+.nav-link:hover {opacity: 0.9;text-decoration: underline;}
+.prev { text-align: left; }
+.toc-link { text-align: center; }
+.next { text-align: right; }
+
+.download-section {display: flex;align-items: center;justify-content: center;gap: 2rem;padding: 2rem 1rem;max-width: 600px;margin: 3rem auto;border-radius: 12px;box-shadow: 0 4px 10px rgba(0,0,0,0.05);}
+.download-info h2 {margin: 0 0 0.5rem;font-size: 1.2rem;}
+.format-label {margin: 0 0 0.5rem;font-size: 0.95rem;}
+.download-buttons {display: flex;gap: 1rem;}
+.download-button {background-color: #4A90E2;color: white;padding: 0.5em 1.2em;border-radius: 25px;font-size: 0.95rem;text-decoration: none;transition: background-color 0.3s ease;}
+.download-button:hover {background-color: #357ABD;}
+
+.code-block {position: relative;margin-bottom: 1em;}
+.copy-button {background: transparent;color: white;position: absolute;top: 8px;right: 8px;border: none;padding: 4px 8px;font-size: 12px;border-radius: 4px;cursor: pointer;z-index: 1;}
+.copy-button:hover {background-color: #0056b3;}
+
+.snippet-container {overflow: hidden;}
+.snippet-header {padding: 0.75rem 1rem;cursor: pointer;font-size: 1rem;background-color: #eeeeee;color:  #111111; border-radius: 8px;cursor: pointer;box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+.snippet-body {display: none;font-family: monospace;}
+.snippet-container.open .snippet-body {display: block;}
+
+.CodeMirror {border: 2px solid #ccc;border-radius: 4px;resize: vertical;}
+
+.light-mode .format-label {color: #888;}
+.light-mode th {background-color: #f2f2f2;}
+.light-mode tr:nth-child(even) {background-color: #fafafa;}
+.light-mode tr:hover {background-color: #e6f7ff;}
+
+.dark-mode .snippet-header {background-color: #333;color:  #ddd; }
+.dark-mode .format-label {color: #aaa;}
+.dark-mode th {background-color: #333;color: #fff;}
+.dark-mode td {border-color: #444;}
+.dark-mode tr:nth-child(even) {background-color: #2a2a2a;}
+.dark-mode tr:hover {background-color: #2c3e50;}
+
+
+.button-group-run-edit {display: flex;width: 100%;gap: 1rem;}
+.button-run-edit {flex: 1;padding: 1rem;font-size: 1rem;font-weight: 600;border: none;border-radius: 8px;cursor: pointer;transition: background 0.3s, color 0.3s;}
+
+.light-mode .button-run-edit {background-color: #f0f0f0;color: #222;box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);}
+.light-mode .button-run-edit:hover {background-color: #e0e0e0;}
+
+.dark-mode .button-run-edit {background-color: #2a2a2a;color: #f5f5f5;box-shadow: 0 0 10px rgba(255, 255, 255, 0.05);}
+.dark-mode .button-run-edit:hover {background-color: #3a3a3a;}
+
+button { padding: 0.5em 1em; background: green; color: white; border: none; cursor: pointer; }
+button:hover { background: #1e7e34; }
+.result_iframe { width:99%; margin-top: 1em;  resize: both;background-color: #515b63;border:1px solid #ccc;}   
+
+.dialog-backdrop {position: fixed;top: 0;left: 0;width: 100vw;height: 100vh;background: rgba(0,0,0,0.5);display: none;justify-content: center;align-items: center;z-index: 10;}
+.dialog {background: #90979e;padding: 20px;width: 90vw;height: 80vh;border-radius: 8px;box-shadow: 0 0 20px rgba(0,0,0,0.3);display: flex;flex-direction: column;}
+.dialog-content {display: flex;gap: 20px;margin-top: 10px;height: calc(100% - 40px);}
+.editor-container, .preview-container {flex: 1;height: 100%;max-height: 100%;overflow: hidden; }
+.result_iframe_dialog {width: 100%;height: 100%;resize: both;border:1px solid #ccc;overflow: auto; }   
+.CodeMirror {width: 100% !important;height: 100% !important;}
+</style>
+</head>
+<body>
+<script>const mode = localStorage.getItem('mode') || 'light';document.documentElement.classList.add(`${mode}-mode`);</script>  
+<div class="container"><div class = "chapter-navi-section">
+<a href="typescript-for-beginners-typescript-in-the-browser.htm" class="nav-button prev">←</a>
+<a href='typescript-for-beginners.htm#typescript-and-react-intro' class="nav-button toc-link">Index</a>
+<a href="typescript-for-beginners-testing-typescript-code.htm" class="nav-button next">→</a>
+</div>
+<div class='book-header'><h1 class='book-title-toc' id = 'top'>TypeScript and React (Intro)</h1><h3 class='book-subtitle-toc'>Typescript for Beginners</h3></div><h2 id='typing-props-and-state'>21.1 Typing Props and State</h2><p>When working with React and TypeScript, properly typing your component’s props and state is essential for catching errors early and improving your development experience. TypeScript helps ensure that components receive the correct data and maintain consistent internal state.</p><h3 id="typing-props-in-functional-components">Typing Props in Functional Components</h3><p>You can define an interface or type describing the props your component expects. This gives you strong guarantees about the shape and types of the data passed into components.</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-tsx">import React from 'react';
+
+interface GreetingProps {
+  name: string;
+  age?: number; // optional prop
+}
+
+const Greeting: React.FC&lt;GreetingProps&gt; = ({ name, age }) =&gt; {
+  return (
+    &lt;div&gt;
+      &lt;p&gt;Hello, {name}!&lt;/p&gt;
+      {age &amp;&amp; &lt;p&gt;You are {age} years old.&lt;/p&gt;}
+    &lt;/div&gt;
+  );
+};</code></pre>
+</div><p><strong>Notes:</strong></p><ul>
+ <li><code>name</code> is required.</li>
+ <li><code>age</code> is optional (<code>?</code>).</li>
+ <li>Using <code>React.FC&lt;Props&gt;</code> adds type checking for props and also includes the <code>children</code> prop by default.</li>
+</ul><h3 id="default-props-with-typescript">Default Props with TypeScript</h3><p>To provide default values for optional props, you can use default parameters or default values:</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-tsx">const Greeting: React.FC&lt;GreetingProps&gt; = ({ name, age = 18 }) =&gt; {
+  return (
+    &lt;div&gt;
+      &lt;p&gt;Hello, {name}!&lt;/p&gt;
+      &lt;p&gt;You are {age} years old.&lt;/p&gt;
+    &lt;/div&gt;
+  );
+};</code></pre>
+</div><p>Here, if <code>age</code> is not passed, it defaults to 18.</p><h3 id="typing-state-with-usestate">Typing State with <code>useState</code></h3><p>When using React hooks like <code>useState</code>, you can specify the type of your state variable for full type safety:</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-tsx">import React, { useState } from 'react';
+
+const Counter: React.FC = () =&gt; {
+  // State is typed as number
+  const [count, setCount] = useState&lt;number&gt;(0);
+
+  return (
+    &lt;div&gt;
+      &lt;p&gt;Count: {count}&lt;/p&gt;
+      &lt;button onClick={() =&gt; setCount(count + 1)}&gt;Increment&lt;/button&gt;
+    &lt;/div&gt;
+  );
+};</code></pre>
+</div><p>TypeScript infers the type from the initial value (here <code>0</code>), but explicitly typing helps when initial state is <code>null</code> or <code>undefined</code>.</p><h3 id="using-complex-state-types">Using Complex State Types</h3><p>You can also use interfaces or types for more complex state objects:</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-tsx">interface User {
+  id: number;
+  name: string;
+}
+
+const UserProfile: React.FC = () =&gt; {
+  const [user, setUser] = useState&lt;User | null&gt;(null);
+
+  // Imagine fetching user data and updating state
+
+  return &lt;div&gt;{user ? user.name : 'No user logged in'}&lt;/div&gt;;
+};</code></pre>
+</div><p>Here, state may be <code>User</code> or <code>null</code>, and TypeScript will enforce proper handling.</p><h3 id="benefits-of-typing-props-and-state">Benefits of Typing Props and State</h3><ul>
+ <li><strong>Early error detection:</strong> TypeScript warns you if you pass wrong props or access state incorrectly.</li>
+ <li><strong>Better autocompletion:</strong> Editors provide suggestions based on your typed props and state.</li>
+ <li><strong>Self-documenting code:</strong> Interfaces clearly describe the expected data shape.</li>
+ <li><strong>Improved maintainability:</strong> Refactoring becomes safer with static types checking component contracts.</li>
+</ul><p>Typing props and state is a fundamental step in building robust React apps with TypeScript. It brings clarity, safety, and confidence to your component development.</p><div class = "chapter-navi-section">
+<a href="#top" class="nav-button prev">↑</a>
+<a href='typescript-for-beginners.htm#typescript-and-react-intro' class="nav-button toc-link">Index</a>
+<a href="#bottom" class="nav-button next">↓</a>
+</div>
+<h2 id='functional-components-and-hooks'>21.2 Functional Components and Hooks</h2><p>Functional components are the modern, recommended way to build React components. Combined with React hooks, they provide powerful features for managing state and side effects while keeping your components concise and readable.</p><p>When using TypeScript, adding type annotations to hooks and event handlers helps prevent bugs and improves your development workflow.</p><h3 id="basic-functional-component-with-typescript">Basic Functional Component with TypeScript</h3><p>A functional component is a JavaScript (or TypeScript) function that returns JSX. Using TypeScript, you define the props type as shown previously:</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-tsx">import React from 'react';
+
+interface WelcomeProps {
+  name: string;
+}
+
+const Welcome: React.FC&lt;WelcomeProps&gt; = ({ name }) =&gt; {
+  return &lt;h1&gt;Welcome, {name}!&lt;/h1&gt;;
+};</code></pre>
+</div><h3 id="using-usestate-with-typescript">Using <code>useState</code> with TypeScript</h3><p>The <code>useState</code> hook lets you add state to functional components. TypeScript can infer the state type from the initial value, or you can explicitly declare it:</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-tsx">import React, { useState } from 'react';
+
+const Counter: React.FC = () =&gt; {
+  // Type inferred as number
+  const [count, setCount] = useState(0);
+
+  // Explicitly typed array of strings
+  const [names, setNames] = useState&lt;string[]&gt;([]);
+
+  return (
+    &lt;div&gt;
+      &lt;p&gt;Count: {count}&lt;/p&gt;
+      &lt;button onClick={() =&gt; setCount(count + 1)}&gt;Increment&lt;/button&gt;
+
+      &lt;button onClick={() =&gt; setNames([...names, 'New Name'])}&gt;Add Name&lt;/button&gt;
+      &lt;ul&gt;{names.map((name, i) =&gt; &lt;li key={i}&gt;{name}&lt;/li&gt;)}&lt;/ul&gt;
+    &lt;/div&gt;
+  );
+};</code></pre>
+</div><h3 id="using-useeffect-with-typescript">Using <code>useEffect</code> with TypeScript</h3><p><code>useEffect</code> runs side effects such as data fetching or subscriptions. You can add cleanup logic by returning a function from the effect.</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-tsx">import React, { useState, useEffect } from 'react';
+
+const Timer: React.FC = () =&gt; {
+  const [seconds, setSeconds] = useState(0);
+
+  useEffect(() =&gt; {
+    const intervalId = setInterval(() =&gt; {
+      setSeconds(prev =&gt; prev + 1);
+    }, 1000);
+
+    // Cleanup function to clear the interval on unmount
+    return () =&gt; clearInterval(intervalId);
+  }, []); // Empty dependency array: runs once on mount
+
+  return &lt;p&gt;Seconds elapsed: {seconds}&lt;/p&gt;;
+};</code></pre>
+</div><p>TypeScript infers types inside <code>useEffect</code>, but be sure to type any parameters or returned cleanup functions if more complex.</p><h3 id="typing-event-handlers">Typing Event Handlers</h3><p>Event handlers are common in React. Typing them correctly avoids runtime errors and enables IntelliSense:</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-tsx">const ClickButton: React.FC = () =&gt; {
+  // Mouse event on button
+  const handleClick = (event: React.MouseEvent&lt;HTMLButtonElement&gt;) =&gt; {
+    console.log('Button clicked!', event.clientX, event.clientY);
+  };
+
+  // Keyboard event on input
+  const handleKeyPress = (event: React.KeyboardEvent&lt;HTMLInputElement&gt;) =&gt; {
+    if (event.key === 'Enter') {
+      alert('Enter pressed!');
+    }
+  };
+
+  return (
+    &lt;&gt;
+      &lt;button onClick={handleClick}&gt;Click me&lt;/button&gt;
+      &lt;input type="text" onKeyPress={handleKeyPress} /&gt;
+    &lt;/&gt;
+  );
+};</code></pre>
+</div><p><strong>Tip:</strong> The generic event types like <code>React.MouseEvent</code>, <code>React.KeyboardEvent</code> allow you to specify the element type (<code>HTMLButtonElement</code>, <code>HTMLInputElement</code>, etc.) to access element-specific properties safely.</p><h3 id="summary">Summary</h3><ul>
+ <li>Functional components are simple functions returning JSX.</li>
+ <li>Hooks like <code>useState</code> and <code>useEffect</code> manage state and side effects.</li>
+ <li>TypeScript can infer many types but explicit annotations improve clarity.</li>
+ <li>Typing event handlers helps prevent common runtime errors.</li>
+ <li>Proper typings lead to better tooling support and safer code.</li>
+</ul><div class = "chapter-navi-section">
+<a href="#top" class="nav-button prev">↑</a>
+<a href='typescript-for-beginners.htm#typescript-and-react-intro' class="nav-button toc-link">Index</a>
+<a href="#bottom" class="nav-button next">↓</a>
+</div>
+<h2 id='component-reusability-with-generics'>21.3 Component Reusability with Generics</h2><p>In React applications, creating reusable components is essential for scalability and maintainability. TypeScript generics allow you to write components that can operate on multiple data types without sacrificing type safety.</p><p>Generics make it possible to build flexible components that work across a variety of use cases—like rendering lists, dropdowns, or form elements—while still benefiting from autocomplete, type checking, and clear contracts.</p><h3 id="why-use-generics-in-react">Why Use Generics in React?</h3><p>A generic component can accept a type parameter (e.g., <code>T</code>) that represents the shape of data it will work with. This helps:</p><ul>
+ <li>Enforce <strong>type correctness</strong> without duplicating code for different data types.</li>
+ <li>Improve <strong>developer experience</strong> through IntelliSense and static analysis.</li>
+ <li>Enable <strong>flexible APIs</strong> that scale across different parts of your app.</li>
+</ul><h3 id="example-generic-list-component">Example: Generic List Component</h3><p>Here’s a reusable <code>List</code> component that displays any type of item, given a rendering function.</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-tsx">import React from 'react';
+
+interface ListProps&lt;T&gt; {
+  items: T[];
+  renderItem: (item: T) =&gt; React.ReactNode;
+}
+
+function List&lt;T&gt;({ items, renderItem }: ListProps&lt;T&gt;): JSX.Element {
+  return (
+    &lt;ul&gt;
+      {items.map((item, index) =&gt; (
+        &lt;li key={index}&gt;{renderItem(item)}&lt;/li&gt;
+      ))}
+    &lt;/ul&gt;
+  );
+}</code></pre>
+</div><h4 id="usage-with-strings">Usage with Strings:</h4><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-tsx">const FruitList = () =&gt; {
+  const fruits = ['Apple', 'Banana', 'Cherry'];
+
+  return (
+    &lt;List
+      items={fruits}
+      renderItem={(fruit) =&gt; &lt;strong&gt;{fruit}&lt;/strong&gt;}
+    /&gt;
+  );
+};</code></pre>
+</div><h4 id="usage-with-objects">Usage with Objects:</h4><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-tsx">interface User {
+  id: number;
+  name: string;
+}
+
+const UserList = () =&gt; {
+  const users: User[] = [
+    { id: 1, name: 'Alice' },
+    { id: 2, name: 'Bob' },
+  ];
+
+  return (
+    &lt;List
+      items={users}
+      renderItem={(user) =&gt; &lt;span&gt;{user.name}&lt;/span&gt;}
+    /&gt;
+  );
+};</code></pre>
+</div><p>The same component now supports both <code>string[]</code> and <code>User[]</code> with full type safety and no duplication.</p><h3 id="example-generic-dropdown-component">Example: Generic Dropdown Component</h3><p>Let’s build a dropdown that works for any list of items with a label.</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-tsx">interface DropdownProps&lt;T&gt; {
+  options: T[];
+  getLabel: (option: T) =&gt; string;
+  onSelect: (option: T) =&gt; void;
+}
+
+function Dropdown&lt;T&gt;({ options, getLabel, onSelect }: DropdownProps&lt;T&gt;) {
+  return (
+    &lt;select onChange={(e) =&gt; onSelect(options[e.target.selectedIndex])}&gt;
+      {options.map((option, i) =&gt; (
+        &lt;option key={i} value={i}&gt;
+          {getLabel(option)}
+        &lt;/option&gt;
+      ))}
+    &lt;/select&gt;
+  );
+}</code></pre>
+</div><h4 id="usage">Usage:</h4><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-tsx">interface Country {
+  code: string;
+  name: string;
+}
+
+const CountrySelector = () =&gt; {
+  const countries: Country[] = [
+    { code: 'US', name: 'United States' },
+    { code: 'CA', name: 'Canada' },
+  ];
+
+  return (
+    &lt;Dropdown
+      options={countries}
+      getLabel={(c) =&gt; c.name}
+      onSelect={(selected) =&gt; alert(`Selected: ${selected.code}`)}
+    /&gt;
+  );
+};</code></pre>
+</div><h3 id="summary">Summary</h3><ul>
+ <li><strong>Generic components</strong> accept type parameters and allow maximum flexibility with strong typing.</li>
+ <li>They work well with <strong>lists, dropdowns, and form components</strong>.</li>
+ <li>TypeScript ensures that type mismatches are caught at compile time.</li>
+ <li>This approach helps <strong>scale applications</strong> by building consistent, reusable building blocks.</li>
+</ul><p>Up next: we’ll transition into more advanced React + TypeScript topics such as forms, contexts, and custom hooks.</p><div class = "chapter-navi-section">
+<a href="typescript-for-beginners-typescript-in-the-browser.htm" class="nav-button prev">←</a>
+<a href='typescript-for-beginners.htm#typescript-and-react-intro' class="nav-button toc-link">Index</a>
+<a href="typescript-for-beginners-testing-typescript-code.htm" class="nav-button next">→</a>
+</div>
+<section class="download-section">
+  <div class="book-cover" style="background-color: #f9f6f1;border: 1px solid #ccc;"> 
+    <div class="book-cover-title" style="font-size: 18px;color: #333;top: 20px;">Typescript for Beginners</div>
+    <div class="book-cover-author">readbytes</div>
+    <div class="book-cover-bottom-stripe" style="background-color: #333;"></div>
+    <img class="book-cover-icon" style="width: 90px;height: 90px;top: 70px;" src="data:image/png;base64,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"/>
+  </div>
+  <div class="download-info">
+    <h2 id='bottom'>Download This Ebook</h2>
+    <p class="format-label">Available formats:</p>
+    <div class="download-buttons">
+      <a href="typescript-for-beginners.pdf" class="download-button">📄 PDF</a>
+      <a href="typescript-for-beginners.epub" class="download-button">📘 EPUB</a>
+    </div>
+  </div>
+</section><div class='related-books'>
+<h2>Typescript Introduction Books</h2>
+<div class='related-book-list'>
+<a href="typescript-for-beginners.htm">
+<div class="book-cover" style="background-color: #f9f6f1;border: 1px solid #ccc;"> 
+    <div class="book-cover-title" style="font-size: 18px;color: #333;top: 20px;">Typescript for Beginners</div>
+    <div class="book-cover-author">readbytes</div>
+    <div class="book-cover-bottom-stripe" style="background-color: #333;"></div>
+    <img class="book-cover-icon" style="width: 90px;height: 90px;top: 70px;" src="data:image/png;base64,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"/>
+  </div>
+</a>
+
+
+
+<a href='typescript.htm'><div class='book-cover' style='background-color: #f9f6f1;color: #111111;border: 1px solid #ccc;display: flex;justify-content: center;align-items: center;text-align: center;'>More Typescript Books</div></a>
+</div>
+</div><script>
+function copyCode(button) {const code = button.nextElementSibling.innerText;navigator.clipboard.writeText(code).then(() => {button.textContent = 'Copied!';setTimeout(() => { button.textContent = 'Copy'; }, 1500);});}
+</script></div>
+<style>
+.site-footer {margin-top: 60px;padding: 20px 0;border-top: 1px solid #eee;text-align: center;font-size: 14px;}
+.site-footer a {text-decoration: none;}
+.light-mode .site-footer {color: #777;border-color: #eee;}
+.dark-mode .site-footer {color: #888;border-color: #333;}
+.light-mode .site-footer a {color: #555;}
+.dark-mode .site-footer a {color: #aaa;}
+.site-footer a:hover {text-decoration: underline;}    
+</style>
+<footer class="site-footer">
+<nav><a href="https://readbytes.github.io">Home</a> |Email:<script type="text/javascript">
+var part1 = 'yinpeng';var part6 = '263';var part2 = Math.pow(2,6);var part3 = String.fromCharCode(part2);var part4 = 'hotmail dot com';var part5 = part1 + String.fromCharCode(part2) + part4;document.write(part1 + part6 + part3 + part4);
+</script>
+| <a id="mode-toggle" href="#">Toggle Dark Mode</a>
+</nav><p>© 2025 — All rights reserved.</p></footer>
+<script>
+const toggleButton = document.getElementById('mode-toggle');
+const body = document.body;
+const savedMode = localStorage.getItem('mode') || 'light';
+body.classList.add(savedMode + '-mode');
+toggleButton.addEventListener('click', () => {
+      const isDark = body.classList.contains('dark-mode');
+      body.classList.toggle('dark-mode', !isDark);
+      body.classList.toggle('light-mode', isDark);
+      localStorage.setItem('mode', isDark ? 'light' : 'dark');
+});
+function copyCode(button) {const code = button.nextElementSibling.innerText;navigator.clipboard.writeText(code).then(() => {button.textContent = 'Copied!';setTimeout(() => { button.textContent = 'Copy'; }, 1500);});}
+</script>
+</body>
+</html>

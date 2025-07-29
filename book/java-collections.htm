@@ -1,275 +1,74 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Table of Content for Java Collections</title>
-  <script>
-  const mode = localStorage.getItem('mode') || 'light';
-  document.documentElement.classList.add(`${mode}-mode`);
-  </script>  
-  <link rel='shortcut icon' href='https://java2s.com/style/favicon.ico'>  
-  <style>
-body {
-  font-family: 'Georgia', serif;
-  padding: 40px;
-  max-width: 800px;
-  margin: auto;
-  transition: background-color 0.3s, color 0.3s;
-}
-  .book-title-toc {
-      font-size: 32px;
-      font-weight: bold; 
-    }
+<meta charset="UTF-8">
+<title>Table of Content for Java Collections</title>
+<link rel='shortcut icon' href='https://readbytes.github.io/images/favicon.ico'>
+<link href="https://fonts.googleapis.com/css2?family=Merriweather&display=swap" rel="stylesheet" />
+<link href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.css" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/theme/dracula.min.css"><style>
+html {scroll-behavior: smooth;}  
+body {font-family: 'Merriweather', serif;;margin: 0;padding: 2rem 1rem;font-size: 15px;line-height: 1.5;transition: background-color 0.3s, color 0.3s;}
+.container {max-width: 750px;margin: 0 auto;padding: 1rem 2rem;}
+.light-mode {background-color: #f8f7f5;color: #333;} 
+.dark-mode {background-color: #121212;color: #e0e0e0;}
+a { text-decoration: none;transition: color 0.2s;}
+a:hover {text-decoration: underline;}
+.light-mode a {color: #555;}
+.dark-mode a {color: #aaa;}
+</style><style>
+.related-book-list {display: flex;flex-wrap: wrap;gap: 20px;}
+.related-books {margin-top: 40px;}
+.related-books h2 {font-size: 22px;margin-bottom: 20px;border-bottom: 2px solid #eee;padding-bottom: 8px;}
+.light-mode .related-books h2 {color: #333;border-color: #eee;}
+.dark-mode .related-books h2 {color: #ddd;border-color: #333;}
+</style><style>
+.book-cover {width: 130px;height: 180px;font-family: Arial, sans-serif;position: relative;overflow: hidden;box-shadow: 2px 2px 4px rgba(0,0,0,0.1);}
+.book-cover-bottom-stripe {position: absolute;bottom: 0;left: 0;height: 5px;width: 100%;}
+.book-cover-title {position: absolute;width: 100%;text-align: center;font-weight: bold;}
+.book-cover-icon {position: absolute;left: 50%;transform: translateX(-50%);display: flex;align-items: center;justify-content: center;}
+.book-cover-author {position: absolute;bottom: 10px;width: 100%;text-align: center;font-size: 8px;color: #333;}
+</style><style>
+.book-title-toc {font-size: 32px;font-weight: bold; }
+.book-subtitle-toc {font-size: 18px;margin-top: 8px;font-style: italic;}
+.book-header {text-align: center;margin-bottom: 40px;}
 
-    .book-subtitle-toc {
-      font-size: 18px; 
-      margin-top: 8px;
-      font-style: italic;
-    }
-.book-header {
-  text-align: center;
-  margin-bottom: 40px;
-}
+.toc-container {border-radius: 10px;padding: 30px;margin-bottom: 40px;box-shadow: 0 8px 20px rgba(0,0,0,0.05);}
+h1 {font-size: 24px;text-align: center;margin-bottom: 30px;letter-spacing: 1px;padding-bottom: 10px;}
+.toc-list,.toc-section-list {list-style: none;padding: 0;margin: 0;}
+.toc-section-list {padding-left: 18px;margin-top: 6px;margin-bottom: 20px; }
+.toc-chapter {padding: 20px 0;}
+.chapter-title,.toc-section {display: flex;justify-content: space-between;padding-top: 4px;}
+.chapter-title {font-size: 17px;font-weight: bold;}
+.chapter-page,.section-page {font-style: italic;}
+ 
+ 
+.light-mode .book-title-toc,.light-mode .chapter-title,.light-mode .book-name {color: #222;}
+.light-mode .book-subtitle-toc,.light-mode .book-sub,.light-mode .chapter-page,.light-mode .section-page {color: #666;}
+.light-mode .toc-container { background: #fff;border: 1px solid #ddd;}
+.light-mode h1 {border-bottom: 2px solid #eee;color: #222;}
+.light-mode .toc-section {  color: #444;}
 
-.toc-container {
-  border-radius: 10px;
-  padding: 30px;
-  margin-bottom: 40px;
-  box-shadow: 0 8px 20px rgba(0,0,0,0.05);
-}
+.light-mode .book-cover { border: 1px solid #ccc;box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);}
+.light-mode .book-title,.light-mode .series-name {color: #fff;}
+.light-mode .book-subtitle,.light-mode .book-footer {color: #aaa;}
 
-h1 {
-  font-size: 24px;
-  text-align: center;
-  margin-bottom: 30px;
-  letter-spacing: 1px;
-  padding-bottom: 10px;
-}
+.dark-mode .book-title-toc,.dark-mode .chapter-title,.dark-mode .book-name {color: #f5f5f5;}
+.dark-mode .book-subtitle-toc,.dark-mode .book-sub,.dark-mode .chapter-page,.dark-mode .section-page {color: #aaa;}
+.dark-mode .toc-container {background: #1e1e1e;border: 1px solid #444;}
 
-.toc-list,
-.toc-section-list {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-}
+.dark-mode h1 {border-bottom: 2px solid #333;color: #eee;}
+.dark-mode .toc-section {color: #bbb;}
 
-.toc-section-list {
-  padding-left: 18px;
-  margin-top: 6px;
-  margin-bottom: 20px; 
-}
+.dark-mode .related-books h2 {color: #ddd;border-bottom: 2px solid #333;}
+.dark-mode .book-title,.dark-mode .series-name {color: #fff;}
+.dark-mode .book-subtitle,.dark-mode .book-footer {color: #bbb;}
+.dark-mode .toc-section {color: #ddd;}
 
-.toc-chapter {
-  padding: 20px 0;
-}
-
-.chapter-title,
-.toc-section {
-  display: flex;
-  justify-content: space-between;
-  padding-top: 4px;
-}
-
-.chapter-title {
-  font-size: 17px;
-  font-weight: bold;
-}
-
-.chapter-page,
-.section-page {
-  font-style: italic;
-}
-
-.related-books {
-  margin-top: 40px;
-}
-
-.related-book-list {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 20px;
-}
-    .book-cover {
-      width: 130px;
-      height: 180px;
-      font-family: Arial, sans-serif;
-      position: relative;
-      overflow: hidden;
-      box-shadow: 2px 2px 4px rgba(0,0,0,0.1);
-    }
-    .book-cover-bottom-stripe {
-      position: absolute;
-      bottom: 0;
-      left: 0;
-      height: 5px;
-      width: 100%;
-    }
-    .book-cover-title {
-      position: absolute;
-      width: 100%;
-      text-align: center;
-      font-weight: bold;
-    }
-     
-    .book-cover-icon {
-      position: absolute;
-      left: 50%;
-      transform: translateX(-50%);
-      display: flex;
-      align-items: center;
-      justify-content: center; 
-    }
-
-    .book-cover-author {
-      position: absolute;
-      bottom: 10px;
-      width: 100%;
-      text-align: center;
-      font-size: 8px;
-      color: #333;
-    }
-
-a {
-  text-decoration: none;
-  transition: color 0.2s;
-}
-
-a:hover {
-  text-decoration: underline;
-}
-.site-footer {
-  margin-top: 60px;
-  padding: 20px 0;
-  border-top: 1px solid #eee;
-  text-align: center;
-  font-size: 14px; 
-}
-/* === Light Mode === */
-html.light-mode {
-  background-color: #fdfdfd;
-  color: #333;
-}
-
-.light-mode .book-title-toc,
-.light-mode .chapter-title,
-.light-mode .book-name {
-  color: #222;
-}
-
-.light-mode .book-subtitle-toc,
-.light-mode .book-sub,
-.light-mode .chapter-page,
-.light-mode .section-page {
-  color: #666;
-}
-
-.light-mode .toc-container {
-  background: #fff;
-  border: 1px solid #ddd;
-}
-
-.light-mode h1 {
-  border-bottom: 2px solid #eee;
-  color: #222;
-}
-
-.light-mode .toc-section {
-  color: #444;
-}
-
-.light-mode .related-books h2 {
-  color: #333;
-  border-bottom: 2px solid #eee;
-}
-
-.light-mode .book-cover { 
-  border: 1px solid #ccc;
-  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
-}
-
-.light-mode .book-title,
-.light-mode .series-name {
-  color: #fff;
-}
-
-.light-mode .book-subtitle,
-.light-mode .book-footer {
-  color: #aaa;
-}
-
-.light-mode .site-footer {
-  color: #777;
-  border-color: #eee;
-}
-
-.light-mode a {
-  color: #555;
-}
-
-/* === Dark Mode === */
-html.dark-mode {
-  background-color: #121212;
-  color: #e0e0e0;
-}
-
-.dark-mode .book-title-toc,
-.dark-mode .chapter-title,
-.dark-mode .book-name {
-  color: #f5f5f5;
-}
-
-.dark-mode .book-subtitle-toc,
-.dark-mode .book-sub,
-.dark-mode .chapter-page,
-.dark-mode .section-page {
-  color: #aaa;
-}
-
-.dark-mode .toc-container {
-  background: #1e1e1e;
-  border: 1px solid #444;
-}
-
-.dark-mode h1 {
-  border-bottom: 2px solid #333;
-  color: #eee;
-}
-
-.dark-mode .toc-section {
-  color: #bbb;
-}
-
-.dark-mode .related-books h2 {
-  color: #ddd;
-  border-bottom: 2px solid #333;
-}
-
-
-.dark-mode .book-title,
-.dark-mode .series-name {
-  color: #fff;
-}
-
-.dark-mode .book-subtitle,
-.dark-mode .book-footer {
-  color: #bbb;
-}
-
-.dark-mode .site-footer {
-  color: #aaa;
-  border-color: #333;
-}
-
-.dark-mode .toc-section {
-  color: #ddd;
-}
-
-
-.dark-mode a {
-  color: #aaa;
-}
-
-/* === Responsive === */
 @media (max-width: 600px) {
   .chapter-title,
   .toc-section {
@@ -282,35 +81,17 @@ html.dark-mode {
     margin-top: 4px;
   }
 }
-  </style>
+
+</style>
 </head>
 <body>
-<button onclick="toggleMode()">Toggle Mode</button>
-<script>
-function toggleMode() {
-    const html = document.documentElement;
-    const isDark = html.classList.contains('dark-mode');
-
-    html.classList.toggle('dark-mode', !isDark);
-    html.classList.toggle('light-mode', isDark);
-
-    localStorage.setItem('mode', isDark ? 'light' : 'dark');
-  }
-</script>
-<div class="book-header">
-  <div class="book-title-toc">Java Collections</div>
-  <div class="book-subtitle-toc">From Fundamentals to Advanced Applications</div>
-</div>
-
-<div class="toc-container">
-  <h1>Table of Contents</h1>
-  <ul class="toc-list">
-    <li class='toc-chapter'><a href='java-collections-introduction-to-java-collections-framework.htm'>
+<script>const mode = localStorage.getItem('mode') || 'light';document.documentElement.classList.add(`${mode}-mode`);</script>  
+<div class="container"><div class='book-header'><h1 class='book-title-toc' id = 'top'>Java Collections</h1><h3 class='book-subtitle-toc'>From Fundamentals to Advanced Applications</h3></div><div class='toc-container'><h1>Table of Contents</h1><ul class='toc-list'><li class='toc-chapter'><a href='java-collections-introduction-to-java-collections-framework.htm'>
 <div class='chapter-title'>
 <span id='introduction-to-java-collections-framework'>Chapter 1 : Introduction to Java Collections Framework </span>
 <span class='chapter-page'>1</span>
 </div>
-</a><ul class="toc-section-list"><li class="toc-section">
+</a><ul class='toc-section-list'><li class="toc-section">
 <a href='java-collections-introduction-to-java-collections-framework.htm#what-are-collections'>
 <span>What are Collections?</span></a>
 <span class='section-page'>1</span>
@@ -335,7 +116,7 @@ function toggleMode() {
 <span id='core-interfaces-and-their-implementations'>Chapter 2 : Core Interfaces and Their Implementations </span>
 <span class='chapter-page'>11</span>
 </div>
-</a><ul class="toc-section-list"><li class="toc-section">
+</a><ul class='toc-section-list'><li class="toc-section">
 <a href='java-collections-core-interfaces-and-their-implementations.htm#interface-overview'>
 <span>Interface Overview</span></a>
 <span class='section-page'>11</span>
@@ -360,7 +141,7 @@ function toggleMode() {
 <span id='iterating-over-collections'>Chapter 3 : Iterating Over Collections </span>
 <span class='chapter-page'>25</span>
 </div>
-</a><ul class="toc-section-list"><li class="toc-section">
+</a><ul class='toc-section-list'><li class="toc-section">
 <a href='java-collections-iterating-over-collections.htm#iterator-and-listiterator'>
 <span>Iterator and ListIterator</span></a>
 <span class='section-page'>25</span>
@@ -381,7 +162,7 @@ function toggleMode() {
 <span id='lists-in-detail'>Chapter 4 : Lists in Detail </span>
 <span class='chapter-page'>35</span>
 </div>
-</a><ul class="toc-section-list"><li class="toc-section">
+</a><ul class='toc-section-list'><li class="toc-section">
 <a href='java-collections-lists-in-detail.htm#arraylist-vs-linkedlist-internal-workings'>
 <span>ArrayList vs LinkedList: Internal workings</span></a>
 <span class='section-page'>35</span>
@@ -402,7 +183,7 @@ function toggleMode() {
 <span id='sets-in-detail'>Chapter 5 : Sets in Detail </span>
 <span class='chapter-page'>44</span>
 </div>
-</a><ul class="toc-section-list"><li class="toc-section">
+</a><ul class='toc-section-list'><li class="toc-section">
 <a href='java-collections-sets-in-detail.htm#hashset-vs-linkedhashset-vs-treeset'>
 <span>HashSet vs LinkedHashSet vs TreeSet</span></a>
 <span class='section-page'>44</span>
@@ -423,7 +204,7 @@ function toggleMode() {
 <span id='queues-and-deques'>Chapter 6 : Queues and Deques </span>
 <span class='chapter-page'>54</span>
 </div>
-</a><ul class="toc-section-list"><li class="toc-section">
+</a><ul class='toc-section-list'><li class="toc-section">
 <a href='java-collections-queues-and-deques.htm#queue-interface-and-implementations'>
 <span>Queue Interface and Implementations</span></a>
 <span class='section-page'>54</span>
@@ -444,7 +225,7 @@ function toggleMode() {
 <span id='understanding-maps'>Chapter 7 : Understanding Maps </span>
 <span class='chapter-page'>65</span>
 </div>
-</a><ul class="toc-section-list"><li class="toc-section">
+</a><ul class='toc-section-list'><li class="toc-section">
 <a href='java-collections-understanding-maps.htm#map-interface-and-implementations-hashmap-linkedhashmap-treemap-hashtable'>
 <span>Map Interface and Implementations (HashMap, LinkedHashMap, TreeMap, Hashtable)</span></a>
 <span class='section-page'>65</span>
@@ -461,7 +242,7 @@ function toggleMode() {
 <span id='advanced-map-concepts'>Chapter 8 : Advanced Map Concepts </span>
 <span class='chapter-page'>74</span>
 </div>
-</a><ul class="toc-section-list"><li class="toc-section">
+</a><ul class='toc-section-list'><li class="toc-section">
 <a href='java-collections-advanced-map-concepts.htm#custom-key-classes-and-equals-hashcode-contracts'>
 <span>Custom Key Classes and equals/hashCode contracts</span></a>
 <span class='section-page'>74</span>
@@ -482,7 +263,7 @@ function toggleMode() {
 <span id='specialized-collections'>Chapter 9 : Specialized Collections </span>
 <span class='chapter-page'>86</span>
 </div>
-</a><ul class="toc-section-list"><li class="toc-section">
+</a><ul class='toc-section-list'><li class="toc-section">
 <a href='java-collections-specialized-collections.htm#enumset-and-enummap'>
 <span>EnumSet and EnumMap</span></a>
 <span class='section-page'>86</span>
@@ -503,7 +284,7 @@ function toggleMode() {
 <span id='collections-utility-class'>Chapter 10 : Collections Utility Class </span>
 <span class='chapter-page'>97</span>
 </div>
-</a><ul class="toc-section-list"><li class="toc-section">
+</a><ul class='toc-section-list'><li class="toc-section">
 <a href='java-collections-collections-utility-class.htm#common-utility-methods-sort-shuffle-reverse-binarysearch'>
 <span>Common Utility Methods (sort, shuffle, reverse, binarySearch)</span></a>
 <span class='section-page'>97</span>
@@ -520,7 +301,7 @@ function toggleMode() {
 <span id='performance-and-memory-considerations'>Chapter 11 : Performance and Memory Considerations </span>
 <span class='chapter-page'>104</span>
 </div>
-</a><ul class="toc-section-list"><li class="toc-section">
+</a><ul class='toc-section-list'><li class="toc-section">
 <a href='java-collections-performance-and-memory-considerations.htm#understanding-time-and-space-complexity'>
 <span>Understanding Time and Space Complexity</span></a>
 <span class='section-page'>104</span>
@@ -541,7 +322,7 @@ function toggleMode() {
 <span id='generics-and-collections'>Chapter 12 : Generics and Collections </span>
 <span class='chapter-page'>113</span>
 </div>
-</a><ul class="toc-section-list"><li class="toc-section">
+</a><ul class='toc-section-list'><li class="toc-section">
 <a href='java-collections-generics-and-collections.htm#using-generics-with-collections'>
 <span>Using Generics with Collections</span></a>
 <span class='section-page'>113</span>
@@ -558,7 +339,7 @@ function toggleMode() {
 <span id='concurrent-collections'>Chapter 13 : Concurrent Collections </span>
 <span class='chapter-page'>119</span>
 </div>
-</a><ul class="toc-section-list"><li class="toc-section">
+</a><ul class='toc-section-list'><li class="toc-section">
 <a href='java-collections-concurrent-collections.htm#thread-safety-issues-with-collections'>
 <span>Thread Safety Issues with Collections</span></a>
 <span class='section-page'>119</span>
@@ -575,7 +356,7 @@ function toggleMode() {
 <span id='streams-and-functional-programming-with-collections'>Chapter 14 : Streams and Functional Programming with Collections </span>
 <span class='chapter-page'>129</span>
 </div>
-</a><ul class="toc-section-list"><li class="toc-section">
+</a><ul class='toc-section-list'><li class="toc-section">
 <a href='java-collections-streams-and-functional-programming-with-collections.htm#introduction-to-streams-api'>
 <span>Introduction to Streams API</span></a>
 <span class='section-page'>129</span>
@@ -596,7 +377,7 @@ function toggleMode() {
 <span id='advanced-collection-patterns-and-best-practices'>Chapter 15 : Advanced Collection Patterns and Best Practices </span>
 <span class='chapter-page'>140</span>
 </div>
-</a><ul class="toc-section-list"><li class="toc-section">
+</a><ul class='toc-section-list'><li class="toc-section">
 <a href='java-collections-advanced-collection-patterns-and-best-practices.htm#immutable-collections-java-9-list-of-set-of-map-of'>
 <span>Immutable Collections (Java 9 List.of, Set.of, Map.of)</span></a>
 <span class='section-page'>140</span>
@@ -617,7 +398,7 @@ function toggleMode() {
 <span id='real-world-applications-of-collections'>Chapter 16 : Real-World Applications of Collections </span>
 <span class='chapter-page'>150</span>
 </div>
-</a><ul class="toc-section-list"><li class="toc-section">
+</a><ul class='toc-section-list'><li class="toc-section">
 <a href='java-collections-real-world-applications-of-collections.htm#implementing-a-simple-cache-with-map'>
 <span>Implementing a Simple Cache with Map</span></a>
 <span class='section-page'>150</span>
@@ -634,7 +415,7 @@ function toggleMode() {
 <span id='case-study-building-a-mini-search-engine'>Chapter 17 : Case Study: Building a Mini Search Engine </span>
 <span class='chapter-page'>158</span>
 </div>
-</a><ul class="toc-section-list"><li class="toc-section">
+</a><ul class='toc-section-list'><li class="toc-section">
 <a href='java-collections-case-study-building-a-mini-search-engine.htm#indexing-text-with-maps-and-sets'>
 <span>Indexing Text with Maps and Sets</span></a>
 <span class='section-page'>158</span>
@@ -647,7 +428,7 @@ function toggleMode() {
 <span id='case-study-event-driven-programming-with-queues'>Chapter 18 : Case Study: Event-Driven Programming with Queues </span>
 <span class='chapter-page'>164</span>
 </div>
-</a><ul class="toc-section-list"><li class="toc-section">
+</a><ul class='toc-section-list'><li class="toc-section">
 <a href='java-collections-case-study-event-driven-programming-with-queues.htm#using-queues-for-event-handling'>
 <span>Using Queues for Event Handling</span></a>
 <span class='section-page'>164</span>
@@ -660,7 +441,7 @@ function toggleMode() {
 <span id='appendices'>Chapter 19 : Appendices </span>
 <span class='chapter-page'>170</span>
 </div>
-</a><ul class="toc-section-list"><li class="toc-section">
+</a><ul class='toc-section-list'><li class="toc-section">
 <a href='java-collections-appendices.htm#common-pitfalls-and-how-to-avoid-them'>
 <span>Common Pitfalls and How to Avoid Them</span></a>
 <span class='section-page'>170</span>
@@ -668,11 +449,7 @@ function toggleMode() {
 <a href='java-collections-appendices.htm#useful-third-party-libraries-guava-apache-commons-collections'>
 <span>Useful Third-Party Libraries (Guava, Apache Commons Collections)</span></a>
 <span class='section-page'>173</span>
-</li></ul></li>
-  </ul>
-</div>
-
-<div class='related-books'>
+</li></ul></li></ul></div><div class='related-books'>
 <h2>Java In-Depth Books</h2>
 <div class='related-book-list'>
 <a href="java-io-and-nio.htm">
@@ -728,16 +505,34 @@ function toggleMode() {
 
 <a href='java.htm'><div class='book-cover' style='background-color: #f9f6f1;color: #111111;border: 1px solid #ccc;display: flex;justify-content: center;align-items: center;text-align: center;'>More Java Books</div></a>
 </div>
-</div>
+</div></div>
+<style>
+.site-footer {margin-top: 60px;padding: 20px 0;border-top: 1px solid #eee;text-align: center;font-size: 14px;}
+.site-footer a {text-decoration: none;}
+.light-mode .site-footer {color: #777;border-color: #eee;}
+.dark-mode .site-footer {color: #888;border-color: #333;}
+.light-mode .site-footer a {color: #555;}
+.dark-mode .site-footer a {color: #aaa;}
+.site-footer a:hover {text-decoration: underline;}    
+</style>
 <footer class="site-footer">
-    <nav>
-      <a href="https://readbytes.github.io">Home</a> | 
-      Email:<script language="JavaScript" type="text/javascript">
+<nav><a href="https://readbytes.github.io">Home</a> |Email:<script type="text/javascript">
 var part1 = 'yinpeng';var part6 = '263';var part2 = Math.pow(2,6);var part3 = String.fromCharCode(part2);var part4 = 'hotmail dot com';var part5 = part1 + String.fromCharCode(part2) + part4;document.write(part1 + part6 + part3 + part4);
 </script>
-    </nav>
-  <p>© 2025 — All rights reserved.</p>   
-</footer>
-
+| <a id="mode-toggle" href="#">Toggle Dark Mode</a>
+</nav><p>© 2025 — All rights reserved.</p></footer>
+<script>
+const toggleButton = document.getElementById('mode-toggle');
+const body = document.body;
+const savedMode = localStorage.getItem('mode') || 'light';
+body.classList.add(savedMode + '-mode');
+toggleButton.addEventListener('click', () => {
+      const isDark = body.classList.contains('dark-mode');
+      body.classList.toggle('dark-mode', !isDark);
+      body.classList.toggle('light-mode', isDark);
+      localStorage.setItem('mode', isDark ? 'light' : 'dark');
+});
+function copyCode(button) {const code = button.nextElementSibling.innerText;navigator.clipboard.writeText(code).then(() => {button.textContent = 'Copied!';setTimeout(() => { button.textContent = 'Copy'; }, 1500);});}
+</script>
 </body>
 </html>

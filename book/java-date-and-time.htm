@@ -1,275 +1,74 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Table of Content for Java Date and Time</title>
-  <script>
-  const mode = localStorage.getItem('mode') || 'light';
-  document.documentElement.classList.add(`${mode}-mode`);
-  </script>  
-  <link rel='shortcut icon' href='https://java2s.com/style/favicon.ico'>  
-  <style>
-body {
-  font-family: 'Georgia', serif;
-  padding: 40px;
-  max-width: 800px;
-  margin: auto;
-  transition: background-color 0.3s, color 0.3s;
-}
-  .book-title-toc {
-      font-size: 32px;
-      font-weight: bold; 
-    }
+<meta charset="UTF-8">
+<title>Table of Content for Java Date and Time</title>
+<link rel='shortcut icon' href='https://readbytes.github.io/images/favicon.ico'>
+<link href="https://fonts.googleapis.com/css2?family=Merriweather&display=swap" rel="stylesheet" />
+<link href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.css" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/theme/dracula.min.css"><style>
+html {scroll-behavior: smooth;}  
+body {font-family: 'Merriweather', serif;;margin: 0;padding: 2rem 1rem;font-size: 15px;line-height: 1.5;transition: background-color 0.3s, color 0.3s;}
+.container {max-width: 750px;margin: 0 auto;padding: 1rem 2rem;}
+.light-mode {background-color: #f8f7f5;color: #333;} 
+.dark-mode {background-color: #121212;color: #e0e0e0;}
+a { text-decoration: none;transition: color 0.2s;}
+a:hover {text-decoration: underline;}
+.light-mode a {color: #555;}
+.dark-mode a {color: #aaa;}
+</style><style>
+.related-book-list {display: flex;flex-wrap: wrap;gap: 20px;}
+.related-books {margin-top: 40px;}
+.related-books h2 {font-size: 22px;margin-bottom: 20px;border-bottom: 2px solid #eee;padding-bottom: 8px;}
+.light-mode .related-books h2 {color: #333;border-color: #eee;}
+.dark-mode .related-books h2 {color: #ddd;border-color: #333;}
+</style><style>
+.book-cover {width: 130px;height: 180px;font-family: Arial, sans-serif;position: relative;overflow: hidden;box-shadow: 2px 2px 4px rgba(0,0,0,0.1);}
+.book-cover-bottom-stripe {position: absolute;bottom: 0;left: 0;height: 5px;width: 100%;}
+.book-cover-title {position: absolute;width: 100%;text-align: center;font-weight: bold;}
+.book-cover-icon {position: absolute;left: 50%;transform: translateX(-50%);display: flex;align-items: center;justify-content: center;}
+.book-cover-author {position: absolute;bottom: 10px;width: 100%;text-align: center;font-size: 8px;color: #333;}
+</style><style>
+.book-title-toc {font-size: 32px;font-weight: bold; }
+.book-subtitle-toc {font-size: 18px;margin-top: 8px;font-style: italic;}
+.book-header {text-align: center;margin-bottom: 40px;}
 
-    .book-subtitle-toc {
-      font-size: 18px; 
-      margin-top: 8px;
-      font-style: italic;
-    }
-.book-header {
-  text-align: center;
-  margin-bottom: 40px;
-}
+.toc-container {border-radius: 10px;padding: 30px;margin-bottom: 40px;box-shadow: 0 8px 20px rgba(0,0,0,0.05);}
+h1 {font-size: 24px;text-align: center;margin-bottom: 30px;letter-spacing: 1px;padding-bottom: 10px;}
+.toc-list,.toc-section-list {list-style: none;padding: 0;margin: 0;}
+.toc-section-list {padding-left: 18px;margin-top: 6px;margin-bottom: 20px; }
+.toc-chapter {padding: 20px 0;}
+.chapter-title,.toc-section {display: flex;justify-content: space-between;padding-top: 4px;}
+.chapter-title {font-size: 17px;font-weight: bold;}
+.chapter-page,.section-page {font-style: italic;}
+ 
+ 
+.light-mode .book-title-toc,.light-mode .chapter-title,.light-mode .book-name {color: #222;}
+.light-mode .book-subtitle-toc,.light-mode .book-sub,.light-mode .chapter-page,.light-mode .section-page {color: #666;}
+.light-mode .toc-container { background: #fff;border: 1px solid #ddd;}
+.light-mode h1 {border-bottom: 2px solid #eee;color: #222;}
+.light-mode .toc-section {  color: #444;}
 
-.toc-container {
-  border-radius: 10px;
-  padding: 30px;
-  margin-bottom: 40px;
-  box-shadow: 0 8px 20px rgba(0,0,0,0.05);
-}
+.light-mode .book-cover { border: 1px solid #ccc;box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);}
+.light-mode .book-title,.light-mode .series-name {color: #fff;}
+.light-mode .book-subtitle,.light-mode .book-footer {color: #aaa;}
 
-h1 {
-  font-size: 24px;
-  text-align: center;
-  margin-bottom: 30px;
-  letter-spacing: 1px;
-  padding-bottom: 10px;
-}
+.dark-mode .book-title-toc,.dark-mode .chapter-title,.dark-mode .book-name {color: #f5f5f5;}
+.dark-mode .book-subtitle-toc,.dark-mode .book-sub,.dark-mode .chapter-page,.dark-mode .section-page {color: #aaa;}
+.dark-mode .toc-container {background: #1e1e1e;border: 1px solid #444;}
 
-.toc-list,
-.toc-section-list {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-}
+.dark-mode h1 {border-bottom: 2px solid #333;color: #eee;}
+.dark-mode .toc-section {color: #bbb;}
 
-.toc-section-list {
-  padding-left: 18px;
-  margin-top: 6px;
-  margin-bottom: 20px; 
-}
+.dark-mode .related-books h2 {color: #ddd;border-bottom: 2px solid #333;}
+.dark-mode .book-title,.dark-mode .series-name {color: #fff;}
+.dark-mode .book-subtitle,.dark-mode .book-footer {color: #bbb;}
+.dark-mode .toc-section {color: #ddd;}
 
-.toc-chapter {
-  padding: 20px 0;
-}
-
-.chapter-title,
-.toc-section {
-  display: flex;
-  justify-content: space-between;
-  padding-top: 4px;
-}
-
-.chapter-title {
-  font-size: 17px;
-  font-weight: bold;
-}
-
-.chapter-page,
-.section-page {
-  font-style: italic;
-}
-
-.related-books {
-  margin-top: 40px;
-}
-
-.related-book-list {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 20px;
-}
-    .book-cover {
-      width: 130px;
-      height: 180px;
-      font-family: Arial, sans-serif;
-      position: relative;
-      overflow: hidden;
-      box-shadow: 2px 2px 4px rgba(0,0,0,0.1);
-    }
-    .book-cover-bottom-stripe {
-      position: absolute;
-      bottom: 0;
-      left: 0;
-      height: 5px;
-      width: 100%;
-    }
-    .book-cover-title {
-      position: absolute;
-      width: 100%;
-      text-align: center;
-      font-weight: bold;
-    }
-     
-    .book-cover-icon {
-      position: absolute;
-      left: 50%;
-      transform: translateX(-50%);
-      display: flex;
-      align-items: center;
-      justify-content: center; 
-    }
-
-    .book-cover-author {
-      position: absolute;
-      bottom: 10px;
-      width: 100%;
-      text-align: center;
-      font-size: 8px;
-      color: #333;
-    }
-
-a {
-  text-decoration: none;
-  transition: color 0.2s;
-}
-
-a:hover {
-  text-decoration: underline;
-}
-.site-footer {
-  margin-top: 60px;
-  padding: 20px 0;
-  border-top: 1px solid #eee;
-  text-align: center;
-  font-size: 14px; 
-}
-/* === Light Mode === */
-html.light-mode {
-  background-color: #fdfdfd;
-  color: #333;
-}
-
-.light-mode .book-title-toc,
-.light-mode .chapter-title,
-.light-mode .book-name {
-  color: #222;
-}
-
-.light-mode .book-subtitle-toc,
-.light-mode .book-sub,
-.light-mode .chapter-page,
-.light-mode .section-page {
-  color: #666;
-}
-
-.light-mode .toc-container {
-  background: #fff;
-  border: 1px solid #ddd;
-}
-
-.light-mode h1 {
-  border-bottom: 2px solid #eee;
-  color: #222;
-}
-
-.light-mode .toc-section {
-  color: #444;
-}
-
-.light-mode .related-books h2 {
-  color: #333;
-  border-bottom: 2px solid #eee;
-}
-
-.light-mode .book-cover { 
-  border: 1px solid #ccc;
-  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
-}
-
-.light-mode .book-title,
-.light-mode .series-name {
-  color: #fff;
-}
-
-.light-mode .book-subtitle,
-.light-mode .book-footer {
-  color: #aaa;
-}
-
-.light-mode .site-footer {
-  color: #777;
-  border-color: #eee;
-}
-
-.light-mode a {
-  color: #555;
-}
-
-/* === Dark Mode === */
-html.dark-mode {
-  background-color: #121212;
-  color: #e0e0e0;
-}
-
-.dark-mode .book-title-toc,
-.dark-mode .chapter-title,
-.dark-mode .book-name {
-  color: #f5f5f5;
-}
-
-.dark-mode .book-subtitle-toc,
-.dark-mode .book-sub,
-.dark-mode .chapter-page,
-.dark-mode .section-page {
-  color: #aaa;
-}
-
-.dark-mode .toc-container {
-  background: #1e1e1e;
-  border: 1px solid #444;
-}
-
-.dark-mode h1 {
-  border-bottom: 2px solid #333;
-  color: #eee;
-}
-
-.dark-mode .toc-section {
-  color: #bbb;
-}
-
-.dark-mode .related-books h2 {
-  color: #ddd;
-  border-bottom: 2px solid #333;
-}
-
-
-.dark-mode .book-title,
-.dark-mode .series-name {
-  color: #fff;
-}
-
-.dark-mode .book-subtitle,
-.dark-mode .book-footer {
-  color: #bbb;
-}
-
-.dark-mode .site-footer {
-  color: #aaa;
-  border-color: #333;
-}
-
-.dark-mode .toc-section {
-  color: #ddd;
-}
-
-
-.dark-mode a {
-  color: #aaa;
-}
-
-/* === Responsive === */
 @media (max-width: 600px) {
   .chapter-title,
   .toc-section {
@@ -282,35 +81,17 @@ html.dark-mode {
     margin-top: 4px;
   }
 }
-  </style>
+
+</style>
 </head>
 <body>
-<button onclick="toggleMode()">Toggle Mode</button>
-<script>
-function toggleMode() {
-    const html = document.documentElement;
-    const isDark = html.classList.contains('dark-mode');
-
-    html.classList.toggle('dark-mode', !isDark);
-    html.classList.toggle('light-mode', isDark);
-
-    localStorage.setItem('mode', isDark ? 'light' : 'dark');
-  }
-</script>
-<div class="book-header">
-  <div class="book-title-toc">Java Date and Time</div>
-  <div class="book-subtitle-toc">A Systematic Approach</div>
-</div>
-
-<div class="toc-container">
-  <h1>Table of Contents</h1>
-  <ul class="toc-list">
-    <li class='toc-chapter'><a href='java-date-and-time-introduction-to-date-and-time-in-java.htm'>
+<script>const mode = localStorage.getItem('mode') || 'light';document.documentElement.classList.add(`${mode}-mode`);</script>  
+<div class="container"><div class='book-header'><h1 class='book-title-toc' id = 'top'>Java Date and Time</h1><h3 class='book-subtitle-toc'>A Systematic Approach</h3></div><div class='toc-container'><h1>Table of Contents</h1><ul class='toc-list'><li class='toc-chapter'><a href='java-date-and-time-introduction-to-date-and-time-in-java.htm'>
 <div class='chapter-title'>
 <span id='introduction-to-date-and-time-in-java'>Chapter 1 : Introduction to Date and Time in Java </span>
 <span class='chapter-page'>1</span>
 </div>
-</a><ul class="toc-section-list"><li class="toc-section">
+</a><ul class='toc-section-list'><li class="toc-section">
 <a href='java-date-and-time-introduction-to-date-and-time-in-java.htm#the-importance-of-date-and-time-handling'>
 <span>The Importance of Date and Time Handling</span></a>
 <span class='section-page'>1</span>
@@ -327,7 +108,7 @@ function toggleMode() {
 <span id='working-with-local-dates'>Chapter 2 : Working with Local Dates </span>
 <span class='chapter-page'>8</span>
 </div>
-</a><ul class="toc-section-list"><li class="toc-section">
+</a><ul class='toc-section-list'><li class="toc-section">
 <a href='java-date-and-time-working-with-local-dates.htm#creating-a-localdate-instance'>
 <span>Creating a <code>LocalDate</code> Instance</span></a>
 <span class='section-page'>8</span>
@@ -356,7 +137,7 @@ function toggleMode() {
 <span id='working-with-local-times'>Chapter 3 : Working with Local Times </span>
 <span class='chapter-page'>20</span>
 </div>
-</a><ul class="toc-section-list"><li class="toc-section">
+</a><ul class='toc-section-list'><li class="toc-section">
 <a href='java-date-and-time-working-with-local-times.htm#creating-a-localtime-instance'>
 <span>Creating a <code>LocalTime</code> Instance</span></a>
 <span class='section-page'>20</span>
@@ -377,7 +158,7 @@ function toggleMode() {
 <span id='localdatetime-combining-date-and-time'>Chapter 4 : LocalDateTime Combining Date and Time </span>
 <span class='chapter-page'>26</span>
 </div>
-</a><ul class="toc-section-list"><li class="toc-section">
+</a><ul class='toc-section-list'><li class="toc-section">
 <a href='java-date-and-time-localdatetime-combining-date-and-time.htm#creating-localdatetime-instances'>
 <span>Creating <code>LocalDateTime</code> Instances</span></a>
 <span class='section-page'>26</span>
@@ -402,7 +183,7 @@ function toggleMode() {
 <span id='zoned-and-offset-date-time-types'>Chapter 5 : Zoned and Offset Date-Time Types </span>
 <span class='chapter-page'>34</span>
 </div>
-</a><ul class="toc-section-list"><li class="toc-section">
+</a><ul class='toc-section-list'><li class="toc-section">
 <a href='java-date-and-time-zoned-and-offset-date-time-types.htm#understanding-time-zones'>
 <span>Understanding Time Zones</span></a>
 <span class='section-page'>34</span>
@@ -427,7 +208,7 @@ function toggleMode() {
 <span id='duration-and-period'>Chapter 6 : Duration and Period </span>
 <span class='chapter-page'>45</span>
 </div>
-</a><ul class="toc-section-list"><li class="toc-section">
+</a><ul class='toc-section-list'><li class="toc-section">
 <a href='java-date-and-time-duration-and-period.htm#measuring-elapsed-time-with-duration'>
 <span>Measuring Elapsed Time with <code>Duration</code></span></a>
 <span class='section-page'>45</span>
@@ -448,7 +229,7 @@ function toggleMode() {
 <span id='temporal-adjusters'>Chapter 7 : Temporal Adjusters </span>
 <span class='chapter-page'>54</span>
 </div>
-</a><ul class="toc-section-list"><li class="toc-section">
+</a><ul class='toc-section-list'><li class="toc-section">
 <a href='java-date-and-time-temporal-adjusters.htm#using-built-in-temporal-adjusters'>
 <span>Using Built-in Temporal Adjusters</span></a>
 <span class='section-page'>54</span>
@@ -465,7 +246,7 @@ function toggleMode() {
 <span id='formatting-and-parsing-with-datetimeformatter'>Chapter 8 : Formatting and Parsing with <code>DateTimeFormatter</code> </span>
 <span class='chapter-page'>65</span>
 </div>
-</a><ul class="toc-section-list"><li class="toc-section">
+</a><ul class='toc-section-list'><li class="toc-section">
 <a href='java-date-and-time-formatting-and-parsing-with-datetimeformatter.htm#using-predefined-formatters'>
 <span>Using Predefined Formatters</span></a>
 <span class='section-page'>65</span>
@@ -486,7 +267,7 @@ function toggleMode() {
 <span id='clock-and-instant'>Chapter 9 : Clock and Instant </span>
 <span class='chapter-page'>74</span>
 </div>
-</a><ul class="toc-section-list"><li class="toc-section">
+</a><ul class='toc-section-list'><li class="toc-section">
 <a href='java-date-and-time-clock-and-instant.htm#working-with-instant'>
 <span>Working with <code>Instant</code></span></a>
 <span class='section-page'>74</span>
@@ -507,7 +288,7 @@ function toggleMode() {
 <span id='legacy-date-and-time-api'>Chapter 10 : Legacy Date and Time API </span>
 <span class='chapter-page'>85</span>
 </div>
-</a><ul class="toc-section-list"><li class="toc-section">
+</a><ul class='toc-section-list'><li class="toc-section">
 <a href='java-date-and-time-legacy-date-and-time-api.htm#overview-of-java-util-date-and-java-util-calendar'>
 <span>Overview of <code>java.util.Date</code> and <code>java.util.Calendar</code></span></a>
 <span class='section-page'>85</span>
@@ -524,7 +305,7 @@ function toggleMode() {
 <span id='internationalization-and-localization'>Chapter 11 : Internationalization and Localization </span>
 <span class='chapter-page'>96</span>
 </div>
-</a><ul class="toc-section-list"><li class="toc-section">
+</a><ul class='toc-section-list'><li class="toc-section">
 <a href='java-date-and-time-internationalization-and-localization.htm#localized-date-and-time-formats'>
 <span>Localized Date and Time Formats</span></a>
 <span class='section-page'>96</span>
@@ -541,7 +322,7 @@ function toggleMode() {
 <span id='working-with-time-zones-in-depth'>Chapter 12 : Working with Time Zones in Depth </span>
 <span class='chapter-page'>105</span>
 </div>
-</a><ul class="toc-section-list"><li class="toc-section">
+</a><ul class='toc-section-list'><li class="toc-section">
 <a href='java-date-and-time-working-with-time-zones-in-depth.htm#exploring-the-zonerules-api'>
 <span>Exploring the <code>ZoneRules</code> API</span></a>
 <span class='section-page'>105</span>
@@ -558,7 +339,7 @@ function toggleMode() {
 <span id='scheduling-and-recurrence'>Chapter 13 : Scheduling and Recurrence </span>
 <span class='chapter-page'>113</span>
 </div>
-</a><ul class="toc-section-list"><li class="toc-section">
+</a><ul class='toc-section-list'><li class="toc-section">
 <a href='java-date-and-time-scheduling-and-recurrence.htm#modeling-recurring-events-e-g-every-monday'>
 <span>Modeling Recurring Events (e.g., &quot;Every Monday&quot;)</span></a>
 <span class='section-page'>113</span>
@@ -575,7 +356,7 @@ function toggleMode() {
 <span id='serialization-and-deserialization'>Chapter 14 : Serialization and Deserialization </span>
 <span class='chapter-page'>122</span>
 </div>
-</a><ul class="toc-section-list"><li class="toc-section">
+</a><ul class='toc-section-list'><li class="toc-section">
 <a href='java-date-and-time-serialization-and-deserialization.htm#json-serialization-with-java-time'>
 <span>JSON Serialization with <code>java.time</code></span></a>
 <span class='section-page'>122</span>
@@ -592,7 +373,7 @@ function toggleMode() {
 <span id='multi-threaded-and-concurrent-date-time-handling'>Chapter 15 : Multi-threaded and Concurrent Date-Time Handling </span>
 <span class='chapter-page'>132</span>
 </div>
-</a><ul class="toc-section-list"><li class="toc-section">
+</a><ul class='toc-section-list'><li class="toc-section">
 <a href='java-date-and-time-multi-threaded-and-concurrent-date-time-handling.htm#thread-safety-of-the-java-time-api'>
 <span>Thread Safety of the java.time API</span></a>
 <span class='section-page'>132</span>
@@ -609,7 +390,7 @@ function toggleMode() {
 <span id='building-a-time-zone-converter'>Chapter 16 : Building a Time Zone Converter </span>
 <span class='chapter-page'>141</span>
 </div>
-</a><ul class="toc-section-list"><li class="toc-section">
+</a><ul class='toc-section-list'><li class="toc-section">
 <a href='java-date-and-time-building-a-time-zone-converter.htm#user-input-for-date-time-and-zone'>
 <span>User Input for Date, Time, and Zone</span></a>
 <span class='section-page'>142</span>
@@ -626,7 +407,7 @@ function toggleMode() {
 <span id='implementing-a-date-range-picker-backend'>Chapter 17 : Implementing a Date Range Picker Backend </span>
 <span class='chapter-page'>150</span>
 </div>
-</a><ul class="toc-section-list"><li class="toc-section">
+</a><ul class='toc-section-list'><li class="toc-section">
 <a href='java-date-and-time-implementing-a-date-range-picker-backend.htm#representing-and-validating-date-ranges'>
 <span>Representing and Validating Date Ranges</span></a>
 <span class='section-page'>150</span>
@@ -643,7 +424,7 @@ function toggleMode() {
 <span id='logging-and-timestamps'>Chapter 18 : Logging and Timestamps </span>
 <span class='chapter-page'>162</span>
 </div>
-</a><ul class="toc-section-list"><li class="toc-section">
+</a><ul class='toc-section-list'><li class="toc-section">
 <a href='java-date-and-time-logging-and-timestamps.htm#using-timestamps-in-logs'>
 <span>Using Timestamps in Logs</span></a>
 <span class='section-page'>162</span>
@@ -660,7 +441,7 @@ function toggleMode() {
 <span id='time-in-rest-apis'>Chapter 19 : Time in REST APIs </span>
 <span class='chapter-page'>168</span>
 </div>
-</a><ul class="toc-section-list"><li class="toc-section">
+</a><ul class='toc-section-list'><li class="toc-section">
 <a href='java-date-and-time-time-in-rest-apis.htm#designing-apis-with-iso-8601-support'>
 <span>Designing APIs with ISO-8601 Support</span></a>
 <span class='section-page'>168</span>
@@ -677,7 +458,7 @@ function toggleMode() {
 <span id='testing-with-time'>Chapter 20 : Testing with Time </span>
 <span class='chapter-page'>176</span>
 </div>
-</a><ul class="toc-section-list"><li class="toc-section">
+</a><ul class='toc-section-list'><li class="toc-section">
 <a href='java-date-and-time-testing-with-time.htm#faking-the-current-time-with-clock'>
 <span>Faking the Current Time with <code>Clock</code></span></a>
 <span class='section-page'>176</span>
@@ -689,11 +470,7 @@ function toggleMode() {
 <a href='java-date-and-time-testing-with-time.htm#using-libraries-like-junit-and-mockito-with-clock'>
 <span>Using Libraries like JUnit and Mockito with <code>Clock</code></span></a>
 <span class='section-page'>182</span>
-</li></ul></li>
-  </ul>
-</div>
-
-<div class='related-books'>
+</li></ul></li></ul></div><div class='related-books'>
 <h2>Java Introduction Books</h2>
 <div class='related-book-list'>
 <a href="java-for-beginners.htm">
@@ -728,7 +505,7 @@ function toggleMode() {
 
 <a href="java-object-oriented-design.htm">
 <div class="book-cover" style="background-color: #f9f6f1;border: 1px solid #ccc;"> 
-    <div class="book-cover-title" style="font-size: 16px;color: #333;top: 20px;">Java Object-Oriented Design</div>
+    <div class="book-cover-title" style="font-size: 16px;color: #333;top: 10px;">Java Object-Oriented Design</div>
     <div class="book-cover-author">readbytes</div>
     <div class="book-cover-bottom-stripe" style="background-color: #333;"></div>
     <img class="book-cover-icon" style="width: 80px;height: 80px;top: 60px;" src="data:image/png;base64,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"/>
@@ -739,16 +516,34 @@ function toggleMode() {
 
 <a href='java.htm'><div class='book-cover' style='background-color: #f9f6f1;color: #111111;border: 1px solid #ccc;display: flex;justify-content: center;align-items: center;text-align: center;'>More Java Books</div></a>
 </div>
-</div>
+</div></div>
+<style>
+.site-footer {margin-top: 60px;padding: 20px 0;border-top: 1px solid #eee;text-align: center;font-size: 14px;}
+.site-footer a {text-decoration: none;}
+.light-mode .site-footer {color: #777;border-color: #eee;}
+.dark-mode .site-footer {color: #888;border-color: #333;}
+.light-mode .site-footer a {color: #555;}
+.dark-mode .site-footer a {color: #aaa;}
+.site-footer a:hover {text-decoration: underline;}    
+</style>
 <footer class="site-footer">
-    <nav>
-      <a href="https://readbytes.github.io">Home</a> | 
-      Email:<script language="JavaScript" type="text/javascript">
+<nav><a href="https://readbytes.github.io">Home</a> |Email:<script type="text/javascript">
 var part1 = 'yinpeng';var part6 = '263';var part2 = Math.pow(2,6);var part3 = String.fromCharCode(part2);var part4 = 'hotmail dot com';var part5 = part1 + String.fromCharCode(part2) + part4;document.write(part1 + part6 + part3 + part4);
 </script>
-    </nav>
-  <p>© 2025 — All rights reserved.</p>   
-</footer>
-
+| <a id="mode-toggle" href="#">Toggle Dark Mode</a>
+</nav><p>© 2025 — All rights reserved.</p></footer>
+<script>
+const toggleButton = document.getElementById('mode-toggle');
+const body = document.body;
+const savedMode = localStorage.getItem('mode') || 'light';
+body.classList.add(savedMode + '-mode');
+toggleButton.addEventListener('click', () => {
+      const isDark = body.classList.contains('dark-mode');
+      body.classList.toggle('dark-mode', !isDark);
+      body.classList.toggle('light-mode', isDark);
+      localStorage.setItem('mode', isDark ? 'light' : 'dark');
+});
+function copyCode(button) {const code = button.nextElementSibling.innerText;navigator.clipboard.writeText(code).then(() => {button.textContent = 'Copied!';setTimeout(() => { button.textContent = 'Copy'; }, 1500);});}
+</script>
 </body>
 </html>

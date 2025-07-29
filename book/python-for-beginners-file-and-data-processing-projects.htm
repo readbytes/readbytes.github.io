@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Python for Beginners File and Data Processing Projects</title>
+<link rel='shortcut icon' href='https://readbytes.github.io/images/favicon.ico'>
+<link href="https://fonts.googleapis.com/css2?family=Merriweather&display=swap" rel="stylesheet" />
+<link href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.css" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/theme/dracula.min.css"><style>
+html {scroll-behavior: smooth;}  
+body {font-family: 'Merriweather', serif;;margin: 0;padding: 2rem 1rem;font-size: 15px;line-height: 1.5;transition: background-color 0.3s, color 0.3s;}
+.container {max-width: 750px;margin: 0 auto;padding: 1rem 2rem;}
+.light-mode {background-color: #f8f7f5;color: #333;} 
+.dark-mode {background-color: #121212;color: #e0e0e0;}
+a { text-decoration: none;transition: color 0.2s;}
+a:hover {text-decoration: underline;}
+.light-mode a {color: #555;}
+.dark-mode a {color: #aaa;}
+</style><style>
+.related-book-list {display: flex;flex-wrap: wrap;gap: 20px;}
+.related-books {margin-top: 40px;}
+.related-books h2 {font-size: 22px;margin-bottom: 20px;border-bottom: 2px solid #eee;padding-bottom: 8px;}
+.light-mode .related-books h2 {color: #333;border-color: #eee;}
+.dark-mode .related-books h2 {color: #ddd;border-color: #333;}
+</style><style>
+.book-cover {width: 130px;height: 180px;font-family: Arial, sans-serif;position: relative;overflow: hidden;box-shadow: 2px 2px 4px rgba(0,0,0,0.1);}
+.book-cover-bottom-stripe {position: absolute;bottom: 0;left: 0;height: 5px;width: 100%;}
+.book-cover-title {position: absolute;width: 100%;text-align: center;font-weight: bold;}
+.book-cover-icon {position: absolute;left: 50%;transform: translateX(-50%);display: flex;align-items: center;justify-content: center;}
+.book-cover-author {position: absolute;bottom: 10px;width: 100%;text-align: center;font-size: 8px;color: #333;}
+</style><style>
+.book-title-toc {font-size: 32px;font-weight: bold; }
+.book-subtitle-toc {font-size: 18px;margin-top: 8px;font-style: italic;}
+.book-header {text-align: center;margin-bottom: 40px;}
+
+.toc-container {border-radius: 10px;padding: 30px;margin-bottom: 40px;box-shadow: 0 8px 20px rgba(0,0,0,0.05);}
+h1 {font-size: 24px;text-align: center;margin-bottom: 30px;letter-spacing: 1px;padding-bottom: 10px;}
+.toc-list,.toc-section-list {list-style: none;padding: 0;margin: 0;}
+.toc-section-list {padding-left: 18px;margin-top: 6px;margin-bottom: 20px; }
+.toc-chapter {padding: 20px 0;}
+.chapter-title,.toc-section {display: flex;justify-content: space-between;padding-top: 4px;}
+.chapter-title {font-size: 17px;font-weight: bold;}
+.chapter-page,.section-page {font-style: italic;}
+ 
+ 
+.light-mode .book-title-toc,.light-mode .chapter-title,.light-mode .book-name {color: #222;}
+.light-mode .book-subtitle-toc,.light-mode .book-sub,.light-mode .chapter-page,.light-mode .section-page {color: #666;}
+.light-mode .toc-container { background: #fff;border: 1px solid #ddd;}
+.light-mode h1 {border-bottom: 2px solid #eee;color: #222;}
+.light-mode .toc-section {  color: #444;}
+
+.light-mode .book-cover { border: 1px solid #ccc;box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);}
+.light-mode .book-title,.light-mode .series-name {color: #fff;}
+.light-mode .book-subtitle,.light-mode .book-footer {color: #aaa;}
+
+.dark-mode .book-title-toc,.dark-mode .chapter-title,.dark-mode .book-name {color: #f5f5f5;}
+.dark-mode .book-subtitle-toc,.dark-mode .book-sub,.dark-mode .chapter-page,.dark-mode .section-page {color: #aaa;}
+.dark-mode .toc-container {background: #1e1e1e;border: 1px solid #444;}
+
+.dark-mode h1 {border-bottom: 2px solid #333;color: #eee;}
+.dark-mode .toc-section {color: #bbb;}
+
+.dark-mode .related-books h2 {color: #ddd;border-bottom: 2px solid #333;}
+.dark-mode .book-title,.dark-mode .series-name {color: #fff;}
+.dark-mode .book-subtitle,.dark-mode .book-footer {color: #bbb;}
+.dark-mode .toc-section {color: #ddd;}
+
+@media (max-width: 600px) {
+  .chapter-title,
+  .toc-section {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .chapter-page,
+  .section-page {
+    margin-top: 4px;
+  }
+}
+
+</style><style>
+.light-mode .container {box-shadow: 0 0 15px rgba(0,0,0,0.1);}
+.dark-mode .container {box-shadow: 0 0 15px rgba(255, 255, 255, 0.05);}
+
+h1, h2, h3 {font-weight: 600;margin-top: 2.5rem;margin-bottom: 1rem;line-height: 1.2;}
+h1 { font-size: 1.8rem; }
+h2 { font-size: 1.4rem; }
+h3 { font-size: 1.2rem; }
+
+table {width: 100%;border-collapse: collapse;font-family: sans-serif;font-size: 1em;margin: 1em 0;}
+th, td {padding: 0.6em 1em;text-align: left;border: 1px solid;}
+tr:nth-child(even) {  background-color: inherit;}
+tr:hover { background-color: inherit;}
+
+code {color: #d35400;}
+
+.chapter-navi-section {display: flex;justify-content: space-between;align-items: center;padding-bottom: 10px;padding-top: 10px;}
+.nav-link {color: inherit;text-decoration: none;opacity: 0.5;transition: opacity 0.3s ease, text-decoration 0.3s ease;}
+.nav-link:hover {opacity: 0.9;text-decoration: underline;}
+.prev { text-align: left; }
+.toc-link { text-align: center; }
+.next { text-align: right; }
+
+.download-section {display: flex;align-items: center;justify-content: center;gap: 2rem;padding: 2rem 1rem;max-width: 600px;margin: 3rem auto;border-radius: 12px;box-shadow: 0 4px 10px rgba(0,0,0,0.05);}
+.download-info h2 {margin: 0 0 0.5rem;font-size: 1.2rem;}
+.format-label {margin: 0 0 0.5rem;font-size: 0.95rem;}
+.download-buttons {display: flex;gap: 1rem;}
+.download-button {background-color: #4A90E2;color: white;padding: 0.5em 1.2em;border-radius: 25px;font-size: 0.95rem;text-decoration: none;transition: background-color 0.3s ease;}
+.download-button:hover {background-color: #357ABD;}
+
+.code-block {position: relative;margin-bottom: 1em;}
+.copy-button {background: transparent;color: white;position: absolute;top: 8px;right: 8px;border: none;padding: 4px 8px;font-size: 12px;border-radius: 4px;cursor: pointer;z-index: 1;}
+.copy-button:hover {background-color: #0056b3;}
+
+.snippet-container {overflow: hidden;}
+.snippet-header {padding: 0.75rem 1rem;cursor: pointer;font-size: 1rem;background-color: #eeeeee;color:  #111111; border-radius: 8px;cursor: pointer;box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+.snippet-body {display: none;font-family: monospace;}
+.snippet-container.open .snippet-body {display: block;}
+
+.CodeMirror {border: 2px solid #ccc;border-radius: 4px;resize: vertical;}
+
+.light-mode .format-label {color: #888;}
+.light-mode th {background-color: #f2f2f2;}
+.light-mode tr:nth-child(even) {background-color: #fafafa;}
+.light-mode tr:hover {background-color: #e6f7ff;}
+
+.dark-mode .snippet-header {background-color: #333;color:  #ddd; }
+.dark-mode .format-label {color: #aaa;}
+.dark-mode th {background-color: #333;color: #fff;}
+.dark-mode td {border-color: #444;}
+.dark-mode tr:nth-child(even) {background-color: #2a2a2a;}
+.dark-mode tr:hover {background-color: #2c3e50;}
+
+
+.button-group-run-edit {display: flex;width: 100%;gap: 1rem;}
+.button-run-edit {flex: 1;padding: 1rem;font-size: 1rem;font-weight: 600;border: none;border-radius: 8px;cursor: pointer;transition: background 0.3s, color 0.3s;}
+
+.light-mode .button-run-edit {background-color: #f0f0f0;color: #222;box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);}
+.light-mode .button-run-edit:hover {background-color: #e0e0e0;}
+
+.dark-mode .button-run-edit {background-color: #2a2a2a;color: #f5f5f5;box-shadow: 0 0 10px rgba(255, 255, 255, 0.05);}
+.dark-mode .button-run-edit:hover {background-color: #3a3a3a;}
+
+button { padding: 0.5em 1em; background: green; color: white; border: none; cursor: pointer; }
+button:hover { background: #1e7e34; }
+.result_iframe { width:99%; margin-top: 1em;  resize: both;background-color: #515b63;border:1px solid #ccc;}   
+
+.dialog-backdrop {position: fixed;top: 0;left: 0;width: 100vw;height: 100vh;background: rgba(0,0,0,0.5);display: none;justify-content: center;align-items: center;z-index: 10;}
+.dialog {background: #90979e;padding: 20px;width: 90vw;height: 80vh;border-radius: 8px;box-shadow: 0 0 20px rgba(0,0,0,0.3);display: flex;flex-direction: column;}
+.dialog-content {display: flex;gap: 20px;margin-top: 10px;height: calc(100% - 40px);}
+.editor-container, .preview-container {flex: 1;height: 100%;max-height: 100%;overflow: hidden; }
+.result_iframe_dialog {width: 100%;height: 100%;resize: both;border:1px solid #ccc;overflow: auto; }   
+.CodeMirror {width: 100% !important;height: 100% !important;}
+</style>
+</head>
+<body>
+<script>const mode = localStorage.getItem('mode') || 'light';document.documentElement.classList.add(`${mode}-mode`);</script>  
+<div class="container"><div class = "chapter-navi-section">
+<a href="python-for-beginners-testing-and-debugging.htm" class="nav-button prev">←</a>
+<a href='python-for-beginners.htm#file-and-data-processing-projects' class="nav-button toc-link">Index</a>
+<a href="python-for-beginners-python-in-data-science-and-machine-learning-intro.htm" class="nav-button next">→</a>
+</div>
+<div class='book-header'><h1 class='book-title-toc' id = 'top'>File and Data Processing Projects</h1><h3 class='book-subtitle-toc'>Python for Beginners</h3></div><h2 id='web-scraping-basics-requests-beautifulsoup'>14.1 Web Scraping Basics (<code>requests</code>, <code>BeautifulSoup</code>)</h2><p>Web scraping is the process of programmatically extracting data from websites. In Python, this is often done using two powerful libraries:</p><ul>
+ <li><code>requests</code> – to download web pages.</li>
+ <li><code>BeautifulSoup</code> – to parse and navigate the HTML content.</li>
+</ul><p>This section introduces you to basic web scraping techniques and shows you how to extract useful information such as headlines, links, and product details.</p><h3 id="installing-required-libraries">Installing Required Libraries</h3><p>To follow along, install the required packages using <code>pip</code>:</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-bash">pip install requests beautifulsoup4</code></pre>
+</div><h3 id="step-1-fetch-a-web-page-with-requests">Step 1: Fetch a Web Page with <code>requests</code></h3><p>The <code>requests</code> library makes it easy to download a webpage's content:</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-python">import requests
+
+url = "https://example.com"
+response = requests.get(url)
+
+print(response.text)  # Shows the raw HTML</code></pre>
+</div><p>Check the response status code:</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-python">if response.status_code == 200:
+    print("Page fetched successfully!")
+else:
+    print("Failed to retrieve the page.")</code></pre>
+</div><h3 id="step-2-parse-html-with-beautifulsoup">Step 2: Parse HTML with <code>BeautifulSoup</code></h3><p>After fetching the page, we parse it with <code>BeautifulSoup</code>:</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-python">from bs4 import BeautifulSoup
+
+soup = BeautifulSoup(response.text, "html.parser")
+print(soup.prettify())  # View the structured HTML</code></pre>
+</div><h3 id="step-3-extracting-data">Step 3: Extracting Data</h3><h4 id="example-extracting-all-links">Example: Extracting All Links</h4><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-python">for link in soup.find_all('a'):
+    print(link.get('href'))</code></pre>
+</div><h4 id="example-extracting-headings">Example: Extracting Headings</h4><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-python">headings = soup.find_all('h2')
+for h in headings:
+    print(h.text.strip())</code></pre>
+</div><h4 id="example-extracting-items-by-class">Example: Extracting Items by Class</h4><p>Suppose you want to scrape product names with class <code>"product-title"</code>:</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-python">products = soup.find_all(class_='product-title')
+for product in products:
+    print(product.text.strip())</code></pre>
+</div><h3 id="step-4-navigating-the-dom">Step 4: Navigating the DOM</h3><p>You can chain methods to drill down into elements:</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-python">article = soup.find('div', class_='article')
+title = article.find('h1').text
+print(title)</code></pre>
+</div><p>You can also use CSS selectors:</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-python">for item in soup.select('.news-item h3'):
+    print(item.text)</code></pre>
+</div><h3 id="sample-project-scraping-top-news-headlines">Sample Project: Scraping Top News Headlines</h3><p>Let’s build a quick script to extract headlines from a real website like <a href="https://news.ycombinator.com">https://news.ycombinator.com</a>:</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-python">import requests
+from bs4 import BeautifulSoup
+
+url = "https://news.ycombinator.com"
+response = requests.get(url)
+soup = BeautifulSoup(response.text, "html.parser")
+
+headlines = soup.select('.titleline &gt; a')
+for i, headline in enumerate(headlines[:10], 1):
+    print(f"{i}. {headline.text}")</code></pre>
+</div><h3 id="step-5-ethics-and-best-practices">Step 5: Ethics and Best Practices</h3><p>Web scraping must be done <strong>responsibly</strong>. Keep in mind:</p><ul>
+ <li>✅ <strong>Check <code>robots.txt</code>:</strong> Many websites specify rules for automated access (e.g., <code>https://example.com/robots.txt</code>).</li>
+ <li>✅ <strong>Use Headers:</strong> Mimic a browser using headers like <code>User-Agent</code>.</li>
+ <li>✅ <strong>Throttle Requests:</strong> Avoid overloading servers. Use <code>time.sleep()</code> between requests.</li>
+ <li>❌ <strong>Never scrape login-protected or copyrighted content</strong> without permission.</li>
+</ul><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-python">import time
+
+for page in range(1, 5):
+    response = requests.get(f"https://example.com/page={page}")
+    time.sleep(1)  # Pause 1 second between requests</code></pre>
+</div><h3 id="summary">Summary</h3><p>In this section, you learned how to:</p><ul>
+ <li>Use <code>requests</code> to download web pages</li>
+ <li>Use <code>BeautifulSoup</code> to parse and navigate HTML</li>
+ <li>Extract data like links, headings, and product info</li>
+ <li>Build a simple scraping script</li>
+ <li>Follow ethical guidelines and avoid legal trouble</li>
+</ul><div class = "chapter-navi-section">
+<a href="#top" class="nav-button prev">↑</a>
+<a href='python-for-beginners.htm#file-and-data-processing-projects' class="nav-button toc-link">Index</a>
+<a href="#bottom" class="nav-button next">↓</a>
+</div>
+<h2 id='working-with-apis-and-json-data'>14.2 Working with APIs and JSON Data</h2><p>Modern applications often rely on data from web-based APIs (Application Programming Interfaces). APIs typically return data in <strong>JSON (JavaScript Object Notation)</strong> format, which is lightweight and easy to use in Python.</p><p>In this section, you'll learn how to:</p><ul>
+ <li>Use <code>requests.get()</code> to make API calls</li>
+ <li>Handle query parameters and headers</li>
+ <li>Parse and extract data from JSON responses</li>
+ <li>Handle API errors gracefully</li>
+ <li>Save API results to a file</li>
+</ul><h3 id="step-1-making-a-simple-api-request">Step 1: Making a Simple API Request</h3><p>Let’s start by making a request to a sample API. We'll use a free fake API for demonstration: <code>https://jsonplaceholder.typicode.com</code>.</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-python">import requests
+
+url = "https://jsonplaceholder.typicode.com/posts"
+response = requests.get(url)
+
+print(response.status_code)  # Should be 200 for success
+print(response.text)         # Raw JSON string</code></pre>
+</div><h3 id="step-2-parsing-json-data">Step 2: Parsing JSON Data</h3><p>The <code>response.json()</code> method converts the JSON string into Python data types (lists and dictionaries):</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-python">data = response.json()
+
+# Print the first post's title
+print(data[0]['title'])</code></pre>
+</div><h3 id="step-3-accessing-nested-json-fields">Step 3: Accessing Nested JSON Fields</h3><p>Many APIs return nested data. For example:</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-json">{
+  "user": {
+    "id": 1,
+    "profile": {
+      "name": "Alice",
+      "email": "alice@example.com"
+    }
+  }
+}</code></pre>
+</div><p>To access the email:</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-python">email = data['user']['profile']['email']</code></pre>
+</div><h3 id="step-4-adding-query-parameters">Step 4: Adding Query Parameters</h3><p>Some APIs require query parameters (e.g., filtering or pagination). Pass them as a dictionary using the <code>params</code> keyword:</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-python">params = {'userId': 1}
+response = requests.get("https://jsonplaceholder.typicode.com/posts", params=params)
+posts = response.json()
+
+for post in posts:
+    print(f"{post['id']}: {post['title']}")</code></pre>
+</div><h3 id="step-5-handling-headers-and-error-responses">Step 5: Handling Headers and Error Responses</h3><p>Some APIs require custom headers, like API keys. You can send headers like this:</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-python">headers = {
+    'Authorization': 'Bearer YOUR_API_KEY_HERE'
+}
+response = requests.get('https://api.example.com/data', headers=headers)</code></pre>
+</div><p>Check the response status code to handle errors:</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-python">if response.status_code == 200:
+    data = response.json()
+else:
+    print(f"Error: {response.status_code}")</code></pre>
+</div><h3 id="step-6-example-saving-data-to-a-file">Step 6: Example Saving Data to a File</h3><p>Let’s fetch data from the API and save specific fields to a file.</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-python">import json
+
+response = requests.get("https://jsonplaceholder.typicode.com/users")
+users = response.json()
+
+# Extract names and emails
+user_contacts = [{"name": u["name"], "email": u["email"]} for u in users]
+
+# Save to a JSON file
+with open("contacts.json", "w") as f:
+    json.dump(user_contacts, f, indent=2)
+
+print("Saved contacts to contacts.json")</code></pre>
+</div><h3 id="optional-working-with-real-apis">Optional: Working with Real APIs</h3><p>If you'd like to work with real-world APIs, here are some popular examples:</p><ul>
+ <li><a href="https://openweathermap.org/api">OpenWeatherMap</a> – Weather data</li>
+ <li><a href="https://restcountries.com/">REST Countries</a> – Country and region info</li>
+ <li><a href="https://newsapi.org/">NewsAPI</a> – News headlines</li>
+</ul><p>Most require an API key (a free account is usually enough).</p><h3 id="best-practices">Best Practices</h3><ul>
+ <li>✅ Read the API documentation carefully.</li>
+ <li>✅ Always handle errors (<code>try</code>/<code>except</code> or check <code>response.status_code</code>).</li>
+ <li>✅ Respect rate limits (throttle your requests if needed).</li>
+ <li>✅ Use pagination for large datasets.</li>
+</ul><div class = "chapter-navi-section">
+<a href="#top" class="nav-button prev">↑</a>
+<a href='python-for-beginners.htm#file-and-data-processing-projects' class="nav-button toc-link">Index</a>
+<a href="#bottom" class="nav-button next">↓</a>
+</div>
+<h2 id='automating-tasks-and-scripting'>14.3 Automating Tasks and Scripting</h2><p>Python shines in automating repetitive or time-consuming tasks. Whether it’s renaming hundreds of files, sending routine emails, scraping data, or organizing content—Python can streamline it efficiently with minimal code.</p><p>In this section, you’ll learn how to:</p><ul>
+ <li>Automate file operations using <code>os</code> and <code>shutil</code></li>
+ <li>Use scheduling and conditions to control task execution</li>
+ <li>Handle errors and write cross-platform scripts</li>
+ <li>Create two practical automation scripts</li>
+</ul><h3 id="example-1-renaming-files-in-a-folder">Example 1: Renaming Files in a Folder</h3><p>Let’s automate renaming a batch of files using the <code>os</code> module.</p><h4 id="task-rename-all-txt-files-in-a-folder-to-have-a-processed-prefix">Task: Rename all <code>.txt</code> files in a folder to have a <code>processed_</code> prefix.</h4><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-python">import os
+
+folder_path = "./my_text_files"
+
+try:
+    for filename in os.listdir(folder_path):
+        if filename.endswith(".txt"):
+            old_path = os.path.join(folder_path, filename)
+            new_filename = "processed_" + filename
+            new_path = os.path.join(folder_path, new_filename)
+            os.rename(old_path, new_path)
+            print(f"Renamed: {filename} → {new_filename}")
+except FileNotFoundError:
+    print("The specified folder was not found.")
+except PermissionError:
+    print("Permission denied. Try running as administrator.")</code></pre>
+</div><h4 id="notes">Notes:</h4><ul>
+ <li>Works on Windows, macOS, and Linux</li>
+ <li>Always use <code>os.path.join()</code> for cross-platform paths</li>
+ <li>Add logging or backups in production scripts</li>
+</ul><h3 id="example-2-scheduled-web-scraping-and-csv-export">Example 2: Scheduled Web Scraping and CSV Export</h3><p>Let’s write a script that scrapes data every morning and saves it.</p><h4 id="task-fetch-top-headlines-and-save-them-to-a-csv">Task: Fetch top headlines and save them to a CSV.</h4><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-python">import requests
+from bs4 import BeautifulSoup
+import csv
+import datetime
+import time
+
+def fetch_headlines():
+    url = "https://news.ycombinator.com"
+    response = requests.get(url)
+    soup = BeautifulSoup(response.text, 'html.parser')
+    headlines = soup.select('.titleline &gt; a')
+
+    today = datetime.date.today().isoformat()
+    filename = f"headlines_{today}.csv"
+
+    with open(filename, "w", newline='', encoding='utf-8') as file:
+        writer = csv.writer(file)
+        writer.writerow(["Title", "URL"])
+        for h in headlines:
+            writer.writerow([h.get_text(), h['href']])
+    
+    print(f"Saved {len(headlines)} headlines to {filename}")
+
+# Run the task once daily
+while True:
+    now = datetime.datetime.now()
+    if now.hour == 7:  # Run at 7 AM
+        fetch_headlines()
+        time.sleep(86400)  # Sleep for 24 hours
+    else:
+        time.sleep(60)  # Check again in 1 minute</code></pre>
+</div><blockquote>
+ <p>You can stop the script using <code>Ctrl + C</code>. For actual deployment, consider using a task scheduler:</p>
+ <ul>
+  <li><strong>Windows:</strong> Task Scheduler</li>
+  <li><strong>macOS/Linux:</strong> <code>cron</code></li>
+ </ul>
+</blockquote><h3 id="real-world-automation-ideas">Real-World Automation Ideas</h3><ul>
+ <li>🔄 <strong>Back up important files</strong> using <code>shutil.copy()</code></li>
+ <li>🧹 <strong>Clean up downloads or temp folders</strong> based on file age</li>
+ <li>📧 <strong>Send daily reports via email</strong> using <code>smtplib</code></li>
+ <li>📋 <strong>Scrape and update a database</strong> with product prices or weather data</li>
+</ul><h3 id="cross-platform-and-error-handling-tips">Cross-Platform and Error-Handling Tips</h3><table>
+ <thead>
+  <tr>
+   <th>Challenge</th>
+   <th>Best Practice</th>
+  </tr>
+ </thead>
+ <tbody>
+  <tr>
+   <td>File paths</td>
+   <td>Use <code>os.path.join()</code> or <code>pathlib.Path()</code></td>
+  </tr>
+  <tr>
+   <td>Scheduling tasks</td>
+   <td>Use OS-native tools (<code>cron</code>, Task Scheduler)</td>
+  </tr>
+  <tr>
+   <td>File permission issues</td>
+   <td>Use <code>try/except</code> blocks and avoid hardcoding paths</td>
+  </tr>
+  <tr>
+   <td>Encoding problems</td>
+   <td>Use <code>encoding='utf-8'</code> when reading/writing files</td>
+  </tr>
+ </tbody>
+</table><h3 id="summary">Summary</h3><p>Python makes it easy to automate mundane tasks that would otherwise take hours. In this section, you:</p><ul>
+ <li>Renamed multiple files automatically</li>
+ <li>Scheduled a script to scrape headlines and save them</li>
+ <li>Learned how to write scripts that are safe, flexible, and reusable</li>
+</ul><div class = "chapter-navi-section">
+<a href="python-for-beginners-testing-and-debugging.htm" class="nav-button prev">←</a>
+<a href='python-for-beginners.htm#file-and-data-processing-projects' class="nav-button toc-link">Index</a>
+<a href="python-for-beginners-python-in-data-science-and-machine-learning-intro.htm" class="nav-button next">→</a>
+</div>
+<section class="download-section">
+  <div class="book-cover" style="background-color: #f9f6f1;border: 1px solid #ccc;"> 
+    <div class="book-cover-title" style="font-size: 18px;color: #333;top: 20px;">Python for Beginners</div>
+    <div class="book-cover-author">readbytes</div>
+    <div class="book-cover-bottom-stripe" style="background-color: #333;"></div>
+    <img class="book-cover-icon" style="width: 90px;height: 90px;top: 70px;" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFoAAABaCAYAAAA4qEECAAAEPUlEQVR4Xu2bv4seVRSGX6OJhVok2IiLPxoLtREMglqGGJLCRgsL7VxUUDuRDbszs67VNsF/IL2VaKpgIE0QbCxsLEwRRNc2RBJRQzJ3xtndee/MNzN3zjnfwp4HnubO3HPOfbMJM8sEOMxk2OElJ5Uc93ipIqz3XXMmUuDXzkCbtdofW9ecBNqB/tux1vWH8FC05uyjCS3Dc9HasDvRmtMDBzVXZwEcVqoFbnNpZz8c2HyPcYvDS45THQHJ6pRs4mQUjKwH5PEvww/RcBm+59tUaR7JNFw6PFCflnDvuS6V8OC/N8zrfHmXAm/s3pfhD74sToYPoqDmW7/kmLM3wCW+1EuO33f3aRKHJKM5TeOv8SBfGmTvp+06XxKDA5LSlAJvVk0/x3G+NJrmnxwtOCApTZFqKlWniwLvRiHNtcB/3EaP8HYUmkqQ47eq1jYeKQ/xrVjdBg5qrqZINOUDaB2Ga8/VlLrpvL9CfACtw+Q4EtVPNcMnXF6X0HQu7WfvttJw/VRN2SpfSCSaZjgbHaTbu7w1ibjuNM2Z05iHH6sU4Z87rj3GpZDafM4vedbwBJebBdfv9wRvtaMe4A4vD5Lj546DjFeDDBeiPjmu8m3LoR5mlZcHiQ80zUNH6qE5uBTnslG+KQIP8HIv4S0wx1O8bEPqgTm0FKeQ42a0f2od3tdY4J/y6etlvl2WKYPuh4dN83Eu20m8r+15PMlbInhPl2p8jIeTGhT4NBoy1THwni4XEX5i+f4uvyrzUGELTw8O2QUPOMcx8J5+f2rtW8XRjnsWudLaL8Y6XqkaTCUeMNWL+ALPcvmIeJ+Om3iJW8vQfC8xFR5wyAKXucQkuJ6WGU5zaxkyvFU1kKTAL9EB5sL19Fzj1jIUeL9qIM1neOz/wW/xpSTiQHTM8A23liHDe1WDgw4HoqXaJxM5zlQNDjociKYqbOI1veKCcBiaqpDjeb3ignAYmqoQXoHVigvCYWiqhmpxITgMTdVQLS4Eh6GpGqrFheAwNFVDtbgQHIamaoTi63iBl5dCmCV8bMlwGEPBpNyz6N4NnOu9Npq6wTVenkyOR1F/RNN2CvUs9ZNQnxn+5G2dLAqOCTW5T9sVTD1LRChU4G9enkwdNA847qANOW7wUjIp/ReR4y9eGib8Z8bGZqD9a6lyyF11F5HjCi8lEz6Il/qlViDDd9UXspPgMCztI8eLpdulr4pY4J3SD6P1dD8qfYbHXgwf3lJG4+Nybb8c+6UVb7SU8aDdQQfhDW6ag/AGN81BeIOb5iC8wU1zMlygMbzjHxY28HZ0/uRA++DCHrQHrYYHbYQHbYQHbYQHbYQHbYQHbYQHbYQHbYQHbYQHbYQHbYQHbYQHbYQHbYQHbYQHbYQHbYQHbYQHbYQHbYQHbYQHbYQHbYQHbYQHbYQHbYQHbYQHbYQHbYQHbYQHbYRA0PcByjp3gyQxx4YAAAAASUVORK5CYII="/>
+  </div>
+  <div class="download-info">
+    <h2 id='bottom'>Download This Ebook</h2>
+    <p class="format-label">Available formats:</p>
+    <div class="download-buttons">
+      <a href="python-for-beginners.pdf" class="download-button">📄 PDF</a>
+      <a href="python-for-beginners.epub" class="download-button">📘 EPUB</a>
+    </div>
+  </div>
+</section><div class='related-books'>
+<h2>Python Introduction Books</h2>
+<div class='related-book-list'>
+<a href="python-for-beginners.htm">
+<div class="book-cover" style="background-color: #f9f6f1;border: 1px solid #ccc;"> 
+    <div class="book-cover-title" style="font-size: 18px;color: #333;top: 20px;">Python for Beginners</div>
+    <div class="book-cover-author">readbytes</div>
+    <div class="book-cover-bottom-stripe" style="background-color: #333;"></div>
+    <img class="book-cover-icon" style="width: 90px;height: 90px;top: 70px;" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFoAAABaCAYAAAA4qEECAAAEPUlEQVR4Xu2bv4seVRSGX6OJhVok2IiLPxoLtREMglqGGJLCRgsL7VxUUDuRDbszs67VNsF/IL2VaKpgIE0QbCxsLEwRRNc2RBJRQzJ3xtndee/MNzN3zjnfwp4HnubO3HPOfbMJM8sEOMxk2OElJ5Uc93ipIqz3XXMmUuDXzkCbtdofW9ecBNqB/tux1vWH8FC05uyjCS3Dc9HasDvRmtMDBzVXZwEcVqoFbnNpZz8c2HyPcYvDS45THQHJ6pRs4mQUjKwH5PEvww/RcBm+59tUaR7JNFw6PFCflnDvuS6V8OC/N8zrfHmXAm/s3pfhD74sToYPoqDmW7/kmLM3wCW+1EuO33f3aRKHJKM5TeOv8SBfGmTvp+06XxKDA5LSlAJvVk0/x3G+NJrmnxwtOCApTZFqKlWniwLvRiHNtcB/3EaP8HYUmkqQ47eq1jYeKQ/xrVjdBg5qrqZINOUDaB2Ga8/VlLrpvL9CfACtw+Q4EtVPNcMnXF6X0HQu7WfvttJw/VRN2SpfSCSaZjgbHaTbu7w1ibjuNM2Z05iHH6sU4Z87rj3GpZDafM4vedbwBJebBdfv9wRvtaMe4A4vD5Lj546DjFeDDBeiPjmu8m3LoR5mlZcHiQ80zUNH6qE5uBTnslG+KQIP8HIv4S0wx1O8bEPqgTm0FKeQ42a0f2od3tdY4J/y6etlvl2WKYPuh4dN83Eu20m8r+15PMlbInhPl2p8jIeTGhT4NBoy1THwni4XEX5i+f4uvyrzUGELTw8O2QUPOMcx8J5+f2rtW8XRjnsWudLaL8Y6XqkaTCUeMNWL+ALPcvmIeJ+Om3iJW8vQfC8xFR5wyAKXucQkuJ6WGU5zaxkyvFU1kKTAL9EB5sL19Fzj1jIUeL9qIM1neOz/wW/xpSTiQHTM8A23liHDe1WDgw4HoqXaJxM5zlQNDjociKYqbOI1veKCcBiaqpDjeb3ignAYmqoQXoHVigvCYWiqhmpxITgMTdVQLS4Eh6GpGqrFheAwNFVDtbgQHIamaoTi63iBl5dCmCV8bMlwGEPBpNyz6N4NnOu9Npq6wTVenkyOR1F/RNN2CvUs9ZNQnxn+5G2dLAqOCTW5T9sVTD1LRChU4G9enkwdNA847qANOW7wUjIp/ReR4y9eGib8Z8bGZqD9a6lyyF11F5HjCi8lEz6Il/qlViDDd9UXspPgMCztI8eLpdulr4pY4J3SD6P1dD8qfYbHXgwf3lJG4+Nybb8c+6UVb7SU8aDdQQfhDW6ag/AGN81BeIOb5iC8wU1zMlygMbzjHxY28HZ0/uRA++DCHrQHrYYHbYQHbYQHbYQHbYQHbYQHbYQHbYQHbYQHbYQHbYQHbYQHbYQHbYQHbYQHbYQHbYQHbYQHbYQHbYQHbYQHbYQHbYQHbYQHbYQHbYQHbYQHbYQHbYQHbYQHbYQHbYRA0PcByjp3gyQxx4YAAAAASUVORK5CYII="/>
+  </div>
+</a>
+
+
+
+<a href='python.htm'><div class='book-cover' style='background-color: #f9f6f1;color: #111111;border: 1px solid #ccc;display: flex;justify-content: center;align-items: center;text-align: center;'>More Python Books</div></a>
+</div>
+</div><script>
+function copyCode(button) {const code = button.nextElementSibling.innerText;navigator.clipboard.writeText(code).then(() => {button.textContent = 'Copied!';setTimeout(() => { button.textContent = 'Copy'; }, 1500);});}
+</script></div>
+<style>
+.site-footer {margin-top: 60px;padding: 20px 0;border-top: 1px solid #eee;text-align: center;font-size: 14px;}
+.site-footer a {text-decoration: none;}
+.light-mode .site-footer {color: #777;border-color: #eee;}
+.dark-mode .site-footer {color: #888;border-color: #333;}
+.light-mode .site-footer a {color: #555;}
+.dark-mode .site-footer a {color: #aaa;}
+.site-footer a:hover {text-decoration: underline;}    
+</style>
+<footer class="site-footer">
+<nav><a href="https://readbytes.github.io">Home</a> |Email:<script type="text/javascript">
+var part1 = 'yinpeng';var part6 = '263';var part2 = Math.pow(2,6);var part3 = String.fromCharCode(part2);var part4 = 'hotmail dot com';var part5 = part1 + String.fromCharCode(part2) + part4;document.write(part1 + part6 + part3 + part4);
+</script>
+| <a id="mode-toggle" href="#">Toggle Dark Mode</a>
+</nav><p>© 2025 — All rights reserved.</p></footer>
+<script>
+const toggleButton = document.getElementById('mode-toggle');
+const body = document.body;
+const savedMode = localStorage.getItem('mode') || 'light';
+body.classList.add(savedMode + '-mode');
+toggleButton.addEventListener('click', () => {
+      const isDark = body.classList.contains('dark-mode');
+      body.classList.toggle('dark-mode', !isDark);
+      body.classList.toggle('light-mode', isDark);
+      localStorage.setItem('mode', isDark ? 'light' : 'dark');
+});
+function copyCode(button) {const code = button.nextElementSibling.innerText;navigator.clipboard.writeText(code).then(() => {button.textContent = 'Copied!';setTimeout(() => { button.textContent = 'Copy'; }, 1500);});}
+</script>
+</body>
+</html>

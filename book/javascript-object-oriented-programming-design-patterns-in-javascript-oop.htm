@@ -1,192 +1,165 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
+<meta charset="UTF-8">
 <title>JavaScript Object-Oriented Programming Design Patterns in JavaScript OOP</title>
-<link rel='shortcut icon' href='https://java2s.com/style/favicon.ico'>
+<link rel='shortcut icon' href='https://readbytes.github.io/images/favicon.ico'>
 <link href="https://fonts.googleapis.com/css2?family=Merriweather&display=swap" rel="stylesheet" />
 <link href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
-
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.css" />
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/theme/material.css"> <!-- Dark theme -->
-<script src="https://cdn.jsdelivr.net/npm/typescript@5/lib/typescript.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/htmlmixed/htmlmixed.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/xml/xml.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/css/css.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/javascript/javascript.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/javascript/typescript.min.js"></script>
-<style>
-    #floatingLog {
-      position: fixed;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      background: rgba(20, 20, 20, 0.95);
-      color: white;
-      font-family: monospace;
-      font-size: 14px;
-      padding: 16px 20px;
-      border-radius: 8px;
-      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
-      max-width: 80%;
-      max-height: 200px;
-      overflow-y: auto;
-      display: none;
-      z-index: 9999;
-      pointer-events: none;
-      white-space: pre-wrap;
-      text-align: center;
-    }
-</style>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/theme/dracula.min.css"><style>
+html {scroll-behavior: smooth;}  
+body {font-family: 'Merriweather', serif;;margin: 0;padding: 2rem 1rem;font-size: 15px;line-height: 1.5;transition: background-color 0.3s, color 0.3s;}
+.container {max-width: 750px;margin: 0 auto;padding: 1rem 2rem;}
+.light-mode {background-color: #f8f7f5;color: #333;} 
+.dark-mode {background-color: #121212;color: #e0e0e0;}
+a { text-decoration: none;transition: color 0.2s;}
+a:hover {text-decoration: underline;}
+.light-mode a {color: #555;}
+.dark-mode a {color: #aaa;}
+</style><style>
+.related-book-list {display: flex;flex-wrap: wrap;gap: 20px;}
+.related-books {margin-top: 40px;}
+.related-books h2 {font-size: 22px;margin-bottom: 20px;border-bottom: 2px solid #eee;padding-bottom: 8px;}
+.light-mode .related-books h2 {color: #333;border-color: #eee;}
+.dark-mode .related-books h2 {color: #ddd;border-color: #333;}
+</style><style>
+.book-cover {width: 130px;height: 180px;font-family: Arial, sans-serif;position: relative;overflow: hidden;box-shadow: 2px 2px 4px rgba(0,0,0,0.1);}
+.book-cover-bottom-stripe {position: absolute;bottom: 0;left: 0;height: 5px;width: 100%;}
+.book-cover-title {position: absolute;width: 100%;text-align: center;font-weight: bold;}
+.book-cover-icon {position: absolute;left: 50%;transform: translateX(-50%);display: flex;align-items: center;justify-content: center;}
+.book-cover-author {position: absolute;bottom: 10px;width: 100%;text-align: center;font-size: 8px;color: #333;}
+</style><style>
+.book-title-toc {font-size: 32px;font-weight: bold; }
+.book-subtitle-toc {font-size: 18px;margin-top: 8px;font-style: italic;}
+.book-header {text-align: center;margin-bottom: 40px;}
+
+.toc-container {border-radius: 10px;padding: 30px;margin-bottom: 40px;box-shadow: 0 8px 20px rgba(0,0,0,0.05);}
+h1 {font-size: 24px;text-align: center;margin-bottom: 30px;letter-spacing: 1px;padding-bottom: 10px;}
+.toc-list,.toc-section-list {list-style: none;padding: 0;margin: 0;}
+.toc-section-list {padding-left: 18px;margin-top: 6px;margin-bottom: 20px; }
+.toc-chapter {padding: 20px 0;}
+.chapter-title,.toc-section {display: flex;justify-content: space-between;padding-top: 4px;}
+.chapter-title {font-size: 17px;font-weight: bold;}
+.chapter-page,.section-page {font-style: italic;}
+ 
+ 
+.light-mode .book-title-toc,.light-mode .chapter-title,.light-mode .book-name {color: #222;}
+.light-mode .book-subtitle-toc,.light-mode .book-sub,.light-mode .chapter-page,.light-mode .section-page {color: #666;}
+.light-mode .toc-container { background: #fff;border: 1px solid #ddd;}
+.light-mode h1 {border-bottom: 2px solid #eee;color: #222;}
+.light-mode .toc-section {  color: #444;}
+
+.light-mode .book-cover { border: 1px solid #ccc;box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);}
+.light-mode .book-title,.light-mode .series-name {color: #fff;}
+.light-mode .book-subtitle,.light-mode .book-footer {color: #aaa;}
+
+.dark-mode .book-title-toc,.dark-mode .chapter-title,.dark-mode .book-name {color: #f5f5f5;}
+.dark-mode .book-subtitle-toc,.dark-mode .book-sub,.dark-mode .chapter-page,.dark-mode .section-page {color: #aaa;}
+.dark-mode .toc-container {background: #1e1e1e;border: 1px solid #444;}
+
+.dark-mode h1 {border-bottom: 2px solid #333;color: #eee;}
+.dark-mode .toc-section {color: #bbb;}
+
+.dark-mode .related-books h2 {color: #ddd;border-bottom: 2px solid #333;}
+.dark-mode .book-title,.dark-mode .series-name {color: #fff;}
+.dark-mode .book-subtitle,.dark-mode .book-footer {color: #bbb;}
+.dark-mode .toc-section {color: #ddd;}
+
+@media (max-width: 600px) {
+  .chapter-title,
+  .toc-section {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .chapter-page,
+  .section-page {
+    margin-top: 4px;
+  }
+}
+
+</style><style>
+.light-mode .container {box-shadow: 0 0 15px rgba(0,0,0,0.1);}
+.dark-mode .container {box-shadow: 0 0 15px rgba(255, 255, 255, 0.05);}
+
+h1, h2, h3 {font-weight: 600;margin-top: 2.5rem;margin-bottom: 1rem;line-height: 1.2;}
+h1 { font-size: 1.8rem; }
+h2 { font-size: 1.4rem; }
+h3 { font-size: 1.2rem; }
+
+table {width: 100%;border-collapse: collapse;font-family: sans-serif;font-size: 1em;margin: 1em 0;}
+th, td {padding: 0.6em 1em;text-align: left;border: 1px solid;}
+tr:nth-child(even) {  background-color: inherit;}
+tr:hover { background-color: inherit;}
+
+code {color: #d35400;}
+
+.chapter-navi-section {display: flex;justify-content: space-between;align-items: center;padding-bottom: 10px;padding-top: 10px;}
+.nav-link {color: inherit;text-decoration: none;opacity: 0.5;transition: opacity 0.3s ease, text-decoration 0.3s ease;}
+.nav-link:hover {opacity: 0.9;text-decoration: underline;}
+.prev { text-align: left; }
+.toc-link { text-align: center; }
+.next { text-align: right; }
+
+.download-section {display: flex;align-items: center;justify-content: center;gap: 2rem;padding: 2rem 1rem;max-width: 600px;margin: 3rem auto;border-radius: 12px;box-shadow: 0 4px 10px rgba(0,0,0,0.05);}
+.download-info h2 {margin: 0 0 0.5rem;font-size: 1.2rem;}
+.format-label {margin: 0 0 0.5rem;font-size: 0.95rem;}
+.download-buttons {display: flex;gap: 1rem;}
+.download-button {background-color: #4A90E2;color: white;padding: 0.5em 1.2em;border-radius: 25px;font-size: 0.95rem;text-decoration: none;transition: background-color 0.3s ease;}
+.download-button:hover {background-color: #357ABD;}
+
+.code-block {position: relative;margin-bottom: 1em;}
+.copy-button {background: transparent;color: white;position: absolute;top: 8px;right: 8px;border: none;padding: 4px 8px;font-size: 12px;border-radius: 4px;cursor: pointer;z-index: 1;}
+.copy-button:hover {background-color: #0056b3;}
+
+.snippet-container {overflow: hidden;}
+.snippet-header {padding: 0.75rem 1rem;cursor: pointer;font-size: 1rem;background-color: #eeeeee;color:  #111111; border-radius: 8px;cursor: pointer;box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+.snippet-body {display: none;font-family: monospace;}
+.snippet-container.open .snippet-body {display: block;}
+
+.CodeMirror {border: 2px solid #ccc;border-radius: 4px;resize: vertical;}
+
+.light-mode .format-label {color: #888;}
+.light-mode th {background-color: #f2f2f2;}
+.light-mode tr:nth-child(even) {background-color: #fafafa;}
+.light-mode tr:hover {background-color: #e6f7ff;}
+
+.dark-mode .snippet-header {background-color: #333;color:  #ddd; }
+.dark-mode .format-label {color: #aaa;}
+.dark-mode th {background-color: #333;color: #fff;}
+.dark-mode td {border-color: #444;}
+.dark-mode tr:nth-child(even) {background-color: #2a2a2a;}
+.dark-mode tr:hover {background-color: #2c3e50;}
+
+
+.button-group-run-edit {display: flex;width: 100%;gap: 1rem;}
+.button-run-edit {flex: 1;padding: 1rem;font-size: 1rem;font-weight: 600;border: none;border-radius: 8px;cursor: pointer;transition: background 0.3s, color 0.3s;}
+
+.light-mode .button-run-edit {background-color: #f0f0f0;color: #222;box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);}
+.light-mode .button-run-edit:hover {background-color: #e0e0e0;}
+
+.dark-mode .button-run-edit {background-color: #2a2a2a;color: #f5f5f5;box-shadow: 0 0 10px rgba(255, 255, 255, 0.05);}
+.dark-mode .button-run-edit:hover {background-color: #3a3a3a;}
+
+button { padding: 0.5em 1em; background: green; color: white; border: none; cursor: pointer; }
+button:hover { background: #1e7e34; }
+.result_iframe { width:99%; margin-top: 1em;  resize: both;background-color: #515b63;border:1px solid #ccc;}   
+
+.dialog-backdrop {position: fixed;top: 0;left: 0;width: 100vw;height: 100vh;background: rgba(0,0,0,0.5);display: none;justify-content: center;align-items: center;z-index: 10;}
+.dialog {background: #90979e;padding: 20px;width: 90vw;height: 80vh;border-radius: 8px;box-shadow: 0 0 20px rgba(0,0,0,0.3);display: flex;flex-direction: column;}
+.dialog-content {display: flex;gap: 20px;margin-top: 10px;height: calc(100% - 40px);}
+.editor-container, .preview-container {flex: 1;height: 100%;max-height: 100%;overflow: hidden; }
+.result_iframe_dialog {width: 100%;height: 100%;resize: both;border:1px solid #ccc;overflow: auto; }   
+.CodeMirror {width: 100% !important;height: 100% !important;}
+</style><script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/javascript/javascript.min.js"></script>
 <script>
-  const codeMirrorMap = new Map();
-  const iframeMap = new Map();
-  
- 
-
-  let dismissTimer;
-  function showFloatingLog(message) {
-	const floatingLog = document.getElementById('floatingLog');
-
-    if (floatingLog.style.display !== 'block') {
-      floatingLog.textContent = '';
-      floatingLog.style.display = 'block'; 
-    }
-
-    floatingLog.textContent += message + '\n';
-    floatingLog.scrollTop = floatingLog.scrollHeight; 
-    clearTimeout(dismissTimer);
-    dismissTimer = setTimeout(() => {
-      floatingLog.style.display = 'none';
-      floatingLog.textContent = '';
-    }, 2000);
-  }
-  window.addEventListener('message', (event) => {
-	    if (!iframeMap.has(event.source)) return;
-
-	    if (event.data?.type === 'console-log') {
-	      showFloatingLog(event.data.message);
-	    }
-  });  
-  function renderIframe(button,textarea_id, iframe_id) {
-      const html = codeMirrorMap.get(textarea_id).getValue();
-      const iframe = document.getElementById(iframe_id);
-  
-      const oldIframe = iframe;
-      const newIframe = document.createElement('iframe');
-      newIframe.className ="result_iframe";
-      
-      newIframe.id = iframe_id;
-      oldIframe.replaceWith(newIframe);
- 
-
-      // Track the iframe in the map
-      iframeMap.set(newIframe.contentWindow, button);
-
-      const overrideScript = `
-        <script>
-          (function() {
-            const originalLog = console.log;
-            console.log = function(...args) {
-              originalLog.apply(console, args);
-              window.parent.postMessage({
-                type: 'console-log',
-                message: args.map(a => {
-                  try { return JSON.stringify(a); }
-                  catch { return String(a); }
-                }).join(' ')
-              }, '*');
-            };
-          })();
-        <\/script>
-      `;
-
-      const iframeHTML = `
-        <!DOCTYPE html>
-        <html>
-        <body>
-          ${overrideScript}
-          ${html}
-        </body>
-        </html>
-      `;
- 
-      const doc = newIframe.contentDocument || newIframe.contentWindow.document;
-      doc.open();
-      doc.write(iframeHTML);
-      doc.close();
-
-      
-      setTimeout(() => {
-    	  newIframe.style.height = '0px';
-    	   let contentHeight = Math.max(doc.body.scrollHeight,doc.documentElement.scrollHeight);
- 
-    	//   if(contentHeight < 150 || contentHeight > 600){
-    	//	   contentHeight = 600;
-    	 //  } 
-    	   newIframe.style.height = contentHeight + 'px';
-    	}, 50);      
-      
-  }
-  function renderIframeForClientTypescript(textarea_id, iframe_id) {
-      let code = codeMirrorMap.get(textarea_id).getValue();
-      code = ts.transpile(code);
-      const iframe = document.getElementById(iframe_id);
-      const doc = iframe.contentDocument || iframe.contentWindow.document;
-
-const html = `
-  <!DOCTYPE html>
-  <html>
-    <head>
-      <title>Output</title>
-      <style>
-        body { font-family: monospace; padding: 1em; background: #f4f4f4; color: #222; }
-        pre { white-space: pre-wrap; word-break: break-word; }
-        .error { color: red; }
-      </style>
-    </head>
-    <body>
-      <pre id="log"></pre>
-      <script>
-        (function(){
-          const logEl = document.getElementById('log');
-          const origLog = console.log;
-          const origError = console.error;
-
-          console.log = (...args) => {
-            logEl.textContent += args.join(' ') + '\\n';
-            origLog.apply(console, args);
-          };
-          console.table = (...args) => {
-            logEl.textContent += args.join(' ') + '\\n';
-            origLog.apply(console, args);
-          };
-
-          console.error = (...args) => {
-            logEl.innerHTML +='<span class="error">' + args.join(' ') + '</span>';
-            origError.apply(console, args);
-          };
-          window.addEventListener("error", function (event) {
-              console.error("Caught by event listener:", event.message);
-          });    
-          try {             
-              ${code};
-          } catch (err) {
-            console.error(err.stack || err.message);
-          }
-        })();
-      <\/script>
-    </body>
-  </html>
-`;
-
-      iframe.style.display = "block";
-      iframe.srcdoc = html;  
-  }
-
-    function renderIframeForClientJavascript(textarea_id, iframe_id) {
-        const code = codeMirrorMap.get(textarea_id).getValue();
+  const javascriptCodeMirrorMap = new Map();
+  function runJavascriptCode(button,textarea_id, iframe_id) {
+        const code = javascriptCodeMirrorMap.get(textarea_id).getValue();
         const iframe = document.getElementById(iframe_id);
         const doc = iframe.contentDocument || iframe.contentWindow.document;
 
@@ -237,469 +210,41 @@ const html = `
   `;
         iframe.style.display = "block";
         iframe.srcdoc = html;  
+iframe.onload = function () {
+  const doc = iframe.contentDocument || iframe.contentWindow.document;
+  const contentHeight = Math.max(
+    doc.body.scrollHeight,
+    doc.documentElement.scrollHeight
+  );
+  iframe.style.height = contentHeight + 'px';
+};
+        
     }
-    function toggleSnippetAndRefresh(id, textarea_id) {
-      const box = document.getElementById(id);
-      box.classList.toggle("open");
-      codeMirrorMap.get(textarea_id).refresh();
-    }
-
-  </script>
-  <script>
-  const mode = localStorage.getItem('mode') || 'light';
-  document.documentElement.classList.add(`${mode}-mode`);
-  </script>   
-<style> 
-html {
-  scroll-behavior: smooth;
+function openEditJavascriptCodeDialog(id, textarea_id) {
+		        closeAllJavascriptCodeDialog();
+		        document.getElementById(id).style.display = 'flex';
+         
+ 	        setTimeout(() => {
+		        	 javascriptCodeMirrorMap.get(textarea_id).refresh();
+                   
+ 	        }, 100); // 100ms 
 }
 
-body {
-  font-family: 'Merriweather', serif;
-  margin: 0;
-  padding: 2rem 1rem;
-  font-size: 15px;
-  line-height: 1.5;
-  transition: background-color 0.3s, color 0.3s;
-}
-
-.container {
-  max-width: 700px;
-  margin: 0 auto;
-  padding: 1rem 2rem;
-  box-shadow: 0 0 15px rgba(0,0,0,0.1);
-}
-
-h1, h2, h3 {
-  font-weight: 600;
-  margin-top: 2.5rem;
-  margin-bottom: 1rem;
-  line-height: 1.2;
-}
-
-h1 { font-size: 1.8rem; }
-h2 { font-size: 1.4rem; }
-h3 { font-size: 1.2rem; }
-
-table {
-  width: 100%;
-  border-collapse: collapse;
-  font-family: sans-serif;
-  font-size: 1em;
-  margin: 1em 0;
-}
-
-th, td {
-  padding: 0.6em 1em;
-  text-align: left;
-  border: 1px solid;
-}
-
-tr:nth-child(even) {
-  background-color: inherit;
-}
-
-tr:hover {
-  background-color: inherit;
-}
-
-a {
-  text-decoration: none;
-  transition: color 0.2s;
-}
-
-a:hover {
-  text-decoration: underline;
-}
-
-code {
-  color: #d35400;
-}
-
-.book-title-chapter {
-  font-family: 'Merriweather', serif;
-  font-size: 2rem;
-  font-weight: bold;
-  text-align: center;
-  margin-bottom: 2rem;
-  border-bottom: 2px solid;
-  padding-bottom: 0.5rem;
-}
-
-.book-subtitle-chapter {
-  text-align: center;
-  font-size: 1rem;
-  margin-top: -1rem;
-  margin-bottom: 2rem;
-}
-
-.related-books {
-  margin-top: 40px;
-}
-
-.related-book-list {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 20px;
-}
-
-    .book-cover {
-      width: 130px;
-      height: 180px;
-      font-family: Arial, sans-serif;
-      position: relative;
-      overflow: hidden;      
-      line-height: normal;
-      box-shadow: 2px 2px 4px rgba(0,0,0,0.1);
-    }
-    .book-cover-bottom-stripe {
-      position: absolute;
-      bottom: 0;
-      left: 0;
-      height: 5px;
-      width: 100%;
-    }
-    .book-cover-title {
-      position: absolute;
-      width: 100%;
-      text-align: center;
-      font-weight: bold;
-    }
-     
-    .book-cover-icon {
-      position: absolute;
-      left: 50%;
-      transform: translateX(-50%);
-      display: flex;
-      align-items: center;
-      justify-content: center; 
-    }
-
-    .book-cover-author {
-      position: absolute;
-      bottom: 10px;
-      width: 100%;
-      text-align: center;
-      font-size: 8px;
-      color: #333;
-    }
-
-.page-footer {
-  margin-top: 4rem;
-  padding: 1rem 0;
-  text-align: center;
-  font-size: 0.85rem;
-  border-top: 1px solid;
-}
-
-.chapter-navi-section {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding-bottom: 10px;
-}
-
-.nav-link {
-  color: inherit;
-  text-decoration: none;
-  opacity: 0.5;
-  transition: opacity 0.3s ease, text-decoration 0.3s ease;
-}
-
-.nav-link:hover {
-  opacity: 0.9;
-  text-decoration: underline;
-}
-
-.prev { text-align: left; }
-.toc-link { text-align: center; }
-.next { text-align: right; }
-
-.download-section {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 2rem;
-  padding: 2rem 1rem;
-  max-width: 600px;
-  margin: 3rem auto;
-  border-radius: 12px;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-}
-
-.download-info h2 {
-  margin: 0 0 0.5rem;
-  font-size: 1.2rem;
-}
-
-.format-label {
-  margin: 0 0 0.5rem;
-  font-size: 0.95rem;
-}
-
-.download-buttons {
-  display: flex;
-  gap: 1rem;
-}
-
-.download-button {
-  background-color: #4A90E2;
-  color: white;
-  padding: 0.5em 1.2em;
-  border-radius: 25px;
-  font-size: 0.95rem;
-  text-decoration: none;
-  transition: background-color 0.3s ease;
-}
-
-.download-button:hover {
-  background-color: #357ABD;
-}
-
-.code-block {
-  position: relative;
-  margin-bottom: 1em;
-}
-
-.copy-button {
-  background: transparent;
-  color: white;
-  position: absolute;
-  top: 8px;
-  right: 8px;
-  border: none;
-  padding: 4px 8px;
-  font-size: 12px;
-  border-radius: 4px;
-  cursor: pointer;
-  z-index: 1;
-}
-
-.copy-button:hover {
-  background-color: #0056b3;
-}
-
-.snippet-container {
-  overflow: hidden;
-}
-
-.snippet-header {
-  padding: 0.75rem 1rem;
-  cursor: pointer;
-  font-size: 1rem;
-    background-color: #eeeeee;
-    color:  #111111; 
-    border-radius: 8px;
-    cursor: pointer;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.1);  
-}
-
-.snippet-body {
-  display: none;
-  font-family: monospace;
-}
-
-.snippet-container.open .snippet-body {
-  display: block;
-}
-
-.CodeMirror {
-  border: 2px solid #ccc;
-  border-radius: 4px;
-  resize: vertical;
-}
-
-/* === Light Mode === */
-html.light-mode {
-  background-color: #f8f7f5;
-  color: #333;
-}
-
-html.light-mode .container {
-  background: white;
-}
-
-html.light-mode .book-title-chapter {
-  color: #2c3e50;
-  border-color: #ccc;
-}
-html.light-mode .book-subtitle-chapter{
-  color: #888;
-}
-
-html.light-mode .page-footer,
-html.light-mode .series-name,
-html.light-mode .book-subtitle,
-html.light-mode .format-label {
-  color: #888;
-}
-
-html.light-mode .related-books h2 {
-  color: #333;
-  border-bottom: 2px solid #eee;
-}
-
-html.light-mode .book-title {
-  color: #fff;
-}
-
-html.light-mode .book-cover {
-  border: 1px solid #ccc;
-}
-
-html.light-mode th {
-  background-color: #f2f2f2;
-}
-
-html.light-mode tr:nth-child(even) {
-  background-color: #fafafa;
-}
-
-html.light-mode tr:hover {
-  background-color: #e6f7ff;
-}
-
-html.light-mode a,
-html.light-mode .page-footer a {
-  color: #000;
-}
-
-/* === Dark Mode === */
-html.dark-mode {
-  background-color: #181818;
-  color: #e0e0e0;
-}
-
-html.dark-mode .container {
-  background: #222;
-}
-
-html.dark-mode .book-title-chapter {
-  color: #ddd;
-  border-color: #444;
-}
-
-html.dark-mode .snippet-header {
-    background-color: #333;
-    color:  #ddd; 
-}
-
-
-html.dark-mode .book-subtitle-chapter,
-html.dark-mode .page-footer,
-html.dark-mode .series-name,
-html.dark-mode .book-subtitle,
-html.dark-mode .book-footer,
-html.dark-mode .format-label {
-  color: #aaa;
-}
-
-html.dark-mode .related-books h2 {
-  color: #ddd;
-  border-bottom: 2px solid #333;
-}
-
-html.dark-mode .book-title {
-  color: #fff;
-}
-
-html.dark-mode .book-cover {
-  border: 1px solid #555;
-}
-
-html.dark-mode th {
-  background-color: #333;
-  color: #fff;
-}
-
-html.dark-mode td {
-  border-color: #444;
-}
-
-html.dark-mode tr:nth-child(even) {
-  background-color: #2a2a2a;
-}
-
-html.dark-mode tr:hover {
-  background-color: #2c3e50;
-}
-
-html.dark-mode a,
-html.dark-mode .page-footer a {
-  color: #eee;
-}
-
-    .dialog-backdrop {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100vw;
-      height: 100vh;
-      background: rgba(0,0,0,0.5);
-      display: none;
-      justify-content: center;
-      align-items: center;
-      z-index: 10;
-    }
-
-    .dialog {
-      background: white;
-      padding: 20px;
-      width: 90vw;
-      height: 80vh;
-      border-radius: 8px;
-      box-shadow: 0 0 20px rgba(0,0,0,0.3);
-      display: flex;
-      flex-direction: column;
-    }
-    .dialog-content {
-      display: flex;
-      flex: 1;
-      gap: 20px;
-      margin-top: 10px;
-    }
-    .dialog h2 {
-      margin-top: 0;
-    }
-
-    .textarea_dialog {
-      width: 50%;
-      height: 100%;
-      resize: none;
-      font-family: monospace;
-      font-size: 14px;
-      padding: 10px;
-      box-sizing: border-box;
-      border: 1px solid #ccc;
-    }
-
-    .iframe_dialog {
-      width: 50%;
-      height: 100%;
-      border: 1px solid #ccc;
-    }
-    .controls_dialog {
-      display: flex;
-      justify-content: space-between;
-      margin-top: 10px;
-    }    
-    button { padding: 0.5em 1em; background: green; color: white; border: none; cursor: pointer; }
-    button:hover { background: #1e7e34; }
-    .result_iframe { width:99%; height:200px; margin-top: 1em;  resize: both;border:1px solid #ccc;}        
-</style>
+function closeAllJavascriptCodeDialog() {
+		        document.querySelectorAll('.dialog-backdrop').forEach(el => {
+		          el.style.display = 'none';
+		        });
+}		
+</script>
 </head>
-<body> 
-  <div class="container">
-    <div class = "chapter-navi-section">
+<body>
+<script>const mode = localStorage.getItem('mode') || 'light';document.documentElement.classList.add(`${mode}-mode`);</script>  
+<div class="container"><div class = "chapter-navi-section">
 <a href="javascript-object-oriented-programming-asynchronous-programming-and-oop.htm" class="nav-button prev">←</a>
 <a href='javascript-object-oriented-programming.htm#design-patterns-in-javascript-oop' class="nav-button toc-link">Index</a>
 <a href="javascript-object-oriented-programming-testing-object-oriented-javascript.htm" class="nav-button next">→</a>
 </div>
-
-    <h1 class="book-title-chapter" id = 'top'>Design Patterns in JavaScript OOP</h1>
-    <h3 class="book-subtitle-chapter">JavaScript Object-Oriented Programming</h3>   
-    <!-- <h1 class ="chapter-title"></h1> -->
-    <h2 id='singleton-pattern'>16.1 Singleton Pattern</h2><p>The <strong>Singleton</strong> pattern is a design principle that ensures a class has only <strong>one single instance</strong> throughout the entire application. Moreover, it provides a <strong>global access point</strong> to that instance, allowing consistent and centralized management of shared resources or state.</p><p>Think of a Singleton like a <strong>single control tower</strong> at an airport — no matter how many flights there are, all communication passes through one central entity to keep everything coordinated.</p><h3 id="why-use-the-singleton-pattern">Why Use the Singleton Pattern?</h3><p>Singletons are especially useful when you need to:</p><ul>
+<div class='book-header'><h1 class='book-title-toc' id = 'top'>Design Patterns in JavaScript OOP</h1><h3 class='book-subtitle-toc'>JavaScript Object-Oriented Programming</h3></div><h2 id='singleton-pattern'>16.1 Singleton Pattern</h2><p>The <strong>Singleton</strong> pattern is a design principle that ensures a class has only <strong>one single instance</strong> throughout the entire application. Moreover, it provides a <strong>global access point</strong> to that instance, allowing consistent and centralized management of shared resources or state.</p><p>Think of a Singleton like a <strong>single control tower</strong> at an airport — no matter how many flights there are, all communication passes through one central entity to keep everything coordinated.</p><h3 id="why-use-the-singleton-pattern">Why Use the Singleton Pattern?</h3><p>Singletons are especially useful when you need to:</p><ul>
  <li><strong>Manage shared resources</strong> like database connections, logging services, or caches, ensuring there aren’t multiple conflicting instances.</li>
  <li>Maintain <strong>application-wide configuration</strong> or state that must be consistent and accessible from various parts of your app.</li>
  <li>Provide a <strong>centralized point of control</strong> without resorting to global variables, which can pollute the global namespace.</li>
@@ -736,11 +281,16 @@ console.log(logger1 === logger2); // true, both are the same instance
 
 logger1.log("Singleton pattern in action!");</code></pre>
  </div>
- <div class="snippet-container" id="FVdzT">
-  <div class="snippet-header" onclick="toggleSnippetAndRefresh('FVdzT','LpmMK')">
-   Try it in editor
-  </div>
-  <div class="snippet-body"><textarea id="LpmMK">const Logger = (function () {
+ <div class="snippet-container">
+  <div class="button-group-run-edit"><button class="button-run-edit" onclick="runJavascriptCode(this,'7Gg89','DVsgr')">Run</button> <button class="button-run-edit" onclick="openEditJavascriptCodeDialog('DVsgr_Dialog','7Gg89')">Edit</button>
+  </div> <iframe id="DVsgr" class="result_iframe" style="display: none;"></iframe>
+  <div id="DVsgr_Dialog" class="dialog-backdrop">
+   <div class="dialog">
+    <div class="controls"><button onclick="runJavascriptCode(this,'7Gg89','DVsgr_IFrame')">Run</button> <button onclick="closeAllJavascriptCodeDialog()">Close</button>
+    </div>
+    <div class="dialog-content">
+     <div class="editor-container">
+      <textarea id="7Gg89" class="textarea_dialog" placeholder="Type HTML here...">const Logger = (function () {
   let instance;
 
   function createInstance() {
@@ -766,26 +316,38 @@ const logger2 = Logger.getInstance();
 
 console.log(logger1 === logger2); // true, both are the same instance
 
-logger1.log("Singleton pattern in action!");</textarea> <br> <button onclick="renderIframeForClientJavascript('LpmMK','PuOfV')">Run</button> <iframe id="PuOfV" class="result_iframe" style="display: none;"></iframe>
-   <script>
-  {let editor1 = CodeMirror.fromTextArea(document.getElementById("LpmMK"), {
-    mode: "javascript",
-    lineNumbers:false,
-    tabSize: 2
-    });
-    const mode = localStorage.getItem("mode") || "light";  
-    const newTheme = mode === "dark" ? "material" : "default";
-    editor1.setOption("theme", newTheme);
-
-    codeMirrorMap.set("LpmMK", editor1);}
-  </script>
+logger1.log("Singleton pattern in action!");</textarea>
+     </div>
+     <div class="preview-container">
+      <iframe id="DVsgr_IFrame" class="result_iframe_dialog" style="border: none;"></iframe>
+     </div>
+    </div>
+   </div>
   </div>
+  <script>
+{
+let editor = CodeMirror.fromTextArea(document.getElementById("7Gg89"), {
+					mode : "javascript",
+					lineNumbers : false,
+          lineWrapping: true,
+					tabSize : 2
+});
+
+const darkmode = localStorage.getItem("mode") || "light";  
+const newTheme = darkmode === "dark" ? "dracula" : "default";
+editor.setSize("50%", "100%");
+editor.setOption("theme", newTheme);
+javascriptCodeMirrorMap.set("7Gg89", editor);
+}
+
+</script>
  </div>
 </div><p>In this example:</p><ul>
  <li>The <code>Logger</code> module keeps a private <code>instance</code> variable.</li>
  <li>The first call to <code>getInstance()</code> creates and returns the single instance.</li>
  <li>Subsequent calls return the same instance, guaranteeing only one logger exists.</li>
-</ul><h3 id="singleton-with-es6-modules">Singleton with ES6 Modules</h3><p>Thanks to the ES6 module system, you can create singletons simply by exporting an instance directly:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</ul><h3 id="singleton-with-es6-modules">Singleton with ES6 Modules</h3><p>Thanks to the ES6 module system, you can create singletons simply by exporting an instance directly:</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-js">// config.js
 class Config {
   constructor() {
@@ -855,11 +417,16 @@ shapes.forEach(shape =&gt; shape.draw());
 // Drawing a Square
 // Drawing a Circle</code></pre>
  </div>
- <div class="snippet-container" id="EK42L">
-  <div class="snippet-header" onclick="toggleSnippetAndRefresh('EK42L','Kt08E')">
-   Try it in editor
-  </div>
-  <div class="snippet-body"><textarea id="Kt08E">// Base classes
+ <div class="snippet-container">
+  <div class="button-group-run-edit"><button class="button-run-edit" onclick="runJavascriptCode(this,'V3O2b','Uihs2')">Run</button> <button class="button-run-edit" onclick="openEditJavascriptCodeDialog('Uihs2_Dialog','V3O2b')">Edit</button>
+  </div> <iframe id="Uihs2" class="result_iframe" style="display: none;"></iframe>
+  <div id="Uihs2_Dialog" class="dialog-backdrop">
+   <div class="dialog">
+    <div class="controls"><button onclick="runJavascriptCode(this,'V3O2b','Uihs2_IFrame')">Run</button> <button onclick="closeAllJavascriptCodeDialog()">Close</button>
+    </div>
+    <div class="dialog-content">
+     <div class="editor-container">
+      <textarea id="V3O2b" class="textarea_dialog" placeholder="Type HTML here...">// Base classes
 class Circle {
   draw() {
     console.log("Drawing a Circle");
@@ -895,26 +462,38 @@ shapes.forEach(shape =&gt; shape.draw());
 // Output:
 // Drawing a Circle
 // Drawing a Square
-// Drawing a Circle</textarea> <br> <button onclick="renderIframeForClientJavascript('Kt08E','ZEOjf')">Run</button> <iframe id="ZEOjf" class="result_iframe" style="display: none;"></iframe>
-   <script>
-  {let editor1 = CodeMirror.fromTextArea(document.getElementById("Kt08E"), {
-    mode: "javascript",
-    lineNumbers:false,
-    tabSize: 2
-    });
-    const mode = localStorage.getItem("mode") || "light";  
-    const newTheme = mode === "dark" ? "material" : "default";
-    editor1.setOption("theme", newTheme);
-
-    codeMirrorMap.set("Kt08E", editor1);}
-  </script>
+// Drawing a Circle</textarea>
+     </div>
+     <div class="preview-container">
+      <iframe id="Uihs2_IFrame" class="result_iframe_dialog" style="border: none;"></iframe>
+     </div>
+    </div>
+   </div>
   </div>
+  <script>
+{
+let editor = CodeMirror.fromTextArea(document.getElementById("V3O2b"), {
+					mode : "javascript",
+					lineNumbers : false,
+          lineWrapping: true,
+					tabSize : 2
+});
+
+const darkmode = localStorage.getItem("mode") || "light";  
+const newTheme = darkmode === "dark" ? "dracula" : "default";
+editor.setSize("50%", "100%");
+editor.setOption("theme", newTheme);
+javascriptCodeMirrorMap.set("V3O2b", editor);
+}
+
+</script>
  </div>
 </div><p>In this example:</p><ul>
  <li>The <code>shapeFactory</code> function encapsulates the logic deciding which shape to create.</li>
  <li>The client code simply calls <code>shapeFactory</code> with the desired type and works with the returned object polymorphically.</li>
  <li>Adding a new shape requires only adding a new class and extending the factory logic.</li>
-</ul><h3 id="using-factory-classes">Using Factory Classes</h3><p>You can also create a dedicated factory class to manage object creation:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</ul><h3 id="using-factory-classes">Using Factory Classes</h3><p>You can also create a dedicated factory class to manage object creation:</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-js">class ShapeFactory {
   createShape(type) {
     switch (type.toLowerCase()) {
@@ -1008,11 +587,16 @@ subject.notify('Event B');
 // Output:
 // Observer 2 received data: Event B</code></pre>
  </div>
- <div class="snippet-container" id="WJSRi">
-  <div class="snippet-header" onclick="toggleSnippetAndRefresh('WJSRi','YbPY8')">
-   Try it in editor
-  </div>
-  <div class="snippet-body"><textarea id="YbPY8">// Subject class
+ <div class="snippet-container">
+  <div class="button-group-run-edit"><button class="button-run-edit" onclick="runJavascriptCode(this,'f6kXm','beqSz')">Run</button> <button class="button-run-edit" onclick="openEditJavascriptCodeDialog('beqSz_Dialog','f6kXm')">Edit</button>
+  </div> <iframe id="beqSz" class="result_iframe" style="display: none;"></iframe>
+  <div id="beqSz_Dialog" class="dialog-backdrop">
+   <div class="dialog">
+    <div class="controls"><button onclick="runJavascriptCode(this,'f6kXm','beqSz_IFrame')">Run</button> <button onclick="closeAllJavascriptCodeDialog()">Close</button>
+    </div>
+    <div class="dialog-content">
+     <div class="editor-container">
+      <textarea id="f6kXm" class="textarea_dialog" placeholder="Type HTML here...">// Subject class
 class Subject {
   constructor() {
     this.observers = [];
@@ -1064,20 +648,31 @@ subject.unsubscribe(observer1);
 
 subject.notify('Event B'); 
 // Output:
-// Observer 2 received data: Event B</textarea> <br> <button onclick="renderIframeForClientJavascript('YbPY8','FLLDa')">Run</button> <iframe id="FLLDa" class="result_iframe" style="display: none;"></iframe>
-   <script>
-  {let editor1 = CodeMirror.fromTextArea(document.getElementById("YbPY8"), {
-    mode: "javascript",
-    lineNumbers:false,
-    tabSize: 2
-    });
-    const mode = localStorage.getItem("mode") || "light";  
-    const newTheme = mode === "dark" ? "material" : "default";
-    editor1.setOption("theme", newTheme);
-
-    codeMirrorMap.set("YbPY8", editor1);}
-  </script>
+// Observer 2 received data: Event B</textarea>
+     </div>
+     <div class="preview-container">
+      <iframe id="beqSz_IFrame" class="result_iframe_dialog" style="border: none;"></iframe>
+     </div>
+    </div>
+   </div>
   </div>
+  <script>
+{
+let editor = CodeMirror.fromTextArea(document.getElementById("f6kXm"), {
+					mode : "javascript",
+					lineNumbers : false,
+          lineWrapping: true,
+					tabSize : 2
+});
+
+const darkmode = localStorage.getItem("mode") || "light";  
+const newTheme = darkmode === "dark" ? "dracula" : "default";
+editor.setSize("50%", "100%");
+editor.setOption("theme", newTheme);
+javascriptCodeMirrorMap.set("f6kXm", editor);
+}
+
+</script>
  </div>
 </div><h3 id="relation-to-javascripts-native-event-systems">Relation to JavaScripts Native Event Systems</h3><ul>
  <li>The <strong>DOM event system</strong> follows the Observer pattern where event listeners subscribe to DOM elements, waiting for events like clicks or keypresses.</li>
@@ -1129,11 +724,16 @@ calc.add(2, 3);
 // Calling add with arguments: [2, 3]
 // Result of add: 5</code></pre>
  </div>
- <div class="snippet-container" id="2pA6W">
-  <div class="snippet-header" onclick="toggleSnippetAndRefresh('2pA6W','TVr4g')">
-   Try it in editor
-  </div>
-  <div class="snippet-body"><textarea id="TVr4g">// Original class
+ <div class="snippet-container">
+  <div class="button-group-run-edit"><button class="button-run-edit" onclick="runJavascriptCode(this,'XkXOv','H2aac')">Run</button> <button class="button-run-edit" onclick="openEditJavascriptCodeDialog('H2aac_Dialog','XkXOv')">Edit</button>
+  </div> <iframe id="H2aac" class="result_iframe" style="display: none;"></iframe>
+  <div id="H2aac_Dialog" class="dialog-backdrop">
+   <div class="dialog">
+    <div class="controls"><button onclick="runJavascriptCode(this,'XkXOv','H2aac_IFrame')">Run</button> <button onclick="closeAllJavascriptCodeDialog()">Close</button>
+    </div>
+    <div class="dialog-content">
+     <div class="editor-container">
+      <textarea id="XkXOv" class="textarea_dialog" placeholder="Type HTML here...">// Original class
 class Calculator {
   add(a, b) {
     return a + b;
@@ -1161,20 +761,31 @@ logDecorator(calc, 'add');
 calc.add(2, 3);
 // Output:
 // Calling add with arguments: [2, 3]
-// Result of add: 5</textarea> <br> <button onclick="renderIframeForClientJavascript('TVr4g','vL3Su')">Run</button> <iframe id="vL3Su" class="result_iframe" style="display: none;"></iframe>
-   <script>
-  {let editor1 = CodeMirror.fromTextArea(document.getElementById("TVr4g"), {
-    mode: "javascript",
-    lineNumbers:false,
-    tabSize: 2
-    });
-    const mode = localStorage.getItem("mode") || "light";  
-    const newTheme = mode === "dark" ? "material" : "default";
-    editor1.setOption("theme", newTheme);
-
-    codeMirrorMap.set("TVr4g", editor1);}
-  </script>
+// Result of add: 5</textarea>
+     </div>
+     <div class="preview-container">
+      <iframe id="H2aac_IFrame" class="result_iframe_dialog" style="border: none;"></iframe>
+     </div>
+    </div>
+   </div>
   </div>
+  <script>
+{
+let editor = CodeMirror.fromTextArea(document.getElementById("XkXOv"), {
+					mode : "javascript",
+					lineNumbers : false,
+          lineWrapping: true,
+					tabSize : 2
+});
+
+const darkmode = localStorage.getItem("mode") || "light";  
+const newTheme = darkmode === "dark" ? "dracula" : "default";
+editor.setSize("50%", "100%");
+editor.setOption("theme", newTheme);
+javascriptCodeMirrorMap.set("XkXOv", editor);
+}
+
+</script>
  </div>
 </div><p>In this example, the <code>logDecorator</code> wraps the <code>add</code> method of <code>Calculator</code> to inject logging behavior without modifying the class’s code.</p><h3 id="decorating-properties-and-validations">Decorating Properties and Validations</h3><p>Decorators can also be used to enhance properties, such as adding validation before setting a value:</p><div>
  <div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
@@ -1204,11 +815,16 @@ validatePositiveDecorator(product, 'price');
 product.price = 20;  // Works fine
 product.price = -5;  // Throws Error: price must be positive</code></pre>
  </div>
- <div class="snippet-container" id="JUrRz">
-  <div class="snippet-header" onclick="toggleSnippetAndRefresh('JUrRz','h4Q2X')">
-   Try it in editor
-  </div>
-  <div class="snippet-body"><textarea id="h4Q2X">function validatePositiveDecorator(obj, propertyName) {
+ <div class="snippet-container">
+  <div class="button-group-run-edit"><button class="button-run-edit" onclick="runJavascriptCode(this,'NsuNV','IfV2t')">Run</button> <button class="button-run-edit" onclick="openEditJavascriptCodeDialog('IfV2t_Dialog','NsuNV')">Edit</button>
+  </div> <iframe id="IfV2t" class="result_iframe" style="display: none;"></iframe>
+  <div id="IfV2t_Dialog" class="dialog-backdrop">
+   <div class="dialog">
+    <div class="controls"><button onclick="runJavascriptCode(this,'NsuNV','IfV2t_IFrame')">Run</button> <button onclick="closeAllJavascriptCodeDialog()">Close</button>
+    </div>
+    <div class="dialog-content">
+     <div class="editor-container">
+      <textarea id="NsuNV" class="textarea_dialog" placeholder="Type HTML here...">function validatePositiveDecorator(obj, propertyName) {
   let value = obj[propertyName];
 
   Object.defineProperty(obj, propertyName, {
@@ -1232,20 +848,31 @@ const product = { price: 10 };
 validatePositiveDecorator(product, 'price');
 
 product.price = 20;  // Works fine
-product.price = -5;  // Throws Error: price must be positive</textarea> <br> <button onclick="renderIframeForClientJavascript('h4Q2X','27G5V')">Run</button> <iframe id="27G5V" class="result_iframe" style="display: none;"></iframe>
-   <script>
-  {let editor1 = CodeMirror.fromTextArea(document.getElementById("h4Q2X"), {
-    mode: "javascript",
-    lineNumbers:false,
-    tabSize: 2
-    });
-    const mode = localStorage.getItem("mode") || "light";  
-    const newTheme = mode === "dark" ? "material" : "default";
-    editor1.setOption("theme", newTheme);
-
-    codeMirrorMap.set("h4Q2X", editor1);}
-  </script>
+product.price = -5;  // Throws Error: price must be positive</textarea>
+     </div>
+     <div class="preview-container">
+      <iframe id="IfV2t_IFrame" class="result_iframe_dialog" style="border: none;"></iframe>
+     </div>
+    </div>
+   </div>
   </div>
+  <script>
+{
+let editor = CodeMirror.fromTextArea(document.getElementById("NsuNV"), {
+					mode : "javascript",
+					lineNumbers : false,
+          lineWrapping: true,
+					tabSize : 2
+});
+
+const darkmode = localStorage.getItem("mode") || "light";  
+const newTheme = darkmode === "dark" ? "dracula" : "default";
+editor.setSize("50%", "100%");
+editor.setOption("theme", newTheme);
+javascriptCodeMirrorMap.set("NsuNV", editor);
+}
+
+</script>
  </div>
 </div><h3 id="decorators-vs-subclassing">Decorators vs. Subclassing</h3><p>While subclassing adds behavior statically at design time, decorators add behavior dynamically at runtime and can be composed or stacked to combine multiple enhancements.</p><h3 id="summary">Summary</h3><p>The Decorator pattern is a powerful technique to <strong>augment objects flexibly without modifying their core implementations</strong>. By wrapping objects, decorators enable the addition of cross-cutting concerns like logging, validation, caching, or more, promoting modular, maintainable, and reusable code.</p><p>Next, we will apply these design patterns in a practical chat application example.</p><div class = "chapter-navi-section">
 <a href="#top" class="nav-button prev">↑</a>
@@ -1257,7 +884,8 @@ product.price = -5;  // Throws Error: price must be positive</textarea> <br> <bu
  <li><strong>Factory</strong>: Create different types of messages (text, image)</li>
  <li><strong>Observer</strong>: Notify UI components about new messages</li>
  <li><strong>Decorator</strong>: Enhance messages with additional behavior (e.g., formatting or encryption)</li>
-</ul><h3 id="step-1-singleton-chatapp-state-manager">Step 1: Singleton ChatApp State Manager</h3><p>We want a single shared instance managing the chat state (messages, users, etc.). This prevents conflicting data and ensures centralized access.</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</ul><h3 id="step-1-singleton-chatapp-state-manager">Step 1: Singleton ChatApp State Manager</h3><p>We want a single shared instance managing the chat state (messages, users, etc.). This prevents conflicting data and ensures centralized access.</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-js">class ChatApp {
   constructor() {
     if (ChatApp.instance) {
@@ -1290,7 +918,8 @@ product.price = -5;  // Throws Error: price must be positive</textarea> <br> <bu
 const chatApp = new ChatApp();
 const chatApp2 = new ChatApp();
 console.log(chatApp === chatApp2);  // true</code></pre>
-</div><h3 id="step-2-factory-message-creation">Step 2: Factory Message Creation</h3><p>We need a flexible way to create different message types without cluttering the client code.</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</div><h3 id="step-2-factory-message-creation">Step 2: Factory Message Creation</h3><p>We need a flexible way to create different message types without cluttering the client code.</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-js">// Base Message class
 class Message {
   constructor(sender, content) {
@@ -1330,7 +959,8 @@ function MessageFactory(type, sender, content) {
       throw new Error(`Unknown message type: ${type}`);
   }
 }</code></pre>
-</div><h3 id="step-3-observer-ui-listener-for-new-messages">Step 3: Observer UI Listener for New Messages</h3><p>Our UI components can subscribe to new messages and update automatically when notified.</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</div><h3 id="step-3-observer-ui-listener-for-new-messages">Step 3: Observer UI Listener for New Messages</h3><p>Our UI components can subscribe to new messages and update automatically when notified.</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-js">class MessageListView {
   update(message) {
     console.log('New message received: ', message.display());
@@ -1341,7 +971,8 @@ function MessageFactory(type, sender, content) {
 // Subscribe to chat app notifications
 const messageListView = new MessageListView();
 chatApp.subscribe(messageListView);</code></pre>
-</div><h3 id="step-4-decorator-enhancing-messages">Step 4: Decorator Enhancing Messages</h3><p>Decorators let us extend messages dynamically, e.g., add encryption or formatting.</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</div><h3 id="step-4-decorator-enhancing-messages">Step 4: Decorator Enhancing Messages</h3><p>Decorators let us extend messages dynamically, e.g., add encryption or formatting.</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-js">// Decorator to add emoji to text messages
 function emojiDecorator(message) {
   const originalDisplay = message.display.bind(message);
@@ -1362,7 +993,8 @@ function encryptDecorator(message) {
   };
   return message;
 }</code></pre>
-</div><h3 id="step-5-putting-it-all-together">Step 5: Putting It All Together</h3><p>Here’s how the patterns integrate into real usage:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</div><h3 id="step-5-putting-it-all-together">Step 5: Putting It All Together</h3><p>Here’s how the patterns integrate into real usage:</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-js">// Get the singleton app instance
 const app = new ChatApp();
 
@@ -1381,17 +1013,18 @@ msg2 = encryptDecorator(msg2);
 // Add messages to app, which notifies observers
 app.addMessage(msg1);
 app.addMessage(msg2);</code></pre>
-</div><p><strong>Console output:</strong></p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</div><p><strong>Console output:</strong></p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-bash">New message received:  [12:00:00 PM] Alice: Hello! 😊
 New message received:  [12:00:01 PM] Bob: ]gpj.cip/lru.egami//:ptth[ 🔒</code></pre>
-</div><div class="snippet-container" id="6ql5K">
- <div class="snippet-header" onclick="toggleSnippet('6ql5K')">
+</div><div class="snippet-container" id="GIReT">
+ <div class="snippet-header" onclick="toggleSnippet('GIReT')">
   Click to view full runnable Code
  </div>
  <div class="snippet-body">
-  <div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
-   <pre><code class="language-js">
-// chat-app.js
+  <div class="code-block">
+   <button class="copy-button" onclick="copyCode(this)">▯</button>
+   <pre><code class="language-js">// chat-app.js
 
 // Step 1: Singleton - ChatApp State Manager
 class ChatApp {
@@ -1501,8 +1134,7 @@ function runChatAppDemo() {
   app.addMessage(msg2);
 }
 
-runChatAppDemo(); 
-</code></pre>
+runChatAppDemo();</code></pre>
   </div>
  </div>
 </div><h3 id="summary">Summary</h3><p>This example shows how combining design patterns helps build modular, maintainable applications:</p><ul>
@@ -1586,35 +1218,38 @@ runChatAppDemo();
 
 <a href='javascript.htm'><div class='book-cover' style='background-color: #f9f6f1;color: #111111;border: 1px solid #ccc;display: flex;justify-content: center;align-items: center;text-align: center;'>More Javascript Books</div></a>
 </div>
-</div>
-  </div>
-  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
-    <script>
-  function toggleSnippet(id) {
-      const box = document.getElementById(id);
-      box.classList.toggle("open");
-  }  
-  </script>
-  <script>
-    function copyCode(button) {
-      const code = button.nextElementSibling.innerText;
-      navigator.clipboard.writeText(code).then(() => {
-        button.textContent = 'Copied!';
-        setTimeout(() => { button.textContent = 'Copy'; }, 1500);
-      });
-    }
-  </script>  
-<div id="floatingLog" aria-live="polite" role="alert"></div>
-<footer class="page-footer">
-    <nav>
-      <a href="https://readbytes.github.io">Home</a> | 
-      Email:<script language="JavaScript" type="text/javascript">
+</div><script>
+function copyCode(button) {const code = button.nextElementSibling.innerText;navigator.clipboard.writeText(code).then(() => {button.textContent = 'Copied!';setTimeout(() => { button.textContent = 'Copy'; }, 1500);});}
+</script><script>
+function toggleSnippet(id) {const box = document.getElementById(id);box.classList.toggle("open");}  
+</script></div>
+<style>
+.site-footer {margin-top: 60px;padding: 20px 0;border-top: 1px solid #eee;text-align: center;font-size: 14px;}
+.site-footer a {text-decoration: none;}
+.light-mode .site-footer {color: #777;border-color: #eee;}
+.dark-mode .site-footer {color: #888;border-color: #333;}
+.light-mode .site-footer a {color: #555;}
+.dark-mode .site-footer a {color: #aaa;}
+.site-footer a:hover {text-decoration: underline;}    
+</style>
+<footer class="site-footer">
+<nav><a href="https://readbytes.github.io">Home</a> |Email:<script type="text/javascript">
 var part1 = 'yinpeng';var part6 = '263';var part2 = Math.pow(2,6);var part3 = String.fromCharCode(part2);var part4 = 'hotmail dot com';var part5 = part1 + String.fromCharCode(part2) + part4;document.write(part1 + part6 + part3 + part4);
 </script>
-    </nav>
-  <p>© 2025 — All rights reserved.</p>    
-  </footer>
-
+| <a id="mode-toggle" href="#">Toggle Dark Mode</a>
+</nav><p>© 2025 — All rights reserved.</p></footer>
+<script>
+const toggleButton = document.getElementById('mode-toggle');
+const body = document.body;
+const savedMode = localStorage.getItem('mode') || 'light';
+body.classList.add(savedMode + '-mode');
+toggleButton.addEventListener('click', () => {
+      const isDark = body.classList.contains('dark-mode');
+      body.classList.toggle('dark-mode', !isDark);
+      body.classList.toggle('light-mode', isDark);
+      localStorage.setItem('mode', isDark ? 'light' : 'dark');
+});
+function copyCode(button) {const code = button.nextElementSibling.innerText;navigator.clipboard.writeText(code).then(() => {button.textContent = 'Copied!';setTimeout(() => { button.textContent = 'Copy'; }, 1500);});}
+</script>
 </body>
 </html>

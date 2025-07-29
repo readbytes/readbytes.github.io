@@ -1,21 +1,281 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
+<meta charset="UTF-8">
 <title>jQuery In-Depth jQuery Effects and Animations</title>
-<link rel='shortcut icon' href='https://java2s.com/style/favicon.ico'>
+<link rel='shortcut icon' href='https://readbytes.github.io/images/favicon.ico'>
 <link href="https://fonts.googleapis.com/css2?family=Merriweather&display=swap" rel="stylesheet" />
 <link href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
-
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.css" />
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/theme/material.css"> <!-- Dark theme -->
-<script src="https://cdn.jsdelivr.net/npm/typescript@5/lib/typescript.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/htmlmixed/htmlmixed.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/theme/dracula.min.css"><style>
+html {scroll-behavior: smooth;}  
+body {font-family: 'Merriweather', serif;;margin: 0;padding: 2rem 1rem;font-size: 15px;line-height: 1.5;transition: background-color 0.3s, color 0.3s;}
+.container {max-width: 750px;margin: 0 auto;padding: 1rem 2rem;}
+.light-mode {background-color: #f8f7f5;color: #333;} 
+.dark-mode {background-color: #121212;color: #e0e0e0;}
+a { text-decoration: none;transition: color 0.2s;}
+a:hover {text-decoration: underline;}
+.light-mode a {color: #555;}
+.dark-mode a {color: #aaa;}
+</style><style>
+.related-book-list {display: flex;flex-wrap: wrap;gap: 20px;}
+.related-books {margin-top: 40px;}
+.related-books h2 {font-size: 22px;margin-bottom: 20px;border-bottom: 2px solid #eee;padding-bottom: 8px;}
+.light-mode .related-books h2 {color: #333;border-color: #eee;}
+.dark-mode .related-books h2 {color: #ddd;border-color: #333;}
+</style><style>
+.book-cover {width: 130px;height: 180px;font-family: Arial, sans-serif;position: relative;overflow: hidden;box-shadow: 2px 2px 4px rgba(0,0,0,0.1);}
+.book-cover-bottom-stripe {position: absolute;bottom: 0;left: 0;height: 5px;width: 100%;}
+.book-cover-title {position: absolute;width: 100%;text-align: center;font-weight: bold;}
+.book-cover-icon {position: absolute;left: 50%;transform: translateX(-50%);display: flex;align-items: center;justify-content: center;}
+.book-cover-author {position: absolute;bottom: 10px;width: 100%;text-align: center;font-size: 8px;color: #333;}
+</style><style>
+.book-title-toc {font-size: 32px;font-weight: bold; }
+.book-subtitle-toc {font-size: 18px;margin-top: 8px;font-style: italic;}
+.book-header {text-align: center;margin-bottom: 40px;}
+
+.toc-container {border-radius: 10px;padding: 30px;margin-bottom: 40px;box-shadow: 0 8px 20px rgba(0,0,0,0.05);}
+h1 {font-size: 24px;text-align: center;margin-bottom: 30px;letter-spacing: 1px;padding-bottom: 10px;}
+.toc-list,.toc-section-list {list-style: none;padding: 0;margin: 0;}
+.toc-section-list {padding-left: 18px;margin-top: 6px;margin-bottom: 20px; }
+.toc-chapter {padding: 20px 0;}
+.chapter-title,.toc-section {display: flex;justify-content: space-between;padding-top: 4px;}
+.chapter-title {font-size: 17px;font-weight: bold;}
+.chapter-page,.section-page {font-style: italic;}
+ 
+ 
+.light-mode .book-title-toc,.light-mode .chapter-title,.light-mode .book-name {color: #222;}
+.light-mode .book-subtitle-toc,.light-mode .book-sub,.light-mode .chapter-page,.light-mode .section-page {color: #666;}
+.light-mode .toc-container { background: #fff;border: 1px solid #ddd;}
+.light-mode h1 {border-bottom: 2px solid #eee;color: #222;}
+.light-mode .toc-section {  color: #444;}
+
+.light-mode .book-cover { border: 1px solid #ccc;box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);}
+.light-mode .book-title,.light-mode .series-name {color: #fff;}
+.light-mode .book-subtitle,.light-mode .book-footer {color: #aaa;}
+
+.dark-mode .book-title-toc,.dark-mode .chapter-title,.dark-mode .book-name {color: #f5f5f5;}
+.dark-mode .book-subtitle-toc,.dark-mode .book-sub,.dark-mode .chapter-page,.dark-mode .section-page {color: #aaa;}
+.dark-mode .toc-container {background: #1e1e1e;border: 1px solid #444;}
+
+.dark-mode h1 {border-bottom: 2px solid #333;color: #eee;}
+.dark-mode .toc-section {color: #bbb;}
+
+.dark-mode .related-books h2 {color: #ddd;border-bottom: 2px solid #333;}
+.dark-mode .book-title,.dark-mode .series-name {color: #fff;}
+.dark-mode .book-subtitle,.dark-mode .book-footer {color: #bbb;}
+.dark-mode .toc-section {color: #ddd;}
+
+@media (max-width: 600px) {
+  .chapter-title,
+  .toc-section {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .chapter-page,
+  .section-page {
+    margin-top: 4px;
+  }
+}
+
+</style><style>
+.light-mode .container {box-shadow: 0 0 15px rgba(0,0,0,0.1);}
+.dark-mode .container {box-shadow: 0 0 15px rgba(255, 255, 255, 0.05);}
+
+h1, h2, h3 {font-weight: 600;margin-top: 2.5rem;margin-bottom: 1rem;line-height: 1.2;}
+h1 { font-size: 1.8rem; }
+h2 { font-size: 1.4rem; }
+h3 { font-size: 1.2rem; }
+
+table {width: 100%;border-collapse: collapse;font-family: sans-serif;font-size: 1em;margin: 1em 0;}
+th, td {padding: 0.6em 1em;text-align: left;border: 1px solid;}
+tr:nth-child(even) {  background-color: inherit;}
+tr:hover { background-color: inherit;}
+
+code {color: #d35400;}
+
+.chapter-navi-section {display: flex;justify-content: space-between;align-items: center;padding-bottom: 10px;padding-top: 10px;}
+.nav-link {color: inherit;text-decoration: none;opacity: 0.5;transition: opacity 0.3s ease, text-decoration 0.3s ease;}
+.nav-link:hover {opacity: 0.9;text-decoration: underline;}
+.prev { text-align: left; }
+.toc-link { text-align: center; }
+.next { text-align: right; }
+
+.download-section {display: flex;align-items: center;justify-content: center;gap: 2rem;padding: 2rem 1rem;max-width: 600px;margin: 3rem auto;border-radius: 12px;box-shadow: 0 4px 10px rgba(0,0,0,0.05);}
+.download-info h2 {margin: 0 0 0.5rem;font-size: 1.2rem;}
+.format-label {margin: 0 0 0.5rem;font-size: 0.95rem;}
+.download-buttons {display: flex;gap: 1rem;}
+.download-button {background-color: #4A90E2;color: white;padding: 0.5em 1.2em;border-radius: 25px;font-size: 0.95rem;text-decoration: none;transition: background-color 0.3s ease;}
+.download-button:hover {background-color: #357ABD;}
+
+.code-block {position: relative;margin-bottom: 1em;}
+.copy-button {background: transparent;color: white;position: absolute;top: 8px;right: 8px;border: none;padding: 4px 8px;font-size: 12px;border-radius: 4px;cursor: pointer;z-index: 1;}
+.copy-button:hover {background-color: #0056b3;}
+
+.snippet-container {overflow: hidden;}
+.snippet-header {padding: 0.75rem 1rem;cursor: pointer;font-size: 1rem;background-color: #eeeeee;color:  #111111; border-radius: 8px;cursor: pointer;box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+.snippet-body {display: none;font-family: monospace;}
+.snippet-container.open .snippet-body {display: block;}
+
+.CodeMirror {border: 2px solid #ccc;border-radius: 4px;resize: vertical;}
+
+.light-mode .format-label {color: #888;}
+.light-mode th {background-color: #f2f2f2;}
+.light-mode tr:nth-child(even) {background-color: #fafafa;}
+.light-mode tr:hover {background-color: #e6f7ff;}
+
+.dark-mode .snippet-header {background-color: #333;color:  #ddd; }
+.dark-mode .format-label {color: #aaa;}
+.dark-mode th {background-color: #333;color: #fff;}
+.dark-mode td {border-color: #444;}
+.dark-mode tr:nth-child(even) {background-color: #2a2a2a;}
+.dark-mode tr:hover {background-color: #2c3e50;}
+
+
+.button-group-run-edit {display: flex;width: 100%;gap: 1rem;}
+.button-run-edit {flex: 1;padding: 1rem;font-size: 1rem;font-weight: 600;border: none;border-radius: 8px;cursor: pointer;transition: background 0.3s, color 0.3s;}
+
+.light-mode .button-run-edit {background-color: #f0f0f0;color: #222;box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);}
+.light-mode .button-run-edit:hover {background-color: #e0e0e0;}
+
+.dark-mode .button-run-edit {background-color: #2a2a2a;color: #f5f5f5;box-shadow: 0 0 10px rgba(255, 255, 255, 0.05);}
+.dark-mode .button-run-edit:hover {background-color: #3a3a3a;}
+
+button { padding: 0.5em 1em; background: green; color: white; border: none; cursor: pointer; }
+button:hover { background: #1e7e34; }
+.result_iframe { width:99%; margin-top: 1em;  resize: both;background-color: #515b63;border:1px solid #ccc;}   
+
+.dialog-backdrop {position: fixed;top: 0;left: 0;width: 100vw;height: 100vh;background: rgba(0,0,0,0.5);display: none;justify-content: center;align-items: center;z-index: 10;}
+.dialog {background: #90979e;padding: 20px;width: 90vw;height: 80vh;border-radius: 8px;box-shadow: 0 0 20px rgba(0,0,0,0.3);display: flex;flex-direction: column;}
+.dialog-content {display: flex;gap: 20px;margin-top: 10px;height: calc(100% - 40px);}
+.editor-container, .preview-container {flex: 1;height: 100%;max-height: 100%;overflow: hidden; }
+.result_iframe_dialog {width: 100%;height: 100%;resize: both;border:1px solid #ccc;overflow: auto; }   
+.CodeMirror {width: 100% !important;height: 100% !important;}
+</style><script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/htmlmixed/htmlmixed.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/xml/xml.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/css/css.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/javascript/javascript.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/javascript/typescript.min.js"></script>
+<script>
+  const htmlCodeMirrorMap = new Map();
+  const htmlCodeIFrameMap = new Map();
+  let dismissTimer;
+  function showFloatingLog(message) {
+	const floatingLog = document.getElementById('floatingLog');
+
+    if (floatingLog.style.display !== 'block') {
+      floatingLog.textContent = '';
+      floatingLog.style.display = 'block'; 
+    }
+
+    floatingLog.textContent += message + '\n';
+    floatingLog.scrollTop = floatingLog.scrollHeight; 
+    clearTimeout(dismissTimer);
+    dismissTimer = setTimeout(() => {
+      floatingLog.style.display = 'none';
+      floatingLog.textContent = '';
+    }, 2000);
+  }
+  window.addEventListener('message', (event) => {
+	    if (!htmlCodeIFrameMap.has(event.source)) return;
+
+	    if (event.data?.type === 'console-log') {
+	      showFloatingLog(event.data.message);
+	    }
+  });      
+  function runHtmlCode(button,textarea_id, iframe_id, isInDialog) {
+      const html = htmlCodeMirrorMap.get(textarea_id).getValue();
+      const iframe = document.getElementById(iframe_id);
+  
+      const oldIframe = iframe;
+      const newIframe = document.createElement('iframe');
+
+      if(isInDialog){
+         newIframe.className ="result_iframe_dialog";
+      }else{
+         newIframe.className ="result_iframe";
+      }
+      
+      
+      newIframe.id = iframe_id;
+      oldIframe.replaceWith(newIframe);
+ 
+
+      // Track the iframe in the map
+      htmlCodeIFrameMap.set(newIframe.contentWindow, button);
+
+      const overrideScript = `
+        <script>
+          (function() {
+            const originalLog = console.log;
+            console.log = function(...args) {
+              originalLog.apply(console, args);
+              window.parent.postMessage({
+                type: 'console-log',
+                message: args.map(a => {
+                  try { return JSON.stringify(a); }
+                  catch { return String(a); }
+                }).join(' ')
+              }, '*');
+            };
+          })();
+        <\/script>
+      `;
+ 
+      const iframeHTML = `
+        <!DOCTYPE html>
+        <html>
+        <body>
+          ${overrideScript}
+          ${html}
+        </body>
+        </html>
+      `;
+ 
+      const doc = newIframe.contentDocument || newIframe.contentWindow.document;
+      doc.open();
+      doc.write(iframeHTML);
+      doc.close();
+
+if(!isInDialog){ 
+newIframe.onload = function () {
+ 
+    const doc = newIframe.contentDocument || newIframe.contentWindow.document;
+    // Give a short delay to ensure layout is complete
+    setTimeout(() => {
+      const body = doc.body;
+      const html = doc.documentElement;
+
+      const height = Math.max(
+        body.scrollHeight, body.offsetHeight,
+        html.clientHeight, html.scrollHeight, html.offsetHeight
+      );
+
+      newIframe.style.height = height + 'px';
+    }, 50);
+};
+
+}
+      
+  }  
+function openEditHtmlCodeDialog(id, textarea_id) {
+		        closeAllHtmlCodeDialog();
+		        document.getElementById(id).style.display = 'flex';
+         
+ 	        setTimeout(() => {
+		        	 htmlCodeMirrorMap.get(textarea_id).refresh();
+                   
+ 	        }, 100); // 100ms 
+}
+
+function closeAllHtmlCodeDialog() {
+		        document.querySelectorAll('.dialog-backdrop').forEach(el => {
+		          el.style.display = 'none';
+		        });
+}		
+</script> 
 <style>
     #floatingLog {
       position: fixed;
@@ -39,675 +299,25 @@
       text-align: center;
     }
 </style>
-<script>
-  const codeMirrorMap = new Map();
-  const iframeMap = new Map();
-  
- 
-
-  let dismissTimer;
-  function showFloatingLog(message) {
-	const floatingLog = document.getElementById('floatingLog');
-
-    if (floatingLog.style.display !== 'block') {
-      floatingLog.textContent = '';
-      floatingLog.style.display = 'block'; 
-    }
-
-    floatingLog.textContent += message + '\n';
-    floatingLog.scrollTop = floatingLog.scrollHeight; 
-    clearTimeout(dismissTimer);
-    dismissTimer = setTimeout(() => {
-      floatingLog.style.display = 'none';
-      floatingLog.textContent = '';
-    }, 2000);
-  }
-  window.addEventListener('message', (event) => {
-	    if (!iframeMap.has(event.source)) return;
-
-	    if (event.data?.type === 'console-log') {
-	      showFloatingLog(event.data.message);
-	    }
-  });  
-  function renderIframe(button,textarea_id, iframe_id) {
-      const html = codeMirrorMap.get(textarea_id).getValue();
-      const iframe = document.getElementById(iframe_id);
-  
-      const oldIframe = iframe;
-      const newIframe = document.createElement('iframe');
-      newIframe.className ="result_iframe";
-      
-      newIframe.id = iframe_id;
-      oldIframe.replaceWith(newIframe);
- 
-
-      // Track the iframe in the map
-      iframeMap.set(newIframe.contentWindow, button);
-
-      const overrideScript = `
-        <script>
-          (function() {
-            const originalLog = console.log;
-            console.log = function(...args) {
-              originalLog.apply(console, args);
-              window.parent.postMessage({
-                type: 'console-log',
-                message: args.map(a => {
-                  try { return JSON.stringify(a); }
-                  catch { return String(a); }
-                }).join(' ')
-              }, '*');
-            };
-          })();
-        <\/script>
-      `;
-
-      const iframeHTML = `
-        <!DOCTYPE html>
-        <html>
-        <body>
-          ${overrideScript}
-          ${html}
-        </body>
-        </html>
-      `;
- 
-      const doc = newIframe.contentDocument || newIframe.contentWindow.document;
-      doc.open();
-      doc.write(iframeHTML);
-      doc.close();
-
-      
-      setTimeout(() => {
-    	  newIframe.style.height = '0px';
-    	   let contentHeight = Math.max(doc.body.scrollHeight,doc.documentElement.scrollHeight);
- 
-    	//   if(contentHeight < 150 || contentHeight > 600){
-    	//	   contentHeight = 600;
-    	 //  } 
-    	   newIframe.style.height = contentHeight + 'px';
-    	}, 50);      
-      
-  }
-  function renderIframeForClientTypescript(textarea_id, iframe_id) {
-      let code = codeMirrorMap.get(textarea_id).getValue();
-      code = ts.transpile(code);
-      const iframe = document.getElementById(iframe_id);
-      const doc = iframe.contentDocument || iframe.contentWindow.document;
-
-const html = `
-  <!DOCTYPE html>
-  <html>
-    <head>
-      <title>Output</title>
-      <style>
-        body { font-family: monospace; padding: 1em; background: #f4f4f4; color: #222; }
-        pre { white-space: pre-wrap; word-break: break-word; }
-        .error { color: red; }
-      </style>
-    </head>
-    <body>
-      <pre id="log"></pre>
-      <script>
-        (function(){
-          const logEl = document.getElementById('log');
-          const origLog = console.log;
-          const origError = console.error;
-
-          console.log = (...args) => {
-            logEl.textContent += args.join(' ') + '\\n';
-            origLog.apply(console, args);
-          };
-          console.table = (...args) => {
-            logEl.textContent += args.join(' ') + '\\n';
-            origLog.apply(console, args);
-          };
-
-          console.error = (...args) => {
-            logEl.innerHTML +='<span class="error">' + args.join(' ') + '</span>';
-            origError.apply(console, args);
-          };
-          window.addEventListener("error", function (event) {
-              console.error("Caught by event listener:", event.message);
-          });    
-          try {             
-              ${code};
-          } catch (err) {
-            console.error(err.stack || err.message);
-          }
-        })();
-      <\/script>
-    </body>
-  </html>
-`;
-
-      iframe.style.display = "block";
-      iframe.srcdoc = html;  
-  }
-
-    function renderIframeForClientJavascript(textarea_id, iframe_id) {
-        const code = codeMirrorMap.get(textarea_id).getValue();
-        const iframe = document.getElementById(iframe_id);
-        const doc = iframe.contentDocument || iframe.contentWindow.document;
-
-  const html = `
-    <!DOCTYPE html>
-    <html>
-      <head>
-        <title>Output</title>
-        <style>
-          body { font-family: monospace; padding: 1em; background: #1e1e1e; color: #eee; }
-          pre { white-space: pre-wrap; word-break: break-word; }
-          .error { color: red; }
-        </style>
-      </head>
-      <body>
-        <pre id="log"></pre>
-        <script>
-          (function(){
-            const logEl = document.getElementById('log');
-            const origLog = console.log;
-            const origError = console.error;
-
-            console.log = (...args) => {
-              logEl.textContent += args.join(' ') + '\\n';
-              origLog.apply(console, args);
-            };
-            console.table = (...args) => {
-              logEl.textContent += args.join(' ') + '\\n';
-              origLog.apply(console, args);
-            };
-
-            console.error = (...args) => {
-              logEl.innerHTML +='<span class="error">' + args.join(' ') + '</span>';
-              origError.apply(console, args);
-            };
-            window.addEventListener("error", function (event) {
-                console.error("Caught by event listener:", event.message);
-            });    
-            try {
-             ${code}; 
-            } catch (err) {
-              console.error(err.stack || err.message);
-            }
-          })();
-        <\/script>
-      </body>
-    </html>
-  `;
-        iframe.style.display = "block";
-        iframe.srcdoc = html;  
-    }
-    function toggleSnippetAndRefresh(id, textarea_id) {
-      const box = document.getElementById(id);
-      box.classList.toggle("open");
-      codeMirrorMap.get(textarea_id).refresh();
-    }
-
-  </script>
-  <script>
-  const mode = localStorage.getItem('mode') || 'light';
-  document.documentElement.classList.add(`${mode}-mode`);
-  </script>   
-<style> 
-html {
-  scroll-behavior: smooth;
-}
-
-body {
-  font-family: 'Merriweather', serif;
-  margin: 0;
-  padding: 2rem 1rem;
-  font-size: 15px;
-  line-height: 1.5;
-  transition: background-color 0.3s, color 0.3s;
-}
-
-.container {
-  max-width: 700px;
-  margin: 0 auto;
-  padding: 1rem 2rem;
-  box-shadow: 0 0 15px rgba(0,0,0,0.1);
-}
-
-h1, h2, h3 {
-  font-weight: 600;
-  margin-top: 2.5rem;
-  margin-bottom: 1rem;
-  line-height: 1.2;
-}
-
-h1 { font-size: 1.8rem; }
-h2 { font-size: 1.4rem; }
-h3 { font-size: 1.2rem; }
-
-table {
-  width: 100%;
-  border-collapse: collapse;
-  font-family: sans-serif;
-  font-size: 1em;
-  margin: 1em 0;
-}
-
-th, td {
-  padding: 0.6em 1em;
-  text-align: left;
-  border: 1px solid;
-}
-
-tr:nth-child(even) {
-  background-color: inherit;
-}
-
-tr:hover {
-  background-color: inherit;
-}
-
-a {
-  text-decoration: none;
-  transition: color 0.2s;
-}
-
-a:hover {
-  text-decoration: underline;
-}
-
-code {
-  color: #d35400;
-}
-
-.book-title-chapter {
-  font-family: 'Merriweather', serif;
-  font-size: 2rem;
-  font-weight: bold;
-  text-align: center;
-  margin-bottom: 2rem;
-  border-bottom: 2px solid;
-  padding-bottom: 0.5rem;
-}
-
-.book-subtitle-chapter {
-  text-align: center;
-  font-size: 1rem;
-  margin-top: -1rem;
-  margin-bottom: 2rem;
-}
-
-.related-books {
-  margin-top: 40px;
-}
-
-.related-book-list {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 20px;
-}
-
-    .book-cover {
-      width: 130px;
-      height: 180px;
-      font-family: Arial, sans-serif;
-      position: relative;
-      overflow: hidden;      
-      line-height: normal;
-      box-shadow: 2px 2px 4px rgba(0,0,0,0.1);
-    }
-    .book-cover-bottom-stripe {
-      position: absolute;
-      bottom: 0;
-      left: 0;
-      height: 5px;
-      width: 100%;
-    }
-    .book-cover-title {
-      position: absolute;
-      width: 100%;
-      text-align: center;
-      font-weight: bold;
-    }
-     
-    .book-cover-icon {
-      position: absolute;
-      left: 50%;
-      transform: translateX(-50%);
-      display: flex;
-      align-items: center;
-      justify-content: center; 
-    }
-
-    .book-cover-author {
-      position: absolute;
-      bottom: 10px;
-      width: 100%;
-      text-align: center;
-      font-size: 8px;
-      color: #333;
-    }
-
-.page-footer {
-  margin-top: 4rem;
-  padding: 1rem 0;
-  text-align: center;
-  font-size: 0.85rem;
-  border-top: 1px solid;
-}
-
-.chapter-navi-section {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding-bottom: 10px;
-}
-
-.nav-link {
-  color: inherit;
-  text-decoration: none;
-  opacity: 0.5;
-  transition: opacity 0.3s ease, text-decoration 0.3s ease;
-}
-
-.nav-link:hover {
-  opacity: 0.9;
-  text-decoration: underline;
-}
-
-.prev { text-align: left; }
-.toc-link { text-align: center; }
-.next { text-align: right; }
-
-.download-section {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 2rem;
-  padding: 2rem 1rem;
-  max-width: 600px;
-  margin: 3rem auto;
-  border-radius: 12px;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-}
-
-.download-info h2 {
-  margin: 0 0 0.5rem;
-  font-size: 1.2rem;
-}
-
-.format-label {
-  margin: 0 0 0.5rem;
-  font-size: 0.95rem;
-}
-
-.download-buttons {
-  display: flex;
-  gap: 1rem;
-}
-
-.download-button {
-  background-color: #4A90E2;
-  color: white;
-  padding: 0.5em 1.2em;
-  border-radius: 25px;
-  font-size: 0.95rem;
-  text-decoration: none;
-  transition: background-color 0.3s ease;
-}
-
-.download-button:hover {
-  background-color: #357ABD;
-}
-
-.code-block {
-  position: relative;
-  margin-bottom: 1em;
-}
-
-.copy-button {
-  background: transparent;
-  color: white;
-  position: absolute;
-  top: 8px;
-  right: 8px;
-  border: none;
-  padding: 4px 8px;
-  font-size: 12px;
-  border-radius: 4px;
-  cursor: pointer;
-  z-index: 1;
-}
-
-.copy-button:hover {
-  background-color: #0056b3;
-}
-
-.snippet-container {
-  overflow: hidden;
-}
-
-.snippet-header {
-  padding: 0.75rem 1rem;
-  cursor: pointer;
-  font-size: 1rem;
-    background-color: #eeeeee;
-    color:  #111111; 
-    border-radius: 8px;
-    cursor: pointer;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.1);  
-}
-
-.snippet-body {
-  display: none;
-  font-family: monospace;
-}
-
-.snippet-container.open .snippet-body {
-  display: block;
-}
-
-.CodeMirror {
-  border: 2px solid #ccc;
-  border-radius: 4px;
-  resize: vertical;
-}
-
-/* === Light Mode === */
-html.light-mode {
-  background-color: #f8f7f5;
-  color: #333;
-}
-
-html.light-mode .container {
-  background: white;
-}
-
-html.light-mode .book-title-chapter {
-  color: #2c3e50;
-  border-color: #ccc;
-}
-html.light-mode .book-subtitle-chapter{
-  color: #888;
-}
-
-html.light-mode .page-footer,
-html.light-mode .series-name,
-html.light-mode .book-subtitle,
-html.light-mode .format-label {
-  color: #888;
-}
-
-html.light-mode .related-books h2 {
-  color: #333;
-  border-bottom: 2px solid #eee;
-}
-
-html.light-mode .book-title {
-  color: #fff;
-}
-
-html.light-mode .book-cover {
-  border: 1px solid #ccc;
-}
-
-html.light-mode th {
-  background-color: #f2f2f2;
-}
-
-html.light-mode tr:nth-child(even) {
-  background-color: #fafafa;
-}
-
-html.light-mode tr:hover {
-  background-color: #e6f7ff;
-}
-
-html.light-mode a,
-html.light-mode .page-footer a {
-  color: #000;
-}
-
-/* === Dark Mode === */
-html.dark-mode {
-  background-color: #181818;
-  color: #e0e0e0;
-}
-
-html.dark-mode .container {
-  background: #222;
-}
-
-html.dark-mode .book-title-chapter {
-  color: #ddd;
-  border-color: #444;
-}
-
-html.dark-mode .snippet-header {
-    background-color: #333;
-    color:  #ddd; 
-}
-
-
-html.dark-mode .book-subtitle-chapter,
-html.dark-mode .page-footer,
-html.dark-mode .series-name,
-html.dark-mode .book-subtitle,
-html.dark-mode .book-footer,
-html.dark-mode .format-label {
-  color: #aaa;
-}
-
-html.dark-mode .related-books h2 {
-  color: #ddd;
-  border-bottom: 2px solid #333;
-}
-
-html.dark-mode .book-title {
-  color: #fff;
-}
-
-html.dark-mode .book-cover {
-  border: 1px solid #555;
-}
-
-html.dark-mode th {
-  background-color: #333;
-  color: #fff;
-}
-
-html.dark-mode td {
-  border-color: #444;
-}
-
-html.dark-mode tr:nth-child(even) {
-  background-color: #2a2a2a;
-}
-
-html.dark-mode tr:hover {
-  background-color: #2c3e50;
-}
-
-html.dark-mode a,
-html.dark-mode .page-footer a {
-  color: #eee;
-}
-
-    .dialog-backdrop {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100vw;
-      height: 100vh;
-      background: rgba(0,0,0,0.5);
-      display: none;
-      justify-content: center;
-      align-items: center;
-      z-index: 10;
-    }
-
-    .dialog {
-      background: white;
-      padding: 20px;
-      width: 90vw;
-      height: 80vh;
-      border-radius: 8px;
-      box-shadow: 0 0 20px rgba(0,0,0,0.3);
-      display: flex;
-      flex-direction: column;
-    }
-    .dialog-content {
-      display: flex;
-      flex: 1;
-      gap: 20px;
-      margin-top: 10px;
-    }
-    .dialog h2 {
-      margin-top: 0;
-    }
-
-    .textarea_dialog {
-      width: 50%;
-      height: 100%;
-      resize: none;
-      font-family: monospace;
-      font-size: 14px;
-      padding: 10px;
-      box-sizing: border-box;
-      border: 1px solid #ccc;
-    }
-
-    .iframe_dialog {
-      width: 50%;
-      height: 100%;
-      border: 1px solid #ccc;
-    }
-    .controls_dialog {
-      display: flex;
-      justify-content: space-between;
-      margin-top: 10px;
-    }    
-    button { padding: 0.5em 1em; background: green; color: white; border: none; cursor: pointer; }
-    button:hover { background: #1e7e34; }
-    .result_iframe { width:99%; height:200px; margin-top: 1em;  resize: both;border:1px solid #ccc;}        
-</style>
 </head>
-<body> 
-  <div class="container">
-    <div class = "chapter-navi-section">
+<body>
+<script>const mode = localStorage.getItem('mode') || 'light';document.documentElement.classList.add(`${mode}-mode`);</script>  
+<div class="container"><div class = "chapter-navi-section">
 <a href="jquery-in-depth-forms-and-input-controls.htm" class="nav-button prev">←</a>
 <a href='jquery-in-depth.htm#jquery-effects-and-animations' class="nav-button toc-link">Index</a>
 <a href="jquery-in-depth-traversing-the-dom.htm" class="nav-button next">→</a>
 </div>
-
-    <h1 class="book-title-chapter" id = 'top'>jQuery Effects and Animations</h1>
-    <h3 class="book-subtitle-chapter">jQuery In-Depth</h3>   
-    <!-- <h1 class ="chapter-title"></h1> -->
-    <h2 id='show-hide-and-toggle'>8.1 Show/Hide and Toggle</h2><p>Controlling the visibility of elements is one of the most common tasks in web development, and jQuery provides simple yet powerful methods to do this: <code>.show()</code>, <code>.hide()</code>, and <code>.toggle()</code>. These methods allow you to dynamically reveal or conceal content with optional animations and callbacks for executing code after the visibility change.</p><h3 id="the-basics-show-hide-and-toggle">The Basics: <code>.show()</code>, <code>.hide()</code>, and <code>.toggle()</code></h3><ul>
+<div class='book-header'><h1 class='book-title-toc' id = 'top'>jQuery Effects and Animations</h1><h3 class='book-subtitle-toc'>jQuery In-Depth</h3></div><h2 id='show-hide-and-toggle'>8.1 Show/Hide and Toggle</h2><p>Controlling the visibility of elements is one of the most common tasks in web development, and jQuery provides simple yet powerful methods to do this: <code>.show()</code>, <code>.hide()</code>, and <code>.toggle()</code>. These methods allow you to dynamically reveal or conceal content with optional animations and callbacks for executing code after the visibility change.</p><h3 id="the-basics-show-hide-and-toggle">The Basics: <code>.show()</code>, <code>.hide()</code>, and <code>.toggle()</code></h3><ul>
  <li><strong><code>.show()</code></strong> — Makes a hidden element visible.</li>
  <li><strong><code>.hide()</code></strong> — Hides a visible element.</li>
  <li><strong><code>.toggle()</code></strong> — Switches an element’s visibility; shows if hidden, hides if visible.</li>
-</ul><p>By default, these methods change the CSS <code>display</code> property to show or hide elements. But they also accept parameters to animate the transition.</p><h3 id="example-1-simple-show-and-hide">Example 1: Simple Show and Hide</h3><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</ul><p>By default, these methods change the CSS <code>display</code> property to show or hide elements. But they also accept parameters to animate the transition.</p><h3 id="example-1-simple-show-and-hide">Example 1: Simple Show and Hide</h3><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-html">&lt;button id="showBtn"&gt;Show Message&lt;/button&gt;
 &lt;button id="hideBtn"&gt;Hide Message&lt;/button&gt;
 &lt;p id="message" style="display:none;"&gt;Hello! This is a toggle message.&lt;/p&gt;</code></pre>
-</div><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</div><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-js">$('#showBtn').on('click', function() {
   $('#message').show();
 });
@@ -718,13 +328,16 @@ $('#hideBtn').on('click', function() {
 </div><ul>
  <li>Clicking <strong>Show Message</strong> makes the paragraph appear immediately.</li>
  <li>Clicking <strong>Hide Message</strong> hides it instantly.</li>
-</ul><div class="snippet-container" id="sHist">
- <div id="H1Nij_Dialog" class="dialog-backdrop">
+</ul><div class="snippet-container">
+ <div class="button-group-run-edit"><button class="button-run-edit" onclick="runHtmlCode(this,'fRZ4j','0bpCn', false)">Run</button> <button class="button-run-edit" onclick="openEditHtmlCodeDialog('0bpCn_Dialog','fRZ4j')">Edit</button>
+ </div> <iframe id="0bpCn" class="result_iframe" style="display: none;"></iframe>
+ <div id="0bpCn_Dialog" class="dialog-backdrop">
   <div class="dialog">
-   <h2>Dialog 1</h2>
-   <div class="controls"><button onclick="renderIframe(this,'QZu41_Textarea','H1Nij_IFrame')">Run</button> <button onclick="closeAll()">Close</button>
+   <div class="controls"><button onclick="runHtmlCode(this,'fRZ4j','0bpCn_IFrame', true)">Run</button> <button onclick="closeAllHtmlCodeDialog()">Close</button>
    </div>
-   <div class="dialog-content"><textarea id="QZu41_Textarea" class="textarea_dialog" placeholder="Type HTML here...">&lt;!DOCTYPE html&gt;
+   <div class="dialog-content">
+    <div class="editor-container">
+     <textarea id="fRZ4j" class="textarea_dialog" placeholder="Type HTML here...">&lt;!DOCTYPE html&gt;
 &lt;html lang="en"&gt;
 &lt;head&gt;
 &lt;meta charset="UTF-8" /&gt;
@@ -760,106 +373,51 @@ $('#hideBtn').on('click', function() {
 &lt;/script&gt;
 
 &lt;/body&gt;
-&lt;/html&gt;</textarea> <iframe id="H1Nij_IFrame" class="iframe_dialog"></iframe>
+&lt;/html&gt;</textarea>
+    </div>
+    <div class="preview-container">
+     <iframe id="0bpCn_IFrame" class="result_iframe_dialog" style="border: none;"></iframe>
+    </div>
    </div>
   </div>
  </div>
- <div class="snippet-header" onclick="toggleSnippetAndRefresh('sHist','QZu41')">
-  Click to Try it <!--<span onclick="toggleSnippetAndRefresh('sHist','QZu41')">Click
-			to Try it</span> --> <!-- <span onclick="openDialog('H1Nij_Dialog')">Dialog</span> -->
- </div>
- <div class="snippet-body"><textarea id="QZu41">&lt;!DOCTYPE html&gt;
-&lt;html lang="en"&gt;
-&lt;head&gt;
-&lt;meta charset="UTF-8" /&gt;
-&lt;title&gt;Show/Hide Example&lt;/title&gt;
-&lt;style&gt;
-  #message {
-    display: none;
-    margin-top: 10px;
-    font-size: 1.2em;
-    color: #333;
-  }
-  button {
-    margin-right: 10px;
-    padding: 8px 16px;
-  }
-&lt;/style&gt;
-&lt;/head&gt;
-&lt;body&gt;
-
-&lt;button id="showBtn"&gt;Show Message&lt;/button&gt;
-&lt;button id="hideBtn"&gt;Hide Message&lt;/button&gt;
-&lt;p id="message"&gt;Hello! This is a toggle message.&lt;/p&gt;
-
-&lt;script src="https://code.jquery.com/jquery-3.6.0.min.js"&gt;&lt;/script&gt;
-&lt;script&gt;
-  $('#showBtn').on('click', function() {
-    $('#message').show();
-  });
-
-  $('#hideBtn').on('click', function() {
-    $('#message').hide();
-  });
-&lt;/script&gt;
-
-&lt;/body&gt;
-&lt;/html&gt;</textarea> <br> <button onclick="renderIframe(this,'QZu41','H1Nij')">Run</button>
-  <div id="H1Nij_FloatingLog" class="floatingLog" aria-live="polite" role="alert"></div> <iframe id="H1Nij" class="result_iframe" style="display: none;"></iframe>
-  <script>
-			{
-				let editor = CodeMirror.fromTextArea(document
-						.getElementById("QZu41"), {
+ <script>
+{
+let editor = CodeMirror.fromTextArea(document.getElementById("fRZ4j"), {
 					mode : "htmlmixed",
 					lineNumbers : false,
+                    lineWrapping: true,
 					tabSize : 2
-				});
-			    const mode = localStorage.getItem("mode") || "light";  
-			    const newTheme = mode === "dark" ? "material" : "default";
-			    editor.setOption("theme", newTheme);
-			    
-				codeMirrorMap.set("QZu41", editor);
+});
+const darkmode = localStorage.getItem("mode") || "light";  
+const newTheme = darkmode === "dark" ? "dracula" : "default";
+editor.setSize("50%", "100%");
+editor.setOption("theme", newTheme);
+htmlCodeMirrorMap.set("fRZ4j", editor);
+}
 
-				let editor1 = CodeMirror.fromTextArea(document.getElementById("QZu41_Textarea"), {
-					mode : "htmlmixed",
-					lineNumbers : false,
-					tabSize : 2
-				});
-			    editor1.setOption("theme", newTheme);				
-				
-				codeMirrorMap.set("QZu41_Textarea", editor1);
-			}
-		    function openDialog(id) {
-		        closeAll();
-		        document.getElementById(id).style.display = 'flex';
-		        setTimeout(() => {
-		        	 codeMirrorMap.get("QZu41_Textarea").refresh();
-		        }, 100); // 100ms 
-		      }
-
-		      function closeAll() {
-		        document.querySelectorAll('.dialog-backdrop').forEach(el => {
-		          el.style.display = 'none';
-		        });
-		      }			
-		</script>
- </div>
-</div><h3 id="example-2-toggling-visibility-on-button-click">Example 2: Toggling Visibility on Button Click</h3><p>Instead of separate buttons, you can toggle the element’s visibility with one button:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</script>
+</div><h3 id="example-2-toggling-visibility-on-button-click">Example 2: Toggling Visibility on Button Click</h3><p>Instead of separate buttons, you can toggle the element’s visibility with one button:</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-html">&lt;button id="toggleBtn"&gt;Toggle Menu&lt;/button&gt;
 &lt;div id="menu" style="width:200px; height:100px; background:#ddd; display:none;"&gt;
   &lt;p&gt;Menu Content&lt;/p&gt;
 &lt;/div&gt;</code></pre>
-</div><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</div><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-js">$('#toggleBtn').on('click', function() {
   $('#menu').toggle();
 });</code></pre>
-</div><p>Each click alternates the <code>#menu</code> between visible and hidden states.</p><div class="snippet-container" id="MgMjT">
- <div id="vXfm8_Dialog" class="dialog-backdrop">
+</div><p>Each click alternates the <code>#menu</code> between visible and hidden states.</p><div class="snippet-container">
+ <div class="button-group-run-edit"><button class="button-run-edit" onclick="runHtmlCode(this,'vULNH','sxmMf', false)">Run</button> <button class="button-run-edit" onclick="openEditHtmlCodeDialog('sxmMf_Dialog','vULNH')">Edit</button>
+ </div> <iframe id="sxmMf" class="result_iframe" style="display: none;"></iframe>
+ <div id="sxmMf_Dialog" class="dialog-backdrop">
   <div class="dialog">
-   <h2>Dialog 1</h2>
-   <div class="controls"><button onclick="renderIframe(this,'eDnLY_Textarea','vXfm8_IFrame')">Run</button> <button onclick="closeAll()">Close</button>
+   <div class="controls"><button onclick="runHtmlCode(this,'vULNH','sxmMf_IFrame', true)">Run</button> <button onclick="closeAllHtmlCodeDialog()">Close</button>
    </div>
-   <div class="dialog-content"><textarea id="eDnLY_Textarea" class="textarea_dialog" placeholder="Type HTML here...">&lt;!DOCTYPE html&gt;
+   <div class="dialog-content">
+    <div class="editor-container">
+     <textarea id="vULNH" class="textarea_dialog" placeholder="Type HTML here...">&lt;!DOCTYPE html&gt;
 &lt;html lang="en"&gt;
 &lt;head&gt;
 &lt;meta charset="UTF-8" /&gt;
@@ -894,105 +452,50 @@ $('#hideBtn').on('click', function() {
 &lt;/script&gt;
 
 &lt;/body&gt;
-&lt;/html&gt;</textarea> <iframe id="vXfm8_IFrame" class="iframe_dialog"></iframe>
+&lt;/html&gt;</textarea>
+    </div>
+    <div class="preview-container">
+     <iframe id="sxmMf_IFrame" class="result_iframe_dialog" style="border: none;"></iframe>
+    </div>
    </div>
   </div>
  </div>
- <div class="snippet-header" onclick="toggleSnippetAndRefresh('MgMjT','eDnLY')">
-  Click to Try it <!--<span onclick="toggleSnippetAndRefresh('MgMjT','eDnLY')">Click
-			to Try it</span> --> <!-- <span onclick="openDialog('vXfm8_Dialog')">Dialog</span> -->
- </div>
- <div class="snippet-body"><textarea id="eDnLY">&lt;!DOCTYPE html&gt;
-&lt;html lang="en"&gt;
-&lt;head&gt;
-&lt;meta charset="UTF-8" /&gt;
-&lt;title&gt;Toggle Visibility Example&lt;/title&gt;
-&lt;style&gt;
-  #menu {
-    width: 200px;
-    height: 100px;
-    background: #ddd;
-    display: none;
-    padding: 10px;
-    margin-top: 10px;
-    border: 1px solid #aaa;
-  }
-  #toggleBtn {
-    padding: 8px 16px;
-  }
-&lt;/style&gt;
-&lt;/head&gt;
-&lt;body&gt;
-
-&lt;button id="toggleBtn"&gt;Toggle Menu&lt;/button&gt;
-&lt;div id="menu"&gt;
-  &lt;p&gt;Menu Content&lt;/p&gt;
-&lt;/div&gt;
-
-&lt;script src="https://code.jquery.com/jquery-3.6.0.min.js"&gt;&lt;/script&gt;
-&lt;script&gt;
-  $('#toggleBtn').on('click', function() {
-    $('#menu').toggle();
-  });
-&lt;/script&gt;
-
-&lt;/body&gt;
-&lt;/html&gt;</textarea> <br> <button onclick="renderIframe(this,'eDnLY','vXfm8')">Run</button>
-  <div id="vXfm8_FloatingLog" class="floatingLog" aria-live="polite" role="alert"></div> <iframe id="vXfm8" class="result_iframe" style="display: none;"></iframe>
-  <script>
-			{
-				let editor = CodeMirror.fromTextArea(document
-						.getElementById("eDnLY"), {
+ <script>
+{
+let editor = CodeMirror.fromTextArea(document.getElementById("vULNH"), {
 					mode : "htmlmixed",
 					lineNumbers : false,
+                    lineWrapping: true,
 					tabSize : 2
-				});
-			    const mode = localStorage.getItem("mode") || "light";  
-			    const newTheme = mode === "dark" ? "material" : "default";
-			    editor.setOption("theme", newTheme);
-			    
-				codeMirrorMap.set("eDnLY", editor);
+});
+const darkmode = localStorage.getItem("mode") || "light";  
+const newTheme = darkmode === "dark" ? "dracula" : "default";
+editor.setSize("50%", "100%");
+editor.setOption("theme", newTheme);
+htmlCodeMirrorMap.set("vULNH", editor);
+}
 
-				let editor1 = CodeMirror.fromTextArea(document.getElementById("eDnLY_Textarea"), {
-					mode : "htmlmixed",
-					lineNumbers : false,
-					tabSize : 2
-				});
-			    editor1.setOption("theme", newTheme);				
-				
-				codeMirrorMap.set("eDnLY_Textarea", editor1);
-			}
-		    function openDialog(id) {
-		        closeAll();
-		        document.getElementById(id).style.display = 'flex';
-		        setTimeout(() => {
-		        	 codeMirrorMap.get("eDnLY_Textarea").refresh();
-		        }, 100); // 100ms 
-		      }
-
-		      function closeAll() {
-		        document.querySelectorAll('.dialog-backdrop').forEach(el => {
-		          el.style.display = 'none';
-		        });
-		      }			
-		</script>
- </div>
+</script>
 </div><h3 id="using-duration-parameters-for-animations">Using Duration Parameters for Animations</h3><p>The <code>.show()</code>, <code>.hide()</code>, and <code>.toggle()</code> methods accept optional duration arguments to animate the visibility change:</p><ul>
  <li><strong>Duration</strong>: Specifies the speed in milliseconds or uses predefined strings like <code>'slow'</code> or <code>'fast'</code>.</li>
  <li><strong>Callback</strong>: A function to execute after the animation completes.</li>
-</ul><p>Example with animation:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</ul><p>Example with animation:</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-js">$('#toggleBtn').on('click', function() {
   $('#menu').toggle(400, function() {
     console.log('Toggle animation complete.');
   });
 });</code></pre>
-</div><p>This smoothly fades the menu in or out over 400 milliseconds, then logs a message.</p><div class="snippet-container" id="VIdOv">
- <div id="ZXG3Y_Dialog" class="dialog-backdrop">
+</div><p>This smoothly fades the menu in or out over 400 milliseconds, then logs a message.</p><div class="snippet-container">
+ <div class="button-group-run-edit"><button class="button-run-edit" onclick="runHtmlCode(this,'Tl4sO','wdnRP', false)">Run</button> <button class="button-run-edit" onclick="openEditHtmlCodeDialog('wdnRP_Dialog','Tl4sO')">Edit</button>
+ </div> <iframe id="wdnRP" class="result_iframe" style="display: none;"></iframe>
+ <div id="wdnRP_Dialog" class="dialog-backdrop">
   <div class="dialog">
-   <h2>Dialog 1</h2>
-   <div class="controls"><button onclick="renderIframe(this,'tg1TR_Textarea','ZXG3Y_IFrame')">Run</button> <button onclick="closeAll()">Close</button>
+   <div class="controls"><button onclick="runHtmlCode(this,'Tl4sO','wdnRP_IFrame', true)">Run</button> <button onclick="closeAllHtmlCodeDialog()">Close</button>
    </div>
-   <div class="dialog-content"><textarea id="tg1TR_Textarea" class="textarea_dialog" placeholder="Type HTML here...">&lt;!DOCTYPE html&gt;
+   <div class="dialog-content">
+    <div class="editor-container">
+     <textarea id="Tl4sO" class="textarea_dialog" placeholder="Type HTML here...">&lt;!DOCTYPE html&gt;
 &lt;html lang="en"&gt;
 &lt;head&gt;
 &lt;meta charset="UTF-8" /&gt;
@@ -1029,92 +532,32 @@ $('#hideBtn').on('click', function() {
 &lt;/script&gt;
 
 &lt;/body&gt;
-&lt;/html&gt;</textarea> <iframe id="ZXG3Y_IFrame" class="iframe_dialog"></iframe>
+&lt;/html&gt;</textarea>
+    </div>
+    <div class="preview-container">
+     <iframe id="wdnRP_IFrame" class="result_iframe_dialog" style="border: none;"></iframe>
+    </div>
    </div>
   </div>
  </div>
- <div class="snippet-header" onclick="toggleSnippetAndRefresh('VIdOv','tg1TR')">
-  Click to Try it <!--<span onclick="toggleSnippetAndRefresh('VIdOv','tg1TR')">Click
-			to Try it</span> --> <!-- <span onclick="openDialog('ZXG3Y_Dialog')">Dialog</span> -->
- </div>
- <div class="snippet-body"><textarea id="tg1TR">&lt;!DOCTYPE html&gt;
-&lt;html lang="en"&gt;
-&lt;head&gt;
-&lt;meta charset="UTF-8" /&gt;
-&lt;title&gt;Toggle with Animation&lt;/title&gt;
-&lt;style&gt;
-  #menu {
-    width: 200px;
-    height: 100px;
-    background: #ddd;
-    display: none;
-    padding: 10px;
-    margin-top: 10px;
-    border: 1px solid #aaa;
-  }
-  #toggleBtn {
-    padding: 8px 16px;
-  }
-&lt;/style&gt;
-&lt;/head&gt;
-&lt;body&gt;
-
-&lt;button id="toggleBtn"&gt;Toggle Menu&lt;/button&gt;
-&lt;div id="menu"&gt;
-  &lt;p&gt;Menu Content&lt;/p&gt;
-&lt;/div&gt;
-
-&lt;script src="https://code.jquery.com/jquery-3.6.0.min.js"&gt;&lt;/script&gt;
-&lt;script&gt;
-  $('#toggleBtn').on('click', function() {
-    $('#menu').toggle(400, function() {
-      console.log('Toggle animation complete.');
-    });
-  });
-&lt;/script&gt;
-
-&lt;/body&gt;
-&lt;/html&gt;</textarea> <br> <button onclick="renderIframe(this,'tg1TR','ZXG3Y')">Run</button>
-  <div id="ZXG3Y_FloatingLog" class="floatingLog" aria-live="polite" role="alert"></div> <iframe id="ZXG3Y" class="result_iframe" style="display: none;"></iframe>
-  <script>
-			{
-				let editor = CodeMirror.fromTextArea(document
-						.getElementById("tg1TR"), {
+ <script>
+{
+let editor = CodeMirror.fromTextArea(document.getElementById("Tl4sO"), {
 					mode : "htmlmixed",
 					lineNumbers : false,
+                    lineWrapping: true,
 					tabSize : 2
-				});
-			    const mode = localStorage.getItem("mode") || "light";  
-			    const newTheme = mode === "dark" ? "material" : "default";
-			    editor.setOption("theme", newTheme);
-			    
-				codeMirrorMap.set("tg1TR", editor);
+});
+const darkmode = localStorage.getItem("mode") || "light";  
+const newTheme = darkmode === "dark" ? "dracula" : "default";
+editor.setSize("50%", "100%");
+editor.setOption("theme", newTheme);
+htmlCodeMirrorMap.set("Tl4sO", editor);
+}
 
-				let editor1 = CodeMirror.fromTextArea(document.getElementById("tg1TR_Textarea"), {
-					mode : "htmlmixed",
-					lineNumbers : false,
-					tabSize : 2
-				});
-			    editor1.setOption("theme", newTheme);				
-				
-				codeMirrorMap.set("tg1TR_Textarea", editor1);
-			}
-		    function openDialog(id) {
-		        closeAll();
-		        document.getElementById(id).style.display = 'flex';
-		        setTimeout(() => {
-		        	 codeMirrorMap.get("tg1TR_Textarea").refresh();
-		        }, 100); // 100ms 
-		      }
-
-		      function closeAll() {
-		        document.querySelectorAll('.dialog-backdrop').forEach(el => {
-		          el.style.display = 'none';
-		        });
-		      }			
-		</script>
- </div>
-</div><h3 id="conditional-ui-rendering">Conditional UI Rendering</h3><p>You can check visibility with <code>.is(':visible')</code> to perform conditional logic:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</script>
+</div><h3 id="conditional-ui-rendering">Conditional UI Rendering</h3><p>You can check visibility with <code>.is(':visible')</code> to perform conditional logic:</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-js">$('#toggleBtn').on('click', function() {
   if ($('#menu').is(':visible')) {
     $('#menu').hide(300);
@@ -1124,13 +567,16 @@ $('#hideBtn').on('click', function() {
     $(this).text('Hide Menu');
   }
 });</code></pre>
-</div><p>This changes the button label dynamically based on the menu state.</p><div class="snippet-container" id="YVqg1">
- <div id="ahfQl_Dialog" class="dialog-backdrop">
+</div><p>This changes the button label dynamically based on the menu state.</p><div class="snippet-container">
+ <div class="button-group-run-edit"><button class="button-run-edit" onclick="runHtmlCode(this,'T5yCy','hpY0l', false)">Run</button> <button class="button-run-edit" onclick="openEditHtmlCodeDialog('hpY0l_Dialog','T5yCy')">Edit</button>
+ </div> <iframe id="hpY0l" class="result_iframe" style="display: none;"></iframe>
+ <div id="hpY0l_Dialog" class="dialog-backdrop">
   <div class="dialog">
-   <h2>Dialog 1</h2>
-   <div class="controls"><button onclick="renderIframe(this,'QR6kX_Textarea','ahfQl_IFrame')">Run</button> <button onclick="closeAll()">Close</button>
+   <div class="controls"><button onclick="runHtmlCode(this,'T5yCy','hpY0l_IFrame', true)">Run</button> <button onclick="closeAllHtmlCodeDialog()">Close</button>
    </div>
-   <div class="dialog-content"><textarea id="QR6kX_Textarea" class="textarea_dialog" placeholder="Type HTML here...">&lt;!DOCTYPE html&gt;
+   <div class="dialog-content">
+    <div class="editor-container">
+     <textarea id="T5yCy" class="textarea_dialog" placeholder="Type HTML here...">&lt;!DOCTYPE html&gt;
 &lt;html lang="en"&gt;
 &lt;head&gt;
 &lt;meta charset="UTF-8" /&gt;
@@ -1171,111 +617,51 @@ $('#hideBtn').on('click', function() {
 &lt;/script&gt;
 
 &lt;/body&gt;
-&lt;/html&gt;</textarea> <iframe id="ahfQl_IFrame" class="iframe_dialog"></iframe>
+&lt;/html&gt;</textarea>
+    </div>
+    <div class="preview-container">
+     <iframe id="hpY0l_IFrame" class="result_iframe_dialog" style="border: none;"></iframe>
+    </div>
    </div>
   </div>
  </div>
- <div class="snippet-header" onclick="toggleSnippetAndRefresh('YVqg1','QR6kX')">
-  Click to Try it <!--<span onclick="toggleSnippetAndRefresh('YVqg1','QR6kX')">Click
-			to Try it</span> --> <!-- <span onclick="openDialog('ahfQl_Dialog')">Dialog</span> -->
- </div>
- <div class="snippet-body"><textarea id="QR6kX">&lt;!DOCTYPE html&gt;
-&lt;html lang="en"&gt;
-&lt;head&gt;
-&lt;meta charset="UTF-8" /&gt;
-&lt;title&gt;Conditional Toggle Example&lt;/title&gt;
-&lt;style&gt;
-  #menu {
-    width: 200px;
-    height: 100px;
-    background: #ddd;
-    display: none;
-    padding: 10px;
-    margin-top: 10px;
-    border: 1px solid #aaa;
-  }
-  #toggleBtn {
-    padding: 8px 16px;
-  }
-&lt;/style&gt;
-&lt;/head&gt;
-&lt;body&gt;
-
-&lt;button id="toggleBtn"&gt;Show Menu&lt;/button&gt;
-&lt;div id="menu"&gt;
-  &lt;p&gt;Menu Content&lt;/p&gt;
-&lt;/div&gt;
-
-&lt;script src="https://code.jquery.com/jquery-3.6.0.min.js"&gt;&lt;/script&gt;
-&lt;script&gt;
-  $('#toggleBtn').on('click', function() {
-    if ($('#menu').is(':visible')) {
-      $('#menu').hide(300);
-      $(this).text('Show Menu');
-    } else {
-      $('#menu').show(300);
-      $(this).text('Hide Menu');
-    }
-  });
-&lt;/script&gt;
-
-&lt;/body&gt;
-&lt;/html&gt;</textarea> <br> <button onclick="renderIframe(this,'QR6kX','ahfQl')">Run</button>
-  <div id="ahfQl_FloatingLog" class="floatingLog" aria-live="polite" role="alert"></div> <iframe id="ahfQl" class="result_iframe" style="display: none;"></iframe>
-  <script>
-			{
-				let editor = CodeMirror.fromTextArea(document
-						.getElementById("QR6kX"), {
+ <script>
+{
+let editor = CodeMirror.fromTextArea(document.getElementById("T5yCy"), {
 					mode : "htmlmixed",
 					lineNumbers : false,
+                    lineWrapping: true,
 					tabSize : 2
-				});
-			    const mode = localStorage.getItem("mode") || "light";  
-			    const newTheme = mode === "dark" ? "material" : "default";
-			    editor.setOption("theme", newTheme);
-			    
-				codeMirrorMap.set("QR6kX", editor);
+});
+const darkmode = localStorage.getItem("mode") || "light";  
+const newTheme = darkmode === "dark" ? "dracula" : "default";
+editor.setSize("50%", "100%");
+editor.setOption("theme", newTheme);
+htmlCodeMirrorMap.set("T5yCy", editor);
+}
 
-				let editor1 = CodeMirror.fromTextArea(document.getElementById("QR6kX_Textarea"), {
-					mode : "htmlmixed",
-					lineNumbers : false,
-					tabSize : 2
-				});
-			    editor1.setOption("theme", newTheme);				
-				
-				codeMirrorMap.set("QR6kX_Textarea", editor1);
-			}
-		    function openDialog(id) {
-		        closeAll();
-		        document.getElementById(id).style.display = 'flex';
-		        setTimeout(() => {
-		        	 codeMirrorMap.get("QR6kX_Textarea").refresh();
-		        }, 100); // 100ms 
-		      }
-
-		      function closeAll() {
-		        document.querySelectorAll('.dialog-backdrop').forEach(el => {
-		          el.style.display = 'none';
-		        });
-		      }			
-		</script>
- </div>
-</div><h3 id="practical-use-case-collapsible-sections">Practical Use Case: Collapsible Sections</h3><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</script>
+</div><h3 id="practical-use-case-collapsible-sections">Practical Use Case: Collapsible Sections</h3><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-html">&lt;h3 class="section-header"&gt;Section 1&lt;/h3&gt;
 &lt;div class="section-content" style="display:none;"&gt;
   &lt;p&gt;This is the content of section 1.&lt;/p&gt;
 &lt;/div&gt;</code></pre>
-</div><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</div><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-js">$('.section-header').on('click', function() {
   $(this).next('.section-content').toggle(200);
 });</code></pre>
-</div><p>Clicking the header toggles the visibility of the corresponding content, creating an accordion-like effect.</p><div class="snippet-container" id="TCuJG">
- <div id="MoPTh_Dialog" class="dialog-backdrop">
+</div><p>Clicking the header toggles the visibility of the corresponding content, creating an accordion-like effect.</p><div class="snippet-container">
+ <div class="button-group-run-edit"><button class="button-run-edit" onclick="runHtmlCode(this,'l7o3e','JTVQ3', false)">Run</button> <button class="button-run-edit" onclick="openEditHtmlCodeDialog('JTVQ3_Dialog','l7o3e')">Edit</button>
+ </div> <iframe id="JTVQ3" class="result_iframe" style="display: none;"></iframe>
+ <div id="JTVQ3_Dialog" class="dialog-backdrop">
   <div class="dialog">
-   <h2>Dialog 1</h2>
-   <div class="controls"><button onclick="renderIframe(this,'LM5nQ_Textarea','MoPTh_IFrame')">Run</button> <button onclick="closeAll()">Close</button>
+   <div class="controls"><button onclick="runHtmlCode(this,'l7o3e','JTVQ3_IFrame', true)">Run</button> <button onclick="closeAllHtmlCodeDialog()">Close</button>
    </div>
-   <div class="dialog-content"><textarea id="LM5nQ_Textarea" class="textarea_dialog" placeholder="Type HTML here...">&lt;!DOCTYPE html&gt;
+   <div class="dialog-content">
+    <div class="editor-container">
+     <textarea id="l7o3e" class="textarea_dialog" placeholder="Type HTML here...">&lt;!DOCTYPE html&gt;
 &lt;html lang="en"&gt;
 &lt;head&gt;
 &lt;meta charset="UTF-8" /&gt;
@@ -1321,100 +707,30 @@ $('#hideBtn').on('click', function() {
 &lt;/script&gt;
 
 &lt;/body&gt;
-&lt;/html&gt;</textarea> <iframe id="MoPTh_IFrame" class="iframe_dialog"></iframe>
+&lt;/html&gt;</textarea>
+    </div>
+    <div class="preview-container">
+     <iframe id="JTVQ3_IFrame" class="result_iframe_dialog" style="border: none;"></iframe>
+    </div>
    </div>
   </div>
  </div>
- <div class="snippet-header" onclick="toggleSnippetAndRefresh('TCuJG','LM5nQ')">
-  Click to Try it <!--<span onclick="toggleSnippetAndRefresh('TCuJG','LM5nQ')">Click
-			to Try it</span> --> <!-- <span onclick="openDialog('MoPTh_Dialog')">Dialog</span> -->
- </div>
- <div class="snippet-body"><textarea id="LM5nQ">&lt;!DOCTYPE html&gt;
-&lt;html lang="en"&gt;
-&lt;head&gt;
-&lt;meta charset="UTF-8" /&gt;
-&lt;title&gt;Collapsible Sections Example&lt;/title&gt;
-&lt;style&gt;
-  .section-header {
-    cursor: pointer;
-    background-color: #eee;
-    padding: 10px;
-    border: 1px solid #ccc;
-    margin: 0;
-  }
-  .section-content {
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-top: none;
-    display: none;
-  }
-&lt;/style&gt;
-&lt;/head&gt;
-&lt;body&gt;
-
-&lt;h3 class="section-header"&gt;Section 1&lt;/h3&gt;
-&lt;div class="section-content"&gt;
-  &lt;p&gt;This is the content of section 1.&lt;/p&gt;
-&lt;/div&gt;
-
-&lt;h3 class="section-header"&gt;Section 2&lt;/h3&gt;
-&lt;div class="section-content"&gt;
-  &lt;p&gt;This is the content of section 2.&lt;/p&gt;
-&lt;/div&gt;
-
-&lt;h3 class="section-header"&gt;Section 3&lt;/h3&gt;
-&lt;div class="section-content"&gt;
-  &lt;p&gt;This is the content of section 3.&lt;/p&gt;
-&lt;/div&gt;
-
-&lt;script src="https://code.jquery.com/jquery-3.6.0.min.js"&gt;&lt;/script&gt;
-&lt;script&gt;
-  $('.section-header').on('click', function() {
-    $(this).next('.section-content').toggle(200);
-  });
-&lt;/script&gt;
-
-&lt;/body&gt;
-&lt;/html&gt;</textarea> <br> <button onclick="renderIframe(this,'LM5nQ','MoPTh')">Run</button>
-  <div id="MoPTh_FloatingLog" class="floatingLog" aria-live="polite" role="alert"></div> <iframe id="MoPTh" class="result_iframe" style="display: none;"></iframe>
-  <script>
-			{
-				let editor = CodeMirror.fromTextArea(document
-						.getElementById("LM5nQ"), {
+ <script>
+{
+let editor = CodeMirror.fromTextArea(document.getElementById("l7o3e"), {
 					mode : "htmlmixed",
 					lineNumbers : false,
+                    lineWrapping: true,
 					tabSize : 2
-				});
-			    const mode = localStorage.getItem("mode") || "light";  
-			    const newTheme = mode === "dark" ? "material" : "default";
-			    editor.setOption("theme", newTheme);
-			    
-				codeMirrorMap.set("LM5nQ", editor);
+});
+const darkmode = localStorage.getItem("mode") || "light";  
+const newTheme = darkmode === "dark" ? "dracula" : "default";
+editor.setSize("50%", "100%");
+editor.setOption("theme", newTheme);
+htmlCodeMirrorMap.set("l7o3e", editor);
+}
 
-				let editor1 = CodeMirror.fromTextArea(document.getElementById("LM5nQ_Textarea"), {
-					mode : "htmlmixed",
-					lineNumbers : false,
-					tabSize : 2
-				});
-			    editor1.setOption("theme", newTheme);				
-				
-				codeMirrorMap.set("LM5nQ_Textarea", editor1);
-			}
-		    function openDialog(id) {
-		        closeAll();
-		        document.getElementById(id).style.display = 'flex';
-		        setTimeout(() => {
-		        	 codeMirrorMap.get("LM5nQ_Textarea").refresh();
-		        }, 100); // 100ms 
-		      }
-
-		      function closeAll() {
-		        document.querySelectorAll('.dialog-backdrop').forEach(el => {
-		          el.style.display = 'none';
-		        });
-		      }			
-		</script>
- </div>
+</script>
 </div><h3 id="summary">Summary</h3><table>
  <thead>
   <tr>
@@ -1445,13 +761,15 @@ $('#hideBtn').on('click', function() {
 <a href='jquery-in-depth.htm#jquery-effects-and-animations' class="nav-button toc-link">Index</a>
 <a href="#bottom" class="nav-button next">↓</a>
 </div>
-<h2 id='fade-and-slide-effects'>8.2 Fade and Slide Effects</h2><p>jQuery provides intuitive and visually appealing methods to show and hide elements using <strong>fade</strong> and <strong>slide</strong> animations. These effects enhance user experience by smoothly transitioning elements in and out of view, making your interfaces feel dynamic and responsive. In this section, we’ll explore <code>.fadeIn()</code>, <code>.fadeOut()</code>, <code>.fadeToggle()</code> for fading effects, and <code>.slideUp()</code>, <code>.slideDown()</code>, <code>.slideToggle()</code> for sliding effects. We’ll also discuss timing, easing, and practical use cases.</p><h3 id="fade-effects-fadein-fadeout-fadetoggle">Fade Effects: <code>.fadeIn()</code>, <code>.fadeOut()</code>, <code>.fadeToggle()</code></h3><p>Fading changes an element’s opacity from transparent (0) to opaque (1), or vice versa. Unlike simply toggling visibility, fading provides a smooth visual transition.</p><h3 id="basic-example-fading-alerts">Basic Example: Fading Alerts</h3><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+<h2 id='fade-and-slide-effects'>8.2 Fade and Slide Effects</h2><p>jQuery provides intuitive and visually appealing methods to show and hide elements using <strong>fade</strong> and <strong>slide</strong> animations. These effects enhance user experience by smoothly transitioning elements in and out of view, making your interfaces feel dynamic and responsive. In this section, we’ll explore <code>.fadeIn()</code>, <code>.fadeOut()</code>, <code>.fadeToggle()</code> for fading effects, and <code>.slideUp()</code>, <code>.slideDown()</code>, <code>.slideToggle()</code> for sliding effects. We’ll also discuss timing, easing, and practical use cases.</p><h3 id="fade-effects-fadein-fadeout-fadetoggle">Fade Effects: <code>.fadeIn()</code>, <code>.fadeOut()</code>, <code>.fadeToggle()</code></h3><p>Fading changes an element’s opacity from transparent (0) to opaque (1), or vice versa. Unlike simply toggling visibility, fading provides a smooth visual transition.</p><h3 id="basic-example-fading-alerts">Basic Example: Fading Alerts</h3><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-html">&lt;button id="showAlert"&gt;Show Alert&lt;/button&gt;
 &lt;button id="hideAlert"&gt;Hide Alert&lt;/button&gt;
 &lt;div id="alertBox" style="display:none; padding:10px; background:#f44336; color:#fff;"&gt;
   Warning: This is an alert message!
 &lt;/div&gt;</code></pre>
-</div><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</div><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-js">$('#showAlert').on('click', function() {
   $('#alertBox').fadeIn(600);
 });
@@ -1462,13 +780,16 @@ $('#hideAlert').on('click', function() {
 </div><ul>
  <li>Clicking <strong>Show Alert</strong> fades the alert box in over 600 milliseconds.</li>
  <li>Clicking <strong>Hide Alert</strong> fades it out smoothly.</li>
-</ul><div class="snippet-container" id="haV51">
- <div id="odAHD_Dialog" class="dialog-backdrop">
+</ul><div class="snippet-container">
+ <div class="button-group-run-edit"><button class="button-run-edit" onclick="runHtmlCode(this,'TWyZl','ieGsa', false)">Run</button> <button class="button-run-edit" onclick="openEditHtmlCodeDialog('ieGsa_Dialog','TWyZl')">Edit</button>
+ </div> <iframe id="ieGsa" class="result_iframe" style="display: none;"></iframe>
+ <div id="ieGsa_Dialog" class="dialog-backdrop">
   <div class="dialog">
-   <h2>Dialog 1</h2>
-   <div class="controls"><button onclick="renderIframe(this,'s4QIW_Textarea','odAHD_IFrame')">Run</button> <button onclick="closeAll()">Close</button>
+   <div class="controls"><button onclick="runHtmlCode(this,'TWyZl','ieGsa_IFrame', true)">Run</button> <button onclick="closeAllHtmlCodeDialog()">Close</button>
    </div>
-   <div class="dialog-content"><textarea id="s4QIW_Textarea" class="textarea_dialog" placeholder="Type HTML here...">&lt;!DOCTYPE html&gt;
+   <div class="dialog-content">
+    <div class="editor-container">
+     <textarea id="TWyZl" class="textarea_dialog" placeholder="Type HTML here...">&lt;!DOCTYPE html&gt;
 &lt;html lang="en"&gt;
 &lt;head&gt;
 &lt;meta charset="UTF-8" /&gt;
@@ -1504,112 +825,58 @@ $('#hideAlert').on('click', function() {
 &lt;/script&gt;
 
 &lt;/body&gt;
-&lt;/html&gt;</textarea> <iframe id="odAHD_IFrame" class="iframe_dialog"></iframe>
+&lt;/html&gt;</textarea>
+    </div>
+    <div class="preview-container">
+     <iframe id="ieGsa_IFrame" class="result_iframe_dialog" style="border: none;"></iframe>
+    </div>
    </div>
   </div>
  </div>
- <div class="snippet-header" onclick="toggleSnippetAndRefresh('haV51','s4QIW')">
-  Click to Try it <!--<span onclick="toggleSnippetAndRefresh('haV51','s4QIW')">Click
-			to Try it</span> --> <!-- <span onclick="openDialog('odAHD_Dialog')">Dialog</span> -->
- </div>
- <div class="snippet-body"><textarea id="s4QIW">&lt;!DOCTYPE html&gt;
-&lt;html lang="en"&gt;
-&lt;head&gt;
-&lt;meta charset="UTF-8" /&gt;
-&lt;title&gt;Fading Alert Example&lt;/title&gt;
-&lt;style&gt;
-  #alertBox {
-    display: none;
-    padding: 10px;
-    background: #f44336;
-    color: #fff;
-    margin-top: 10px;
-  }
-&lt;/style&gt;
-&lt;/head&gt;
-&lt;body&gt;
-
-&lt;button id="showAlert"&gt;Show Alert&lt;/button&gt;
-&lt;button id="hideAlert"&gt;Hide Alert&lt;/button&gt;
-
-&lt;div id="alertBox"&gt;
-  Warning: This is an alert message!
-&lt;/div&gt;
-
-&lt;script src="https://code.jquery.com/jquery-3.6.0.min.js"&gt;&lt;/script&gt;
-&lt;script&gt;
-  $('#showAlert').on('click', function() {
-    $('#alertBox').fadeIn(600);
-  });
-
-  $('#hideAlert').on('click', function() {
-    $('#alertBox').fadeOut(600);
-  });
-&lt;/script&gt;
-
-&lt;/body&gt;
-&lt;/html&gt;</textarea> <br> <button onclick="renderIframe(this,'s4QIW','odAHD')">Run</button>
-  <div id="odAHD_FloatingLog" class="floatingLog" aria-live="polite" role="alert"></div> <iframe id="odAHD" class="result_iframe" style="display: none;"></iframe>
-  <script>
-			{
-				let editor = CodeMirror.fromTextArea(document
-						.getElementById("s4QIW"), {
+ <script>
+{
+let editor = CodeMirror.fromTextArea(document.getElementById("TWyZl"), {
 					mode : "htmlmixed",
 					lineNumbers : false,
+                    lineWrapping: true,
 					tabSize : 2
-				});
-			    const mode = localStorage.getItem("mode") || "light";  
-			    const newTheme = mode === "dark" ? "material" : "default";
-			    editor.setOption("theme", newTheme);
-			    
-				codeMirrorMap.set("s4QIW", editor);
+});
+const darkmode = localStorage.getItem("mode") || "light";  
+const newTheme = darkmode === "dark" ? "dracula" : "default";
+editor.setSize("50%", "100%");
+editor.setOption("theme", newTheme);
+htmlCodeMirrorMap.set("TWyZl", editor);
+}
 
-				let editor1 = CodeMirror.fromTextArea(document.getElementById("s4QIW_Textarea"), {
-					mode : "htmlmixed",
-					lineNumbers : false,
-					tabSize : 2
-				});
-			    editor1.setOption("theme", newTheme);				
-				
-				codeMirrorMap.set("s4QIW_Textarea", editor1);
-			}
-		    function openDialog(id) {
-		        closeAll();
-		        document.getElementById(id).style.display = 'flex';
-		        setTimeout(() => {
-		        	 codeMirrorMap.get("s4QIW_Textarea").refresh();
-		        }, 100); // 100ms 
-		      }
-
-		      function closeAll() {
-		        document.querySelectorAll('.dialog-backdrop').forEach(el => {
-		          el.style.display = 'none';
-		        });
-		      }			
-		</script>
- </div>
-</div><h3 id="toggle-fade">Toggle Fade</h3><p>You can combine fading in and out using <code>.fadeToggle()</code>:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</script>
+</div><h3 id="toggle-fade">Toggle Fade</h3><p>You can combine fading in and out using <code>.fadeToggle()</code>:</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-js">$('#toggleAlert').on('click', function() {
   $('#alertBox').fadeToggle(800);
 });</code></pre>
-</div><p>This toggles the alert’s visibility with a fade animation.</p><h3 id="slide-effects-slideup-slidedown-slidetoggle">Slide Effects: <code>.slideUp()</code>, <code>.slideDown()</code>, <code>.slideToggle()</code></h3><p>Sliding effects animate an element’s height from zero (collapsed) to full height (expanded), or back. Sliding is ideal for revealing or hiding blocks of content vertically.</p><h3 id="example-faq-expander">Example: FAQ Expander</h3><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</div><p>This toggles the alert’s visibility with a fade animation.</p><h3 id="slide-effects-slideup-slidedown-slidetoggle">Slide Effects: <code>.slideUp()</code>, <code>.slideDown()</code>, <code>.slideToggle()</code></h3><p>Sliding effects animate an element’s height from zero (collapsed) to full height (expanded), or back. Sliding is ideal for revealing or hiding blocks of content vertically.</p><h3 id="example-faq-expander">Example: FAQ Expander</h3><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-html">&lt;div class="faq-item"&gt;
   &lt;h3 class="faq-question"&gt;What is jQuery?&lt;/h3&gt;
   &lt;div class="faq-answer" style="display:none;"&gt;
     &lt;p&gt;jQuery is a JavaScript library that simplifies HTML DOM manipulation, event handling, and animations.&lt;/p&gt;
   &lt;/div&gt;
 &lt;/div&gt;</code></pre>
-</div><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</div><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-js">$('.faq-question').on('click', function() {
   $(this).next('.faq-answer').slideToggle(400);
 });</code></pre>
-</div><p>Clicking a question slides its answer open or closed, creating an intuitive FAQ interaction.</p><div class="snippet-container" id="eTAYS">
- <div id="m0ykG_Dialog" class="dialog-backdrop">
+</div><p>Clicking a question slides its answer open or closed, creating an intuitive FAQ interaction.</p><div class="snippet-container">
+ <div class="button-group-run-edit"><button class="button-run-edit" onclick="runHtmlCode(this,'cZMMi','xrwBL', false)">Run</button> <button class="button-run-edit" onclick="openEditHtmlCodeDialog('xrwBL_Dialog','cZMMi')">Edit</button>
+ </div> <iframe id="xrwBL" class="result_iframe" style="display: none;"></iframe>
+ <div id="xrwBL_Dialog" class="dialog-backdrop">
   <div class="dialog">
-   <h2>Dialog 1</h2>
-   <div class="controls"><button onclick="renderIframe(this,'kbO9K_Textarea','m0ykG_IFrame')">Run</button> <button onclick="closeAll()">Close</button>
+   <div class="controls"><button onclick="runHtmlCode(this,'cZMMi','xrwBL_IFrame', true)">Run</button> <button onclick="closeAllHtmlCodeDialog()">Close</button>
    </div>
-   <div class="dialog-content"><textarea id="kbO9K_Textarea" class="textarea_dialog" placeholder="Type HTML here...">&lt;!DOCTYPE html&gt;
+   <div class="dialog-content">
+    <div class="editor-container">
+     <textarea id="cZMMi" class="textarea_dialog" placeholder="Type HTML here...">&lt;!DOCTYPE html&gt;
 &lt;html lang="en"&gt;
 &lt;head&gt;
 &lt;meta charset="UTF-8" /&gt;
@@ -1645,95 +912,36 @@ $('#hideAlert').on('click', function() {
 &lt;/script&gt;
 
 &lt;/body&gt;
-&lt;/html&gt;</textarea> <iframe id="m0ykG_IFrame" class="iframe_dialog"></iframe>
+&lt;/html&gt;</textarea>
+    </div>
+    <div class="preview-container">
+     <iframe id="xrwBL_IFrame" class="result_iframe_dialog" style="border: none;"></iframe>
+    </div>
    </div>
   </div>
  </div>
- <div class="snippet-header" onclick="toggleSnippetAndRefresh('eTAYS','kbO9K')">
-  Click to Try it <!--<span onclick="toggleSnippetAndRefresh('eTAYS','kbO9K')">Click
-			to Try it</span> --> <!-- <span onclick="openDialog('m0ykG_Dialog')">Dialog</span> -->
- </div>
- <div class="snippet-body"><textarea id="kbO9K">&lt;!DOCTYPE html&gt;
-&lt;html lang="en"&gt;
-&lt;head&gt;
-&lt;meta charset="UTF-8" /&gt;
-&lt;title&gt;FAQ Expander Example&lt;/title&gt;
-&lt;style&gt;
-  .faq-question {
-    cursor: pointer;
-    background: #eee;
-    padding: 10px;
-    margin: 0;
-  }
-  .faq-answer {
-    padding: 10px;
-    background: #f9f9f9;
-    border-left: 3px solid #007BFF;
-  }
-&lt;/style&gt;
-&lt;/head&gt;
-&lt;body&gt;
-
-&lt;div class="faq-item"&gt;
-  &lt;h3 class="faq-question"&gt;What is jQuery?&lt;/h3&gt;
-  &lt;div class="faq-answer" style="display:none;"&gt;
-    &lt;p&gt;jQuery is a JavaScript library that simplifies HTML DOM manipulation, event handling, and animations.&lt;/p&gt;
-  &lt;/div&gt;
-&lt;/div&gt;
-
-&lt;script src="https://code.jquery.com/jquery-3.6.0.min.js"&gt;&lt;/script&gt;
-&lt;script&gt;
-  $('.faq-question').on('click', function() {
-    $(this).next('.faq-answer').slideToggle(400);
-  });
-&lt;/script&gt;
-
-&lt;/body&gt;
-&lt;/html&gt;</textarea> <br> <button onclick="renderIframe(this,'kbO9K','m0ykG')">Run</button>
-  <div id="m0ykG_FloatingLog" class="floatingLog" aria-live="polite" role="alert"></div> <iframe id="m0ykG" class="result_iframe" style="display: none;"></iframe>
-  <script>
-			{
-				let editor = CodeMirror.fromTextArea(document
-						.getElementById("kbO9K"), {
+ <script>
+{
+let editor = CodeMirror.fromTextArea(document.getElementById("cZMMi"), {
 					mode : "htmlmixed",
 					lineNumbers : false,
+                    lineWrapping: true,
 					tabSize : 2
-				});
-			    const mode = localStorage.getItem("mode") || "light";  
-			    const newTheme = mode === "dark" ? "material" : "default";
-			    editor.setOption("theme", newTheme);
-			    
-				codeMirrorMap.set("kbO9K", editor);
+});
+const darkmode = localStorage.getItem("mode") || "light";  
+const newTheme = darkmode === "dark" ? "dracula" : "default";
+editor.setSize("50%", "100%");
+editor.setOption("theme", newTheme);
+htmlCodeMirrorMap.set("cZMMi", editor);
+}
 
-				let editor1 = CodeMirror.fromTextArea(document.getElementById("kbO9K_Textarea"), {
-					mode : "htmlmixed",
-					lineNumbers : false,
-					tabSize : 2
-				});
-			    editor1.setOption("theme", newTheme);				
-				
-				codeMirrorMap.set("kbO9K_Textarea", editor1);
-			}
-		    function openDialog(id) {
-		        closeAll();
-		        document.getElementById(id).style.display = 'flex';
-		        setTimeout(() => {
-		        	 codeMirrorMap.get("kbO9K_Textarea").refresh();
-		        }, 100); // 100ms 
-		      }
-
-		      function closeAll() {
-		        document.querySelectorAll('.dialog-backdrop').forEach(el => {
-		          el.style.display = 'none';
-		        });
-		      }			
-		</script>
- </div>
+</script>
 </div><h3 id="timing-and-easing-options">Timing and Easing Options</h3><p>All fade and slide methods accept:</p><ul>
  <li><strong>Duration</strong> (milliseconds or <code>'slow'</code>, <code>'fast'</code>)</li>
  <li><strong>Easing</strong> (optional; defines animation speed curve, e.g., <code>'swing'</code> or <code>'linear'</code>)</li>
  <li><strong>Callback</strong> function executed after animation completes</li>
-</ul><p>Example with easing and callback:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</ul><p>Example with easing and callback:</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-js">$('#alertBox').fadeIn(600, 'swing', function() {
   console.log('Fade-in complete');
 });</code></pre>
@@ -1760,14 +968,16 @@ $('#hideAlert').on('click', function() {
 </table><ul>
  <li><strong>Fade</strong> is great for non-structural elements that overlay or appear/disappear.</li>
  <li><strong>Slide</strong> works best when revealing content that expands/collapses in the page layout.</li>
-</ul><h3 id="real-world-example-image-slider-with-fade">Real-World Example: Image Slider with Fade</h3><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</ul><h3 id="real-world-example-image-slider-with-fade">Real-World Example: Image Slider with Fade</h3><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-html">&lt;div id="slider" style="width:300px; height:200px; position:relative; overflow:hidden;"&gt;
   &lt;img src="image1.jpg" class="slide" style="position:absolute; display:none;"&gt;
   &lt;img src="image2.jpg" class="slide" style="position:absolute; display:none;"&gt;
   &lt;img src="image3.jpg" class="slide" style="position:absolute; display:none;"&gt;
 &lt;/div&gt;
 &lt;button id="nextSlide"&gt;Next&lt;/button&gt;</code></pre>
-</div><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</div><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-js">var currentIndex = 0;
 var slides = $('#slider .slide');
 
@@ -1783,13 +993,16 @@ $('#nextSlide').on('click', function() {
 
 // Initialize first slide
 showSlide(currentIndex);</code></pre>
-</div><p>Each click fades the current image out and the next one in, creating a smooth slideshow effect.</p><div class="snippet-container" id="lAj1B">
- <div id="uv7fB_Dialog" class="dialog-backdrop">
+</div><p>Each click fades the current image out and the next one in, creating a smooth slideshow effect.</p><div class="snippet-container">
+ <div class="button-group-run-edit"><button class="button-run-edit" onclick="runHtmlCode(this,'MsSSr','Lh4qb', false)">Run</button> <button class="button-run-edit" onclick="openEditHtmlCodeDialog('Lh4qb_Dialog','MsSSr')">Edit</button>
+ </div> <iframe id="Lh4qb" class="result_iframe" style="display: none;"></iframe>
+ <div id="Lh4qb_Dialog" class="dialog-backdrop">
   <div class="dialog">
-   <h2>Dialog 1</h2>
-   <div class="controls"><button onclick="renderIframe(this,'FFW2c_Textarea','uv7fB_IFrame')">Run</button> <button onclick="closeAll()">Close</button>
+   <div class="controls"><button onclick="runHtmlCode(this,'MsSSr','Lh4qb_IFrame', true)">Run</button> <button onclick="closeAllHtmlCodeDialog()">Close</button>
    </div>
-   <div class="dialog-content"><textarea id="FFW2c_Textarea" class="textarea_dialog" placeholder="Type HTML here...">&lt;!DOCTYPE html&gt;
+   <div class="dialog-content">
+    <div class="editor-container">
+     <textarea id="MsSSr" class="textarea_dialog" placeholder="Type HTML here...">&lt;!DOCTYPE html&gt;
 &lt;html lang="en"&gt;
 &lt;head&gt;
 &lt;meta charset="UTF-8" /&gt;
@@ -1842,107 +1055,30 @@ showSlide(currentIndex);</code></pre>
 &lt;/script&gt;
 
 &lt;/body&gt;
-&lt;/html&gt;</textarea> <iframe id="uv7fB_IFrame" class="iframe_dialog"></iframe>
+&lt;/html&gt;</textarea>
+    </div>
+    <div class="preview-container">
+     <iframe id="Lh4qb_IFrame" class="result_iframe_dialog" style="border: none;"></iframe>
+    </div>
    </div>
   </div>
  </div>
- <div class="snippet-header" onclick="toggleSnippetAndRefresh('lAj1B','FFW2c')">
-  Click to Try it <!--<span onclick="toggleSnippetAndRefresh('lAj1B','FFW2c')">Click
-			to Try it</span> --> <!-- <span onclick="openDialog('uv7fB_Dialog')">Dialog</span> -->
- </div>
- <div class="snippet-body"><textarea id="FFW2c">&lt;!DOCTYPE html&gt;
-&lt;html lang="en"&gt;
-&lt;head&gt;
-&lt;meta charset="UTF-8" /&gt;
-&lt;title&gt;Image Slider with Fade&lt;/title&gt;
-&lt;style&gt;
-  #slider {
-    width: 300px;
-    height: 200px;
-    position: relative;
-    overflow: hidden;
-    border: 1px solid #ccc;
-  }
-  #slider .slide {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 300px;
-    height: 200px;
-    display: none;
-    object-fit: cover;
-  }
-&lt;/style&gt;
-&lt;/head&gt;
-&lt;body&gt;
-
-&lt;div id="slider"&gt;
-  &lt;img src="https://readbytes.github.io/images/200x200/1.png" class="slide" alt="Slide 1"&gt;
-  &lt;img src="https://readbytes.github.io/images/200x200/2.png" class="slide" alt="Slide 2"&gt;
-  &lt;img src="https://readbytes.github.io/images/200x200/3.png" class="slide" alt="Slide 3"&gt;
-&lt;/div&gt;
-&lt;button id="nextSlide"&gt;Next&lt;/button&gt;
-
-&lt;script src="https://code.jquery.com/jquery-3.6.0.min.js"&gt;&lt;/script&gt;
-&lt;script&gt;
-  var currentIndex = 0;
-  var slides = $('#slider .slide');
-
-  function showSlide(index) {
-    slides.stop(true, true).fadeOut(500);
-    slides.eq(index).fadeIn(500);
-  }
-
-  $('#nextSlide').on('click', function() {
-    currentIndex = (currentIndex + 1) % slides.length;
-    showSlide(currentIndex);
-  });
-
-  // Initialize first slide
-  showSlide(currentIndex);
-&lt;/script&gt;
-
-&lt;/body&gt;
-&lt;/html&gt;</textarea> <br> <button onclick="renderIframe(this,'FFW2c','uv7fB')">Run</button>
-  <div id="uv7fB_FloatingLog" class="floatingLog" aria-live="polite" role="alert"></div> <iframe id="uv7fB" class="result_iframe" style="display: none;"></iframe>
-  <script>
-			{
-				let editor = CodeMirror.fromTextArea(document
-						.getElementById("FFW2c"), {
+ <script>
+{
+let editor = CodeMirror.fromTextArea(document.getElementById("MsSSr"), {
 					mode : "htmlmixed",
 					lineNumbers : false,
+                    lineWrapping: true,
 					tabSize : 2
-				});
-			    const mode = localStorage.getItem("mode") || "light";  
-			    const newTheme = mode === "dark" ? "material" : "default";
-			    editor.setOption("theme", newTheme);
-			    
-				codeMirrorMap.set("FFW2c", editor);
+});
+const darkmode = localStorage.getItem("mode") || "light";  
+const newTheme = darkmode === "dark" ? "dracula" : "default";
+editor.setSize("50%", "100%");
+editor.setOption("theme", newTheme);
+htmlCodeMirrorMap.set("MsSSr", editor);
+}
 
-				let editor1 = CodeMirror.fromTextArea(document.getElementById("FFW2c_Textarea"), {
-					mode : "htmlmixed",
-					lineNumbers : false,
-					tabSize : 2
-				});
-			    editor1.setOption("theme", newTheme);				
-				
-				codeMirrorMap.set("FFW2c_Textarea", editor1);
-			}
-		    function openDialog(id) {
-		        closeAll();
-		        document.getElementById(id).style.display = 'flex';
-		        setTimeout(() => {
-		        	 codeMirrorMap.get("FFW2c_Textarea").refresh();
-		        }, 100); // 100ms 
-		      }
-
-		      function closeAll() {
-		        document.querySelectorAll('.dialog-backdrop').forEach(el => {
-		          el.style.display = 'none';
-		        });
-		      }			
-		</script>
- </div>
+</script>
 </div><h3 id="summary">Summary</h3><table>
  <thead>
   <tr>
@@ -1988,7 +1124,8 @@ showSlide(currentIndex);</code></pre>
 <a href='jquery-in-depth.htm#jquery-effects-and-animations' class="nav-button toc-link">Index</a>
 <a href="#bottom" class="nav-button next">↓</a>
 </div>
-<h2 id='custom-animations-with-animate'>8.3 Custom Animations with <code>animate()</code></h2><p>jQuery’s <code>.animate()</code> method is a powerful tool that lets you create <strong>custom animations</strong> by manipulating numeric CSS properties over time. Unlike predefined effects like <code>.fadeIn()</code> or <code>.slideUp()</code>, <code>.animate()</code> provides full control over which CSS properties to change, how long the animation lasts, and the easing function that controls its acceleration.</p><p>In this section, we’ll explore how <code>.animate()</code> works, which properties you can animate, and walk through practical examples such as growing a div on hover and expanding a sidebar.</p><h3 id="understanding-the-animate-method">Understanding the <code>.animate()</code> Method</h3><p>The basic syntax for <code>.animate()</code> is:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+<h2 id='custom-animations-with-animate'>8.3 Custom Animations with <code>animate()</code></h2><p>jQuery’s <code>.animate()</code> method is a powerful tool that lets you create <strong>custom animations</strong> by manipulating numeric CSS properties over time. Unlike predefined effects like <code>.fadeIn()</code> or <code>.slideUp()</code>, <code>.animate()</code> provides full control over which CSS properties to change, how long the animation lasts, and the easing function that controls its acceleration.</p><p>In this section, we’ll explore how <code>.animate()</code> works, which properties you can animate, and walk through practical examples such as growing a div on hover and expanding a sidebar.</p><h3 id="understanding-the-animate-method">Understanding the <code>.animate()</code> Method</h3><p>The basic syntax for <code>.animate()</code> is:</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-js">$(selector).animate(properties, duration, easing, callback);</code></pre>
 </div><ul>
  <li><strong><code>properties</code></strong>: An object specifying one or more CSS properties and their target values.</li>
@@ -2002,9 +1139,11 @@ showSlide(currentIndex);</code></pre>
  <li><code>padding</code></li>
  <li><code>left</code>, <code>top</code>, <code>right</code>, <code>bottom</code> (for positioned elements)</li>
  <li><code>fontSize</code>, <code>borderWidth</code>, <code>lineHeight</code>, etc.</li>
-</ul><p>Properties like <code>color</code> or <code>background-color</code> require additional plugins or CSS transitions because they use non-numeric values.</p><h3 id="example-1-growing-a-div-on-hover">Example 1: Growing a Div on Hover</h3><p>Let’s create a simple effect where a square grows in size when hovered over, and shrinks back when the mouse leaves.</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</ul><p>Properties like <code>color</code> or <code>background-color</code> require additional plugins or CSS transitions because they use non-numeric values.</p><h3 id="example-1-growing-a-div-on-hover">Example 1: Growing a Div on Hover</h3><p>Let’s create a simple effect where a square grows in size when hovered over, and shrinks back when the mouse leaves.</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-html">&lt;div id="growBox" style="width:100px; height:100px; background:#3498db; margin:20px;"&gt;&lt;/div&gt;</code></pre>
-</div><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</div><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-js">$('#growBox').hover(
   function() { // Mouse enters
     $(this).stop().animate({
@@ -2023,13 +1162,16 @@ showSlide(currentIndex);</code></pre>
  <li><code>.hover()</code> takes two functions: one for mouse enter and one for mouse leave.</li>
  <li><code>.stop()</code> ensures that if the user rapidly moves the mouse in and out, the animations don’t queue up and behave smoothly.</li>
  <li>The <code>width</code> and <code>height</code> properties animate to 150px and back to 100px over 400 milliseconds using the default <code>'swing'</code> easing.</li>
-</ul><div class="snippet-container" id="xeLjd">
- <div id="Sfz2r_Dialog" class="dialog-backdrop">
+</ul><div class="snippet-container">
+ <div class="button-group-run-edit"><button class="button-run-edit" onclick="runHtmlCode(this,'QsNfQ','51uto', false)">Run</button> <button class="button-run-edit" onclick="openEditHtmlCodeDialog('51uto_Dialog','QsNfQ')">Edit</button>
+ </div> <iframe id="51uto" class="result_iframe" style="display: none;"></iframe>
+ <div id="51uto_Dialog" class="dialog-backdrop">
   <div class="dialog">
-   <h2>Dialog 1</h2>
-   <div class="controls"><button onclick="renderIframe(this,'ICOEC_Textarea','Sfz2r_IFrame')">Run</button> <button onclick="closeAll()">Close</button>
+   <div class="controls"><button onclick="runHtmlCode(this,'QsNfQ','51uto_IFrame', true)">Run</button> <button onclick="closeAllHtmlCodeDialog()">Close</button>
    </div>
-   <div class="dialog-content"><textarea id="ICOEC_Textarea" class="textarea_dialog" placeholder="Type HTML here...">&lt;!DOCTYPE html&gt;
+   <div class="dialog-content">
+    <div class="editor-container">
+     <textarea id="QsNfQ" class="textarea_dialog" placeholder="Type HTML here...">&lt;!DOCTYPE html&gt;
 &lt;html lang="en"&gt;
 &lt;head&gt;
 &lt;meta charset="UTF-8" /&gt;
@@ -2067,96 +1209,36 @@ showSlide(currentIndex);</code></pre>
 &lt;/script&gt;
 
 &lt;/body&gt;
-&lt;/html&gt;</textarea> <iframe id="Sfz2r_IFrame" class="iframe_dialog"></iframe>
+&lt;/html&gt;</textarea>
+    </div>
+    <div class="preview-container">
+     <iframe id="51uto_IFrame" class="result_iframe_dialog" style="border: none;"></iframe>
+    </div>
    </div>
   </div>
  </div>
- <div class="snippet-header" onclick="toggleSnippetAndRefresh('xeLjd','ICOEC')">
-  Click to Try it <!--<span onclick="toggleSnippetAndRefresh('xeLjd','ICOEC')">Click
-			to Try it</span> --> <!-- <span onclick="openDialog('Sfz2r_Dialog')">Dialog</span> -->
- </div>
- <div class="snippet-body"><textarea id="ICOEC">&lt;!DOCTYPE html&gt;
-&lt;html lang="en"&gt;
-&lt;head&gt;
-&lt;meta charset="UTF-8" /&gt;
-&lt;title&gt;Grow Div on Hover&lt;/title&gt;
-&lt;style&gt;
-  #growBox {
-    width: 100px;
-    height: 100px;
-    background: #3498db;
-    margin: 20px;
-    cursor: pointer;
-  }
-&lt;/style&gt;
-&lt;/head&gt;
-&lt;body&gt;
-
-&lt;div id="growBox"&gt;&lt;/div&gt;
-
-&lt;script src="https://code.jquery.com/jquery-3.6.0.min.js"&gt;&lt;/script&gt;
-&lt;script&gt;
-  $('#growBox').hover(
-    function() { // Mouse enters
-      $(this).stop().animate({
-        width: '150px',
-        height: '150px'
-      }, 400, 'swing');
-    },
-    function() { // Mouse leaves
-      $(this).stop().animate({
-        width: '100px',
-        height: '100px'
-      }, 400, 'swing');
-    }
-  );
-&lt;/script&gt;
-
-&lt;/body&gt;
-&lt;/html&gt;</textarea> <br> <button onclick="renderIframe(this,'ICOEC','Sfz2r')">Run</button>
-  <div id="Sfz2r_FloatingLog" class="floatingLog" aria-live="polite" role="alert"></div> <iframe id="Sfz2r" class="result_iframe" style="display: none;"></iframe>
-  <script>
-			{
-				let editor = CodeMirror.fromTextArea(document
-						.getElementById("ICOEC"), {
+ <script>
+{
+let editor = CodeMirror.fromTextArea(document.getElementById("QsNfQ"), {
 					mode : "htmlmixed",
 					lineNumbers : false,
+                    lineWrapping: true,
 					tabSize : 2
-				});
-			    const mode = localStorage.getItem("mode") || "light";  
-			    const newTheme = mode === "dark" ? "material" : "default";
-			    editor.setOption("theme", newTheme);
-			    
-				codeMirrorMap.set("ICOEC", editor);
+});
+const darkmode = localStorage.getItem("mode") || "light";  
+const newTheme = darkmode === "dark" ? "dracula" : "default";
+editor.setSize("50%", "100%");
+editor.setOption("theme", newTheme);
+htmlCodeMirrorMap.set("QsNfQ", editor);
+}
 
-				let editor1 = CodeMirror.fromTextArea(document.getElementById("ICOEC_Textarea"), {
-					mode : "htmlmixed",
-					lineNumbers : false,
-					tabSize : 2
-				});
-			    editor1.setOption("theme", newTheme);				
-				
-				codeMirrorMap.set("ICOEC_Textarea", editor1);
-			}
-		    function openDialog(id) {
-		        closeAll();
-		        document.getElementById(id).style.display = 'flex';
-		        setTimeout(() => {
-		        	 codeMirrorMap.get("ICOEC_Textarea").refresh();
-		        }, 100); // 100ms 
-		      }
-
-		      function closeAll() {
-		        document.querySelectorAll('.dialog-backdrop').forEach(el => {
-		          el.style.display = 'none';
-		        });
-		      }			
-		</script>
- </div>
-</div><h3 id="example-2-expanding-a-sidebar">Example 2: Expanding a Sidebar</h3><p>Imagine a sidebar that expands its width when a toggle button is clicked, and collapses back.</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</script>
+</div><h3 id="example-2-expanding-a-sidebar">Example 2: Expanding a Sidebar</h3><p>Imagine a sidebar that expands its width when a toggle button is clicked, and collapses back.</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-html">&lt;button id="toggleSidebar"&gt;Toggle Sidebar&lt;/button&gt;
 &lt;div id="sidebar" style="width: 200px; height: 300px; background:#2ecc71; overflow:hidden;"&gt;&lt;/div&gt;</code></pre>
-</div><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</div><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-js">var expanded = true;
 
 $('#toggleSidebar').on('click', function() {
@@ -2170,13 +1252,16 @@ $('#toggleSidebar').on('click', function() {
 </div><ul>
  <li>Clicking the button animates the sidebar's width to 50px or back to 200px over 500 milliseconds.</li>
  <li>The <code>'linear'</code> easing gives a consistent speed throughout the animation.</li>
-</ul><div class="snippet-container" id="BjRK5">
- <div id="kOQbm_Dialog" class="dialog-backdrop">
+</ul><div class="snippet-container">
+ <div class="button-group-run-edit"><button class="button-run-edit" onclick="runHtmlCode(this,'kmTTw','GeKTL', false)">Run</button> <button class="button-run-edit" onclick="openEditHtmlCodeDialog('GeKTL_Dialog','kmTTw')">Edit</button>
+ </div> <iframe id="GeKTL" class="result_iframe" style="display: none;"></iframe>
+ <div id="GeKTL_Dialog" class="dialog-backdrop">
   <div class="dialog">
-   <h2>Dialog 1</h2>
-   <div class="controls"><button onclick="renderIframe(this,'66Qgn_Textarea','kOQbm_IFrame')">Run</button> <button onclick="closeAll()">Close</button>
+   <div class="controls"><button onclick="runHtmlCode(this,'kmTTw','GeKTL_IFrame', true)">Run</button> <button onclick="closeAllHtmlCodeDialog()">Close</button>
    </div>
-   <div class="dialog-content"><textarea id="66Qgn_Textarea" class="textarea_dialog" placeholder="Type HTML here...">&lt;!DOCTYPE html&gt;
+   <div class="dialog-content">
+    <div class="editor-container">
+     <textarea id="kmTTw" class="textarea_dialog" placeholder="Type HTML here...">&lt;!DOCTYPE html&gt;
 &lt;html lang="en"&gt;
 &lt;head&gt;
 &lt;meta charset="UTF-8" /&gt;
@@ -2219,105 +1304,40 @@ $('#toggleSidebar').on('click', function() {
 &lt;/script&gt;
 
 &lt;/body&gt;
-&lt;/html&gt;</textarea> <iframe id="kOQbm_IFrame" class="iframe_dialog"></iframe>
+&lt;/html&gt;</textarea>
+    </div>
+    <div class="preview-container">
+     <iframe id="GeKTL_IFrame" class="result_iframe_dialog" style="border: none;"></iframe>
+    </div>
    </div>
   </div>
  </div>
- <div class="snippet-header" onclick="toggleSnippetAndRefresh('BjRK5','66Qgn')">
-  Click to Try it <!--<span onclick="toggleSnippetAndRefresh('BjRK5','66Qgn')">Click
-			to Try it</span> --> <!-- <span onclick="openDialog('kOQbm_Dialog')">Dialog</span> -->
- </div>
- <div class="snippet-body"><textarea id="66Qgn">&lt;!DOCTYPE html&gt;
-&lt;html lang="en"&gt;
-&lt;head&gt;
-&lt;meta charset="UTF-8" /&gt;
-&lt;title&gt;Expandable Sidebar&lt;/title&gt;
-&lt;style&gt;
-  #sidebar {
-    width: 200px;
-    height: 300px;
-    background: #2ecc71;
-    overflow: hidden;
-    transition: background-color 0.3s ease;
-  }
-  #sidebar.collapsed {
-    background-color: #27ae60;
-  }
-  #toggleSidebar {
-    margin-bottom: 10px;
-    padding: 8px 12px;
-    cursor: pointer;
-  }
-&lt;/style&gt;
-&lt;/head&gt;
-&lt;body&gt;
-
-&lt;button id="toggleSidebar"&gt;Toggle Sidebar&lt;/button&gt;
-&lt;div id="sidebar"&gt;&lt;/div&gt;
-
-&lt;script src="https://code.jquery.com/jquery-3.6.0.min.js"&gt;&lt;/script&gt;
-&lt;script&gt;
-  var expanded = true;
-
-  $('#toggleSidebar').on('click', function() {
-    if (expanded) {
-      $('#sidebar').animate({ width: '50px' }, 500, 'linear').addClass('collapsed');
-    } else {
-      $('#sidebar').animate({ width: '200px' }, 500, 'linear').removeClass('collapsed');
-    }
-    expanded = !expanded;
-  });
-&lt;/script&gt;
-
-&lt;/body&gt;
-&lt;/html&gt;</textarea> <br> <button onclick="renderIframe(this,'66Qgn','kOQbm')">Run</button>
-  <div id="kOQbm_FloatingLog" class="floatingLog" aria-live="polite" role="alert"></div> <iframe id="kOQbm" class="result_iframe" style="display: none;"></iframe>
-  <script>
-			{
-				let editor = CodeMirror.fromTextArea(document
-						.getElementById("66Qgn"), {
+ <script>
+{
+let editor = CodeMirror.fromTextArea(document.getElementById("kmTTw"), {
 					mode : "htmlmixed",
 					lineNumbers : false,
+                    lineWrapping: true,
 					tabSize : 2
-				});
-			    const mode = localStorage.getItem("mode") || "light";  
-			    const newTheme = mode === "dark" ? "material" : "default";
-			    editor.setOption("theme", newTheme);
-			    
-				codeMirrorMap.set("66Qgn", editor);
+});
+const darkmode = localStorage.getItem("mode") || "light";  
+const newTheme = darkmode === "dark" ? "dracula" : "default";
+editor.setSize("50%", "100%");
+editor.setOption("theme", newTheme);
+htmlCodeMirrorMap.set("kmTTw", editor);
+}
 
-				let editor1 = CodeMirror.fromTextArea(document.getElementById("66Qgn_Textarea"), {
-					mode : "htmlmixed",
-					lineNumbers : false,
-					tabSize : 2
-				});
-			    editor1.setOption("theme", newTheme);				
-				
-				codeMirrorMap.set("66Qgn_Textarea", editor1);
-			}
-		    function openDialog(id) {
-		        closeAll();
-		        document.getElementById(id).style.display = 'flex';
-		        setTimeout(() => {
-		        	 codeMirrorMap.get("66Qgn_Textarea").refresh();
-		        }, 100); // 100ms 
-		      }
-
-		      function closeAll() {
-		        document.querySelectorAll('.dialog-backdrop').forEach(el => {
-		          el.style.display = 'none';
-		        });
-		      }			
-		</script>
- </div>
-</div><h3 id="chaining-animations-and-multiple-properties">Chaining Animations and Multiple Properties</h3><p>You can animate multiple properties at once by including them all in the properties object:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</script>
+</div><h3 id="chaining-animations-and-multiple-properties">Chaining Animations and Multiple Properties</h3><p>You can animate multiple properties at once by including them all in the properties object:</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-js">$('#box').animate({
   width: '300px',
   height: '300px',
   marginLeft: '50px',
   opacity: 0.5
 }, 700);</code></pre>
-</div><p>This example grows the box, moves it to the right, and fades it slightly, all in 700 milliseconds.</p><h3 id="using-callbacks-for-post-animation-logic">Using Callbacks for Post-Animation Logic</h3><p>You can pass a callback function that runs after the animation completes:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</div><p>This example grows the box, moves it to the right, and fades it slightly, all in 700 milliseconds.</p><h3 id="using-callbacks-for-post-animation-logic">Using Callbacks for Post-Animation Logic</h3><p>You can pass a callback function that runs after the animation completes:</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-js">$('#box').animate({ width: '300px' }, 500, function() {
   alert('Animation completed!');
 });</code></pre>
@@ -2361,7 +1381,8 @@ $('#toggleSidebar').on('click', function() {
 <a href='jquery-in-depth.htm#jquery-effects-and-animations' class="nav-button toc-link">Index</a>
 <a href="#bottom" class="nav-button next">↓</a>
 </div>
-<h2 id='stopping-and-queuing-animations'>8.4 Stopping and Queuing Animations</h2><p>jQuery’s animation methods like <code>.animate()</code>, <code>.fadeIn()</code>, and <code>.slideUp()</code> are powerful tools for creating smooth UI transitions. However, animations don’t just run in isolation—they are <strong>queued</strong> and managed internally by jQuery, which can sometimes lead to unexpected behavior if not handled properly. In this section, we’ll explore how jQuery’s animation queue works, how to control it with <code>.stop()</code> and <code>.finish()</code>, and why managing animation queues is crucial for building responsive, bug-free interfaces.</p><h3 id="how-jquery-queues-animations">How jQuery Queues Animations</h3><p>By default, jQuery places animations on a <strong>queue</strong> for each matched element, executing them one after another in the order they were called. This means if you trigger multiple animations on the same element quickly, they won’t run simultaneously but will wait their turn.</p><h3 id="example-queued-animations">Example: Queued Animations</h3><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+<h2 id='stopping-and-queuing-animations'>8.4 Stopping and Queuing Animations</h2><p>jQuery’s animation methods like <code>.animate()</code>, <code>.fadeIn()</code>, and <code>.slideUp()</code> are powerful tools for creating smooth UI transitions. However, animations don’t just run in isolation—they are <strong>queued</strong> and managed internally by jQuery, which can sometimes lead to unexpected behavior if not handled properly. In this section, we’ll explore how jQuery’s animation queue works, how to control it with <code>.stop()</code> and <code>.finish()</code>, and why managing animation queues is crucial for building responsive, bug-free interfaces.</p><h3 id="how-jquery-queues-animations">How jQuery Queues Animations</h3><p>By default, jQuery places animations on a <strong>queue</strong> for each matched element, executing them one after another in the order they were called. This means if you trigger multiple animations on the same element quickly, they won’t run simultaneously but will wait their turn.</p><h3 id="example-queued-animations">Example: Queued Animations</h3><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-js">$('#box').animate({ width: '300px' }, 1000)
          .animate({ height: '300px' }, 1000)
          .animate({ opacity: 0.5 }, 1000);</code></pre>
@@ -2369,16 +1390,19 @@ $('#toggleSidebar').on('click', function() {
  <li><strong>Animation lag:</strong> A backlog of animations plays one after the other, slowing responsiveness.</li>
  <li><strong>Visual glitches:</strong> Unexpected flickers or jumpy behavior when animations stack up.</li>
  <li><strong>Memory issues:</strong> Queued animations consume memory and can degrade performance.</li>
-</ul><p>For example:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</ul><p>For example:</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-js">$('#box').click(function() {
   $(this).slideUp(1000).slideDown(1000);
 });</code></pre>
-</div><p>If the user clicks the box multiple times quickly, many <code>slideUp</code> and <code>slideDown</code> animations queue, causing the box to continue sliding long after the last click.</p><h3 id="controlling-animations-with-stop">Controlling Animations with <code>.stop()</code></h3><p>The <code>.stop()</code> method is essential for managing animation queues. It immediately <strong>stops the currently running animation</strong> on matched elements and <strong>clears the remaining queued animations</strong> (optional).</p><h3 id="syntax">Syntax:</h3><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</div><p>If the user clicks the box multiple times quickly, many <code>slideUp</code> and <code>slideDown</code> animations queue, causing the box to continue sliding long after the last click.</p><h3 id="controlling-animations-with-stop">Controlling Animations with <code>.stop()</code></h3><p>The <code>.stop()</code> method is essential for managing animation queues. It immediately <strong>stops the currently running animation</strong> on matched elements and <strong>clears the remaining queued animations</strong> (optional).</p><h3 id="syntax">Syntax:</h3><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-js">$(selector).stop(clearQueue, jumpToEnd);</code></pre>
 </div><ul>
  <li><code>clearQueue</code> (boolean, optional): If <code>true</code>, removes queued animations waiting to run. Defaults to <code>false</code>.</li>
  <li><code>jumpToEnd</code> (boolean, optional): If <code>true</code>, immediately completes the current animation and applies the end state. Defaults to <code>false</code>.</li>
-</ul><h3 id="example-using-stop-to-prevent-queue-buildup">Example: Using <code>.stop()</code> to prevent queue buildup</h3><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</ul><h3 id="example-using-stop-to-prevent-queue-buildup">Example: Using <code>.stop()</code> to prevent queue buildup</h3><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-js">$('#box').hover(
   function() {
     $(this).stop(true).animate({ width: '300px' }, 400);
@@ -2390,13 +1414,16 @@ $('#toggleSidebar').on('click', function() {
 </div><p>Here:</p><ul>
  <li><code>.stop(true)</code> clears any queued animations before starting the new animation.</li>
  <li>This prevents animation buildup if the user quickly moves the mouse in and out repeatedly.</li>
-</ul><div class="snippet-container" id="XLSYh">
- <div id="VF6js_Dialog" class="dialog-backdrop">
+</ul><div class="snippet-container">
+ <div class="button-group-run-edit"><button class="button-run-edit" onclick="runHtmlCode(this,'HsCQk','1VMlv', false)">Run</button> <button class="button-run-edit" onclick="openEditHtmlCodeDialog('1VMlv_Dialog','HsCQk')">Edit</button>
+ </div> <iframe id="1VMlv" class="result_iframe" style="display: none;"></iframe>
+ <div id="1VMlv_Dialog" class="dialog-backdrop">
   <div class="dialog">
-   <h2>Dialog 1</h2>
-   <div class="controls"><button onclick="renderIframe(this,'NtmfA_Textarea','VF6js_IFrame')">Run</button> <button onclick="closeAll()">Close</button>
+   <div class="controls"><button onclick="runHtmlCode(this,'HsCQk','1VMlv_IFrame', true)">Run</button> <button onclick="closeAllHtmlCodeDialog()">Close</button>
    </div>
-   <div class="dialog-content"><textarea id="NtmfA_Textarea" class="textarea_dialog" placeholder="Type HTML here...">&lt;!DOCTYPE html&gt;
+   <div class="dialog-content">
+    <div class="editor-container">
+     <textarea id="HsCQk" class="textarea_dialog" placeholder="Type HTML here...">&lt;!DOCTYPE html&gt;
 &lt;html lang="en"&gt;
 &lt;head&gt;
   &lt;meta charset="UTF-8" /&gt;
@@ -2428,93 +1455,40 @@ $('#toggleSidebar').on('click', function() {
   &lt;/script&gt;
   
 &lt;/body&gt;
-&lt;/html&gt;</textarea> <iframe id="VF6js_IFrame" class="iframe_dialog"></iframe>
+&lt;/html&gt;</textarea>
+    </div>
+    <div class="preview-container">
+     <iframe id="1VMlv_IFrame" class="result_iframe_dialog" style="border: none;"></iframe>
+    </div>
    </div>
   </div>
  </div>
- <div class="snippet-header" onclick="toggleSnippetAndRefresh('XLSYh','NtmfA')">
-  Click to Try it <!--<span onclick="toggleSnippetAndRefresh('XLSYh','NtmfA')">Click
-			to Try it</span> --> <!-- <span onclick="openDialog('VF6js_Dialog')">Dialog</span> -->
- </div>
- <div class="snippet-body"><textarea id="NtmfA">&lt;!DOCTYPE html&gt;
-&lt;html lang="en"&gt;
-&lt;head&gt;
-  &lt;meta charset="UTF-8" /&gt;
-  &lt;meta name="viewport" content="width=device-width, initial-scale=1" /&gt;
-  &lt;title&gt;jQuery .stop() Example&lt;/title&gt;
-  &lt;style&gt;
-    #box {
-      width: 100px;
-      height: 100px;
-      background: #3498db;
-      margin: 20px;
-    }
-  &lt;/style&gt;
-&lt;/head&gt;
-&lt;body&gt;
-
-  &lt;div id="box"&gt;&lt;/div&gt;
-
-  &lt;script src="https://code.jquery.com/jquery-3.6.0.min.js"&gt;&lt;/script&gt;
-  &lt;script&gt;
-    $('#box').hover(
-      function() {
-        $(this).stop(true).animate({ width: '300px' }, 400);
-      },
-      function() {
-        $(this).stop(true).animate({ width: '100px' }, 400);
-      }
-    );
-  &lt;/script&gt;
-  
-&lt;/body&gt;
-&lt;/html&gt;</textarea> <br> <button onclick="renderIframe(this,'NtmfA','VF6js')">Run</button>
-  <div id="VF6js_FloatingLog" class="floatingLog" aria-live="polite" role="alert"></div> <iframe id="VF6js" class="result_iframe" style="display: none;"></iframe>
-  <script>
-			{
-				let editor = CodeMirror.fromTextArea(document
-						.getElementById("NtmfA"), {
+ <script>
+{
+let editor = CodeMirror.fromTextArea(document.getElementById("HsCQk"), {
 					mode : "htmlmixed",
 					lineNumbers : false,
+                    lineWrapping: true,
 					tabSize : 2
-				});
-			    const mode = localStorage.getItem("mode") || "light";  
-			    const newTheme = mode === "dark" ? "material" : "default";
-			    editor.setOption("theme", newTheme);
-			    
-				codeMirrorMap.set("NtmfA", editor);
+});
+const darkmode = localStorage.getItem("mode") || "light";  
+const newTheme = darkmode === "dark" ? "dracula" : "default";
+editor.setSize("50%", "100%");
+editor.setOption("theme", newTheme);
+htmlCodeMirrorMap.set("HsCQk", editor);
+}
 
-				let editor1 = CodeMirror.fromTextArea(document.getElementById("NtmfA_Textarea"), {
-					mode : "htmlmixed",
-					lineNumbers : false,
-					tabSize : 2
-				});
-			    editor1.setOption("theme", newTheme);				
-				
-				codeMirrorMap.set("NtmfA_Textarea", editor1);
-			}
-		    function openDialog(id) {
-		        closeAll();
-		        document.getElementById(id).style.display = 'flex';
-		        setTimeout(() => {
-		        	 codeMirrorMap.get("NtmfA_Textarea").refresh();
-		        }, 100); // 100ms 
-		      }
-
-		      function closeAll() {
-		        document.querySelectorAll('.dialog-backdrop').forEach(el => {
-		          el.style.display = 'none';
-		        });
-		      }			
-		</script>
- </div>
-</div><h3 id="finish-jump-to-end-and-clear-queue"><code>.finish()</code>: Jump to End and Clear Queue</h3><p><code>.finish()</code> is a shorthand to immediately complete the current animation and clear the queue:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</script>
+</div><h3 id="finish-jump-to-end-and-clear-queue"><code>.finish()</code>: Jump to End and Clear Queue</h3><p><code>.finish()</code> is a shorthand to immediately complete the current animation and clear the queue:</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-js">$(selector).finish();</code></pre>
-</div><p>It’s useful when you need the element to <strong>skip to the final state</strong> of any animations immediately.</p><h3 id="practical-example-interrupting-and-clearing-animations">Practical Example: Interrupting and Clearing Animations</h3><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</div><p>It’s useful when you need the element to <strong>skip to the final state</strong> of any animations immediately.</p><h3 id="practical-example-interrupting-and-clearing-animations">Practical Example: Interrupting and Clearing Animations</h3><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-html">&lt;button id="startAnim"&gt;Start Animation&lt;/button&gt;
 &lt;button id="stopAnim"&gt;Stop Animation&lt;/button&gt;
 &lt;div id="animBox" style="width:100px; height:100px; background:#e74c3c;"&gt;&lt;/div&gt;</code></pre>
-</div><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</div><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-js">$('#startAnim').on('click', function() {
   $('#animBox').animate({ width: '300px' }, 2000)
                .animate({ height: '300px' }, 2000)
@@ -2527,13 +1501,16 @@ $('#stopAnim').on('click', function() {
 </div><ul>
  <li>Clicking <strong>Start Animation</strong> queues three animations.</li>
  <li>Clicking <strong>Stop Animation</strong> immediately halts the current animation, clears the queue, and jumps the box to the final state (<code>width: 300px</code>, <code>height: 300px</code>, <code>opacity: 0.2</code>).</li>
-</ul><div class="snippet-container" id="1mVy0">
- <div id="ezM2W_Dialog" class="dialog-backdrop">
+</ul><div class="snippet-container">
+ <div class="button-group-run-edit"><button class="button-run-edit" onclick="runHtmlCode(this,'o6MlM','EqmK2', false)">Run</button> <button class="button-run-edit" onclick="openEditHtmlCodeDialog('EqmK2_Dialog','o6MlM')">Edit</button>
+ </div> <iframe id="EqmK2" class="result_iframe" style="display: none;"></iframe>
+ <div id="EqmK2_Dialog" class="dialog-backdrop">
   <div class="dialog">
-   <h2>Dialog 1</h2>
-   <div class="controls"><button onclick="renderIframe(this,'5JZbW_Textarea','ezM2W_IFrame')">Run</button> <button onclick="closeAll()">Close</button>
+   <div class="controls"><button onclick="runHtmlCode(this,'o6MlM','EqmK2_IFrame', true)">Run</button> <button onclick="closeAllHtmlCodeDialog()">Close</button>
    </div>
-   <div class="dialog-content"><textarea id="5JZbW_Textarea" class="textarea_dialog" placeholder="Type HTML here...">&lt;!DOCTYPE html&gt;
+   <div class="dialog-content">
+    <div class="editor-container">
+     <textarea id="o6MlM" class="textarea_dialog" placeholder="Type HTML here...">&lt;!DOCTYPE html&gt;
 &lt;html lang="en"&gt;
 &lt;head&gt;
   &lt;meta charset="UTF-8" /&gt;
@@ -2569,90 +1546,30 @@ $('#stopAnim').on('click', function() {
   &lt;/script&gt;
 
 &lt;/body&gt;
-&lt;/html&gt;</textarea> <iframe id="ezM2W_IFrame" class="iframe_dialog"></iframe>
+&lt;/html&gt;</textarea>
+    </div>
+    <div class="preview-container">
+     <iframe id="EqmK2_IFrame" class="result_iframe_dialog" style="border: none;"></iframe>
+    </div>
    </div>
   </div>
  </div>
- <div class="snippet-header" onclick="toggleSnippetAndRefresh('1mVy0','5JZbW')">
-  Click to Try it <!--<span onclick="toggleSnippetAndRefresh('1mVy0','5JZbW')">Click
-			to Try it</span> --> <!-- <span onclick="openDialog('ezM2W_Dialog')">Dialog</span> -->
- </div>
- <div class="snippet-body"><textarea id="5JZbW">&lt;!DOCTYPE html&gt;
-&lt;html lang="en"&gt;
-&lt;head&gt;
-  &lt;meta charset="UTF-8" /&gt;
-  &lt;meta name="viewport" content="width=device-width, initial-scale=1" /&gt;
-  &lt;title&gt;jQuery Animation Stop Example&lt;/title&gt;
-  &lt;style&gt;
-    #animBox {
-      width: 100px;
-      height: 100px;
-      background: #e74c3c;
-      margin: 20px 0;
-    }
-  &lt;/style&gt;
-&lt;/head&gt;
-&lt;body&gt;
-
-  &lt;button id="startAnim"&gt;Start Animation&lt;/button&gt;
-  &lt;button id="stopAnim"&gt;Stop Animation&lt;/button&gt;
-
-  &lt;div id="animBox"&gt;&lt;/div&gt;
-
-  &lt;script src="https://code.jquery.com/jquery-3.6.0.min.js"&gt;&lt;/script&gt;
-  &lt;script&gt;
-    $('#startAnim').on('click', function() {
-      $('#animBox').animate({ width: '300px' }, 2000)
-                   .animate({ height: '300px' }, 2000)
-                   .animate({ opacity: 0.2 }, 2000);
-    });
-
-    $('#stopAnim').on('click', function() {
-      $('#animBox').stop(true, true); // Stop current animation, clear queue, jump to end state
-    });
-  &lt;/script&gt;
-
-&lt;/body&gt;
-&lt;/html&gt;</textarea> <br> <button onclick="renderIframe(this,'5JZbW','ezM2W')">Run</button>
-  <div id="ezM2W_FloatingLog" class="floatingLog" aria-live="polite" role="alert"></div> <iframe id="ezM2W" class="result_iframe" style="display: none;"></iframe>
-  <script>
-			{
-				let editor = CodeMirror.fromTextArea(document
-						.getElementById("5JZbW"), {
+ <script>
+{
+let editor = CodeMirror.fromTextArea(document.getElementById("o6MlM"), {
 					mode : "htmlmixed",
 					lineNumbers : false,
+                    lineWrapping: true,
 					tabSize : 2
-				});
-			    const mode = localStorage.getItem("mode") || "light";  
-			    const newTheme = mode === "dark" ? "material" : "default";
-			    editor.setOption("theme", newTheme);
-			    
-				codeMirrorMap.set("5JZbW", editor);
+});
+const darkmode = localStorage.getItem("mode") || "light";  
+const newTheme = darkmode === "dark" ? "dracula" : "default";
+editor.setSize("50%", "100%");
+editor.setOption("theme", newTheme);
+htmlCodeMirrorMap.set("o6MlM", editor);
+}
 
-				let editor1 = CodeMirror.fromTextArea(document.getElementById("5JZbW_Textarea"), {
-					mode : "htmlmixed",
-					lineNumbers : false,
-					tabSize : 2
-				});
-			    editor1.setOption("theme", newTheme);				
-				
-				codeMirrorMap.set("5JZbW_Textarea", editor1);
-			}
-		    function openDialog(id) {
-		        closeAll();
-		        document.getElementById(id).style.display = 'flex';
-		        setTimeout(() => {
-		        	 codeMirrorMap.get("5JZbW_Textarea").refresh();
-		        }, 100); // 100ms 
-		      }
-
-		      function closeAll() {
-		        document.querySelectorAll('.dialog-backdrop').forEach(el => {
-		          el.style.display = 'none';
-		        });
-		      }			
-		</script>
- </div>
+</script>
 </div><h3 id="why-managing-animation-queues-matters">Why Managing Animation Queues Matters</h3><ol>
  <li><strong>Improved Responsiveness:</strong> Prevents animations from piling up, which could make the UI feel sluggish.</li>
  <li><strong>Better User Experience:</strong> Avoids unexpected or jarring visual effects caused by rapid, overlapping animations.</li>
@@ -2721,9 +1638,19 @@ $('#stopAnim').on('click', function() {
 </a>
 
 
+<a href="javascript-html5-animation.htm">
+<div class="book-cover" style="background-color: #f9f6f1;border: 1px solid #ccc;"> 
+    <div class="book-cover-title" style="font-size: 16px;color: #333;top: 10px;">JavaScript HTML5 Animation</div>
+    <div class="book-cover-author">readbytes</div>
+    <div class="book-cover-bottom-stripe" style="background-color: #333;"></div>
+    <img class="book-cover-icon" style="width: 120px;height: 120px;top: 60px;" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFoAAABaCAYAAAA4qEECAAACw0lEQVR4Xu3WvWoUURjG8dXGS9BK7awECysR78Ab8RqUmZGE3QmKmEJUxEarFJJCFK0sbGzEThBEJFjEbbQwsOLOcZZl2cN/PvbMx+6cCc8PHpLs2fN+DAmbwUBERERERERERERERERERERERDYrDqaPRmFiFokjc4vvkZriKDmyH25hgmTMu3Vk6iKDgTnBO73HJV3CGq5YZ1V4v5dGoTnLxarErrW9bU7HobmRvv52GCaf06/f0t/+L7Ofd0Jzad4vW8MlcWAu2716hwv5HXOF8/dCdhH/wx28Nwqmj7lEX8JdvMbh82LjWZtJ/9up1Ie7eI3D58XGszZj+/3LrRf38VL6ofKKg+fFxrM28+Ng2efeKHueF+7kJQ5dFBvPug538hKHLooedEMcepGqeN8148P5/edPs2d2yvpwJy9xaC7mivdd41KDeD4Mkn3u5R0OXZSyRZvEpe6bl8v3zb7n+SzcyyvDoTnPgYti41nTvH+3uubD+/Pw9UW4m1fSAcccuCjrfNBthLt5hcOWZZMPuk4f7uYVDlsWG8/ajO3ge6VeP7mfN3KG7TyTyfJB7+9VetD+/lZzUF+y9ywxTx5kX18V7ucNDtr3cD8vjILkBQfte+5smXPcs3Mc8jgkjpKEe3aOQx6XcM/OccDjEu7ZOQ7YNKzvIv2c+Mg6TROG5iT7dIoDNou5xvqusrUaJko+sUenMgM2CGtXxXpNMgyT16zfKQ5YN6xbF+vWze6uOcXanUr/xP5yyBqZsm5dO6E5k1O/cljXCxyyalivqbTmH/aoGtb0AoeskvimucB6bWCfKmEtr3BYxxyxTpty+q1OZK6zjncyQ5dnwvvrkNO3JOYu73srO3xOtsxV3lunTP+c8E5vxKH5wGVGt81Fvm+T0hm+2vPEUfKP7xERERERERERERERERERERERERGRbv0HldRbu8sOVfIAAAAASUVORK5CYII="/>
+  </div>
+</a>
+
+
 <a href="javascript-dom-programming.htm">
 <div class="book-cover" style="background-color: #f9f6f1;border: 1px solid #ccc;"> 
-    <div class="book-cover-title" style="font-size: 16px;color: #333;top: 20px;">JavaScript DOM Programming</div>
+    <div class="book-cover-title" style="font-size: 16px;color: #333;top: 10px;">JavaScript DOM Programming</div>
     <div class="book-cover-author">readbytes</div>
     <div class="book-cover-bottom-stripe" style="background-color: #333;"></div>
     <img class="book-cover-icon" style="width: 90px;height: 90px;top: 60px;" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFoAAABaCAYAAAA4qEECAAADUklEQVR4Xu2dv47TQBDGI0RDczY9rwMlrwEFBweC/t4EXRwaXuI6WiSaOLkCIZ6BCqTgPRFr8zkbnPF4Zuydn/RVuzsz33eSlX/2LRYRm1Xxe1MVOzY19eL6/6NzfqCw/ilEvXc2Mwh7pNiuyks8O1T1snyNfVLgWQ5hjxbcyCHskaJelVd4drCW5Vvsk6JzlkHYo6XXph5Q6hwEfUZASDhLqUOZ+Ri96vTa1ANKHQ+aAKWOB02AUseDJkCp40EToNTxoAlQ6njQBCh1PGgClDrZBs0l7JEi23eGXMIeKTbVxSs8O1Trm4tL7JMCz3IIe7Rsq+IXbh6iUA97nALPDxXWP4W29w5xMVwbG67rOBVR76LNAA9aiKyCbq49L0QbRmgGHXuul8VLXB+F3IPGtdGIm0o21gpay+89Gs01gtbwecDPz08eSQ8hHTT6C55xjwh3q+IZDhO0u148wL0cSAR93cyOfoKCV9wryu528RCHmpuCR/StRvOy7w8OOHUFT+jTDHdV+RwHnpqCB/SVFRLXaGfhQYvhQQvhQQvhQQvhQf8DXyZNXehPnW+fisc45FwUvKFfNXC4uQn9qvD1Y1maG4qB2NP3xiOui1NX5Zv9QNuq+IDrU6Xx8n7vq16WV7guTvxKYH1TvsP1qWLOl7mBmDDny9xATJjzZW4gJsz5MjcQE+Z8mRuICXO+zA3EhDlf5gZiwpwvcwMxYc6XuYGYMOfL3EBMmPNlbiAmzPkyNxAT5nyZG4gJc778Y1Ih/IN/QeKh5ij0q8acv5z9YenL2T045NSF/rIhfiWQ9Q9oxsaDFsKDFsKDFsKDFsKDjqj9ZqFx8dvfRubWb+gcn+Yv/hSHuh9swrcoh9nRT5DaLcpf/KZ7GXAIXB8D6aADGj5btJprBB3Q8nvQGNfGRCvogLjntT+8SubhVVohBzSDDoh6F20GeNBCzCZo7Qeh4vmhwvqnEPWOmzmEPVJk9Vhj3Mgh7JHi4LLApTMuL52zDMIeLb029YBSh+v6G85S6lBmPkavOr029YBSx4MmQKnjQROg1PGgCVDqeNAEKHU8aAKUOh40AUodD5oApU62QXMJe6TI9p0hl7BHitz+XTX3j2DO+gHKkfODhPVPsRnZ+1+tJg8Iaaje6wAAAABJRU5ErkJggg=="/>
@@ -2733,7 +1660,7 @@ $('#stopAnim').on('click', function() {
 
 <a href="javascript-data-visualization.htm">
 <div class="book-cover" style="background-color: #f9f6f1;border: 1px solid #ccc;"> 
-    <div class="book-cover-title" style="font-size: 16px;color: #333;top: 20px;">JavaScript Data Visualization</div>
+    <div class="book-cover-title" style="font-size: 16px;color: #333;top: 10px;">JavaScript Data Visualization</div>
     <div class="book-cover-author">readbytes</div>
     <div class="book-cover-bottom-stripe" style="background-color: #333;"></div>
     <img class="book-cover-icon" style="width: 90px;height: 90px;top: 60px;" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFoAAABaCAYAAAA4qEECAAAC0UlEQVR4Xu3dMWsUURSG4fwr2U6zJI0WKZSAaa0EG7tU2giWimLETrQQQRCxUDsbK3+IYOWCiFU06IQz356ZuffOvXdm4A28ze585OxDsLDZnR3zs1pf+rHavXhKWdpY2/Mf50HKEMgV+4cs/1z8/v6OMiTYm9Zfsz5M42r9VQNdLqArBXSlgK4U0JUCulKLgrb39aW7ObQY6PXl/S3Qrs6e1f3ULQZaMYfS/dTZ2xYDvff6g9tS7ge6YEBXCuhKAV0poCsFdKWArtQk0G9e3Tt9dnLc2+dPD1sboCOzv2Ool8/vujsFBtpJMYfydgoMtFMqWOpuLtnbgC6YvQ3ogtnbgC6YvQ3ogtnbgC6YvQ3ogtnbgC6YvQ3ogtnboqCvHR20xn11/UKF6gNL3Y1JP0dXV68fbG01+3wUtP6yvp4+OXZ3CtUHlrpL7ew/tvRz9KV7zT4LtGmW0O+/fnRr3l86tH4u/Xwhv88+C7QJ6MhdakBH7lIDOnKXGtCRu9SAjtylBnTkLjWgI3e67evnt7fnG6BH7EJqdkCP2IXU7IAesft169DN2wE9YqfAQDt35NgpMNDOHTl2Cgy0c0eOnQID7dxhXwvJ2ykw0M4d9rWQvJ0CA+3cYV8LydspMNDOHfa1C/cfuQ3tFBho5w77mgID/f99oCeGDsnbKXBp6JDUR7PPAm12QO8CvVXzfhe0QoWC6fOhOwUOhX7w4rGbt+vKPgu02QE9YqfAi4Meai7QITU7oEfsQmp2s4S+cfumW/P+XKDvXFm7ebtZQusBeshcoL8c7rt5O6BH7BQYaOeOHDsFBtq5I8dOgYF27sixU2CgnTty7BQYaOeOHDsFBtq5I8dOgRcHPVQXdEhT7Wb536RDAQ30Vs1uNtAUF9CVArpSQFcK6EoBXSmgK9WG5qtQi2RNV803KsuLlDn7RcpgF6qF3Pz8fWOjD1JyrS9g/wOlHj3Oru4PcQAAAABJRU5ErkJggg=="/>
@@ -2794,30 +1721,36 @@ $('#stopAnim').on('click', function() {
 
 <a href='javascript.htm'><div class='book-cover' style='background-color: #f9f6f1;color: #111111;border: 1px solid #ccc;display: flex;justify-content: center;align-items: center;text-align: center;'>More Javascript Books</div></a>
 </div>
-</div>
-  </div>
-  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
-  
-  <script>
-    function copyCode(button) {
-      const code = button.nextElementSibling.innerText;
-      navigator.clipboard.writeText(code).then(() => {
-        button.textContent = 'Copied!';
-        setTimeout(() => { button.textContent = 'Copy'; }, 1500);
-      });
-    }
-  </script>  
-<div id="floatingLog" aria-live="polite" role="alert"></div>
-<footer class="page-footer">
-    <nav>
-      <a href="https://readbytes.github.io">Home</a> | 
-      Email:<script language="JavaScript" type="text/javascript">
+</div><script>
+function copyCode(button) {const code = button.nextElementSibling.innerText;navigator.clipboard.writeText(code).then(() => {button.textContent = 'Copied!';setTimeout(() => { button.textContent = 'Copy'; }, 1500);});}
+</script><div id="floatingLog" aria-live="polite" role="alert"></div></div>
+<style>
+.site-footer {margin-top: 60px;padding: 20px 0;border-top: 1px solid #eee;text-align: center;font-size: 14px;}
+.site-footer a {text-decoration: none;}
+.light-mode .site-footer {color: #777;border-color: #eee;}
+.dark-mode .site-footer {color: #888;border-color: #333;}
+.light-mode .site-footer a {color: #555;}
+.dark-mode .site-footer a {color: #aaa;}
+.site-footer a:hover {text-decoration: underline;}    
+</style>
+<footer class="site-footer">
+<nav><a href="https://readbytes.github.io">Home</a> |Email:<script type="text/javascript">
 var part1 = 'yinpeng';var part6 = '263';var part2 = Math.pow(2,6);var part3 = String.fromCharCode(part2);var part4 = 'hotmail dot com';var part5 = part1 + String.fromCharCode(part2) + part4;document.write(part1 + part6 + part3 + part4);
 </script>
-    </nav>
-  <p>© 2025 — All rights reserved.</p>    
-  </footer>
-
+| <a id="mode-toggle" href="#">Toggle Dark Mode</a>
+</nav><p>© 2025 — All rights reserved.</p></footer>
+<script>
+const toggleButton = document.getElementById('mode-toggle');
+const body = document.body;
+const savedMode = localStorage.getItem('mode') || 'light';
+body.classList.add(savedMode + '-mode');
+toggleButton.addEventListener('click', () => {
+      const isDark = body.classList.contains('dark-mode');
+      body.classList.toggle('dark-mode', !isDark);
+      body.classList.toggle('light-mode', isDark);
+      localStorage.setItem('mode', isDark ? 'light' : 'dark');
+});
+function copyCode(button) {const code = button.nextElementSibling.innerText;navigator.clipboard.writeText(code).then(() => {button.textContent = 'Copied!';setTimeout(() => { button.textContent = 'Copy'; }, 1500);});}
+</script>
 </body>
 </html>

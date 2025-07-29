@@ -1,468 +1,171 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
+<meta charset="UTF-8">
 <title>C++ STL Smart Pointers and Resource Management in STL</title>
-<link rel='shortcut icon' href='https://java2s.com/style/favicon.ico'>
+<link rel='shortcut icon' href='https://readbytes.github.io/images/favicon.ico'>
 <link href="https://fonts.googleapis.com/css2?family=Merriweather&display=swap" rel="stylesheet" />
 <link href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.css" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/theme/dracula.min.css"><style>
+html {scroll-behavior: smooth;}  
+body {font-family: 'Merriweather', serif;;margin: 0;padding: 2rem 1rem;font-size: 15px;line-height: 1.5;transition: background-color 0.3s, color 0.3s;}
+.container {max-width: 750px;margin: 0 auto;padding: 1rem 2rem;}
+.light-mode {background-color: #f8f7f5;color: #333;} 
+.dark-mode {background-color: #121212;color: #e0e0e0;}
+a { text-decoration: none;transition: color 0.2s;}
+a:hover {text-decoration: underline;}
+.light-mode a {color: #555;}
+.dark-mode a {color: #aaa;}
+</style><style>
+.related-book-list {display: flex;flex-wrap: wrap;gap: 20px;}
+.related-books {margin-top: 40px;}
+.related-books h2 {font-size: 22px;margin-bottom: 20px;border-bottom: 2px solid #eee;padding-bottom: 8px;}
+.light-mode .related-books h2 {color: #333;border-color: #eee;}
+.dark-mode .related-books h2 {color: #ddd;border-color: #333;}
+</style><style>
+.book-cover {width: 130px;height: 180px;font-family: Arial, sans-serif;position: relative;overflow: hidden;box-shadow: 2px 2px 4px rgba(0,0,0,0.1);}
+.book-cover-bottom-stripe {position: absolute;bottom: 0;left: 0;height: 5px;width: 100%;}
+.book-cover-title {position: absolute;width: 100%;text-align: center;font-weight: bold;}
+.book-cover-icon {position: absolute;left: 50%;transform: translateX(-50%);display: flex;align-items: center;justify-content: center;}
+.book-cover-author {position: absolute;bottom: 10px;width: 100%;text-align: center;font-size: 8px;color: #333;}
+</style><style>
+.book-title-toc {font-size: 32px;font-weight: bold; }
+.book-subtitle-toc {font-size: 18px;margin-top: 8px;font-style: italic;}
+.book-header {text-align: center;margin-bottom: 40px;}
 
+.toc-container {border-radius: 10px;padding: 30px;margin-bottom: 40px;box-shadow: 0 8px 20px rgba(0,0,0,0.05);}
+h1 {font-size: 24px;text-align: center;margin-bottom: 30px;letter-spacing: 1px;padding-bottom: 10px;}
+.toc-list,.toc-section-list {list-style: none;padding: 0;margin: 0;}
+.toc-section-list {padding-left: 18px;margin-top: 6px;margin-bottom: 20px; }
+.toc-chapter {padding: 20px 0;}
+.chapter-title,.toc-section {display: flex;justify-content: space-between;padding-top: 4px;}
+.chapter-title {font-size: 17px;font-weight: bold;}
+.chapter-page,.section-page {font-style: italic;}
+ 
+ 
+.light-mode .book-title-toc,.light-mode .chapter-title,.light-mode .book-name {color: #222;}
+.light-mode .book-subtitle-toc,.light-mode .book-sub,.light-mode .chapter-page,.light-mode .section-page {color: #666;}
+.light-mode .toc-container { background: #fff;border: 1px solid #ddd;}
+.light-mode h1 {border-bottom: 2px solid #eee;color: #222;}
+.light-mode .toc-section {  color: #444;}
 
-  <script>
-  const mode = localStorage.getItem('mode') || 'light';
-  document.documentElement.classList.add(`${mode}-mode`);
-  </script>   
-<style> 
-html {
-  scroll-behavior: smooth;
+.light-mode .book-cover { border: 1px solid #ccc;box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);}
+.light-mode .book-title,.light-mode .series-name {color: #fff;}
+.light-mode .book-subtitle,.light-mode .book-footer {color: #aaa;}
+
+.dark-mode .book-title-toc,.dark-mode .chapter-title,.dark-mode .book-name {color: #f5f5f5;}
+.dark-mode .book-subtitle-toc,.dark-mode .book-sub,.dark-mode .chapter-page,.dark-mode .section-page {color: #aaa;}
+.dark-mode .toc-container {background: #1e1e1e;border: 1px solid #444;}
+
+.dark-mode h1 {border-bottom: 2px solid #333;color: #eee;}
+.dark-mode .toc-section {color: #bbb;}
+
+.dark-mode .related-books h2 {color: #ddd;border-bottom: 2px solid #333;}
+.dark-mode .book-title,.dark-mode .series-name {color: #fff;}
+.dark-mode .book-subtitle,.dark-mode .book-footer {color: #bbb;}
+.dark-mode .toc-section {color: #ddd;}
+
+@media (max-width: 600px) {
+  .chapter-title,
+  .toc-section {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .chapter-page,
+  .section-page {
+    margin-top: 4px;
+  }
 }
 
-body {
-  font-family: 'Merriweather', serif;
-  margin: 0;
-  padding: 2rem 1rem;
-  font-size: 15px;
-  line-height: 1.5;
-  transition: background-color 0.3s, color 0.3s;
-}
+</style><style>
+.light-mode .container {box-shadow: 0 0 15px rgba(0,0,0,0.1);}
+.dark-mode .container {box-shadow: 0 0 15px rgba(255, 255, 255, 0.05);}
 
-.container {
-  max-width: 700px;
-  margin: 0 auto;
-  padding: 1rem 2rem;
-  box-shadow: 0 0 15px rgba(0,0,0,0.1);
-}
-
-h1, h2, h3 {
-  font-weight: 600;
-  margin-top: 2.5rem;
-  margin-bottom: 1rem;
-  line-height: 1.2;
-}
-
+h1, h2, h3 {font-weight: 600;margin-top: 2.5rem;margin-bottom: 1rem;line-height: 1.2;}
 h1 { font-size: 1.8rem; }
 h2 { font-size: 1.4rem; }
 h3 { font-size: 1.2rem; }
 
-table {
-  width: 100%;
-  border-collapse: collapse;
-  font-family: sans-serif;
-  font-size: 1em;
-  margin: 1em 0;
-}
+table {width: 100%;border-collapse: collapse;font-family: sans-serif;font-size: 1em;margin: 1em 0;}
+th, td {padding: 0.6em 1em;text-align: left;border: 1px solid;}
+tr:nth-child(even) {  background-color: inherit;}
+tr:hover { background-color: inherit;}
 
-th, td {
-  padding: 0.6em 1em;
-  text-align: left;
-  border: 1px solid;
-}
+code {color: #d35400;}
 
-tr:nth-child(even) {
-  background-color: inherit;
-}
-
-tr:hover {
-  background-color: inherit;
-}
-
-a {
-  text-decoration: none;
-  transition: color 0.2s;
-}
-
-a:hover {
-  text-decoration: underline;
-}
-
-code {
-  color: #d35400;
-}
-
-.book-title-chapter {
-  font-family: 'Merriweather', serif;
-  font-size: 2rem;
-  font-weight: bold;
-  text-align: center;
-  margin-bottom: 2rem;
-  border-bottom: 2px solid;
-  padding-bottom: 0.5rem;
-}
-
-.book-subtitle-chapter {
-  text-align: center;
-  font-size: 1rem;
-  margin-top: -1rem;
-  margin-bottom: 2rem;
-}
-
-.related-books {
-  margin-top: 40px;
-}
-
-.related-book-list {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 20px;
-}
-
-    .book-cover {
-      width: 130px;
-      height: 180px;
-      font-family: Arial, sans-serif;
-      position: relative;
-      overflow: hidden;      
-      line-height: normal;
-      box-shadow: 2px 2px 4px rgba(0,0,0,0.1);
-    }
-    .book-cover-bottom-stripe {
-      position: absolute;
-      bottom: 0;
-      left: 0;
-      height: 5px;
-      width: 100%;
-    }
-    .book-cover-title {
-      position: absolute;
-      width: 100%;
-      text-align: center;
-      font-weight: bold;
-    }
-     
-    .book-cover-icon {
-      position: absolute;
-      left: 50%;
-      transform: translateX(-50%);
-      display: flex;
-      align-items: center;
-      justify-content: center; 
-    }
-
-    .book-cover-author {
-      position: absolute;
-      bottom: 10px;
-      width: 100%;
-      text-align: center;
-      font-size: 8px;
-      color: #333;
-    }
-
-.page-footer {
-  margin-top: 4rem;
-  padding: 1rem 0;
-  text-align: center;
-  font-size: 0.85rem;
-  border-top: 1px solid;
-}
-
-.chapter-navi-section {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding-bottom: 10px;
-}
-
-.nav-link {
-  color: inherit;
-  text-decoration: none;
-  opacity: 0.5;
-  transition: opacity 0.3s ease, text-decoration 0.3s ease;
-}
-
-.nav-link:hover {
-  opacity: 0.9;
-  text-decoration: underline;
-}
-
+.chapter-navi-section {display: flex;justify-content: space-between;align-items: center;padding-bottom: 10px;padding-top: 10px;}
+.nav-link {color: inherit;text-decoration: none;opacity: 0.5;transition: opacity 0.3s ease, text-decoration 0.3s ease;}
+.nav-link:hover {opacity: 0.9;text-decoration: underline;}
 .prev { text-align: left; }
 .toc-link { text-align: center; }
 .next { text-align: right; }
 
-.download-section {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 2rem;
-  padding: 2rem 1rem;
-  max-width: 600px;
-  margin: 3rem auto;
-  border-radius: 12px;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-}
+.download-section {display: flex;align-items: center;justify-content: center;gap: 2rem;padding: 2rem 1rem;max-width: 600px;margin: 3rem auto;border-radius: 12px;box-shadow: 0 4px 10px rgba(0,0,0,0.05);}
+.download-info h2 {margin: 0 0 0.5rem;font-size: 1.2rem;}
+.format-label {margin: 0 0 0.5rem;font-size: 0.95rem;}
+.download-buttons {display: flex;gap: 1rem;}
+.download-button {background-color: #4A90E2;color: white;padding: 0.5em 1.2em;border-radius: 25px;font-size: 0.95rem;text-decoration: none;transition: background-color 0.3s ease;}
+.download-button:hover {background-color: #357ABD;}
 
-.download-info h2 {
-  margin: 0 0 0.5rem;
-  font-size: 1.2rem;
-}
+.code-block {position: relative;margin-bottom: 1em;}
+.copy-button {background: transparent;color: white;position: absolute;top: 8px;right: 8px;border: none;padding: 4px 8px;font-size: 12px;border-radius: 4px;cursor: pointer;z-index: 1;}
+.copy-button:hover {background-color: #0056b3;}
 
-.format-label {
-  margin: 0 0 0.5rem;
-  font-size: 0.95rem;
-}
+.snippet-container {overflow: hidden;}
+.snippet-header {padding: 0.75rem 1rem;cursor: pointer;font-size: 1rem;background-color: #eeeeee;color:  #111111; border-radius: 8px;cursor: pointer;box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+.snippet-body {display: none;font-family: monospace;}
+.snippet-container.open .snippet-body {display: block;}
 
-.download-buttons {
-  display: flex;
-  gap: 1rem;
-}
+.CodeMirror {border: 2px solid #ccc;border-radius: 4px;resize: vertical;}
 
-.download-button {
-  background-color: #4A90E2;
-  color: white;
-  padding: 0.5em 1.2em;
-  border-radius: 25px;
-  font-size: 0.95rem;
-  text-decoration: none;
-  transition: background-color 0.3s ease;
-}
+.light-mode .format-label {color: #888;}
+.light-mode th {background-color: #f2f2f2;}
+.light-mode tr:nth-child(even) {background-color: #fafafa;}
+.light-mode tr:hover {background-color: #e6f7ff;}
 
-.download-button:hover {
-  background-color: #357ABD;
-}
-
-.code-block {
-  position: relative;
-  margin-bottom: 1em;
-}
-
-.copy-button {
-  background: transparent;
-  color: white;
-  position: absolute;
-  top: 8px;
-  right: 8px;
-  border: none;
-  padding: 4px 8px;
-  font-size: 12px;
-  border-radius: 4px;
-  cursor: pointer;
-  z-index: 1;
-}
-
-.copy-button:hover {
-  background-color: #0056b3;
-}
-
-.snippet-container {
-  overflow: hidden;
-}
-
-.snippet-header {
-  padding: 0.75rem 1rem;
-  cursor: pointer;
-  font-size: 1rem;
-    background-color: #eeeeee;
-    color:  #111111; 
-    border-radius: 8px;
-    cursor: pointer;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.1);  
-}
-
-.snippet-body {
-  display: none;
-  font-family: monospace;
-}
-
-.snippet-container.open .snippet-body {
-  display: block;
-}
-
-.CodeMirror {
-  border: 2px solid #ccc;
-  border-radius: 4px;
-  resize: vertical;
-}
-
-/* === Light Mode === */
-html.light-mode {
-  background-color: #f8f7f5;
-  color: #333;
-}
-
-html.light-mode .container {
-  background: white;
-}
-
-html.light-mode .book-title-chapter {
-  color: #2c3e50;
-  border-color: #ccc;
-}
-html.light-mode .book-subtitle-chapter{
-  color: #888;
-}
-
-html.light-mode .page-footer,
-html.light-mode .series-name,
-html.light-mode .book-subtitle,
-html.light-mode .format-label {
-  color: #888;
-}
-
-html.light-mode .related-books h2 {
-  color: #333;
-  border-bottom: 2px solid #eee;
-}
-
-html.light-mode .book-title {
-  color: #fff;
-}
-
-html.light-mode .book-cover {
-  border: 1px solid #ccc;
-}
-
-html.light-mode th {
-  background-color: #f2f2f2;
-}
-
-html.light-mode tr:nth-child(even) {
-  background-color: #fafafa;
-}
-
-html.light-mode tr:hover {
-  background-color: #e6f7ff;
-}
-
-html.light-mode a,
-html.light-mode .page-footer a {
-  color: #000;
-}
-
-/* === Dark Mode === */
-html.dark-mode {
-  background-color: #181818;
-  color: #e0e0e0;
-}
-
-html.dark-mode .container {
-  background: #222;
-}
-
-html.dark-mode .book-title-chapter {
-  color: #ddd;
-  border-color: #444;
-}
-
-html.dark-mode .snippet-header {
-    background-color: #333;
-    color:  #ddd; 
-}
+.dark-mode .snippet-header {background-color: #333;color:  #ddd; }
+.dark-mode .format-label {color: #aaa;}
+.dark-mode th {background-color: #333;color: #fff;}
+.dark-mode td {border-color: #444;}
+.dark-mode tr:nth-child(even) {background-color: #2a2a2a;}
+.dark-mode tr:hover {background-color: #2c3e50;}
 
 
-html.dark-mode .book-subtitle-chapter,
-html.dark-mode .page-footer,
-html.dark-mode .series-name,
-html.dark-mode .book-subtitle,
-html.dark-mode .book-footer,
-html.dark-mode .format-label {
-  color: #aaa;
-}
+.button-group-run-edit {display: flex;width: 100%;gap: 1rem;}
+.button-run-edit {flex: 1;padding: 1rem;font-size: 1rem;font-weight: 600;border: none;border-radius: 8px;cursor: pointer;transition: background 0.3s, color 0.3s;}
 
-html.dark-mode .related-books h2 {
-  color: #ddd;
-  border-bottom: 2px solid #333;
-}
+.light-mode .button-run-edit {background-color: #f0f0f0;color: #222;box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);}
+.light-mode .button-run-edit:hover {background-color: #e0e0e0;}
 
-html.dark-mode .book-title {
-  color: #fff;
-}
+.dark-mode .button-run-edit {background-color: #2a2a2a;color: #f5f5f5;box-shadow: 0 0 10px rgba(255, 255, 255, 0.05);}
+.dark-mode .button-run-edit:hover {background-color: #3a3a3a;}
 
-html.dark-mode .book-cover {
-  border: 1px solid #555;
-}
+button { padding: 0.5em 1em; background: green; color: white; border: none; cursor: pointer; }
+button:hover { background: #1e7e34; }
+.result_iframe { width:99%; margin-top: 1em;  resize: both;background-color: #515b63;border:1px solid #ccc;}   
 
-html.dark-mode th {
-  background-color: #333;
-  color: #fff;
-}
-
-html.dark-mode td {
-  border-color: #444;
-}
-
-html.dark-mode tr:nth-child(even) {
-  background-color: #2a2a2a;
-}
-
-html.dark-mode tr:hover {
-  background-color: #2c3e50;
-}
-
-html.dark-mode a,
-html.dark-mode .page-footer a {
-  color: #eee;
-}
-
-    .dialog-backdrop {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100vw;
-      height: 100vh;
-      background: rgba(0,0,0,0.5);
-      display: none;
-      justify-content: center;
-      align-items: center;
-      z-index: 10;
-    }
-
-    .dialog {
-      background: white;
-      padding: 20px;
-      width: 90vw;
-      height: 80vh;
-      border-radius: 8px;
-      box-shadow: 0 0 20px rgba(0,0,0,0.3);
-      display: flex;
-      flex-direction: column;
-    }
-    .dialog-content {
-      display: flex;
-      flex: 1;
-      gap: 20px;
-      margin-top: 10px;
-    }
-    .dialog h2 {
-      margin-top: 0;
-    }
-
-    .textarea_dialog {
-      width: 50%;
-      height: 100%;
-      resize: none;
-      font-family: monospace;
-      font-size: 14px;
-      padding: 10px;
-      box-sizing: border-box;
-      border: 1px solid #ccc;
-    }
-
-    .iframe_dialog {
-      width: 50%;
-      height: 100%;
-      border: 1px solid #ccc;
-    }
-    .controls_dialog {
-      display: flex;
-      justify-content: space-between;
-      margin-top: 10px;
-    }    
-    button { padding: 0.5em 1em; background: green; color: white; border: none; cursor: pointer; }
-    button:hover { background: #1e7e34; }
-    .result_iframe { width:99%; height:200px; margin-top: 1em;  resize: both;border:1px solid #ccc;}        
+.dialog-backdrop {position: fixed;top: 0;left: 0;width: 100vw;height: 100vh;background: rgba(0,0,0,0.5);display: none;justify-content: center;align-items: center;z-index: 10;}
+.dialog {background: #90979e;padding: 20px;width: 90vw;height: 80vh;border-radius: 8px;box-shadow: 0 0 20px rgba(0,0,0,0.3);display: flex;flex-direction: column;}
+.dialog-content {display: flex;gap: 20px;margin-top: 10px;height: calc(100% - 40px);}
+.editor-container, .preview-container {flex: 1;height: 100%;max-height: 100%;overflow: hidden; }
+.result_iframe_dialog {width: 100%;height: 100%;resize: both;border:1px solid #ccc;overflow: auto; }   
+.CodeMirror {width: 100% !important;height: 100% !important;}
 </style>
 </head>
-<body> 
-  <div class="container">
-    <div class = "chapter-navi-section">
+<body>
+<script>const mode = localStorage.getItem('mode') || 'light';document.documentElement.classList.add(`${mode}-mode`);</script>  
+<div class="container"><div class = "chapter-navi-section">
 <a href="cplusplus-stl-tuples-and-pairs.htm" class="nav-button prev">←</a>
 <a href='cplusplus-stl.htm#smart-pointers-and-resource-management-in-stl' class="nav-button toc-link">Index</a>
 <a href="cplusplus-stl-concurrency-utilities-in-stl.htm" class="nav-button next">→</a>
 </div>
-
-    <h1 class="book-title-chapter" id = 'top'>Smart Pointers and Resource Management in STL</h1>
-    <h3 class="book-subtitle-chapter">C++ STL</h3>   
-    <!-- <h1 class ="chapter-title"></h1> -->
-    <h2 id='overview-of-std-unique-ptr-std-shared-ptr-and-std-weak-ptr'>12.1 Overview of <code>std::unique_ptr</code>, <code>std::shared_ptr</code>, and <code>std::weak_ptr</code></h2><p>Managing dynamic memory safely and efficiently is a fundamental challenge in C++. Traditional raw pointers require explicit calls to <code>delete</code> to free resources, which can easily lead to memory leaks, dangling pointers, or double deletions. To solve these problems, the C++ Standard Library provides <strong>smart pointers</strong> — wrapper classes that automate resource management and help enforce ownership semantics.</p><h4 id="motivation-automatic-resource-management">Motivation: Automatic Resource Management</h4><p>Smart pointers encapsulate raw pointers and automatically release the associated memory when the smart pointer goes out of scope. This approach follows the RAII (Resource Acquisition Is Initialization) principle, reducing manual memory management errors and improving code safety and clarity.</p><h4 id="std-unique-ptr-exclusive-ownership"><code>std::unique_ptr</code>: Exclusive Ownership</h4><p><code>std::unique_ptr</code> represents <strong>exclusive ownership</strong> of a resource. Only one <code>unique_ptr</code> instance can own a particular resource at a time. It cannot be copied but can be moved, transferring ownership to another <code>unique_ptr</code>.</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">📋</button>
+<div class='book-header'><h1 class='book-title-toc' id = 'top'>Smart Pointers and Resource Management in STL</h1><h3 class='book-subtitle-toc'>C++ STL</h3></div><h2 id='overview-of-std-unique-ptr-std-shared-ptr-and-std-weak-ptr'>12.1 Overview of <code>std::unique_ptr</code>, <code>std::shared_ptr</code>, and <code>std::weak_ptr</code></h2><p>Managing dynamic memory safely and efficiently is a fundamental challenge in C++. Traditional raw pointers require explicit calls to <code>delete</code> to free resources, which can easily lead to memory leaks, dangling pointers, or double deletions. To solve these problems, the C++ Standard Library provides <strong>smart pointers</strong> — wrapper classes that automate resource management and help enforce ownership semantics.</p><h4 id="motivation-automatic-resource-management">Motivation: Automatic Resource Management</h4><p>Smart pointers encapsulate raw pointers and automatically release the associated memory when the smart pointer goes out of scope. This approach follows the RAII (Resource Acquisition Is Initialization) principle, reducing manual memory management errors and improving code safety and clarity.</p><h4 id="std-unique-ptr-exclusive-ownership"><code>std::unique_ptr</code>: Exclusive Ownership</h4><p><code>std::unique_ptr</code> represents <strong>exclusive ownership</strong> of a resource. Only one <code>unique_ptr</code> instance can own a particular resource at a time. It cannot be copied but can be moved, transferring ownership to another <code>unique_ptr</code>.</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">📋</button>
  <pre><code class="language-cpp">#include &lt;memory&gt;
 #include &lt;iostream&gt;
 
@@ -476,7 +179,8 @@ int main() {
     if (!ptr1) std::cout &lt;&lt; "ptr1 is empty after move\n";
     std::cout &lt;&lt; *ptr2 &lt;&lt; '\n';
 }</code></pre>
-</div><p><code>unique_ptr</code> is lightweight and ideal when a single owner manages the lifetime of a resource.</p><h4 id="std-shared-ptr-shared-ownership-with-reference-counting"><code>std::shared_ptr</code>: Shared Ownership with Reference Counting</h4><p><code>std::shared_ptr</code> enables <strong>shared ownership</strong> of a resource. Multiple <code>shared_ptr</code>s can point to the same object, and the resource is destroyed only when the last <code>shared_ptr</code> owning it is destroyed or reset. This is implemented through <strong>reference counting</strong> internally.</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">📋</button>
+</div><p><code>unique_ptr</code> is lightweight and ideal when a single owner manages the lifetime of a resource.</p><h4 id="std-shared-ptr-shared-ownership-with-reference-counting"><code>std::shared_ptr</code>: Shared Ownership with Reference Counting</h4><p><code>std::shared_ptr</code> enables <strong>shared ownership</strong> of a resource. Multiple <code>shared_ptr</code>s can point to the same object, and the resource is destroyed only when the last <code>shared_ptr</code> owning it is destroyed or reset. This is implemented through <strong>reference counting</strong> internally.</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">📋</button>
  <pre><code class="language-cpp">#include &lt;memory&gt;
 #include &lt;iostream&gt;
 
@@ -490,7 +194,8 @@ int main() {
     std::cout &lt;&lt; "Count after reset: " &lt;&lt; sp2.use_count() &lt;&lt; '\n';  // 1
     std::cout &lt;&lt; *sp2 &lt;&lt; '\n';
 }</code></pre>
-</div><p>Because <code>shared_ptr</code> manages reference counting, it is slightly heavier than <code>unique_ptr</code> but allows multiple owners safely, including across threads. The reference counting is <strong>thread-safe</strong> in standard implementations.</p><h4 id="std-weak-ptr-non-owning-observer"><code>std::weak_ptr</code>: Non-owning Observer</h4><p><code>std::weak_ptr</code> is a <strong>non-owning</strong> smart pointer that observes an object managed by <code>shared_ptr</code> without affecting its lifetime or reference count. It is useful to break reference cycles or check if a resource is still alive without extending its lifetime.</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">📋</button>
+</div><p>Because <code>shared_ptr</code> manages reference counting, it is slightly heavier than <code>unique_ptr</code> but allows multiple owners safely, including across threads. The reference counting is <strong>thread-safe</strong> in standard implementations.</p><h4 id="std-weak-ptr-non-owning-observer"><code>std::weak_ptr</code>: Non-owning Observer</h4><p><code>std::weak_ptr</code> is a <strong>non-owning</strong> smart pointer that observes an object managed by <code>shared_ptr</code> without affecting its lifetime or reference count. It is useful to break reference cycles or check if a resource is still alive without extending its lifetime.</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">📋</button>
  <pre><code class="language-cpp">#include &lt;memory&gt;
 #include &lt;iostream&gt;
 
@@ -546,12 +251,14 @@ int main() {
 <a href='cplusplus-stl.htm#smart-pointers-and-resource-management-in-stl' class="nav-button toc-link">Index</a>
 <a href="#bottom" class="nav-button next">↓</a>
 </div>
-<h2 id='automatic-resource-management-using-smart-pointers'>12.2 Automatic Resource Management Using Smart Pointers</h2><p>Managing dynamic memory manually in C++ is error-prone. Forgetting to delete allocated memory leads to <strong>memory leaks</strong>, while deleting memory prematurely or multiple times causes <strong>dangling pointers</strong> and undefined behavior. Smart pointers solve these issues by <strong>automating object lifetime management</strong> through RAII (Resource Acquisition Is Initialization), ensuring resources are properly released.</p><h4 id="raii-and-smart-pointers">RAII and Smart Pointers</h4><p>RAII is a C++ design idiom where resource acquisition (like dynamic memory allocation) is tied to the lifetime of an object. When the object goes out of scope, its destructor releases the resource automatically. Smart pointers apply RAII to dynamic memory by owning pointers to allocated objects and deleting them automatically when they go out of scope.</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+<h2 id='automatic-resource-management-using-smart-pointers'>12.2 Automatic Resource Management Using Smart Pointers</h2><p>Managing dynamic memory manually in C++ is error-prone. Forgetting to delete allocated memory leads to <strong>memory leaks</strong>, while deleting memory prematurely or multiple times causes <strong>dangling pointers</strong> and undefined behavior. Smart pointers solve these issues by <strong>automating object lifetime management</strong> through RAII (Resource Acquisition Is Initialization), ensuring resources are properly released.</p><h4 id="raii-and-smart-pointers">RAII and Smart Pointers</h4><p>RAII is a C++ design idiom where resource acquisition (like dynamic memory allocation) is tied to the lifetime of an object. When the object goes out of scope, its destructor releases the resource automatically. Smart pointers apply RAII to dynamic memory by owning pointers to allocated objects and deleting them automatically when they go out of scope.</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-cpp">void foo() {
     std::unique_ptr&lt;int&gt; ptr = std::make_unique&lt;int&gt;(42);
     // No need to manually delete, memory freed automatically when ptr goes out of scope
 }</code></pre>
-</div><p>Here, <code>ptr</code> manages a dynamically allocated integer. Once <code>foo()</code> ends, <code>ptr</code> is destroyed and the memory freed, eliminating the risk of leaks.</p><h4 id="ownership-transfer-and-std-move">Ownership Transfer and <code>std::move</code></h4><p>Smart pointers like <code>std::unique_ptr</code> enforce exclusive ownership. To transfer ownership, you must use <code>std::move</code> to explicitly indicate the transfer:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</div><p>Here, <code>ptr</code> manages a dynamically allocated integer. Once <code>foo()</code> ends, <code>ptr</code> is destroyed and the memory freed, eliminating the risk of leaks.</p><h4 id="ownership-transfer-and-std-move">Ownership Transfer and <code>std::move</code></h4><p>Smart pointers like <code>std::unique_ptr</code> enforce exclusive ownership. To transfer ownership, you must use <code>std::move</code> to explicitly indicate the transfer:</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-cpp">void process(std::unique_ptr&lt;int&gt; p) {
     std::cout &lt;&lt; "Value: " &lt;&lt; *p &lt;&lt; '\n';
 }
@@ -564,7 +271,8 @@ int main() {
         std::cout &lt;&lt; "ptr is now empty after move\n";
     }
 }</code></pre>
-</div><p><code>std::move</code> converts <code>ptr</code> into an rvalue, allowing <code>process</code> to take ownership. Afterward, <code>ptr</code> no longer owns the memory and cannot be used to access it safely, preventing dangling pointers.</p><h4 id="smart-pointers-in-classes">Smart Pointers in Classes</h4><p>Smart pointers can be members of classes to manage dynamically allocated resources safely:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</div><p><code>std::move</code> converts <code>ptr</code> into an rvalue, allowing <code>process</code> to take ownership. Afterward, <code>ptr</code> no longer owns the memory and cannot be used to access it safely, preventing dangling pointers.</p><h4 id="smart-pointers-in-classes">Smart Pointers in Classes</h4><p>Smart pointers can be members of classes to manage dynamically allocated resources safely:</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-cpp">class Widget {
     std::unique_ptr&lt;int&gt; data;
 
@@ -590,7 +298,8 @@ int main() {
 <a href='cplusplus-stl.htm#smart-pointers-and-resource-management-in-stl' class="nav-button toc-link">Index</a>
 <a href="#bottom" class="nav-button next">↓</a>
 </div>
-<h2 id='custom-deleters-and-use-cases'>12.3 Custom Deleters and Use Cases</h2><p>Smart pointers in C++ not only manage dynamic memory but can also handle other resources like file handles, sockets, or custom objects that require special cleanup. This flexibility is made possible by <strong>custom deleters</strong>—user-defined functions or function objects that specify how a resource should be released when the smart pointer is destroyed.</p><h4 id="what-are-custom-deleters">What Are Custom Deleters?</h4><p>By default, <code>std::unique_ptr</code> and <code>std::shared_ptr</code> call <code>delete</code> to free memory. However, some resources need different cleanup routines. A <strong>custom deleter</strong> tells the smart pointer what function to invoke to properly release the resource.</p><p>You can specify a custom deleter as a template parameter or as a constructor argument.</p><h4 id="using-custom-deleters-with-std-unique-ptr">Using Custom Deleters with <code>std::unique_ptr</code></h4><div class="code-block"><button class="copy-button" onclick="copyCode(this)">📋</button>
+<h2 id='custom-deleters-and-use-cases'>12.3 Custom Deleters and Use Cases</h2><p>Smart pointers in C++ not only manage dynamic memory but can also handle other resources like file handles, sockets, or custom objects that require special cleanup. This flexibility is made possible by <strong>custom deleters</strong>—user-defined functions or function objects that specify how a resource should be released when the smart pointer is destroyed.</p><h4 id="what-are-custom-deleters">What Are Custom Deleters?</h4><p>By default, <code>std::unique_ptr</code> and <code>std::shared_ptr</code> call <code>delete</code> to free memory. However, some resources need different cleanup routines. A <strong>custom deleter</strong> tells the smart pointer what function to invoke to properly release the resource.</p><p>You can specify a custom deleter as a template parameter or as a constructor argument.</p><h4 id="using-custom-deleters-with-std-unique-ptr">Using Custom Deleters with <code>std::unique_ptr</code></h4><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">📋</button>
  <pre><code class="language-cpp">#include &lt;iostream&gt;
 #include &lt;cstdio&gt;
 #include &lt;memory&gt;
@@ -613,7 +322,8 @@ int main() {
         std::fprintf(filePtr.get(), "Hello, world!\n");
     } // filePtr destructor calls FileCloser::operator(), closing the file automatically
 }</code></pre>
-</div><p>Here, <code>FileCloser</code> is a functor acting as a custom deleter that closes the file using <code>fclose</code>. When <code>filePtr</code> goes out of scope, the file is automatically closed, preventing resource leaks.</p><h4 id="custom-deleters-with-std-shared-ptr">Custom Deleters with <code>std::shared_ptr</code></h4><p><code>std::shared_ptr</code> also supports custom deleters, which is especially useful for managing resources shared across multiple owners:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">📋</button>
+</div><p>Here, <code>FileCloser</code> is a functor acting as a custom deleter that closes the file using <code>fclose</code>. When <code>filePtr</code> goes out of scope, the file is automatically closed, preventing resource leaks.</p><h4 id="custom-deleters-with-std-shared-ptr">Custom Deleters with <code>std::shared_ptr</code></h4><p><code>std::shared_ptr</code> also supports custom deleters, which is especially useful for managing resources shared across multiple owners:</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">📋</button>
  <pre><code class="language-cpp">#include &lt;iostream&gt;
 #include &lt;memory&gt;
 
@@ -641,7 +351,8 @@ int main() {
 <a href='cplusplus-stl.htm#smart-pointers-and-resource-management-in-stl' class="nav-button toc-link">Index</a>
 <a href="#bottom" class="nav-button next">↓</a>
 </div>
-<h2 id='examples-managing-dynamic-memory-safely'>12.4 Examples: Managing Dynamic Memory Safely</h2><p>Smart pointers are essential tools in modern C++ for managing dynamic memory safely and efficiently. They help avoid common pitfalls like memory leaks, dangling pointers, and manual <code>delete</code> mistakes. Below are comprehensive examples demonstrating how to use smart pointers with dynamic arrays, linked data structures, and polymorphic objects.</p><h4 id="example-1-managing-dynamic-arrays-with-std-unique-ptr">Example 1: Managing Dynamic Arrays with <code>std::unique_ptr</code></h4><p>Using <code>std::unique_ptr</code> with arrays ensures automatic cleanup without manual <code>delete[]</code> calls.</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">📋</button>
+<h2 id='examples-managing-dynamic-memory-safely'>12.4 Examples: Managing Dynamic Memory Safely</h2><p>Smart pointers are essential tools in modern C++ for managing dynamic memory safely and efficiently. They help avoid common pitfalls like memory leaks, dangling pointers, and manual <code>delete</code> mistakes. Below are comprehensive examples demonstrating how to use smart pointers with dynamic arrays, linked data structures, and polymorphic objects.</p><h4 id="example-1-managing-dynamic-arrays-with-std-unique-ptr">Example 1: Managing Dynamic Arrays with <code>std::unique_ptr</code></h4><p>Using <code>std::unique_ptr</code> with arrays ensures automatic cleanup without manual <code>delete[]</code> calls.</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">📋</button>
  <pre><code class="language-cpp">#include &lt;iostream&gt;
 #include &lt;memory&gt;
 
@@ -662,7 +373,8 @@ int main() {
 
     // No need to manually delete[] arr; automatically freed
 }</code></pre>
-</div><p><strong>Key point:</strong> Use <code>std::unique_ptr&lt;T[]&gt;</code> for arrays, and avoid raw pointers entirely.</p><h4 id="example-2-building-a-simple-linked-list-with-std-shared-ptr">Example 2: Building a Simple Linked List with <code>std::shared_ptr</code></h4><p>Smart pointers make managing linked data structures safer by automating node lifetime.</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">📋</button>
+</div><p><strong>Key point:</strong> Use <code>std::unique_ptr&lt;T[]&gt;</code> for arrays, and avoid raw pointers entirely.</p><h4 id="example-2-building-a-simple-linked-list-with-std-shared-ptr">Example 2: Building a Simple Linked List with <code>std::shared_ptr</code></h4><p>Smart pointers make managing linked data structures safer by automating node lifetime.</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">📋</button>
  <pre><code class="language-cpp">#include &lt;iostream&gt;
 #include &lt;memory&gt;
 
@@ -686,7 +398,8 @@ int main() {
 
     // No manual deletes; nodes freed when no longer referenced
 }</code></pre>
-</div><p><strong>Key point:</strong> Using <code>std::shared_ptr</code> allows multiple parts of your program to share ownership safely.</p><h4 id="example-3-polymorphic-objects-with-std-unique-ptr-and-virtual-destructors">Example 3: Polymorphic Objects with <code>std::unique_ptr</code> and Virtual Destructors</h4><p>Smart pointers handle polymorphic objects correctly when destructors are virtual.</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">📋</button>
+</div><p><strong>Key point:</strong> Using <code>std::shared_ptr</code> allows multiple parts of your program to share ownership safely.</p><h4 id="example-3-polymorphic-objects-with-std-unique-ptr-and-virtual-destructors">Example 3: Polymorphic Objects with <code>std::unique_ptr</code> and Virtual Destructors</h4><p>Smart pointers handle polymorphic objects correctly when destructors are virtual.</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">📋</button>
  <pre><code class="language-cpp">#include &lt;iostream&gt;
 #include &lt;memory&gt;
 
@@ -769,30 +482,36 @@ int main() {
 
 <a href='cplusplus.htm'><div class='book-cover' style='background-color: #f9f6f1;color: #111111;border: 1px solid #ccc;display: flex;justify-content: center;align-items: center;text-align: center;'>More C++ Books</div></a>
 </div>
-</div>
-  </div>
-  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
-  
-  <script>
-    function copyCode(button) {
-      const code = button.nextElementSibling.innerText;
-      navigator.clipboard.writeText(code).then(() => {
-        button.textContent = 'Copied!';
-        setTimeout(() => { button.textContent = 'Copy'; }, 1500);
-      });
-    }
-  </script>  
-<div id="floatingLog" aria-live="polite" role="alert"></div>
-<footer class="page-footer">
-    <nav>
-      <a href="https://readbytes.github.io">Home</a> | 
-      Email:<script language="JavaScript" type="text/javascript">
+</div><script>
+function copyCode(button) {const code = button.nextElementSibling.innerText;navigator.clipboard.writeText(code).then(() => {button.textContent = 'Copied!';setTimeout(() => { button.textContent = 'Copy'; }, 1500);});}
+</script></div>
+<style>
+.site-footer {margin-top: 60px;padding: 20px 0;border-top: 1px solid #eee;text-align: center;font-size: 14px;}
+.site-footer a {text-decoration: none;}
+.light-mode .site-footer {color: #777;border-color: #eee;}
+.dark-mode .site-footer {color: #888;border-color: #333;}
+.light-mode .site-footer a {color: #555;}
+.dark-mode .site-footer a {color: #aaa;}
+.site-footer a:hover {text-decoration: underline;}    
+</style>
+<footer class="site-footer">
+<nav><a href="https://readbytes.github.io">Home</a> |Email:<script type="text/javascript">
 var part1 = 'yinpeng';var part6 = '263';var part2 = Math.pow(2,6);var part3 = String.fromCharCode(part2);var part4 = 'hotmail dot com';var part5 = part1 + String.fromCharCode(part2) + part4;document.write(part1 + part6 + part3 + part4);
 </script>
-    </nav>
-  <p>© 2025 — All rights reserved.</p>    
-  </footer>
-
+| <a id="mode-toggle" href="#">Toggle Dark Mode</a>
+</nav><p>© 2025 — All rights reserved.</p></footer>
+<script>
+const toggleButton = document.getElementById('mode-toggle');
+const body = document.body;
+const savedMode = localStorage.getItem('mode') || 'light';
+body.classList.add(savedMode + '-mode');
+toggleButton.addEventListener('click', () => {
+      const isDark = body.classList.contains('dark-mode');
+      body.classList.toggle('dark-mode', !isDark);
+      body.classList.toggle('light-mode', isDark);
+      localStorage.setItem('mode', isDark ? 'light' : 'dark');
+});
+function copyCode(button) {const code = button.nextElementSibling.innerText;navigator.clipboard.writeText(code).then(() => {button.textContent = 'Copied!';setTimeout(() => { button.textContent = 'Copy'; }, 1500);});}
+</script>
 </body>
 </html>

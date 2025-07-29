@@ -1,192 +1,165 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
+<meta charset="UTF-8">
 <title>JavaScript for Beginners Functions and Scope</title>
-<link rel='shortcut icon' href='https://java2s.com/style/favicon.ico'>
+<link rel='shortcut icon' href='https://readbytes.github.io/images/favicon.ico'>
 <link href="https://fonts.googleapis.com/css2?family=Merriweather&display=swap" rel="stylesheet" />
 <link href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
-
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.css" />
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/theme/material.css"> <!-- Dark theme -->
-<script src="https://cdn.jsdelivr.net/npm/typescript@5/lib/typescript.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/htmlmixed/htmlmixed.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/xml/xml.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/css/css.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/javascript/javascript.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/javascript/typescript.min.js"></script>
-<style>
-    #floatingLog {
-      position: fixed;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      background: rgba(20, 20, 20, 0.95);
-      color: white;
-      font-family: monospace;
-      font-size: 14px;
-      padding: 16px 20px;
-      border-radius: 8px;
-      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
-      max-width: 80%;
-      max-height: 200px;
-      overflow-y: auto;
-      display: none;
-      z-index: 9999;
-      pointer-events: none;
-      white-space: pre-wrap;
-      text-align: center;
-    }
-</style>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/theme/dracula.min.css"><style>
+html {scroll-behavior: smooth;}  
+body {font-family: 'Merriweather', serif;;margin: 0;padding: 2rem 1rem;font-size: 15px;line-height: 1.5;transition: background-color 0.3s, color 0.3s;}
+.container {max-width: 750px;margin: 0 auto;padding: 1rem 2rem;}
+.light-mode {background-color: #f8f7f5;color: #333;} 
+.dark-mode {background-color: #121212;color: #e0e0e0;}
+a { text-decoration: none;transition: color 0.2s;}
+a:hover {text-decoration: underline;}
+.light-mode a {color: #555;}
+.dark-mode a {color: #aaa;}
+</style><style>
+.related-book-list {display: flex;flex-wrap: wrap;gap: 20px;}
+.related-books {margin-top: 40px;}
+.related-books h2 {font-size: 22px;margin-bottom: 20px;border-bottom: 2px solid #eee;padding-bottom: 8px;}
+.light-mode .related-books h2 {color: #333;border-color: #eee;}
+.dark-mode .related-books h2 {color: #ddd;border-color: #333;}
+</style><style>
+.book-cover {width: 130px;height: 180px;font-family: Arial, sans-serif;position: relative;overflow: hidden;box-shadow: 2px 2px 4px rgba(0,0,0,0.1);}
+.book-cover-bottom-stripe {position: absolute;bottom: 0;left: 0;height: 5px;width: 100%;}
+.book-cover-title {position: absolute;width: 100%;text-align: center;font-weight: bold;}
+.book-cover-icon {position: absolute;left: 50%;transform: translateX(-50%);display: flex;align-items: center;justify-content: center;}
+.book-cover-author {position: absolute;bottom: 10px;width: 100%;text-align: center;font-size: 8px;color: #333;}
+</style><style>
+.book-title-toc {font-size: 32px;font-weight: bold; }
+.book-subtitle-toc {font-size: 18px;margin-top: 8px;font-style: italic;}
+.book-header {text-align: center;margin-bottom: 40px;}
+
+.toc-container {border-radius: 10px;padding: 30px;margin-bottom: 40px;box-shadow: 0 8px 20px rgba(0,0,0,0.05);}
+h1 {font-size: 24px;text-align: center;margin-bottom: 30px;letter-spacing: 1px;padding-bottom: 10px;}
+.toc-list,.toc-section-list {list-style: none;padding: 0;margin: 0;}
+.toc-section-list {padding-left: 18px;margin-top: 6px;margin-bottom: 20px; }
+.toc-chapter {padding: 20px 0;}
+.chapter-title,.toc-section {display: flex;justify-content: space-between;padding-top: 4px;}
+.chapter-title {font-size: 17px;font-weight: bold;}
+.chapter-page,.section-page {font-style: italic;}
+ 
+ 
+.light-mode .book-title-toc,.light-mode .chapter-title,.light-mode .book-name {color: #222;}
+.light-mode .book-subtitle-toc,.light-mode .book-sub,.light-mode .chapter-page,.light-mode .section-page {color: #666;}
+.light-mode .toc-container { background: #fff;border: 1px solid #ddd;}
+.light-mode h1 {border-bottom: 2px solid #eee;color: #222;}
+.light-mode .toc-section {  color: #444;}
+
+.light-mode .book-cover { border: 1px solid #ccc;box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);}
+.light-mode .book-title,.light-mode .series-name {color: #fff;}
+.light-mode .book-subtitle,.light-mode .book-footer {color: #aaa;}
+
+.dark-mode .book-title-toc,.dark-mode .chapter-title,.dark-mode .book-name {color: #f5f5f5;}
+.dark-mode .book-subtitle-toc,.dark-mode .book-sub,.dark-mode .chapter-page,.dark-mode .section-page {color: #aaa;}
+.dark-mode .toc-container {background: #1e1e1e;border: 1px solid #444;}
+
+.dark-mode h1 {border-bottom: 2px solid #333;color: #eee;}
+.dark-mode .toc-section {color: #bbb;}
+
+.dark-mode .related-books h2 {color: #ddd;border-bottom: 2px solid #333;}
+.dark-mode .book-title,.dark-mode .series-name {color: #fff;}
+.dark-mode .book-subtitle,.dark-mode .book-footer {color: #bbb;}
+.dark-mode .toc-section {color: #ddd;}
+
+@media (max-width: 600px) {
+  .chapter-title,
+  .toc-section {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .chapter-page,
+  .section-page {
+    margin-top: 4px;
+  }
+}
+
+</style><style>
+.light-mode .container {box-shadow: 0 0 15px rgba(0,0,0,0.1);}
+.dark-mode .container {box-shadow: 0 0 15px rgba(255, 255, 255, 0.05);}
+
+h1, h2, h3 {font-weight: 600;margin-top: 2.5rem;margin-bottom: 1rem;line-height: 1.2;}
+h1 { font-size: 1.8rem; }
+h2 { font-size: 1.4rem; }
+h3 { font-size: 1.2rem; }
+
+table {width: 100%;border-collapse: collapse;font-family: sans-serif;font-size: 1em;margin: 1em 0;}
+th, td {padding: 0.6em 1em;text-align: left;border: 1px solid;}
+tr:nth-child(even) {  background-color: inherit;}
+tr:hover { background-color: inherit;}
+
+code {color: #d35400;}
+
+.chapter-navi-section {display: flex;justify-content: space-between;align-items: center;padding-bottom: 10px;padding-top: 10px;}
+.nav-link {color: inherit;text-decoration: none;opacity: 0.5;transition: opacity 0.3s ease, text-decoration 0.3s ease;}
+.nav-link:hover {opacity: 0.9;text-decoration: underline;}
+.prev { text-align: left; }
+.toc-link { text-align: center; }
+.next { text-align: right; }
+
+.download-section {display: flex;align-items: center;justify-content: center;gap: 2rem;padding: 2rem 1rem;max-width: 600px;margin: 3rem auto;border-radius: 12px;box-shadow: 0 4px 10px rgba(0,0,0,0.05);}
+.download-info h2 {margin: 0 0 0.5rem;font-size: 1.2rem;}
+.format-label {margin: 0 0 0.5rem;font-size: 0.95rem;}
+.download-buttons {display: flex;gap: 1rem;}
+.download-button {background-color: #4A90E2;color: white;padding: 0.5em 1.2em;border-radius: 25px;font-size: 0.95rem;text-decoration: none;transition: background-color 0.3s ease;}
+.download-button:hover {background-color: #357ABD;}
+
+.code-block {position: relative;margin-bottom: 1em;}
+.copy-button {background: transparent;color: white;position: absolute;top: 8px;right: 8px;border: none;padding: 4px 8px;font-size: 12px;border-radius: 4px;cursor: pointer;z-index: 1;}
+.copy-button:hover {background-color: #0056b3;}
+
+.snippet-container {overflow: hidden;}
+.snippet-header {padding: 0.75rem 1rem;cursor: pointer;font-size: 1rem;background-color: #eeeeee;color:  #111111; border-radius: 8px;cursor: pointer;box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+.snippet-body {display: none;font-family: monospace;}
+.snippet-container.open .snippet-body {display: block;}
+
+.CodeMirror {border: 2px solid #ccc;border-radius: 4px;resize: vertical;}
+
+.light-mode .format-label {color: #888;}
+.light-mode th {background-color: #f2f2f2;}
+.light-mode tr:nth-child(even) {background-color: #fafafa;}
+.light-mode tr:hover {background-color: #e6f7ff;}
+
+.dark-mode .snippet-header {background-color: #333;color:  #ddd; }
+.dark-mode .format-label {color: #aaa;}
+.dark-mode th {background-color: #333;color: #fff;}
+.dark-mode td {border-color: #444;}
+.dark-mode tr:nth-child(even) {background-color: #2a2a2a;}
+.dark-mode tr:hover {background-color: #2c3e50;}
+
+
+.button-group-run-edit {display: flex;width: 100%;gap: 1rem;}
+.button-run-edit {flex: 1;padding: 1rem;font-size: 1rem;font-weight: 600;border: none;border-radius: 8px;cursor: pointer;transition: background 0.3s, color 0.3s;}
+
+.light-mode .button-run-edit {background-color: #f0f0f0;color: #222;box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);}
+.light-mode .button-run-edit:hover {background-color: #e0e0e0;}
+
+.dark-mode .button-run-edit {background-color: #2a2a2a;color: #f5f5f5;box-shadow: 0 0 10px rgba(255, 255, 255, 0.05);}
+.dark-mode .button-run-edit:hover {background-color: #3a3a3a;}
+
+button { padding: 0.5em 1em; background: green; color: white; border: none; cursor: pointer; }
+button:hover { background: #1e7e34; }
+.result_iframe { width:99%; margin-top: 1em;  resize: both;background-color: #515b63;border:1px solid #ccc;}   
+
+.dialog-backdrop {position: fixed;top: 0;left: 0;width: 100vw;height: 100vh;background: rgba(0,0,0,0.5);display: none;justify-content: center;align-items: center;z-index: 10;}
+.dialog {background: #90979e;padding: 20px;width: 90vw;height: 80vh;border-radius: 8px;box-shadow: 0 0 20px rgba(0,0,0,0.3);display: flex;flex-direction: column;}
+.dialog-content {display: flex;gap: 20px;margin-top: 10px;height: calc(100% - 40px);}
+.editor-container, .preview-container {flex: 1;height: 100%;max-height: 100%;overflow: hidden; }
+.result_iframe_dialog {width: 100%;height: 100%;resize: both;border:1px solid #ccc;overflow: auto; }   
+.CodeMirror {width: 100% !important;height: 100% !important;}
+</style><script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/javascript/javascript.min.js"></script>
 <script>
-  const codeMirrorMap = new Map();
-  const iframeMap = new Map();
-  
- 
-
-  let dismissTimer;
-  function showFloatingLog(message) {
-	const floatingLog = document.getElementById('floatingLog');
-
-    if (floatingLog.style.display !== 'block') {
-      floatingLog.textContent = '';
-      floatingLog.style.display = 'block'; 
-    }
-
-    floatingLog.textContent += message + '\n';
-    floatingLog.scrollTop = floatingLog.scrollHeight; 
-    clearTimeout(dismissTimer);
-    dismissTimer = setTimeout(() => {
-      floatingLog.style.display = 'none';
-      floatingLog.textContent = '';
-    }, 2000);
-  }
-  window.addEventListener('message', (event) => {
-	    if (!iframeMap.has(event.source)) return;
-
-	    if (event.data?.type === 'console-log') {
-	      showFloatingLog(event.data.message);
-	    }
-  });  
-  function renderIframe(button,textarea_id, iframe_id) {
-      const html = codeMirrorMap.get(textarea_id).getValue();
-      const iframe = document.getElementById(iframe_id);
-  
-      const oldIframe = iframe;
-      const newIframe = document.createElement('iframe');
-      newIframe.className ="result_iframe";
-      
-      newIframe.id = iframe_id;
-      oldIframe.replaceWith(newIframe);
- 
-
-      // Track the iframe in the map
-      iframeMap.set(newIframe.contentWindow, button);
-
-      const overrideScript = `
-        <script>
-          (function() {
-            const originalLog = console.log;
-            console.log = function(...args) {
-              originalLog.apply(console, args);
-              window.parent.postMessage({
-                type: 'console-log',
-                message: args.map(a => {
-                  try { return JSON.stringify(a); }
-                  catch { return String(a); }
-                }).join(' ')
-              }, '*');
-            };
-          })();
-        <\/script>
-      `;
-
-      const iframeHTML = `
-        <!DOCTYPE html>
-        <html>
-        <body>
-          ${overrideScript}
-          ${html}
-        </body>
-        </html>
-      `;
- 
-      const doc = newIframe.contentDocument || newIframe.contentWindow.document;
-      doc.open();
-      doc.write(iframeHTML);
-      doc.close();
-
-      
-      setTimeout(() => {
-    	  newIframe.style.height = '0px';
-    	   let contentHeight = Math.max(doc.body.scrollHeight,doc.documentElement.scrollHeight);
- 
-    	//   if(contentHeight < 150 || contentHeight > 600){
-    	//	   contentHeight = 600;
-    	 //  } 
-    	   newIframe.style.height = contentHeight + 'px';
-    	}, 50);      
-      
-  }
-  function renderIframeForClientTypescript(textarea_id, iframe_id) {
-      let code = codeMirrorMap.get(textarea_id).getValue();
-      code = ts.transpile(code);
-      const iframe = document.getElementById(iframe_id);
-      const doc = iframe.contentDocument || iframe.contentWindow.document;
-
-const html = `
-  <!DOCTYPE html>
-  <html>
-    <head>
-      <title>Output</title>
-      <style>
-        body { font-family: monospace; padding: 1em; background: #f4f4f4; color: #222; }
-        pre { white-space: pre-wrap; word-break: break-word; }
-        .error { color: red; }
-      </style>
-    </head>
-    <body>
-      <pre id="log"></pre>
-      <script>
-        (function(){
-          const logEl = document.getElementById('log');
-          const origLog = console.log;
-          const origError = console.error;
-
-          console.log = (...args) => {
-            logEl.textContent += args.join(' ') + '\\n';
-            origLog.apply(console, args);
-          };
-          console.table = (...args) => {
-            logEl.textContent += args.join(' ') + '\\n';
-            origLog.apply(console, args);
-          };
-
-          console.error = (...args) => {
-            logEl.innerHTML +='<span class="error">' + args.join(' ') + '</span>';
-            origError.apply(console, args);
-          };
-          window.addEventListener("error", function (event) {
-              console.error("Caught by event listener:", event.message);
-          });    
-          try {             
-              ${code};
-          } catch (err) {
-            console.error(err.stack || err.message);
-          }
-        })();
-      <\/script>
-    </body>
-  </html>
-`;
-
-      iframe.style.display = "block";
-      iframe.srcdoc = html;  
-  }
-
-    function renderIframeForClientJavascript(textarea_id, iframe_id) {
-        const code = codeMirrorMap.get(textarea_id).getValue();
+  const javascriptCodeMirrorMap = new Map();
+  function runJavascriptCode(button,textarea_id, iframe_id) {
+        const code = javascriptCodeMirrorMap.get(textarea_id).getValue();
         const iframe = document.getElementById(iframe_id);
         const doc = iframe.contentDocument || iframe.contentWindow.document;
 
@@ -237,472 +210,45 @@ const html = `
   `;
         iframe.style.display = "block";
         iframe.srcdoc = html;  
+iframe.onload = function () {
+  const doc = iframe.contentDocument || iframe.contentWindow.document;
+  const contentHeight = Math.max(
+    doc.body.scrollHeight,
+    doc.documentElement.scrollHeight
+  );
+  iframe.style.height = contentHeight + 'px';
+};
+        
     }
-    function toggleSnippetAndRefresh(id, textarea_id) {
-      const box = document.getElementById(id);
-      box.classList.toggle("open");
-      codeMirrorMap.get(textarea_id).refresh();
-    }
-
-  </script>
-  <script>
-  const mode = localStorage.getItem('mode') || 'light';
-  document.documentElement.classList.add(`${mode}-mode`);
-  </script>   
-<style> 
-html {
-  scroll-behavior: smooth;
+function openEditJavascriptCodeDialog(id, textarea_id) {
+		        closeAllJavascriptCodeDialog();
+		        document.getElementById(id).style.display = 'flex';
+         
+ 	        setTimeout(() => {
+		        	 javascriptCodeMirrorMap.get(textarea_id).refresh();
+                   
+ 	        }, 100); // 100ms 
 }
 
-body {
-  font-family: 'Merriweather', serif;
-  margin: 0;
-  padding: 2rem 1rem;
-  font-size: 15px;
-  line-height: 1.5;
-  transition: background-color 0.3s, color 0.3s;
-}
-
-.container {
-  max-width: 700px;
-  margin: 0 auto;
-  padding: 1rem 2rem;
-  box-shadow: 0 0 15px rgba(0,0,0,0.1);
-}
-
-h1, h2, h3 {
-  font-weight: 600;
-  margin-top: 2.5rem;
-  margin-bottom: 1rem;
-  line-height: 1.2;
-}
-
-h1 { font-size: 1.8rem; }
-h2 { font-size: 1.4rem; }
-h3 { font-size: 1.2rem; }
-
-table {
-  width: 100%;
-  border-collapse: collapse;
-  font-family: sans-serif;
-  font-size: 1em;
-  margin: 1em 0;
-}
-
-th, td {
-  padding: 0.6em 1em;
-  text-align: left;
-  border: 1px solid;
-}
-
-tr:nth-child(even) {
-  background-color: inherit;
-}
-
-tr:hover {
-  background-color: inherit;
-}
-
-a {
-  text-decoration: none;
-  transition: color 0.2s;
-}
-
-a:hover {
-  text-decoration: underline;
-}
-
-code {
-  color: #d35400;
-}
-
-.book-title-chapter {
-  font-family: 'Merriweather', serif;
-  font-size: 2rem;
-  font-weight: bold;
-  text-align: center;
-  margin-bottom: 2rem;
-  border-bottom: 2px solid;
-  padding-bottom: 0.5rem;
-}
-
-.book-subtitle-chapter {
-  text-align: center;
-  font-size: 1rem;
-  margin-top: -1rem;
-  margin-bottom: 2rem;
-}
-
-.related-books {
-  margin-top: 40px;
-}
-
-.related-book-list {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 20px;
-}
-
-    .book-cover {
-      width: 130px;
-      height: 180px;
-      font-family: Arial, sans-serif;
-      position: relative;
-      overflow: hidden;      
-      line-height: normal;
-      box-shadow: 2px 2px 4px rgba(0,0,0,0.1);
-    }
-    .book-cover-bottom-stripe {
-      position: absolute;
-      bottom: 0;
-      left: 0;
-      height: 5px;
-      width: 100%;
-    }
-    .book-cover-title {
-      position: absolute;
-      width: 100%;
-      text-align: center;
-      font-weight: bold;
-    }
-     
-    .book-cover-icon {
-      position: absolute;
-      left: 50%;
-      transform: translateX(-50%);
-      display: flex;
-      align-items: center;
-      justify-content: center; 
-    }
-
-    .book-cover-author {
-      position: absolute;
-      bottom: 10px;
-      width: 100%;
-      text-align: center;
-      font-size: 8px;
-      color: #333;
-    }
-
-.page-footer {
-  margin-top: 4rem;
-  padding: 1rem 0;
-  text-align: center;
-  font-size: 0.85rem;
-  border-top: 1px solid;
-}
-
-.chapter-navi-section {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding-bottom: 10px;
-}
-
-.nav-link {
-  color: inherit;
-  text-decoration: none;
-  opacity: 0.5;
-  transition: opacity 0.3s ease, text-decoration 0.3s ease;
-}
-
-.nav-link:hover {
-  opacity: 0.9;
-  text-decoration: underline;
-}
-
-.prev { text-align: left; }
-.toc-link { text-align: center; }
-.next { text-align: right; }
-
-.download-section {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 2rem;
-  padding: 2rem 1rem;
-  max-width: 600px;
-  margin: 3rem auto;
-  border-radius: 12px;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-}
-
-.download-info h2 {
-  margin: 0 0 0.5rem;
-  font-size: 1.2rem;
-}
-
-.format-label {
-  margin: 0 0 0.5rem;
-  font-size: 0.95rem;
-}
-
-.download-buttons {
-  display: flex;
-  gap: 1rem;
-}
-
-.download-button {
-  background-color: #4A90E2;
-  color: white;
-  padding: 0.5em 1.2em;
-  border-radius: 25px;
-  font-size: 0.95rem;
-  text-decoration: none;
-  transition: background-color 0.3s ease;
-}
-
-.download-button:hover {
-  background-color: #357ABD;
-}
-
-.code-block {
-  position: relative;
-  margin-bottom: 1em;
-}
-
-.copy-button {
-  background: transparent;
-  color: white;
-  position: absolute;
-  top: 8px;
-  right: 8px;
-  border: none;
-  padding: 4px 8px;
-  font-size: 12px;
-  border-radius: 4px;
-  cursor: pointer;
-  z-index: 1;
-}
-
-.copy-button:hover {
-  background-color: #0056b3;
-}
-
-.snippet-container {
-  overflow: hidden;
-}
-
-.snippet-header {
-  padding: 0.75rem 1rem;
-  cursor: pointer;
-  font-size: 1rem;
-    background-color: #eeeeee;
-    color:  #111111; 
-    border-radius: 8px;
-    cursor: pointer;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.1);  
-}
-
-.snippet-body {
-  display: none;
-  font-family: monospace;
-}
-
-.snippet-container.open .snippet-body {
-  display: block;
-}
-
-.CodeMirror {
-  border: 2px solid #ccc;
-  border-radius: 4px;
-  resize: vertical;
-}
-
-/* === Light Mode === */
-html.light-mode {
-  background-color: #f8f7f5;
-  color: #333;
-}
-
-html.light-mode .container {
-  background: white;
-}
-
-html.light-mode .book-title-chapter {
-  color: #2c3e50;
-  border-color: #ccc;
-}
-html.light-mode .book-subtitle-chapter{
-  color: #888;
-}
-
-html.light-mode .page-footer,
-html.light-mode .series-name,
-html.light-mode .book-subtitle,
-html.light-mode .format-label {
-  color: #888;
-}
-
-html.light-mode .related-books h2 {
-  color: #333;
-  border-bottom: 2px solid #eee;
-}
-
-html.light-mode .book-title {
-  color: #fff;
-}
-
-html.light-mode .book-cover {
-  border: 1px solid #ccc;
-}
-
-html.light-mode th {
-  background-color: #f2f2f2;
-}
-
-html.light-mode tr:nth-child(even) {
-  background-color: #fafafa;
-}
-
-html.light-mode tr:hover {
-  background-color: #e6f7ff;
-}
-
-html.light-mode a,
-html.light-mode .page-footer a {
-  color: #000;
-}
-
-/* === Dark Mode === */
-html.dark-mode {
-  background-color: #181818;
-  color: #e0e0e0;
-}
-
-html.dark-mode .container {
-  background: #222;
-}
-
-html.dark-mode .book-title-chapter {
-  color: #ddd;
-  border-color: #444;
-}
-
-html.dark-mode .snippet-header {
-    background-color: #333;
-    color:  #ddd; 
-}
-
-
-html.dark-mode .book-subtitle-chapter,
-html.dark-mode .page-footer,
-html.dark-mode .series-name,
-html.dark-mode .book-subtitle,
-html.dark-mode .book-footer,
-html.dark-mode .format-label {
-  color: #aaa;
-}
-
-html.dark-mode .related-books h2 {
-  color: #ddd;
-  border-bottom: 2px solid #333;
-}
-
-html.dark-mode .book-title {
-  color: #fff;
-}
-
-html.dark-mode .book-cover {
-  border: 1px solid #555;
-}
-
-html.dark-mode th {
-  background-color: #333;
-  color: #fff;
-}
-
-html.dark-mode td {
-  border-color: #444;
-}
-
-html.dark-mode tr:nth-child(even) {
-  background-color: #2a2a2a;
-}
-
-html.dark-mode tr:hover {
-  background-color: #2c3e50;
-}
-
-html.dark-mode a,
-html.dark-mode .page-footer a {
-  color: #eee;
-}
-
-    .dialog-backdrop {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100vw;
-      height: 100vh;
-      background: rgba(0,0,0,0.5);
-      display: none;
-      justify-content: center;
-      align-items: center;
-      z-index: 10;
-    }
-
-    .dialog {
-      background: white;
-      padding: 20px;
-      width: 90vw;
-      height: 80vh;
-      border-radius: 8px;
-      box-shadow: 0 0 20px rgba(0,0,0,0.3);
-      display: flex;
-      flex-direction: column;
-    }
-    .dialog-content {
-      display: flex;
-      flex: 1;
-      gap: 20px;
-      margin-top: 10px;
-    }
-    .dialog h2 {
-      margin-top: 0;
-    }
-
-    .textarea_dialog {
-      width: 50%;
-      height: 100%;
-      resize: none;
-      font-family: monospace;
-      font-size: 14px;
-      padding: 10px;
-      box-sizing: border-box;
-      border: 1px solid #ccc;
-    }
-
-    .iframe_dialog {
-      width: 50%;
-      height: 100%;
-      border: 1px solid #ccc;
-    }
-    .controls_dialog {
-      display: flex;
-      justify-content: space-between;
-      margin-top: 10px;
-    }    
-    button { padding: 0.5em 1em; background: green; color: white; border: none; cursor: pointer; }
-    button:hover { background: #1e7e34; }
-    .result_iframe { width:99%; height:200px; margin-top: 1em;  resize: both;border:1px solid #ccc;}        
-</style>
+function closeAllJavascriptCodeDialog() {
+		        document.querySelectorAll('.dialog-backdrop').forEach(el => {
+		          el.style.display = 'none';
+		        });
+}		
+</script>
 </head>
-<body> 
-  <div class="container">
-    <div class = "chapter-navi-section">
+<body>
+<script>const mode = localStorage.getItem('mode') || 'light';document.documentElement.classList.add(`${mode}-mode`);</script>  
+<div class="container"><div class = "chapter-navi-section">
 <a href="javascript-for-beginners-objects-and-object-literals.htm" class="nav-button prev">←</a>
 <a href='javascript-for-beginners.htm#functions-and-scope' class="nav-button toc-link">Index</a>
 <a href="javascript-for-beginners-events-and-user-interaction.htm" class="nav-button next">→</a>
 </div>
-
-    <h1 class="book-title-chapter" id = 'top'>Functions and Scope</h1>
-    <h3 class="book-subtitle-chapter">JavaScript for Beginners</h3>   
-    <!-- <h1 class ="chapter-title"></h1> -->
-    <h2 id='declaring-functions-function-arrow-functions'>9.1 Declaring Functions (<code>function</code>, arrow functions)</h2><p>Functions are one of the most fundamental building blocks in JavaScript. They allow you to <strong>group reusable code</strong> into named blocks that can be called whenever needed. JavaScript supports multiple ways to declare functions, with two of the most common being:</p><ul>
+<div class='book-header'><h1 class='book-title-toc' id = 'top'>Functions and Scope</h1><h3 class='book-subtitle-toc'>JavaScript for Beginners</h3></div><h2 id='declaring-functions-function-arrow-functions'>9.1 Declaring Functions (<code>function</code>, arrow functions)</h2><p>Functions are one of the most fundamental building blocks in JavaScript. They allow you to <strong>group reusable code</strong> into named blocks that can be called whenever needed. JavaScript supports multiple ways to declare functions, with two of the most common being:</p><ul>
  <li><strong>Function declarations</strong> (traditional)</li>
  <li><strong>Arrow functions</strong> (introduced in ES6)</li>
-</ul><p>In this section, you'll learn how to use both styles, understand their differences, and see when each is most appropriate.</p><h3 id="traditional-function-declarations">Traditional Function Declarations</h3><p>The traditional way to declare a function uses the <code>function</code> keyword.</p><p><strong>Syntax:</strong></p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</ul><p>In this section, you'll learn how to use both styles, understand their differences, and see when each is most appropriate.</p><h3 id="traditional-function-declarations">Traditional Function Declarations</h3><p>The traditional way to declare a function uses the <code>function</code> keyword.</p><p><strong>Syntax:</strong></p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-js">function functionName(parameters) {
   // code to execute
   return result;
@@ -715,28 +261,44 @@ html.dark-mode .page-footer a {
 
 console.log(add(3, 4)); // 7</code></pre>
  </div>
- <div class="snippet-container" id="ITRyP">
-  <div class="snippet-header" onclick="toggleSnippetAndRefresh('ITRyP','WMHC0')">
-   Try it in editor
-  </div>
-  <div class="snippet-body"><textarea id="WMHC0">function add(a, b) {
+ <div class="snippet-container">
+  <div class="button-group-run-edit"><button class="button-run-edit" onclick="runJavascriptCode(this,'7415x','uGxtm')">Run</button> <button class="button-run-edit" onclick="openEditJavascriptCodeDialog('uGxtm_Dialog','7415x')">Edit</button>
+  </div> <iframe id="uGxtm" class="result_iframe" style="display: none;"></iframe>
+  <div id="uGxtm_Dialog" class="dialog-backdrop">
+   <div class="dialog">
+    <div class="controls"><button onclick="runJavascriptCode(this,'7415x','uGxtm_IFrame')">Run</button> <button onclick="closeAllJavascriptCodeDialog()">Close</button>
+    </div>
+    <div class="dialog-content">
+     <div class="editor-container">
+      <textarea id="7415x" class="textarea_dialog" placeholder="Type HTML here...">function add(a, b) {
   return a + b;
 }
 
-console.log(add(3, 4)); // 7</textarea> <br> <button onclick="renderIframeForClientJavascript('WMHC0','61lJa')">Run</button> <iframe id="61lJa" class="result_iframe" style="display: none;"></iframe>
-   <script>
-  {let editor1 = CodeMirror.fromTextArea(document.getElementById("WMHC0"), {
-    mode: "javascript",
-    lineNumbers:false,
-    tabSize: 2
-    });
-    const mode = localStorage.getItem("mode") || "light";  
-    const newTheme = mode === "dark" ? "material" : "default";
-    editor1.setOption("theme", newTheme);
-
-    codeMirrorMap.set("WMHC0", editor1);}
-  </script>
+console.log(add(3, 4)); // 7</textarea>
+     </div>
+     <div class="preview-container">
+      <iframe id="uGxtm_IFrame" class="result_iframe_dialog" style="border: none;"></iframe>
+     </div>
+    </div>
+   </div>
   </div>
+  <script>
+{
+let editor = CodeMirror.fromTextArea(document.getElementById("7415x"), {
+					mode : "javascript",
+					lineNumbers : false,
+          lineWrapping: true,
+					tabSize : 2
+});
+
+const darkmode = localStorage.getItem("mode") || "light";  
+const newTheme = darkmode === "dark" ? "dracula" : "default";
+editor.setSize("50%", "100%");
+editor.setOption("theme", newTheme);
+javascriptCodeMirrorMap.set("7415x", editor);
+}
+
+</script>
  </div>
 </div><p><strong>Example – Greet a user:</strong></p><div>
  <div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
@@ -746,35 +308,53 @@ console.log(add(3, 4)); // 7</textarea> <br> <button onclick="renderIframeForCli
 
 console.log(greet('Alice')); // Hello, Alice!</code></pre>
  </div>
- <div class="snippet-container" id="7Fzwn">
-  <div class="snippet-header" onclick="toggleSnippetAndRefresh('7Fzwn','UMSQs')">
-   Try it in editor
-  </div>
-  <div class="snippet-body"><textarea id="UMSQs">function greet(name) {
+ <div class="snippet-container">
+  <div class="button-group-run-edit"><button class="button-run-edit" onclick="runJavascriptCode(this,'hOsDS','GPbNY')">Run</button> <button class="button-run-edit" onclick="openEditJavascriptCodeDialog('GPbNY_Dialog','hOsDS')">Edit</button>
+  </div> <iframe id="GPbNY" class="result_iframe" style="display: none;"></iframe>
+  <div id="GPbNY_Dialog" class="dialog-backdrop">
+   <div class="dialog">
+    <div class="controls"><button onclick="runJavascriptCode(this,'hOsDS','GPbNY_IFrame')">Run</button> <button onclick="closeAllJavascriptCodeDialog()">Close</button>
+    </div>
+    <div class="dialog-content">
+     <div class="editor-container">
+      <textarea id="hOsDS" class="textarea_dialog" placeholder="Type HTML here...">function greet(name) {
   return `Hello, ${name}!`;
 }
 
-console.log(greet('Alice')); // Hello, Alice!</textarea> <br> <button onclick="renderIframeForClientJavascript('UMSQs','YpWlf')">Run</button> <iframe id="YpWlf" class="result_iframe" style="display: none;"></iframe>
-   <script>
-  {let editor1 = CodeMirror.fromTextArea(document.getElementById("UMSQs"), {
-    mode: "javascript",
-    lineNumbers:false,
-    tabSize: 2
-    });
-    const mode = localStorage.getItem("mode") || "light";  
-    const newTheme = mode === "dark" ? "material" : "default";
-    editor1.setOption("theme", newTheme);
-
-    codeMirrorMap.set("UMSQs", editor1);}
-  </script>
+console.log(greet('Alice')); // Hello, Alice!</textarea>
+     </div>
+     <div class="preview-container">
+      <iframe id="GPbNY_IFrame" class="result_iframe_dialog" style="border: none;"></iframe>
+     </div>
+    </div>
+   </div>
   </div>
+  <script>
+{
+let editor = CodeMirror.fromTextArea(document.getElementById("hOsDS"), {
+					mode : "javascript",
+					lineNumbers : false,
+          lineWrapping: true,
+					tabSize : 2
+});
+
+const darkmode = localStorage.getItem("mode") || "light";  
+const newTheme = darkmode === "dark" ? "dracula" : "default";
+editor.setSize("50%", "100%");
+editor.setOption("theme", newTheme);
+javascriptCodeMirrorMap.set("hOsDS", editor);
+}
+
+</script>
  </div>
-</div><h3 id="arrow-functions">Arrow Functions</h3><p>Arrow functions offer a <strong>shorter syntax</strong> and are commonly used in modern JavaScript, especially for small or anonymous functions.</p><p><strong>Syntax:</strong></p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</div><h3 id="arrow-functions">Arrow Functions</h3><p>Arrow functions offer a <strong>shorter syntax</strong> and are commonly used in modern JavaScript, especially for small or anonymous functions.</p><p><strong>Syntax:</strong></p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-js">const functionName = (parameters) =&gt; {
   // code to execute
   return result;
 };</code></pre>
-</div><p>If the function has only <strong>one expression</strong>, you can omit the braces and <code>return</code> keyword:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</div><p>If the function has only <strong>one expression</strong>, you can omit the braces and <code>return</code> keyword:</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-js">const add = (a, b) =&gt; a + b;</code></pre>
 </div><p><strong>Example – Greet a user (arrow version):</strong></p><div>
  <div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
@@ -782,26 +362,42 @@ console.log(greet('Alice')); // Hello, Alice!</textarea> <br> <button onclick="r
 
 console.log(greet('Bob')); // Hello, Bob!</code></pre>
  </div>
- <div class="snippet-container" id="FHUbO">
-  <div class="snippet-header" onclick="toggleSnippetAndRefresh('FHUbO','68HVQ')">
-   Try it in editor
-  </div>
-  <div class="snippet-body"><textarea id="68HVQ">const greet = name =&gt; `Hello, ${name}!`;
+ <div class="snippet-container">
+  <div class="button-group-run-edit"><button class="button-run-edit" onclick="runJavascriptCode(this,'vSYSd','lN4In')">Run</button> <button class="button-run-edit" onclick="openEditJavascriptCodeDialog('lN4In_Dialog','vSYSd')">Edit</button>
+  </div> <iframe id="lN4In" class="result_iframe" style="display: none;"></iframe>
+  <div id="lN4In_Dialog" class="dialog-backdrop">
+   <div class="dialog">
+    <div class="controls"><button onclick="runJavascriptCode(this,'vSYSd','lN4In_IFrame')">Run</button> <button onclick="closeAllJavascriptCodeDialog()">Close</button>
+    </div>
+    <div class="dialog-content">
+     <div class="editor-container">
+      <textarea id="vSYSd" class="textarea_dialog" placeholder="Type HTML here...">const greet = name =&gt; `Hello, ${name}!`;
 
-console.log(greet('Bob')); // Hello, Bob!</textarea> <br> <button onclick="renderIframeForClientJavascript('68HVQ','dvv65')">Run</button> <iframe id="dvv65" class="result_iframe" style="display: none;"></iframe>
-   <script>
-  {let editor1 = CodeMirror.fromTextArea(document.getElementById("68HVQ"), {
-    mode: "javascript",
-    lineNumbers:false,
-    tabSize: 2
-    });
-    const mode = localStorage.getItem("mode") || "light";  
-    const newTheme = mode === "dark" ? "material" : "default";
-    editor1.setOption("theme", newTheme);
-
-    codeMirrorMap.set("68HVQ", editor1);}
-  </script>
+console.log(greet('Bob')); // Hello, Bob!</textarea>
+     </div>
+     <div class="preview-container">
+      <iframe id="lN4In_IFrame" class="result_iframe_dialog" style="border: none;"></iframe>
+     </div>
+    </div>
+   </div>
   </div>
+  <script>
+{
+let editor = CodeMirror.fromTextArea(document.getElementById("vSYSd"), {
+					mode : "javascript",
+					lineNumbers : false,
+          lineWrapping: true,
+					tabSize : 2
+});
+
+const darkmode = localStorage.getItem("mode") || "light";  
+const newTheme = darkmode === "dark" ? "dracula" : "default";
+editor.setSize("50%", "100%");
+editor.setOption("theme", newTheme);
+javascriptCodeMirrorMap.set("vSYSd", editor);
+}
+
+</script>
  </div>
 </div><h3 id="comparing-function-declarations-vs-arrow-functions">Comparing Function Declarations vs. Arrow Functions</h3><table>
  <thead>
@@ -844,31 +440,47 @@ console.log(greet('Bob')); // Hello, Bob!</textarea> <br> <button onclick="rende
 
 user.greet(); // Hi, I'm Alice</code></pre>
  </div>
- <div class="snippet-container" id="0u2Xu">
-  <div class="snippet-header" onclick="toggleSnippetAndRefresh('0u2Xu','mX55d')">
-   Try it in editor
-  </div>
-  <div class="snippet-body"><textarea id="mX55d">const user = {
+ <div class="snippet-container">
+  <div class="button-group-run-edit"><button class="button-run-edit" onclick="runJavascriptCode(this,'fOkun','oSwmC')">Run</button> <button class="button-run-edit" onclick="openEditJavascriptCodeDialog('oSwmC_Dialog','fOkun')">Edit</button>
+  </div> <iframe id="oSwmC" class="result_iframe" style="display: none;"></iframe>
+  <div id="oSwmC_Dialog" class="dialog-backdrop">
+   <div class="dialog">
+    <div class="controls"><button onclick="runJavascriptCode(this,'fOkun','oSwmC_IFrame')">Run</button> <button onclick="closeAllJavascriptCodeDialog()">Close</button>
+    </div>
+    <div class="dialog-content">
+     <div class="editor-container">
+      <textarea id="fOkun" class="textarea_dialog" placeholder="Type HTML here...">const user = {
   name: 'Alice',
   greet: function () {
     console.log(`Hi, I'm ${this.name}`);
   }
 };
 
-user.greet(); // Hi, I'm Alice</textarea> <br> <button onclick="renderIframeForClientJavascript('mX55d','WFxvs')">Run</button> <iframe id="WFxvs" class="result_iframe" style="display: none;"></iframe>
-   <script>
-  {let editor1 = CodeMirror.fromTextArea(document.getElementById("mX55d"), {
-    mode: "javascript",
-    lineNumbers:false,
-    tabSize: 2
-    });
-    const mode = localStorage.getItem("mode") || "light";  
-    const newTheme = mode === "dark" ? "material" : "default";
-    editor1.setOption("theme", newTheme);
-
-    codeMirrorMap.set("mX55d", editor1);}
-  </script>
+user.greet(); // Hi, I'm Alice</textarea>
+     </div>
+     <div class="preview-container">
+      <iframe id="oSwmC_IFrame" class="result_iframe_dialog" style="border: none;"></iframe>
+     </div>
+    </div>
+   </div>
   </div>
+  <script>
+{
+let editor = CodeMirror.fromTextArea(document.getElementById("fOkun"), {
+					mode : "javascript",
+					lineNumbers : false,
+          lineWrapping: true,
+					tabSize : 2
+});
+
+const darkmode = localStorage.getItem("mode") || "light";  
+const newTheme = darkmode === "dark" ? "dracula" : "default";
+editor.setSize("50%", "100%");
+editor.setOption("theme", newTheme);
+javascriptCodeMirrorMap.set("fOkun", editor);
+}
+
+</script>
  </div>
 </div><p><strong>Arrow Function (wrong in this case):</strong></p><div>
  <div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
@@ -881,31 +493,47 @@ user.greet(); // Hi, I'm Alice</textarea> <br> <button onclick="renderIframeForC
 
 user.greet(); // Hi, I'm undefined</code></pre>
  </div>
- <div class="snippet-container" id="9axfH">
-  <div class="snippet-header" onclick="toggleSnippetAndRefresh('9axfH','f3mh8')">
-   Try it in editor
-  </div>
-  <div class="snippet-body"><textarea id="f3mh8">const user = {
+ <div class="snippet-container">
+  <div class="button-group-run-edit"><button class="button-run-edit" onclick="runJavascriptCode(this,'jpOCG','O9Q6z')">Run</button> <button class="button-run-edit" onclick="openEditJavascriptCodeDialog('O9Q6z_Dialog','jpOCG')">Edit</button>
+  </div> <iframe id="O9Q6z" class="result_iframe" style="display: none;"></iframe>
+  <div id="O9Q6z_Dialog" class="dialog-backdrop">
+   <div class="dialog">
+    <div class="controls"><button onclick="runJavascriptCode(this,'jpOCG','O9Q6z_IFrame')">Run</button> <button onclick="closeAllJavascriptCodeDialog()">Close</button>
+    </div>
+    <div class="dialog-content">
+     <div class="editor-container">
+      <textarea id="jpOCG" class="textarea_dialog" placeholder="Type HTML here...">const user = {
   name: 'Bob',
   greet: () =&gt; {
     console.log(`Hi, I'm ${this.name}`);
   }
 };
 
-user.greet(); // Hi, I'm undefined</textarea> <br> <button onclick="renderIframeForClientJavascript('f3mh8','iA5GV')">Run</button> <iframe id="iA5GV" class="result_iframe" style="display: none;"></iframe>
-   <script>
-  {let editor1 = CodeMirror.fromTextArea(document.getElementById("f3mh8"), {
-    mode: "javascript",
-    lineNumbers:false,
-    tabSize: 2
-    });
-    const mode = localStorage.getItem("mode") || "light";  
-    const newTheme = mode === "dark" ? "material" : "default";
-    editor1.setOption("theme", newTheme);
-
-    codeMirrorMap.set("f3mh8", editor1);}
-  </script>
+user.greet(); // Hi, I'm undefined</textarea>
+     </div>
+     <div class="preview-container">
+      <iframe id="O9Q6z_IFrame" class="result_iframe_dialog" style="border: none;"></iframe>
+     </div>
+    </div>
+   </div>
   </div>
+  <script>
+{
+let editor = CodeMirror.fromTextArea(document.getElementById("jpOCG"), {
+					mode : "javascript",
+					lineNumbers : false,
+          lineWrapping: true,
+					tabSize : 2
+});
+
+const darkmode = localStorage.getItem("mode") || "light";  
+const newTheme = darkmode === "dark" ? "dracula" : "default";
+editor.setSize("50%", "100%");
+editor.setOption("theme", newTheme);
+javascriptCodeMirrorMap.set("jpOCG", editor);
+}
+
+</script>
  </div>
 </div><blockquote>
  <p>Arrow functions do <strong>not</strong> have their own <code>this</code>. They inherit it from the surrounding context, which can lead to unexpected results when used in object methods.</p>
@@ -926,28 +554,44 @@ user.greet(); // Hi, I'm undefined</textarea> <br> <button onclick="renderIframe
 
 sayHello(); // Output: Hello!</code></pre>
  </div>
- <div class="snippet-container" id="6JSkp">
-  <div class="snippet-header" onclick="toggleSnippetAndRefresh('6JSkp','EqkNb')">
-   Try it in editor
-  </div>
-  <div class="snippet-body"><textarea id="EqkNb">function sayHello() {
+ <div class="snippet-container">
+  <div class="button-group-run-edit"><button class="button-run-edit" onclick="runJavascriptCode(this,'UEKSu','0KOwr')">Run</button> <button class="button-run-edit" onclick="openEditJavascriptCodeDialog('0KOwr_Dialog','UEKSu')">Edit</button>
+  </div> <iframe id="0KOwr" class="result_iframe" style="display: none;"></iframe>
+  <div id="0KOwr_Dialog" class="dialog-backdrop">
+   <div class="dialog">
+    <div class="controls"><button onclick="runJavascriptCode(this,'UEKSu','0KOwr_IFrame')">Run</button> <button onclick="closeAllJavascriptCodeDialog()">Close</button>
+    </div>
+    <div class="dialog-content">
+     <div class="editor-container">
+      <textarea id="UEKSu" class="textarea_dialog" placeholder="Type HTML here...">function sayHello() {
   console.log('Hello!');
 }
 
-sayHello(); // Output: Hello!</textarea> <br> <button onclick="renderIframeForClientJavascript('EqkNb','Wj0hZ')">Run</button> <iframe id="Wj0hZ" class="result_iframe" style="display: none;"></iframe>
-   <script>
-  {let editor1 = CodeMirror.fromTextArea(document.getElementById("EqkNb"), {
-    mode: "javascript",
-    lineNumbers:false,
-    tabSize: 2
-    });
-    const mode = localStorage.getItem("mode") || "light";  
-    const newTheme = mode === "dark" ? "material" : "default";
-    editor1.setOption("theme", newTheme);
-
-    codeMirrorMap.set("EqkNb", editor1);}
-  </script>
+sayHello(); // Output: Hello!</textarea>
+     </div>
+     <div class="preview-container">
+      <iframe id="0KOwr_IFrame" class="result_iframe_dialog" style="border: none;"></iframe>
+     </div>
+    </div>
+   </div>
   </div>
+  <script>
+{
+let editor = CodeMirror.fromTextArea(document.getElementById("UEKSu"), {
+					mode : "javascript",
+					lineNumbers : false,
+          lineWrapping: true,
+					tabSize : 2
+});
+
+const darkmode = localStorage.getItem("mode") || "light";  
+const newTheme = darkmode === "dark" ? "dracula" : "default";
+editor.setSize("50%", "100%");
+editor.setOption("theme", newTheme);
+javascriptCodeMirrorMap.set("UEKSu", editor);
+}
+
+</script>
  </div>
 </div><h3 id="functions-with-one-parameter">Functions with One Parameter</h3><p><strong>Example – Greet a user by name:</strong></p><div>
  <div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
@@ -957,28 +601,44 @@ sayHello(); // Output: Hello!</textarea> <br> <button onclick="renderIframeForCl
 
 greet('Alice'); // Output: Hello, Alice!</code></pre>
  </div>
- <div class="snippet-container" id="0DHwW">
-  <div class="snippet-header" onclick="toggleSnippetAndRefresh('0DHwW','fUNcm')">
-   Try it in editor
-  </div>
-  <div class="snippet-body"><textarea id="fUNcm">function greet(name) {
+ <div class="snippet-container">
+  <div class="button-group-run-edit"><button class="button-run-edit" onclick="runJavascriptCode(this,'74jSk','pSDp2')">Run</button> <button class="button-run-edit" onclick="openEditJavascriptCodeDialog('pSDp2_Dialog','74jSk')">Edit</button>
+  </div> <iframe id="pSDp2" class="result_iframe" style="display: none;"></iframe>
+  <div id="pSDp2_Dialog" class="dialog-backdrop">
+   <div class="dialog">
+    <div class="controls"><button onclick="runJavascriptCode(this,'74jSk','pSDp2_IFrame')">Run</button> <button onclick="closeAllJavascriptCodeDialog()">Close</button>
+    </div>
+    <div class="dialog-content">
+     <div class="editor-container">
+      <textarea id="74jSk" class="textarea_dialog" placeholder="Type HTML here...">function greet(name) {
   console.log(`Hello, ${name}!`);
 }
 
-greet('Alice'); // Output: Hello, Alice!</textarea> <br> <button onclick="renderIframeForClientJavascript('fUNcm','7tftX')">Run</button> <iframe id="7tftX" class="result_iframe" style="display: none;"></iframe>
-   <script>
-  {let editor1 = CodeMirror.fromTextArea(document.getElementById("fUNcm"), {
-    mode: "javascript",
-    lineNumbers:false,
-    tabSize: 2
-    });
-    const mode = localStorage.getItem("mode") || "light";  
-    const newTheme = mode === "dark" ? "material" : "default";
-    editor1.setOption("theme", newTheme);
-
-    codeMirrorMap.set("fUNcm", editor1);}
-  </script>
+greet('Alice'); // Output: Hello, Alice!</textarea>
+     </div>
+     <div class="preview-container">
+      <iframe id="pSDp2_IFrame" class="result_iframe_dialog" style="border: none;"></iframe>
+     </div>
+    </div>
+   </div>
   </div>
+  <script>
+{
+let editor = CodeMirror.fromTextArea(document.getElementById("74jSk"), {
+					mode : "javascript",
+					lineNumbers : false,
+          lineWrapping: true,
+					tabSize : 2
+});
+
+const darkmode = localStorage.getItem("mode") || "light";  
+const newTheme = darkmode === "dark" ? "dracula" : "default";
+editor.setSize("50%", "100%");
+editor.setOption("theme", newTheme);
+javascriptCodeMirrorMap.set("74jSk", editor);
+}
+
+</script>
  </div>
 </div><p>Here, <code>name</code> is a parameter, and <code>'Alice'</code> is the argument passed to it.</p><h3 id="functions-with-multiple-parameters">Functions with Multiple Parameters</h3><p>You can define as many parameters as you need, separated by commas.</p><p><strong>Example – Add two numbers:</strong></p><div>
  <div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
@@ -989,29 +649,45 @@ greet('Alice'); // Output: Hello, Alice!</textarea> <br> <button onclick="render
 let result = add(5, 3);
 console.log(result); // 8</code></pre>
  </div>
- <div class="snippet-container" id="Ok3Dr">
-  <div class="snippet-header" onclick="toggleSnippetAndRefresh('Ok3Dr','AUCRj')">
-   Try it in editor
-  </div>
-  <div class="snippet-body"><textarea id="AUCRj">function add(a, b) {
+ <div class="snippet-container">
+  <div class="button-group-run-edit"><button class="button-run-edit" onclick="runJavascriptCode(this,'rjGRW','IKvnw')">Run</button> <button class="button-run-edit" onclick="openEditJavascriptCodeDialog('IKvnw_Dialog','rjGRW')">Edit</button>
+  </div> <iframe id="IKvnw" class="result_iframe" style="display: none;"></iframe>
+  <div id="IKvnw_Dialog" class="dialog-backdrop">
+   <div class="dialog">
+    <div class="controls"><button onclick="runJavascriptCode(this,'rjGRW','IKvnw_IFrame')">Run</button> <button onclick="closeAllJavascriptCodeDialog()">Close</button>
+    </div>
+    <div class="dialog-content">
+     <div class="editor-container">
+      <textarea id="rjGRW" class="textarea_dialog" placeholder="Type HTML here...">function add(a, b) {
   return a + b;
 }
 
 let result = add(5, 3);
-console.log(result); // 8</textarea> <br> <button onclick="renderIframeForClientJavascript('AUCRj','Kauyi')">Run</button> <iframe id="Kauyi" class="result_iframe" style="display: none;"></iframe>
-   <script>
-  {let editor1 = CodeMirror.fromTextArea(document.getElementById("AUCRj"), {
-    mode: "javascript",
-    lineNumbers:false,
-    tabSize: 2
-    });
-    const mode = localStorage.getItem("mode") || "light";  
-    const newTheme = mode === "dark" ? "material" : "default";
-    editor1.setOption("theme", newTheme);
-
-    codeMirrorMap.set("AUCRj", editor1);}
-  </script>
+console.log(result); // 8</textarea>
+     </div>
+     <div class="preview-container">
+      <iframe id="IKvnw_IFrame" class="result_iframe_dialog" style="border: none;"></iframe>
+     </div>
+    </div>
+   </div>
   </div>
+  <script>
+{
+let editor = CodeMirror.fromTextArea(document.getElementById("rjGRW"), {
+					mode : "javascript",
+					lineNumbers : false,
+          lineWrapping: true,
+					tabSize : 2
+});
+
+const darkmode = localStorage.getItem("mode") || "light";  
+const newTheme = darkmode === "dark" ? "dracula" : "default";
+editor.setSize("50%", "100%");
+editor.setOption("theme", newTheme);
+javascriptCodeMirrorMap.set("rjGRW", editor);
+}
+
+</script>
  </div>
 </div><h3 id="default-parameter-values">Default Parameter Values</h3><p>If a caller doesn’t provide an argument, you can define a <strong>default value</strong> to use instead.</p><p><strong>Example – Greet with a default name:</strong></p><div>
  <div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
@@ -1022,29 +698,45 @@ console.log(result); // 8</textarea> <br> <button onclick="renderIframeForClient
 greet();          // Welcome, Guest!
 greet('Charlie'); // Welcome, Charlie!</code></pre>
  </div>
- <div class="snippet-container" id="jUm7K">
-  <div class="snippet-header" onclick="toggleSnippetAndRefresh('jUm7K','nxrJA')">
-   Try it in editor
-  </div>
-  <div class="snippet-body"><textarea id="nxrJA">function greet(name = 'Guest') {
+ <div class="snippet-container">
+  <div class="button-group-run-edit"><button class="button-run-edit" onclick="runJavascriptCode(this,'cZq0M','Jt55T')">Run</button> <button class="button-run-edit" onclick="openEditJavascriptCodeDialog('Jt55T_Dialog','cZq0M')">Edit</button>
+  </div> <iframe id="Jt55T" class="result_iframe" style="display: none;"></iframe>
+  <div id="Jt55T_Dialog" class="dialog-backdrop">
+   <div class="dialog">
+    <div class="controls"><button onclick="runJavascriptCode(this,'cZq0M','Jt55T_IFrame')">Run</button> <button onclick="closeAllJavascriptCodeDialog()">Close</button>
+    </div>
+    <div class="dialog-content">
+     <div class="editor-container">
+      <textarea id="cZq0M" class="textarea_dialog" placeholder="Type HTML here...">function greet(name = 'Guest') {
   console.log(`Welcome, ${name}!`);
 }
 
 greet();          // Welcome, Guest!
-greet('Charlie'); // Welcome, Charlie!</textarea> <br> <button onclick="renderIframeForClientJavascript('nxrJA','0Ow1A')">Run</button> <iframe id="0Ow1A" class="result_iframe" style="display: none;"></iframe>
-   <script>
-  {let editor1 = CodeMirror.fromTextArea(document.getElementById("nxrJA"), {
-    mode: "javascript",
-    lineNumbers:false,
-    tabSize: 2
-    });
-    const mode = localStorage.getItem("mode") || "light";  
-    const newTheme = mode === "dark" ? "material" : "default";
-    editor1.setOption("theme", newTheme);
-
-    codeMirrorMap.set("nxrJA", editor1);}
-  </script>
+greet('Charlie'); // Welcome, Charlie!</textarea>
+     </div>
+     <div class="preview-container">
+      <iframe id="Jt55T_IFrame" class="result_iframe_dialog" style="border: none;"></iframe>
+     </div>
+    </div>
+   </div>
   </div>
+  <script>
+{
+let editor = CodeMirror.fromTextArea(document.getElementById("cZq0M"), {
+					mode : "javascript",
+					lineNumbers : false,
+          lineWrapping: true,
+					tabSize : 2
+});
+
+const darkmode = localStorage.getItem("mode") || "light";  
+const newTheme = darkmode === "dark" ? "dracula" : "default";
+editor.setSize("50%", "100%");
+editor.setOption("theme", newTheme);
+javascriptCodeMirrorMap.set("cZq0M", editor);
+}
+
+</script>
  </div>
 </div><p>This makes your functions more <strong>robust</strong> and <strong>error-tolerant</strong>.</p><h3 id="returning-values">Returning Values</h3><p>A function can return a value using the <code>return</code> keyword. This lets you <strong>store or use the result</strong> of a computation later in your code.</p><p><strong>Example – Calculate area of a rectangle:</strong></p><div>
  <div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
@@ -1055,29 +747,45 @@ greet('Charlie'); // Welcome, Charlie!</textarea> <br> <button onclick="renderIf
 let area = calculateArea(5, 4);
 console.log(area); // 20</code></pre>
  </div>
- <div class="snippet-container" id="z5hD2">
-  <div class="snippet-header" onclick="toggleSnippetAndRefresh('z5hD2','tuI2N')">
-   Try it in editor
-  </div>
-  <div class="snippet-body"><textarea id="tuI2N">function calculateArea(width, height) {
+ <div class="snippet-container">
+  <div class="button-group-run-edit"><button class="button-run-edit" onclick="runJavascriptCode(this,'6HfbX','Xsnc9')">Run</button> <button class="button-run-edit" onclick="openEditJavascriptCodeDialog('Xsnc9_Dialog','6HfbX')">Edit</button>
+  </div> <iframe id="Xsnc9" class="result_iframe" style="display: none;"></iframe>
+  <div id="Xsnc9_Dialog" class="dialog-backdrop">
+   <div class="dialog">
+    <div class="controls"><button onclick="runJavascriptCode(this,'6HfbX','Xsnc9_IFrame')">Run</button> <button onclick="closeAllJavascriptCodeDialog()">Close</button>
+    </div>
+    <div class="dialog-content">
+     <div class="editor-container">
+      <textarea id="6HfbX" class="textarea_dialog" placeholder="Type HTML here...">function calculateArea(width, height) {
   return width * height;
 }
 
 let area = calculateArea(5, 4);
-console.log(area); // 20</textarea> <br> <button onclick="renderIframeForClientJavascript('tuI2N','NHLHR')">Run</button> <iframe id="NHLHR" class="result_iframe" style="display: none;"></iframe>
-   <script>
-  {let editor1 = CodeMirror.fromTextArea(document.getElementById("tuI2N"), {
-    mode: "javascript",
-    lineNumbers:false,
-    tabSize: 2
-    });
-    const mode = localStorage.getItem("mode") || "light";  
-    const newTheme = mode === "dark" ? "material" : "default";
-    editor1.setOption("theme", newTheme);
-
-    codeMirrorMap.set("tuI2N", editor1);}
-  </script>
+console.log(area); // 20</textarea>
+     </div>
+     <div class="preview-container">
+      <iframe id="Xsnc9_IFrame" class="result_iframe_dialog" style="border: none;"></iframe>
+     </div>
+    </div>
+   </div>
   </div>
+  <script>
+{
+let editor = CodeMirror.fromTextArea(document.getElementById("6HfbX"), {
+					mode : "javascript",
+					lineNumbers : false,
+          lineWrapping: true,
+					tabSize : 2
+});
+
+const darkmode = localStorage.getItem("mode") || "light";  
+const newTheme = darkmode === "dark" ? "dracula" : "default";
+editor.setSize("50%", "100%");
+editor.setOption("theme", newTheme);
+javascriptCodeMirrorMap.set("6HfbX", editor);
+}
+
+</script>
  </div>
 </div><p>Without <code>return</code>, the function would perform the calculation but not give the result back to the code that called it.</p><h3 id="real-world-analogy">Real-World Analogy</h3><p>Think of a function like a <strong>coffee machine</strong>:</p><ul>
  <li><strong>Parameters</strong> = the inputs (e.g. water, coffee beans, sugar)</li>
@@ -1123,7 +831,8 @@ console.log(area); // 20</textarea> <br> <button onclick="renderIframeForClientJ
 <a href='javascript-for-beginners.htm#functions-and-scope' class="nav-button toc-link">Index</a>
 <a href="#bottom" class="nav-button next">↓</a>
 </div>
-<h2 id='function-expressions'>9.3 Function Expressions</h2><p>In JavaScript, functions are <strong>first-class citizens</strong>, meaning they can be treated like any other value — stored in variables, passed as arguments, or returned from other functions. One way to create functions that leverages this flexibility is through <strong>function expressions</strong>.</p><h3 id="what-is-a-function-expression">What Is a Function Expression?</h3><p>A <strong>function expression</strong> defines a function inside an expression, typically assigning it to a variable.</p><p><strong>Syntax:</strong></p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+<h2 id='function-expressions'>9.3 Function Expressions</h2><p>In JavaScript, functions are <strong>first-class citizens</strong>, meaning they can be treated like any other value — stored in variables, passed as arguments, or returned from other functions. One way to create functions that leverages this flexibility is through <strong>function expressions</strong>.</p><h3 id="what-is-a-function-expression">What Is a Function Expression?</h3><p>A <strong>function expression</strong> defines a function inside an expression, typically assigning it to a variable.</p><p><strong>Syntax:</strong></p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-js">const sayHello = function() {
   console.log('Hello!');
 };</code></pre>
@@ -1135,28 +844,44 @@ console.log(area); // 20</textarea> <br> <button onclick="renderIframeForClientJ
 
 console.log(multiply(4, 5)); // 20</code></pre>
  </div>
- <div class="snippet-container" id="vCGkd">
-  <div class="snippet-header" onclick="toggleSnippetAndRefresh('vCGkd','SFW43')">
-   Try it in editor
-  </div>
-  <div class="snippet-body"><textarea id="SFW43">const multiply = function(a, b) {
+ <div class="snippet-container">
+  <div class="button-group-run-edit"><button class="button-run-edit" onclick="runJavascriptCode(this,'YWPWg','l6CSj')">Run</button> <button class="button-run-edit" onclick="openEditJavascriptCodeDialog('l6CSj_Dialog','YWPWg')">Edit</button>
+  </div> <iframe id="l6CSj" class="result_iframe" style="display: none;"></iframe>
+  <div id="l6CSj_Dialog" class="dialog-backdrop">
+   <div class="dialog">
+    <div class="controls"><button onclick="runJavascriptCode(this,'YWPWg','l6CSj_IFrame')">Run</button> <button onclick="closeAllJavascriptCodeDialog()">Close</button>
+    </div>
+    <div class="dialog-content">
+     <div class="editor-container">
+      <textarea id="YWPWg" class="textarea_dialog" placeholder="Type HTML here...">const multiply = function(a, b) {
   return a * b;
 };
 
-console.log(multiply(4, 5)); // 20</textarea> <br> <button onclick="renderIframeForClientJavascript('SFW43','0Sbfg')">Run</button> <iframe id="0Sbfg" class="result_iframe" style="display: none;"></iframe>
-   <script>
-  {let editor1 = CodeMirror.fromTextArea(document.getElementById("SFW43"), {
-    mode: "javascript",
-    lineNumbers:false,
-    tabSize: 2
-    });
-    const mode = localStorage.getItem("mode") || "light";  
-    const newTheme = mode === "dark" ? "material" : "default";
-    editor1.setOption("theme", newTheme);
-
-    codeMirrorMap.set("SFW43", editor1);}
-  </script>
+console.log(multiply(4, 5)); // 20</textarea>
+     </div>
+     <div class="preview-container">
+      <iframe id="l6CSj_IFrame" class="result_iframe_dialog" style="border: none;"></iframe>
+     </div>
+    </div>
+   </div>
   </div>
+  <script>
+{
+let editor = CodeMirror.fromTextArea(document.getElementById("YWPWg"), {
+					mode : "javascript",
+					lineNumbers : false,
+          lineWrapping: true,
+					tabSize : 2
+});
+
+const darkmode = localStorage.getItem("mode") || "light";  
+const newTheme = darkmode === "dark" ? "dracula" : "default";
+editor.setSize("50%", "100%");
+editor.setOption("theme", newTheme);
+javascriptCodeMirrorMap.set("YWPWg", editor);
+}
+
+</script>
  </div>
 </div><h3 id="passing-functions-as-arguments-callbacks">Passing Functions as Arguments (Callbacks)</h3><p>Because functions can be stored in variables, they can also be <strong>passed as arguments</strong> to other functions. This is useful for things like event handling or array processing.</p><p><strong>Example – Using a callback with <code>setTimeout</code>:</strong></p><div>
  <div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
@@ -1164,26 +889,42 @@ console.log(multiply(4, 5)); // 20</textarea> <br> <button onclick="renderIframe
   console.log('This message appears after 2 seconds');
 }, 2000);</code></pre>
  </div>
- <div class="snippet-container" id="UMMYF">
-  <div class="snippet-header" onclick="toggleSnippetAndRefresh('UMMYF','RCE0B')">
-   Try it in editor
-  </div>
-  <div class="snippet-body"><textarea id="RCE0B">setTimeout(function() {
+ <div class="snippet-container">
+  <div class="button-group-run-edit"><button class="button-run-edit" onclick="runJavascriptCode(this,'bVkfa','CIIBX')">Run</button> <button class="button-run-edit" onclick="openEditJavascriptCodeDialog('CIIBX_Dialog','bVkfa')">Edit</button>
+  </div> <iframe id="CIIBX" class="result_iframe" style="display: none;"></iframe>
+  <div id="CIIBX_Dialog" class="dialog-backdrop">
+   <div class="dialog">
+    <div class="controls"><button onclick="runJavascriptCode(this,'bVkfa','CIIBX_IFrame')">Run</button> <button onclick="closeAllJavascriptCodeDialog()">Close</button>
+    </div>
+    <div class="dialog-content">
+     <div class="editor-container">
+      <textarea id="bVkfa" class="textarea_dialog" placeholder="Type HTML here...">setTimeout(function() {
   console.log('This message appears after 2 seconds');
-}, 2000);</textarea> <br> <button onclick="renderIframeForClientJavascript('RCE0B','dzP4h')">Run</button> <iframe id="dzP4h" class="result_iframe" style="display: none;"></iframe>
-   <script>
-  {let editor1 = CodeMirror.fromTextArea(document.getElementById("RCE0B"), {
-    mode: "javascript",
-    lineNumbers:false,
-    tabSize: 2
-    });
-    const mode = localStorage.getItem("mode") || "light";  
-    const newTheme = mode === "dark" ? "material" : "default";
-    editor1.setOption("theme", newTheme);
-
-    codeMirrorMap.set("RCE0B", editor1);}
-  </script>
+}, 2000);</textarea>
+     </div>
+     <div class="preview-container">
+      <iframe id="CIIBX_IFrame" class="result_iframe_dialog" style="border: none;"></iframe>
+     </div>
+    </div>
+   </div>
   </div>
+  <script>
+{
+let editor = CodeMirror.fromTextArea(document.getElementById("bVkfa"), {
+					mode : "javascript",
+					lineNumbers : false,
+          lineWrapping: true,
+					tabSize : 2
+});
+
+const darkmode = localStorage.getItem("mode") || "light";  
+const newTheme = darkmode === "dark" ? "dracula" : "default";
+editor.setSize("50%", "100%");
+editor.setOption("theme", newTheme);
+javascriptCodeMirrorMap.set("bVkfa", editor);
+}
+
+</script>
  </div>
 </div><p>Here, the anonymous function (a function without a name) is passed directly as an argument to <code>setTimeout</code>.</p><h3 id="anonymous-functions">Anonymous Functions</h3><p>Functions without a name are called <strong>anonymous functions</strong>. They are often used in function expressions or as callbacks:</p><div>
  <div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
@@ -1193,51 +934,83 @@ console.log(multiply(4, 5)); // 20</textarea> <br> <button onclick="renderIframe
 
 greet('Alice'); // Hello, Alice!</code></pre>
  </div>
- <div class="snippet-container" id="hs0yx">
-  <div class="snippet-header" onclick="toggleSnippetAndRefresh('hs0yx','K8THI')">
-   Try it in editor
-  </div>
-  <div class="snippet-body"><textarea id="K8THI">const greet = function(name) {
+ <div class="snippet-container">
+  <div class="button-group-run-edit"><button class="button-run-edit" onclick="runJavascriptCode(this,'fdyuP','fFlIy')">Run</button> <button class="button-run-edit" onclick="openEditJavascriptCodeDialog('fFlIy_Dialog','fdyuP')">Edit</button>
+  </div> <iframe id="fFlIy" class="result_iframe" style="display: none;"></iframe>
+  <div id="fFlIy_Dialog" class="dialog-backdrop">
+   <div class="dialog">
+    <div class="controls"><button onclick="runJavascriptCode(this,'fdyuP','fFlIy_IFrame')">Run</button> <button onclick="closeAllJavascriptCodeDialog()">Close</button>
+    </div>
+    <div class="dialog-content">
+     <div class="editor-container">
+      <textarea id="fdyuP" class="textarea_dialog" placeholder="Type HTML here...">const greet = function(name) {
   console.log(`Hello, ${name}!`);
 };
 
-greet('Alice'); // Hello, Alice!</textarea> <br> <button onclick="renderIframeForClientJavascript('K8THI','nzmAD')">Run</button> <iframe id="nzmAD" class="result_iframe" style="display: none;"></iframe>
-   <script>
-  {let editor1 = CodeMirror.fromTextArea(document.getElementById("K8THI"), {
-    mode: "javascript",
-    lineNumbers:false,
-    tabSize: 2
-    });
-    const mode = localStorage.getItem("mode") || "light";  
-    const newTheme = mode === "dark" ? "material" : "default";
-    editor1.setOption("theme", newTheme);
-
-    codeMirrorMap.set("K8THI", editor1);}
-  </script>
+greet('Alice'); // Hello, Alice!</textarea>
+     </div>
+     <div class="preview-container">
+      <iframe id="fFlIy_IFrame" class="result_iframe_dialog" style="border: none;"></iframe>
+     </div>
+    </div>
+   </div>
   </div>
+  <script>
+{
+let editor = CodeMirror.fromTextArea(document.getElementById("fdyuP"), {
+					mode : "javascript",
+					lineNumbers : false,
+          lineWrapping: true,
+					tabSize : 2
+});
+
+const darkmode = localStorage.getItem("mode") || "light";  
+const newTheme = darkmode === "dark" ? "dracula" : "default";
+editor.setSize("50%", "100%");
+editor.setOption("theme", newTheme);
+javascriptCodeMirrorMap.set("fdyuP", editor);
+}
+
+</script>
  </div>
 </div><p>You can also write anonymous arrow functions:</p><div>
  <div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
   <pre><code class="language-js">setTimeout(() =&gt; console.log('Done!'), 1000);</code></pre>
  </div>
- <div class="snippet-container" id="qDJW7">
-  <div class="snippet-header" onclick="toggleSnippetAndRefresh('qDJW7','ODTsH')">
-   Try it in editor
+ <div class="snippet-container">
+  <div class="button-group-run-edit"><button class="button-run-edit" onclick="runJavascriptCode(this,'20dGu','X59MJ')">Run</button> <button class="button-run-edit" onclick="openEditJavascriptCodeDialog('X59MJ_Dialog','20dGu')">Edit</button>
+  </div> <iframe id="X59MJ" class="result_iframe" style="display: none;"></iframe>
+  <div id="X59MJ_Dialog" class="dialog-backdrop">
+   <div class="dialog">
+    <div class="controls"><button onclick="runJavascriptCode(this,'20dGu','X59MJ_IFrame')">Run</button> <button onclick="closeAllJavascriptCodeDialog()">Close</button>
+    </div>
+    <div class="dialog-content">
+     <div class="editor-container">
+      <textarea id="20dGu" class="textarea_dialog" placeholder="Type HTML here...">setTimeout(() =&gt; console.log('Done!'), 1000);</textarea>
+     </div>
+     <div class="preview-container">
+      <iframe id="X59MJ_IFrame" class="result_iframe_dialog" style="border: none;"></iframe>
+     </div>
+    </div>
+   </div>
   </div>
-  <div class="snippet-body"><textarea id="ODTsH">setTimeout(() =&gt; console.log('Done!'), 1000);</textarea> <br> <button onclick="renderIframeForClientJavascript('ODTsH','FL1E7')">Run</button> <iframe id="FL1E7" class="result_iframe" style="display: none;"></iframe>
-   <script>
-  {let editor1 = CodeMirror.fromTextArea(document.getElementById("ODTsH"), {
-    mode: "javascript",
-    lineNumbers:false,
-    tabSize: 2
-    });
-    const mode = localStorage.getItem("mode") || "light";  
-    const newTheme = mode === "dark" ? "material" : "default";
-    editor1.setOption("theme", newTheme);
+  <script>
+{
+let editor = CodeMirror.fromTextArea(document.getElementById("20dGu"), {
+					mode : "javascript",
+					lineNumbers : false,
+          lineWrapping: true,
+					tabSize : 2
+});
 
-    codeMirrorMap.set("ODTsH", editor1);}
-  </script>
-  </div>
+const darkmode = localStorage.getItem("mode") || "light";  
+const newTheme = darkmode === "dark" ? "dracula" : "default";
+editor.setSize("50%", "100%");
+editor.setOption("theme", newTheme);
+javascriptCodeMirrorMap.set("20dGu", editor);
+}
+
+</script>
  </div>
 </div><h3 id="function-declarations-vs-function-expressions">Function Declarations vs. Function Expressions</h3><table>
  <thead>
@@ -1294,31 +1067,47 @@ function showVar() {
 showVar();               // Output: I am global
 console.log(globalVar);  // Output: I am global</code></pre>
  </div>
- <div class="snippet-container" id="BzxFh">
-  <div class="snippet-header" onclick="toggleSnippetAndRefresh('BzxFh','q6GSr')">
-   Try it in editor
-  </div>
-  <div class="snippet-body"><textarea id="q6GSr">let globalVar = 'I am global';
+ <div class="snippet-container">
+  <div class="button-group-run-edit"><button class="button-run-edit" onclick="runJavascriptCode(this,'tMyOY','EcInx')">Run</button> <button class="button-run-edit" onclick="openEditJavascriptCodeDialog('EcInx_Dialog','tMyOY')">Edit</button>
+  </div> <iframe id="EcInx" class="result_iframe" style="display: none;"></iframe>
+  <div id="EcInx_Dialog" class="dialog-backdrop">
+   <div class="dialog">
+    <div class="controls"><button onclick="runJavascriptCode(this,'tMyOY','EcInx_IFrame')">Run</button> <button onclick="closeAllJavascriptCodeDialog()">Close</button>
+    </div>
+    <div class="dialog-content">
+     <div class="editor-container">
+      <textarea id="tMyOY" class="textarea_dialog" placeholder="Type HTML here...">let globalVar = 'I am global';
 
 function showVar() {
   console.log(globalVar); // Accessible here
 }
 
 showVar();               // Output: I am global
-console.log(globalVar);  // Output: I am global</textarea> <br> <button onclick="renderIframeForClientJavascript('q6GSr','za6Ua')">Run</button> <iframe id="za6Ua" class="result_iframe" style="display: none;"></iframe>
-   <script>
-  {let editor1 = CodeMirror.fromTextArea(document.getElementById("q6GSr"), {
-    mode: "javascript",
-    lineNumbers:false,
-    tabSize: 2
-    });
-    const mode = localStorage.getItem("mode") || "light";  
-    const newTheme = mode === "dark" ? "material" : "default";
-    editor1.setOption("theme", newTheme);
-
-    codeMirrorMap.set("q6GSr", editor1);}
-  </script>
+console.log(globalVar);  // Output: I am global</textarea>
+     </div>
+     <div class="preview-container">
+      <iframe id="EcInx_IFrame" class="result_iframe_dialog" style="border: none;"></iframe>
+     </div>
+    </div>
+   </div>
   </div>
+  <script>
+{
+let editor = CodeMirror.fromTextArea(document.getElementById("tMyOY"), {
+					mode : "javascript",
+					lineNumbers : false,
+          lineWrapping: true,
+					tabSize : 2
+});
+
+const darkmode = localStorage.getItem("mode") || "light";  
+const newTheme = darkmode === "dark" ? "dracula" : "default";
+editor.setSize("50%", "100%");
+editor.setOption("theme", newTheme);
+javascriptCodeMirrorMap.set("tMyOY", editor);
+}
+
+</script>
  </div>
 </div><h3 id="function-scope">Function Scope</h3><p>Variables declared inside a function are only accessible <strong>within that function</strong>.</p><div>
  <div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
@@ -1330,30 +1119,46 @@ console.log(globalVar);  // Output: I am global</textarea> <br> <button onclick=
 myFunc();
 console.log(funcVar); // Error: funcVar is not defined</code></pre>
  </div>
- <div class="snippet-container" id="HzHh7">
-  <div class="snippet-header" onclick="toggleSnippetAndRefresh('HzHh7','ecaOJ')">
-   Try it in editor
-  </div>
-  <div class="snippet-body"><textarea id="ecaOJ">function myFunc() {
+ <div class="snippet-container">
+  <div class="button-group-run-edit"><button class="button-run-edit" onclick="runJavascriptCode(this,'W34Po','X7Y12')">Run</button> <button class="button-run-edit" onclick="openEditJavascriptCodeDialog('X7Y12_Dialog','W34Po')">Edit</button>
+  </div> <iframe id="X7Y12" class="result_iframe" style="display: none;"></iframe>
+  <div id="X7Y12_Dialog" class="dialog-backdrop">
+   <div class="dialog">
+    <div class="controls"><button onclick="runJavascriptCode(this,'W34Po','X7Y12_IFrame')">Run</button> <button onclick="closeAllJavascriptCodeDialog()">Close</button>
+    </div>
+    <div class="dialog-content">
+     <div class="editor-container">
+      <textarea id="W34Po" class="textarea_dialog" placeholder="Type HTML here...">function myFunc() {
   let funcVar = 'I am local to myFunc';
   console.log(funcVar); // Works here
 }
 
 myFunc();
-console.log(funcVar); // Error: funcVar is not defined</textarea> <br> <button onclick="renderIframeForClientJavascript('ecaOJ','JSYja')">Run</button> <iframe id="JSYja" class="result_iframe" style="display: none;"></iframe>
-   <script>
-  {let editor1 = CodeMirror.fromTextArea(document.getElementById("ecaOJ"), {
-    mode: "javascript",
-    lineNumbers:false,
-    tabSize: 2
-    });
-    const mode = localStorage.getItem("mode") || "light";  
-    const newTheme = mode === "dark" ? "material" : "default";
-    editor1.setOption("theme", newTheme);
-
-    codeMirrorMap.set("ecaOJ", editor1);}
-  </script>
+console.log(funcVar); // Error: funcVar is not defined</textarea>
+     </div>
+     <div class="preview-container">
+      <iframe id="X7Y12_IFrame" class="result_iframe_dialog" style="border: none;"></iframe>
+     </div>
+    </div>
+   </div>
   </div>
+  <script>
+{
+let editor = CodeMirror.fromTextArea(document.getElementById("W34Po"), {
+					mode : "javascript",
+					lineNumbers : false,
+          lineWrapping: true,
+					tabSize : 2
+});
+
+const darkmode = localStorage.getItem("mode") || "light";  
+const newTheme = darkmode === "dark" ? "dracula" : "default";
+editor.setSize("50%", "100%");
+editor.setOption("theme", newTheme);
+javascriptCodeMirrorMap.set("W34Po", editor);
+}
+
+</script>
  </div>
 </div><p>Variables declared with <code>var</code> and <code>let</code> inside functions are both function-scoped, meaning they exist throughout the function.</p><h3 id="block-scope">Block Scope</h3><p>Block scope means variables are only accessible <strong>inside the nearest pair of <code>{}</code></strong>, such as in <code>if</code> statements, loops, or blocks.</p><ul>
  <li><code>let</code> and <code>const</code> are <strong>block-scoped</strong>.</li>
@@ -1368,30 +1173,46 @@ console.log(funcVar); // Error: funcVar is not defined</textarea> <br> <button o
 console.log(blockVar); // Error: blockVar is not defined
 console.log(varVar);   // Output: I am function-scoped</code></pre>
  </div>
- <div class="snippet-container" id="JQT2k">
-  <div class="snippet-header" onclick="toggleSnippetAndRefresh('JQT2k','W1K3P')">
-   Try it in editor
-  </div>
-  <div class="snippet-body"><textarea id="W1K3P">if (true) {
+ <div class="snippet-container">
+  <div class="button-group-run-edit"><button class="button-run-edit" onclick="runJavascriptCode(this,'uKlE6','XVuEo')">Run</button> <button class="button-run-edit" onclick="openEditJavascriptCodeDialog('XVuEo_Dialog','uKlE6')">Edit</button>
+  </div> <iframe id="XVuEo" class="result_iframe" style="display: none;"></iframe>
+  <div id="XVuEo_Dialog" class="dialog-backdrop">
+   <div class="dialog">
+    <div class="controls"><button onclick="runJavascriptCode(this,'uKlE6','XVuEo_IFrame')">Run</button> <button onclick="closeAllJavascriptCodeDialog()">Close</button>
+    </div>
+    <div class="dialog-content">
+     <div class="editor-container">
+      <textarea id="uKlE6" class="textarea_dialog" placeholder="Type HTML here...">if (true) {
   let blockVar = 'I exist only in this block';
   var varVar = 'I am function-scoped';
 }
 
 console.log(blockVar); // Error: blockVar is not defined
-console.log(varVar);   // Output: I am function-scoped</textarea> <br> <button onclick="renderIframeForClientJavascript('W1K3P','H3DNZ')">Run</button> <iframe id="H3DNZ" class="result_iframe" style="display: none;"></iframe>
-   <script>
-  {let editor1 = CodeMirror.fromTextArea(document.getElementById("W1K3P"), {
-    mode: "javascript",
-    lineNumbers:false,
-    tabSize: 2
-    });
-    const mode = localStorage.getItem("mode") || "light";  
-    const newTheme = mode === "dark" ? "material" : "default";
-    editor1.setOption("theme", newTheme);
-
-    codeMirrorMap.set("W1K3P", editor1);}
-  </script>
+console.log(varVar);   // Output: I am function-scoped</textarea>
+     </div>
+     <div class="preview-container">
+      <iframe id="XVuEo_IFrame" class="result_iframe_dialog" style="border: none;"></iframe>
+     </div>
+    </div>
+   </div>
   </div>
+  <script>
+{
+let editor = CodeMirror.fromTextArea(document.getElementById("uKlE6"), {
+					mode : "javascript",
+					lineNumbers : false,
+          lineWrapping: true,
+					tabSize : 2
+});
+
+const darkmode = localStorage.getItem("mode") || "light";  
+const newTheme = darkmode === "dark" ? "dracula" : "default";
+editor.setSize("50%", "100%");
+editor.setOption("theme", newTheme);
+javascriptCodeMirrorMap.set("uKlE6", editor);
+}
+
+</script>
  </div>
 </div><h3 id="var-vs-let-vs-const"><code>var</code> vs. <code>let</code> vs. <code>const</code></h3><table>
  <thead>
@@ -1422,16 +1243,19 @@ console.log(varVar);   // Output: I am function-scoped</textarea> <br> <button o
    <td>No</td>
   </tr>
  </tbody>
-</table><p><strong>Example of <code>let</code> and <code>const</code>:</strong></p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</table><p><strong>Example of <code>let</code> and <code>const</code>:</strong></p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-js">let count = 1;
 count = 2; // Allowed
 
 const max = 10;
 max = 20; // Error: Assignment to constant variable</code></pre>
-</div><h3 id="what-is-hoisting">What Is Hoisting?</h3><p><strong>Hoisting</strong> is JavaScript’s behavior of moving <strong>variable and function declarations</strong> to the top of their scope during compilation, <strong>before code runs</strong>.</p><p>This means you can sometimes use variables and functions before they are declared — but the details vary depending on how they were declared.</p><h3 id="hoisting-with-var">Hoisting with <code>var</code></h3><p><code>var</code> declarations are hoisted and <strong>initialized with <code>undefined</code></strong>.</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</div><h3 id="what-is-hoisting">What Is Hoisting?</h3><p><strong>Hoisting</strong> is JavaScript’s behavior of moving <strong>variable and function declarations</strong> to the top of their scope during compilation, <strong>before code runs</strong>.</p><p>This means you can sometimes use variables and functions before they are declared — but the details vary depending on how they were declared.</p><h3 id="hoisting-with-var">Hoisting with <code>var</code></h3><p><code>var</code> declarations are hoisted and <strong>initialized with <code>undefined</code></strong>.</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-js">console.log(myVar); // Output: undefined
 var myVar = 10;</code></pre>
-</div><p>Behind the scenes, JavaScript treats it like:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</div><p>Behind the scenes, JavaScript treats it like:</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-js">var myVar;
 console.log(myVar); // undefined
 myVar = 10;</code></pre>
@@ -1440,25 +1264,41 @@ myVar = 10;</code></pre>
   <pre><code class="language-js">console.log(myLet); // ReferenceError
 let myLet = 5;</code></pre>
  </div>
- <div class="snippet-container" id="ntKPL">
-  <div class="snippet-header" onclick="toggleSnippetAndRefresh('ntKPL','iSiR7')">
-   Try it in editor
+ <div class="snippet-container">
+  <div class="button-group-run-edit"><button class="button-run-edit" onclick="runJavascriptCode(this,'dv7gf','8t5Nq')">Run</button> <button class="button-run-edit" onclick="openEditJavascriptCodeDialog('8t5Nq_Dialog','dv7gf')">Edit</button>
+  </div> <iframe id="8t5Nq" class="result_iframe" style="display: none;"></iframe>
+  <div id="8t5Nq_Dialog" class="dialog-backdrop">
+   <div class="dialog">
+    <div class="controls"><button onclick="runJavascriptCode(this,'dv7gf','8t5Nq_IFrame')">Run</button> <button onclick="closeAllJavascriptCodeDialog()">Close</button>
+    </div>
+    <div class="dialog-content">
+     <div class="editor-container">
+      <textarea id="dv7gf" class="textarea_dialog" placeholder="Type HTML here...">console.log(myLet); // ReferenceError
+let myLet = 5;</textarea>
+     </div>
+     <div class="preview-container">
+      <iframe id="8t5Nq_IFrame" class="result_iframe_dialog" style="border: none;"></iframe>
+     </div>
+    </div>
+   </div>
   </div>
-  <div class="snippet-body"><textarea id="iSiR7">console.log(myLet); // ReferenceError
-let myLet = 5;</textarea> <br> <button onclick="renderIframeForClientJavascript('iSiR7','wSnMj')">Run</button> <iframe id="wSnMj" class="result_iframe" style="display: none;"></iframe>
-   <script>
-  {let editor1 = CodeMirror.fromTextArea(document.getElementById("iSiR7"), {
-    mode: "javascript",
-    lineNumbers:false,
-    tabSize: 2
-    });
-    const mode = localStorage.getItem("mode") || "light";  
-    const newTheme = mode === "dark" ? "material" : "default";
-    editor1.setOption("theme", newTheme);
+  <script>
+{
+let editor = CodeMirror.fromTextArea(document.getElementById("dv7gf"), {
+					mode : "javascript",
+					lineNumbers : false,
+          lineWrapping: true,
+					tabSize : 2
+});
 
-    codeMirrorMap.set("iSiR7", editor1);}
-  </script>
-  </div>
+const darkmode = localStorage.getItem("mode") || "light";  
+const newTheme = darkmode === "dark" ? "dracula" : "default";
+editor.setSize("50%", "100%");
+editor.setOption("theme", newTheme);
+javascriptCodeMirrorMap.set("dv7gf", editor);
+}
+
+</script>
  </div>
 </div><h3 id="hoisting-with-functions">Hoisting with Functions</h3><ul>
  <li><strong>Function declarations</strong> are fully hoisted and can be called before their definition.</li>
@@ -1470,28 +1310,44 @@ function sayHi() {
   console.log('Hi!');
 }</code></pre>
  </div>
- <div class="snippet-container" id="5RaIF">
-  <div class="snippet-header" onclick="toggleSnippetAndRefresh('5RaIF','Mzzm5')">
-   Try it in editor
-  </div>
-  <div class="snippet-body"><textarea id="Mzzm5">sayHi(); // Works!
+ <div class="snippet-container">
+  <div class="button-group-run-edit"><button class="button-run-edit" onclick="runJavascriptCode(this,'MwZLI','1ZZqV')">Run</button> <button class="button-run-edit" onclick="openEditJavascriptCodeDialog('1ZZqV_Dialog','MwZLI')">Edit</button>
+  </div> <iframe id="1ZZqV" class="result_iframe" style="display: none;"></iframe>
+  <div id="1ZZqV_Dialog" class="dialog-backdrop">
+   <div class="dialog">
+    <div class="controls"><button onclick="runJavascriptCode(this,'MwZLI','1ZZqV_IFrame')">Run</button> <button onclick="closeAllJavascriptCodeDialog()">Close</button>
+    </div>
+    <div class="dialog-content">
+     <div class="editor-container">
+      <textarea id="MwZLI" class="textarea_dialog" placeholder="Type HTML here...">sayHi(); // Works!
 
 function sayHi() {
   console.log('Hi!');
-}</textarea> <br> <button onclick="renderIframeForClientJavascript('Mzzm5','uYZXX')">Run</button> <iframe id="uYZXX" class="result_iframe" style="display: none;"></iframe>
-   <script>
-  {let editor1 = CodeMirror.fromTextArea(document.getElementById("Mzzm5"), {
-    mode: "javascript",
-    lineNumbers:false,
-    tabSize: 2
-    });
-    const mode = localStorage.getItem("mode") || "light";  
-    const newTheme = mode === "dark" ? "material" : "default";
-    editor1.setOption("theme", newTheme);
-
-    codeMirrorMap.set("Mzzm5", editor1);}
-  </script>
+}</textarea>
+     </div>
+     <div class="preview-container">
+      <iframe id="1ZZqV_IFrame" class="result_iframe_dialog" style="border: none;"></iframe>
+     </div>
+    </div>
+   </div>
   </div>
+  <script>
+{
+let editor = CodeMirror.fromTextArea(document.getElementById("MwZLI"), {
+					mode : "javascript",
+					lineNumbers : false,
+          lineWrapping: true,
+					tabSize : 2
+});
+
+const darkmode = localStorage.getItem("mode") || "light";  
+const newTheme = darkmode === "dark" ? "dracula" : "default";
+editor.setSize("50%", "100%");
+editor.setOption("theme", newTheme);
+javascriptCodeMirrorMap.set("MwZLI", editor);
+}
+
+</script>
  </div>
 </div><ul>
  <li><strong>Function expressions</strong> (including arrow functions) behave like variables declared with <code>var</code>, <code>let</code>, or <code>const</code> depending on how they are assigned.</li>
@@ -1503,28 +1359,44 @@ const sayHello = function() {
   console.log('Hello!');
 };</code></pre>
  </div>
- <div class="snippet-container" id="h6QtF">
-  <div class="snippet-header" onclick="toggleSnippetAndRefresh('h6QtF','MBjMy')">
-   Try it in editor
-  </div>
-  <div class="snippet-body"><textarea id="MBjMy">sayHello(); // Error or undefined behavior depending on declaration
+ <div class="snippet-container">
+  <div class="button-group-run-edit"><button class="button-run-edit" onclick="runJavascriptCode(this,'tJxHx','bjyK9')">Run</button> <button class="button-run-edit" onclick="openEditJavascriptCodeDialog('bjyK9_Dialog','tJxHx')">Edit</button>
+  </div> <iframe id="bjyK9" class="result_iframe" style="display: none;"></iframe>
+  <div id="bjyK9_Dialog" class="dialog-backdrop">
+   <div class="dialog">
+    <div class="controls"><button onclick="runJavascriptCode(this,'tJxHx','bjyK9_IFrame')">Run</button> <button onclick="closeAllJavascriptCodeDialog()">Close</button>
+    </div>
+    <div class="dialog-content">
+     <div class="editor-container">
+      <textarea id="tJxHx" class="textarea_dialog" placeholder="Type HTML here...">sayHello(); // Error or undefined behavior depending on declaration
 
 const sayHello = function() {
   console.log('Hello!');
-};</textarea> <br> <button onclick="renderIframeForClientJavascript('MBjMy','URzJ3')">Run</button> <iframe id="URzJ3" class="result_iframe" style="display: none;"></iframe>
-   <script>
-  {let editor1 = CodeMirror.fromTextArea(document.getElementById("MBjMy"), {
-    mode: "javascript",
-    lineNumbers:false,
-    tabSize: 2
-    });
-    const mode = localStorage.getItem("mode") || "light";  
-    const newTheme = mode === "dark" ? "material" : "default";
-    editor1.setOption("theme", newTheme);
-
-    codeMirrorMap.set("MBjMy", editor1);}
-  </script>
+};</textarea>
+     </div>
+     <div class="preview-container">
+      <iframe id="bjyK9_IFrame" class="result_iframe_dialog" style="border: none;"></iframe>
+     </div>
+    </div>
+   </div>
   </div>
+  <script>
+{
+let editor = CodeMirror.fromTextArea(document.getElementById("tJxHx"), {
+					mode : "javascript",
+					lineNumbers : false,
+          lineWrapping: true,
+					tabSize : 2
+});
+
+const darkmode = localStorage.getItem("mode") || "light";  
+const newTheme = darkmode === "dark" ? "dracula" : "default";
+editor.setSize("50%", "100%");
+editor.setOption("theme", newTheme);
+javascriptCodeMirrorMap.set("tJxHx", editor);
+}
+
+</script>
  </div>
 </div><h3 id="summary">Summary</h3><table>
  <thead>
@@ -1583,11 +1455,16 @@ console.log(counter()); // 1
 console.log(counter()); // 2
 console.log(counter()); // 3</code></pre>
  </div>
- <div class="snippet-container" id="6Ssc0">
-  <div class="snippet-header" onclick="toggleSnippetAndRefresh('6Ssc0','u2hGQ')">
-   Try it in editor
-  </div>
-  <div class="snippet-body"><textarea id="u2hGQ">function createCounter() {
+ <div class="snippet-container">
+  <div class="button-group-run-edit"><button class="button-run-edit" onclick="runJavascriptCode(this,'yMDN1','2Y1IY')">Run</button> <button class="button-run-edit" onclick="openEditJavascriptCodeDialog('2Y1IY_Dialog','yMDN1')">Edit</button>
+  </div> <iframe id="2Y1IY" class="result_iframe" style="display: none;"></iframe>
+  <div id="2Y1IY_Dialog" class="dialog-backdrop">
+   <div class="dialog">
+    <div class="controls"><button onclick="runJavascriptCode(this,'yMDN1','2Y1IY_IFrame')">Run</button> <button onclick="closeAllJavascriptCodeDialog()">Close</button>
+    </div>
+    <div class="dialog-content">
+     <div class="editor-container">
+      <textarea id="yMDN1" class="textarea_dialog" placeholder="Type HTML here...">function createCounter() {
   let count = 0;  // This variable is "closed over"
 
   return function() {
@@ -1600,20 +1477,31 @@ const counter = createCounter();
 
 console.log(counter()); // 1
 console.log(counter()); // 2
-console.log(counter()); // 3</textarea> <br> <button onclick="renderIframeForClientJavascript('u2hGQ','3c4a9')">Run</button> <iframe id="3c4a9" class="result_iframe" style="display: none;"></iframe>
-   <script>
-  {let editor1 = CodeMirror.fromTextArea(document.getElementById("u2hGQ"), {
-    mode: "javascript",
-    lineNumbers:false,
-    tabSize: 2
-    });
-    const mode = localStorage.getItem("mode") || "light";  
-    const newTheme = mode === "dark" ? "material" : "default";
-    editor1.setOption("theme", newTheme);
-
-    codeMirrorMap.set("u2hGQ", editor1);}
-  </script>
+console.log(counter()); // 3</textarea>
+     </div>
+     <div class="preview-container">
+      <iframe id="2Y1IY_IFrame" class="result_iframe_dialog" style="border: none;"></iframe>
+     </div>
+    </div>
+   </div>
   </div>
+  <script>
+{
+let editor = CodeMirror.fromTextArea(document.getElementById("yMDN1"), {
+					mode : "javascript",
+					lineNumbers : false,
+          lineWrapping: true,
+					tabSize : 2
+});
+
+const darkmode = localStorage.getItem("mode") || "light";  
+const newTheme = darkmode === "dark" ? "dracula" : "default";
+editor.setSize("50%", "100%");
+editor.setOption("theme", newTheme);
+javascriptCodeMirrorMap.set("yMDN1", editor);
+}
+
+</script>
  </div>
 </div><p><strong>What’s happening here?</strong></p><ul>
  <li><code>createCounter()</code> defines a local variable <code>count</code> and returns an <strong>anonymous function</strong>.</li>
@@ -1634,11 +1522,16 @@ const sayHi = greetGenerator('Hi');
 console.log(sayHello('Alice')); // Hello, Alice!
 console.log(sayHi('Bob'));       // Hi, Bob!</code></pre>
  </div>
- <div class="snippet-container" id="Q9d8C">
-  <div class="snippet-header" onclick="toggleSnippetAndRefresh('Q9d8C','6oAR3')">
-   Try it in editor
-  </div>
-  <div class="snippet-body"><textarea id="6oAR3">function greetGenerator(greeting) {
+ <div class="snippet-container">
+  <div class="button-group-run-edit"><button class="button-run-edit" onclick="runJavascriptCode(this,'Yzcjh','Ur1ix')">Run</button> <button class="button-run-edit" onclick="openEditJavascriptCodeDialog('Ur1ix_Dialog','Yzcjh')">Edit</button>
+  </div> <iframe id="Ur1ix" class="result_iframe" style="display: none;"></iframe>
+  <div id="Ur1ix_Dialog" class="dialog-backdrop">
+   <div class="dialog">
+    <div class="controls"><button onclick="runJavascriptCode(this,'Yzcjh','Ur1ix_IFrame')">Run</button> <button onclick="closeAllJavascriptCodeDialog()">Close</button>
+    </div>
+    <div class="dialog-content">
+     <div class="editor-container">
+      <textarea id="Yzcjh" class="textarea_dialog" placeholder="Type HTML here...">function greetGenerator(greeting) {
   return function(name) {
     return `${greeting}, ${name}!`;
   };
@@ -1648,20 +1541,31 @@ const sayHello = greetGenerator('Hello');
 const sayHi = greetGenerator('Hi');
 
 console.log(sayHello('Alice')); // Hello, Alice!
-console.log(sayHi('Bob'));       // Hi, Bob!</textarea> <br> <button onclick="renderIframeForClientJavascript('6oAR3','cxP1L')">Run</button> <iframe id="cxP1L" class="result_iframe" style="display: none;"></iframe>
-   <script>
-  {let editor1 = CodeMirror.fromTextArea(document.getElementById("6oAR3"), {
-    mode: "javascript",
-    lineNumbers:false,
-    tabSize: 2
-    });
-    const mode = localStorage.getItem("mode") || "light";  
-    const newTheme = mode === "dark" ? "material" : "default";
-    editor1.setOption("theme", newTheme);
-
-    codeMirrorMap.set("6oAR3", editor1);}
-  </script>
+console.log(sayHi('Bob'));       // Hi, Bob!</textarea>
+     </div>
+     <div class="preview-container">
+      <iframe id="Ur1ix_IFrame" class="result_iframe_dialog" style="border: none;"></iframe>
+     </div>
+    </div>
+   </div>
   </div>
+  <script>
+{
+let editor = CodeMirror.fromTextArea(document.getElementById("Yzcjh"), {
+					mode : "javascript",
+					lineNumbers : false,
+          lineWrapping: true,
+					tabSize : 2
+});
+
+const darkmode = localStorage.getItem("mode") || "light";  
+const newTheme = darkmode === "dark" ? "dracula" : "default";
+editor.setSize("50%", "100%");
+editor.setOption("theme", newTheme);
+javascriptCodeMirrorMap.set("Yzcjh", editor);
+}
+
+</script>
  </div>
 </div><p>Here, each generated function remembers the <code>greeting</code> passed to the outer function.</p><h3 id="why-are-closures-useful">Why Are Closures Useful?</h3><ul>
  <li><strong>Data privacy</strong>: Variables inside a closure can’t be accessed from outside, protecting data.</li>
@@ -1747,30 +1651,36 @@ console.log(sayHi('Bob'));       // Hi, Bob!</textarea> <br> <button onclick="re
 
 <a href='javascript.htm'><div class='book-cover' style='background-color: #f9f6f1;color: #111111;border: 1px solid #ccc;display: flex;justify-content: center;align-items: center;text-align: center;'>More Javascript Books</div></a>
 </div>
-</div>
-  </div>
-  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
-  
-  <script>
-    function copyCode(button) {
-      const code = button.nextElementSibling.innerText;
-      navigator.clipboard.writeText(code).then(() => {
-        button.textContent = 'Copied!';
-        setTimeout(() => { button.textContent = 'Copy'; }, 1500);
-      });
-    }
-  </script>  
-<div id="floatingLog" aria-live="polite" role="alert"></div>
-<footer class="page-footer">
-    <nav>
-      <a href="https://readbytes.github.io">Home</a> | 
-      Email:<script language="JavaScript" type="text/javascript">
+</div><script>
+function copyCode(button) {const code = button.nextElementSibling.innerText;navigator.clipboard.writeText(code).then(() => {button.textContent = 'Copied!';setTimeout(() => { button.textContent = 'Copy'; }, 1500);});}
+</script></div>
+<style>
+.site-footer {margin-top: 60px;padding: 20px 0;border-top: 1px solid #eee;text-align: center;font-size: 14px;}
+.site-footer a {text-decoration: none;}
+.light-mode .site-footer {color: #777;border-color: #eee;}
+.dark-mode .site-footer {color: #888;border-color: #333;}
+.light-mode .site-footer a {color: #555;}
+.dark-mode .site-footer a {color: #aaa;}
+.site-footer a:hover {text-decoration: underline;}    
+</style>
+<footer class="site-footer">
+<nav><a href="https://readbytes.github.io">Home</a> |Email:<script type="text/javascript">
 var part1 = 'yinpeng';var part6 = '263';var part2 = Math.pow(2,6);var part3 = String.fromCharCode(part2);var part4 = 'hotmail dot com';var part5 = part1 + String.fromCharCode(part2) + part4;document.write(part1 + part6 + part3 + part4);
 </script>
-    </nav>
-  <p>© 2025 — All rights reserved.</p>    
-  </footer>
-
+| <a id="mode-toggle" href="#">Toggle Dark Mode</a>
+</nav><p>© 2025 — All rights reserved.</p></footer>
+<script>
+const toggleButton = document.getElementById('mode-toggle');
+const body = document.body;
+const savedMode = localStorage.getItem('mode') || 'light';
+body.classList.add(savedMode + '-mode');
+toggleButton.addEventListener('click', () => {
+      const isDark = body.classList.contains('dark-mode');
+      body.classList.toggle('dark-mode', !isDark);
+      body.classList.toggle('light-mode', isDark);
+      localStorage.setItem('mode', isDark ? 'light' : 'dark');
+});
+function copyCode(button) {const code = button.nextElementSibling.innerText;navigator.clipboard.writeText(code).then(() => {button.textContent = 'Copied!';setTimeout(() => { button.textContent = 'Copy'; }, 1500);});}
+</script>
 </body>
 </html>

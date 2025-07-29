@@ -1,21 +1,281 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
+<meta charset="UTF-8">
 <title>D3.js Data Visualization Modularizing and Reusing Code</title>
-<link rel='shortcut icon' href='https://java2s.com/style/favicon.ico'>
+<link rel='shortcut icon' href='https://readbytes.github.io/images/favicon.ico'>
 <link href="https://fonts.googleapis.com/css2?family=Merriweather&display=swap" rel="stylesheet" />
 <link href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
-
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.css" />
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/theme/material.css"> <!-- Dark theme -->
-<script src="https://cdn.jsdelivr.net/npm/typescript@5/lib/typescript.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/htmlmixed/htmlmixed.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/theme/dracula.min.css"><style>
+html {scroll-behavior: smooth;}  
+body {font-family: 'Merriweather', serif;;margin: 0;padding: 2rem 1rem;font-size: 15px;line-height: 1.5;transition: background-color 0.3s, color 0.3s;}
+.container {max-width: 750px;margin: 0 auto;padding: 1rem 2rem;}
+.light-mode {background-color: #f8f7f5;color: #333;} 
+.dark-mode {background-color: #121212;color: #e0e0e0;}
+a { text-decoration: none;transition: color 0.2s;}
+a:hover {text-decoration: underline;}
+.light-mode a {color: #555;}
+.dark-mode a {color: #aaa;}
+</style><style>
+.related-book-list {display: flex;flex-wrap: wrap;gap: 20px;}
+.related-books {margin-top: 40px;}
+.related-books h2 {font-size: 22px;margin-bottom: 20px;border-bottom: 2px solid #eee;padding-bottom: 8px;}
+.light-mode .related-books h2 {color: #333;border-color: #eee;}
+.dark-mode .related-books h2 {color: #ddd;border-color: #333;}
+</style><style>
+.book-cover {width: 130px;height: 180px;font-family: Arial, sans-serif;position: relative;overflow: hidden;box-shadow: 2px 2px 4px rgba(0,0,0,0.1);}
+.book-cover-bottom-stripe {position: absolute;bottom: 0;left: 0;height: 5px;width: 100%;}
+.book-cover-title {position: absolute;width: 100%;text-align: center;font-weight: bold;}
+.book-cover-icon {position: absolute;left: 50%;transform: translateX(-50%);display: flex;align-items: center;justify-content: center;}
+.book-cover-author {position: absolute;bottom: 10px;width: 100%;text-align: center;font-size: 8px;color: #333;}
+</style><style>
+.book-title-toc {font-size: 32px;font-weight: bold; }
+.book-subtitle-toc {font-size: 18px;margin-top: 8px;font-style: italic;}
+.book-header {text-align: center;margin-bottom: 40px;}
+
+.toc-container {border-radius: 10px;padding: 30px;margin-bottom: 40px;box-shadow: 0 8px 20px rgba(0,0,0,0.05);}
+h1 {font-size: 24px;text-align: center;margin-bottom: 30px;letter-spacing: 1px;padding-bottom: 10px;}
+.toc-list,.toc-section-list {list-style: none;padding: 0;margin: 0;}
+.toc-section-list {padding-left: 18px;margin-top: 6px;margin-bottom: 20px; }
+.toc-chapter {padding: 20px 0;}
+.chapter-title,.toc-section {display: flex;justify-content: space-between;padding-top: 4px;}
+.chapter-title {font-size: 17px;font-weight: bold;}
+.chapter-page,.section-page {font-style: italic;}
+ 
+ 
+.light-mode .book-title-toc,.light-mode .chapter-title,.light-mode .book-name {color: #222;}
+.light-mode .book-subtitle-toc,.light-mode .book-sub,.light-mode .chapter-page,.light-mode .section-page {color: #666;}
+.light-mode .toc-container { background: #fff;border: 1px solid #ddd;}
+.light-mode h1 {border-bottom: 2px solid #eee;color: #222;}
+.light-mode .toc-section {  color: #444;}
+
+.light-mode .book-cover { border: 1px solid #ccc;box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);}
+.light-mode .book-title,.light-mode .series-name {color: #fff;}
+.light-mode .book-subtitle,.light-mode .book-footer {color: #aaa;}
+
+.dark-mode .book-title-toc,.dark-mode .chapter-title,.dark-mode .book-name {color: #f5f5f5;}
+.dark-mode .book-subtitle-toc,.dark-mode .book-sub,.dark-mode .chapter-page,.dark-mode .section-page {color: #aaa;}
+.dark-mode .toc-container {background: #1e1e1e;border: 1px solid #444;}
+
+.dark-mode h1 {border-bottom: 2px solid #333;color: #eee;}
+.dark-mode .toc-section {color: #bbb;}
+
+.dark-mode .related-books h2 {color: #ddd;border-bottom: 2px solid #333;}
+.dark-mode .book-title,.dark-mode .series-name {color: #fff;}
+.dark-mode .book-subtitle,.dark-mode .book-footer {color: #bbb;}
+.dark-mode .toc-section {color: #ddd;}
+
+@media (max-width: 600px) {
+  .chapter-title,
+  .toc-section {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .chapter-page,
+  .section-page {
+    margin-top: 4px;
+  }
+}
+
+</style><style>
+.light-mode .container {box-shadow: 0 0 15px rgba(0,0,0,0.1);}
+.dark-mode .container {box-shadow: 0 0 15px rgba(255, 255, 255, 0.05);}
+
+h1, h2, h3 {font-weight: 600;margin-top: 2.5rem;margin-bottom: 1rem;line-height: 1.2;}
+h1 { font-size: 1.8rem; }
+h2 { font-size: 1.4rem; }
+h3 { font-size: 1.2rem; }
+
+table {width: 100%;border-collapse: collapse;font-family: sans-serif;font-size: 1em;margin: 1em 0;}
+th, td {padding: 0.6em 1em;text-align: left;border: 1px solid;}
+tr:nth-child(even) {  background-color: inherit;}
+tr:hover { background-color: inherit;}
+
+code {color: #d35400;}
+
+.chapter-navi-section {display: flex;justify-content: space-between;align-items: center;padding-bottom: 10px;padding-top: 10px;}
+.nav-link {color: inherit;text-decoration: none;opacity: 0.5;transition: opacity 0.3s ease, text-decoration 0.3s ease;}
+.nav-link:hover {opacity: 0.9;text-decoration: underline;}
+.prev { text-align: left; }
+.toc-link { text-align: center; }
+.next { text-align: right; }
+
+.download-section {display: flex;align-items: center;justify-content: center;gap: 2rem;padding: 2rem 1rem;max-width: 600px;margin: 3rem auto;border-radius: 12px;box-shadow: 0 4px 10px rgba(0,0,0,0.05);}
+.download-info h2 {margin: 0 0 0.5rem;font-size: 1.2rem;}
+.format-label {margin: 0 0 0.5rem;font-size: 0.95rem;}
+.download-buttons {display: flex;gap: 1rem;}
+.download-button {background-color: #4A90E2;color: white;padding: 0.5em 1.2em;border-radius: 25px;font-size: 0.95rem;text-decoration: none;transition: background-color 0.3s ease;}
+.download-button:hover {background-color: #357ABD;}
+
+.code-block {position: relative;margin-bottom: 1em;}
+.copy-button {background: transparent;color: white;position: absolute;top: 8px;right: 8px;border: none;padding: 4px 8px;font-size: 12px;border-radius: 4px;cursor: pointer;z-index: 1;}
+.copy-button:hover {background-color: #0056b3;}
+
+.snippet-container {overflow: hidden;}
+.snippet-header {padding: 0.75rem 1rem;cursor: pointer;font-size: 1rem;background-color: #eeeeee;color:  #111111; border-radius: 8px;cursor: pointer;box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+.snippet-body {display: none;font-family: monospace;}
+.snippet-container.open .snippet-body {display: block;}
+
+.CodeMirror {border: 2px solid #ccc;border-radius: 4px;resize: vertical;}
+
+.light-mode .format-label {color: #888;}
+.light-mode th {background-color: #f2f2f2;}
+.light-mode tr:nth-child(even) {background-color: #fafafa;}
+.light-mode tr:hover {background-color: #e6f7ff;}
+
+.dark-mode .snippet-header {background-color: #333;color:  #ddd; }
+.dark-mode .format-label {color: #aaa;}
+.dark-mode th {background-color: #333;color: #fff;}
+.dark-mode td {border-color: #444;}
+.dark-mode tr:nth-child(even) {background-color: #2a2a2a;}
+.dark-mode tr:hover {background-color: #2c3e50;}
+
+
+.button-group-run-edit {display: flex;width: 100%;gap: 1rem;}
+.button-run-edit {flex: 1;padding: 1rem;font-size: 1rem;font-weight: 600;border: none;border-radius: 8px;cursor: pointer;transition: background 0.3s, color 0.3s;}
+
+.light-mode .button-run-edit {background-color: #f0f0f0;color: #222;box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);}
+.light-mode .button-run-edit:hover {background-color: #e0e0e0;}
+
+.dark-mode .button-run-edit {background-color: #2a2a2a;color: #f5f5f5;box-shadow: 0 0 10px rgba(255, 255, 255, 0.05);}
+.dark-mode .button-run-edit:hover {background-color: #3a3a3a;}
+
+button { padding: 0.5em 1em; background: green; color: white; border: none; cursor: pointer; }
+button:hover { background: #1e7e34; }
+.result_iframe { width:99%; margin-top: 1em;  resize: both;background-color: #515b63;border:1px solid #ccc;}   
+
+.dialog-backdrop {position: fixed;top: 0;left: 0;width: 100vw;height: 100vh;background: rgba(0,0,0,0.5);display: none;justify-content: center;align-items: center;z-index: 10;}
+.dialog {background: #90979e;padding: 20px;width: 90vw;height: 80vh;border-radius: 8px;box-shadow: 0 0 20px rgba(0,0,0,0.3);display: flex;flex-direction: column;}
+.dialog-content {display: flex;gap: 20px;margin-top: 10px;height: calc(100% - 40px);}
+.editor-container, .preview-container {flex: 1;height: 100%;max-height: 100%;overflow: hidden; }
+.result_iframe_dialog {width: 100%;height: 100%;resize: both;border:1px solid #ccc;overflow: auto; }   
+.CodeMirror {width: 100% !important;height: 100% !important;}
+</style><script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/htmlmixed/htmlmixed.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/xml/xml.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/css/css.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/javascript/javascript.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/javascript/typescript.min.js"></script>
+<script>
+  const htmlCodeMirrorMap = new Map();
+  const htmlCodeIFrameMap = new Map();
+  let dismissTimer;
+  function showFloatingLog(message) {
+	const floatingLog = document.getElementById('floatingLog');
+
+    if (floatingLog.style.display !== 'block') {
+      floatingLog.textContent = '';
+      floatingLog.style.display = 'block'; 
+    }
+
+    floatingLog.textContent += message + '\n';
+    floatingLog.scrollTop = floatingLog.scrollHeight; 
+    clearTimeout(dismissTimer);
+    dismissTimer = setTimeout(() => {
+      floatingLog.style.display = 'none';
+      floatingLog.textContent = '';
+    }, 2000);
+  }
+  window.addEventListener('message', (event) => {
+	    if (!htmlCodeIFrameMap.has(event.source)) return;
+
+	    if (event.data?.type === 'console-log') {
+	      showFloatingLog(event.data.message);
+	    }
+  });      
+  function runHtmlCode(button,textarea_id, iframe_id, isInDialog) {
+      const html = htmlCodeMirrorMap.get(textarea_id).getValue();
+      const iframe = document.getElementById(iframe_id);
+  
+      const oldIframe = iframe;
+      const newIframe = document.createElement('iframe');
+
+      if(isInDialog){
+         newIframe.className ="result_iframe_dialog";
+      }else{
+         newIframe.className ="result_iframe";
+      }
+      
+      
+      newIframe.id = iframe_id;
+      oldIframe.replaceWith(newIframe);
+ 
+
+      // Track the iframe in the map
+      htmlCodeIFrameMap.set(newIframe.contentWindow, button);
+
+      const overrideScript = `
+        <script>
+          (function() {
+            const originalLog = console.log;
+            console.log = function(...args) {
+              originalLog.apply(console, args);
+              window.parent.postMessage({
+                type: 'console-log',
+                message: args.map(a => {
+                  try { return JSON.stringify(a); }
+                  catch { return String(a); }
+                }).join(' ')
+              }, '*');
+            };
+          })();
+        <\/script>
+      `;
+ 
+      const iframeHTML = `
+        <!DOCTYPE html>
+        <html>
+        <body>
+          ${overrideScript}
+          ${html}
+        </body>
+        </html>
+      `;
+ 
+      const doc = newIframe.contentDocument || newIframe.contentWindow.document;
+      doc.open();
+      doc.write(iframeHTML);
+      doc.close();
+
+if(!isInDialog){ 
+newIframe.onload = function () {
+ 
+    const doc = newIframe.contentDocument || newIframe.contentWindow.document;
+    // Give a short delay to ensure layout is complete
+    setTimeout(() => {
+      const body = doc.body;
+      const html = doc.documentElement;
+
+      const height = Math.max(
+        body.scrollHeight, body.offsetHeight,
+        html.clientHeight, html.scrollHeight, html.offsetHeight
+      );
+
+      newIframe.style.height = height + 'px';
+    }, 50);
+};
+
+}
+      
+  }  
+function openEditHtmlCodeDialog(id, textarea_id) {
+		        closeAllHtmlCodeDialog();
+		        document.getElementById(id).style.display = 'flex';
+         
+ 	        setTimeout(() => {
+		        	 htmlCodeMirrorMap.get(textarea_id).refresh();
+                   
+ 	        }, 100); // 100ms 
+}
+
+function closeAllHtmlCodeDialog() {
+		        document.querySelectorAll('.dialog-backdrop').forEach(el => {
+		          el.style.display = 'none';
+		        });
+}		
+</script> 
 <style>
     #floatingLog {
       position: fixed;
@@ -39,683 +299,34 @@
       text-align: center;
     }
 </style>
-<script>
-  const codeMirrorMap = new Map();
-  const iframeMap = new Map();
-  
- 
-
-  let dismissTimer;
-  function showFloatingLog(message) {
-	const floatingLog = document.getElementById('floatingLog');
-
-    if (floatingLog.style.display !== 'block') {
-      floatingLog.textContent = '';
-      floatingLog.style.display = 'block'; 
-    }
-
-    floatingLog.textContent += message + '\n';
-    floatingLog.scrollTop = floatingLog.scrollHeight; 
-    clearTimeout(dismissTimer);
-    dismissTimer = setTimeout(() => {
-      floatingLog.style.display = 'none';
-      floatingLog.textContent = '';
-    }, 2000);
-  }
-  window.addEventListener('message', (event) => {
-	    if (!iframeMap.has(event.source)) return;
-
-	    if (event.data?.type === 'console-log') {
-	      showFloatingLog(event.data.message);
-	    }
-  });  
-  function renderIframe(button,textarea_id, iframe_id) {
-      const html = codeMirrorMap.get(textarea_id).getValue();
-      const iframe = document.getElementById(iframe_id);
-  
-      const oldIframe = iframe;
-      const newIframe = document.createElement('iframe');
-      newIframe.className ="result_iframe";
-      
-      newIframe.id = iframe_id;
-      oldIframe.replaceWith(newIframe);
- 
-
-      // Track the iframe in the map
-      iframeMap.set(newIframe.contentWindow, button);
-
-      const overrideScript = `
-        <script>
-          (function() {
-            const originalLog = console.log;
-            console.log = function(...args) {
-              originalLog.apply(console, args);
-              window.parent.postMessage({
-                type: 'console-log',
-                message: args.map(a => {
-                  try { return JSON.stringify(a); }
-                  catch { return String(a); }
-                }).join(' ')
-              }, '*');
-            };
-          })();
-        <\/script>
-      `;
-
-      const iframeHTML = `
-        <!DOCTYPE html>
-        <html>
-        <body>
-          ${overrideScript}
-          ${html}
-        </body>
-        </html>
-      `;
- 
-      const doc = newIframe.contentDocument || newIframe.contentWindow.document;
-      doc.open();
-      doc.write(iframeHTML);
-      doc.close();
-
-      
-      setTimeout(() => {
-    	  newIframe.style.height = '0px';
-    	   let contentHeight = Math.max(doc.body.scrollHeight,doc.documentElement.scrollHeight);
- 
-    	//   if(contentHeight < 150 || contentHeight > 600){
-    	//	   contentHeight = 600;
-    	 //  } 
-    	   newIframe.style.height = contentHeight + 'px';
-    	}, 50);      
-      
-  }
-  function renderIframeForClientTypescript(textarea_id, iframe_id) {
-      let code = codeMirrorMap.get(textarea_id).getValue();
-      code = ts.transpile(code);
-      const iframe = document.getElementById(iframe_id);
-      const doc = iframe.contentDocument || iframe.contentWindow.document;
-
-const html = `
-  <!DOCTYPE html>
-  <html>
-    <head>
-      <title>Output</title>
-      <style>
-        body { font-family: monospace; padding: 1em; background: #f4f4f4; color: #222; }
-        pre { white-space: pre-wrap; word-break: break-word; }
-        .error { color: red; }
-      </style>
-    </head>
-    <body>
-      <pre id="log"></pre>
-      <script>
-        (function(){
-          const logEl = document.getElementById('log');
-          const origLog = console.log;
-          const origError = console.error;
-
-          console.log = (...args) => {
-            logEl.textContent += args.join(' ') + '\\n';
-            origLog.apply(console, args);
-          };
-          console.table = (...args) => {
-            logEl.textContent += args.join(' ') + '\\n';
-            origLog.apply(console, args);
-          };
-
-          console.error = (...args) => {
-            logEl.innerHTML +='<span class="error">' + args.join(' ') + '</span>';
-            origError.apply(console, args);
-          };
-          window.addEventListener("error", function (event) {
-              console.error("Caught by event listener:", event.message);
-          });    
-          try {             
-              ${code};
-          } catch (err) {
-            console.error(err.stack || err.message);
-          }
-        })();
-      <\/script>
-    </body>
-  </html>
-`;
-
-      iframe.style.display = "block";
-      iframe.srcdoc = html;  
-  }
-
-    function renderIframeForClientJavascript(textarea_id, iframe_id) {
-        const code = codeMirrorMap.get(textarea_id).getValue();
-        const iframe = document.getElementById(iframe_id);
-        const doc = iframe.contentDocument || iframe.contentWindow.document;
-
-  const html = `
-    <!DOCTYPE html>
-    <html>
-      <head>
-        <title>Output</title>
-        <style>
-          body { font-family: monospace; padding: 1em; background: #1e1e1e; color: #eee; }
-          pre { white-space: pre-wrap; word-break: break-word; }
-          .error { color: red; }
-        </style>
-      </head>
-      <body>
-        <pre id="log"></pre>
-        <script>
-          (function(){
-            const logEl = document.getElementById('log');
-            const origLog = console.log;
-            const origError = console.error;
-
-            console.log = (...args) => {
-              logEl.textContent += args.join(' ') + '\\n';
-              origLog.apply(console, args);
-            };
-            console.table = (...args) => {
-              logEl.textContent += args.join(' ') + '\\n';
-              origLog.apply(console, args);
-            };
-
-            console.error = (...args) => {
-              logEl.innerHTML +='<span class="error">' + args.join(' ') + '</span>';
-              origError.apply(console, args);
-            };
-            window.addEventListener("error", function (event) {
-                console.error("Caught by event listener:", event.message);
-            });    
-            try {
-             ${code}; 
-            } catch (err) {
-              console.error(err.stack || err.message);
-            }
-          })();
-        <\/script>
-      </body>
-    </html>
-  `;
-        iframe.style.display = "block";
-        iframe.srcdoc = html;  
-    }
-    function toggleSnippetAndRefresh(id, textarea_id) {
-      const box = document.getElementById(id);
-      box.classList.toggle("open");
-      codeMirrorMap.get(textarea_id).refresh();
-    }
-
-  </script>
-  <script>
-  const mode = localStorage.getItem('mode') || 'light';
-  document.documentElement.classList.add(`${mode}-mode`);
-  </script>   
-<style> 
-html {
-  scroll-behavior: smooth;
-}
-
-body {
-  font-family: 'Merriweather', serif;
-  margin: 0;
-  padding: 2rem 1rem;
-  font-size: 15px;
-  line-height: 1.5;
-  transition: background-color 0.3s, color 0.3s;
-}
-
-.container {
-  max-width: 700px;
-  margin: 0 auto;
-  padding: 1rem 2rem;
-  box-shadow: 0 0 15px rgba(0,0,0,0.1);
-}
-
-h1, h2, h3 {
-  font-weight: 600;
-  margin-top: 2.5rem;
-  margin-bottom: 1rem;
-  line-height: 1.2;
-}
-
-h1 { font-size: 1.8rem; }
-h2 { font-size: 1.4rem; }
-h3 { font-size: 1.2rem; }
-
-table {
-  width: 100%;
-  border-collapse: collapse;
-  font-family: sans-serif;
-  font-size: 1em;
-  margin: 1em 0;
-}
-
-th, td {
-  padding: 0.6em 1em;
-  text-align: left;
-  border: 1px solid;
-}
-
-tr:nth-child(even) {
-  background-color: inherit;
-}
-
-tr:hover {
-  background-color: inherit;
-}
-
-a {
-  text-decoration: none;
-  transition: color 0.2s;
-}
-
-a:hover {
-  text-decoration: underline;
-}
-
-code {
-  color: #d35400;
-}
-
-.book-title-chapter {
-  font-family: 'Merriweather', serif;
-  font-size: 2rem;
-  font-weight: bold;
-  text-align: center;
-  margin-bottom: 2rem;
-  border-bottom: 2px solid;
-  padding-bottom: 0.5rem;
-}
-
-.book-subtitle-chapter {
-  text-align: center;
-  font-size: 1rem;
-  margin-top: -1rem;
-  margin-bottom: 2rem;
-}
-
-.related-books {
-  margin-top: 40px;
-}
-
-.related-book-list {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 20px;
-}
-
-    .book-cover {
-      width: 130px;
-      height: 180px;
-      font-family: Arial, sans-serif;
-      position: relative;
-      overflow: hidden;      
-      line-height: normal;
-      box-shadow: 2px 2px 4px rgba(0,0,0,0.1);
-    }
-    .book-cover-bottom-stripe {
-      position: absolute;
-      bottom: 0;
-      left: 0;
-      height: 5px;
-      width: 100%;
-    }
-    .book-cover-title {
-      position: absolute;
-      width: 100%;
-      text-align: center;
-      font-weight: bold;
-    }
-     
-    .book-cover-icon {
-      position: absolute;
-      left: 50%;
-      transform: translateX(-50%);
-      display: flex;
-      align-items: center;
-      justify-content: center; 
-    }
-
-    .book-cover-author {
-      position: absolute;
-      bottom: 10px;
-      width: 100%;
-      text-align: center;
-      font-size: 8px;
-      color: #333;
-    }
-
-.page-footer {
-  margin-top: 4rem;
-  padding: 1rem 0;
-  text-align: center;
-  font-size: 0.85rem;
-  border-top: 1px solid;
-}
-
-.chapter-navi-section {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding-bottom: 10px;
-}
-
-.nav-link {
-  color: inherit;
-  text-decoration: none;
-  opacity: 0.5;
-  transition: opacity 0.3s ease, text-decoration 0.3s ease;
-}
-
-.nav-link:hover {
-  opacity: 0.9;
-  text-decoration: underline;
-}
-
-.prev { text-align: left; }
-.toc-link { text-align: center; }
-.next { text-align: right; }
-
-.download-section {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 2rem;
-  padding: 2rem 1rem;
-  max-width: 600px;
-  margin: 3rem auto;
-  border-radius: 12px;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-}
-
-.download-info h2 {
-  margin: 0 0 0.5rem;
-  font-size: 1.2rem;
-}
-
-.format-label {
-  margin: 0 0 0.5rem;
-  font-size: 0.95rem;
-}
-
-.download-buttons {
-  display: flex;
-  gap: 1rem;
-}
-
-.download-button {
-  background-color: #4A90E2;
-  color: white;
-  padding: 0.5em 1.2em;
-  border-radius: 25px;
-  font-size: 0.95rem;
-  text-decoration: none;
-  transition: background-color 0.3s ease;
-}
-
-.download-button:hover {
-  background-color: #357ABD;
-}
-
-.code-block {
-  position: relative;
-  margin-bottom: 1em;
-}
-
-.copy-button {
-  background: transparent;
-  color: white;
-  position: absolute;
-  top: 8px;
-  right: 8px;
-  border: none;
-  padding: 4px 8px;
-  font-size: 12px;
-  border-radius: 4px;
-  cursor: pointer;
-  z-index: 1;
-}
-
-.copy-button:hover {
-  background-color: #0056b3;
-}
-
-.snippet-container {
-  overflow: hidden;
-}
-
-.snippet-header {
-  padding: 0.75rem 1rem;
-  cursor: pointer;
-  font-size: 1rem;
-    background-color: #eeeeee;
-    color:  #111111; 
-    border-radius: 8px;
-    cursor: pointer;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.1);  
-}
-
-.snippet-body {
-  display: none;
-  font-family: monospace;
-}
-
-.snippet-container.open .snippet-body {
-  display: block;
-}
-
-.CodeMirror {
-  border: 2px solid #ccc;
-  border-radius: 4px;
-  resize: vertical;
-}
-
-/* === Light Mode === */
-html.light-mode {
-  background-color: #f8f7f5;
-  color: #333;
-}
-
-html.light-mode .container {
-  background: white;
-}
-
-html.light-mode .book-title-chapter {
-  color: #2c3e50;
-  border-color: #ccc;
-}
-html.light-mode .book-subtitle-chapter{
-  color: #888;
-}
-
-html.light-mode .page-footer,
-html.light-mode .series-name,
-html.light-mode .book-subtitle,
-html.light-mode .format-label {
-  color: #888;
-}
-
-html.light-mode .related-books h2 {
-  color: #333;
-  border-bottom: 2px solid #eee;
-}
-
-html.light-mode .book-title {
-  color: #fff;
-}
-
-html.light-mode .book-cover {
-  border: 1px solid #ccc;
-}
-
-html.light-mode th {
-  background-color: #f2f2f2;
-}
-
-html.light-mode tr:nth-child(even) {
-  background-color: #fafafa;
-}
-
-html.light-mode tr:hover {
-  background-color: #e6f7ff;
-}
-
-html.light-mode a,
-html.light-mode .page-footer a {
-  color: #000;
-}
-
-/* === Dark Mode === */
-html.dark-mode {
-  background-color: #181818;
-  color: #e0e0e0;
-}
-
-html.dark-mode .container {
-  background: #222;
-}
-
-html.dark-mode .book-title-chapter {
-  color: #ddd;
-  border-color: #444;
-}
-
-html.dark-mode .snippet-header {
-    background-color: #333;
-    color:  #ddd; 
-}
-
-
-html.dark-mode .book-subtitle-chapter,
-html.dark-mode .page-footer,
-html.dark-mode .series-name,
-html.dark-mode .book-subtitle,
-html.dark-mode .book-footer,
-html.dark-mode .format-label {
-  color: #aaa;
-}
-
-html.dark-mode .related-books h2 {
-  color: #ddd;
-  border-bottom: 2px solid #333;
-}
-
-html.dark-mode .book-title {
-  color: #fff;
-}
-
-html.dark-mode .book-cover {
-  border: 1px solid #555;
-}
-
-html.dark-mode th {
-  background-color: #333;
-  color: #fff;
-}
-
-html.dark-mode td {
-  border-color: #444;
-}
-
-html.dark-mode tr:nth-child(even) {
-  background-color: #2a2a2a;
-}
-
-html.dark-mode tr:hover {
-  background-color: #2c3e50;
-}
-
-html.dark-mode a,
-html.dark-mode .page-footer a {
-  color: #eee;
-}
-
-    .dialog-backdrop {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100vw;
-      height: 100vh;
-      background: rgba(0,0,0,0.5);
-      display: none;
-      justify-content: center;
-      align-items: center;
-      z-index: 10;
-    }
-
-    .dialog {
-      background: white;
-      padding: 20px;
-      width: 90vw;
-      height: 80vh;
-      border-radius: 8px;
-      box-shadow: 0 0 20px rgba(0,0,0,0.3);
-      display: flex;
-      flex-direction: column;
-    }
-    .dialog-content {
-      display: flex;
-      flex: 1;
-      gap: 20px;
-      margin-top: 10px;
-    }
-    .dialog h2 {
-      margin-top: 0;
-    }
-
-    .textarea_dialog {
-      width: 50%;
-      height: 100%;
-      resize: none;
-      font-family: monospace;
-      font-size: 14px;
-      padding: 10px;
-      box-sizing: border-box;
-      border: 1px solid #ccc;
-    }
-
-    .iframe_dialog {
-      width: 50%;
-      height: 100%;
-      border: 1px solid #ccc;
-    }
-    .controls_dialog {
-      display: flex;
-      justify-content: space-between;
-      margin-top: 10px;
-    }    
-    button { padding: 0.5em 1em; background: green; color: white; border: none; cursor: pointer; }
-    button:hover { background: #1e7e34; }
-    .result_iframe { width:99%; height:200px; margin-top: 1em;  resize: both;border:1px solid #ccc;}        
-</style>
 </head>
-<body> 
-  <div class="container">
-    <div class = "chapter-navi-section">
+<body>
+<script>const mode = localStorage.getItem('mode') || 'light';document.documentElement.classList.add(`${mode}-mode`);</script>  
+<div class="container"><div class = "chapter-navi-section">
 <a href="d3-js-data-visualization-advanced-visualizations.htm" class="nav-button prev">←</a>
 <a href='d3-js-data-visualization.htm#modularizing-and-reusing-code' class="nav-button toc-link">Index</a>
 <a href="d3-js-data-visualization-debugging-and-performance-optimization.htm" class="nav-button next">→</a>
 </div>
-
-    <h1 class="book-title-chapter" id = 'top'>Modularizing and Reusing Code</h1>
-    <h3 class="book-subtitle-chapter">D3.js Data Visualization</h3>   
-    <!-- <h1 class ="chapter-title"></h1> -->
-    <h2 id='encapsulating-charts-in-functions'>11.1 Encapsulating Charts in Functions</h2><p>As your D3 visualizations become more complex, structuring your code for <strong>reusability</strong> and <strong>modularity</strong> becomes critical. Instead of rewriting visualization logic every time, you can encapsulate chart behavior in reusable functions—enabling easier maintenance, testing, and integration.</p><h3 id="why-encapsulate-d3-charts">Why Encapsulate D3 Charts?</h3><p>Encapsulating a chart in a function allows you to:</p><ul>
+<div class='book-header'><h1 class='book-title-toc' id = 'top'>Modularizing and Reusing Code</h1><h3 class='book-subtitle-toc'>D3.js Data Visualization</h3></div><h2 id='encapsulating-charts-in-functions'>11.1 Encapsulating Charts in Functions</h2><p>As your D3 visualizations become more complex, structuring your code for <strong>reusability</strong> and <strong>modularity</strong> becomes critical. Instead of rewriting visualization logic every time, you can encapsulate chart behavior in reusable functions—enabling easier maintenance, testing, and integration.</p><h3 id="why-encapsulate-d3-charts">Why Encapsulate D3 Charts?</h3><p>Encapsulating a chart in a function allows you to:</p><ul>
  <li>Reuse charts across pages or projects</li>
  <li>Separate concerns (data, layout, DOM binding)</li>
  <li>Improve testability and readability</li>
  <li>Make charts configurable (e.g., data source, size, colors)</li>
-</ul><h3 id="basic-chart-wrapper-structure">Basic Chart Wrapper Structure</h3><p>A reusable chart function takes a config object with parameters like:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</ul><h3 id="basic-chart-wrapper-structure">Basic Chart Wrapper Structure</h3><p>A reusable chart function takes a config object with parameters like:</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-js">function barChart({ data, width, height, selector }) {
   // chart implementation here
 }</code></pre>
-</div><p>You can then call it as:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</div><p>You can then call it as:</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-js">barChart({
   data: myData,
   width: 500,
   height: 300,
   selector: "#chart-container"
 });</code></pre>
-</div><h3 id="example-reusable-bar-chart-function">Example: Reusable Bar Chart Function</h3><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</div><h3 id="example-reusable-bar-chart-function">Example: Reusable Bar Chart Function</h3><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-js">function barChart({ data, width = 600, height = 400, selector }) {
   const margin = { top: 20, right: 20, bottom: 40, left: 40 };
   const innerWidth = width - margin.left - margin.right;
@@ -757,7 +368,8 @@ html.dark-mode .page-footer a {
     .attr("height", d =&gt; innerHeight - y(d.value))
     .attr("fill", "steelblue");
 }</code></pre>
-</div><h3 id="using-the-function">Using the Function</h3><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</div><h3 id="using-the-function">Using the Function</h3><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-js">const sampleData = [
   { name: "A", value: 30 },
   { name: "B", value: 80 },
@@ -770,15 +382,19 @@ barChart({
   width: 500,
   height: 300
 });</code></pre>
-</div><p>Make sure you have a container element like this in your HTML:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</div><p>Make sure you have a container element like this in your HTML:</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-html">&lt;div id="chart1"&gt;&lt;/div&gt;</code></pre>
-</div><div class="snippet-container" id="zgKEu">
- <div id="ItB5A_Dialog" class="dialog-backdrop">
+</div><div class="snippet-container">
+ <div class="button-group-run-edit"><button class="button-run-edit" onclick="runHtmlCode(this,'Yp8L9','tG667', false)">Run</button> <button class="button-run-edit" onclick="openEditHtmlCodeDialog('tG667_Dialog','Yp8L9')">Edit</button>
+ </div> <iframe id="tG667" class="result_iframe" style="display: none;"></iframe>
+ <div id="tG667_Dialog" class="dialog-backdrop">
   <div class="dialog">
-   <h2>Dialog 1</h2>
-   <div class="controls"><button onclick="renderIframe(this,'pahFu_Textarea','ItB5A_IFrame')">Run</button> <button onclick="closeAll()">Close</button>
+   <div class="controls"><button onclick="runHtmlCode(this,'Yp8L9','tG667_IFrame', true)">Run</button> <button onclick="closeAllHtmlCodeDialog()">Close</button>
    </div>
-   <div class="dialog-content"><textarea id="pahFu_Textarea" class="textarea_dialog" placeholder="Type HTML here...">&lt;!DOCTYPE html&gt;
+   <div class="dialog-content">
+    <div class="editor-container">
+     <textarea id="Yp8L9" class="textarea_dialog" placeholder="Type HTML here...">&lt;!DOCTYPE html&gt;
 &lt;html lang="en"&gt;
 &lt;head&gt;
   &lt;meta charset="UTF-8"&gt;
@@ -858,134 +474,30 @@ barChart({
 &lt;/script&gt;
 
 &lt;/body&gt;
-&lt;/html&gt;</textarea> <iframe id="ItB5A_IFrame" class="iframe_dialog"></iframe>
+&lt;/html&gt;</textarea>
+    </div>
+    <div class="preview-container">
+     <iframe id="tG667_IFrame" class="result_iframe_dialog" style="border: none;"></iframe>
+    </div>
    </div>
   </div>
  </div>
- <div class="snippet-header" onclick="toggleSnippetAndRefresh('zgKEu','pahFu')">
-  Click to Try it <!--<span onclick="toggleSnippetAndRefresh('zgKEu','pahFu')">Click
-			to Try it</span> --> <!-- <span onclick="openDialog('ItB5A_Dialog')">Dialog</span> -->
- </div>
- <div class="snippet-body"><textarea id="pahFu">&lt;!DOCTYPE html&gt;
-&lt;html lang="en"&gt;
-&lt;head&gt;
-  &lt;meta charset="UTF-8"&gt;
-  &lt;title&gt;Reusable D3 Bar Chart&lt;/title&gt;
-  &lt;script src="https://cdn.jsdelivr.net/npm/d3@7"&gt;&lt;/script&gt;
-  &lt;style&gt;
-    body {
-      font-family: sans-serif;
-      padding: 20px;
-    }
-    #chart1 {
-      margin-top: 20px;
-    }
-  &lt;/style&gt;
-&lt;/head&gt;
-&lt;body&gt;
-
-&lt;h2&gt;Bar Chart Example&lt;/h2&gt;
-&lt;div id="chart1"&gt;&lt;/div&gt;
-
-&lt;script&gt;
-function barChart({ data, width = 600, height = 400, selector }) {
-  const margin = { top: 20, right: 20, bottom: 40, left: 40 };
-  const innerWidth = width - margin.left - margin.right;
-  const innerHeight = height - margin.top - margin.bottom;
-
-  const x = d3.scaleBand()
-    .domain(data.map(d =&gt; d.name))
-    .range([0, innerWidth])
-    .padding(0.1);
-
-  const y = d3.scaleLinear()
-    .domain([0, d3.max(data, d =&gt; d.value)])
-    .nice()
-    .range([innerHeight, 0]);
-
-  d3.select(selector).select("svg").remove(); // Clear previous chart if any
-
-  const svg = d3.select(selector)
-    .append("svg")
-    .attr("width", width)
-    .attr("height", height);
-
-  const g = svg.append("g")
-    .attr("transform", `translate(${margin.left},${margin.top})`);
-
-  g.append("g")
-    .call(d3.axisLeft(y));
-
-  g.append("g")
-    .attr("transform", `translate(0,${innerHeight})`)
-    .call(d3.axisBottom(x));
-
-  g.selectAll("rect")
-    .data(data)
-    .join("rect")
-    .attr("x", d =&gt; x(d.name))
-    .attr("y", d =&gt; y(d.value))
-    .attr("width", x.bandwidth())
-    .attr("height", d =&gt; innerHeight - y(d.value))
-    .attr("fill", "steelblue");
+ <script>
+{
+let editor = CodeMirror.fromTextArea(document.getElementById("Yp8L9"), {
+					mode : "htmlmixed",
+					lineNumbers : false,
+                    lineWrapping: true,
+					tabSize : 2
+});
+const darkmode = localStorage.getItem("mode") || "light";  
+const newTheme = darkmode === "dark" ? "dracula" : "default";
+editor.setSize("50%", "100%");
+editor.setOption("theme", newTheme);
+htmlCodeMirrorMap.set("Yp8L9", editor);
 }
 
-// Example usage
-const sampleData = [
-  { name: "A", value: 30 },
-  { name: "B", value: 80 },
-  { name: "C", value: 45 }
-];
-
-barChart({
-  data: sampleData,
-  selector: "#chart1",
-  width: 500,
-  height: 300
-});
-&lt;/script&gt;
-
-&lt;/body&gt;
-&lt;/html&gt;</textarea> <br> <button onclick="renderIframe(this,'pahFu','ItB5A')">Run</button>
-  <div id="ItB5A_FloatingLog" class="floatingLog" aria-live="polite" role="alert"></div> <iframe id="ItB5A" class="result_iframe" style="display: none;"></iframe>
-  <script>
-			{
-				let editor = CodeMirror.fromTextArea(document
-						.getElementById("pahFu"), {
-					mode : "htmlmixed",
-					lineNumbers : false,
-					tabSize : 2
-				});
-			    const mode = localStorage.getItem("mode") || "light";  
-			    const newTheme = mode === "dark" ? "material" : "default";
-			    editor.setOption("theme", newTheme);
-			    
-				codeMirrorMap.set("pahFu", editor);
-
-				let editor1 = CodeMirror.fromTextArea(document.getElementById("pahFu_Textarea"), {
-					mode : "htmlmixed",
-					lineNumbers : false,
-					tabSize : 2
-				});
-			    editor1.setOption("theme", newTheme);				
-				
-				codeMirrorMap.set("pahFu_Textarea", editor1);
-			}
-		    function openDialog(id) {
-		        closeAll();
-		        document.getElementById(id).style.display = 'flex';
-		        setTimeout(() => {
-		        	 codeMirrorMap.get("pahFu_Textarea").refresh();
-		        }, 100); // 100ms 
-		      }
-
-		      function closeAll() {
-		        document.querySelectorAll('.dialog-backdrop').forEach(el => {
-		          el.style.display = 'none';
-		        });
-		      }			
-		</script>
- </div>
+</script>
 </div><h3 id="optional-enhancements">Optional Enhancements</h3><ul>
  <li>Add parameters for <code>color</code>, <code>title</code>, <code>margin</code>, <code>xLabel</code>, etc.</li>
  <li>Emit events (e.g., on bar click) for interactivity.</li>
@@ -995,7 +507,8 @@ barChart({
 <a href='d3-js-data-visualization.htm#modularizing-and-reusing-code' class="nav-button toc-link">Index</a>
 <a href="#bottom" class="nav-button next">↓</a>
 </div>
-<h2 id='reusable-d3-chart-patterns'>11.2 Reusable D3 Chart Patterns</h2><p>To build scalable, maintainable D3 visualizations, it’s essential to structure your code in a way that promotes <strong>reuse</strong> and <strong>encapsulation</strong>. One of the most influential techniques for this is <strong>Mike Bostock’s reusable chart pattern</strong>—a flexible and composable design that turns a D3 chart into a configurable function.</p><h3 id="what-is-the-reusable-chart-pattern">What Is the Reusable Chart Pattern?</h3><p>Instead of writing charts as imperative one-off scripts, this pattern wraps your D3 logic inside a <strong>closure</strong> that returns a function. This function, when called with a selection, draws or updates the chart.</p><p>The structure:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+<h2 id='reusable-d3-chart-patterns'>11.2 Reusable D3 Chart Patterns</h2><p>To build scalable, maintainable D3 visualizations, it’s essential to structure your code in a way that promotes <strong>reuse</strong> and <strong>encapsulation</strong>. One of the most influential techniques for this is <strong>Mike Bostock’s reusable chart pattern</strong>—a flexible and composable design that turns a D3 chart into a configurable function.</p><h3 id="what-is-the-reusable-chart-pattern">What Is the Reusable Chart Pattern?</h3><p>Instead of writing charts as imperative one-off scripts, this pattern wraps your D3 logic inside a <strong>closure</strong> that returns a function. This function, when called with a selection, draws or updates the chart.</p><p>The structure:</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-js">function myChart() {
   // internal state (e.g., width, height, data)
   
@@ -1010,7 +523,8 @@ barChart({
 
   return chart;
 }</code></pre>
-</div><p>By using closures, your chart maintains private state while exposing a flexible public interface.</p><h3 id="example-reusable-line-chart">Example: Reusable Line Chart</h3><p>Let’s build a reusable line chart that supports different datasets and dimensions.</p><h4 id="step-1-define-the-line-chart-module">Step 1: Define the Line Chart Module</h4><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</div><p>By using closures, your chart maintains private state while exposing a flexible public interface.</p><h3 id="example-reusable-line-chart">Example: Reusable Line Chart</h3><p>Let’s build a reusable line chart that supports different datasets and dimensions.</p><h4 id="step-1-define-the-line-chart-module">Step 1: Define the Line Chart Module</h4><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-js">function lineChart() {
   let width = 500;
   let height = 300;
@@ -1081,7 +595,8 @@ barChart({
 
   return chart;
 }</code></pre>
-</div><h3 id="step-2-use-the-chart-with-different-data">Step 2: Use the Chart with Different Data</h3><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</div><h3 id="step-2-use-the-chart-with-different-data">Step 2: Use the Chart with Different Data</h3><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-js">const sampleData = [
   { date: new Date(2024, 0, 1), value: 30 },
   { date: new Date(2024, 1, 1), value: 50 },
@@ -1095,15 +610,19 @@ const chart = lineChart()
   .data(sampleData);
 
 d3.select("#linechart").call(chart);</code></pre>
-</div><p>Make sure the HTML includes a container:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</div><p>Make sure the HTML includes a container:</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-html">&lt;div id="linechart"&gt;&lt;/div&gt;</code></pre>
-</div><div class="snippet-container" id="6ArDz">
- <div id="etUDH_Dialog" class="dialog-backdrop">
+</div><div class="snippet-container">
+ <div class="button-group-run-edit"><button class="button-run-edit" onclick="runHtmlCode(this,'WJRyz','hwSK8', false)">Run</button> <button class="button-run-edit" onclick="openEditHtmlCodeDialog('hwSK8_Dialog','WJRyz')">Edit</button>
+ </div> <iframe id="hwSK8" class="result_iframe" style="display: none;"></iframe>
+ <div id="hwSK8_Dialog" class="dialog-backdrop">
   <div class="dialog">
-   <h2>Dialog 1</h2>
-   <div class="controls"><button onclick="renderIframe(this,'fay56_Textarea','etUDH_IFrame')">Run</button> <button onclick="closeAll()">Close</button>
+   <div class="controls"><button onclick="runHtmlCode(this,'WJRyz','hwSK8_IFrame', true)">Run</button> <button onclick="closeAllHtmlCodeDialog()">Close</button>
    </div>
-   <div class="dialog-content"><textarea id="fay56_Textarea" class="textarea_dialog" placeholder="Type HTML here...">&lt;!DOCTYPE html&gt;
+   <div class="dialog-content">
+    <div class="editor-container">
+     <textarea id="WJRyz" class="textarea_dialog" placeholder="Type HTML here...">&lt;!DOCTYPE html&gt;
 &lt;html lang="en"&gt;
 &lt;head&gt;
   &lt;meta charset="UTF-8"&gt;
@@ -1213,164 +732,30 @@ d3.select("#linechart").call(chart);
 &lt;/script&gt;
 
 &lt;/body&gt;
-&lt;/html&gt;</textarea> <iframe id="etUDH_IFrame" class="iframe_dialog"></iframe>
+&lt;/html&gt;</textarea>
+    </div>
+    <div class="preview-container">
+     <iframe id="hwSK8_IFrame" class="result_iframe_dialog" style="border: none;"></iframe>
+    </div>
    </div>
   </div>
  </div>
- <div class="snippet-header" onclick="toggleSnippetAndRefresh('6ArDz','fay56')">
-  Click to Try it <!--<span onclick="toggleSnippetAndRefresh('6ArDz','fay56')">Click
-			to Try it</span> --> <!-- <span onclick="openDialog('etUDH_Dialog')">Dialog</span> -->
- </div>
- <div class="snippet-body"><textarea id="fay56">&lt;!DOCTYPE html&gt;
-&lt;html lang="en"&gt;
-&lt;head&gt;
-  &lt;meta charset="UTF-8"&gt;
-  &lt;title&gt;Reusable Line Chart with D3&lt;/title&gt;
-  &lt;script src="https://cdn.jsdelivr.net/npm/d3@7"&gt;&lt;/script&gt;
-  &lt;style&gt;
-    body {
-      font-family: sans-serif;
-      padding: 20px;
-    }
-    #linechart {
-      margin-top: 20px;
-    }
-  &lt;/style&gt;
-&lt;/head&gt;
-&lt;body&gt;
-
-&lt;h2&gt;Reusable Line Chart Example&lt;/h2&gt;
-&lt;div id="linechart"&gt;&lt;/div&gt;
-
-&lt;script&gt;
-function lineChart() {
-  let width = 500;
-  let height = 300;
-  let margin = { top: 20, right: 20, bottom: 30, left: 40 };
-  let data = [];
-
-  function chart(selection) {
-    selection.each(function () {
-      const innerWidth = width - margin.left - margin.right;
-      const innerHeight = height - margin.top - margin.bottom;
-
-      const x = d3.scaleTime()
-        .domain(d3.extent(data, d =&gt; d.date))
-        .range([0, innerWidth]);
-
-      const y = d3.scaleLinear()
-        .domain([0, d3.max(data, d =&gt; d.value)])
-        .nice()
-        .range([innerHeight, 0]);
-
-      const line = d3.line()
-        .x(d =&gt; x(d.date))
-        .y(d =&gt; y(d.value));
-
-      const svg = d3.select(this).selectAll("svg")
-        .data([data])
-        .join("svg")
-        .attr("width", width)
-        .attr("height", height);
-
-      svg.selectAll("*").remove(); // Clear for re-render
-
-      const g = svg.append("g")
-        .attr("transform", `translate(${margin.left},${margin.top})`);
-
-      g.append("g")
-        .call(d3.axisLeft(y));
-
-      g.append("g")
-        .attr("transform", `translate(0,${innerHeight})`)
-        .call(d3.axisBottom(x));
-
-      g.append("path")
-        .datum(data)
-        .attr("fill", "none")
-        .attr("stroke", "steelblue")
-        .attr("stroke-width", 2)
-        .attr("d", line);
-    });
-  }
-
-  chart.data = function (_) {
-    return arguments.length ? (data = _, chart) : data;
-  };
-
-  chart.width = function (_) {
-    return arguments.length ? (width = _, chart) : width;
-  };
-
-  chart.height = function (_) {
-    return arguments.length ? (height = _, chart) : height;
-  };
-
-  chart.margin = function (_) {
-    return arguments.length ? (margin = _, chart) : margin;
-  };
-
-  return chart;
+ <script>
+{
+let editor = CodeMirror.fromTextArea(document.getElementById("WJRyz"), {
+					mode : "htmlmixed",
+					lineNumbers : false,
+                    lineWrapping: true,
+					tabSize : 2
+});
+const darkmode = localStorage.getItem("mode") || "light";  
+const newTheme = darkmode === "dark" ? "dracula" : "default";
+editor.setSize("50%", "100%");
+editor.setOption("theme", newTheme);
+htmlCodeMirrorMap.set("WJRyz", editor);
 }
 
-// Sample data
-const sampleData = [
-  { date: new Date(2024, 0, 1), value: 30 },
-  { date: new Date(2024, 1, 1), value: 50 },
-  { date: new Date(2024, 2, 1), value: 45 },
-  { date: new Date(2024, 3, 1), value: 60 }
-];
-
-// Create and draw the chart
-const chart = lineChart()
-  .width(600)
-  .height(350)
-  .data(sampleData);
-
-d3.select("#linechart").call(chart);
-&lt;/script&gt;
-
-&lt;/body&gt;
-&lt;/html&gt;</textarea> <br> <button onclick="renderIframe(this,'fay56','etUDH')">Run</button>
-  <div id="etUDH_FloatingLog" class="floatingLog" aria-live="polite" role="alert"></div> <iframe id="etUDH" class="result_iframe" style="display: none;"></iframe>
-  <script>
-			{
-				let editor = CodeMirror.fromTextArea(document
-						.getElementById("fay56"), {
-					mode : "htmlmixed",
-					lineNumbers : false,
-					tabSize : 2
-				});
-			    const mode = localStorage.getItem("mode") || "light";  
-			    const newTheme = mode === "dark" ? "material" : "default";
-			    editor.setOption("theme", newTheme);
-			    
-				codeMirrorMap.set("fay56", editor);
-
-				let editor1 = CodeMirror.fromTextArea(document.getElementById("fay56_Textarea"), {
-					mode : "htmlmixed",
-					lineNumbers : false,
-					tabSize : 2
-				});
-			    editor1.setOption("theme", newTheme);				
-				
-				codeMirrorMap.set("fay56_Textarea", editor1);
-			}
-		    function openDialog(id) {
-		        closeAll();
-		        document.getElementById(id).style.display = 'flex';
-		        setTimeout(() => {
-		        	 codeMirrorMap.get("fay56_Textarea").refresh();
-		        }, 100); // 100ms 
-		      }
-
-		      function closeAll() {
-		        document.querySelectorAll('.dialog-backdrop').forEach(el => {
-		          el.style.display = 'none';
-		        });
-		      }			
-		</script>
- </div>
+</script>
 </div><h3 id="reusability-in-practice">Reusability in Practice</h3><p>This pattern allows you to:</p><ul>
  <li>Chain configuration: <code>chart.width(800).height(400).data(myData)</code></li>
  <li>Render the same chart in multiple places with different settings</li>
@@ -1409,9 +794,19 @@ d3.select("#linechart").call(chart);
 </a>
 
 
+<a href="javascript-html5-animation.htm">
+<div class="book-cover" style="background-color: #f9f6f1;border: 1px solid #ccc;"> 
+    <div class="book-cover-title" style="font-size: 16px;color: #333;top: 10px;">JavaScript HTML5 Animation</div>
+    <div class="book-cover-author">readbytes</div>
+    <div class="book-cover-bottom-stripe" style="background-color: #333;"></div>
+    <img class="book-cover-icon" style="width: 120px;height: 120px;top: 60px;" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFoAAABaCAYAAAA4qEECAAACw0lEQVR4Xu3WvWoUURjG8dXGS9BK7awECysR78Ab8RqUmZGE3QmKmEJUxEarFJJCFK0sbGzEThBEJFjEbbQwsOLOcZZl2cN/PvbMx+6cCc8PHpLs2fN+DAmbwUBERERERERERERERERERERERDYrDqaPRmFiFokjc4vvkZriKDmyH25hgmTMu3Vk6iKDgTnBO73HJV3CGq5YZ1V4v5dGoTnLxarErrW9bU7HobmRvv52GCaf06/f0t/+L7Ofd0Jzad4vW8MlcWAu2716hwv5HXOF8/dCdhH/wx28Nwqmj7lEX8JdvMbh82LjWZtJ/9up1Ie7eI3D58XGszZj+/3LrRf38VL6ofKKg+fFxrM28+Ng2efeKHueF+7kJQ5dFBvPug538hKHLooedEMcepGqeN8148P5/edPs2d2yvpwJy9xaC7mivdd41KDeD4Mkn3u5R0OXZSyRZvEpe6bl8v3zb7n+SzcyyvDoTnPgYti41nTvH+3uubD+/Pw9UW4m1fSAcccuCjrfNBthLt5hcOWZZMPuk4f7uYVDlsWG8/ajO3ge6VeP7mfN3KG7TyTyfJB7+9VetD+/lZzUF+y9ywxTx5kX18V7ucNDtr3cD8vjILkBQfte+5smXPcs3Mc8jgkjpKEe3aOQx6XcM/OccDjEu7ZOQ7YNKzvIv2c+Mg6TROG5iT7dIoDNou5xvqusrUaJko+sUenMgM2CGtXxXpNMgyT16zfKQ5YN6xbF+vWze6uOcXanUr/xP5yyBqZsm5dO6E5k1O/cljXCxyyalivqbTmH/aoGtb0AoeskvimucB6bWCfKmEtr3BYxxyxTpty+q1OZK6zjncyQ5dnwvvrkNO3JOYu73srO3xOtsxV3lunTP+c8E5vxKH5wGVGt81Fvm+T0hm+2vPEUfKP7xERERERERERERERERERERERERGRbv0HldRbu8sOVfIAAAAASUVORK5CYII="/>
+  </div>
+</a>
+
+
 <a href="javascript-dom-programming.htm">
 <div class="book-cover" style="background-color: #f9f6f1;border: 1px solid #ccc;"> 
-    <div class="book-cover-title" style="font-size: 16px;color: #333;top: 20px;">JavaScript DOM Programming</div>
+    <div class="book-cover-title" style="font-size: 16px;color: #333;top: 10px;">JavaScript DOM Programming</div>
     <div class="book-cover-author">readbytes</div>
     <div class="book-cover-bottom-stripe" style="background-color: #333;"></div>
     <img class="book-cover-icon" style="width: 90px;height: 90px;top: 60px;" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFoAAABaCAYAAAA4qEECAAADUklEQVR4Xu2dv47TQBDGI0RDczY9rwMlrwEFBweC/t4EXRwaXuI6WiSaOLkCIZ6BCqTgPRFr8zkbnPF4Zuydn/RVuzsz33eSlX/2LRYRm1Xxe1MVOzY19eL6/6NzfqCw/ilEvXc2Mwh7pNiuyks8O1T1snyNfVLgWQ5hjxbcyCHskaJelVd4drCW5Vvsk6JzlkHYo6XXph5Q6hwEfUZASDhLqUOZ+Ri96vTa1ANKHQ+aAKWOB02AUseDJkCp40EToNTxoAlQ6njQBCh1PGgClDrZBs0l7JEi23eGXMIeKTbVxSs8O1Trm4tL7JMCz3IIe7Rsq+IXbh6iUA97nALPDxXWP4W29w5xMVwbG67rOBVR76LNAA9aiKyCbq49L0QbRmgGHXuul8VLXB+F3IPGtdGIm0o21gpay+89Gs01gtbwecDPz08eSQ8hHTT6C55xjwh3q+IZDhO0u148wL0cSAR93cyOfoKCV9wryu528RCHmpuCR/StRvOy7w8OOHUFT+jTDHdV+RwHnpqCB/SVFRLXaGfhQYvhQQvhQQvhQQvhQf8DXyZNXehPnW+fisc45FwUvKFfNXC4uQn9qvD1Y1maG4qB2NP3xiOui1NX5Zv9QNuq+IDrU6Xx8n7vq16WV7guTvxKYH1TvsP1qWLOl7mBmDDny9xATJjzZW4gJsz5MjcQE+Z8mRuICXO+zA3EhDlf5gZiwpwvcwMxYc6XuYGYMOfL3EBMmPNlbiAmzPkyNxAT5nyZG4gJc778Y1Ih/IN/QeKh5ij0q8acv5z9YenL2T045NSF/rIhfiWQ9Q9oxsaDFsKDFsKDFsKDFsKDjqj9ZqFx8dvfRubWb+gcn+Yv/hSHuh9swrcoh9nRT5DaLcpf/KZ7GXAIXB8D6aADGj5btJprBB3Q8nvQGNfGRCvogLjntT+8SubhVVohBzSDDoh6F20GeNBCzCZo7Qeh4vmhwvqnEPWOmzmEPVJk9Vhj3Mgh7JHi4LLApTMuL52zDMIeLb029YBSh+v6G85S6lBmPkavOr029YBSx4MmQKnjQROg1PGgCVDqeNAEKHU8aAKUOh40AUodD5oApU62QXMJe6TI9p0hl7BHitz+XTX3j2DO+gHKkfODhPVPsRnZ+1+tJg8Iaaje6wAAAABJRU5ErkJggg=="/>
@@ -1421,7 +816,7 @@ d3.select("#linechart").call(chart);
 
 <a href="javascript-data-visualization.htm">
 <div class="book-cover" style="background-color: #f9f6f1;border: 1px solid #ccc;"> 
-    <div class="book-cover-title" style="font-size: 16px;color: #333;top: 20px;">JavaScript Data Visualization</div>
+    <div class="book-cover-title" style="font-size: 16px;color: #333;top: 10px;">JavaScript Data Visualization</div>
     <div class="book-cover-author">readbytes</div>
     <div class="book-cover-bottom-stripe" style="background-color: #333;"></div>
     <img class="book-cover-icon" style="width: 90px;height: 90px;top: 60px;" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFoAAABaCAYAAAA4qEECAAAC0UlEQVR4Xu3dMWsUURSG4fwr2U6zJI0WKZSAaa0EG7tU2giWimLETrQQQRCxUDsbK3+IYOWCiFU06IQz356ZuffOvXdm4A28ze585OxDsLDZnR3zs1pf+rHavXhKWdpY2/Mf50HKEMgV+4cs/1z8/v6OMiTYm9Zfsz5M42r9VQNdLqArBXSlgK4U0JUCulKLgrb39aW7ObQY6PXl/S3Qrs6e1f3ULQZaMYfS/dTZ2xYDvff6g9tS7ge6YEBXCuhKAV0poCsFdKWArtQk0G9e3Tt9dnLc2+dPD1sboCOzv2Ool8/vujsFBtpJMYfydgoMtFMqWOpuLtnbgC6YvQ3ogtnbgC6YvQ3ogtnbgC6YvQ3ogtnbgC6YvQ3ogtnboqCvHR20xn11/UKF6gNL3Y1JP0dXV68fbG01+3wUtP6yvp4+OXZ3CtUHlrpL7ew/tvRz9KV7zT4LtGmW0O+/fnRr3l86tH4u/Xwhv88+C7QJ6MhdakBH7lIDOnKXGtCRu9SAjtylBnTkLjWgI3e67evnt7fnG6BH7EJqdkCP2IXU7IAesft169DN2wE9YqfAQDt35NgpMNDOHTl2Cgy0c0eOnQID7dxhXwvJ2ykw0M4d9rWQvJ0CA+3cYV8LydspMNDOHfa1C/cfuQ3tFBho5w77mgID/f99oCeGDsnbKXBp6JDUR7PPAm12QO8CvVXzfhe0QoWC6fOhOwUOhX7w4rGbt+vKPgu02QE9YqfAi4Meai7QITU7oEfsQmp2s4S+cfumW/P+XKDvXFm7ebtZQusBeshcoL8c7rt5O6BH7BQYaOeOHDsFBtq5I8dOgYF27sixU2CgnTty7BQYaOeOHDsFBtq5I8dOgRcHPVQXdEhT7Wb536RDAQ30Vs1uNtAUF9CVArpSQFcK6EoBXSmgK9WG5qtQi2RNV803KsuLlDn7RcpgF6qF3Pz8fWOjD1JyrS9g/wOlHj3Oru4PcQAAAABJRU5ErkJggg=="/>
@@ -1482,30 +877,36 @@ d3.select("#linechart").call(chart);
 
 <a href='javascript.htm'><div class='book-cover' style='background-color: #f9f6f1;color: #111111;border: 1px solid #ccc;display: flex;justify-content: center;align-items: center;text-align: center;'>More Javascript Books</div></a>
 </div>
-</div>
-  </div>
-  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
-  
-  <script>
-    function copyCode(button) {
-      const code = button.nextElementSibling.innerText;
-      navigator.clipboard.writeText(code).then(() => {
-        button.textContent = 'Copied!';
-        setTimeout(() => { button.textContent = 'Copy'; }, 1500);
-      });
-    }
-  </script>  
-<div id="floatingLog" aria-live="polite" role="alert"></div>
-<footer class="page-footer">
-    <nav>
-      <a href="https://readbytes.github.io">Home</a> | 
-      Email:<script language="JavaScript" type="text/javascript">
+</div><script>
+function copyCode(button) {const code = button.nextElementSibling.innerText;navigator.clipboard.writeText(code).then(() => {button.textContent = 'Copied!';setTimeout(() => { button.textContent = 'Copy'; }, 1500);});}
+</script><div id="floatingLog" aria-live="polite" role="alert"></div></div>
+<style>
+.site-footer {margin-top: 60px;padding: 20px 0;border-top: 1px solid #eee;text-align: center;font-size: 14px;}
+.site-footer a {text-decoration: none;}
+.light-mode .site-footer {color: #777;border-color: #eee;}
+.dark-mode .site-footer {color: #888;border-color: #333;}
+.light-mode .site-footer a {color: #555;}
+.dark-mode .site-footer a {color: #aaa;}
+.site-footer a:hover {text-decoration: underline;}    
+</style>
+<footer class="site-footer">
+<nav><a href="https://readbytes.github.io">Home</a> |Email:<script type="text/javascript">
 var part1 = 'yinpeng';var part6 = '263';var part2 = Math.pow(2,6);var part3 = String.fromCharCode(part2);var part4 = 'hotmail dot com';var part5 = part1 + String.fromCharCode(part2) + part4;document.write(part1 + part6 + part3 + part4);
 </script>
-    </nav>
-  <p>© 2025 — All rights reserved.</p>    
-  </footer>
-
+| <a id="mode-toggle" href="#">Toggle Dark Mode</a>
+</nav><p>© 2025 — All rights reserved.</p></footer>
+<script>
+const toggleButton = document.getElementById('mode-toggle');
+const body = document.body;
+const savedMode = localStorage.getItem('mode') || 'light';
+body.classList.add(savedMode + '-mode');
+toggleButton.addEventListener('click', () => {
+      const isDark = body.classList.contains('dark-mode');
+      body.classList.toggle('dark-mode', !isDark);
+      body.classList.toggle('light-mode', isDark);
+      localStorage.setItem('mode', isDark ? 'light' : 'dark');
+});
+function copyCode(button) {const code = button.nextElementSibling.innerText;navigator.clipboard.writeText(code).then(() => {button.textContent = 'Copied!';setTimeout(() => { button.textContent = 'Copy'; }, 1500);});}
+</script>
 </body>
 </html>

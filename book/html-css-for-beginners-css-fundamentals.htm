@@ -1,21 +1,281 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
+<meta charset="UTF-8">
 <title>HTML CSS for Beginners CSS Fundamentals</title>
-<link rel='shortcut icon' href='https://java2s.com/style/favicon.ico'>
+<link rel='shortcut icon' href='https://readbytes.github.io/images/favicon.ico'>
 <link href="https://fonts.googleapis.com/css2?family=Merriweather&display=swap" rel="stylesheet" />
 <link href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
-
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.css" />
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/theme/material.css"> <!-- Dark theme -->
-<script src="https://cdn.jsdelivr.net/npm/typescript@5/lib/typescript.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/htmlmixed/htmlmixed.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/theme/dracula.min.css"><style>
+html {scroll-behavior: smooth;}  
+body {font-family: 'Merriweather', serif;;margin: 0;padding: 2rem 1rem;font-size: 15px;line-height: 1.5;transition: background-color 0.3s, color 0.3s;}
+.container {max-width: 750px;margin: 0 auto;padding: 1rem 2rem;}
+.light-mode {background-color: #f8f7f5;color: #333;} 
+.dark-mode {background-color: #121212;color: #e0e0e0;}
+a { text-decoration: none;transition: color 0.2s;}
+a:hover {text-decoration: underline;}
+.light-mode a {color: #555;}
+.dark-mode a {color: #aaa;}
+</style><style>
+.related-book-list {display: flex;flex-wrap: wrap;gap: 20px;}
+.related-books {margin-top: 40px;}
+.related-books h2 {font-size: 22px;margin-bottom: 20px;border-bottom: 2px solid #eee;padding-bottom: 8px;}
+.light-mode .related-books h2 {color: #333;border-color: #eee;}
+.dark-mode .related-books h2 {color: #ddd;border-color: #333;}
+</style><style>
+.book-cover {width: 130px;height: 180px;font-family: Arial, sans-serif;position: relative;overflow: hidden;box-shadow: 2px 2px 4px rgba(0,0,0,0.1);}
+.book-cover-bottom-stripe {position: absolute;bottom: 0;left: 0;height: 5px;width: 100%;}
+.book-cover-title {position: absolute;width: 100%;text-align: center;font-weight: bold;}
+.book-cover-icon {position: absolute;left: 50%;transform: translateX(-50%);display: flex;align-items: center;justify-content: center;}
+.book-cover-author {position: absolute;bottom: 10px;width: 100%;text-align: center;font-size: 8px;color: #333;}
+</style><style>
+.book-title-toc {font-size: 32px;font-weight: bold; }
+.book-subtitle-toc {font-size: 18px;margin-top: 8px;font-style: italic;}
+.book-header {text-align: center;margin-bottom: 40px;}
+
+.toc-container {border-radius: 10px;padding: 30px;margin-bottom: 40px;box-shadow: 0 8px 20px rgba(0,0,0,0.05);}
+h1 {font-size: 24px;text-align: center;margin-bottom: 30px;letter-spacing: 1px;padding-bottom: 10px;}
+.toc-list,.toc-section-list {list-style: none;padding: 0;margin: 0;}
+.toc-section-list {padding-left: 18px;margin-top: 6px;margin-bottom: 20px; }
+.toc-chapter {padding: 20px 0;}
+.chapter-title,.toc-section {display: flex;justify-content: space-between;padding-top: 4px;}
+.chapter-title {font-size: 17px;font-weight: bold;}
+.chapter-page,.section-page {font-style: italic;}
+ 
+ 
+.light-mode .book-title-toc,.light-mode .chapter-title,.light-mode .book-name {color: #222;}
+.light-mode .book-subtitle-toc,.light-mode .book-sub,.light-mode .chapter-page,.light-mode .section-page {color: #666;}
+.light-mode .toc-container { background: #fff;border: 1px solid #ddd;}
+.light-mode h1 {border-bottom: 2px solid #eee;color: #222;}
+.light-mode .toc-section {  color: #444;}
+
+.light-mode .book-cover { border: 1px solid #ccc;box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);}
+.light-mode .book-title,.light-mode .series-name {color: #fff;}
+.light-mode .book-subtitle,.light-mode .book-footer {color: #aaa;}
+
+.dark-mode .book-title-toc,.dark-mode .chapter-title,.dark-mode .book-name {color: #f5f5f5;}
+.dark-mode .book-subtitle-toc,.dark-mode .book-sub,.dark-mode .chapter-page,.dark-mode .section-page {color: #aaa;}
+.dark-mode .toc-container {background: #1e1e1e;border: 1px solid #444;}
+
+.dark-mode h1 {border-bottom: 2px solid #333;color: #eee;}
+.dark-mode .toc-section {color: #bbb;}
+
+.dark-mode .related-books h2 {color: #ddd;border-bottom: 2px solid #333;}
+.dark-mode .book-title,.dark-mode .series-name {color: #fff;}
+.dark-mode .book-subtitle,.dark-mode .book-footer {color: #bbb;}
+.dark-mode .toc-section {color: #ddd;}
+
+@media (max-width: 600px) {
+  .chapter-title,
+  .toc-section {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .chapter-page,
+  .section-page {
+    margin-top: 4px;
+  }
+}
+
+</style><style>
+.light-mode .container {box-shadow: 0 0 15px rgba(0,0,0,0.1);}
+.dark-mode .container {box-shadow: 0 0 15px rgba(255, 255, 255, 0.05);}
+
+h1, h2, h3 {font-weight: 600;margin-top: 2.5rem;margin-bottom: 1rem;line-height: 1.2;}
+h1 { font-size: 1.8rem; }
+h2 { font-size: 1.4rem; }
+h3 { font-size: 1.2rem; }
+
+table {width: 100%;border-collapse: collapse;font-family: sans-serif;font-size: 1em;margin: 1em 0;}
+th, td {padding: 0.6em 1em;text-align: left;border: 1px solid;}
+tr:nth-child(even) {  background-color: inherit;}
+tr:hover { background-color: inherit;}
+
+code {color: #d35400;}
+
+.chapter-navi-section {display: flex;justify-content: space-between;align-items: center;padding-bottom: 10px;padding-top: 10px;}
+.nav-link {color: inherit;text-decoration: none;opacity: 0.5;transition: opacity 0.3s ease, text-decoration 0.3s ease;}
+.nav-link:hover {opacity: 0.9;text-decoration: underline;}
+.prev { text-align: left; }
+.toc-link { text-align: center; }
+.next { text-align: right; }
+
+.download-section {display: flex;align-items: center;justify-content: center;gap: 2rem;padding: 2rem 1rem;max-width: 600px;margin: 3rem auto;border-radius: 12px;box-shadow: 0 4px 10px rgba(0,0,0,0.05);}
+.download-info h2 {margin: 0 0 0.5rem;font-size: 1.2rem;}
+.format-label {margin: 0 0 0.5rem;font-size: 0.95rem;}
+.download-buttons {display: flex;gap: 1rem;}
+.download-button {background-color: #4A90E2;color: white;padding: 0.5em 1.2em;border-radius: 25px;font-size: 0.95rem;text-decoration: none;transition: background-color 0.3s ease;}
+.download-button:hover {background-color: #357ABD;}
+
+.code-block {position: relative;margin-bottom: 1em;}
+.copy-button {background: transparent;color: white;position: absolute;top: 8px;right: 8px;border: none;padding: 4px 8px;font-size: 12px;border-radius: 4px;cursor: pointer;z-index: 1;}
+.copy-button:hover {background-color: #0056b3;}
+
+.snippet-container {overflow: hidden;}
+.snippet-header {padding: 0.75rem 1rem;cursor: pointer;font-size: 1rem;background-color: #eeeeee;color:  #111111; border-radius: 8px;cursor: pointer;box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+.snippet-body {display: none;font-family: monospace;}
+.snippet-container.open .snippet-body {display: block;}
+
+.CodeMirror {border: 2px solid #ccc;border-radius: 4px;resize: vertical;}
+
+.light-mode .format-label {color: #888;}
+.light-mode th {background-color: #f2f2f2;}
+.light-mode tr:nth-child(even) {background-color: #fafafa;}
+.light-mode tr:hover {background-color: #e6f7ff;}
+
+.dark-mode .snippet-header {background-color: #333;color:  #ddd; }
+.dark-mode .format-label {color: #aaa;}
+.dark-mode th {background-color: #333;color: #fff;}
+.dark-mode td {border-color: #444;}
+.dark-mode tr:nth-child(even) {background-color: #2a2a2a;}
+.dark-mode tr:hover {background-color: #2c3e50;}
+
+
+.button-group-run-edit {display: flex;width: 100%;gap: 1rem;}
+.button-run-edit {flex: 1;padding: 1rem;font-size: 1rem;font-weight: 600;border: none;border-radius: 8px;cursor: pointer;transition: background 0.3s, color 0.3s;}
+
+.light-mode .button-run-edit {background-color: #f0f0f0;color: #222;box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);}
+.light-mode .button-run-edit:hover {background-color: #e0e0e0;}
+
+.dark-mode .button-run-edit {background-color: #2a2a2a;color: #f5f5f5;box-shadow: 0 0 10px rgba(255, 255, 255, 0.05);}
+.dark-mode .button-run-edit:hover {background-color: #3a3a3a;}
+
+button { padding: 0.5em 1em; background: green; color: white; border: none; cursor: pointer; }
+button:hover { background: #1e7e34; }
+.result_iframe { width:99%; margin-top: 1em;  resize: both;background-color: #515b63;border:1px solid #ccc;}   
+
+.dialog-backdrop {position: fixed;top: 0;left: 0;width: 100vw;height: 100vh;background: rgba(0,0,0,0.5);display: none;justify-content: center;align-items: center;z-index: 10;}
+.dialog {background: #90979e;padding: 20px;width: 90vw;height: 80vh;border-radius: 8px;box-shadow: 0 0 20px rgba(0,0,0,0.3);display: flex;flex-direction: column;}
+.dialog-content {display: flex;gap: 20px;margin-top: 10px;height: calc(100% - 40px);}
+.editor-container, .preview-container {flex: 1;height: 100%;max-height: 100%;overflow: hidden; }
+.result_iframe_dialog {width: 100%;height: 100%;resize: both;border:1px solid #ccc;overflow: auto; }   
+.CodeMirror {width: 100% !important;height: 100% !important;}
+</style><script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/htmlmixed/htmlmixed.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/xml/xml.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/css/css.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/javascript/javascript.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/javascript/typescript.min.js"></script>
+<script>
+  const htmlCodeMirrorMap = new Map();
+  const htmlCodeIFrameMap = new Map();
+  let dismissTimer;
+  function showFloatingLog(message) {
+	const floatingLog = document.getElementById('floatingLog');
+
+    if (floatingLog.style.display !== 'block') {
+      floatingLog.textContent = '';
+      floatingLog.style.display = 'block'; 
+    }
+
+    floatingLog.textContent += message + '\n';
+    floatingLog.scrollTop = floatingLog.scrollHeight; 
+    clearTimeout(dismissTimer);
+    dismissTimer = setTimeout(() => {
+      floatingLog.style.display = 'none';
+      floatingLog.textContent = '';
+    }, 2000);
+  }
+  window.addEventListener('message', (event) => {
+	    if (!htmlCodeIFrameMap.has(event.source)) return;
+
+	    if (event.data?.type === 'console-log') {
+	      showFloatingLog(event.data.message);
+	    }
+  });      
+  function runHtmlCode(button,textarea_id, iframe_id, isInDialog) {
+      const html = htmlCodeMirrorMap.get(textarea_id).getValue();
+      const iframe = document.getElementById(iframe_id);
+  
+      const oldIframe = iframe;
+      const newIframe = document.createElement('iframe');
+
+      if(isInDialog){
+         newIframe.className ="result_iframe_dialog";
+      }else{
+         newIframe.className ="result_iframe";
+      }
+      
+      
+      newIframe.id = iframe_id;
+      oldIframe.replaceWith(newIframe);
+ 
+
+      // Track the iframe in the map
+      htmlCodeIFrameMap.set(newIframe.contentWindow, button);
+
+      const overrideScript = `
+        <script>
+          (function() {
+            const originalLog = console.log;
+            console.log = function(...args) {
+              originalLog.apply(console, args);
+              window.parent.postMessage({
+                type: 'console-log',
+                message: args.map(a => {
+                  try { return JSON.stringify(a); }
+                  catch { return String(a); }
+                }).join(' ')
+              }, '*');
+            };
+          })();
+        <\/script>
+      `;
+ 
+      const iframeHTML = `
+        <!DOCTYPE html>
+        <html>
+        <body>
+          ${overrideScript}
+          ${html}
+        </body>
+        </html>
+      `;
+ 
+      const doc = newIframe.contentDocument || newIframe.contentWindow.document;
+      doc.open();
+      doc.write(iframeHTML);
+      doc.close();
+
+if(!isInDialog){ 
+newIframe.onload = function () {
+ 
+    const doc = newIframe.contentDocument || newIframe.contentWindow.document;
+    // Give a short delay to ensure layout is complete
+    setTimeout(() => {
+      const body = doc.body;
+      const html = doc.documentElement;
+
+      const height = Math.max(
+        body.scrollHeight, body.offsetHeight,
+        html.clientHeight, html.scrollHeight, html.offsetHeight
+      );
+
+      newIframe.style.height = height + 'px';
+    }, 50);
+};
+
+}
+      
+  }  
+function openEditHtmlCodeDialog(id, textarea_id) {
+		        closeAllHtmlCodeDialog();
+		        document.getElementById(id).style.display = 'flex';
+         
+ 	        setTimeout(() => {
+		        	 htmlCodeMirrorMap.get(textarea_id).refresh();
+                   
+ 	        }, 100); // 100ms 
+}
+
+function closeAllHtmlCodeDialog() {
+		        document.querySelectorAll('.dialog-backdrop').forEach(el => {
+		          el.style.display = 'none';
+		        });
+}		
+</script> 
 <style>
     #floatingLog {
       position: fixed;
@@ -39,675 +299,25 @@
       text-align: center;
     }
 </style>
-<script>
-  const codeMirrorMap = new Map();
-  const iframeMap = new Map();
-  
- 
-
-  let dismissTimer;
-  function showFloatingLog(message) {
-	const floatingLog = document.getElementById('floatingLog');
-
-    if (floatingLog.style.display !== 'block') {
-      floatingLog.textContent = '';
-      floatingLog.style.display = 'block'; 
-    }
-
-    floatingLog.textContent += message + '\n';
-    floatingLog.scrollTop = floatingLog.scrollHeight; 
-    clearTimeout(dismissTimer);
-    dismissTimer = setTimeout(() => {
-      floatingLog.style.display = 'none';
-      floatingLog.textContent = '';
-    }, 2000);
-  }
-  window.addEventListener('message', (event) => {
-	    if (!iframeMap.has(event.source)) return;
-
-	    if (event.data?.type === 'console-log') {
-	      showFloatingLog(event.data.message);
-	    }
-  });  
-  function renderIframe(button,textarea_id, iframe_id) {
-      const html = codeMirrorMap.get(textarea_id).getValue();
-      const iframe = document.getElementById(iframe_id);
-  
-      const oldIframe = iframe;
-      const newIframe = document.createElement('iframe');
-      newIframe.className ="result_iframe";
-      
-      newIframe.id = iframe_id;
-      oldIframe.replaceWith(newIframe);
- 
-
-      // Track the iframe in the map
-      iframeMap.set(newIframe.contentWindow, button);
-
-      const overrideScript = `
-        <script>
-          (function() {
-            const originalLog = console.log;
-            console.log = function(...args) {
-              originalLog.apply(console, args);
-              window.parent.postMessage({
-                type: 'console-log',
-                message: args.map(a => {
-                  try { return JSON.stringify(a); }
-                  catch { return String(a); }
-                }).join(' ')
-              }, '*');
-            };
-          })();
-        <\/script>
-      `;
-
-      const iframeHTML = `
-        <!DOCTYPE html>
-        <html>
-        <body>
-          ${overrideScript}
-          ${html}
-        </body>
-        </html>
-      `;
- 
-      const doc = newIframe.contentDocument || newIframe.contentWindow.document;
-      doc.open();
-      doc.write(iframeHTML);
-      doc.close();
-
-      
-      setTimeout(() => {
-    	  newIframe.style.height = '0px';
-    	   let contentHeight = Math.max(doc.body.scrollHeight,doc.documentElement.scrollHeight);
- 
-    	//   if(contentHeight < 150 || contentHeight > 600){
-    	//	   contentHeight = 600;
-    	 //  } 
-    	   newIframe.style.height = contentHeight + 'px';
-    	}, 50);      
-      
-  }
-  function renderIframeForClientTypescript(textarea_id, iframe_id) {
-      let code = codeMirrorMap.get(textarea_id).getValue();
-      code = ts.transpile(code);
-      const iframe = document.getElementById(iframe_id);
-      const doc = iframe.contentDocument || iframe.contentWindow.document;
-
-const html = `
-  <!DOCTYPE html>
-  <html>
-    <head>
-      <title>Output</title>
-      <style>
-        body { font-family: monospace; padding: 1em; background: #f4f4f4; color: #222; }
-        pre { white-space: pre-wrap; word-break: break-word; }
-        .error { color: red; }
-      </style>
-    </head>
-    <body>
-      <pre id="log"></pre>
-      <script>
-        (function(){
-          const logEl = document.getElementById('log');
-          const origLog = console.log;
-          const origError = console.error;
-
-          console.log = (...args) => {
-            logEl.textContent += args.join(' ') + '\\n';
-            origLog.apply(console, args);
-          };
-          console.table = (...args) => {
-            logEl.textContent += args.join(' ') + '\\n';
-            origLog.apply(console, args);
-          };
-
-          console.error = (...args) => {
-            logEl.innerHTML +='<span class="error">' + args.join(' ') + '</span>';
-            origError.apply(console, args);
-          };
-          window.addEventListener("error", function (event) {
-              console.error("Caught by event listener:", event.message);
-          });    
-          try {             
-              ${code};
-          } catch (err) {
-            console.error(err.stack || err.message);
-          }
-        })();
-      <\/script>
-    </body>
-  </html>
-`;
-
-      iframe.style.display = "block";
-      iframe.srcdoc = html;  
-  }
-
-    function renderIframeForClientJavascript(textarea_id, iframe_id) {
-        const code = codeMirrorMap.get(textarea_id).getValue();
-        const iframe = document.getElementById(iframe_id);
-        const doc = iframe.contentDocument || iframe.contentWindow.document;
-
-  const html = `
-    <!DOCTYPE html>
-    <html>
-      <head>
-        <title>Output</title>
-        <style>
-          body { font-family: monospace; padding: 1em; background: #1e1e1e; color: #eee; }
-          pre { white-space: pre-wrap; word-break: break-word; }
-          .error { color: red; }
-        </style>
-      </head>
-      <body>
-        <pre id="log"></pre>
-        <script>
-          (function(){
-            const logEl = document.getElementById('log');
-            const origLog = console.log;
-            const origError = console.error;
-
-            console.log = (...args) => {
-              logEl.textContent += args.join(' ') + '\\n';
-              origLog.apply(console, args);
-            };
-            console.table = (...args) => {
-              logEl.textContent += args.join(' ') + '\\n';
-              origLog.apply(console, args);
-            };
-
-            console.error = (...args) => {
-              logEl.innerHTML +='<span class="error">' + args.join(' ') + '</span>';
-              origError.apply(console, args);
-            };
-            window.addEventListener("error", function (event) {
-                console.error("Caught by event listener:", event.message);
-            });    
-            try {
-             ${code}; 
-            } catch (err) {
-              console.error(err.stack || err.message);
-            }
-          })();
-        <\/script>
-      </body>
-    </html>
-  `;
-        iframe.style.display = "block";
-        iframe.srcdoc = html;  
-    }
-    function toggleSnippetAndRefresh(id, textarea_id) {
-      const box = document.getElementById(id);
-      box.classList.toggle("open");
-      codeMirrorMap.get(textarea_id).refresh();
-    }
-
-  </script>
-  <script>
-  const mode = localStorage.getItem('mode') || 'light';
-  document.documentElement.classList.add(`${mode}-mode`);
-  </script>   
-<style> 
-html {
-  scroll-behavior: smooth;
-}
-
-body {
-  font-family: 'Merriweather', serif;
-  margin: 0;
-  padding: 2rem 1rem;
-  font-size: 15px;
-  line-height: 1.5;
-  transition: background-color 0.3s, color 0.3s;
-}
-
-.container {
-  max-width: 700px;
-  margin: 0 auto;
-  padding: 1rem 2rem;
-  box-shadow: 0 0 15px rgba(0,0,0,0.1);
-}
-
-h1, h2, h3 {
-  font-weight: 600;
-  margin-top: 2.5rem;
-  margin-bottom: 1rem;
-  line-height: 1.2;
-}
-
-h1 { font-size: 1.8rem; }
-h2 { font-size: 1.4rem; }
-h3 { font-size: 1.2rem; }
-
-table {
-  width: 100%;
-  border-collapse: collapse;
-  font-family: sans-serif;
-  font-size: 1em;
-  margin: 1em 0;
-}
-
-th, td {
-  padding: 0.6em 1em;
-  text-align: left;
-  border: 1px solid;
-}
-
-tr:nth-child(even) {
-  background-color: inherit;
-}
-
-tr:hover {
-  background-color: inherit;
-}
-
-a {
-  text-decoration: none;
-  transition: color 0.2s;
-}
-
-a:hover {
-  text-decoration: underline;
-}
-
-code {
-  color: #d35400;
-}
-
-.book-title-chapter {
-  font-family: 'Merriweather', serif;
-  font-size: 2rem;
-  font-weight: bold;
-  text-align: center;
-  margin-bottom: 2rem;
-  border-bottom: 2px solid;
-  padding-bottom: 0.5rem;
-}
-
-.book-subtitle-chapter {
-  text-align: center;
-  font-size: 1rem;
-  margin-top: -1rem;
-  margin-bottom: 2rem;
-}
-
-.related-books {
-  margin-top: 40px;
-}
-
-.related-book-list {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 20px;
-}
-
-    .book-cover {
-      width: 130px;
-      height: 180px;
-      font-family: Arial, sans-serif;
-      position: relative;
-      overflow: hidden;      
-      line-height: normal;
-      box-shadow: 2px 2px 4px rgba(0,0,0,0.1);
-    }
-    .book-cover-bottom-stripe {
-      position: absolute;
-      bottom: 0;
-      left: 0;
-      height: 5px;
-      width: 100%;
-    }
-    .book-cover-title {
-      position: absolute;
-      width: 100%;
-      text-align: center;
-      font-weight: bold;
-    }
-     
-    .book-cover-icon {
-      position: absolute;
-      left: 50%;
-      transform: translateX(-50%);
-      display: flex;
-      align-items: center;
-      justify-content: center; 
-    }
-
-    .book-cover-author {
-      position: absolute;
-      bottom: 10px;
-      width: 100%;
-      text-align: center;
-      font-size: 8px;
-      color: #333;
-    }
-
-.page-footer {
-  margin-top: 4rem;
-  padding: 1rem 0;
-  text-align: center;
-  font-size: 0.85rem;
-  border-top: 1px solid;
-}
-
-.chapter-navi-section {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding-bottom: 10px;
-}
-
-.nav-link {
-  color: inherit;
-  text-decoration: none;
-  opacity: 0.5;
-  transition: opacity 0.3s ease, text-decoration 0.3s ease;
-}
-
-.nav-link:hover {
-  opacity: 0.9;
-  text-decoration: underline;
-}
-
-.prev { text-align: left; }
-.toc-link { text-align: center; }
-.next { text-align: right; }
-
-.download-section {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 2rem;
-  padding: 2rem 1rem;
-  max-width: 600px;
-  margin: 3rem auto;
-  border-radius: 12px;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-}
-
-.download-info h2 {
-  margin: 0 0 0.5rem;
-  font-size: 1.2rem;
-}
-
-.format-label {
-  margin: 0 0 0.5rem;
-  font-size: 0.95rem;
-}
-
-.download-buttons {
-  display: flex;
-  gap: 1rem;
-}
-
-.download-button {
-  background-color: #4A90E2;
-  color: white;
-  padding: 0.5em 1.2em;
-  border-radius: 25px;
-  font-size: 0.95rem;
-  text-decoration: none;
-  transition: background-color 0.3s ease;
-}
-
-.download-button:hover {
-  background-color: #357ABD;
-}
-
-.code-block {
-  position: relative;
-  margin-bottom: 1em;
-}
-
-.copy-button {
-  background: transparent;
-  color: white;
-  position: absolute;
-  top: 8px;
-  right: 8px;
-  border: none;
-  padding: 4px 8px;
-  font-size: 12px;
-  border-radius: 4px;
-  cursor: pointer;
-  z-index: 1;
-}
-
-.copy-button:hover {
-  background-color: #0056b3;
-}
-
-.snippet-container {
-  overflow: hidden;
-}
-
-.snippet-header {
-  padding: 0.75rem 1rem;
-  cursor: pointer;
-  font-size: 1rem;
-    background-color: #eeeeee;
-    color:  #111111; 
-    border-radius: 8px;
-    cursor: pointer;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.1);  
-}
-
-.snippet-body {
-  display: none;
-  font-family: monospace;
-}
-
-.snippet-container.open .snippet-body {
-  display: block;
-}
-
-.CodeMirror {
-  border: 2px solid #ccc;
-  border-radius: 4px;
-  resize: vertical;
-}
-
-/* === Light Mode === */
-html.light-mode {
-  background-color: #f8f7f5;
-  color: #333;
-}
-
-html.light-mode .container {
-  background: white;
-}
-
-html.light-mode .book-title-chapter {
-  color: #2c3e50;
-  border-color: #ccc;
-}
-html.light-mode .book-subtitle-chapter{
-  color: #888;
-}
-
-html.light-mode .page-footer,
-html.light-mode .series-name,
-html.light-mode .book-subtitle,
-html.light-mode .format-label {
-  color: #888;
-}
-
-html.light-mode .related-books h2 {
-  color: #333;
-  border-bottom: 2px solid #eee;
-}
-
-html.light-mode .book-title {
-  color: #fff;
-}
-
-html.light-mode .book-cover {
-  border: 1px solid #ccc;
-}
-
-html.light-mode th {
-  background-color: #f2f2f2;
-}
-
-html.light-mode tr:nth-child(even) {
-  background-color: #fafafa;
-}
-
-html.light-mode tr:hover {
-  background-color: #e6f7ff;
-}
-
-html.light-mode a,
-html.light-mode .page-footer a {
-  color: #000;
-}
-
-/* === Dark Mode === */
-html.dark-mode {
-  background-color: #181818;
-  color: #e0e0e0;
-}
-
-html.dark-mode .container {
-  background: #222;
-}
-
-html.dark-mode .book-title-chapter {
-  color: #ddd;
-  border-color: #444;
-}
-
-html.dark-mode .snippet-header {
-    background-color: #333;
-    color:  #ddd; 
-}
-
-
-html.dark-mode .book-subtitle-chapter,
-html.dark-mode .page-footer,
-html.dark-mode .series-name,
-html.dark-mode .book-subtitle,
-html.dark-mode .book-footer,
-html.dark-mode .format-label {
-  color: #aaa;
-}
-
-html.dark-mode .related-books h2 {
-  color: #ddd;
-  border-bottom: 2px solid #333;
-}
-
-html.dark-mode .book-title {
-  color: #fff;
-}
-
-html.dark-mode .book-cover {
-  border: 1px solid #555;
-}
-
-html.dark-mode th {
-  background-color: #333;
-  color: #fff;
-}
-
-html.dark-mode td {
-  border-color: #444;
-}
-
-html.dark-mode tr:nth-child(even) {
-  background-color: #2a2a2a;
-}
-
-html.dark-mode tr:hover {
-  background-color: #2c3e50;
-}
-
-html.dark-mode a,
-html.dark-mode .page-footer a {
-  color: #eee;
-}
-
-    .dialog-backdrop {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100vw;
-      height: 100vh;
-      background: rgba(0,0,0,0.5);
-      display: none;
-      justify-content: center;
-      align-items: center;
-      z-index: 10;
-    }
-
-    .dialog {
-      background: white;
-      padding: 20px;
-      width: 90vw;
-      height: 80vh;
-      border-radius: 8px;
-      box-shadow: 0 0 20px rgba(0,0,0,0.3);
-      display: flex;
-      flex-direction: column;
-    }
-    .dialog-content {
-      display: flex;
-      flex: 1;
-      gap: 20px;
-      margin-top: 10px;
-    }
-    .dialog h2 {
-      margin-top: 0;
-    }
-
-    .textarea_dialog {
-      width: 50%;
-      height: 100%;
-      resize: none;
-      font-family: monospace;
-      font-size: 14px;
-      padding: 10px;
-      box-sizing: border-box;
-      border: 1px solid #ccc;
-    }
-
-    .iframe_dialog {
-      width: 50%;
-      height: 100%;
-      border: 1px solid #ccc;
-    }
-    .controls_dialog {
-      display: flex;
-      justify-content: space-between;
-      margin-top: 10px;
-    }    
-    button { padding: 0.5em 1em; background: green; color: white; border: none; cursor: pointer; }
-    button:hover { background: #1e7e34; }
-    .result_iframe { width:99%; height:200px; margin-top: 1em;  resize: both;border:1px solid #ccc;}        
-</style>
 </head>
-<body> 
-  <div class="container">
-    <div class = "chapter-navi-section">
+<body>
+<script>const mode = localStorage.getItem('mode') || 'light';document.documentElement.classList.add(`${mode}-mode`);</script>  
+<div class="container"><div class = "chapter-navi-section">
 <a href="html-css-for-beginners-basic-html-elements-and-structure.htm" class="nav-button prev">←</a>
 <a href='html-css-for-beginners.htm#css-fundamentals' class="nav-button toc-link">Index</a>
 <a href="html-css-for-beginners-html-forms-and-input-elements.htm" class="nav-button next">→</a>
 </div>
-
-    <h1 class="book-title-chapter" id = 'top'>CSS Fundamentals</h1>
-    <h3 class="book-subtitle-chapter">HTML CSS for Beginners</h3>   
-    <!-- <h1 class ="chapter-title"></h1> -->
-    <h2 id='css-syntax-and-selectors-element-class-id'>3.1 CSS Syntax and Selectors (Element, Class, ID)</h2><h3 id="understanding-the-structure-of-a-css-rule">Understanding the Structure of a CSS Rule</h3><p>A CSS rule defines <strong>how to style HTML elements</strong> on your web page. Each rule consists of two main parts:</p><ol>
+<div class='book-header'><h1 class='book-title-toc' id = 'top'>CSS Fundamentals</h1><h3 class='book-subtitle-toc'>HTML CSS for Beginners</h3></div><h2 id='css-syntax-and-selectors-element-class-id'>3.1 CSS Syntax and Selectors (Element, Class, ID)</h2><h3 id="understanding-the-structure-of-a-css-rule">Understanding the Structure of a CSS Rule</h3><p>A CSS rule defines <strong>how to style HTML elements</strong> on your web page. Each rule consists of two main parts:</p><ol>
  <li><strong>Selector:</strong> Specifies which HTML elements the rule applies to.</li>
  <li><strong>Declaration block:</strong> Contains one or more declarations inside curly braces <code>{}</code>. Each declaration includes a <strong>property</strong> and a <strong>value</strong>, separated by a colon, and ends with a semicolon.</li>
-</ol><p><strong>Basic structure:</strong></p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</ol><p><strong>Basic structure:</strong></p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-css">selector {
   property: value;
   property: value;
 }</code></pre>
-</div><h3 id="example-css-rule">Example CSS Rule:</h3><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</div><h3 id="example-css-rule">Example CSS Rule:</h3><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-css">p {
   color: blue;
   font-size: 16px;
@@ -719,28 +329,35 @@ html.dark-mode .page-footer a {
    <li><code>color: blue;</code> sets the text color to blue.</li>
    <li><code>font-size: 16px;</code> sets the font size.</li>
   </ul></li>
-</ul><h3 id="css-selectors-targeting-html-elements">CSS Selectors: Targeting HTML Elements</h3><p>CSS selectors tell the browser <strong>which HTML elements to style</strong>. Let’s explore three common selector types:</p><h3 id="element-tag-selector">Element (Tag) Selector</h3><p>Targets <strong>all instances</strong> of a specific HTML element by its tag name.</p><p><strong>Example:</strong></p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</ul><h3 id="css-selectors-targeting-html-elements">CSS Selectors: Targeting HTML Elements</h3><p>CSS selectors tell the browser <strong>which HTML elements to style</strong>. Let’s explore three common selector types:</p><h3 id="element-tag-selector">Element (Tag) Selector</h3><p>Targets <strong>all instances</strong> of a specific HTML element by its tag name.</p><p><strong>Example:</strong></p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-css">h1 {
   color: darkred;
 }</code></pre>
-</div><p>This applies to every <code>&lt;h1&gt;</code> heading on the page, turning the text dark red.</p><h3 id="class-selector">Class Selector (<code>.</code>)</h3><p>Targets elements that have a specific <strong>class attribute</strong> value. Classes allow you to group elements and style them consistently, regardless of their tag.</p><p><strong>Syntax:</strong></p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</div><p>This applies to every <code>&lt;h1&gt;</code> heading on the page, turning the text dark red.</p><h3 id="class-selector">Class Selector (<code>.</code>)</h3><p>Targets elements that have a specific <strong>class attribute</strong> value. Classes allow you to group elements and style them consistently, regardless of their tag.</p><p><strong>Syntax:</strong></p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-css">.className {
   property: value;
 }</code></pre>
-</div><p><strong>Example HTML:</strong></p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</div><p><strong>Example HTML:</strong></p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-html">&lt;p class="highlight"&gt;This paragraph is highlighted.&lt;/p&gt;
 &lt;div class="highlight"&gt;This div is also highlighted.&lt;/div&gt;</code></pre>
-</div><p><strong>Example CSS:</strong></p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</div><p><strong>Example CSS:</strong></p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-css">.highlight {
   background-color: yellow;
 }</code></pre>
-</div><p>Both the paragraph and the div with class <code>"highlight"</code> get a yellow background.</p><h3 id="id-selector">ID Selector (<code>#</code>)</h3><p>Targets a <strong>single unique element</strong> by its <code>id</code> attribute. IDs should be unique within the page.</p><p><strong>Syntax:</strong></p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</div><p>Both the paragraph and the div with class <code>"highlight"</code> get a yellow background.</p><h3 id="id-selector">ID Selector (<code>#</code>)</h3><p>Targets a <strong>single unique element</strong> by its <code>id</code> attribute. IDs should be unique within the page.</p><p><strong>Syntax:</strong></p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-css">#uniqueId {
   property: value;
 }</code></pre>
-</div><p><strong>Example HTML:</strong></p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</div><p><strong>Example HTML:</strong></p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-html">&lt;h2 id="main-title"&gt;Welcome&lt;/h2&gt;</code></pre>
-</div><p><strong>Example CSS:</strong></p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</div><p><strong>Example CSS:</strong></p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-css">#main-title {
   font-weight: bold;
   text-transform: uppercase;
@@ -786,11 +403,13 @@ html.dark-mode .page-footer a {
    <td>Unique single elements</td>
   </tr>
  </tbody>
-</table><h3 id="quick-example-combining-selectors">Quick Example Combining Selectors</h3><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</table><h3 id="quick-example-combining-selectors">Quick Example Combining Selectors</h3><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-html">&lt;h1 id="header"&gt;Site Title&lt;/h1&gt;
 &lt;p class="intro"&gt;Welcome to the website.&lt;/p&gt;
 &lt;p&gt;This is a regular paragraph.&lt;/p&gt;</code></pre>
-</div><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</div><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-css">h1 {
   color: navy;
 }
@@ -806,13 +425,16 @@ html.dark-mode .page-footer a {
  <li>All <code>&lt;h1&gt;</code> elements are navy.</li>
  <li>Elements with class <code>"intro"</code> are italicized.</li>
  <li>The element with ID <code>"header"</code> has a larger font size.</li>
-</ul><div class="snippet-container" id="Ub3iC">
- <div id="W4Cty_Dialog" class="dialog-backdrop">
+</ul><div class="snippet-container">
+ <div class="button-group-run-edit"><button class="button-run-edit" onclick="runHtmlCode(this,'lCTTC','m6q79', false)">Run</button> <button class="button-run-edit" onclick="openEditHtmlCodeDialog('m6q79_Dialog','lCTTC')">Edit</button>
+ </div> <iframe id="m6q79" class="result_iframe" style="display: none;"></iframe>
+ <div id="m6q79_Dialog" class="dialog-backdrop">
   <div class="dialog">
-   <h2>Dialog 1</h2>
-   <div class="controls"><button onclick="renderIframe(this,'IlcGH_Textarea','W4Cty_IFrame')">Run</button> <button onclick="closeAll()">Close</button>
+   <div class="controls"><button onclick="runHtmlCode(this,'lCTTC','m6q79_IFrame', true)">Run</button> <button onclick="closeAllHtmlCodeDialog()">Close</button>
    </div>
-   <div class="dialog-content"><textarea id="IlcGH_Textarea" class="textarea_dialog" placeholder="Type HTML here...">&lt;!DOCTYPE html&gt;
+   <div class="dialog-content">
+    <div class="editor-container">
+     <textarea id="lCTTC" class="textarea_dialog" placeholder="Type HTML here...">&lt;!DOCTYPE html&gt;
 &lt;html lang="en"&gt;
 &lt;head&gt;
   &lt;meta charset="UTF-8"&gt;
@@ -836,84 +458,37 @@ html.dark-mode .page-footer a {
   &lt;p class="intro"&gt;Welcome to the website.&lt;/p&gt;
   &lt;p&gt;This is a regular paragraph.&lt;/p&gt;
 &lt;/body&gt;
-&lt;/html&gt;</textarea> <iframe id="W4Cty_IFrame" class="iframe_dialog"></iframe>
+&lt;/html&gt;</textarea>
+    </div>
+    <div class="preview-container">
+     <iframe id="m6q79_IFrame" class="result_iframe_dialog" style="border: none;"></iframe>
+    </div>
    </div>
   </div>
  </div>
- <div class="snippet-header" onclick="toggleSnippetAndRefresh('Ub3iC','IlcGH')">
-  Click to Try it <!--<span onclick="toggleSnippetAndRefresh('Ub3iC','IlcGH')">Click
-			to Try it</span> --> <!-- <span onclick="openDialog('W4Cty_Dialog')">Dialog</span> -->
- </div>
- <div class="snippet-body"><textarea id="IlcGH">&lt;!DOCTYPE html&gt;
-&lt;html lang="en"&gt;
-&lt;head&gt;
-  &lt;meta charset="UTF-8"&gt;
-  &lt;title&gt;Quick Example Combining Selectors&lt;/title&gt;
-  &lt;style&gt;
-    h1 {
-      color: navy;
-    }
-
-    .intro {
-      font-style: italic;
-    }
-
-    #header {
-      font-size: 36px;
-    }
-  &lt;/style&gt;
-&lt;/head&gt;
-&lt;body&gt;
-  &lt;h1 id="header"&gt;Site Title&lt;/h1&gt;
-  &lt;p class="intro"&gt;Welcome to the website.&lt;/p&gt;
-  &lt;p&gt;This is a regular paragraph.&lt;/p&gt;
-&lt;/body&gt;
-&lt;/html&gt;</textarea> <br> <button onclick="renderIframe(this,'IlcGH','W4Cty')">Run</button>
-  <div id="W4Cty_FloatingLog" class="floatingLog" aria-live="polite" role="alert"></div> <iframe id="W4Cty" class="result_iframe" style="display: none;"></iframe>
-  <script>
-			{
-				let editor = CodeMirror.fromTextArea(document
-						.getElementById("IlcGH"), {
+ <script>
+{
+let editor = CodeMirror.fromTextArea(document.getElementById("lCTTC"), {
 					mode : "htmlmixed",
 					lineNumbers : false,
+                    lineWrapping: true,
 					tabSize : 2
-				});
-			    const mode = localStorage.getItem("mode") || "light";  
-			    const newTheme = mode === "dark" ? "material" : "default";
-			    editor.setOption("theme", newTheme);
-			    
-				codeMirrorMap.set("IlcGH", editor);
+});
+const darkmode = localStorage.getItem("mode") || "light";  
+const newTheme = darkmode === "dark" ? "dracula" : "default";
+editor.setSize("50%", "100%");
+editor.setOption("theme", newTheme);
+htmlCodeMirrorMap.set("lCTTC", editor);
+}
 
-				let editor1 = CodeMirror.fromTextArea(document.getElementById("IlcGH_Textarea"), {
-					mode : "htmlmixed",
-					lineNumbers : false,
-					tabSize : 2
-				});
-			    editor1.setOption("theme", newTheme);				
-				
-				codeMirrorMap.set("IlcGH_Textarea", editor1);
-			}
-		    function openDialog(id) {
-		        closeAll();
-		        document.getElementById(id).style.display = 'flex';
-		        setTimeout(() => {
-		        	 codeMirrorMap.get("IlcGH_Textarea").refresh();
-		        }, 100); // 100ms 
-		      }
-
-		      function closeAll() {
-		        document.querySelectorAll('.dialog-backdrop').forEach(el => {
-		          el.style.display = 'none';
-		        });
-		      }			
-		</script>
- </div>
+</script>
 </div><div class = "chapter-navi-section">
 <a href="#top" class="nav-button prev">↑</a>
 <a href='html-css-for-beginners.htm#css-fundamentals' class="nav-button toc-link">Index</a>
 <a href="#bottom" class="nav-button next">↓</a>
 </div>
-<h2 id='applying-css-inline-internal-external-stylesheets'>3.2 Applying CSS: Inline, Internal, External Stylesheets</h2><p>CSS can be added to your web pages in three main ways: <strong>inline styles</strong>, <strong>internal stylesheets</strong>, and <strong>external stylesheets</strong>. Each method has its own use cases, advantages, and disadvantages.</p><h3 id="inline-styles">Inline Styles</h3><p><strong>Inline styles</strong> apply CSS directly to an individual HTML element using the <code>style</code> attribute.</p><h4 id="example">Example:</h4><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+<h2 id='applying-css-inline-internal-external-stylesheets'>3.2 Applying CSS: Inline, Internal, External Stylesheets</h2><p>CSS can be added to your web pages in three main ways: <strong>inline styles</strong>, <strong>internal stylesheets</strong>, and <strong>external stylesheets</strong>. Each method has its own use cases, advantages, and disadvantages.</p><h3 id="inline-styles">Inline Styles</h3><p><strong>Inline styles</strong> apply CSS directly to an individual HTML element using the <code>style</code> attribute.</p><h4 id="example">Example:</h4><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-html">&lt;p style="color: red; font-weight: bold;"&gt;This is an inline styled paragraph.&lt;/p&gt;</code></pre>
 </div><p><strong>Advantages:</strong></p><ul>
  <li>Quick and easy to apply for single, specific elements.</li>
@@ -922,7 +497,8 @@ html.dark-mode .page-footer a {
  <li>Mixes content and presentation, making code harder to read.</li>
  <li>Difficult to maintain and reuse styles across multiple elements.</li>
  <li>Should be avoided for large projects or repetitive styling.</li>
-</ul><h3 id="internal-stylesheets">Internal Stylesheets</h3><p><strong>Internal stylesheets</strong> are CSS rules written inside a <code>&lt;style&gt;</code> tag placed in the <code>&lt;head&gt;</code> section of an HTML document.</p><h4 id="example">Example:</h4><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</ul><h3 id="internal-stylesheets">Internal Stylesheets</h3><p><strong>Internal stylesheets</strong> are CSS rules written inside a <code>&lt;style&gt;</code> tag placed in the <code>&lt;head&gt;</code> section of an HTML document.</p><h4 id="example">Example:</h4><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-html">&lt;head&gt;
   &lt;style&gt;
     p {
@@ -941,11 +517,13 @@ html.dark-mode .page-footer a {
 </ul><p><strong>Disadvantages:</strong></p><ul>
  <li>Styles apply only to that single HTML document.</li>
  <li>Not reusable across multiple pages, leading to duplication.</li>
-</ul><h3 id="external-stylesheets">External Stylesheets</h3><p><strong>External stylesheets</strong> are separate <code>.css</code> files linked to your HTML document using the <code>&lt;link&gt;</code> tag in the <code>&lt;head&gt;</code> section.</p><h4 id="example">Example:</h4><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</ul><h3 id="external-stylesheets">External Stylesheets</h3><p><strong>External stylesheets</strong> are separate <code>.css</code> files linked to your HTML document using the <code>&lt;link&gt;</code> tag in the <code>&lt;head&gt;</code> section.</p><h4 id="example">Example:</h4><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-html">&lt;head&gt;
   &lt;link rel="stylesheet" href="styles.css"&gt;
 &lt;/head&gt;</code></pre>
-</div><p>Content of <code>styles.css</code>:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</div><p>Content of <code>styles.css</code>:</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-css">p {
   color: green;
   font-size: 20px;
@@ -998,27 +576,32 @@ html.dark-mode .page-footer a {
 <a href='html-css-for-beginners.htm#css-fundamentals' class="nav-button toc-link">Index</a>
 <a href="#bottom" class="nav-button next">↓</a>
 </div>
-<h2 id='colors-backgrounds-and-text-styling'>3.3 Colors, Backgrounds, and Text Styling</h2><p>CSS gives you powerful tools to control the <strong>colors</strong> and <strong>appearance</strong> of text and backgrounds on your web pages. In this section, you’ll learn how to apply colors using different formats, set background colors and images, and style text properties like size, weight, and alignment.</p><h3 id="setting-colors-in-css">Setting Colors in CSS</h3><p>The most common way to change color is with the <code>color</code> property for text, and the <code>background-color</code> property for backgrounds.</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+<h2 id='colors-backgrounds-and-text-styling'>3.3 Colors, Backgrounds, and Text Styling</h2><p>CSS gives you powerful tools to control the <strong>colors</strong> and <strong>appearance</strong> of text and backgrounds on your web pages. In this section, you’ll learn how to apply colors using different formats, set background colors and images, and style text properties like size, weight, and alignment.</p><h3 id="setting-colors-in-css">Setting Colors in CSS</h3><p>The most common way to change color is with the <code>color</code> property for text, and the <code>background-color</code> property for backgrounds.</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-css">selector {
   color: value;            /* Text color */
   background-color: value; /* Background color */
 }</code></pre>
-</div><h3 id="color-values-in-css">Color Values in CSS</h3><p>CSS supports several ways to specify colors:</p><h4 id="named-colors">Named Colors</h4><p>You can use predefined color names like <code>red</code>, <code>blue</code>, or <code>green</code>.</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</div><h3 id="color-values-in-css">Color Values in CSS</h3><p>CSS supports several ways to specify colors:</p><h4 id="named-colors">Named Colors</h4><p>You can use predefined color names like <code>red</code>, <code>blue</code>, or <code>green</code>.</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-css">p {
   color: red;
 }</code></pre>
-</div><h4 id="hexadecimal-hex-codes">Hexadecimal (Hex) Codes</h4><p>A hex code starts with <code>#</code> followed by six hexadecimal digits, representing red, green, and blue components.</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</div><h4 id="hexadecimal-hex-codes">Hexadecimal (Hex) Codes</h4><p>A hex code starts with <code>#</code> followed by six hexadecimal digits, representing red, green, and blue components.</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-css">h1 {
   color: #ff5733; /* A bright orange-red */
 }</code></pre>
 </div><ul>
  <li>The format is <code>#RRGGBB</code>, where each pair (<code>RR</code>, <code>GG</code>, <code>BB</code>) is a hex value from <code>00</code> to <code>FF</code>.</li>
  <li>For example, <code>#000000</code> is black, <code>#ffffff</code> is white.</li>
-</ul><h4 id="rgb-values">RGB Values</h4><p>You specify red, green, and blue components using numbers between 0 and 255:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</ul><h4 id="rgb-values">RGB Values</h4><p>You specify red, green, and blue components using numbers between 0 and 255:</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-css">div {
   background-color: rgb(100, 149, 237); /* Cornflower blue */
 }</code></pre>
-</div><h4 id="hsl-values">HSL Values</h4><p>HSL stands for Hue, Saturation, and Lightness.</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</div><h4 id="hsl-values">HSL Values</h4><p>HSL stands for Hue, Saturation, and Lightness.</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-css">span {
   color: hsl(200, 70%, 50%);
 }</code></pre>
@@ -1026,7 +609,8 @@ html.dark-mode .page-footer a {
  <li>Hue is the color type (0–360 degrees on the color wheel).</li>
  <li>Saturation is intensity (0%–100%).</li>
  <li>Lightness controls brightness (0% is black, 100% is white).</li>
-</ul><h3 id="background-images">Background Images</h3><p>You can also use images as backgrounds with the <code>background-image</code> property.</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</ul><h3 id="background-images">Background Images</h3><p>You can also use images as backgrounds with the <code>background-image</code> property.</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-css">body {
   background-image: url('background.jpg');
   background-repeat: no-repeat;
@@ -1076,7 +660,8 @@ html.dark-mode .page-footer a {
    <td><code>text-decoration: underline;</code></td>
   </tr>
  </tbody>
-</table><h3 id="practical-examples">Practical Examples</h3><h4 id="example-1-colored-heading-and-paragraph">Example 1: Colored Heading and Paragraph</h4><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</table><h3 id="practical-examples">Practical Examples</h3><h4 id="example-1-colored-heading-and-paragraph">Example 1: Colored Heading and Paragraph</h4><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-css">h1 {
   color: #2c3e50;          /* Dark blue-gray */
   font-size: 36px;
@@ -1088,13 +673,16 @@ p {
   font-size: 16px;
   font-weight: 400;
 }</code></pre>
-</div><div class="snippet-container" id="rPG59">
- <div id="qr9uM_Dialog" class="dialog-backdrop">
+</div><div class="snippet-container">
+ <div class="button-group-run-edit"><button class="button-run-edit" onclick="runHtmlCode(this,'4CdLb','d4sRK', false)">Run</button> <button class="button-run-edit" onclick="openEditHtmlCodeDialog('d4sRK_Dialog','4CdLb')">Edit</button>
+ </div> <iframe id="d4sRK" class="result_iframe" style="display: none;"></iframe>
+ <div id="d4sRK_Dialog" class="dialog-backdrop">
   <div class="dialog">
-   <h2>Dialog 1</h2>
-   <div class="controls"><button onclick="renderIframe(this,'gdyh8_Textarea','qr9uM_IFrame')">Run</button> <button onclick="closeAll()">Close</button>
+   <div class="controls"><button onclick="runHtmlCode(this,'4CdLb','d4sRK_IFrame', true)">Run</button> <button onclick="closeAllHtmlCodeDialog()">Close</button>
    </div>
-   <div class="dialog-content"><textarea id="gdyh8_Textarea" class="textarea_dialog" placeholder="Type HTML here...">&lt;!DOCTYPE html&gt;
+   <div class="dialog-content">
+    <div class="editor-container">
+     <textarea id="4CdLb" class="textarea_dialog" placeholder="Type HTML here...">&lt;!DOCTYPE html&gt;
 &lt;html lang="en"&gt;
 &lt;head&gt;
   &lt;meta charset="UTF-8"&gt;
@@ -1118,79 +706,32 @@ p {
   &lt;p&gt;This is a sample paragraph to demonstrate the styles defined in the CSS.&lt;/p&gt;
   &lt;p&gt;Feel free to edit and expand this example as needed.&lt;/p&gt;
 &lt;/body&gt;
-&lt;/html&gt;</textarea> <iframe id="qr9uM_IFrame" class="iframe_dialog"></iframe>
+&lt;/html&gt;</textarea>
+    </div>
+    <div class="preview-container">
+     <iframe id="d4sRK_IFrame" class="result_iframe_dialog" style="border: none;"></iframe>
+    </div>
    </div>
   </div>
  </div>
- <div class="snippet-header" onclick="toggleSnippetAndRefresh('rPG59','gdyh8')">
-  Click to Try it <!--<span onclick="toggleSnippetAndRefresh('rPG59','gdyh8')">Click
-			to Try it</span> --> <!-- <span onclick="openDialog('qr9uM_Dialog')">Dialog</span> -->
- </div>
- <div class="snippet-body"><textarea id="gdyh8">&lt;!DOCTYPE html&gt;
-&lt;html lang="en"&gt;
-&lt;head&gt;
-  &lt;meta charset="UTF-8"&gt;
-  &lt;title&gt;Styled Headings and Paragraphs&lt;/title&gt;
-  &lt;style&gt;
-    h1 {
-      color: #2c3e50;          /* Dark blue-gray */
-      font-size: 36px;
-      text-align: center;
-    }
-
-    p {
-      color: rgb(100, 100, 100); /* Medium gray */
-      font-size: 16px;
-      font-weight: 400;
-    }
-  &lt;/style&gt;
-&lt;/head&gt;
-&lt;body&gt;
-  &lt;h1&gt;Welcome to My Page&lt;/h1&gt;
-  &lt;p&gt;This is a sample paragraph to demonstrate the styles defined in the CSS.&lt;/p&gt;
-  &lt;p&gt;Feel free to edit and expand this example as needed.&lt;/p&gt;
-&lt;/body&gt;
-&lt;/html&gt;</textarea> <br> <button onclick="renderIframe(this,'gdyh8','qr9uM')">Run</button>
-  <div id="qr9uM_FloatingLog" class="floatingLog" aria-live="polite" role="alert"></div> <iframe id="qr9uM" class="result_iframe" style="display: none;"></iframe>
-  <script>
-			{
-				let editor = CodeMirror.fromTextArea(document
-						.getElementById("gdyh8"), {
+ <script>
+{
+let editor = CodeMirror.fromTextArea(document.getElementById("4CdLb"), {
 					mode : "htmlmixed",
 					lineNumbers : false,
+                    lineWrapping: true,
 					tabSize : 2
-				});
-			    const mode = localStorage.getItem("mode") || "light";  
-			    const newTheme = mode === "dark" ? "material" : "default";
-			    editor.setOption("theme", newTheme);
-			    
-				codeMirrorMap.set("gdyh8", editor);
+});
+const darkmode = localStorage.getItem("mode") || "light";  
+const newTheme = darkmode === "dark" ? "dracula" : "default";
+editor.setSize("50%", "100%");
+editor.setOption("theme", newTheme);
+htmlCodeMirrorMap.set("4CdLb", editor);
+}
 
-				let editor1 = CodeMirror.fromTextArea(document.getElementById("gdyh8_Textarea"), {
-					mode : "htmlmixed",
-					lineNumbers : false,
-					tabSize : 2
-				});
-			    editor1.setOption("theme", newTheme);				
-				
-				codeMirrorMap.set("gdyh8_Textarea", editor1);
-			}
-		    function openDialog(id) {
-		        closeAll();
-		        document.getElementById(id).style.display = 'flex';
-		        setTimeout(() => {
-		        	 codeMirrorMap.get("gdyh8_Textarea").refresh();
-		        }, 100); // 100ms 
-		      }
-
-		      function closeAll() {
-		        document.querySelectorAll('.dialog-backdrop').forEach(el => {
-		          el.style.display = 'none';
-		        });
-		      }			
-		</script>
- </div>
-</div><h4 id="example-2-background-color-and-image">Example 2: Background Color and Image</h4><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</script>
+</div><h4 id="example-2-background-color-and-image">Example 2: Background Color and Image</h4><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-css">body {
   background-color: #f0f0f0; /* Light gray background */
   background-image: url('https://readbytes.github.io/60x60/1.png');
@@ -1201,13 +742,16 @@ p {
   background-color: rgba(255, 255, 255, 0.8); /* Semi-transparent white */
   padding: 20px;
 }</code></pre>
-</div><div class="snippet-container" id="Cyj2P">
- <div id="7UjVN_Dialog" class="dialog-backdrop">
+</div><div class="snippet-container">
+ <div class="button-group-run-edit"><button class="button-run-edit" onclick="runHtmlCode(this,'vesH6','TGvrp', false)">Run</button> <button class="button-run-edit" onclick="openEditHtmlCodeDialog('TGvrp_Dialog','vesH6')">Edit</button>
+ </div> <iframe id="TGvrp" class="result_iframe" style="display: none;"></iframe>
+ <div id="TGvrp_Dialog" class="dialog-backdrop">
   <div class="dialog">
-   <h2>Dialog 1</h2>
-   <div class="controls"><button onclick="renderIframe(this,'UhwDk_Textarea','7UjVN_IFrame')">Run</button> <button onclick="closeAll()">Close</button>
+   <div class="controls"><button onclick="runHtmlCode(this,'vesH6','TGvrp_IFrame', true)">Run</button> <button onclick="closeAllHtmlCodeDialog()">Close</button>
    </div>
-   <div class="dialog-content"><textarea id="UhwDk_Textarea" class="textarea_dialog" placeholder="Type HTML here...">&lt;!DOCTYPE html&gt;
+   <div class="dialog-content">
+    <div class="editor-container">
+     <textarea id="vesH6" class="textarea_dialog" placeholder="Type HTML here...">&lt;!DOCTYPE html&gt;
 &lt;html lang="en"&gt;
 &lt;head&gt;
   &lt;meta charset="UTF-8"&gt;
@@ -1239,99 +783,47 @@ p {
     &lt;p&gt;Resize the window or edit the background image URL to experiment!&lt;/p&gt;
   &lt;/div&gt;
 &lt;/body&gt;
-&lt;/html&gt;</textarea> <iframe id="7UjVN_IFrame" class="iframe_dialog"></iframe>
+&lt;/html&gt;</textarea>
+    </div>
+    <div class="preview-container">
+     <iframe id="TGvrp_IFrame" class="result_iframe_dialog" style="border: none;"></iframe>
+    </div>
    </div>
   </div>
  </div>
- <div class="snippet-header" onclick="toggleSnippetAndRefresh('Cyj2P','UhwDk')">
-  Click to Try it <!--<span onclick="toggleSnippetAndRefresh('Cyj2P','UhwDk')">Click
-			to Try it</span> --> <!-- <span onclick="openDialog('7UjVN_Dialog')">Dialog</span> -->
- </div>
- <div class="snippet-body"><textarea id="UhwDk">&lt;!DOCTYPE html&gt;
-&lt;html lang="en"&gt;
-&lt;head&gt;
-  &lt;meta charset="UTF-8"&gt;
-  &lt;title&gt;Background and Section Example&lt;/title&gt;
-  &lt;style&gt;
-    body {
-      background-color: #f0f0f0; /* Light gray background */
-      background-image: url('https://readbytes.github.io/60x60/1.png');
-      background-repeat: repeat;
-      margin: 0;
-      font-family: sans-serif;
-    }
-
-    .section {
-      background-color: rgba(255, 255, 255, 0.8); /* Semi-transparent white */
-      padding: 20px;
-      margin: 40px auto;
-      width: 80%;
-      max-width: 600px;
-      border-radius: 8px;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-    }
-  &lt;/style&gt;
-&lt;/head&gt;
-&lt;body&gt;
-  &lt;div class="section"&gt;
-    &lt;h1&gt;Hello, World!&lt;/h1&gt;
-    &lt;p&gt;This is a section with a semi-transparent background over a repeated tiled image.&lt;/p&gt;
-    &lt;p&gt;Resize the window or edit the background image URL to experiment!&lt;/p&gt;
-  &lt;/div&gt;
-&lt;/body&gt;
-&lt;/html&gt;</textarea> <br> <button onclick="renderIframe(this,'UhwDk','7UjVN')">Run</button>
-  <div id="7UjVN_FloatingLog" class="floatingLog" aria-live="polite" role="alert"></div> <iframe id="7UjVN" class="result_iframe" style="display: none;"></iframe>
-  <script>
-			{
-				let editor = CodeMirror.fromTextArea(document
-						.getElementById("UhwDk"), {
+ <script>
+{
+let editor = CodeMirror.fromTextArea(document.getElementById("vesH6"), {
 					mode : "htmlmixed",
 					lineNumbers : false,
+                    lineWrapping: true,
 					tabSize : 2
-				});
-			    const mode = localStorage.getItem("mode") || "light";  
-			    const newTheme = mode === "dark" ? "material" : "default";
-			    editor.setOption("theme", newTheme);
-			    
-				codeMirrorMap.set("UhwDk", editor);
+});
+const darkmode = localStorage.getItem("mode") || "light";  
+const newTheme = darkmode === "dark" ? "dracula" : "default";
+editor.setSize("50%", "100%");
+editor.setOption("theme", newTheme);
+htmlCodeMirrorMap.set("vesH6", editor);
+}
 
-				let editor1 = CodeMirror.fromTextArea(document.getElementById("UhwDk_Textarea"), {
-					mode : "htmlmixed",
-					lineNumbers : false,
-					tabSize : 2
-				});
-			    editor1.setOption("theme", newTheme);				
-				
-				codeMirrorMap.set("UhwDk_Textarea", editor1);
-			}
-		    function openDialog(id) {
-		        closeAll();
-		        document.getElementById(id).style.display = 'flex';
-		        setTimeout(() => {
-		        	 codeMirrorMap.get("UhwDk_Textarea").refresh();
-		        }, 100); // 100ms 
-		      }
-
-		      function closeAll() {
-		        document.querySelectorAll('.dialog-backdrop').forEach(el => {
-		          el.style.display = 'none';
-		        });
-		      }			
-		</script>
- </div>
-</div><h4 id="example-3-text-alignment-and-decoration">Example 3: Text Alignment and Decoration</h4><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</script>
+</div><h4 id="example-3-text-alignment-and-decoration">Example 3: Text Alignment and Decoration</h4><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-css">h2 {
   text-align: right;
   text-decoration: underline;
   font-style: italic;
 }</code></pre>
-</div><div class="snippet-container" id="0zZC4">
- <div id="2Jt2H_Dialog" class="dialog-backdrop">
+</div><div class="snippet-container">
+ <div class="button-group-run-edit"><button class="button-run-edit" onclick="runHtmlCode(this,'3jyeB','U3IwA', false)">Run</button> <button class="button-run-edit" onclick="openEditHtmlCodeDialog('U3IwA_Dialog','3jyeB')">Edit</button>
+ </div> <iframe id="U3IwA" class="result_iframe" style="display: none;"></iframe>
+ <div id="U3IwA_Dialog" class="dialog-backdrop">
   <div class="dialog">
-   <h2>Dialog 1</h2>
-   <div class="controls"><button onclick="renderIframe(this,'hooW4_Textarea','2Jt2H_IFrame')">Run</button> <button onclick="closeAll()">Close</button>
+   <div class="controls"><button onclick="runHtmlCode(this,'3jyeB','U3IwA_IFrame', true)">Run</button> <button onclick="closeAllHtmlCodeDialog()">Close</button>
    </div>
-   <div class="dialog-content"><textarea id="hooW4_Textarea" class="textarea_dialog" placeholder="Type HTML here...">&lt;!DOCTYPE html&gt;
+   <div class="dialog-content">
+    <div class="editor-container">
+     <textarea id="3jyeB" class="textarea_dialog" placeholder="Type HTML here...">&lt;!DOCTYPE html&gt;
 &lt;html lang="en"&gt;
 &lt;head&gt;
   &lt;meta charset="UTF-8"&gt;
@@ -1348,71 +840,30 @@ p {
   &lt;h2&gt;Right-Aligned and Underlined Heading&lt;/h2&gt;
   &lt;p&gt;This paragraph is here to provide context and contrast with the styled heading above.&lt;/p&gt;
 &lt;/body&gt;
-&lt;/html&gt;</textarea> <iframe id="2Jt2H_IFrame" class="iframe_dialog"></iframe>
+&lt;/html&gt;</textarea>
+    </div>
+    <div class="preview-container">
+     <iframe id="U3IwA_IFrame" class="result_iframe_dialog" style="border: none;"></iframe>
+    </div>
    </div>
   </div>
  </div>
- <div class="snippet-header" onclick="toggleSnippetAndRefresh('0zZC4','hooW4')">
-  Click to Try it <!--<span onclick="toggleSnippetAndRefresh('0zZC4','hooW4')">Click
-			to Try it</span> --> <!-- <span onclick="openDialog('2Jt2H_Dialog')">Dialog</span> -->
- </div>
- <div class="snippet-body"><textarea id="hooW4">&lt;!DOCTYPE html&gt;
-&lt;html lang="en"&gt;
-&lt;head&gt;
-  &lt;meta charset="UTF-8"&gt;
-  &lt;title&gt;Styled h2 Example&lt;/title&gt;
-  &lt;style&gt;
-    h2 {
-      text-align: right;
-      text-decoration: underline;
-      font-style: italic;
-    }
-  &lt;/style&gt;
-&lt;/head&gt;
-&lt;body&gt;
-  &lt;h2&gt;Right-Aligned and Underlined Heading&lt;/h2&gt;
-  &lt;p&gt;This paragraph is here to provide context and contrast with the styled heading above.&lt;/p&gt;
-&lt;/body&gt;
-&lt;/html&gt;</textarea> <br> <button onclick="renderIframe(this,'hooW4','2Jt2H')">Run</button>
-  <div id="2Jt2H_FloatingLog" class="floatingLog" aria-live="polite" role="alert"></div> <iframe id="2Jt2H" class="result_iframe" style="display: none;"></iframe>
-  <script>
-			{
-				let editor = CodeMirror.fromTextArea(document
-						.getElementById("hooW4"), {
+ <script>
+{
+let editor = CodeMirror.fromTextArea(document.getElementById("3jyeB"), {
 					mode : "htmlmixed",
 					lineNumbers : false,
+                    lineWrapping: true,
 					tabSize : 2
-				});
-			    const mode = localStorage.getItem("mode") || "light";  
-			    const newTheme = mode === "dark" ? "material" : "default";
-			    editor.setOption("theme", newTheme);
-			    
-				codeMirrorMap.set("hooW4", editor);
+});
+const darkmode = localStorage.getItem("mode") || "light";  
+const newTheme = darkmode === "dark" ? "dracula" : "default";
+editor.setSize("50%", "100%");
+editor.setOption("theme", newTheme);
+htmlCodeMirrorMap.set("3jyeB", editor);
+}
 
-				let editor1 = CodeMirror.fromTextArea(document.getElementById("hooW4_Textarea"), {
-					mode : "htmlmixed",
-					lineNumbers : false,
-					tabSize : 2
-				});
-			    editor1.setOption("theme", newTheme);				
-				
-				codeMirrorMap.set("hooW4_Textarea", editor1);
-			}
-		    function openDialog(id) {
-		        closeAll();
-		        document.getElementById(id).style.display = 'flex';
-		        setTimeout(() => {
-		        	 codeMirrorMap.get("hooW4_Textarea").refresh();
-		        }, 100); // 100ms 
-		      }
-
-		      function closeAll() {
-		        document.querySelectorAll('.dialog-backdrop').forEach(el => {
-		          el.style.display = 'none';
-		        });
-		      }			
-		</script>
- </div>
+</script>
 </div><h3 id="summary">Summary</h3><ul>
  <li>Use <code>color</code> to set text color and <code>background-color</code> or <code>background-image</code> to style backgrounds.</li>
  <li>CSS supports named colors, hex codes, RGB, and HSL color values.</li>
@@ -1458,7 +909,8 @@ p {
    <td><code>line-height: 1.5;</code></td>
   </tr>
  </tbody>
-</table><h3 id="font-family-choosing-fonts-and-fallbacks"><code>font-family</code>: Choosing Fonts and Fallbacks</h3><p>The <code>font-family</code> property specifies which font to use. Because users might not have every font installed, it's best to list multiple fonts as a <strong>font stack</strong>. The browser uses the first available font.</p><h4 id="example">Example:</h4><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</table><h3 id="font-family-choosing-fonts-and-fallbacks"><code>font-family</code>: Choosing Fonts and Fallbacks</h3><p>The <code>font-family</code> property specifies which font to use. Because users might not have every font installed, it's best to list multiple fonts as a <strong>font stack</strong>. The browser uses the first available font.</p><h4 id="example">Example:</h4><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-css">body {
   font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
 }</code></pre>
@@ -1470,7 +922,8 @@ p {
  <li>Pixels (<code>px</code>) — fixed size</li>
  <li>Ems (<code>em</code>) or rems (<code>rem</code>) — relative sizes, better for responsiveness</li>
  <li>Percentages (<code>%</code>) — relative to parent element</li>
-</ul><p>Example:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</ul><p>Example:</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-css">p {
   font-size: 16px;      /* Fixed size */
 }
@@ -1481,15 +934,18 @@ h1 {
 </div><p>Using relative units like <code>rem</code> helps text scale well on different devices.</p><h3 id="font-weight-thickness-of-text"><code>font-weight</code>: Thickness of Text</h3><p>Font weight controls how bold the text appears:</p><ul>
  <li>Common values: <code>normal</code> (400), <code>bold</code> (700)</li>
  <li>Numeric values range from 100 (thin) to 900 (extra bold)</li>
-</ul><p>Example:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</ul><p>Example:</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-css">strong {
   font-weight: 700;
 }</code></pre>
-</div><h3 id="font-style-normal-or-italic"><code>font-style</code>: Normal or Italic</h3><p>This property controls whether text is normal or italicized.</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</div><h3 id="font-style-normal-or-italic"><code>font-style</code>: Normal or Italic</h3><p>This property controls whether text is normal or italicized.</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-css">em {
   font-style: italic;
 }</code></pre>
-</div><h3 id="line-height-controlling-vertical-spacing"><code>line-height</code>: Controlling Vertical Spacing</h3><p><code>line-height</code> adjusts the space between lines of text, improving readability.</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</div><h3 id="line-height-controlling-vertical-spacing"><code>line-height</code>: Controlling Vertical Spacing</h3><p><code>line-height</code> adjusts the space between lines of text, improving readability.</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-css">p {
   line-height: 1.5; /* 1.5 times the font size */
 }</code></pre>
@@ -1502,15 +958,18 @@ h1 {
  <li>Choose a font and copy the <code>&lt;link&gt;</code> tag.</li>
  <li>Paste the <code>&lt;link&gt;</code> into your HTML <code>&lt;head&gt;</code>.</li>
  <li>Use the font family name in your CSS.</li>
-</ol><p><strong>Example:</strong></p><p>In your HTML:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</ol><p><strong>Example:</strong></p><p>In your HTML:</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-html">&lt;head&gt;
   &lt;link href="https://fonts.googleapis.com/css2?family=Roboto&amp;display=swap" rel="stylesheet"&gt;
 &lt;/head&gt;</code></pre>
-</div><p>In your CSS:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</div><p>In your CSS:</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-css">body {
   font-family: 'Roboto', sans-serif;
 }</code></pre>
-</div><h3 id="practical-example-readable-text-styling">Practical Example: Readable Text Styling</h3><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</div><h3 id="practical-example-readable-text-styling">Practical Example: Readable Text Styling</h3><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-css">body {
   font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
   font-size: 16px;
@@ -1528,13 +987,16 @@ p {
   font-weight: 400;
   margin-bottom: 1em;
 }</code></pre>
-</div><p>This setup ensures text is clear, legible, and nicely spaced on different screen sizes.</p><div class="snippet-container" id="2l6O5">
- <div id="lSCg2_Dialog" class="dialog-backdrop">
+</div><p>This setup ensures text is clear, legible, and nicely spaced on different screen sizes.</p><div class="snippet-container">
+ <div class="button-group-run-edit"><button class="button-run-edit" onclick="runHtmlCode(this,'xau50','uJUNu', false)">Run</button> <button class="button-run-edit" onclick="openEditHtmlCodeDialog('uJUNu_Dialog','xau50')">Edit</button>
+ </div> <iframe id="uJUNu" class="result_iframe" style="display: none;"></iframe>
+ <div id="uJUNu_Dialog" class="dialog-backdrop">
   <div class="dialog">
-   <h2>Dialog 1</h2>
-   <div class="controls"><button onclick="renderIframe(this,'vXj68_Textarea','lSCg2_IFrame')">Run</button> <button onclick="closeAll()">Close</button>
+   <div class="controls"><button onclick="runHtmlCode(this,'xau50','uJUNu_IFrame', true)">Run</button> <button onclick="closeAllHtmlCodeDialog()">Close</button>
    </div>
-   <div class="dialog-content"><textarea id="vXj68_Textarea" class="textarea_dialog" placeholder="Type HTML here...">&lt;!DOCTYPE html&gt;
+   <div class="dialog-content">
+    <div class="editor-container">
+     <textarea id="xau50" class="textarea_dialog" placeholder="Type HTML here...">&lt;!DOCTYPE html&gt;
 &lt;html lang="en"&gt;
 &lt;head&gt;
   &lt;meta charset="UTF-8"&gt;
@@ -1570,90 +1032,30 @@ p {
     With an appropriate font size, line height, and color contrast, body text becomes much easier to read on screens.
   &lt;/p&gt;
 &lt;/body&gt;
-&lt;/html&gt;</textarea> <iframe id="lSCg2_IFrame" class="iframe_dialog"></iframe>
+&lt;/html&gt;</textarea>
+    </div>
+    <div class="preview-container">
+     <iframe id="uJUNu_IFrame" class="result_iframe_dialog" style="border: none;"></iframe>
+    </div>
    </div>
   </div>
  </div>
- <div class="snippet-header" onclick="toggleSnippetAndRefresh('2l6O5','vXj68')">
-  Click to Try it <!--<span onclick="toggleSnippetAndRefresh('2l6O5','vXj68')">Click
-			to Try it</span> --> <!-- <span onclick="openDialog('lSCg2_Dialog')">Dialog</span> -->
- </div>
- <div class="snippet-body"><textarea id="vXj68">&lt;!DOCTYPE html&gt;
-&lt;html lang="en"&gt;
-&lt;head&gt;
-  &lt;meta charset="UTF-8"&gt;
-  &lt;title&gt;Readable Text Styling&lt;/title&gt;
-  &lt;style&gt;
-    body {
-      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-      font-size: 16px;
-      line-height: 1.6;
-      color: #333333;
-      padding: 40px;
-      background-color: #fafafa;
-    }
-
-    h1 {
-      font-size: 2.5rem;
-      font-weight: 700;
-      margin-bottom: 0.5em;
-    }
-
-    p {
-      font-weight: 400;
-      margin-bottom: 1em;
-    }
-  &lt;/style&gt;
-&lt;/head&gt;
-&lt;body&gt;
-  &lt;h1&gt;Readable Text Example&lt;/h1&gt;
-  &lt;p&gt;
-    This example demonstrates clean, readable typography using a modern sans-serif font stack.
-  &lt;/p&gt;
-  &lt;p&gt;
-    With an appropriate font size, line height, and color contrast, body text becomes much easier to read on screens.
-  &lt;/p&gt;
-&lt;/body&gt;
-&lt;/html&gt;</textarea> <br> <button onclick="renderIframe(this,'vXj68','lSCg2')">Run</button>
-  <div id="lSCg2_FloatingLog" class="floatingLog" aria-live="polite" role="alert"></div> <iframe id="lSCg2" class="result_iframe" style="display: none;"></iframe>
-  <script>
-			{
-				let editor = CodeMirror.fromTextArea(document
-						.getElementById("vXj68"), {
+ <script>
+{
+let editor = CodeMirror.fromTextArea(document.getElementById("xau50"), {
 					mode : "htmlmixed",
 					lineNumbers : false,
+                    lineWrapping: true,
 					tabSize : 2
-				});
-			    const mode = localStorage.getItem("mode") || "light";  
-			    const newTheme = mode === "dark" ? "material" : "default";
-			    editor.setOption("theme", newTheme);
-			    
-				codeMirrorMap.set("vXj68", editor);
+});
+const darkmode = localStorage.getItem("mode") || "light";  
+const newTheme = darkmode === "dark" ? "dracula" : "default";
+editor.setSize("50%", "100%");
+editor.setOption("theme", newTheme);
+htmlCodeMirrorMap.set("xau50", editor);
+}
 
-				let editor1 = CodeMirror.fromTextArea(document.getElementById("vXj68_Textarea"), {
-					mode : "htmlmixed",
-					lineNumbers : false,
-					tabSize : 2
-				});
-			    editor1.setOption("theme", newTheme);				
-				
-				codeMirrorMap.set("vXj68_Textarea", editor1);
-			}
-		    function openDialog(id) {
-		        closeAll();
-		        document.getElementById(id).style.display = 'flex';
-		        setTimeout(() => {
-		        	 codeMirrorMap.get("vXj68_Textarea").refresh();
-		        }, 100); // 100ms 
-		      }
-
-		      function closeAll() {
-		        document.querySelectorAll('.dialog-backdrop').forEach(el => {
-		          el.style.display = 'none';
-		        });
-		      }			
-		</script>
- </div>
+</script>
 </div><h3 id="summary">Summary</h3><ul>
  <li>Use <code>font-family</code> with a <strong>font stack</strong> and fallback fonts.</li>
  <li>Prefer relative units like <code>rem</code> for <code>font-size</code> to support responsive design.</li>
@@ -1670,10 +1072,14 @@ p {
  <li><strong>Padding:</strong> Space <em>inside</em> the element, between the content and the border.</li>
  <li><strong>Border:</strong> The line surrounding the padding and content.</li>
  <li><strong>Margin:</strong> Space <em>outside</em> the border, separating this element from others.</li>
-</ol><h3 id="diagram-of-the-box-model">Diagram of the Box Model</h3><div class="snippet-container" id="<!DOCTYPE html>
-<html lang=&quot;en&quot;>
+</ol><h3 id="diagram-of-the-box-model">Diagram of the Box Model</h3><div class="snippet-container"><iframe id="NTn7o" class="result_iframe" style="border:none;"></iframe>
+ <script>
+const iframe = document.getElementById("NTn7o");
+const doc = iframe.contentDocument || iframe.contentWindow.document;
+doc.open();doc.write(`<!DOCTYPE html>
+<html lang="en">
 <head>
-  <meta charset=&quot;UTF-8&quot;>
+  <meta charset="UTF-8">
   <title>CSS Box Model Visual</title>
   <style>
     body {
@@ -1718,120 +1124,36 @@ p {
 <body>
   <h1>CSS Box Model Diagram</h1>
 
-  <svg width=&quot;400&quot; height=&quot;400&quot;>
+  <svg width="400" height="400">
     <!-- Margin -->
-    <rect x=&quot;50&quot; y=&quot;50&quot; width=&quot;300&quot; height=&quot;300&quot; class=&quot;margin&quot; />
-    <text x=&quot;200&quot; y=&quot;45&quot; class=&quot;label&quot;>Margin</text>
+    <rect x="50" y="50" width="300" height="300" class="margin" />
+    <text x="200" y="45" class="label">Margin</text>
 
     <!-- Border -->
-    <rect x=&quot;80&quot; y=&quot;80&quot; width=&quot;240&quot; height=&quot;240&quot; class=&quot;border&quot; />
-    <text x=&quot;200&quot; y=&quot;75&quot; class=&quot;label&quot;>Border</text>
+    <rect x="80" y="80" width="240" height="240" class="border" />
+    <text x="200" y="75" class="label">Border</text>
 
     <!-- Padding -->
-    <rect x=&quot;110&quot; y=&quot;110&quot; width=&quot;180&quot; height=&quot;180&quot; class=&quot;padding&quot; />
-    <text x=&quot;200&quot; y=&quot;105&quot; class=&quot;label&quot;>Padding</text>
+    <rect x="110" y="110" width="180" height="180" class="padding" />
+    <text x="200" y="105" class="label">Padding</text>
 
     <!-- Content -->
-    <rect x=&quot;140&quot; y=&quot;140&quot; width=&quot;120&quot; height=&quot;120&quot; class=&quot;content&quot; />
-    <text x=&quot;200&quot; y=&quot;135&quot; class=&quot;label&quot;>Content</text>
+    <rect x="140" y="140" width="120" height="120" class="content" />
+    <text x="200" y="135" class="label">Content</text>
 
     <!-- Content text -->
-    <text x=&quot;200&quot; y=&quot;200&quot; class=&quot;label&quot; style=&quot;fill:#000;&quot; text-anchor=&quot;middle&quot;>Hello!</text>
+    <text x="200" y="200" class="label" style="fill:#000;" text-anchor="middle">Hello!</text>
   </svg>
 
   <p>This diagram shows how the CSS box model wraps elements: <strong>Content → Padding → Border → Margin</strong>.</p>
 </body>
-</html>ID"><textarea id="ZR8qJ" style="display: none;">&lt;!DOCTYPE html&gt;
-&lt;html lang="en"&gt;
-&lt;head&gt;
-  &lt;meta charset="UTF-8"&gt;
-  &lt;title&gt;CSS Box Model Visual&lt;/title&gt;
-  &lt;style&gt;
-    body {
-      font-family: sans-serif;
-      background-color: #f8f8f8;
-      padding: 20px;
-      text-align: center;
-    }
-
-    h1 {
-      margin-bottom: 20px;
-    }
-
-    .label {
-      font-size: 14px;
-      fill: #333;
-      font-weight: bold;
-    }
-
-    .content {
-      fill: #add8e6; /* Light blue */
-    }
-
-    .padding {
-      fill: #90ee90; /* Light green */
-    }
-
-    .border {
-      fill: #ffa07a; /* Light salmon */
-    }
-
-    .margin {
-      fill: #f0e68c; /* Khaki */
-    }
-
-    svg {
-      border: 1px solid #ccc;
-      background: white;
-    }
-  &lt;/style&gt;
-&lt;/head&gt;
-&lt;body&gt;
-  &lt;h1&gt;CSS Box Model Diagram&lt;/h1&gt;
-
-  &lt;svg width="400" height="400"&gt;
-    &lt;!-- Margin --&gt;
-    &lt;rect x="50" y="50" width="300" height="300" class="margin" /&gt;
-    &lt;text x="200" y="45" class="label"&gt;Margin&lt;/text&gt;
-
-    &lt;!-- Border --&gt;
-    &lt;rect x="80" y="80" width="240" height="240" class="border" /&gt;
-    &lt;text x="200" y="75" class="label"&gt;Border&lt;/text&gt;
-
-    &lt;!-- Padding --&gt;
-    &lt;rect x="110" y="110" width="180" height="180" class="padding" /&gt;
-    &lt;text x="200" y="105" class="label"&gt;Padding&lt;/text&gt;
-
-    &lt;!-- Content --&gt;
-    &lt;rect x="140" y="140" width="120" height="120" class="content" /&gt;
-    &lt;text x="200" y="135" class="label"&gt;Content&lt;/text&gt;
-
-    &lt;!-- Content text --&gt;
-    &lt;text x="200" y="200" class="label" style="fill:#000;" text-anchor="middle"&gt;Hello!&lt;/text&gt;
-  &lt;/svg&gt;
-
-  &lt;p&gt;This diagram shows how the CSS box model wraps elements: &lt;strong&gt;Content → Padding → Border → Margin&lt;/strong&gt;.&lt;/p&gt;
-&lt;/body&gt;
-&lt;/html&gt;</textarea> <iframe id="vndbo" class="result_iframe" style="border:none;"></iframe>
- <script>{
-const textarea = document.getElementById("ZR8qJ");
-const iframe = document.getElementById("vndbo");
-const html = textarea.value;
-const iframeHTML = `${html}`;
-const doc = iframe.contentDocument || iframe.contentWindow.document;
-doc.open();
-doc.write(iframeHTML);
-doc.close();
+</html>`);doc.close();
 setTimeout(() => {
    iframe.style.height = '0px';
    let contentHeight = Math.max(doc.body.scrollHeight,doc.documentElement.scrollHeight);
-  // if(contentHeight < 10 || contentHeight > 800){
-//	   contentHeight = 800;
- //  } 
    iframe.style.height = contentHeight + 'px';
 }, 50);
-}
-		</script>
+</script>
 </div><h3 id="css-properties-for-box-model">CSS Properties for Box Model</h3><table>
  <thead>
   <tr>
@@ -1857,7 +1179,8 @@ setTimeout(() => {
    <td>Space outside the border, between elements</td>
   </tr>
  </tbody>
-</table><h3 id="example-styling-a-box">Example: Styling a Box</h3><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</table><h3 id="example-styling-a-box">Example: Styling a Box</h3><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-css">.box {
   width: 200px;               /* content width */
   padding: 20px;              /* inside space */
@@ -1865,15 +1188,19 @@ setTimeout(() => {
   margin: 10px;               /* outside space */
   background-color: lightblue;
 }</code></pre>
-</div><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</div><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-html">&lt;div class="box"&gt;This is a box.&lt;/div&gt;</code></pre>
-</div><div class="snippet-container" id="B3TZ5">
- <div id="s7efE_Dialog" class="dialog-backdrop">
+</div><div class="snippet-container">
+ <div class="button-group-run-edit"><button class="button-run-edit" onclick="runHtmlCode(this,'dXFMA','SkQsy', false)">Run</button> <button class="button-run-edit" onclick="openEditHtmlCodeDialog('SkQsy_Dialog','dXFMA')">Edit</button>
+ </div> <iframe id="SkQsy" class="result_iframe" style="display: none;"></iframe>
+ <div id="SkQsy_Dialog" class="dialog-backdrop">
   <div class="dialog">
-   <h2>Dialog 1</h2>
-   <div class="controls"><button onclick="renderIframe(this,'8YbzA_Textarea','s7efE_IFrame')">Run</button> <button onclick="closeAll()">Close</button>
+   <div class="controls"><button onclick="runHtmlCode(this,'dXFMA','SkQsy_IFrame', true)">Run</button> <button onclick="closeAllHtmlCodeDialog()">Close</button>
    </div>
-   <div class="dialog-content"><textarea id="8YbzA_Textarea" class="textarea_dialog" placeholder="Type HTML here...">&lt;!DOCTYPE html&gt;
+   <div class="dialog-content">
+    <div class="editor-container">
+     <textarea id="dXFMA" class="textarea_dialog" placeholder="Type HTML here...">&lt;!DOCTYPE html&gt;
 &lt;html lang="en"&gt;
 &lt;head&gt;
   &lt;meta charset="UTF-8"&gt;
@@ -1898,87 +1225,40 @@ setTimeout(() => {
   &lt;h1&gt;Example: Styling a Box&lt;/h1&gt;
   &lt;div class="box"&gt;This is a box.&lt;/div&gt;
 &lt;/body&gt;
-&lt;/html&gt;</textarea> <iframe id="s7efE_IFrame" class="iframe_dialog"></iframe>
+&lt;/html&gt;</textarea>
+    </div>
+    <div class="preview-container">
+     <iframe id="SkQsy_IFrame" class="result_iframe_dialog" style="border: none;"></iframe>
+    </div>
    </div>
   </div>
  </div>
- <div class="snippet-header" onclick="toggleSnippetAndRefresh('B3TZ5','8YbzA')">
-  Click to Try it <!--<span onclick="toggleSnippetAndRefresh('B3TZ5','8YbzA')">Click
-			to Try it</span> --> <!-- <span onclick="openDialog('s7efE_Dialog')">Dialog</span> -->
- </div>
- <div class="snippet-body"><textarea id="8YbzA">&lt;!DOCTYPE html&gt;
-&lt;html lang="en"&gt;
-&lt;head&gt;
-  &lt;meta charset="UTF-8"&gt;
-  &lt;title&gt;Example: Styling a Box&lt;/title&gt;
-  &lt;style&gt;
-    body {
-      font-family: sans-serif;
-      background-color: #f9f9f9;
-      padding: 40px;
-    }
-
-    .box {
-      width: 200px;               /* content width */
-      padding: 20px;              /* inside space */
-      border: 5px solid #333;     /* border thickness and color */
-      margin: 10px;               /* outside space */
-      background-color: lightblue;
-    }
-  &lt;/style&gt;
-&lt;/head&gt;
-&lt;body&gt;
-  &lt;h1&gt;Example: Styling a Box&lt;/h1&gt;
-  &lt;div class="box"&gt;This is a box.&lt;/div&gt;
-&lt;/body&gt;
-&lt;/html&gt;</textarea> <br> <button onclick="renderIframe(this,'8YbzA','s7efE')">Run</button>
-  <div id="s7efE_FloatingLog" class="floatingLog" aria-live="polite" role="alert"></div> <iframe id="s7efE" class="result_iframe" style="display: none;"></iframe>
-  <script>
-			{
-				let editor = CodeMirror.fromTextArea(document
-						.getElementById("8YbzA"), {
+ <script>
+{
+let editor = CodeMirror.fromTextArea(document.getElementById("dXFMA"), {
 					mode : "htmlmixed",
 					lineNumbers : false,
+                    lineWrapping: true,
 					tabSize : 2
-				});
-			    const mode = localStorage.getItem("mode") || "light";  
-			    const newTheme = mode === "dark" ? "material" : "default";
-			    editor.setOption("theme", newTheme);
-			    
-				codeMirrorMap.set("8YbzA", editor);
+});
+const darkmode = localStorage.getItem("mode") || "light";  
+const newTheme = darkmode === "dark" ? "dracula" : "default";
+editor.setSize("50%", "100%");
+editor.setOption("theme", newTheme);
+htmlCodeMirrorMap.set("dXFMA", editor);
+}
 
-				let editor1 = CodeMirror.fromTextArea(document.getElementById("8YbzA_Textarea"), {
-					mode : "htmlmixed",
-					lineNumbers : false,
-					tabSize : 2
-				});
-			    editor1.setOption("theme", newTheme);				
-				
-				codeMirrorMap.set("8YbzA_Textarea", editor1);
-			}
-		    function openDialog(id) {
-		        closeAll();
-		        document.getElementById(id).style.display = 'flex';
-		        setTimeout(() => {
-		        	 codeMirrorMap.get("8YbzA_Textarea").refresh();
-		        }, 100); // 100ms 
-		      }
-
-		      function closeAll() {
-		        document.querySelectorAll('.dialog-backdrop').forEach(el => {
-		          el.style.display = 'none';
-		        });
-		      }			
-		</script>
- </div>
+</script>
 </div><h3 id="how-box-sizing-works">How Box Sizing Works</h3><p>By default, the <code>width</code> and <code>height</code> CSS properties <strong>only apply to the content area</strong>. The actual size of the element on the page includes padding, borders, and margins, which add extra space beyond the content size.</p><p>For example, the total width of the <code>.box</code> above is:</p><ul>
  <li>Content width: 200px</li>
  <li>Padding: 20px on left + 20px on right = 40px</li>
  <li>Border: 5px left + 5px right = 10px</li>
  <li><strong>Total width = 200 + 40 + 10 = 250px</strong></li>
-</ul><h3 id="the-box-sizing-property">The <code>box-sizing</code> Property</h3><p>To make sizing easier to manage, use:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</ul><h3 id="the-box-sizing-property">The <code>box-sizing</code> Property</h3><p>To make sizing easier to manage, use:</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-css">box-sizing: border-box;</code></pre>
-</div><p>This changes the calculation so that <code>width</code> and <code>height</code> <strong>include padding and border</strong>, making the element’s total size equal to what you set.</p><h3 id="example-with-box-sizing">Example with <code>box-sizing</code></h3><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</div><p>This changes the calculation so that <code>width</code> and <code>height</code> <strong>include padding and border</strong>, making the element’s total size equal to what you set.</p><h3 id="example-with-box-sizing">Example with <code>box-sizing</code></h3><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-css">.box {
   width: 200px;
   padding: 20px;
@@ -1986,13 +1266,16 @@ setTimeout(() => {
   box-sizing: border-box;
   background-color: lightgreen;
 }</code></pre>
-</div><p>Now, the <code>.box</code> will be exactly 200px wide including padding and border.</p><div class="snippet-container" id="Uwej6">
- <div id="8Nlmv_Dialog" class="dialog-backdrop">
+</div><p>Now, the <code>.box</code> will be exactly 200px wide including padding and border.</p><div class="snippet-container">
+ <div class="button-group-run-edit"><button class="button-run-edit" onclick="runHtmlCode(this,'Yl0u3','n58wD', false)">Run</button> <button class="button-run-edit" onclick="openEditHtmlCodeDialog('n58wD_Dialog','Yl0u3')">Edit</button>
+ </div> <iframe id="n58wD" class="result_iframe" style="display: none;"></iframe>
+ <div id="n58wD_Dialog" class="dialog-backdrop">
   <div class="dialog">
-   <h2>Dialog 1</h2>
-   <div class="controls"><button onclick="renderIframe(this,'xUdRo_Textarea','8Nlmv_IFrame')">Run</button> <button onclick="closeAll()">Close</button>
+   <div class="controls"><button onclick="runHtmlCode(this,'Yl0u3','n58wD_IFrame', true)">Run</button> <button onclick="closeAllHtmlCodeDialog()">Close</button>
    </div>
-   <div class="dialog-content"><textarea id="xUdRo_Textarea" class="textarea_dialog" placeholder="Type HTML here...">&lt;!DOCTYPE html&gt;
+   <div class="dialog-content">
+    <div class="editor-container">
+     <textarea id="Yl0u3" class="textarea_dialog" placeholder="Type HTML here...">&lt;!DOCTYPE html&gt;
 &lt;html lang="en"&gt;
 &lt;head&gt;
   &lt;meta charset="UTF-8"&gt;
@@ -2028,91 +1311,32 @@ setTimeout(() => {
     This keeps the total box width at exactly 200px.
   &lt;/p&gt;
 &lt;/body&gt;
-&lt;/html&gt;</textarea> <iframe id="8Nlmv_IFrame" class="iframe_dialog"></iframe>
+&lt;/html&gt;</textarea>
+    </div>
+    <div class="preview-container">
+     <iframe id="n58wD_IFrame" class="result_iframe_dialog" style="border: none;"></iframe>
+    </div>
    </div>
   </div>
  </div>
- <div class="snippet-header" onclick="toggleSnippetAndRefresh('Uwej6','xUdRo')">
-  Click to Try it <!--<span onclick="toggleSnippetAndRefresh('Uwej6','xUdRo')">Click
-			to Try it</span> --> <!-- <span onclick="openDialog('8Nlmv_Dialog')">Dialog</span> -->
- </div>
- <div class="snippet-body"><textarea id="xUdRo">&lt;!DOCTYPE html&gt;
-&lt;html lang="en"&gt;
-&lt;head&gt;
-  &lt;meta charset="UTF-8"&gt;
-  &lt;title&gt;Box Sizing Example&lt;/title&gt;
-  &lt;style&gt;
-    body {
-      font-family: sans-serif;
-      background-color: #f0f0f0;
-      padding: 40px;
-    }
-
-    .box {
-      width: 200px;
-      padding: 20px;
-      border: 5px solid #333;
-      box-sizing: border-box;
-      background-color: lightgreen;
-    }
-
-    .note {
-      margin-top: 20px;
-      max-width: 400px;
-    }
-  &lt;/style&gt;
-&lt;/head&gt;
-&lt;body&gt;
-  &lt;h1&gt;Example with &lt;code&gt;box-sizing: border-box&lt;/code&gt;&lt;/h1&gt;
-
-  &lt;div class="box"&gt;This is a box with border-box sizing.&lt;/div&gt;
-
-  &lt;p class="note"&gt;
-    With &lt;code&gt;box-sizing: border-box&lt;/code&gt;, the declared width (200px) includes the content, padding, and border.
-    This keeps the total box width at exactly 200px.
-  &lt;/p&gt;
-&lt;/body&gt;
-&lt;/html&gt;</textarea> <br> <button onclick="renderIframe(this,'xUdRo','8Nlmv')">Run</button>
-  <div id="8Nlmv_FloatingLog" class="floatingLog" aria-live="polite" role="alert"></div> <iframe id="8Nlmv" class="result_iframe" style="display: none;"></iframe>
-  <script>
-			{
-				let editor = CodeMirror.fromTextArea(document
-						.getElementById("xUdRo"), {
+ <script>
+{
+let editor = CodeMirror.fromTextArea(document.getElementById("Yl0u3"), {
 					mode : "htmlmixed",
 					lineNumbers : false,
+                    lineWrapping: true,
 					tabSize : 2
-				});
-			    const mode = localStorage.getItem("mode") || "light";  
-			    const newTheme = mode === "dark" ? "material" : "default";
-			    editor.setOption("theme", newTheme);
-			    
-				codeMirrorMap.set("xUdRo", editor);
+});
+const darkmode = localStorage.getItem("mode") || "light";  
+const newTheme = darkmode === "dark" ? "dracula" : "default";
+editor.setSize("50%", "100%");
+editor.setOption("theme", newTheme);
+htmlCodeMirrorMap.set("Yl0u3", editor);
+}
 
-				let editor1 = CodeMirror.fromTextArea(document.getElementById("xUdRo_Textarea"), {
-					mode : "htmlmixed",
-					lineNumbers : false,
-					tabSize : 2
-				});
-			    editor1.setOption("theme", newTheme);				
-				
-				codeMirrorMap.set("xUdRo_Textarea", editor1);
-			}
-		    function openDialog(id) {
-		        closeAll();
-		        document.getElementById(id).style.display = 'flex';
-		        setTimeout(() => {
-		        	 codeMirrorMap.get("xUdRo_Textarea").refresh();
-		        }, 100); // 100ms 
-		      }
-
-		      function closeAll() {
-		        document.querySelectorAll('.dialog-backdrop').forEach(el => {
-		          el.style.display = 'none';
-		        });
-		      }			
-		</script>
- </div>
-</div><h3 id="margin-collapsing">Margin Collapsing</h3><p>Margins between vertical block elements sometimes <strong>collapse</strong> — that is, overlapping margins combine instead of adding.</p><p>Example:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</script>
+</div><h3 id="margin-collapsing">Margin Collapsing</h3><p>Margins between vertical block elements sometimes <strong>collapse</strong> — that is, overlapping margins combine instead of adding.</p><p>Example:</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-html">&lt;p style="margin-bottom: 20px;"&gt;Paragraph 1&lt;/p&gt;
 &lt;p style="margin-top: 30px;"&gt;Paragraph 2&lt;/p&gt;</code></pre>
 </div><p>The space between these two paragraphs will be <strong>30px</strong> (the larger margin), not 50px.</p><h3 id="exercises-to-practice-box-model">Exercises to Practice Box Model</h3><ol>
@@ -2162,30 +1386,36 @@ setTimeout(() => {
 
 <a href='web-front.htm'><div class='book-cover' style='background-color: #f9f6f1;color: #111111;border: 1px solid #ccc;display: flex;justify-content: center;align-items: center;text-align: center;'>More Web Front Books</div></a>
 </div>
-</div>
-  </div>
-  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
-  
-  <script>
-    function copyCode(button) {
-      const code = button.nextElementSibling.innerText;
-      navigator.clipboard.writeText(code).then(() => {
-        button.textContent = 'Copied!';
-        setTimeout(() => { button.textContent = 'Copy'; }, 1500);
-      });
-    }
-  </script>  
-<div id="floatingLog" aria-live="polite" role="alert"></div>
-<footer class="page-footer">
-    <nav>
-      <a href="https://readbytes.github.io">Home</a> | 
-      Email:<script language="JavaScript" type="text/javascript">
+</div><script>
+function copyCode(button) {const code = button.nextElementSibling.innerText;navigator.clipboard.writeText(code).then(() => {button.textContent = 'Copied!';setTimeout(() => { button.textContent = 'Copy'; }, 1500);});}
+</script><div id="floatingLog" aria-live="polite" role="alert"></div></div>
+<style>
+.site-footer {margin-top: 60px;padding: 20px 0;border-top: 1px solid #eee;text-align: center;font-size: 14px;}
+.site-footer a {text-decoration: none;}
+.light-mode .site-footer {color: #777;border-color: #eee;}
+.dark-mode .site-footer {color: #888;border-color: #333;}
+.light-mode .site-footer a {color: #555;}
+.dark-mode .site-footer a {color: #aaa;}
+.site-footer a:hover {text-decoration: underline;}    
+</style>
+<footer class="site-footer">
+<nav><a href="https://readbytes.github.io">Home</a> |Email:<script type="text/javascript">
 var part1 = 'yinpeng';var part6 = '263';var part2 = Math.pow(2,6);var part3 = String.fromCharCode(part2);var part4 = 'hotmail dot com';var part5 = part1 + String.fromCharCode(part2) + part4;document.write(part1 + part6 + part3 + part4);
 </script>
-    </nav>
-  <p>© 2025 — All rights reserved.</p>    
-  </footer>
-
+| <a id="mode-toggle" href="#">Toggle Dark Mode</a>
+</nav><p>© 2025 — All rights reserved.</p></footer>
+<script>
+const toggleButton = document.getElementById('mode-toggle');
+const body = document.body;
+const savedMode = localStorage.getItem('mode') || 'light';
+body.classList.add(savedMode + '-mode');
+toggleButton.addEventListener('click', () => {
+      const isDark = body.classList.contains('dark-mode');
+      body.classList.toggle('dark-mode', !isDark);
+      body.classList.toggle('light-mode', isDark);
+      localStorage.setItem('mode', isDark ? 'light' : 'dark');
+});
+function copyCode(button) {const code = button.nextElementSibling.innerText;navigator.clipboard.writeText(code).then(() => {button.textContent = 'Copied!';setTimeout(() => { button.textContent = 'Copy'; }, 1500);});}
+</script>
 </body>
 </html>

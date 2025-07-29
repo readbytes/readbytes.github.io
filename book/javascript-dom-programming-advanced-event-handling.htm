@@ -1,21 +1,281 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
+<meta charset="UTF-8">
 <title>JavaScript DOM Programming Advanced Event Handling</title>
-<link rel='shortcut icon' href='https://java2s.com/style/favicon.ico'>
+<link rel='shortcut icon' href='https://readbytes.github.io/images/favicon.ico'>
 <link href="https://fonts.googleapis.com/css2?family=Merriweather&display=swap" rel="stylesheet" />
 <link href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
-
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.css" />
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/theme/material.css"> <!-- Dark theme -->
-<script src="https://cdn.jsdelivr.net/npm/typescript@5/lib/typescript.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/htmlmixed/htmlmixed.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/theme/dracula.min.css"><style>
+html {scroll-behavior: smooth;}  
+body {font-family: 'Merriweather', serif;;margin: 0;padding: 2rem 1rem;font-size: 15px;line-height: 1.5;transition: background-color 0.3s, color 0.3s;}
+.container {max-width: 750px;margin: 0 auto;padding: 1rem 2rem;}
+.light-mode {background-color: #f8f7f5;color: #333;} 
+.dark-mode {background-color: #121212;color: #e0e0e0;}
+a { text-decoration: none;transition: color 0.2s;}
+a:hover {text-decoration: underline;}
+.light-mode a {color: #555;}
+.dark-mode a {color: #aaa;}
+</style><style>
+.related-book-list {display: flex;flex-wrap: wrap;gap: 20px;}
+.related-books {margin-top: 40px;}
+.related-books h2 {font-size: 22px;margin-bottom: 20px;border-bottom: 2px solid #eee;padding-bottom: 8px;}
+.light-mode .related-books h2 {color: #333;border-color: #eee;}
+.dark-mode .related-books h2 {color: #ddd;border-color: #333;}
+</style><style>
+.book-cover {width: 130px;height: 180px;font-family: Arial, sans-serif;position: relative;overflow: hidden;box-shadow: 2px 2px 4px rgba(0,0,0,0.1);}
+.book-cover-bottom-stripe {position: absolute;bottom: 0;left: 0;height: 5px;width: 100%;}
+.book-cover-title {position: absolute;width: 100%;text-align: center;font-weight: bold;}
+.book-cover-icon {position: absolute;left: 50%;transform: translateX(-50%);display: flex;align-items: center;justify-content: center;}
+.book-cover-author {position: absolute;bottom: 10px;width: 100%;text-align: center;font-size: 8px;color: #333;}
+</style><style>
+.book-title-toc {font-size: 32px;font-weight: bold; }
+.book-subtitle-toc {font-size: 18px;margin-top: 8px;font-style: italic;}
+.book-header {text-align: center;margin-bottom: 40px;}
+
+.toc-container {border-radius: 10px;padding: 30px;margin-bottom: 40px;box-shadow: 0 8px 20px rgba(0,0,0,0.05);}
+h1 {font-size: 24px;text-align: center;margin-bottom: 30px;letter-spacing: 1px;padding-bottom: 10px;}
+.toc-list,.toc-section-list {list-style: none;padding: 0;margin: 0;}
+.toc-section-list {padding-left: 18px;margin-top: 6px;margin-bottom: 20px; }
+.toc-chapter {padding: 20px 0;}
+.chapter-title,.toc-section {display: flex;justify-content: space-between;padding-top: 4px;}
+.chapter-title {font-size: 17px;font-weight: bold;}
+.chapter-page,.section-page {font-style: italic;}
+ 
+ 
+.light-mode .book-title-toc,.light-mode .chapter-title,.light-mode .book-name {color: #222;}
+.light-mode .book-subtitle-toc,.light-mode .book-sub,.light-mode .chapter-page,.light-mode .section-page {color: #666;}
+.light-mode .toc-container { background: #fff;border: 1px solid #ddd;}
+.light-mode h1 {border-bottom: 2px solid #eee;color: #222;}
+.light-mode .toc-section {  color: #444;}
+
+.light-mode .book-cover { border: 1px solid #ccc;box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);}
+.light-mode .book-title,.light-mode .series-name {color: #fff;}
+.light-mode .book-subtitle,.light-mode .book-footer {color: #aaa;}
+
+.dark-mode .book-title-toc,.dark-mode .chapter-title,.dark-mode .book-name {color: #f5f5f5;}
+.dark-mode .book-subtitle-toc,.dark-mode .book-sub,.dark-mode .chapter-page,.dark-mode .section-page {color: #aaa;}
+.dark-mode .toc-container {background: #1e1e1e;border: 1px solid #444;}
+
+.dark-mode h1 {border-bottom: 2px solid #333;color: #eee;}
+.dark-mode .toc-section {color: #bbb;}
+
+.dark-mode .related-books h2 {color: #ddd;border-bottom: 2px solid #333;}
+.dark-mode .book-title,.dark-mode .series-name {color: #fff;}
+.dark-mode .book-subtitle,.dark-mode .book-footer {color: #bbb;}
+.dark-mode .toc-section {color: #ddd;}
+
+@media (max-width: 600px) {
+  .chapter-title,
+  .toc-section {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .chapter-page,
+  .section-page {
+    margin-top: 4px;
+  }
+}
+
+</style><style>
+.light-mode .container {box-shadow: 0 0 15px rgba(0,0,0,0.1);}
+.dark-mode .container {box-shadow: 0 0 15px rgba(255, 255, 255, 0.05);}
+
+h1, h2, h3 {font-weight: 600;margin-top: 2.5rem;margin-bottom: 1rem;line-height: 1.2;}
+h1 { font-size: 1.8rem; }
+h2 { font-size: 1.4rem; }
+h3 { font-size: 1.2rem; }
+
+table {width: 100%;border-collapse: collapse;font-family: sans-serif;font-size: 1em;margin: 1em 0;}
+th, td {padding: 0.6em 1em;text-align: left;border: 1px solid;}
+tr:nth-child(even) {  background-color: inherit;}
+tr:hover { background-color: inherit;}
+
+code {color: #d35400;}
+
+.chapter-navi-section {display: flex;justify-content: space-between;align-items: center;padding-bottom: 10px;padding-top: 10px;}
+.nav-link {color: inherit;text-decoration: none;opacity: 0.5;transition: opacity 0.3s ease, text-decoration 0.3s ease;}
+.nav-link:hover {opacity: 0.9;text-decoration: underline;}
+.prev { text-align: left; }
+.toc-link { text-align: center; }
+.next { text-align: right; }
+
+.download-section {display: flex;align-items: center;justify-content: center;gap: 2rem;padding: 2rem 1rem;max-width: 600px;margin: 3rem auto;border-radius: 12px;box-shadow: 0 4px 10px rgba(0,0,0,0.05);}
+.download-info h2 {margin: 0 0 0.5rem;font-size: 1.2rem;}
+.format-label {margin: 0 0 0.5rem;font-size: 0.95rem;}
+.download-buttons {display: flex;gap: 1rem;}
+.download-button {background-color: #4A90E2;color: white;padding: 0.5em 1.2em;border-radius: 25px;font-size: 0.95rem;text-decoration: none;transition: background-color 0.3s ease;}
+.download-button:hover {background-color: #357ABD;}
+
+.code-block {position: relative;margin-bottom: 1em;}
+.copy-button {background: transparent;color: white;position: absolute;top: 8px;right: 8px;border: none;padding: 4px 8px;font-size: 12px;border-radius: 4px;cursor: pointer;z-index: 1;}
+.copy-button:hover {background-color: #0056b3;}
+
+.snippet-container {overflow: hidden;}
+.snippet-header {padding: 0.75rem 1rem;cursor: pointer;font-size: 1rem;background-color: #eeeeee;color:  #111111; border-radius: 8px;cursor: pointer;box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+.snippet-body {display: none;font-family: monospace;}
+.snippet-container.open .snippet-body {display: block;}
+
+.CodeMirror {border: 2px solid #ccc;border-radius: 4px;resize: vertical;}
+
+.light-mode .format-label {color: #888;}
+.light-mode th {background-color: #f2f2f2;}
+.light-mode tr:nth-child(even) {background-color: #fafafa;}
+.light-mode tr:hover {background-color: #e6f7ff;}
+
+.dark-mode .snippet-header {background-color: #333;color:  #ddd; }
+.dark-mode .format-label {color: #aaa;}
+.dark-mode th {background-color: #333;color: #fff;}
+.dark-mode td {border-color: #444;}
+.dark-mode tr:nth-child(even) {background-color: #2a2a2a;}
+.dark-mode tr:hover {background-color: #2c3e50;}
+
+
+.button-group-run-edit {display: flex;width: 100%;gap: 1rem;}
+.button-run-edit {flex: 1;padding: 1rem;font-size: 1rem;font-weight: 600;border: none;border-radius: 8px;cursor: pointer;transition: background 0.3s, color 0.3s;}
+
+.light-mode .button-run-edit {background-color: #f0f0f0;color: #222;box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);}
+.light-mode .button-run-edit:hover {background-color: #e0e0e0;}
+
+.dark-mode .button-run-edit {background-color: #2a2a2a;color: #f5f5f5;box-shadow: 0 0 10px rgba(255, 255, 255, 0.05);}
+.dark-mode .button-run-edit:hover {background-color: #3a3a3a;}
+
+button { padding: 0.5em 1em; background: green; color: white; border: none; cursor: pointer; }
+button:hover { background: #1e7e34; }
+.result_iframe { width:99%; margin-top: 1em;  resize: both;background-color: #515b63;border:1px solid #ccc;}   
+
+.dialog-backdrop {position: fixed;top: 0;left: 0;width: 100vw;height: 100vh;background: rgba(0,0,0,0.5);display: none;justify-content: center;align-items: center;z-index: 10;}
+.dialog {background: #90979e;padding: 20px;width: 90vw;height: 80vh;border-radius: 8px;box-shadow: 0 0 20px rgba(0,0,0,0.3);display: flex;flex-direction: column;}
+.dialog-content {display: flex;gap: 20px;margin-top: 10px;height: calc(100% - 40px);}
+.editor-container, .preview-container {flex: 1;height: 100%;max-height: 100%;overflow: hidden; }
+.result_iframe_dialog {width: 100%;height: 100%;resize: both;border:1px solid #ccc;overflow: auto; }   
+.CodeMirror {width: 100% !important;height: 100% !important;}
+</style><script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/htmlmixed/htmlmixed.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/xml/xml.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/css/css.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/javascript/javascript.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/javascript/typescript.min.js"></script>
+<script>
+  const htmlCodeMirrorMap = new Map();
+  const htmlCodeIFrameMap = new Map();
+  let dismissTimer;
+  function showFloatingLog(message) {
+	const floatingLog = document.getElementById('floatingLog');
+
+    if (floatingLog.style.display !== 'block') {
+      floatingLog.textContent = '';
+      floatingLog.style.display = 'block'; 
+    }
+
+    floatingLog.textContent += message + '\n';
+    floatingLog.scrollTop = floatingLog.scrollHeight; 
+    clearTimeout(dismissTimer);
+    dismissTimer = setTimeout(() => {
+      floatingLog.style.display = 'none';
+      floatingLog.textContent = '';
+    }, 2000);
+  }
+  window.addEventListener('message', (event) => {
+	    if (!htmlCodeIFrameMap.has(event.source)) return;
+
+	    if (event.data?.type === 'console-log') {
+	      showFloatingLog(event.data.message);
+	    }
+  });      
+  function runHtmlCode(button,textarea_id, iframe_id, isInDialog) {
+      const html = htmlCodeMirrorMap.get(textarea_id).getValue();
+      const iframe = document.getElementById(iframe_id);
+  
+      const oldIframe = iframe;
+      const newIframe = document.createElement('iframe');
+
+      if(isInDialog){
+         newIframe.className ="result_iframe_dialog";
+      }else{
+         newIframe.className ="result_iframe";
+      }
+      
+      
+      newIframe.id = iframe_id;
+      oldIframe.replaceWith(newIframe);
+ 
+
+      // Track the iframe in the map
+      htmlCodeIFrameMap.set(newIframe.contentWindow, button);
+
+      const overrideScript = `
+        <script>
+          (function() {
+            const originalLog = console.log;
+            console.log = function(...args) {
+              originalLog.apply(console, args);
+              window.parent.postMessage({
+                type: 'console-log',
+                message: args.map(a => {
+                  try { return JSON.stringify(a); }
+                  catch { return String(a); }
+                }).join(' ')
+              }, '*');
+            };
+          })();
+        <\/script>
+      `;
+ 
+      const iframeHTML = `
+        <!DOCTYPE html>
+        <html>
+        <body>
+          ${overrideScript}
+          ${html}
+        </body>
+        </html>
+      `;
+ 
+      const doc = newIframe.contentDocument || newIframe.contentWindow.document;
+      doc.open();
+      doc.write(iframeHTML);
+      doc.close();
+
+if(!isInDialog){ 
+newIframe.onload = function () {
+ 
+    const doc = newIframe.contentDocument || newIframe.contentWindow.document;
+    // Give a short delay to ensure layout is complete
+    setTimeout(() => {
+      const body = doc.body;
+      const html = doc.documentElement;
+
+      const height = Math.max(
+        body.scrollHeight, body.offsetHeight,
+        html.clientHeight, html.scrollHeight, html.offsetHeight
+      );
+
+      newIframe.style.height = height + 'px';
+    }, 50);
+};
+
+}
+      
+  }  
+function openEditHtmlCodeDialog(id, textarea_id) {
+		        closeAllHtmlCodeDialog();
+		        document.getElementById(id).style.display = 'flex';
+         
+ 	        setTimeout(() => {
+		        	 htmlCodeMirrorMap.get(textarea_id).refresh();
+                   
+ 	        }, 100); // 100ms 
+}
+
+function closeAllHtmlCodeDialog() {
+		        document.querySelectorAll('.dialog-backdrop').forEach(el => {
+		          el.style.display = 'none';
+		        });
+}		
+</script> 
 <style>
     #floatingLog {
       position: fixed;
@@ -39,677 +299,27 @@
       text-align: center;
     }
 </style>
-<script>
-  const codeMirrorMap = new Map();
-  const iframeMap = new Map();
-  
- 
-
-  let dismissTimer;
-  function showFloatingLog(message) {
-	const floatingLog = document.getElementById('floatingLog');
-
-    if (floatingLog.style.display !== 'block') {
-      floatingLog.textContent = '';
-      floatingLog.style.display = 'block'; 
-    }
-
-    floatingLog.textContent += message + '\n';
-    floatingLog.scrollTop = floatingLog.scrollHeight; 
-    clearTimeout(dismissTimer);
-    dismissTimer = setTimeout(() => {
-      floatingLog.style.display = 'none';
-      floatingLog.textContent = '';
-    }, 2000);
-  }
-  window.addEventListener('message', (event) => {
-	    if (!iframeMap.has(event.source)) return;
-
-	    if (event.data?.type === 'console-log') {
-	      showFloatingLog(event.data.message);
-	    }
-  });  
-  function renderIframe(button,textarea_id, iframe_id) {
-      const html = codeMirrorMap.get(textarea_id).getValue();
-      const iframe = document.getElementById(iframe_id);
-  
-      const oldIframe = iframe;
-      const newIframe = document.createElement('iframe');
-      newIframe.className ="result_iframe";
-      
-      newIframe.id = iframe_id;
-      oldIframe.replaceWith(newIframe);
- 
-
-      // Track the iframe in the map
-      iframeMap.set(newIframe.contentWindow, button);
-
-      const overrideScript = `
-        <script>
-          (function() {
-            const originalLog = console.log;
-            console.log = function(...args) {
-              originalLog.apply(console, args);
-              window.parent.postMessage({
-                type: 'console-log',
-                message: args.map(a => {
-                  try { return JSON.stringify(a); }
-                  catch { return String(a); }
-                }).join(' ')
-              }, '*');
-            };
-          })();
-        <\/script>
-      `;
-
-      const iframeHTML = `
-        <!DOCTYPE html>
-        <html>
-        <body>
-          ${overrideScript}
-          ${html}
-        </body>
-        </html>
-      `;
- 
-      const doc = newIframe.contentDocument || newIframe.contentWindow.document;
-      doc.open();
-      doc.write(iframeHTML);
-      doc.close();
-
-      
-      setTimeout(() => {
-    	  newIframe.style.height = '0px';
-    	   let contentHeight = Math.max(doc.body.scrollHeight,doc.documentElement.scrollHeight);
- 
-    	//   if(contentHeight < 150 || contentHeight > 600){
-    	//	   contentHeight = 600;
-    	 //  } 
-    	   newIframe.style.height = contentHeight + 'px';
-    	}, 50);      
-      
-  }
-  function renderIframeForClientTypescript(textarea_id, iframe_id) {
-      let code = codeMirrorMap.get(textarea_id).getValue();
-      code = ts.transpile(code);
-      const iframe = document.getElementById(iframe_id);
-      const doc = iframe.contentDocument || iframe.contentWindow.document;
-
-const html = `
-  <!DOCTYPE html>
-  <html>
-    <head>
-      <title>Output</title>
-      <style>
-        body { font-family: monospace; padding: 1em; background: #f4f4f4; color: #222; }
-        pre { white-space: pre-wrap; word-break: break-word; }
-        .error { color: red; }
-      </style>
-    </head>
-    <body>
-      <pre id="log"></pre>
-      <script>
-        (function(){
-          const logEl = document.getElementById('log');
-          const origLog = console.log;
-          const origError = console.error;
-
-          console.log = (...args) => {
-            logEl.textContent += args.join(' ') + '\\n';
-            origLog.apply(console, args);
-          };
-          console.table = (...args) => {
-            logEl.textContent += args.join(' ') + '\\n';
-            origLog.apply(console, args);
-          };
-
-          console.error = (...args) => {
-            logEl.innerHTML +='<span class="error">' + args.join(' ') + '</span>';
-            origError.apply(console, args);
-          };
-          window.addEventListener("error", function (event) {
-              console.error("Caught by event listener:", event.message);
-          });    
-          try {             
-              ${code};
-          } catch (err) {
-            console.error(err.stack || err.message);
-          }
-        })();
-      <\/script>
-    </body>
-  </html>
-`;
-
-      iframe.style.display = "block";
-      iframe.srcdoc = html;  
-  }
-
-    function renderIframeForClientJavascript(textarea_id, iframe_id) {
-        const code = codeMirrorMap.get(textarea_id).getValue();
-        const iframe = document.getElementById(iframe_id);
-        const doc = iframe.contentDocument || iframe.contentWindow.document;
-
-  const html = `
-    <!DOCTYPE html>
-    <html>
-      <head>
-        <title>Output</title>
-        <style>
-          body { font-family: monospace; padding: 1em; background: #1e1e1e; color: #eee; }
-          pre { white-space: pre-wrap; word-break: break-word; }
-          .error { color: red; }
-        </style>
-      </head>
-      <body>
-        <pre id="log"></pre>
-        <script>
-          (function(){
-            const logEl = document.getElementById('log');
-            const origLog = console.log;
-            const origError = console.error;
-
-            console.log = (...args) => {
-              logEl.textContent += args.join(' ') + '\\n';
-              origLog.apply(console, args);
-            };
-            console.table = (...args) => {
-              logEl.textContent += args.join(' ') + '\\n';
-              origLog.apply(console, args);
-            };
-
-            console.error = (...args) => {
-              logEl.innerHTML +='<span class="error">' + args.join(' ') + '</span>';
-              origError.apply(console, args);
-            };
-            window.addEventListener("error", function (event) {
-                console.error("Caught by event listener:", event.message);
-            });    
-            try {
-             ${code}; 
-            } catch (err) {
-              console.error(err.stack || err.message);
-            }
-          })();
-        <\/script>
-      </body>
-    </html>
-  `;
-        iframe.style.display = "block";
-        iframe.srcdoc = html;  
-    }
-    function toggleSnippetAndRefresh(id, textarea_id) {
-      const box = document.getElementById(id);
-      box.classList.toggle("open");
-      codeMirrorMap.get(textarea_id).refresh();
-    }
-
-  </script>
-  <script>
-  const mode = localStorage.getItem('mode') || 'light';
-  document.documentElement.classList.add(`${mode}-mode`);
-  </script>   
-<style> 
-html {
-  scroll-behavior: smooth;
-}
-
-body {
-  font-family: 'Merriweather', serif;
-  margin: 0;
-  padding: 2rem 1rem;
-  font-size: 15px;
-  line-height: 1.5;
-  transition: background-color 0.3s, color 0.3s;
-}
-
-.container {
-  max-width: 700px;
-  margin: 0 auto;
-  padding: 1rem 2rem;
-  box-shadow: 0 0 15px rgba(0,0,0,0.1);
-}
-
-h1, h2, h3 {
-  font-weight: 600;
-  margin-top: 2.5rem;
-  margin-bottom: 1rem;
-  line-height: 1.2;
-}
-
-h1 { font-size: 1.8rem; }
-h2 { font-size: 1.4rem; }
-h3 { font-size: 1.2rem; }
-
-table {
-  width: 100%;
-  border-collapse: collapse;
-  font-family: sans-serif;
-  font-size: 1em;
-  margin: 1em 0;
-}
-
-th, td {
-  padding: 0.6em 1em;
-  text-align: left;
-  border: 1px solid;
-}
-
-tr:nth-child(even) {
-  background-color: inherit;
-}
-
-tr:hover {
-  background-color: inherit;
-}
-
-a {
-  text-decoration: none;
-  transition: color 0.2s;
-}
-
-a:hover {
-  text-decoration: underline;
-}
-
-code {
-  color: #d35400;
-}
-
-.book-title-chapter {
-  font-family: 'Merriweather', serif;
-  font-size: 2rem;
-  font-weight: bold;
-  text-align: center;
-  margin-bottom: 2rem;
-  border-bottom: 2px solid;
-  padding-bottom: 0.5rem;
-}
-
-.book-subtitle-chapter {
-  text-align: center;
-  font-size: 1rem;
-  margin-top: -1rem;
-  margin-bottom: 2rem;
-}
-
-.related-books {
-  margin-top: 40px;
-}
-
-.related-book-list {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 20px;
-}
-
-    .book-cover {
-      width: 130px;
-      height: 180px;
-      font-family: Arial, sans-serif;
-      position: relative;
-      overflow: hidden;      
-      line-height: normal;
-      box-shadow: 2px 2px 4px rgba(0,0,0,0.1);
-    }
-    .book-cover-bottom-stripe {
-      position: absolute;
-      bottom: 0;
-      left: 0;
-      height: 5px;
-      width: 100%;
-    }
-    .book-cover-title {
-      position: absolute;
-      width: 100%;
-      text-align: center;
-      font-weight: bold;
-    }
-     
-    .book-cover-icon {
-      position: absolute;
-      left: 50%;
-      transform: translateX(-50%);
-      display: flex;
-      align-items: center;
-      justify-content: center; 
-    }
-
-    .book-cover-author {
-      position: absolute;
-      bottom: 10px;
-      width: 100%;
-      text-align: center;
-      font-size: 8px;
-      color: #333;
-    }
-
-.page-footer {
-  margin-top: 4rem;
-  padding: 1rem 0;
-  text-align: center;
-  font-size: 0.85rem;
-  border-top: 1px solid;
-}
-
-.chapter-navi-section {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding-bottom: 10px;
-}
-
-.nav-link {
-  color: inherit;
-  text-decoration: none;
-  opacity: 0.5;
-  transition: opacity 0.3s ease, text-decoration 0.3s ease;
-}
-
-.nav-link:hover {
-  opacity: 0.9;
-  text-decoration: underline;
-}
-
-.prev { text-align: left; }
-.toc-link { text-align: center; }
-.next { text-align: right; }
-
-.download-section {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 2rem;
-  padding: 2rem 1rem;
-  max-width: 600px;
-  margin: 3rem auto;
-  border-radius: 12px;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-}
-
-.download-info h2 {
-  margin: 0 0 0.5rem;
-  font-size: 1.2rem;
-}
-
-.format-label {
-  margin: 0 0 0.5rem;
-  font-size: 0.95rem;
-}
-
-.download-buttons {
-  display: flex;
-  gap: 1rem;
-}
-
-.download-button {
-  background-color: #4A90E2;
-  color: white;
-  padding: 0.5em 1.2em;
-  border-radius: 25px;
-  font-size: 0.95rem;
-  text-decoration: none;
-  transition: background-color 0.3s ease;
-}
-
-.download-button:hover {
-  background-color: #357ABD;
-}
-
-.code-block {
-  position: relative;
-  margin-bottom: 1em;
-}
-
-.copy-button {
-  background: transparent;
-  color: white;
-  position: absolute;
-  top: 8px;
-  right: 8px;
-  border: none;
-  padding: 4px 8px;
-  font-size: 12px;
-  border-radius: 4px;
-  cursor: pointer;
-  z-index: 1;
-}
-
-.copy-button:hover {
-  background-color: #0056b3;
-}
-
-.snippet-container {
-  overflow: hidden;
-}
-
-.snippet-header {
-  padding: 0.75rem 1rem;
-  cursor: pointer;
-  font-size: 1rem;
-    background-color: #eeeeee;
-    color:  #111111; 
-    border-radius: 8px;
-    cursor: pointer;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.1);  
-}
-
-.snippet-body {
-  display: none;
-  font-family: monospace;
-}
-
-.snippet-container.open .snippet-body {
-  display: block;
-}
-
-.CodeMirror {
-  border: 2px solid #ccc;
-  border-radius: 4px;
-  resize: vertical;
-}
-
-/* === Light Mode === */
-html.light-mode {
-  background-color: #f8f7f5;
-  color: #333;
-}
-
-html.light-mode .container {
-  background: white;
-}
-
-html.light-mode .book-title-chapter {
-  color: #2c3e50;
-  border-color: #ccc;
-}
-html.light-mode .book-subtitle-chapter{
-  color: #888;
-}
-
-html.light-mode .page-footer,
-html.light-mode .series-name,
-html.light-mode .book-subtitle,
-html.light-mode .format-label {
-  color: #888;
-}
-
-html.light-mode .related-books h2 {
-  color: #333;
-  border-bottom: 2px solid #eee;
-}
-
-html.light-mode .book-title {
-  color: #fff;
-}
-
-html.light-mode .book-cover {
-  border: 1px solid #ccc;
-}
-
-html.light-mode th {
-  background-color: #f2f2f2;
-}
-
-html.light-mode tr:nth-child(even) {
-  background-color: #fafafa;
-}
-
-html.light-mode tr:hover {
-  background-color: #e6f7ff;
-}
-
-html.light-mode a,
-html.light-mode .page-footer a {
-  color: #000;
-}
-
-/* === Dark Mode === */
-html.dark-mode {
-  background-color: #181818;
-  color: #e0e0e0;
-}
-
-html.dark-mode .container {
-  background: #222;
-}
-
-html.dark-mode .book-title-chapter {
-  color: #ddd;
-  border-color: #444;
-}
-
-html.dark-mode .snippet-header {
-    background-color: #333;
-    color:  #ddd; 
-}
-
-
-html.dark-mode .book-subtitle-chapter,
-html.dark-mode .page-footer,
-html.dark-mode .series-name,
-html.dark-mode .book-subtitle,
-html.dark-mode .book-footer,
-html.dark-mode .format-label {
-  color: #aaa;
-}
-
-html.dark-mode .related-books h2 {
-  color: #ddd;
-  border-bottom: 2px solid #333;
-}
-
-html.dark-mode .book-title {
-  color: #fff;
-}
-
-html.dark-mode .book-cover {
-  border: 1px solid #555;
-}
-
-html.dark-mode th {
-  background-color: #333;
-  color: #fff;
-}
-
-html.dark-mode td {
-  border-color: #444;
-}
-
-html.dark-mode tr:nth-child(even) {
-  background-color: #2a2a2a;
-}
-
-html.dark-mode tr:hover {
-  background-color: #2c3e50;
-}
-
-html.dark-mode a,
-html.dark-mode .page-footer a {
-  color: #eee;
-}
-
-    .dialog-backdrop {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100vw;
-      height: 100vh;
-      background: rgba(0,0,0,0.5);
-      display: none;
-      justify-content: center;
-      align-items: center;
-      z-index: 10;
-    }
-
-    .dialog {
-      background: white;
-      padding: 20px;
-      width: 90vw;
-      height: 80vh;
-      border-radius: 8px;
-      box-shadow: 0 0 20px rgba(0,0,0,0.3);
-      display: flex;
-      flex-direction: column;
-    }
-    .dialog-content {
-      display: flex;
-      flex: 1;
-      gap: 20px;
-      margin-top: 10px;
-    }
-    .dialog h2 {
-      margin-top: 0;
-    }
-
-    .textarea_dialog {
-      width: 50%;
-      height: 100%;
-      resize: none;
-      font-family: monospace;
-      font-size: 14px;
-      padding: 10px;
-      box-sizing: border-box;
-      border: 1px solid #ccc;
-    }
-
-    .iframe_dialog {
-      width: 50%;
-      height: 100%;
-      border: 1px solid #ccc;
-    }
-    .controls_dialog {
-      display: flex;
-      justify-content: space-between;
-      margin-top: 10px;
-    }    
-    button { padding: 0.5em 1em; background: green; color: white; border: none; cursor: pointer; }
-    button:hover { background: #1e7e34; }
-    .result_iframe { width:99%; height:200px; margin-top: 1em;  resize: both;border:1px solid #ccc;}        
-</style>
 </head>
-<body> 
-  <div class="container">
-    <div class = "chapter-navi-section">
+<body>
+<script>const mode = localStorage.getItem('mode') || 'light';document.documentElement.classList.add(`${mode}-mode`);</script>  
+<div class="container"><div class = "chapter-navi-section">
 <a href="javascript-dom-programming-handling-dom-events.htm" class="nav-button prev">←</a>
 <a href='javascript-dom-programming.htm#advanced-event-handling' class="nav-button toc-link">Index</a>
 <a href="javascript-dom-programming-forms-and-user-input.htm" class="nav-button next">→</a>
 </div>
-
-    <h1 class="book-title-chapter" id = 'top'>Advanced Event Handling</h1>
-    <h3 class="book-subtitle-chapter">JavaScript DOM Programming</h3>   
-    <!-- <h1 class ="chapter-title"></h1> -->
-    <h2 id='event-delegation-techniques'>6.1 Event Delegation Techniques</h2><p>When building interactive web applications, you often need to handle events on many similar elements—like items in a list or cells in a table. Attaching individual event listeners to each child element can become inefficient and cumbersome, especially if the list changes dynamically. This is where <strong>event delegation</strong> shines.</p><h3 id="what-is-event-delegation">What Is Event Delegation?</h3><p><strong>Event delegation</strong> is a technique where a single event listener is attached to a <strong>common parent</strong> element instead of each individual child element. Because of <strong>event bubbling</strong>—where events propagate up from the target element through its ancestors—the parent can catch events triggered by any of its children.</p><p>Using <code>event.target</code>, the parent listener can identify exactly which child was interacted with and respond accordingly.</p><h3 id="why-use-event-delegation">Why Use Event Delegation?</h3><ul>
+<div class='book-header'><h1 class='book-title-toc' id = 'top'>Advanced Event Handling</h1><h3 class='book-subtitle-toc'>JavaScript DOM Programming</h3></div><h2 id='event-delegation-techniques'>6.1 Event Delegation Techniques</h2><p>When building interactive web applications, you often need to handle events on many similar elements—like items in a list or cells in a table. Attaching individual event listeners to each child element can become inefficient and cumbersome, especially if the list changes dynamically. This is where <strong>event delegation</strong> shines.</p><h3 id="what-is-event-delegation">What Is Event Delegation?</h3><p><strong>Event delegation</strong> is a technique where a single event listener is attached to a <strong>common parent</strong> element instead of each individual child element. Because of <strong>event bubbling</strong>—where events propagate up from the target element through its ancestors—the parent can catch events triggered by any of its children.</p><p>Using <code>event.target</code>, the parent listener can identify exactly which child was interacted with and respond accordingly.</p><h3 id="why-use-event-delegation">Why Use Event Delegation?</h3><ul>
  <li><strong>Performance:</strong> Only one event listener is needed, regardless of how many child elements exist. This reduces memory usage and speeds up event handling.</li>
  <li><strong>Dynamic elements:</strong> If child elements are added or removed dynamically, the parent listener automatically manages events for new children without needing to attach or remove listeners.</li>
  <li><strong>Cleaner code:</strong> Managing events in one place keeps your code simpler and easier to maintain.</li>
-</ul><h3 id="example-delegating-clicks-in-a-list">Example: Delegating Clicks in a List</h3><p>Let's look at a practical example of event delegation in action.</p><h3 id="html">HTML</h3><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</ul><h3 id="example-delegating-clicks-in-a-list">Example: Delegating Clicks in a List</h3><p>Let's look at a practical example of event delegation in action.</p><h3 id="html">HTML</h3><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-html">&lt;ul id="todoList"&gt;
   &lt;li data-id="1"&gt;Learn JavaScript&lt;/li&gt;
   &lt;li data-id="2"&gt;Build a project&lt;/li&gt;
   &lt;li data-id="3"&gt;Read documentation&lt;/li&gt;
 &lt;/ul&gt;</code></pre>
-</div><h3 id="javascript-with-event-delegation">JavaScript with Event Delegation</h3><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</div><h3 id="javascript-with-event-delegation">JavaScript with Event Delegation</h3><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-js">const list = document.getElementById('todoList');
 
 list.addEventListener('click', (event) =&gt; {
@@ -722,13 +332,16 @@ list.addEventListener('click', (event) =&gt; {
     console.log(`Clicked on item with ID: ${itemId} and text: "${clickedItem.textContent}"`);
   }
 });</code></pre>
-</div><div class="snippet-container" id="1Fgfo">
- <div id="X970B_Dialog" class="dialog-backdrop">
+</div><div class="snippet-container">
+ <div class="button-group-run-edit"><button class="button-run-edit" onclick="runHtmlCode(this,'3OgCm','YJUua', false)">Run</button> <button class="button-run-edit" onclick="openEditHtmlCodeDialog('YJUua_Dialog','3OgCm')">Edit</button>
+ </div> <iframe id="YJUua" class="result_iframe" style="display: none;"></iframe>
+ <div id="YJUua_Dialog" class="dialog-backdrop">
   <div class="dialog">
-   <h2>Dialog 1</h2>
-   <div class="controls"><button onclick="renderIframe(this,'rNTgQ_Textarea','X970B_IFrame')">Run</button> <button onclick="closeAll()">Close</button>
+   <div class="controls"><button onclick="runHtmlCode(this,'3OgCm','YJUua_IFrame', true)">Run</button> <button onclick="closeAllHtmlCodeDialog()">Close</button>
    </div>
-   <div class="dialog-content"><textarea id="rNTgQ_Textarea" class="textarea_dialog" placeholder="Type HTML here...">&lt;!DOCTYPE html&gt;
+   <div class="dialog-content">
+    <div class="editor-container">
+     <textarea id="3OgCm" class="textarea_dialog" placeholder="Type HTML here...">&lt;!DOCTYPE html&gt;
 &lt;html lang="en"&gt;
 &lt;head&gt;
   &lt;meta charset="UTF-8" /&gt;
@@ -774,118 +387,51 @@ list.addEventListener('click', (event) =&gt; {
     });
   &lt;/script&gt;
 &lt;/body&gt;
-&lt;/html&gt;</textarea> <iframe id="X970B_IFrame" class="iframe_dialog"></iframe>
+&lt;/html&gt;</textarea>
+    </div>
+    <div class="preview-container">
+     <iframe id="YJUua_IFrame" class="result_iframe_dialog" style="border: none;"></iframe>
+    </div>
    </div>
   </div>
  </div>
- <div class="snippet-header" onclick="toggleSnippetAndRefresh('1Fgfo','rNTgQ')">
-  Click to Try it <!--<span onclick="toggleSnippetAndRefresh('1Fgfo','rNTgQ')">Click
-			to Try it</span> --> <!-- <span onclick="openDialog('X970B_Dialog')">Dialog</span> -->
- </div>
- <div class="snippet-body"><textarea id="rNTgQ">&lt;!DOCTYPE html&gt;
-&lt;html lang="en"&gt;
-&lt;head&gt;
-  &lt;meta charset="UTF-8" /&gt;
-  &lt;title&gt;Todo List Event Delegation&lt;/title&gt;
-  &lt;style&gt;
-    #todoList {
-      list-style-type: none;
-      padding: 0;
-      max-width: 300px;
-      font-family: Arial, sans-serif;
-    }
-    #todoList li {
-      padding: 10px;
-      margin-bottom: 5px;
-      background: #e0f7fa;
-      cursor: pointer;
-      border-radius: 4px;
-      transition: background-color 0.2s ease;
-    }
-    #todoList li:hover {
-      background-color: #b2ebf2;
-    }
-  &lt;/style&gt;
-&lt;/head&gt;
-&lt;body&gt;
-  &lt;ul id="todoList"&gt;
-    &lt;li data-id="1"&gt;Learn JavaScript&lt;/li&gt;
-    &lt;li data-id="2"&gt;Build a project&lt;/li&gt;
-    &lt;li data-id="3"&gt;Read documentation&lt;/li&gt;
-  &lt;/ul&gt;
-
-  &lt;script&gt;
-    const list = document.getElementById('todoList');
-
-    list.addEventListener('click', (event) =&gt; {
-      const clickedItem = event.target;
-
-      // Make sure we clicked on an LI element
-      if (clickedItem.tagName === 'LI') {
-        const itemId = clickedItem.getAttribute('data-id');
-        console.log(`Clicked on item with ID: ${itemId} and text: "${clickedItem.textContent}"`);
-      }
-    });
-  &lt;/script&gt;
-&lt;/body&gt;
-&lt;/html&gt;</textarea> <br> <button onclick="renderIframe(this,'rNTgQ','X970B')">Run</button>
-  <div id="X970B_FloatingLog" class="floatingLog" aria-live="polite" role="alert"></div> <iframe id="X970B" class="result_iframe" style="display: none;"></iframe>
-  <script>
-			{
-				let editor = CodeMirror.fromTextArea(document
-						.getElementById("rNTgQ"), {
+ <script>
+{
+let editor = CodeMirror.fromTextArea(document.getElementById("3OgCm"), {
 					mode : "htmlmixed",
 					lineNumbers : false,
+                    lineWrapping: true,
 					tabSize : 2
-				});
-			    const mode = localStorage.getItem("mode") || "light";  
-			    const newTheme = mode === "dark" ? "material" : "default";
-			    editor.setOption("theme", newTheme);
-			    
-				codeMirrorMap.set("rNTgQ", editor);
+});
+const darkmode = localStorage.getItem("mode") || "light";  
+const newTheme = darkmode === "dark" ? "dracula" : "default";
+editor.setSize("50%", "100%");
+editor.setOption("theme", newTheme);
+htmlCodeMirrorMap.set("3OgCm", editor);
+}
 
-				let editor1 = CodeMirror.fromTextArea(document.getElementById("rNTgQ_Textarea"), {
-					mode : "htmlmixed",
-					lineNumbers : false,
-					tabSize : 2
-				});
-			    editor1.setOption("theme", newTheme);				
-				
-				codeMirrorMap.set("rNTgQ_Textarea", editor1);
-			}
-		    function openDialog(id) {
-		        closeAll();
-		        document.getElementById(id).style.display = 'flex';
-		        setTimeout(() => {
-		        	 codeMirrorMap.get("rNTgQ_Textarea").refresh();
-		        }, 100); // 100ms 
-		      }
-
-		      function closeAll() {
-		        document.querySelectorAll('.dialog-backdrop').forEach(el => {
-		          el.style.display = 'none';
-		        });
-		      }			
-		</script>
- </div>
+</script>
 </div><h3 id="how-this-works">How This Works:</h3><ul>
  <li>We add a <strong>single</strong> click listener to the <code>&lt;ul&gt;</code> element.</li>
  <li>When any <code>&lt;li&gt;</code> is clicked, the event bubbles up to the <code>&lt;ul&gt;</code>.</li>
  <li>Inside the listener, <code>event.target</code> identifies the exact <code>&lt;li&gt;</code> clicked.</li>
  <li>We check that the target is an <code>&lt;li&gt;</code> to prevent handling clicks on empty parts of the <code>&lt;ul&gt;</code>.</li>
  <li>Then we retrieve the item's data and perform an action (here, showing an alert).</li>
-</ul><h3 id="handling-dynamic-children">Handling Dynamic Children</h3><p>If you later add new <code>&lt;li&gt;</code> items dynamically, this listener will <strong>automatically</strong> handle clicks on them without needing to attach new listeners:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</ul><h3 id="handling-dynamic-children">Handling Dynamic Children</h3><p>If you later add new <code>&lt;li&gt;</code> items dynamically, this listener will <strong>automatically</strong> handle clicks on them without needing to attach new listeners:</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-js">const newItem = document.createElement('li');
 newItem.textContent = "Practice event delegation";
 newItem.setAttribute('data-id', '4');
 list.appendChild(newItem);
 // No extra event listener needed for newItem!</code></pre>
-</div><h3 id="event-delegation-in-tables">Event Delegation in Tables</h3><p>The same concept applies to more complex structures like tables:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</div><h3 id="event-delegation-in-tables">Event Delegation in Tables</h3><p>The same concept applies to more complex structures like tables:</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-html">&lt;table id="userTable"&gt;
   &lt;tr&gt;&lt;td data-user="1"&gt;Alice&lt;/td&gt;&lt;/tr&gt;
   &lt;tr&gt;&lt;td data-user="2"&gt;Bob&lt;/td&gt;&lt;/tr&gt;
 &lt;/table&gt;</code></pre>
-</div><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</div><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-js">const table = document.getElementById('userTable');
 
 table.addEventListener('click', (event) =&gt; {
@@ -894,13 +440,16 @@ table.addEventListener('click', (event) =&gt; {
     console.log(`User ID clicked: ${userId}`);
   }
 });</code></pre>
-</div><div class="snippet-container" id="YL2nH">
- <div id="WHSEb_Dialog" class="dialog-backdrop">
+</div><div class="snippet-container">
+ <div class="button-group-run-edit"><button class="button-run-edit" onclick="runHtmlCode(this,'wd7eM','FEtVJ', false)">Run</button> <button class="button-run-edit" onclick="openEditHtmlCodeDialog('FEtVJ_Dialog','wd7eM')">Edit</button>
+ </div> <iframe id="FEtVJ" class="result_iframe" style="display: none;"></iframe>
+ <div id="FEtVJ_Dialog" class="dialog-backdrop">
   <div class="dialog">
-   <h2>Dialog 1</h2>
-   <div class="controls"><button onclick="renderIframe(this,'WHzxH_Textarea','WHSEb_IFrame')">Run</button> <button onclick="closeAll()">Close</button>
+   <div class="controls"><button onclick="runHtmlCode(this,'wd7eM','FEtVJ_IFrame', true)">Run</button> <button onclick="closeAllHtmlCodeDialog()">Close</button>
    </div>
-   <div class="dialog-content"><textarea id="WHzxH_Textarea" class="textarea_dialog" placeholder="Type HTML here...">&lt;!DOCTYPE html&gt;
+   <div class="dialog-content">
+    <div class="editor-container">
+     <textarea id="wd7eM" class="textarea_dialog" placeholder="Type HTML here...">&lt;!DOCTYPE html&gt;
 &lt;html lang="en"&gt;
 &lt;head&gt;
   &lt;meta charset="UTF-8" /&gt;
@@ -942,96 +491,30 @@ table.addEventListener('click', (event) =&gt; {
   &lt;/script&gt;
 
 &lt;/body&gt;
-&lt;/html&gt;</textarea> <iframe id="WHSEb_IFrame" class="iframe_dialog"></iframe>
+&lt;/html&gt;</textarea>
+    </div>
+    <div class="preview-container">
+     <iframe id="FEtVJ_IFrame" class="result_iframe_dialog" style="border: none;"></iframe>
+    </div>
    </div>
   </div>
  </div>
- <div class="snippet-header" onclick="toggleSnippetAndRefresh('YL2nH','WHzxH')">
-  Click to Try it <!--<span onclick="toggleSnippetAndRefresh('YL2nH','WHzxH')">Click
-			to Try it</span> --> <!-- <span onclick="openDialog('WHSEb_Dialog')">Dialog</span> -->
- </div>
- <div class="snippet-body"><textarea id="WHzxH">&lt;!DOCTYPE html&gt;
-&lt;html lang="en"&gt;
-&lt;head&gt;
-  &lt;meta charset="UTF-8" /&gt;
-  &lt;title&gt;User Table Click&lt;/title&gt;
-  &lt;style&gt;
-    #userTable {
-      border-collapse: collapse;
-      width: 200px;
-      font-family: Arial, sans-serif;
-    }
-    #userTable td {
-      border: 1px solid #ccc;
-      padding: 10px;
-      cursor: pointer;
-      text-align: center;
-      transition: background-color 0.2s;
-    }
-    #userTable td:hover {
-      background-color: #f0f8ff;
-    }
-  &lt;/style&gt;
-&lt;/head&gt;
-&lt;body&gt;
-
-  &lt;table id="userTable"&gt;
-    &lt;tr&gt;&lt;td data-user="1"&gt;Alice&lt;/td&gt;&lt;/tr&gt;
-    &lt;tr&gt;&lt;td data-user="2"&gt;Bob&lt;/td&gt;&lt;/tr&gt;
-  &lt;/table&gt;
-
-  &lt;script&gt;
-    const table = document.getElementById('userTable');
-
-    table.addEventListener('click', (event) =&gt; {
-      if (event.target.tagName === 'TD') {
-        const userId = event.target.getAttribute('data-user');
-        console.log(`User ID clicked: ${userId}`);
-      }
-    });
-  &lt;/script&gt;
-
-&lt;/body&gt;
-&lt;/html&gt;</textarea> <br> <button onclick="renderIframe(this,'WHzxH','WHSEb')">Run</button>
-  <div id="WHSEb_FloatingLog" class="floatingLog" aria-live="polite" role="alert"></div> <iframe id="WHSEb" class="result_iframe" style="display: none;"></iframe>
-  <script>
-			{
-				let editor = CodeMirror.fromTextArea(document
-						.getElementById("WHzxH"), {
+ <script>
+{
+let editor = CodeMirror.fromTextArea(document.getElementById("wd7eM"), {
 					mode : "htmlmixed",
 					lineNumbers : false,
+                    lineWrapping: true,
 					tabSize : 2
-				});
-			    const mode = localStorage.getItem("mode") || "light";  
-			    const newTheme = mode === "dark" ? "material" : "default";
-			    editor.setOption("theme", newTheme);
-			    
-				codeMirrorMap.set("WHzxH", editor);
+});
+const darkmode = localStorage.getItem("mode") || "light";  
+const newTheme = darkmode === "dark" ? "dracula" : "default";
+editor.setSize("50%", "100%");
+editor.setOption("theme", newTheme);
+htmlCodeMirrorMap.set("wd7eM", editor);
+}
 
-				let editor1 = CodeMirror.fromTextArea(document.getElementById("WHzxH_Textarea"), {
-					mode : "htmlmixed",
-					lineNumbers : false,
-					tabSize : 2
-				});
-			    editor1.setOption("theme", newTheme);				
-				
-				codeMirrorMap.set("WHzxH_Textarea", editor1);
-			}
-		    function openDialog(id) {
-		        closeAll();
-		        document.getElementById(id).style.display = 'flex';
-		        setTimeout(() => {
-		        	 codeMirrorMap.get("WHzxH_Textarea").refresh();
-		        }, 100); // 100ms 
-		      }
-
-		      function closeAll() {
-		        document.querySelectorAll('.dialog-backdrop').forEach(el => {
-		          el.style.display = 'none';
-		        });
-		      }			
-		</script>
- </div>
+</script>
 </div><h3 id="summary-of-advantages">Summary of Advantages</h3><table>
  <thead>
   <tr>
@@ -1071,23 +554,29 @@ table.addEventListener('click', (event) =&gt; {
  <li>Clicking a link navigates to another page.</li>
  <li>Submitting a form reloads the page.</li>
  <li>Pressing a key might trigger browser shortcuts.</li>
-</ul><p>If you need to <strong>prevent</strong> these default behaviors (for example, to handle navigation or form submission with JavaScript), you use:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</ul><p>If you need to <strong>prevent</strong> these default behaviors (for example, to handle navigation or form submission with JavaScript), you use:</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-js">event.preventDefault();</code></pre>
-</div><h3 id="example-preventing-a-link-from-navigating">Example: Preventing a Link from Navigating</h3><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</div><h3 id="example-preventing-a-link-from-navigating">Example: Preventing a Link from Navigating</h3><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-html">&lt;a href="https://example.com" id="myLink"&gt;Go to Example.com&lt;/a&gt;</code></pre>
-</div><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</div><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-js">const link = document.getElementById('myLink');
 link.addEventListener('click', (event) =&gt; {
   event.preventDefault(); // Stop the browser from navigating
   console.log('Link clicked, but navigation prevented!');
 });</code></pre>
-</div><p>In this example, clicking the link triggers the alert, but the browser <strong>does not</strong> follow the URL.</p><div class="snippet-container" id="ZmEPt">
- <div id="NDPcg_Dialog" class="dialog-backdrop">
+</div><p>In this example, clicking the link triggers the alert, but the browser <strong>does not</strong> follow the URL.</p><div class="snippet-container">
+ <div class="button-group-run-edit"><button class="button-run-edit" onclick="runHtmlCode(this,'sAt2e','zZiOi', false)">Run</button> <button class="button-run-edit" onclick="openEditHtmlCodeDialog('zZiOi_Dialog','sAt2e')">Edit</button>
+ </div> <iframe id="zZiOi" class="result_iframe" style="display: none;"></iframe>
+ <div id="zZiOi_Dialog" class="dialog-backdrop">
   <div class="dialog">
-   <h2>Dialog 1</h2>
-   <div class="controls"><button onclick="renderIframe(this,'3N6AD_Textarea','NDPcg_IFrame')">Run</button> <button onclick="closeAll()">Close</button>
+   <div class="controls"><button onclick="runHtmlCode(this,'sAt2e','zZiOi_IFrame', true)">Run</button> <button onclick="closeAllHtmlCodeDialog()">Close</button>
    </div>
-   <div class="dialog-content"><textarea id="3N6AD_Textarea" class="textarea_dialog" placeholder="Type HTML here...">&lt;!DOCTYPE html&gt;
+   <div class="dialog-content">
+    <div class="editor-container">
+     <textarea id="sAt2e" class="textarea_dialog" placeholder="Type HTML here...">&lt;!DOCTYPE html&gt;
 &lt;html lang="en"&gt;
 &lt;head&gt;
   &lt;meta charset="UTF-8" /&gt;
@@ -1114,89 +603,41 @@ link.addEventListener('click', (event) =&gt; {
   &lt;/script&gt;
 
 &lt;/body&gt;
-&lt;/html&gt;</textarea> <iframe id="NDPcg_IFrame" class="iframe_dialog"></iframe>
+&lt;/html&gt;</textarea>
+    </div>
+    <div class="preview-container">
+     <iframe id="zZiOi_IFrame" class="result_iframe_dialog" style="border: none;"></iframe>
+    </div>
    </div>
   </div>
  </div>
- <div class="snippet-header" onclick="toggleSnippetAndRefresh('ZmEPt','3N6AD')">
-  Click to Try it <!--<span onclick="toggleSnippetAndRefresh('ZmEPt','3N6AD')">Click
-			to Try it</span> --> <!-- <span onclick="openDialog('NDPcg_Dialog')">Dialog</span> -->
- </div>
- <div class="snippet-body"><textarea id="3N6AD">&lt;!DOCTYPE html&gt;
-&lt;html lang="en"&gt;
-&lt;head&gt;
-  &lt;meta charset="UTF-8" /&gt;
-  &lt;title&gt;Prevent Link Navigation&lt;/title&gt;
-  &lt;style&gt;
-    #myLink {
-      font-size: 18px;
-      color: blue;
-      text-decoration: underline;
-      cursor: pointer;
-    }
-  &lt;/style&gt;
-&lt;/head&gt;
-&lt;body&gt;
-
-  &lt;a href="https://example.com" id="myLink"&gt;Go to Example.com&lt;/a&gt;
-
-  &lt;script&gt;
-    const link = document.getElementById('myLink');
-    link.addEventListener('click', (event) =&gt; {
-      event.preventDefault(); // Stop the browser from navigating
-      console.log('Link clicked, but navigation prevented!');
-    });
-  &lt;/script&gt;
-
-&lt;/body&gt;
-&lt;/html&gt;</textarea> <br> <button onclick="renderIframe(this,'3N6AD','NDPcg')">Run</button>
-  <div id="NDPcg_FloatingLog" class="floatingLog" aria-live="polite" role="alert"></div> <iframe id="NDPcg" class="result_iframe" style="display: none;"></iframe>
-  <script>
-			{
-				let editor = CodeMirror.fromTextArea(document
-						.getElementById("3N6AD"), {
+ <script>
+{
+let editor = CodeMirror.fromTextArea(document.getElementById("sAt2e"), {
 					mode : "htmlmixed",
 					lineNumbers : false,
+                    lineWrapping: true,
 					tabSize : 2
-				});
-			    const mode = localStorage.getItem("mode") || "light";  
-			    const newTheme = mode === "dark" ? "material" : "default";
-			    editor.setOption("theme", newTheme);
-			    
-				codeMirrorMap.set("3N6AD", editor);
+});
+const darkmode = localStorage.getItem("mode") || "light";  
+const newTheme = darkmode === "dark" ? "dracula" : "default";
+editor.setSize("50%", "100%");
+editor.setOption("theme", newTheme);
+htmlCodeMirrorMap.set("sAt2e", editor);
+}
 
-				let editor1 = CodeMirror.fromTextArea(document.getElementById("3N6AD_Textarea"), {
-					mode : "htmlmixed",
-					lineNumbers : false,
-					tabSize : 2
-				});
-			    editor1.setOption("theme", newTheme);				
-				
-				codeMirrorMap.set("3N6AD_Textarea", editor1);
-			}
-		    function openDialog(id) {
-		        closeAll();
-		        document.getElementById(id).style.display = 'flex';
-		        setTimeout(() => {
-		        	 codeMirrorMap.get("3N6AD_Textarea").refresh();
-		        }, 100); // 100ms 
-		      }
-
-		      function closeAll() {
-		        document.querySelectorAll('.dialog-backdrop').forEach(el => {
-		          el.style.display = 'none';
-		        });
-		      }			
-		</script>
- </div>
-</div><h3 id="event-stoppropagation"><code>event.stopPropagation()</code></h3><p>Events bubble up the DOM tree by default, meaning that when an event is triggered on a child element, it also fires on all ancestor elements unless stopped.</p><p>Sometimes, you want to <strong>stop the event from propagating further up</strong>:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</script>
+</div><h3 id="event-stoppropagation"><code>event.stopPropagation()</code></h3><p>Events bubble up the DOM tree by default, meaning that when an event is triggered on a child element, it also fires on all ancestor elements unless stopped.</p><p>Sometimes, you want to <strong>stop the event from propagating further up</strong>:</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-js">event.stopPropagation();</code></pre>
-</div><p>This prevents parent elements from receiving the same event.</p><h3 id="example-stopping-propagation">Example: Stopping Propagation</h3><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</div><p>This prevents parent elements from receiving the same event.</p><h3 id="example-stopping-propagation">Example: Stopping Propagation</h3><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-html">&lt;div id="parent" style="padding:20px; border: 1px solid black;"&gt;
   Parent Div
   &lt;button id="childBtn"&gt;Click Me&lt;/button&gt;
 &lt;/div&gt;</code></pre>
-</div><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</div><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-js">const parent = document.getElementById('parent');
 const childBtn = document.getElementById('childBtn');
 
@@ -1208,13 +649,16 @@ childBtn.addEventListener('click', (event) =&gt; {
   event.stopPropagation(); // Prevent parent listener from firing
   console.log('Button clicked');
 });</code></pre>
-</div><p>Clicking the button shows only <strong>"Button clicked"</strong> alert because the event does <strong>not</strong> bubble to the parent.</p><div class="snippet-container" id="HbCaz">
- <div id="Jkidc_Dialog" class="dialog-backdrop">
+</div><p>Clicking the button shows only <strong>"Button clicked"</strong> alert because the event does <strong>not</strong> bubble to the parent.</p><div class="snippet-container">
+ <div class="button-group-run-edit"><button class="button-run-edit" onclick="runHtmlCode(this,'AbUuW','U7MDG', false)">Run</button> <button class="button-run-edit" onclick="openEditHtmlCodeDialog('U7MDG_Dialog','AbUuW')">Edit</button>
+ </div> <iframe id="U7MDG" class="result_iframe" style="display: none;"></iframe>
+ <div id="U7MDG_Dialog" class="dialog-backdrop">
   <div class="dialog">
-   <h2>Dialog 1</h2>
-   <div class="controls"><button onclick="renderIframe(this,'asbon_Textarea','Jkidc_IFrame')">Run</button> <button onclick="closeAll()">Close</button>
+   <div class="controls"><button onclick="runHtmlCode(this,'AbUuW','U7MDG_IFrame', true)">Run</button> <button onclick="closeAllHtmlCodeDialog()">Close</button>
    </div>
-   <div class="dialog-content"><textarea id="asbon_Textarea" class="textarea_dialog" placeholder="Type HTML here...">&lt;!DOCTYPE html&gt;
+   <div class="dialog-content">
+    <div class="editor-container">
+     <textarea id="AbUuW" class="textarea_dialog" placeholder="Type HTML here...">&lt;!DOCTYPE html&gt;
 &lt;html lang="en"&gt;
 &lt;head&gt;
   &lt;meta charset="UTF-8" /&gt;
@@ -1255,96 +699,32 @@ childBtn.addEventListener('click', (event) =&gt; {
   &lt;/script&gt;
 
 &lt;/body&gt;
-&lt;/html&gt;</textarea> <iframe id="Jkidc_IFrame" class="iframe_dialog"></iframe>
+&lt;/html&gt;</textarea>
+    </div>
+    <div class="preview-container">
+     <iframe id="U7MDG_IFrame" class="result_iframe_dialog" style="border: none;"></iframe>
+    </div>
    </div>
   </div>
  </div>
- <div class="snippet-header" onclick="toggleSnippetAndRefresh('HbCaz','asbon')">
-  Click to Try it <!--<span onclick="toggleSnippetAndRefresh('HbCaz','asbon')">Click
-			to Try it</span> --> <!-- <span onclick="openDialog('Jkidc_Dialog')">Dialog</span> -->
- </div>
- <div class="snippet-body"><textarea id="asbon">&lt;!DOCTYPE html&gt;
-&lt;html lang="en"&gt;
-&lt;head&gt;
-  &lt;meta charset="UTF-8" /&gt;
-  &lt;title&gt;Event Propagation Demo&lt;/title&gt;
-  &lt;style&gt;
-    #parent {
-      padding: 20px;
-      border: 1px solid black;
-      max-width: 200px;
-      font-family: Arial, sans-serif;
-    }
-    #childBtn {
-      margin-top: 10px;
-      padding: 8px 12px;
-      cursor: pointer;
-    }
-  &lt;/style&gt;
-&lt;/head&gt;
-&lt;body&gt;
-
-  &lt;div id="parent"&gt;
-    Parent Div
-    &lt;button id="childBtn"&gt;Click Me&lt;/button&gt;
-  &lt;/div&gt;
-
-  &lt;script&gt;
-    const parent = document.getElementById('parent');
-    const childBtn = document.getElementById('childBtn');
-
-    parent.addEventListener('click', () =&gt; {
-      console.log('Parent clicked');
-    });
-
-    childBtn.addEventListener('click', (event) =&gt; {
-      event.stopPropagation(); // Prevent parent listener from firing
-      console.log('Button clicked');
-    });
-  &lt;/script&gt;
-
-&lt;/body&gt;
-&lt;/html&gt;</textarea> <br> <button onclick="renderIframe(this,'asbon','Jkidc')">Run</button>
-  <div id="Jkidc_FloatingLog" class="floatingLog" aria-live="polite" role="alert"></div> <iframe id="Jkidc" class="result_iframe" style="display: none;"></iframe>
-  <script>
-			{
-				let editor = CodeMirror.fromTextArea(document
-						.getElementById("asbon"), {
+ <script>
+{
+let editor = CodeMirror.fromTextArea(document.getElementById("AbUuW"), {
 					mode : "htmlmixed",
 					lineNumbers : false,
+                    lineWrapping: true,
 					tabSize : 2
-				});
-			    const mode = localStorage.getItem("mode") || "light";  
-			    const newTheme = mode === "dark" ? "material" : "default";
-			    editor.setOption("theme", newTheme);
-			    
-				codeMirrorMap.set("asbon", editor);
+});
+const darkmode = localStorage.getItem("mode") || "light";  
+const newTheme = darkmode === "dark" ? "dracula" : "default";
+editor.setSize("50%", "100%");
+editor.setOption("theme", newTheme);
+htmlCodeMirrorMap.set("AbUuW", editor);
+}
 
-				let editor1 = CodeMirror.fromTextArea(document.getElementById("asbon_Textarea"), {
-					mode : "htmlmixed",
-					lineNumbers : false,
-					tabSize : 2
-				});
-			    editor1.setOption("theme", newTheme);				
-				
-				codeMirrorMap.set("asbon_Textarea", editor1);
-			}
-		    function openDialog(id) {
-		        closeAll();
-		        document.getElementById(id).style.display = 'flex';
-		        setTimeout(() => {
-		        	 codeMirrorMap.get("asbon_Textarea").refresh();
-		        }, 100); // 100ms 
-		      }
-
-		      function closeAll() {
-		        document.querySelectorAll('.dialog-backdrop').forEach(el => {
-		          el.style.display = 'none';
-		        });
-		      }			
-		</script>
- </div>
-</div><h3 id="event-stopimmediatepropagation"><code>event.stopImmediatePropagation()</code></h3><p>This method does everything <code>stopPropagation()</code> does <strong>plus</strong> it prevents <strong>other listeners on the same element</strong> from running.</p><p>Use it when you want to ensure <strong>no other event listeners</strong>, even on the same element, are called.</p><h3 id="example-stopping-immediate-propagation">Example: Stopping Immediate Propagation</h3><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</script>
+</div><h3 id="event-stopimmediatepropagation"><code>event.stopImmediatePropagation()</code></h3><p>This method does everything <code>stopPropagation()</code> does <strong>plus</strong> it prevents <strong>other listeners on the same element</strong> from running.</p><p>Use it when you want to ensure <strong>no other event listeners</strong>, even on the same element, are called.</p><h3 id="example-stopping-immediate-propagation">Example: Stopping Immediate Propagation</h3><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-js">button.addEventListener('click', (event) =&gt; {
   console.log('First handler');
   event.stopImmediatePropagation();
@@ -1408,7 +788,8 @@ button.addEventListener('click', () =&gt; {
    <td>Use when you want to trigger an action only after the user stops performing the event (e.g., search input).</td>
   </tr>
  </tbody>
-</table><h3 id="throttling-explained">Throttling Explained</h3><p>Throttling <strong>limits</strong> the number of times a function can execute over time. Even if an event fires continuously, throttling guarantees the handler runs at a controlled, steady pace.</p><h3 id="throttle-example">Throttle Example</h3><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</table><h3 id="throttling-explained">Throttling Explained</h3><p>Throttling <strong>limits</strong> the number of times a function can execute over time. Even if an event fires continuously, throttling guarantees the handler runs at a controlled, steady pace.</p><h3 id="throttle-example">Throttle Example</h3><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-js">function throttle(fn, delay) {
   let lastCall = 0;
   return function (...args) {
@@ -1424,7 +805,8 @@ button.addEventListener('click', () =&gt; {
 window.addEventListener('mousemove', throttle((event) =&gt; {
   console.log(`Mouse at (${event.clientX}, ${event.clientY})`);
 }, 200));</code></pre>
-</div><p>Here, even though <code>mousemove</code> fires very rapidly, the logging happens at most once every 200 milliseconds.</p><h3 id="debouncing-explained">Debouncing Explained</h3><p>Debouncing <strong>delays</strong> execution until the event stops firing for a certain period. If the event keeps happening, the timer resets.</p><h3 id="debounce-example">Debounce Example</h3><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</div><p>Here, even though <code>mousemove</code> fires very rapidly, the logging happens at most once every 200 milliseconds.</p><h3 id="debouncing-explained">Debouncing Explained</h3><p>Debouncing <strong>delays</strong> execution until the event stops firing for a certain period. If the event keeps happening, the timer resets.</p><h3 id="debounce-example">Debounce Example</h3><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-js">function debounce(fn, delay) {
   let timerId;
   return function (...args) {
@@ -1489,26 +871,31 @@ window.addEventListener('resize', debounce(() =&gt; {
 </ul><h3 id="understanding-event-target-vs-event-currenttarget">Understanding <code>event.target</code> vs. <code>event.currentTarget</code></h3><p>These two properties are often confused but serve distinct purposes:</p><ul>
  <li><p><strong><code>event.target</code></strong> is the <strong>element that triggered the event</strong> — the deepest nested element that was actually interacted with.</p></li>
  <li><p><strong><code>event.currentTarget</code></strong> is the <strong>element the event listener is attached to</strong> — the element handling the event at that moment during propagation.</p></li>
-</ul><h3 id="example-event-delegation-on-a-list">Example: Event Delegation on a List</h3><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</ul><h3 id="example-event-delegation-on-a-list">Example: Event Delegation on a List</h3><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-html">&lt;ul id="menu"&gt;
   &lt;li&gt;&lt;button&gt;Home&lt;/button&gt;&lt;/li&gt;
   &lt;li&gt;&lt;button&gt;About&lt;/button&gt;&lt;/li&gt;
   &lt;li&gt;&lt;button&gt;Contact&lt;/button&gt;&lt;/li&gt;
 &lt;/ul&gt;</code></pre>
-</div><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</div><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-js">const menu = document.getElementById('menu');
 
 menu.addEventListener('click', (event) =&gt; {
   console.log('target:', event.target.tagName);        // Element clicked, e.g., BUTTON
   console.log('currentTarget:', event.currentTarget.id); // The UL element 'menu'
 });</code></pre>
-</div><p>If a user clicks the "About" button, <code>event.target</code> will be the <code>&lt;button&gt;</code> element, while <code>event.currentTarget</code> will always be the <code>&lt;ul id="menu"&gt;</code>, because the listener is attached to the <code>&lt;ul&gt;</code>.</p><div class="snippet-container" id="S81Cc">
- <div id="7rJc3_Dialog" class="dialog-backdrop">
+</div><p>If a user clicks the "About" button, <code>event.target</code> will be the <code>&lt;button&gt;</code> element, while <code>event.currentTarget</code> will always be the <code>&lt;ul id="menu"&gt;</code>, because the listener is attached to the <code>&lt;ul&gt;</code>.</p><div class="snippet-container">
+ <div class="button-group-run-edit"><button class="button-run-edit" onclick="runHtmlCode(this,'BbIYs','q8eZ2', false)">Run</button> <button class="button-run-edit" onclick="openEditHtmlCodeDialog('q8eZ2_Dialog','BbIYs')">Edit</button>
+ </div> <iframe id="q8eZ2" class="result_iframe" style="display: none;"></iframe>
+ <div id="q8eZ2_Dialog" class="dialog-backdrop">
   <div class="dialog">
-   <h2>Dialog 1</h2>
-   <div class="controls"><button onclick="renderIframe(this,'aNtpU_Textarea','7rJc3_IFrame')">Run</button> <button onclick="closeAll()">Close</button>
+   <div class="controls"><button onclick="runHtmlCode(this,'BbIYs','q8eZ2_IFrame', true)">Run</button> <button onclick="closeAllHtmlCodeDialog()">Close</button>
    </div>
-   <div class="dialog-content"><textarea id="aNtpU_Textarea" class="textarea_dialog" placeholder="Type HTML here...">&lt;!DOCTYPE html&gt;
+   <div class="dialog-content">
+    <div class="editor-container">
+     <textarea id="BbIYs" class="textarea_dialog" placeholder="Type HTML here...">&lt;!DOCTYPE html&gt;
 &lt;html lang="en"&gt;
 &lt;head&gt;
   &lt;meta charset="UTF-8" /&gt;
@@ -1549,96 +936,32 @@ menu.addEventListener('click', (event) =&gt; {
   &lt;/script&gt;
 
 &lt;/body&gt;
-&lt;/html&gt;</textarea> <iframe id="7rJc3_IFrame" class="iframe_dialog"></iframe>
+&lt;/html&gt;</textarea>
+    </div>
+    <div class="preview-container">
+     <iframe id="q8eZ2_IFrame" class="result_iframe_dialog" style="border: none;"></iframe>
+    </div>
    </div>
   </div>
  </div>
- <div class="snippet-header" onclick="toggleSnippetAndRefresh('S81Cc','aNtpU')">
-  Click to Try it <!--<span onclick="toggleSnippetAndRefresh('S81Cc','aNtpU')">Click
-			to Try it</span> --> <!-- <span onclick="openDialog('7rJc3_Dialog')">Dialog</span> -->
- </div>
- <div class="snippet-body"><textarea id="aNtpU">&lt;!DOCTYPE html&gt;
-&lt;html lang="en"&gt;
-&lt;head&gt;
-  &lt;meta charset="UTF-8" /&gt;
-  &lt;title&gt;Menu Event Delegation&lt;/title&gt;
-  &lt;style&gt;
-    #menu {
-      list-style: none;
-      padding: 0;
-      font-family: Arial, sans-serif;
-      max-width: 200px;
-    }
-    #menu li {
-      margin: 8px 0;
-    }
-    #menu button {
-      width: 100%;
-      padding: 8px 12px;
-      cursor: pointer;
-      font-size: 16px;
-    }
-  &lt;/style&gt;
-&lt;/head&gt;
-&lt;body&gt;
-
-  &lt;ul id="menu"&gt;
-    &lt;li&gt;&lt;button&gt;Home&lt;/button&gt;&lt;/li&gt;
-    &lt;li&gt;&lt;button&gt;About&lt;/button&gt;&lt;/li&gt;
-    &lt;li&gt;&lt;button&gt;Contact&lt;/button&gt;&lt;/li&gt;
-  &lt;/ul&gt;
-
-  &lt;script&gt;
-    const menu = document.getElementById('menu');
-
-    menu.addEventListener('click', (event) =&gt; {
-      console.log('target:', event.target.tagName);         // Element clicked, e.g., BUTTON
-      console.log('currentTarget:', event.currentTarget.id); // The UL element 'menu'
-    });
-  &lt;/script&gt;
-
-&lt;/body&gt;
-&lt;/html&gt;</textarea> <br> <button onclick="renderIframe(this,'aNtpU','7rJc3')">Run</button>
-  <div id="7rJc3_FloatingLog" class="floatingLog" aria-live="polite" role="alert"></div> <iframe id="7rJc3" class="result_iframe" style="display: none;"></iframe>
-  <script>
-			{
-				let editor = CodeMirror.fromTextArea(document
-						.getElementById("aNtpU"), {
+ <script>
+{
+let editor = CodeMirror.fromTextArea(document.getElementById("BbIYs"), {
 					mode : "htmlmixed",
 					lineNumbers : false,
+                    lineWrapping: true,
 					tabSize : 2
-				});
-			    const mode = localStorage.getItem("mode") || "light";  
-			    const newTheme = mode === "dark" ? "material" : "default";
-			    editor.setOption("theme", newTheme);
-			    
-				codeMirrorMap.set("aNtpU", editor);
+});
+const darkmode = localStorage.getItem("mode") || "light";  
+const newTheme = darkmode === "dark" ? "dracula" : "default";
+editor.setSize("50%", "100%");
+editor.setOption("theme", newTheme);
+htmlCodeMirrorMap.set("BbIYs", editor);
+}
 
-				let editor1 = CodeMirror.fromTextArea(document.getElementById("aNtpU_Textarea"), {
-					mode : "htmlmixed",
-					lineNumbers : false,
-					tabSize : 2
-				});
-			    editor1.setOption("theme", newTheme);				
-				
-				codeMirrorMap.set("aNtpU_Textarea", editor1);
-			}
-		    function openDialog(id) {
-		        closeAll();
-		        document.getElementById(id).style.display = 'flex';
-		        setTimeout(() => {
-		        	 codeMirrorMap.get("aNtpU_Textarea").refresh();
-		        }, 100); // 100ms 
-		      }
-
-		      function closeAll() {
-		        document.querySelectorAll('.dialog-backdrop').forEach(el => {
-		          el.style.display = 'none';
-		        });
-		      }			
-		</script>
- </div>
-</div><h3 id="using-event-objects-for-dynamic-behavior">Using Event Objects for Dynamic Behavior</h3><p>Event objects allow you to react dynamically based on what element triggered the event or other event details:</p><h3 id="example-highlighting-clicked-items">Example: Highlighting Clicked Items</h3><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</script>
+</div><h3 id="using-event-objects-for-dynamic-behavior">Using Event Objects for Dynamic Behavior</h3><p>Event objects allow you to react dynamically based on what element triggered the event or other event details:</p><h3 id="example-highlighting-clicked-items">Example: Highlighting Clicked Items</h3><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-js">menu.addEventListener('click', (event) =&gt; {
   if (event.target.tagName === 'BUTTON') {
     alert(`You clicked: ${event.target.textContent}`);
@@ -1646,13 +969,16 @@ menu.addEventListener('click', (event) =&gt; {
     event.target.classList.add('highlight');
   }
 });</code></pre>
-</div><p>This code checks the <code>event.target</code> to ensure only button clicks inside the menu trigger the action.</p><div class="snippet-container" id="sDxOz">
- <div id="dWP7V_Dialog" class="dialog-backdrop">
+</div><p>This code checks the <code>event.target</code> to ensure only button clicks inside the menu trigger the action.</p><div class="snippet-container">
+ <div class="button-group-run-edit"><button class="button-run-edit" onclick="runHtmlCode(this,'JcbSd','9kdbP', false)">Run</button> <button class="button-run-edit" onclick="openEditHtmlCodeDialog('9kdbP_Dialog','JcbSd')">Edit</button>
+ </div> <iframe id="9kdbP" class="result_iframe" style="display: none;"></iframe>
+ <div id="9kdbP_Dialog" class="dialog-backdrop">
   <div class="dialog">
-   <h2>Dialog 1</h2>
-   <div class="controls"><button onclick="renderIframe(this,'kLPuT_Textarea','dWP7V_IFrame')">Run</button> <button onclick="closeAll()">Close</button>
+   <div class="controls"><button onclick="runHtmlCode(this,'JcbSd','9kdbP_IFrame', true)">Run</button> <button onclick="closeAllHtmlCodeDialog()">Close</button>
    </div>
-   <div class="dialog-content"><textarea id="kLPuT_Textarea" class="textarea_dialog" placeholder="Type HTML here...">&lt;!DOCTYPE html&gt;
+   <div class="dialog-content">
+    <div class="editor-container">
+     <textarea id="JcbSd" class="textarea_dialog" placeholder="Type HTML here...">&lt;!DOCTYPE html&gt;
 &lt;html lang="en"&gt;
 &lt;head&gt;
   &lt;meta charset="UTF-8" /&gt;
@@ -1702,104 +1028,30 @@ menu.addEventListener('click', (event) =&gt; {
   &lt;/script&gt;
 
 &lt;/body&gt;
-&lt;/html&gt;</textarea> <iframe id="dWP7V_IFrame" class="iframe_dialog"></iframe>
+&lt;/html&gt;</textarea>
+    </div>
+    <div class="preview-container">
+     <iframe id="9kdbP_IFrame" class="result_iframe_dialog" style="border: none;"></iframe>
+    </div>
    </div>
   </div>
  </div>
- <div class="snippet-header" onclick="toggleSnippetAndRefresh('sDxOz','kLPuT')">
-  Click to Try it <!--<span onclick="toggleSnippetAndRefresh('sDxOz','kLPuT')">Click
-			to Try it</span> --> <!-- <span onclick="openDialog('dWP7V_Dialog')">Dialog</span> -->
- </div>
- <div class="snippet-body"><textarea id="kLPuT">&lt;!DOCTYPE html&gt;
-&lt;html lang="en"&gt;
-&lt;head&gt;
-  &lt;meta charset="UTF-8" /&gt;
-  &lt;title&gt;Menu Button Highlight&lt;/title&gt;
-  &lt;style&gt;
-    #menu {
-      list-style: none;
-      padding: 0;
-      font-family: Arial, sans-serif;
-      max-width: 200px;
-    }
-    #menu li {
-      margin: 8px 0;
-    }
-    #menu button {
-      width: 100%;
-      padding: 8px 12px;
-      cursor: pointer;
-      font-size: 16px;
-      transition: background-color 0.3s ease;
-    }
-    /* Highlight class */
-    .highlight {
-      background-color: yellow;
-      font-weight: bold;
-    }
-  &lt;/style&gt;
-&lt;/head&gt;
-&lt;body&gt;
-
-  &lt;ul id="menu"&gt;
-    &lt;li&gt;&lt;button&gt;Home&lt;/button&gt;&lt;/li&gt;
-    &lt;li&gt;&lt;button&gt;About&lt;/button&gt;&lt;/li&gt;
-    &lt;li&gt;&lt;button&gt;Contact&lt;/button&gt;&lt;/li&gt;
-  &lt;/ul&gt;
-
-  &lt;script&gt;
-    const menu = document.getElementById('menu');
-
-    menu.addEventListener('click', (event) =&gt; {
-      if (event.target.tagName === 'BUTTON') {
-        console.log(`You clicked: ${event.target.textContent}`);
-        // Add a class to highlight the clicked button
-        event.target.classList.add('highlight');
-      }
-    });
-  &lt;/script&gt;
-
-&lt;/body&gt;
-&lt;/html&gt;</textarea> <br> <button onclick="renderIframe(this,'kLPuT','dWP7V')">Run</button>
-  <div id="dWP7V_FloatingLog" class="floatingLog" aria-live="polite" role="alert"></div> <iframe id="dWP7V" class="result_iframe" style="display: none;"></iframe>
-  <script>
-			{
-				let editor = CodeMirror.fromTextArea(document
-						.getElementById("kLPuT"), {
+ <script>
+{
+let editor = CodeMirror.fromTextArea(document.getElementById("JcbSd"), {
 					mode : "htmlmixed",
 					lineNumbers : false,
+                    lineWrapping: true,
 					tabSize : 2
-				});
-			    const mode = localStorage.getItem("mode") || "light";  
-			    const newTheme = mode === "dark" ? "material" : "default";
-			    editor.setOption("theme", newTheme);
-			    
-				codeMirrorMap.set("kLPuT", editor);
+});
+const darkmode = localStorage.getItem("mode") || "light";  
+const newTheme = darkmode === "dark" ? "dracula" : "default";
+editor.setSize("50%", "100%");
+editor.setOption("theme", newTheme);
+htmlCodeMirrorMap.set("JcbSd", editor);
+}
 
-				let editor1 = CodeMirror.fromTextArea(document.getElementById("kLPuT_Textarea"), {
-					mode : "htmlmixed",
-					lineNumbers : false,
-					tabSize : 2
-				});
-			    editor1.setOption("theme", newTheme);				
-				
-				codeMirrorMap.set("kLPuT_Textarea", editor1);
-			}
-		    function openDialog(id) {
-		        closeAll();
-		        document.getElementById(id).style.display = 'flex';
-		        setTimeout(() => {
-		        	 codeMirrorMap.get("kLPuT_Textarea").refresh();
-		        }, 100); // 100ms 
-		      }
-
-		      function closeAll() {
-		        document.querySelectorAll('.dialog-backdrop').forEach(el => {
-		          el.style.display = 'none';
-		        });
-		      }			
-		</script>
- </div>
+</script>
 </div><h3 id="other-useful-event-object-properties">Other Useful Event Object Properties</h3><ul>
  <li><strong><code>event.key</code></strong>: The key pressed during keyboard events.</li>
  <li><strong><code>event.clientX</code>, <code>event.clientY</code></strong>: Mouse cursor coordinates relative to the viewport.</li>
@@ -1815,7 +1067,8 @@ menu.addEventListener('click', (event) =&gt; {
 <a href='javascript-dom-programming.htm#advanced-event-handling' class="nav-button toc-link">Index</a>
 <a href="#bottom" class="nav-button next">↓</a>
 </div>
-<h2 id='practical-example-efficient-list-item-click-handling'>6.5 Practical Example: Efficient List Item Click Handling</h2><p>Handling events on many dynamic elements can be tricky — especially if the elements are added or removed after the initial page load. Adding event listeners to each individual item is inefficient and can cause memory leaks.</p><p><strong>Event delegation</strong> solves this by attaching a single listener to a common ancestor element that exists from the start. This listener can detect and respond to events triggered by any of its child elements, even if those children are added later dynamically.</p><h3 id="example-delegated-click-handling-on-a-dynamic-list">Example: Delegated Click Handling on a Dynamic List</h3><p>HTML:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+<h2 id='practical-example-efficient-list-item-click-handling'>6.5 Practical Example: Efficient List Item Click Handling</h2><p>Handling events on many dynamic elements can be tricky — especially if the elements are added or removed after the initial page load. Adding event listeners to each individual item is inefficient and can cause memory leaks.</p><p><strong>Event delegation</strong> solves this by attaching a single listener to a common ancestor element that exists from the start. This listener can detect and respond to events triggered by any of its child elements, even if those children are added later dynamically.</p><h3 id="example-delegated-click-handling-on-a-dynamic-list">Example: Delegated Click Handling on a Dynamic List</h3><p>HTML:</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-html">&lt;style&gt;
     .selected {
       background-color: #d0f0c0;
@@ -1829,7 +1082,8 @@ menu.addEventListener('click', (event) =&gt; {
   &lt;/ul&gt;
 
   &lt;button id="addItemBtn"&gt;Add New Item&lt;/button&gt;</code></pre>
-</div><p>Javascript:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</div><p>Javascript:</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-html">&lt;script&gt;
     const list = document.getElementById('itemList');
     const addBtn = document.getElementById('addItemBtn');
@@ -1859,13 +1113,16 @@ menu.addEventListener('click', (event) =&gt; {
       nextId++;
     });
   &lt;/script&gt;</code></pre>
-</div><div class="snippet-container" id="Nz6Er">
- <div id="bkYzi_Dialog" class="dialog-backdrop">
+</div><div class="snippet-container">
+ <div class="button-group-run-edit"><button class="button-run-edit" onclick="runHtmlCode(this,'iZ3lW','9TVLO', false)">Run</button> <button class="button-run-edit" onclick="openEditHtmlCodeDialog('9TVLO_Dialog','iZ3lW')">Edit</button>
+ </div> <iframe id="9TVLO" class="result_iframe" style="display: none;"></iframe>
+ <div id="9TVLO_Dialog" class="dialog-backdrop">
   <div class="dialog">
-   <h2>Dialog 1</h2>
-   <div class="controls"><button onclick="renderIframe(this,'XzXe5_Textarea','bkYzi_IFrame')">Run</button> <button onclick="closeAll()">Close</button>
+   <div class="controls"><button onclick="runHtmlCode(this,'iZ3lW','9TVLO_IFrame', true)">Run</button> <button onclick="closeAllHtmlCodeDialog()">Close</button>
    </div>
-   <div class="dialog-content"><textarea id="XzXe5_Textarea" class="textarea_dialog" placeholder="Type HTML here...">&lt;!DOCTYPE html&gt;
+   <div class="dialog-content">
+    <div class="editor-container">
+     <textarea id="iZ3lW" class="textarea_dialog" placeholder="Type HTML here...">&lt;!DOCTYPE html&gt;
 &lt;html lang="en"&gt;
 &lt;head&gt;
   &lt;meta charset="UTF-8" /&gt;
@@ -1917,106 +1174,30 @@ menu.addEventListener('click', (event) =&gt; {
   &lt;/script&gt;
 
 &lt;/body&gt;
-&lt;/html&gt;</textarea> <iframe id="bkYzi_IFrame" class="iframe_dialog"></iframe>
+&lt;/html&gt;</textarea>
+    </div>
+    <div class="preview-container">
+     <iframe id="9TVLO_IFrame" class="result_iframe_dialog" style="border: none;"></iframe>
+    </div>
    </div>
   </div>
  </div>
- <div class="snippet-header" onclick="toggleSnippetAndRefresh('Nz6Er','XzXe5')">
-  Click to Try it <!--<span onclick="toggleSnippetAndRefresh('Nz6Er','XzXe5')">Click
-			to Try it</span> --> <!-- <span onclick="openDialog('bkYzi_Dialog')">Dialog</span> -->
- </div>
- <div class="snippet-body"><textarea id="XzXe5">&lt;!DOCTYPE html&gt;
-&lt;html lang="en"&gt;
-&lt;head&gt;
-  &lt;meta charset="UTF-8" /&gt;
-  &lt;title&gt;Delegated List Click Handling&lt;/title&gt;
-  &lt;style&gt;
-    .selected {
-      background-color: #d0f0c0;
-    }
-  &lt;/style&gt;
-&lt;/head&gt;
-&lt;body&gt;
-
-  &lt;h2&gt;Click on a list item to select it&lt;/h2&gt;
-  &lt;ul id="itemList"&gt;
-    &lt;li data-id="1"&gt;Item 1&lt;/li&gt;
-    &lt;li data-id="2"&gt;Item 2&lt;/li&gt;
-  &lt;/ul&gt;
-
-  &lt;button id="addItemBtn"&gt;Add New Item&lt;/button&gt;
-
-  &lt;script&gt;
-    const list = document.getElementById('itemList');
-    const addBtn = document.getElementById('addItemBtn');
-    let nextId = 3;
-
-    // Event delegation: single listener on the parent UL
-    list.addEventListener('click', (event) =&gt; {
-      // Only respond if a &lt;li&gt; was clicked (ignore clicks on the UL itself)
-      if (event.target &amp;&amp; event.target.nodeName === 'LI') {
-        // Remove "selected" class from all items
-        [...list.children].forEach(li =&gt; li.classList.remove('selected'));
-
-        // Add "selected" class to the clicked item
-        event.target.classList.add('selected');
-
-        // Log the data-id of the clicked item
-        console.log('Clicked item ID:', event.target.dataset.id);
-      }
-    });
-
-    // Dynamically add new items to the list
-    addBtn.addEventListener('click', () =&gt; {
-      const newItem = document.createElement('li');
-      newItem.textContent = `Item ${nextId}`;
-      newItem.dataset.id = nextId;
-      list.appendChild(newItem);
-      nextId++;
-    });
-  &lt;/script&gt;
-
-&lt;/body&gt;
-&lt;/html&gt;</textarea> <br> <button onclick="renderIframe(this,'XzXe5','bkYzi')">Run</button>
-  <div id="bkYzi_FloatingLog" class="floatingLog" aria-live="polite" role="alert"></div> <iframe id="bkYzi" class="result_iframe" style="display: none;"></iframe>
-  <script>
-			{
-				let editor = CodeMirror.fromTextArea(document
-						.getElementById("XzXe5"), {
+ <script>
+{
+let editor = CodeMirror.fromTextArea(document.getElementById("iZ3lW"), {
 					mode : "htmlmixed",
 					lineNumbers : false,
+                    lineWrapping: true,
 					tabSize : 2
-				});
-			    const mode = localStorage.getItem("mode") || "light";  
-			    const newTheme = mode === "dark" ? "material" : "default";
-			    editor.setOption("theme", newTheme);
-			    
-				codeMirrorMap.set("XzXe5", editor);
+});
+const darkmode = localStorage.getItem("mode") || "light";  
+const newTheme = darkmode === "dark" ? "dracula" : "default";
+editor.setSize("50%", "100%");
+editor.setOption("theme", newTheme);
+htmlCodeMirrorMap.set("iZ3lW", editor);
+}
 
-				let editor1 = CodeMirror.fromTextArea(document.getElementById("XzXe5_Textarea"), {
-					mode : "htmlmixed",
-					lineNumbers : false,
-					tabSize : 2
-				});
-			    editor1.setOption("theme", newTheme);				
-				
-				codeMirrorMap.set("XzXe5_Textarea", editor1);
-			}
-		    function openDialog(id) {
-		        closeAll();
-		        document.getElementById(id).style.display = 'flex';
-		        setTimeout(() => {
-		        	 codeMirrorMap.get("XzXe5_Textarea").refresh();
-		        }, 100); // 100ms 
-		      }
-
-		      function closeAll() {
-		        document.querySelectorAll('.dialog-backdrop').forEach(el => {
-		          el.style.display = 'none';
-		        });
-		      }			
-		</script>
- </div>
+</script>
 </div><h3 id="how-this-works">How This Works</h3><ol>
  <li><p><strong>Single Event Listener on the Parent (<code>ul</code>)</strong> Instead of adding listeners to each <code>&lt;li&gt;</code>, we add one listener to the <code>&lt;ul id="itemList"&gt;</code>. This listener catches <strong>all click events bubbling up</strong> from child <code>&lt;li&gt;</code> elements.</p></li>
  <li><p><strong>Identifying the Clicked Item Using <code>event.target</code></strong> Inside the event handler, we check <code>event.target.nodeName === 'LI'</code> to make sure the click was on a list item, not the parent or any other element.</p></li>
@@ -2037,7 +1218,7 @@ menu.addEventListener('click', (event) =&gt; {
 </div>
 <section class="download-section">
   <div class="book-cover" style="background-color: #f9f6f1;border: 1px solid #ccc;"> 
-    <div class="book-cover-title" style="font-size: 16px;color: #333;top: 20px;">JavaScript DOM Programming</div>
+    <div class="book-cover-title" style="font-size: 16px;color: #333;top: 10px;">JavaScript DOM Programming</div>
     <div class="book-cover-author">readbytes</div>
     <div class="book-cover-bottom-stripe" style="background-color: #333;"></div>
     <img class="book-cover-icon" style="width: 90px;height: 90px;top: 60px;" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFoAAABaCAYAAAA4qEECAAADUklEQVR4Xu2dv47TQBDGI0RDczY9rwMlrwEFBweC/t4EXRwaXuI6WiSaOLkCIZ6BCqTgPRFr8zkbnPF4Zuydn/RVuzsz33eSlX/2LRYRm1Xxe1MVOzY19eL6/6NzfqCw/ilEvXc2Mwh7pNiuyks8O1T1snyNfVLgWQ5hjxbcyCHskaJelVd4drCW5Vvsk6JzlkHYo6XXph5Q6hwEfUZASDhLqUOZ+Ri96vTa1ANKHQ+aAKWOB02AUseDJkCp40EToNTxoAlQ6njQBCh1PGgClDrZBs0l7JEi23eGXMIeKTbVxSs8O1Trm4tL7JMCz3IIe7Rsq+IXbh6iUA97nALPDxXWP4W29w5xMVwbG67rOBVR76LNAA9aiKyCbq49L0QbRmgGHXuul8VLXB+F3IPGtdGIm0o21gpay+89Gs01gtbwecDPz08eSQ8hHTT6C55xjwh3q+IZDhO0u148wL0cSAR93cyOfoKCV9wryu528RCHmpuCR/StRvOy7w8OOHUFT+jTDHdV+RwHnpqCB/SVFRLXaGfhQYvhQQvhQQvhQQvhQf8DXyZNXehPnW+fisc45FwUvKFfNXC4uQn9qvD1Y1maG4qB2NP3xiOui1NX5Zv9QNuq+IDrU6Xx8n7vq16WV7guTvxKYH1TvsP1qWLOl7mBmDDny9xATJjzZW4gJsz5MjcQE+Z8mRuICXO+zA3EhDlf5gZiwpwvcwMxYc6XuYGYMOfL3EBMmPNlbiAmzPkyNxAT5nyZG4gJc778Y1Ih/IN/QeKh5ij0q8acv5z9YenL2T045NSF/rIhfiWQ9Q9oxsaDFsKDFsKDFsKDFsKDjqj9ZqFx8dvfRubWb+gcn+Yv/hSHuh9swrcoh9nRT5DaLcpf/KZ7GXAIXB8D6aADGj5btJprBB3Q8nvQGNfGRCvogLjntT+8SubhVVohBzSDDoh6F20GeNBCzCZo7Qeh4vmhwvqnEPWOmzmEPVJk9Vhj3Mgh7JHi4LLApTMuL52zDMIeLb029YBSh+v6G85S6lBmPkavOr029YBSx4MmQKnjQROg1PGgCVDqeNAEKHU8aAKUOh40AUodD5oApU62QXMJe6TI9p0hl7BHitz+XTX3j2DO+gHKkfODhPVPsRnZ+1+tJg8Iaaje6wAAAABJRU5ErkJggg=="/>
@@ -2063,9 +1244,19 @@ menu.addEventListener('click', (event) =&gt; {
 </a>
 
 
+<a href="javascript-html5-animation.htm">
+<div class="book-cover" style="background-color: #f9f6f1;border: 1px solid #ccc;"> 
+    <div class="book-cover-title" style="font-size: 16px;color: #333;top: 10px;">JavaScript HTML5 Animation</div>
+    <div class="book-cover-author">readbytes</div>
+    <div class="book-cover-bottom-stripe" style="background-color: #333;"></div>
+    <img class="book-cover-icon" style="width: 120px;height: 120px;top: 60px;" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFoAAABaCAYAAAA4qEECAAACw0lEQVR4Xu3WvWoUURjG8dXGS9BK7awECysR78Ab8RqUmZGE3QmKmEJUxEarFJJCFK0sbGzEThBEJFjEbbQwsOLOcZZl2cN/PvbMx+6cCc8PHpLs2fN+DAmbwUBERERERERERERERERERERERDYrDqaPRmFiFokjc4vvkZriKDmyH25hgmTMu3Vk6iKDgTnBO73HJV3CGq5YZ1V4v5dGoTnLxarErrW9bU7HobmRvv52GCaf06/f0t/+L7Ofd0Jzad4vW8MlcWAu2716hwv5HXOF8/dCdhH/wx28Nwqmj7lEX8JdvMbh82LjWZtJ/9up1Ie7eI3D58XGszZj+/3LrRf38VL6ofKKg+fFxrM28+Ng2efeKHueF+7kJQ5dFBvPug538hKHLooedEMcepGqeN8148P5/edPs2d2yvpwJy9xaC7mivdd41KDeD4Mkn3u5R0OXZSyRZvEpe6bl8v3zb7n+SzcyyvDoTnPgYti41nTvH+3uubD+/Pw9UW4m1fSAcccuCjrfNBthLt5hcOWZZMPuk4f7uYVDlsWG8/ajO3ge6VeP7mfN3KG7TyTyfJB7+9VetD+/lZzUF+y9ywxTx5kX18V7ucNDtr3cD8vjILkBQfte+5smXPcs3Mc8jgkjpKEe3aOQx6XcM/OccDjEu7ZOQ7YNKzvIv2c+Mg6TROG5iT7dIoDNou5xvqusrUaJko+sUenMgM2CGtXxXpNMgyT16zfKQ5YN6xbF+vWze6uOcXanUr/xP5yyBqZsm5dO6E5k1O/cljXCxyyalivqbTmH/aoGtb0AoeskvimucB6bWCfKmEtr3BYxxyxTpty+q1OZK6zjncyQ5dnwvvrkNO3JOYu73srO3xOtsxV3lunTP+c8E5vxKH5wGVGt81Fvm+T0hm+2vPEUfKP7xERERERERERERERERERERERERGRbv0HldRbu8sOVfIAAAAASUVORK5CYII="/>
+  </div>
+</a>
+
+
 <a href="javascript-dom-programming.htm">
 <div class="book-cover" style="background-color: #f9f6f1;border: 1px solid #ccc;"> 
-    <div class="book-cover-title" style="font-size: 16px;color: #333;top: 20px;">JavaScript DOM Programming</div>
+    <div class="book-cover-title" style="font-size: 16px;color: #333;top: 10px;">JavaScript DOM Programming</div>
     <div class="book-cover-author">readbytes</div>
     <div class="book-cover-bottom-stripe" style="background-color: #333;"></div>
     <img class="book-cover-icon" style="width: 90px;height: 90px;top: 60px;" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFoAAABaCAYAAAA4qEECAAADUklEQVR4Xu2dv47TQBDGI0RDczY9rwMlrwEFBweC/t4EXRwaXuI6WiSaOLkCIZ6BCqTgPRFr8zkbnPF4Zuydn/RVuzsz33eSlX/2LRYRm1Xxe1MVOzY19eL6/6NzfqCw/ilEvXc2Mwh7pNiuyks8O1T1snyNfVLgWQ5hjxbcyCHskaJelVd4drCW5Vvsk6JzlkHYo6XXph5Q6hwEfUZASDhLqUOZ+Ri96vTa1ANKHQ+aAKWOB02AUseDJkCp40EToNTxoAlQ6njQBCh1PGgClDrZBs0l7JEi23eGXMIeKTbVxSs8O1Trm4tL7JMCz3IIe7Rsq+IXbh6iUA97nALPDxXWP4W29w5xMVwbG67rOBVR76LNAA9aiKyCbq49L0QbRmgGHXuul8VLXB+F3IPGtdGIm0o21gpay+89Gs01gtbwecDPz08eSQ8hHTT6C55xjwh3q+IZDhO0u148wL0cSAR93cyOfoKCV9wryu528RCHmpuCR/StRvOy7w8OOHUFT+jTDHdV+RwHnpqCB/SVFRLXaGfhQYvhQQvhQQvhQQvhQf8DXyZNXehPnW+fisc45FwUvKFfNXC4uQn9qvD1Y1maG4qB2NP3xiOui1NX5Zv9QNuq+IDrU6Xx8n7vq16WV7guTvxKYH1TvsP1qWLOl7mBmDDny9xATJjzZW4gJsz5MjcQE+Z8mRuICXO+zA3EhDlf5gZiwpwvcwMxYc6XuYGYMOfL3EBMmPNlbiAmzPkyNxAT5nyZG4gJc778Y1Ih/IN/QeKh5ij0q8acv5z9YenL2T045NSF/rIhfiWQ9Q9oxsaDFsKDFsKDFsKDFsKDjqj9ZqFx8dvfRubWb+gcn+Yv/hSHuh9swrcoh9nRT5DaLcpf/KZ7GXAIXB8D6aADGj5btJprBB3Q8nvQGNfGRCvogLjntT+8SubhVVohBzSDDoh6F20GeNBCzCZo7Qeh4vmhwvqnEPWOmzmEPVJk9Vhj3Mgh7JHi4LLApTMuL52zDMIeLb029YBSh+v6G85S6lBmPkavOr029YBSx4MmQKnjQROg1PGgCVDqeNAEKHU8aAKUOh40AUodD5oApU62QXMJe6TI9p0hl7BHitz+XTX3j2DO+gHKkfODhPVPsRnZ+1+tJg8Iaaje6wAAAABJRU5ErkJggg=="/>
@@ -2075,7 +1266,7 @@ menu.addEventListener('click', (event) =&gt; {
 
 <a href="javascript-data-visualization.htm">
 <div class="book-cover" style="background-color: #f9f6f1;border: 1px solid #ccc;"> 
-    <div class="book-cover-title" style="font-size: 16px;color: #333;top: 20px;">JavaScript Data Visualization</div>
+    <div class="book-cover-title" style="font-size: 16px;color: #333;top: 10px;">JavaScript Data Visualization</div>
     <div class="book-cover-author">readbytes</div>
     <div class="book-cover-bottom-stripe" style="background-color: #333;"></div>
     <img class="book-cover-icon" style="width: 90px;height: 90px;top: 60px;" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFoAAABaCAYAAAA4qEECAAAC0UlEQVR4Xu3dMWsUURSG4fwr2U6zJI0WKZSAaa0EG7tU2giWimLETrQQQRCxUDsbK3+IYOWCiFU06IQz356ZuffOvXdm4A28ze585OxDsLDZnR3zs1pf+rHavXhKWdpY2/Mf50HKEMgV+4cs/1z8/v6OMiTYm9Zfsz5M42r9VQNdLqArBXSlgK4U0JUCulKLgrb39aW7ObQY6PXl/S3Qrs6e1f3ULQZaMYfS/dTZ2xYDvff6g9tS7ge6YEBXCuhKAV0poCsFdKWArtQk0G9e3Tt9dnLc2+dPD1sboCOzv2Ool8/vujsFBtpJMYfydgoMtFMqWOpuLtnbgC6YvQ3ogtnbgC6YvQ3ogtnbgC6YvQ3ogtnbgC6YvQ3ogtnboqCvHR20xn11/UKF6gNL3Y1JP0dXV68fbG01+3wUtP6yvp4+OXZ3CtUHlrpL7ew/tvRz9KV7zT4LtGmW0O+/fnRr3l86tH4u/Xwhv88+C7QJ6MhdakBH7lIDOnKXGtCRu9SAjtylBnTkLjWgI3e67evnt7fnG6BH7EJqdkCP2IXU7IAesft169DN2wE9YqfAQDt35NgpMNDOHTl2Cgy0c0eOnQID7dxhXwvJ2ykw0M4d9rWQvJ0CA+3cYV8LydspMNDOHfa1C/cfuQ3tFBho5w77mgID/f99oCeGDsnbKXBp6JDUR7PPAm12QO8CvVXzfhe0QoWC6fOhOwUOhX7w4rGbt+vKPgu02QE9YqfAi4Meai7QITU7oEfsQmp2s4S+cfumW/P+XKDvXFm7ebtZQusBeshcoL8c7rt5O6BH7BQYaOeOHDsFBtq5I8dOgYF27sixU2CgnTty7BQYaOeOHDsFBtq5I8dOgRcHPVQXdEhT7Wb536RDAQ30Vs1uNtAUF9CVArpSQFcK6EoBXSmgK9WG5qtQi2RNV803KsuLlDn7RcpgF6qF3Pz8fWOjD1JyrS9g/wOlHj3Oru4PcQAAAABJRU5ErkJggg=="/>
@@ -2136,30 +1327,36 @@ menu.addEventListener('click', (event) =&gt; {
 
 <a href='javascript.htm'><div class='book-cover' style='background-color: #f9f6f1;color: #111111;border: 1px solid #ccc;display: flex;justify-content: center;align-items: center;text-align: center;'>More Javascript Books</div></a>
 </div>
-</div>
-  </div>
-  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
-  
-  <script>
-    function copyCode(button) {
-      const code = button.nextElementSibling.innerText;
-      navigator.clipboard.writeText(code).then(() => {
-        button.textContent = 'Copied!';
-        setTimeout(() => { button.textContent = 'Copy'; }, 1500);
-      });
-    }
-  </script>  
-<div id="floatingLog" aria-live="polite" role="alert"></div>
-<footer class="page-footer">
-    <nav>
-      <a href="https://readbytes.github.io">Home</a> | 
-      Email:<script language="JavaScript" type="text/javascript">
+</div><script>
+function copyCode(button) {const code = button.nextElementSibling.innerText;navigator.clipboard.writeText(code).then(() => {button.textContent = 'Copied!';setTimeout(() => { button.textContent = 'Copy'; }, 1500);});}
+</script><div id="floatingLog" aria-live="polite" role="alert"></div></div>
+<style>
+.site-footer {margin-top: 60px;padding: 20px 0;border-top: 1px solid #eee;text-align: center;font-size: 14px;}
+.site-footer a {text-decoration: none;}
+.light-mode .site-footer {color: #777;border-color: #eee;}
+.dark-mode .site-footer {color: #888;border-color: #333;}
+.light-mode .site-footer a {color: #555;}
+.dark-mode .site-footer a {color: #aaa;}
+.site-footer a:hover {text-decoration: underline;}    
+</style>
+<footer class="site-footer">
+<nav><a href="https://readbytes.github.io">Home</a> |Email:<script type="text/javascript">
 var part1 = 'yinpeng';var part6 = '263';var part2 = Math.pow(2,6);var part3 = String.fromCharCode(part2);var part4 = 'hotmail dot com';var part5 = part1 + String.fromCharCode(part2) + part4;document.write(part1 + part6 + part3 + part4);
 </script>
-    </nav>
-  <p>© 2025 — All rights reserved.</p>    
-  </footer>
-
+| <a id="mode-toggle" href="#">Toggle Dark Mode</a>
+</nav><p>© 2025 — All rights reserved.</p></footer>
+<script>
+const toggleButton = document.getElementById('mode-toggle');
+const body = document.body;
+const savedMode = localStorage.getItem('mode') || 'light';
+body.classList.add(savedMode + '-mode');
+toggleButton.addEventListener('click', () => {
+      const isDark = body.classList.contains('dark-mode');
+      body.classList.toggle('dark-mode', !isDark);
+      body.classList.toggle('light-mode', isDark);
+      localStorage.setItem('mode', isDark ? 'light' : 'dark');
+});
+function copyCode(button) {const code = button.nextElementSibling.innerText;navigator.clipboard.writeText(code).then(() => {button.textContent = 'Copied!';setTimeout(() => { button.textContent = 'Copy'; }, 1500);});}
+</script>
 </body>
 </html>

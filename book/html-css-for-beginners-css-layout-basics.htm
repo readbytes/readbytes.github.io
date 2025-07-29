@@ -1,21 +1,281 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
+<meta charset="UTF-8">
 <title>HTML CSS for Beginners CSS Layout Basics</title>
-<link rel='shortcut icon' href='https://java2s.com/style/favicon.ico'>
+<link rel='shortcut icon' href='https://readbytes.github.io/images/favicon.ico'>
 <link href="https://fonts.googleapis.com/css2?family=Merriweather&display=swap" rel="stylesheet" />
 <link href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
-
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.css" />
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/theme/material.css"> <!-- Dark theme -->
-<script src="https://cdn.jsdelivr.net/npm/typescript@5/lib/typescript.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/htmlmixed/htmlmixed.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/theme/dracula.min.css"><style>
+html {scroll-behavior: smooth;}  
+body {font-family: 'Merriweather', serif;;margin: 0;padding: 2rem 1rem;font-size: 15px;line-height: 1.5;transition: background-color 0.3s, color 0.3s;}
+.container {max-width: 750px;margin: 0 auto;padding: 1rem 2rem;}
+.light-mode {background-color: #f8f7f5;color: #333;} 
+.dark-mode {background-color: #121212;color: #e0e0e0;}
+a { text-decoration: none;transition: color 0.2s;}
+a:hover {text-decoration: underline;}
+.light-mode a {color: #555;}
+.dark-mode a {color: #aaa;}
+</style><style>
+.related-book-list {display: flex;flex-wrap: wrap;gap: 20px;}
+.related-books {margin-top: 40px;}
+.related-books h2 {font-size: 22px;margin-bottom: 20px;border-bottom: 2px solid #eee;padding-bottom: 8px;}
+.light-mode .related-books h2 {color: #333;border-color: #eee;}
+.dark-mode .related-books h2 {color: #ddd;border-color: #333;}
+</style><style>
+.book-cover {width: 130px;height: 180px;font-family: Arial, sans-serif;position: relative;overflow: hidden;box-shadow: 2px 2px 4px rgba(0,0,0,0.1);}
+.book-cover-bottom-stripe {position: absolute;bottom: 0;left: 0;height: 5px;width: 100%;}
+.book-cover-title {position: absolute;width: 100%;text-align: center;font-weight: bold;}
+.book-cover-icon {position: absolute;left: 50%;transform: translateX(-50%);display: flex;align-items: center;justify-content: center;}
+.book-cover-author {position: absolute;bottom: 10px;width: 100%;text-align: center;font-size: 8px;color: #333;}
+</style><style>
+.book-title-toc {font-size: 32px;font-weight: bold; }
+.book-subtitle-toc {font-size: 18px;margin-top: 8px;font-style: italic;}
+.book-header {text-align: center;margin-bottom: 40px;}
+
+.toc-container {border-radius: 10px;padding: 30px;margin-bottom: 40px;box-shadow: 0 8px 20px rgba(0,0,0,0.05);}
+h1 {font-size: 24px;text-align: center;margin-bottom: 30px;letter-spacing: 1px;padding-bottom: 10px;}
+.toc-list,.toc-section-list {list-style: none;padding: 0;margin: 0;}
+.toc-section-list {padding-left: 18px;margin-top: 6px;margin-bottom: 20px; }
+.toc-chapter {padding: 20px 0;}
+.chapter-title,.toc-section {display: flex;justify-content: space-between;padding-top: 4px;}
+.chapter-title {font-size: 17px;font-weight: bold;}
+.chapter-page,.section-page {font-style: italic;}
+ 
+ 
+.light-mode .book-title-toc,.light-mode .chapter-title,.light-mode .book-name {color: #222;}
+.light-mode .book-subtitle-toc,.light-mode .book-sub,.light-mode .chapter-page,.light-mode .section-page {color: #666;}
+.light-mode .toc-container { background: #fff;border: 1px solid #ddd;}
+.light-mode h1 {border-bottom: 2px solid #eee;color: #222;}
+.light-mode .toc-section {  color: #444;}
+
+.light-mode .book-cover { border: 1px solid #ccc;box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);}
+.light-mode .book-title,.light-mode .series-name {color: #fff;}
+.light-mode .book-subtitle,.light-mode .book-footer {color: #aaa;}
+
+.dark-mode .book-title-toc,.dark-mode .chapter-title,.dark-mode .book-name {color: #f5f5f5;}
+.dark-mode .book-subtitle-toc,.dark-mode .book-sub,.dark-mode .chapter-page,.dark-mode .section-page {color: #aaa;}
+.dark-mode .toc-container {background: #1e1e1e;border: 1px solid #444;}
+
+.dark-mode h1 {border-bottom: 2px solid #333;color: #eee;}
+.dark-mode .toc-section {color: #bbb;}
+
+.dark-mode .related-books h2 {color: #ddd;border-bottom: 2px solid #333;}
+.dark-mode .book-title,.dark-mode .series-name {color: #fff;}
+.dark-mode .book-subtitle,.dark-mode .book-footer {color: #bbb;}
+.dark-mode .toc-section {color: #ddd;}
+
+@media (max-width: 600px) {
+  .chapter-title,
+  .toc-section {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .chapter-page,
+  .section-page {
+    margin-top: 4px;
+  }
+}
+
+</style><style>
+.light-mode .container {box-shadow: 0 0 15px rgba(0,0,0,0.1);}
+.dark-mode .container {box-shadow: 0 0 15px rgba(255, 255, 255, 0.05);}
+
+h1, h2, h3 {font-weight: 600;margin-top: 2.5rem;margin-bottom: 1rem;line-height: 1.2;}
+h1 { font-size: 1.8rem; }
+h2 { font-size: 1.4rem; }
+h3 { font-size: 1.2rem; }
+
+table {width: 100%;border-collapse: collapse;font-family: sans-serif;font-size: 1em;margin: 1em 0;}
+th, td {padding: 0.6em 1em;text-align: left;border: 1px solid;}
+tr:nth-child(even) {  background-color: inherit;}
+tr:hover { background-color: inherit;}
+
+code {color: #d35400;}
+
+.chapter-navi-section {display: flex;justify-content: space-between;align-items: center;padding-bottom: 10px;padding-top: 10px;}
+.nav-link {color: inherit;text-decoration: none;opacity: 0.5;transition: opacity 0.3s ease, text-decoration 0.3s ease;}
+.nav-link:hover {opacity: 0.9;text-decoration: underline;}
+.prev { text-align: left; }
+.toc-link { text-align: center; }
+.next { text-align: right; }
+
+.download-section {display: flex;align-items: center;justify-content: center;gap: 2rem;padding: 2rem 1rem;max-width: 600px;margin: 3rem auto;border-radius: 12px;box-shadow: 0 4px 10px rgba(0,0,0,0.05);}
+.download-info h2 {margin: 0 0 0.5rem;font-size: 1.2rem;}
+.format-label {margin: 0 0 0.5rem;font-size: 0.95rem;}
+.download-buttons {display: flex;gap: 1rem;}
+.download-button {background-color: #4A90E2;color: white;padding: 0.5em 1.2em;border-radius: 25px;font-size: 0.95rem;text-decoration: none;transition: background-color 0.3s ease;}
+.download-button:hover {background-color: #357ABD;}
+
+.code-block {position: relative;margin-bottom: 1em;}
+.copy-button {background: transparent;color: white;position: absolute;top: 8px;right: 8px;border: none;padding: 4px 8px;font-size: 12px;border-radius: 4px;cursor: pointer;z-index: 1;}
+.copy-button:hover {background-color: #0056b3;}
+
+.snippet-container {overflow: hidden;}
+.snippet-header {padding: 0.75rem 1rem;cursor: pointer;font-size: 1rem;background-color: #eeeeee;color:  #111111; border-radius: 8px;cursor: pointer;box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+.snippet-body {display: none;font-family: monospace;}
+.snippet-container.open .snippet-body {display: block;}
+
+.CodeMirror {border: 2px solid #ccc;border-radius: 4px;resize: vertical;}
+
+.light-mode .format-label {color: #888;}
+.light-mode th {background-color: #f2f2f2;}
+.light-mode tr:nth-child(even) {background-color: #fafafa;}
+.light-mode tr:hover {background-color: #e6f7ff;}
+
+.dark-mode .snippet-header {background-color: #333;color:  #ddd; }
+.dark-mode .format-label {color: #aaa;}
+.dark-mode th {background-color: #333;color: #fff;}
+.dark-mode td {border-color: #444;}
+.dark-mode tr:nth-child(even) {background-color: #2a2a2a;}
+.dark-mode tr:hover {background-color: #2c3e50;}
+
+
+.button-group-run-edit {display: flex;width: 100%;gap: 1rem;}
+.button-run-edit {flex: 1;padding: 1rem;font-size: 1rem;font-weight: 600;border: none;border-radius: 8px;cursor: pointer;transition: background 0.3s, color 0.3s;}
+
+.light-mode .button-run-edit {background-color: #f0f0f0;color: #222;box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);}
+.light-mode .button-run-edit:hover {background-color: #e0e0e0;}
+
+.dark-mode .button-run-edit {background-color: #2a2a2a;color: #f5f5f5;box-shadow: 0 0 10px rgba(255, 255, 255, 0.05);}
+.dark-mode .button-run-edit:hover {background-color: #3a3a3a;}
+
+button { padding: 0.5em 1em; background: green; color: white; border: none; cursor: pointer; }
+button:hover { background: #1e7e34; }
+.result_iframe { width:99%; margin-top: 1em;  resize: both;background-color: #515b63;border:1px solid #ccc;}   
+
+.dialog-backdrop {position: fixed;top: 0;left: 0;width: 100vw;height: 100vh;background: rgba(0,0,0,0.5);display: none;justify-content: center;align-items: center;z-index: 10;}
+.dialog {background: #90979e;padding: 20px;width: 90vw;height: 80vh;border-radius: 8px;box-shadow: 0 0 20px rgba(0,0,0,0.3);display: flex;flex-direction: column;}
+.dialog-content {display: flex;gap: 20px;margin-top: 10px;height: calc(100% - 40px);}
+.editor-container, .preview-container {flex: 1;height: 100%;max-height: 100%;overflow: hidden; }
+.result_iframe_dialog {width: 100%;height: 100%;resize: both;border:1px solid #ccc;overflow: auto; }   
+.CodeMirror {width: 100% !important;height: 100% !important;}
+</style><script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/htmlmixed/htmlmixed.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/xml/xml.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/css/css.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/javascript/javascript.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/javascript/typescript.min.js"></script>
+<script>
+  const htmlCodeMirrorMap = new Map();
+  const htmlCodeIFrameMap = new Map();
+  let dismissTimer;
+  function showFloatingLog(message) {
+	const floatingLog = document.getElementById('floatingLog');
+
+    if (floatingLog.style.display !== 'block') {
+      floatingLog.textContent = '';
+      floatingLog.style.display = 'block'; 
+    }
+
+    floatingLog.textContent += message + '\n';
+    floatingLog.scrollTop = floatingLog.scrollHeight; 
+    clearTimeout(dismissTimer);
+    dismissTimer = setTimeout(() => {
+      floatingLog.style.display = 'none';
+      floatingLog.textContent = '';
+    }, 2000);
+  }
+  window.addEventListener('message', (event) => {
+	    if (!htmlCodeIFrameMap.has(event.source)) return;
+
+	    if (event.data?.type === 'console-log') {
+	      showFloatingLog(event.data.message);
+	    }
+  });      
+  function runHtmlCode(button,textarea_id, iframe_id, isInDialog) {
+      const html = htmlCodeMirrorMap.get(textarea_id).getValue();
+      const iframe = document.getElementById(iframe_id);
+  
+      const oldIframe = iframe;
+      const newIframe = document.createElement('iframe');
+
+      if(isInDialog){
+         newIframe.className ="result_iframe_dialog";
+      }else{
+         newIframe.className ="result_iframe";
+      }
+      
+      
+      newIframe.id = iframe_id;
+      oldIframe.replaceWith(newIframe);
+ 
+
+      // Track the iframe in the map
+      htmlCodeIFrameMap.set(newIframe.contentWindow, button);
+
+      const overrideScript = `
+        <script>
+          (function() {
+            const originalLog = console.log;
+            console.log = function(...args) {
+              originalLog.apply(console, args);
+              window.parent.postMessage({
+                type: 'console-log',
+                message: args.map(a => {
+                  try { return JSON.stringify(a); }
+                  catch { return String(a); }
+                }).join(' ')
+              }, '*');
+            };
+          })();
+        <\/script>
+      `;
+ 
+      const iframeHTML = `
+        <!DOCTYPE html>
+        <html>
+        <body>
+          ${overrideScript}
+          ${html}
+        </body>
+        </html>
+      `;
+ 
+      const doc = newIframe.contentDocument || newIframe.contentWindow.document;
+      doc.open();
+      doc.write(iframeHTML);
+      doc.close();
+
+if(!isInDialog){ 
+newIframe.onload = function () {
+ 
+    const doc = newIframe.contentDocument || newIframe.contentWindow.document;
+    // Give a short delay to ensure layout is complete
+    setTimeout(() => {
+      const body = doc.body;
+      const html = doc.documentElement;
+
+      const height = Math.max(
+        body.scrollHeight, body.offsetHeight,
+        html.clientHeight, html.scrollHeight, html.offsetHeight
+      );
+
+      newIframe.style.height = height + 'px';
+    }, 50);
+};
+
+}
+      
+  }  
+function openEditHtmlCodeDialog(id, textarea_id) {
+		        closeAllHtmlCodeDialog();
+		        document.getElementById(id).style.display = 'flex';
+         
+ 	        setTimeout(() => {
+		        	 htmlCodeMirrorMap.get(textarea_id).refresh();
+                   
+ 	        }, 100); // 100ms 
+}
+
+function closeAllHtmlCodeDialog() {
+		        document.querySelectorAll('.dialog-backdrop').forEach(el => {
+		          el.style.display = 'none';
+		        });
+}		
+</script> 
 <style>
     #floatingLog {
       position: fixed;
@@ -39,670 +299,19 @@
       text-align: center;
     }
 </style>
-<script>
-  const codeMirrorMap = new Map();
-  const iframeMap = new Map();
-  
- 
-
-  let dismissTimer;
-  function showFloatingLog(message) {
-	const floatingLog = document.getElementById('floatingLog');
-
-    if (floatingLog.style.display !== 'block') {
-      floatingLog.textContent = '';
-      floatingLog.style.display = 'block'; 
-    }
-
-    floatingLog.textContent += message + '\n';
-    floatingLog.scrollTop = floatingLog.scrollHeight; 
-    clearTimeout(dismissTimer);
-    dismissTimer = setTimeout(() => {
-      floatingLog.style.display = 'none';
-      floatingLog.textContent = '';
-    }, 2000);
-  }
-  window.addEventListener('message', (event) => {
-	    if (!iframeMap.has(event.source)) return;
-
-	    if (event.data?.type === 'console-log') {
-	      showFloatingLog(event.data.message);
-	    }
-  });  
-  function renderIframe(button,textarea_id, iframe_id) {
-      const html = codeMirrorMap.get(textarea_id).getValue();
-      const iframe = document.getElementById(iframe_id);
-  
-      const oldIframe = iframe;
-      const newIframe = document.createElement('iframe');
-      newIframe.className ="result_iframe";
-      
-      newIframe.id = iframe_id;
-      oldIframe.replaceWith(newIframe);
- 
-
-      // Track the iframe in the map
-      iframeMap.set(newIframe.contentWindow, button);
-
-      const overrideScript = `
-        <script>
-          (function() {
-            const originalLog = console.log;
-            console.log = function(...args) {
-              originalLog.apply(console, args);
-              window.parent.postMessage({
-                type: 'console-log',
-                message: args.map(a => {
-                  try { return JSON.stringify(a); }
-                  catch { return String(a); }
-                }).join(' ')
-              }, '*');
-            };
-          })();
-        <\/script>
-      `;
-
-      const iframeHTML = `
-        <!DOCTYPE html>
-        <html>
-        <body>
-          ${overrideScript}
-          ${html}
-        </body>
-        </html>
-      `;
- 
-      const doc = newIframe.contentDocument || newIframe.contentWindow.document;
-      doc.open();
-      doc.write(iframeHTML);
-      doc.close();
-
-      
-      setTimeout(() => {
-    	  newIframe.style.height = '0px';
-    	   let contentHeight = Math.max(doc.body.scrollHeight,doc.documentElement.scrollHeight);
- 
-    	//   if(contentHeight < 150 || contentHeight > 600){
-    	//	   contentHeight = 600;
-    	 //  } 
-    	   newIframe.style.height = contentHeight + 'px';
-    	}, 50);      
-      
-  }
-  function renderIframeForClientTypescript(textarea_id, iframe_id) {
-      let code = codeMirrorMap.get(textarea_id).getValue();
-      code = ts.transpile(code);
-      const iframe = document.getElementById(iframe_id);
-      const doc = iframe.contentDocument || iframe.contentWindow.document;
-
-const html = `
-  <!DOCTYPE html>
-  <html>
-    <head>
-      <title>Output</title>
-      <style>
-        body { font-family: monospace; padding: 1em; background: #f4f4f4; color: #222; }
-        pre { white-space: pre-wrap; word-break: break-word; }
-        .error { color: red; }
-      </style>
-    </head>
-    <body>
-      <pre id="log"></pre>
-      <script>
-        (function(){
-          const logEl = document.getElementById('log');
-          const origLog = console.log;
-          const origError = console.error;
-
-          console.log = (...args) => {
-            logEl.textContent += args.join(' ') + '\\n';
-            origLog.apply(console, args);
-          };
-          console.table = (...args) => {
-            logEl.textContent += args.join(' ') + '\\n';
-            origLog.apply(console, args);
-          };
-
-          console.error = (...args) => {
-            logEl.innerHTML +='<span class="error">' + args.join(' ') + '</span>';
-            origError.apply(console, args);
-          };
-          window.addEventListener("error", function (event) {
-              console.error("Caught by event listener:", event.message);
-          });    
-          try {             
-              ${code};
-          } catch (err) {
-            console.error(err.stack || err.message);
-          }
-        })();
-      <\/script>
-    </body>
-  </html>
-`;
-
-      iframe.style.display = "block";
-      iframe.srcdoc = html;  
-  }
-
-    function renderIframeForClientJavascript(textarea_id, iframe_id) {
-        const code = codeMirrorMap.get(textarea_id).getValue();
-        const iframe = document.getElementById(iframe_id);
-        const doc = iframe.contentDocument || iframe.contentWindow.document;
-
-  const html = `
-    <!DOCTYPE html>
-    <html>
-      <head>
-        <title>Output</title>
-        <style>
-          body { font-family: monospace; padding: 1em; background: #1e1e1e; color: #eee; }
-          pre { white-space: pre-wrap; word-break: break-word; }
-          .error { color: red; }
-        </style>
-      </head>
-      <body>
-        <pre id="log"></pre>
-        <script>
-          (function(){
-            const logEl = document.getElementById('log');
-            const origLog = console.log;
-            const origError = console.error;
-
-            console.log = (...args) => {
-              logEl.textContent += args.join(' ') + '\\n';
-              origLog.apply(console, args);
-            };
-            console.table = (...args) => {
-              logEl.textContent += args.join(' ') + '\\n';
-              origLog.apply(console, args);
-            };
-
-            console.error = (...args) => {
-              logEl.innerHTML +='<span class="error">' + args.join(' ') + '</span>';
-              origError.apply(console, args);
-            };
-            window.addEventListener("error", function (event) {
-                console.error("Caught by event listener:", event.message);
-            });    
-            try {
-             ${code}; 
-            } catch (err) {
-              console.error(err.stack || err.message);
-            }
-          })();
-        <\/script>
-      </body>
-    </html>
-  `;
-        iframe.style.display = "block";
-        iframe.srcdoc = html;  
-    }
-    function toggleSnippetAndRefresh(id, textarea_id) {
-      const box = document.getElementById(id);
-      box.classList.toggle("open");
-      codeMirrorMap.get(textarea_id).refresh();
-    }
-
-  </script>
-  <script>
-  const mode = localStorage.getItem('mode') || 'light';
-  document.documentElement.classList.add(`${mode}-mode`);
-  </script>   
-<style> 
-html {
-  scroll-behavior: smooth;
-}
-
-body {
-  font-family: 'Merriweather', serif;
-  margin: 0;
-  padding: 2rem 1rem;
-  font-size: 15px;
-  line-height: 1.5;
-  transition: background-color 0.3s, color 0.3s;
-}
-
-.container {
-  max-width: 700px;
-  margin: 0 auto;
-  padding: 1rem 2rem;
-  box-shadow: 0 0 15px rgba(0,0,0,0.1);
-}
-
-h1, h2, h3 {
-  font-weight: 600;
-  margin-top: 2.5rem;
-  margin-bottom: 1rem;
-  line-height: 1.2;
-}
-
-h1 { font-size: 1.8rem; }
-h2 { font-size: 1.4rem; }
-h3 { font-size: 1.2rem; }
-
-table {
-  width: 100%;
-  border-collapse: collapse;
-  font-family: sans-serif;
-  font-size: 1em;
-  margin: 1em 0;
-}
-
-th, td {
-  padding: 0.6em 1em;
-  text-align: left;
-  border: 1px solid;
-}
-
-tr:nth-child(even) {
-  background-color: inherit;
-}
-
-tr:hover {
-  background-color: inherit;
-}
-
-a {
-  text-decoration: none;
-  transition: color 0.2s;
-}
-
-a:hover {
-  text-decoration: underline;
-}
-
-code {
-  color: #d35400;
-}
-
-.book-title-chapter {
-  font-family: 'Merriweather', serif;
-  font-size: 2rem;
-  font-weight: bold;
-  text-align: center;
-  margin-bottom: 2rem;
-  border-bottom: 2px solid;
-  padding-bottom: 0.5rem;
-}
-
-.book-subtitle-chapter {
-  text-align: center;
-  font-size: 1rem;
-  margin-top: -1rem;
-  margin-bottom: 2rem;
-}
-
-.related-books {
-  margin-top: 40px;
-}
-
-.related-book-list {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 20px;
-}
-
-    .book-cover {
-      width: 130px;
-      height: 180px;
-      font-family: Arial, sans-serif;
-      position: relative;
-      overflow: hidden;      
-      line-height: normal;
-      box-shadow: 2px 2px 4px rgba(0,0,0,0.1);
-    }
-    .book-cover-bottom-stripe {
-      position: absolute;
-      bottom: 0;
-      left: 0;
-      height: 5px;
-      width: 100%;
-    }
-    .book-cover-title {
-      position: absolute;
-      width: 100%;
-      text-align: center;
-      font-weight: bold;
-    }
-     
-    .book-cover-icon {
-      position: absolute;
-      left: 50%;
-      transform: translateX(-50%);
-      display: flex;
-      align-items: center;
-      justify-content: center; 
-    }
-
-    .book-cover-author {
-      position: absolute;
-      bottom: 10px;
-      width: 100%;
-      text-align: center;
-      font-size: 8px;
-      color: #333;
-    }
-
-.page-footer {
-  margin-top: 4rem;
-  padding: 1rem 0;
-  text-align: center;
-  font-size: 0.85rem;
-  border-top: 1px solid;
-}
-
-.chapter-navi-section {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding-bottom: 10px;
-}
-
-.nav-link {
-  color: inherit;
-  text-decoration: none;
-  opacity: 0.5;
-  transition: opacity 0.3s ease, text-decoration 0.3s ease;
-}
-
-.nav-link:hover {
-  opacity: 0.9;
-  text-decoration: underline;
-}
-
-.prev { text-align: left; }
-.toc-link { text-align: center; }
-.next { text-align: right; }
-
-.download-section {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 2rem;
-  padding: 2rem 1rem;
-  max-width: 600px;
-  margin: 3rem auto;
-  border-radius: 12px;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-}
-
-.download-info h2 {
-  margin: 0 0 0.5rem;
-  font-size: 1.2rem;
-}
-
-.format-label {
-  margin: 0 0 0.5rem;
-  font-size: 0.95rem;
-}
-
-.download-buttons {
-  display: flex;
-  gap: 1rem;
-}
-
-.download-button {
-  background-color: #4A90E2;
-  color: white;
-  padding: 0.5em 1.2em;
-  border-radius: 25px;
-  font-size: 0.95rem;
-  text-decoration: none;
-  transition: background-color 0.3s ease;
-}
-
-.download-button:hover {
-  background-color: #357ABD;
-}
-
-.code-block {
-  position: relative;
-  margin-bottom: 1em;
-}
-
-.copy-button {
-  background: transparent;
-  color: white;
-  position: absolute;
-  top: 8px;
-  right: 8px;
-  border: none;
-  padding: 4px 8px;
-  font-size: 12px;
-  border-radius: 4px;
-  cursor: pointer;
-  z-index: 1;
-}
-
-.copy-button:hover {
-  background-color: #0056b3;
-}
-
-.snippet-container {
-  overflow: hidden;
-}
-
-.snippet-header {
-  padding: 0.75rem 1rem;
-  cursor: pointer;
-  font-size: 1rem;
-    background-color: #eeeeee;
-    color:  #111111; 
-    border-radius: 8px;
-    cursor: pointer;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.1);  
-}
-
-.snippet-body {
-  display: none;
-  font-family: monospace;
-}
-
-.snippet-container.open .snippet-body {
-  display: block;
-}
-
-.CodeMirror {
-  border: 2px solid #ccc;
-  border-radius: 4px;
-  resize: vertical;
-}
-
-/* === Light Mode === */
-html.light-mode {
-  background-color: #f8f7f5;
-  color: #333;
-}
-
-html.light-mode .container {
-  background: white;
-}
-
-html.light-mode .book-title-chapter {
-  color: #2c3e50;
-  border-color: #ccc;
-}
-html.light-mode .book-subtitle-chapter{
-  color: #888;
-}
-
-html.light-mode .page-footer,
-html.light-mode .series-name,
-html.light-mode .book-subtitle,
-html.light-mode .format-label {
-  color: #888;
-}
-
-html.light-mode .related-books h2 {
-  color: #333;
-  border-bottom: 2px solid #eee;
-}
-
-html.light-mode .book-title {
-  color: #fff;
-}
-
-html.light-mode .book-cover {
-  border: 1px solid #ccc;
-}
-
-html.light-mode th {
-  background-color: #f2f2f2;
-}
-
-html.light-mode tr:nth-child(even) {
-  background-color: #fafafa;
-}
-
-html.light-mode tr:hover {
-  background-color: #e6f7ff;
-}
-
-html.light-mode a,
-html.light-mode .page-footer a {
-  color: #000;
-}
-
-/* === Dark Mode === */
-html.dark-mode {
-  background-color: #181818;
-  color: #e0e0e0;
-}
-
-html.dark-mode .container {
-  background: #222;
-}
-
-html.dark-mode .book-title-chapter {
-  color: #ddd;
-  border-color: #444;
-}
-
-html.dark-mode .snippet-header {
-    background-color: #333;
-    color:  #ddd; 
-}
-
-
-html.dark-mode .book-subtitle-chapter,
-html.dark-mode .page-footer,
-html.dark-mode .series-name,
-html.dark-mode .book-subtitle,
-html.dark-mode .book-footer,
-html.dark-mode .format-label {
-  color: #aaa;
-}
-
-html.dark-mode .related-books h2 {
-  color: #ddd;
-  border-bottom: 2px solid #333;
-}
-
-html.dark-mode .book-title {
-  color: #fff;
-}
-
-html.dark-mode .book-cover {
-  border: 1px solid #555;
-}
-
-html.dark-mode th {
-  background-color: #333;
-  color: #fff;
-}
-
-html.dark-mode td {
-  border-color: #444;
-}
-
-html.dark-mode tr:nth-child(even) {
-  background-color: #2a2a2a;
-}
-
-html.dark-mode tr:hover {
-  background-color: #2c3e50;
-}
-
-html.dark-mode a,
-html.dark-mode .page-footer a {
-  color: #eee;
-}
-
-    .dialog-backdrop {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100vw;
-      height: 100vh;
-      background: rgba(0,0,0,0.5);
-      display: none;
-      justify-content: center;
-      align-items: center;
-      z-index: 10;
-    }
-
-    .dialog {
-      background: white;
-      padding: 20px;
-      width: 90vw;
-      height: 80vh;
-      border-radius: 8px;
-      box-shadow: 0 0 20px rgba(0,0,0,0.3);
-      display: flex;
-      flex-direction: column;
-    }
-    .dialog-content {
-      display: flex;
-      flex: 1;
-      gap: 20px;
-      margin-top: 10px;
-    }
-    .dialog h2 {
-      margin-top: 0;
-    }
-
-    .textarea_dialog {
-      width: 50%;
-      height: 100%;
-      resize: none;
-      font-family: monospace;
-      font-size: 14px;
-      padding: 10px;
-      box-sizing: border-box;
-      border: 1px solid #ccc;
-    }
-
-    .iframe_dialog {
-      width: 50%;
-      height: 100%;
-      border: 1px solid #ccc;
-    }
-    .controls_dialog {
-      display: flex;
-      justify-content: space-between;
-      margin-top: 10px;
-    }    
-    button { padding: 0.5em 1em; background: green; color: white; border: none; cursor: pointer; }
-    button:hover { background: #1e7e34; }
-    .result_iframe { width:99%; height:200px; margin-top: 1em;  resize: both;border:1px solid #ccc;}        
-</style>
 </head>
-<body> 
-  <div class="container">
-    <div class = "chapter-navi-section">
+<body>
+<script>const mode = localStorage.getItem('mode') || 'light';document.documentElement.classList.add(`${mode}-mode`);</script>  
+<div class="container"><div class = "chapter-navi-section">
 <a href="html-css-for-beginners-html-forms-and-input-elements.htm" class="nav-button prev">←</a>
 <a href='html-css-for-beginners.htm#css-layout-basics' class="nav-button toc-link">Index</a>
 <a href="html-css-for-beginners-responsive-web-design.htm" class="nav-button next">→</a>
 </div>
-
-    <h1 class="book-title-chapter" id = 'top'>CSS Layout Basics</h1>
-    <h3 class="book-subtitle-chapter">HTML CSS for Beginners</h3>   
-    <!-- <h1 class ="chapter-title"></h1> -->
-    <h2 id='display-properties-block-inline-inline-block-none'>5.1 Display Properties: Block, Inline, Inline-Block, None</h2><p>The <code>display</code> property in CSS controls how elements are rendered and interact within the layout of a web page. Understanding <code>block</code>, <code>inline</code>, <code>inline-block</code>, and <code>none</code> is fundamental to mastering page structure.</p><h3 id="what-is-the-display-property">What is the <code>display</code> Property?</h3><p>Every HTML element has a default display type. For example:</p><ul>
+<div class='book-header'><h1 class='book-title-toc' id = 'top'>CSS Layout Basics</h1><h3 class='book-subtitle-toc'>HTML CSS for Beginners</h3></div><h2 id='display-properties-block-inline-inline-block-none'>5.1 Display Properties: Block, Inline, Inline-Block, None</h2><p>The <code>display</code> property in CSS controls how elements are rendered and interact within the layout of a web page. Understanding <code>block</code>, <code>inline</code>, <code>inline-block</code>, and <code>none</code> is fundamental to mastering page structure.</p><h3 id="what-is-the-display-property">What is the <code>display</code> Property?</h3><p>Every HTML element has a default display type. For example:</p><ul>
  <li><code>&lt;div&gt;</code> is a <strong>block</strong> element.</li>
  <li><code>&lt;span&gt;</code> is an <strong>inline</strong> element.</li>
-</ul><p>You can override the default using the <code>display</code> property in CSS.</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</ul><p>You can override the default using the <code>display</code> property in CSS.</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-css">.element {
   display: block;
 }</code></pre>
@@ -710,16 +319,20 @@ html.dark-mode .page-footer a {
  <li>Take up the <strong>full width</strong> available (by default).</li>
  <li>Start on a <strong>new line</strong>.</li>
  <li>Stack vertically.</li>
-</ul><p><strong>Common block elements</strong>: <code>&lt;div&gt;</code>, <code>&lt;p&gt;</code>, <code>&lt;h1&gt;</code>–<code>&lt;h6&gt;</code>, <code>&lt;section&gt;</code>, <code>&lt;article&gt;</code></p><p><strong>Example:</strong></p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</ul><p><strong>Common block elements</strong>: <code>&lt;div&gt;</code>, <code>&lt;p&gt;</code>, <code>&lt;h1&gt;</code>–<code>&lt;h6&gt;</code>, <code>&lt;section&gt;</code>, <code>&lt;article&gt;</code></p><p><strong>Example:</strong></p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-html">&lt;div style="background: lightblue;"&gt;Block 1&lt;/div&gt;
 &lt;div style="background: lightgreen;"&gt;Block 2&lt;/div&gt;</code></pre>
-</div><p>These will appear one below the other, each taking the full width of the container.</p><div class="snippet-container" id="AjDxF">
- <div id="ITlgJ_Dialog" class="dialog-backdrop">
+</div><p>These will appear one below the other, each taking the full width of the container.</p><div class="snippet-container">
+ <div class="button-group-run-edit"><button class="button-run-edit" onclick="runHtmlCode(this,'oIh8O','pZ663', false)">Run</button> <button class="button-run-edit" onclick="openEditHtmlCodeDialog('pZ663_Dialog','oIh8O')">Edit</button>
+ </div> <iframe id="pZ663" class="result_iframe" style="display: none;"></iframe>
+ <div id="pZ663_Dialog" class="dialog-backdrop">
   <div class="dialog">
-   <h2>Dialog 1</h2>
-   <div class="controls"><button onclick="renderIframe(this,'p3UBr_Textarea','ITlgJ_IFrame')">Run</button> <button onclick="closeAll()">Close</button>
+   <div class="controls"><button onclick="runHtmlCode(this,'oIh8O','pZ663_IFrame', true)">Run</button> <button onclick="closeAllHtmlCodeDialog()">Close</button>
    </div>
-   <div class="dialog-content"><textarea id="p3UBr_Textarea" class="textarea_dialog" placeholder="Type HTML here...">&lt;!DOCTYPE html&gt;
+   <div class="dialog-content">
+    <div class="editor-container">
+     <textarea id="oIh8O" class="textarea_dialog" placeholder="Type HTML here...">&lt;!DOCTYPE html&gt;
 &lt;html&gt;
   &lt;head&gt;
     &lt;title&gt;My First Web Page&lt;/title&gt;
@@ -728,76 +341,47 @@ html.dark-mode .page-footer a {
 &lt;div style="background: lightblue;"&gt;Block 1&lt;/div&gt;
 &lt;div style="background: lightgreen;"&gt;Block 2&lt;/div&gt;
 &lt;/body&gt;
-&lt;/html&gt;</textarea> <iframe id="ITlgJ_IFrame" class="iframe_dialog"></iframe>
+&lt;/html&gt;</textarea>
+    </div>
+    <div class="preview-container">
+     <iframe id="pZ663_IFrame" class="result_iframe_dialog" style="border: none;"></iframe>
+    </div>
    </div>
   </div>
  </div>
- <div class="snippet-header" onclick="toggleSnippetAndRefresh('AjDxF','p3UBr')">
-  Click to Try it <!--<span onclick="toggleSnippetAndRefresh('AjDxF','p3UBr')">Click
-			to Try it</span> --> <!-- <span onclick="openDialog('ITlgJ_Dialog')">Dialog</span> -->
- </div>
- <div class="snippet-body"><textarea id="p3UBr">&lt;!DOCTYPE html&gt;
-&lt;html&gt;
-  &lt;head&gt;
-    &lt;title&gt;My First Web Page&lt;/title&gt;
-  &lt;/head&gt;
-  &lt;body&gt;
-&lt;div style="background: lightblue;"&gt;Block 1&lt;/div&gt;
-&lt;div style="background: lightgreen;"&gt;Block 2&lt;/div&gt;
-&lt;/body&gt;
-&lt;/html&gt;</textarea> <br> <button onclick="renderIframe(this,'p3UBr','ITlgJ')">Run</button>
-  <div id="ITlgJ_FloatingLog" class="floatingLog" aria-live="polite" role="alert"></div> <iframe id="ITlgJ" class="result_iframe" style="display: none;"></iframe>
-  <script>
-			{
-				let editor = CodeMirror.fromTextArea(document
-						.getElementById("p3UBr"), {
+ <script>
+{
+let editor = CodeMirror.fromTextArea(document.getElementById("oIh8O"), {
 					mode : "htmlmixed",
 					lineNumbers : false,
+                    lineWrapping: true,
 					tabSize : 2
-				});
-			    const mode = localStorage.getItem("mode") || "light";  
-			    const newTheme = mode === "dark" ? "material" : "default";
-			    editor.setOption("theme", newTheme);
-			    
-				codeMirrorMap.set("p3UBr", editor);
+});
+const darkmode = localStorage.getItem("mode") || "light";  
+const newTheme = darkmode === "dark" ? "dracula" : "default";
+editor.setSize("50%", "100%");
+editor.setOption("theme", newTheme);
+htmlCodeMirrorMap.set("oIh8O", editor);
+}
 
-				let editor1 = CodeMirror.fromTextArea(document.getElementById("p3UBr_Textarea"), {
-					mode : "htmlmixed",
-					lineNumbers : false,
-					tabSize : 2
-				});
-			    editor1.setOption("theme", newTheme);				
-				
-				codeMirrorMap.set("p3UBr_Textarea", editor1);
-			}
-		    function openDialog(id) {
-		        closeAll();
-		        document.getElementById(id).style.display = 'flex';
-		        setTimeout(() => {
-		        	 codeMirrorMap.get("p3UBr_Textarea").refresh();
-		        }, 100); // 100ms 
-		      }
-
-		      function closeAll() {
-		        document.querySelectorAll('.dialog-backdrop').forEach(el => {
-		          el.style.display = 'none';
-		        });
-		      }			
-		</script>
- </div>
+</script>
 </div><h3 id="display-inline"><code>display: inline</code></h3><p>Inline elements:</p><ul>
  <li>Do <strong>not</strong> start on a new line.</li>
  <li>Only take up as much <strong>width</strong> as needed.</li>
  <li>Cannot have vertical margins, height, or width set effectively.</li>
-</ul><p><strong>Common inline elements</strong>: <code>&lt;span&gt;</code>, <code>&lt;a&gt;</code>, <code>&lt;strong&gt;</code>, <code>&lt;em&gt;</code></p><p><strong>Example:</strong></p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</ul><p><strong>Common inline elements</strong>: <code>&lt;span&gt;</code>, <code>&lt;a&gt;</code>, <code>&lt;strong&gt;</code>, <code>&lt;em&gt;</code></p><p><strong>Example:</strong></p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-html">&lt;p&gt;This is &lt;span style="color: red;"&gt;inline&lt;/span&gt; text.&lt;/p&gt;</code></pre>
-</div><p>The <code>&lt;span&gt;</code> element here doesn’t break the line.</p><div class="snippet-container" id="UyhmM">
- <div id="0cQQ5_Dialog" class="dialog-backdrop">
+</div><p>The <code>&lt;span&gt;</code> element here doesn’t break the line.</p><div class="snippet-container">
+ <div class="button-group-run-edit"><button class="button-run-edit" onclick="runHtmlCode(this,'a5P1P','OCAdC', false)">Run</button> <button class="button-run-edit" onclick="openEditHtmlCodeDialog('OCAdC_Dialog','a5P1P')">Edit</button>
+ </div> <iframe id="OCAdC" class="result_iframe" style="display: none;"></iframe>
+ <div id="OCAdC_Dialog" class="dialog-backdrop">
   <div class="dialog">
-   <h2>Dialog 1</h2>
-   <div class="controls"><button onclick="renderIframe(this,'u0SZa_Textarea','0cQQ5_IFrame')">Run</button> <button onclick="closeAll()">Close</button>
+   <div class="controls"><button onclick="runHtmlCode(this,'a5P1P','OCAdC_IFrame', true)">Run</button> <button onclick="closeAllHtmlCodeDialog()">Close</button>
    </div>
-   <div class="dialog-content"><textarea id="u0SZa_Textarea" class="textarea_dialog" placeholder="Type HTML here...">&lt;!DOCTYPE html&gt;
+   <div class="dialog-content">
+    <div class="editor-container">
+     <textarea id="a5P1P" class="textarea_dialog" placeholder="Type HTML here...">&lt;!DOCTYPE html&gt;
 &lt;html&gt;
   &lt;head&gt;
     &lt;title&gt;My First Web Page&lt;/title&gt;
@@ -805,76 +389,48 @@ html.dark-mode .page-footer a {
   &lt;body&gt;
 &lt;p&gt;This is &lt;span style="color: red;"&gt;inline&lt;/span&gt; text.&lt;/p&gt;
 &lt;/body&gt;
-&lt;/html&gt;</textarea> <iframe id="0cQQ5_IFrame" class="iframe_dialog"></iframe>
+&lt;/html&gt;</textarea>
+    </div>
+    <div class="preview-container">
+     <iframe id="OCAdC_IFrame" class="result_iframe_dialog" style="border: none;"></iframe>
+    </div>
    </div>
   </div>
  </div>
- <div class="snippet-header" onclick="toggleSnippetAndRefresh('UyhmM','u0SZa')">
-  Click to Try it <!--<span onclick="toggleSnippetAndRefresh('UyhmM','u0SZa')">Click
-			to Try it</span> --> <!-- <span onclick="openDialog('0cQQ5_Dialog')">Dialog</span> -->
- </div>
- <div class="snippet-body"><textarea id="u0SZa">&lt;!DOCTYPE html&gt;
-&lt;html&gt;
-  &lt;head&gt;
-    &lt;title&gt;My First Web Page&lt;/title&gt;
-  &lt;/head&gt;
-  &lt;body&gt;
-&lt;p&gt;This is &lt;span style="color: red;"&gt;inline&lt;/span&gt; text.&lt;/p&gt;
-&lt;/body&gt;
-&lt;/html&gt;</textarea> <br> <button onclick="renderIframe(this,'u0SZa','0cQQ5')">Run</button>
-  <div id="0cQQ5_FloatingLog" class="floatingLog" aria-live="polite" role="alert"></div> <iframe id="0cQQ5" class="result_iframe" style="display: none;"></iframe>
-  <script>
-			{
-				let editor = CodeMirror.fromTextArea(document
-						.getElementById("u0SZa"), {
+ <script>
+{
+let editor = CodeMirror.fromTextArea(document.getElementById("a5P1P"), {
 					mode : "htmlmixed",
 					lineNumbers : false,
+                    lineWrapping: true,
 					tabSize : 2
-				});
-			    const mode = localStorage.getItem("mode") || "light";  
-			    const newTheme = mode === "dark" ? "material" : "default";
-			    editor.setOption("theme", newTheme);
-			    
-				codeMirrorMap.set("u0SZa", editor);
+});
+const darkmode = localStorage.getItem("mode") || "light";  
+const newTheme = darkmode === "dark" ? "dracula" : "default";
+editor.setSize("50%", "100%");
+editor.setOption("theme", newTheme);
+htmlCodeMirrorMap.set("a5P1P", editor);
+}
 
-				let editor1 = CodeMirror.fromTextArea(document.getElementById("u0SZa_Textarea"), {
-					mode : "htmlmixed",
-					lineNumbers : false,
-					tabSize : 2
-				});
-			    editor1.setOption("theme", newTheme);				
-				
-				codeMirrorMap.set("u0SZa_Textarea", editor1);
-			}
-		    function openDialog(id) {
-		        closeAll();
-		        document.getElementById(id).style.display = 'flex';
-		        setTimeout(() => {
-		        	 codeMirrorMap.get("u0SZa_Textarea").refresh();
-		        }, 100); // 100ms 
-		      }
-
-		      function closeAll() {
-		        document.querySelectorAll('.dialog-backdrop').forEach(el => {
-		          el.style.display = 'none';
-		        });
-		      }			
-		</script>
- </div>
+</script>
 </div><h3 id="display-inline-block"><code>display: inline-block</code></h3><p>Inline-block elements:</p><ul>
  <li>Behave like inline elements <strong>on the outside</strong> (don’t break lines).</li>
  <li>Behave like block elements <strong>on the inside</strong> (can set width, height, margin, and padding).</li>
-</ul><p><strong>Example:</strong></p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</ul><p><strong>Example:</strong></p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-html">&lt;span style="display: inline-block; width: 100px; height: 50px; background: coral;"&gt;
   Inline-Block
 &lt;/span&gt;</code></pre>
-</div><p>This allows box styling while still flowing inline with other content.</p><div class="snippet-container" id="jPu5M">
- <div id="KWpPt_Dialog" class="dialog-backdrop">
+</div><p>This allows box styling while still flowing inline with other content.</p><div class="snippet-container">
+ <div class="button-group-run-edit"><button class="button-run-edit" onclick="runHtmlCode(this,'t8DmF','nE4Ov', false)">Run</button> <button class="button-run-edit" onclick="openEditHtmlCodeDialog('nE4Ov_Dialog','t8DmF')">Edit</button>
+ </div> <iframe id="nE4Ov" class="result_iframe" style="display: none;"></iframe>
+ <div id="nE4Ov_Dialog" class="dialog-backdrop">
   <div class="dialog">
-   <h2>Dialog 1</h2>
-   <div class="controls"><button onclick="renderIframe(this,'FkX6u_Textarea','KWpPt_IFrame')">Run</button> <button onclick="closeAll()">Close</button>
+   <div class="controls"><button onclick="runHtmlCode(this,'t8DmF','nE4Ov_IFrame', true)">Run</button> <button onclick="closeAllHtmlCodeDialog()">Close</button>
    </div>
-   <div class="dialog-content"><textarea id="FkX6u_Textarea" class="textarea_dialog" placeholder="Type HTML here...">&lt;!DOCTYPE html&gt;
+   <div class="dialog-content">
+    <div class="editor-container">
+     <textarea id="t8DmF" class="textarea_dialog" placeholder="Type HTML here...">&lt;!DOCTYPE html&gt;
 &lt;html&gt;
   &lt;head&gt;
     &lt;title&gt;My First Web Page&lt;/title&gt;
@@ -887,80 +443,47 @@ html.dark-mode .page-footer a {
   Inline-Block
 &lt;/span&gt;
 &lt;/body&gt;
-&lt;/html&gt;</textarea> <iframe id="KWpPt_IFrame" class="iframe_dialog"></iframe>
+&lt;/html&gt;</textarea>
+    </div>
+    <div class="preview-container">
+     <iframe id="nE4Ov_IFrame" class="result_iframe_dialog" style="border: none;"></iframe>
+    </div>
    </div>
   </div>
  </div>
- <div class="snippet-header" onclick="toggleSnippetAndRefresh('jPu5M','FkX6u')">
-  Click to Try it <!--<span onclick="toggleSnippetAndRefresh('jPu5M','FkX6u')">Click
-			to Try it</span> --> <!-- <span onclick="openDialog('KWpPt_Dialog')">Dialog</span> -->
- </div>
- <div class="snippet-body"><textarea id="FkX6u">&lt;!DOCTYPE html&gt;
-&lt;html&gt;
-  &lt;head&gt;
-    &lt;title&gt;My First Web Page&lt;/title&gt;
-  &lt;/head&gt;
-  &lt;body&gt;
-&lt;span style="display: inline-block; width: 100px; height: 50px; background: coral;"&gt;
-  Inline-Block
-&lt;/span&gt;
-&lt;span style="display: inline-block; width: 100px; height: 50px; background: yellow;"&gt;
-  Inline-Block
-&lt;/span&gt;
-&lt;/body&gt;
-&lt;/html&gt;</textarea> <br> <button onclick="renderIframe(this,'FkX6u','KWpPt')">Run</button>
-  <div id="KWpPt_FloatingLog" class="floatingLog" aria-live="polite" role="alert"></div> <iframe id="KWpPt" class="result_iframe" style="display: none;"></iframe>
-  <script>
-			{
-				let editor = CodeMirror.fromTextArea(document
-						.getElementById("FkX6u"), {
+ <script>
+{
+let editor = CodeMirror.fromTextArea(document.getElementById("t8DmF"), {
 					mode : "htmlmixed",
 					lineNumbers : false,
+                    lineWrapping: true,
 					tabSize : 2
-				});
-			    const mode = localStorage.getItem("mode") || "light";  
-			    const newTheme = mode === "dark" ? "material" : "default";
-			    editor.setOption("theme", newTheme);
-			    
-				codeMirrorMap.set("FkX6u", editor);
+});
+const darkmode = localStorage.getItem("mode") || "light";  
+const newTheme = darkmode === "dark" ? "dracula" : "default";
+editor.setSize("50%", "100%");
+editor.setOption("theme", newTheme);
+htmlCodeMirrorMap.set("t8DmF", editor);
+}
 
-				let editor1 = CodeMirror.fromTextArea(document.getElementById("FkX6u_Textarea"), {
-					mode : "htmlmixed",
-					lineNumbers : false,
-					tabSize : 2
-				});
-			    editor1.setOption("theme", newTheme);				
-				
-				codeMirrorMap.set("FkX6u_Textarea", editor1);
-			}
-		    function openDialog(id) {
-		        closeAll();
-		        document.getElementById(id).style.display = 'flex';
-		        setTimeout(() => {
-		        	 codeMirrorMap.get("FkX6u_Textarea").refresh();
-		        }, 100); // 100ms 
-		      }
-
-		      function closeAll() {
-		        document.querySelectorAll('.dialog-backdrop').forEach(el => {
-		          el.style.display = 'none';
-		        });
-		      }			
-		</script>
- </div>
+</script>
 </div><h3 id="display-none"><code>display: none</code></h3><p>Elements with <code>display: none</code>:</p><ul>
  <li>Are <strong>completely removed</strong> from the page layout.</li>
  <li>Do <strong>not</strong> take up space.</li>
  <li>Are <strong>not visible</strong> to screen readers unless additional ARIA attributes are used.</li>
-</ul><p><strong>Example:</strong></p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</ul><p><strong>Example:</strong></p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-html">&lt;p&gt;This paragraph is &lt;span style="display: none;"&gt;invisible&lt;/span&gt; to the user.&lt;/p&gt;</code></pre>
-</div><p>The word "invisible" will not appear at all, and it won’t affect spacing.</p><div class="snippet-container" id="nSTMJ">
- <div id="hzTBv_Dialog" class="dialog-backdrop">
+</div><p>The word "invisible" will not appear at all, and it won’t affect spacing.</p><div class="snippet-container">
+ <div class="button-group-run-edit"><button class="button-run-edit" onclick="runHtmlCode(this,'6SNx6','9Nok0', false)">Run</button> <button class="button-run-edit" onclick="openEditHtmlCodeDialog('9Nok0_Dialog','6SNx6')">Edit</button>
+ </div> <iframe id="9Nok0" class="result_iframe" style="display: none;"></iframe>
+ <div id="9Nok0_Dialog" class="dialog-backdrop">
   <div class="dialog">
-   <h2>Dialog 1</h2>
-   <div class="controls"><button onclick="renderIframe(this,'Qofsk_Textarea','hzTBv_IFrame')">Run</button> <button onclick="closeAll()">Close</button>
+   <div class="controls"><button onclick="runHtmlCode(this,'6SNx6','9Nok0_IFrame', true)">Run</button> <button onclick="closeAllHtmlCodeDialog()">Close</button>
    </div>
-   <div class="dialog-content"><textarea id="Qofsk_Textarea" class="textarea_dialog" placeholder="Type HTML here...">&lt;!DOCTYPE html&gt;
+   <div class="dialog-content">
+    <div class="editor-container">
+     <textarea id="6SNx6" class="textarea_dialog" placeholder="Type HTML here...">&lt;!DOCTYPE html&gt;
 &lt;html&gt;
   &lt;head&gt;
     &lt;title&gt;My First Web Page&lt;/title&gt;
@@ -968,62 +491,30 @@ html.dark-mode .page-footer a {
   &lt;body&gt;
 &lt;p&gt;This paragraph is &lt;span style="display: none;"&gt;invisible&lt;/span&gt; to the user.&lt;/p&gt;
 &lt;/body&gt;
-&lt;/html&gt;</textarea> <iframe id="hzTBv_IFrame" class="iframe_dialog"></iframe>
+&lt;/html&gt;</textarea>
+    </div>
+    <div class="preview-container">
+     <iframe id="9Nok0_IFrame" class="result_iframe_dialog" style="border: none;"></iframe>
+    </div>
    </div>
   </div>
  </div>
- <div class="snippet-header" onclick="toggleSnippetAndRefresh('nSTMJ','Qofsk')">
-  Click to Try it <!--<span onclick="toggleSnippetAndRefresh('nSTMJ','Qofsk')">Click
-			to Try it</span> --> <!-- <span onclick="openDialog('hzTBv_Dialog')">Dialog</span> -->
- </div>
- <div class="snippet-body"><textarea id="Qofsk">&lt;!DOCTYPE html&gt;
-&lt;html&gt;
-  &lt;head&gt;
-    &lt;title&gt;My First Web Page&lt;/title&gt;
-  &lt;/head&gt;
-  &lt;body&gt;
-&lt;p&gt;This paragraph is &lt;span style="display: none;"&gt;invisible&lt;/span&gt; to the user.&lt;/p&gt;
-&lt;/body&gt;
-&lt;/html&gt;</textarea> <br> <button onclick="renderIframe(this,'Qofsk','hzTBv')">Run</button>
-  <div id="hzTBv_FloatingLog" class="floatingLog" aria-live="polite" role="alert"></div> <iframe id="hzTBv" class="result_iframe" style="display: none;"></iframe>
-  <script>
-			{
-				let editor = CodeMirror.fromTextArea(document
-						.getElementById("Qofsk"), {
+ <script>
+{
+let editor = CodeMirror.fromTextArea(document.getElementById("6SNx6"), {
 					mode : "htmlmixed",
 					lineNumbers : false,
+                    lineWrapping: true,
 					tabSize : 2
-				});
-			    const mode = localStorage.getItem("mode") || "light";  
-			    const newTheme = mode === "dark" ? "material" : "default";
-			    editor.setOption("theme", newTheme);
-			    
-				codeMirrorMap.set("Qofsk", editor);
+});
+const darkmode = localStorage.getItem("mode") || "light";  
+const newTheme = darkmode === "dark" ? "dracula" : "default";
+editor.setSize("50%", "100%");
+editor.setOption("theme", newTheme);
+htmlCodeMirrorMap.set("6SNx6", editor);
+}
 
-				let editor1 = CodeMirror.fromTextArea(document.getElementById("Qofsk_Textarea"), {
-					mode : "htmlmixed",
-					lineNumbers : false,
-					tabSize : 2
-				});
-			    editor1.setOption("theme", newTheme);				
-				
-				codeMirrorMap.set("Qofsk_Textarea", editor1);
-			}
-		    function openDialog(id) {
-		        closeAll();
-		        document.getElementById(id).style.display = 'flex';
-		        setTimeout(() => {
-		        	 codeMirrorMap.get("Qofsk_Textarea").refresh();
-		        }, 100); // 100ms 
-		      }
-
-		      function closeAll() {
-		        document.querySelectorAll('.dialog-backdrop').forEach(el => {
-		          el.style.display = 'none';
-		        });
-		      }			
-		</script>
- </div>
+</script>
 </div><h3 id="comparison-summary-table">Comparison Summary Table</h3><table>
  <thead>
   <tr>
@@ -1068,16 +559,20 @@ html.dark-mode .page-footer a {
  <li>Create a paragraph with some <code>&lt;span&gt;</code> tags. Change <code>display</code> of spans to <code>block</code> and observe layout changes.</li>
  <li>Turn a group of <code>&lt;div&gt;</code> elements into <code>inline-block</code> to make them sit side by side.</li>
  <li>Hide a button using <code>display: none</code> and show it again with JavaScript or a toggle.</li>
-</ol><p><strong>Example HTML for Experimenting:</strong></p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</ol><p><strong>Example HTML for Experimenting:</strong></p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-html">&lt;div style="display: inline-block; width: 100px; height: 100px; background: salmon;"&gt;Box 1&lt;/div&gt;
 &lt;div style="display: inline-block; width: 100px; height: 100px; background: skyblue;"&gt;Box 2&lt;/div&gt;</code></pre>
-</div><div class="snippet-container" id="kCeLT">
- <div id="SDXu0_Dialog" class="dialog-backdrop">
+</div><div class="snippet-container">
+ <div class="button-group-run-edit"><button class="button-run-edit" onclick="runHtmlCode(this,'gysDD','YHt5m', false)">Run</button> <button class="button-run-edit" onclick="openEditHtmlCodeDialog('YHt5m_Dialog','gysDD')">Edit</button>
+ </div> <iframe id="YHt5m" class="result_iframe" style="display: none;"></iframe>
+ <div id="YHt5m_Dialog" class="dialog-backdrop">
   <div class="dialog">
-   <h2>Dialog 1</h2>
-   <div class="controls"><button onclick="renderIframe(this,'fnbrG_Textarea','SDXu0_IFrame')">Run</button> <button onclick="closeAll()">Close</button>
+   <div class="controls"><button onclick="runHtmlCode(this,'gysDD','YHt5m_IFrame', true)">Run</button> <button onclick="closeAllHtmlCodeDialog()">Close</button>
    </div>
-   <div class="dialog-content"><textarea id="fnbrG_Textarea" class="textarea_dialog" placeholder="Type HTML here...">&lt;!DOCTYPE html&gt;
+   <div class="dialog-content">
+    <div class="editor-container">
+     <textarea id="gysDD" class="textarea_dialog" placeholder="Type HTML here...">&lt;!DOCTYPE html&gt;
 &lt;html lang="en"&gt;
 &lt;head&gt;
   &lt;meta charset="UTF-8"&gt;
@@ -1142,119 +637,30 @@ html.dark-mode .page-footer a {
   &lt;/script&gt;
 
 &lt;/body&gt;
-&lt;/html&gt;</textarea> <iframe id="SDXu0_IFrame" class="iframe_dialog"></iframe>
+&lt;/html&gt;</textarea>
+    </div>
+    <div class="preview-container">
+     <iframe id="YHt5m_IFrame" class="result_iframe_dialog" style="border: none;"></iframe>
+    </div>
    </div>
   </div>
  </div>
- <div class="snippet-header" onclick="toggleSnippetAndRefresh('kCeLT','fnbrG')">
-  Click to Try it <!--<span onclick="toggleSnippetAndRefresh('kCeLT','fnbrG')">Click
-			to Try it</span> --> <!-- <span onclick="openDialog('SDXu0_Dialog')">Dialog</span> -->
- </div>
- <div class="snippet-body"><textarea id="fnbrG">&lt;!DOCTYPE html&gt;
-&lt;html lang="en"&gt;
-&lt;head&gt;
-  &lt;meta charset="UTF-8"&gt;
-  &lt;title&gt;Display Type Experiments&lt;/title&gt;
-  &lt;style&gt;
-    /* Experiment 1: Span becomes block */
-    .block-span span {
-      display: block;
-      background-color: lightyellow;
-      margin: 5px 0;
-    }
-
-    /* Experiment 2: inline-block boxes */
-    .inline-block-container div {
-      display: inline-block;
-      width: 100px;
-      height: 100px;
-      line-height: 100px;
-      text-align: center;
-      margin-right: 10px;
-      color: white;
-      font-weight: bold;
-    }
-
-    .box1 {
-      background-color: salmon;
-    }
-
-    .box2 {
-      background-color: skyblue;
-    }
-
-    /* Hidden by default */
-    #toggle-btn {
-      display: none;
-      margin-top: 10px;
-    }
-  &lt;/style&gt;
-&lt;/head&gt;
-&lt;body&gt;
-
-  &lt;h2&gt;1. Spans as Blocks&lt;/h2&gt;
-  &lt;p class="block-span"&gt;
-    This is a &lt;span&gt;span one&lt;/span&gt; and this is &lt;span&gt;span two&lt;/span&gt;.
-  &lt;/p&gt;
-
-  &lt;h2&gt;2. Inline-Block Boxes&lt;/h2&gt;
-  &lt;div class="inline-block-container"&gt;
-    &lt;div class="box1"&gt;Box 1&lt;/div&gt;
-    &lt;div class="box2"&gt;Box 2&lt;/div&gt;
-  &lt;/div&gt;
-
-  &lt;h2&gt;3. Toggle Button Visibility&lt;/h2&gt;
-  &lt;button onclick="toggleVisibility()"&gt;Toggle Button&lt;/button&gt;
-  &lt;button id="toggle-btn"&gt;I'm hidden!&lt;/button&gt;
-
-  &lt;script&gt;
-    function toggleVisibility() {
-      const btn = document.getElementById('toggle-btn');
-      btn.style.display = btn.style.display === 'none' ? 'inline-block' : 'none';
-    }
-  &lt;/script&gt;
-
-&lt;/body&gt;
-&lt;/html&gt;</textarea> <br> <button onclick="renderIframe(this,'fnbrG','SDXu0')">Run</button>
-  <div id="SDXu0_FloatingLog" class="floatingLog" aria-live="polite" role="alert"></div> <iframe id="SDXu0" class="result_iframe" style="display: none;"></iframe>
-  <script>
-			{
-				let editor = CodeMirror.fromTextArea(document
-						.getElementById("fnbrG"), {
+ <script>
+{
+let editor = CodeMirror.fromTextArea(document.getElementById("gysDD"), {
 					mode : "htmlmixed",
 					lineNumbers : false,
+                    lineWrapping: true,
 					tabSize : 2
-				});
-			    const mode = localStorage.getItem("mode") || "light";  
-			    const newTheme = mode === "dark" ? "material" : "default";
-			    editor.setOption("theme", newTheme);
-			    
-				codeMirrorMap.set("fnbrG", editor);
+});
+const darkmode = localStorage.getItem("mode") || "light";  
+const newTheme = darkmode === "dark" ? "dracula" : "default";
+editor.setSize("50%", "100%");
+editor.setOption("theme", newTheme);
+htmlCodeMirrorMap.set("gysDD", editor);
+}
 
-				let editor1 = CodeMirror.fromTextArea(document.getElementById("fnbrG_Textarea"), {
-					mode : "htmlmixed",
-					lineNumbers : false,
-					tabSize : 2
-				});
-			    editor1.setOption("theme", newTheme);				
-				
-				codeMirrorMap.set("fnbrG_Textarea", editor1);
-			}
-		    function openDialog(id) {
-		        closeAll();
-		        document.getElementById(id).style.display = 'flex';
-		        setTimeout(() => {
-		        	 codeMirrorMap.get("fnbrG_Textarea").refresh();
-		        }, 100); // 100ms 
-		      }
-
-		      function closeAll() {
-		        document.querySelectorAll('.dialog-backdrop').forEach(el => {
-		          el.style.display = 'none';
-		        });
-		      }			
-		</script>
- </div>
+</script>
 </div><h3 id="when-to-use-each-display-type">When to Use Each Display Type</h3><ul>
  <li>Use <code>block</code> for structure (layouts, sections, paragraphs).</li>
  <li>Use <code>inline</code> for text-level elements (bold, links, highlights).</li>
@@ -1275,17 +681,21 @@ html.dark-mode .page-footer a {
  <li><code>absolute</code></li>
  <li><code>fixed</code></li>
  <li><code>sticky</code></li>
-</ul><p>Let’s break them down with examples.</p><h3 id="position-static-default"><code>position: static</code> (Default)</h3><p>This is the <strong>default</strong> behavior. The browser positions elements naturally in the flow, top to bottom, left to right.</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</ul><p>Let’s break them down with examples.</p><h3 id="position-static-default"><code>position: static</code> (Default)</h3><p>This is the <strong>default</strong> behavior. The browser positions elements naturally in the flow, top to bottom, left to right.</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-html">&lt;div style="position: static; background: lightgray;"&gt;
   I'm static — the default positioning.
 &lt;/div&gt;</code></pre>
-</div><div class="snippet-container" id="N7CtG">
- <div id="ygNgh_Dialog" class="dialog-backdrop">
+</div><div class="snippet-container">
+ <div class="button-group-run-edit"><button class="button-run-edit" onclick="runHtmlCode(this,'MlnF3','skbRf', false)">Run</button> <button class="button-run-edit" onclick="openEditHtmlCodeDialog('skbRf_Dialog','MlnF3')">Edit</button>
+ </div> <iframe id="skbRf" class="result_iframe" style="display: none;"></iframe>
+ <div id="skbRf_Dialog" class="dialog-backdrop">
   <div class="dialog">
-   <h2>Dialog 1</h2>
-   <div class="controls"><button onclick="renderIframe(this,'RThGe_Textarea','ygNgh_IFrame')">Run</button> <button onclick="closeAll()">Close</button>
+   <div class="controls"><button onclick="runHtmlCode(this,'MlnF3','skbRf_IFrame', true)">Run</button> <button onclick="closeAllHtmlCodeDialog()">Close</button>
    </div>
-   <div class="dialog-content"><textarea id="RThGe_Textarea" class="textarea_dialog" placeholder="Type HTML here...">&lt;!DOCTYPE html&gt;
+   <div class="dialog-content">
+    <div class="editor-container">
+     <textarea id="MlnF3" class="textarea_dialog" placeholder="Type HTML here...">&lt;!DOCTYPE html&gt;
 &lt;html&gt;
   &lt;head&gt;
     &lt;title&gt;My First Web Page&lt;/title&gt;
@@ -1298,83 +708,50 @@ html.dark-mode .page-footer a {
   I'm static — the default positioning.
 &lt;/div&gt;
 &lt;/body&gt;
-&lt;/html&gt;</textarea> <iframe id="ygNgh_IFrame" class="iframe_dialog"></iframe>
+&lt;/html&gt;</textarea>
+    </div>
+    <div class="preview-container">
+     <iframe id="skbRf_IFrame" class="result_iframe_dialog" style="border: none;"></iframe>
+    </div>
    </div>
   </div>
  </div>
- <div class="snippet-header" onclick="toggleSnippetAndRefresh('N7CtG','RThGe')">
-  Click to Try it <!--<span onclick="toggleSnippetAndRefresh('N7CtG','RThGe')">Click
-			to Try it</span> --> <!-- <span onclick="openDialog('ygNgh_Dialog')">Dialog</span> -->
- </div>
- <div class="snippet-body"><textarea id="RThGe">&lt;!DOCTYPE html&gt;
-&lt;html&gt;
-  &lt;head&gt;
-    &lt;title&gt;My First Web Page&lt;/title&gt;
-  &lt;/head&gt;
-  &lt;body&gt;
-&lt;div style="position: static; background: lightgray;"&gt;
-  I'm static — the default positioning.
-&lt;/div&gt;
-&lt;div style="position: static; background: lightgray;"&gt;
-  I'm static — the default positioning.
-&lt;/div&gt;
-&lt;/body&gt;
-&lt;/html&gt;</textarea> <br> <button onclick="renderIframe(this,'RThGe','ygNgh')">Run</button>
-  <div id="ygNgh_FloatingLog" class="floatingLog" aria-live="polite" role="alert"></div> <iframe id="ygNgh" class="result_iframe" style="display: none;"></iframe>
-  <script>
-			{
-				let editor = CodeMirror.fromTextArea(document
-						.getElementById("RThGe"), {
+ <script>
+{
+let editor = CodeMirror.fromTextArea(document.getElementById("MlnF3"), {
 					mode : "htmlmixed",
 					lineNumbers : false,
+                    lineWrapping: true,
 					tabSize : 2
-				});
-			    const mode = localStorage.getItem("mode") || "light";  
-			    const newTheme = mode === "dark" ? "material" : "default";
-			    editor.setOption("theme", newTheme);
-			    
-				codeMirrorMap.set("RThGe", editor);
+});
+const darkmode = localStorage.getItem("mode") || "light";  
+const newTheme = darkmode === "dark" ? "dracula" : "default";
+editor.setSize("50%", "100%");
+editor.setOption("theme", newTheme);
+htmlCodeMirrorMap.set("MlnF3", editor);
+}
 
-				let editor1 = CodeMirror.fromTextArea(document.getElementById("RThGe_Textarea"), {
-					mode : "htmlmixed",
-					lineNumbers : false,
-					tabSize : 2
-				});
-			    editor1.setOption("theme", newTheme);				
-				
-				codeMirrorMap.set("RThGe_Textarea", editor1);
-			}
-		    function openDialog(id) {
-		        closeAll();
-		        document.getElementById(id).style.display = 'flex';
-		        setTimeout(() => {
-		        	 codeMirrorMap.get("RThGe_Textarea").refresh();
-		        }, 100); // 100ms 
-		      }
-
-		      function closeAll() {
-		        document.querySelectorAll('.dialog-backdrop').forEach(el => {
-		          el.style.display = 'none';
-		        });
-		      }			
-		</script>
- </div>
+</script>
 </div><ul>
  <li><strong>Cannot</strong> use <code>top</code>, <code>left</code>, <code>right</code>, or <code>bottom</code> with <code>static</code>.</li>
-</ul><h3 id="position-relative"><code>position: relative</code></h3><p>Moves an element <strong>relative to its normal position</strong> in the flow.</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</ul><h3 id="position-relative"><code>position: relative</code></h3><p>Moves an element <strong>relative to its normal position</strong> in the flow.</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-html">&lt;div style="position: relative; top: 20px; left: 10px; background: lightblue;"&gt;
   I'm relative — moved from my original spot.
 &lt;/div&gt;</code></pre>
 </div><ul>
  <li><strong>Still occupies</strong> its original space.</li>
  <li>Shifted visually without affecting surrounding elements.</li>
-</ul><div class="snippet-container" id="PsBYm">
- <div id="qFdSG_Dialog" class="dialog-backdrop">
+</ul><div class="snippet-container">
+ <div class="button-group-run-edit"><button class="button-run-edit" onclick="runHtmlCode(this,'KLUHy','frpOE', false)">Run</button> <button class="button-run-edit" onclick="openEditHtmlCodeDialog('frpOE_Dialog','KLUHy')">Edit</button>
+ </div> <iframe id="frpOE" class="result_iframe" style="display: none;"></iframe>
+ <div id="frpOE_Dialog" class="dialog-backdrop">
   <div class="dialog">
-   <h2>Dialog 1</h2>
-   <div class="controls"><button onclick="renderIframe(this,'arf7b_Textarea','qFdSG_IFrame')">Run</button> <button onclick="closeAll()">Close</button>
+   <div class="controls"><button onclick="runHtmlCode(this,'KLUHy','frpOE_IFrame', true)">Run</button> <button onclick="closeAllHtmlCodeDialog()">Close</button>
    </div>
-   <div class="dialog-content"><textarea id="arf7b_Textarea" class="textarea_dialog" placeholder="Type HTML here...">&lt;!DOCTYPE html&gt;
+   <div class="dialog-content">
+    <div class="editor-container">
+     <textarea id="KLUHy" class="textarea_dialog" placeholder="Type HTML here...">&lt;!DOCTYPE html&gt;
 &lt;html&gt;
   &lt;head&gt;
     &lt;title&gt;My First Web Page&lt;/title&gt;
@@ -1387,68 +764,32 @@ html.dark-mode .page-footer a {
   I'm relative — moved from my original spot.
 &lt;/div&gt;
 &lt;/body&gt;
-&lt;/html&gt;</textarea> <iframe id="qFdSG_IFrame" class="iframe_dialog"></iframe>
+&lt;/html&gt;</textarea>
+    </div>
+    <div class="preview-container">
+     <iframe id="frpOE_IFrame" class="result_iframe_dialog" style="border: none;"></iframe>
+    </div>
    </div>
   </div>
  </div>
- <div class="snippet-header" onclick="toggleSnippetAndRefresh('PsBYm','arf7b')">
-  Click to Try it <!--<span onclick="toggleSnippetAndRefresh('PsBYm','arf7b')">Click
-			to Try it</span> --> <!-- <span onclick="openDialog('qFdSG_Dialog')">Dialog</span> -->
- </div>
- <div class="snippet-body"><textarea id="arf7b">&lt;!DOCTYPE html&gt;
-&lt;html&gt;
-  &lt;head&gt;
-    &lt;title&gt;My First Web Page&lt;/title&gt;
-  &lt;/head&gt;
-  &lt;body&gt;
-&lt;div style="position: relative; top: 20px; left: 10px; background: lightblue;"&gt;
-  I'm relative — moved from my original spot.
-&lt;/div&gt;
-&lt;div style="position: relative; top: 20px; left: 10px; background: yellow;"&gt;
-  I'm relative — moved from my original spot.
-&lt;/div&gt;
-&lt;/body&gt;
-&lt;/html&gt;</textarea> <br> <button onclick="renderIframe(this,'arf7b','qFdSG')">Run</button>
-  <div id="qFdSG_FloatingLog" class="floatingLog" aria-live="polite" role="alert"></div> <iframe id="qFdSG" class="result_iframe" style="display: none;"></iframe>
-  <script>
-			{
-				let editor = CodeMirror.fromTextArea(document
-						.getElementById("arf7b"), {
+ <script>
+{
+let editor = CodeMirror.fromTextArea(document.getElementById("KLUHy"), {
 					mode : "htmlmixed",
 					lineNumbers : false,
+                    lineWrapping: true,
 					tabSize : 2
-				});
-			    const mode = localStorage.getItem("mode") || "light";  
-			    const newTheme = mode === "dark" ? "material" : "default";
-			    editor.setOption("theme", newTheme);
-			    
-				codeMirrorMap.set("arf7b", editor);
+});
+const darkmode = localStorage.getItem("mode") || "light";  
+const newTheme = darkmode === "dark" ? "dracula" : "default";
+editor.setSize("50%", "100%");
+editor.setOption("theme", newTheme);
+htmlCodeMirrorMap.set("KLUHy", editor);
+}
 
-				let editor1 = CodeMirror.fromTextArea(document.getElementById("arf7b_Textarea"), {
-					mode : "htmlmixed",
-					lineNumbers : false,
-					tabSize : 2
-				});
-			    editor1.setOption("theme", newTheme);				
-				
-				codeMirrorMap.set("arf7b_Textarea", editor1);
-			}
-		    function openDialog(id) {
-		        closeAll();
-		        document.getElementById(id).style.display = 'flex';
-		        setTimeout(() => {
-		        	 codeMirrorMap.get("arf7b_Textarea").refresh();
-		        }, 100); // 100ms 
-		      }
-
-		      function closeAll() {
-		        document.querySelectorAll('.dialog-backdrop').forEach(el => {
-		          el.style.display = 'none';
-		        });
-		      }			
-		</script>
- </div>
-</div><h3 id="position-absolute"><code>position: absolute</code></h3><p>Removes the element from the normal document flow. It’s positioned <strong>relative to the nearest positioned ancestor</strong> (anything except <code>static</code>), or the <code>&lt;html&gt;</code> element if no ancestor is positioned.</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</script>
+</div><h3 id="position-absolute"><code>position: absolute</code></h3><p>Removes the element from the normal document flow. It’s positioned <strong>relative to the nearest positioned ancestor</strong> (anything except <code>static</code>), or the <code>&lt;html&gt;</code> element if no ancestor is positioned.</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-html">&lt;div style="position: relative; background: lightgray;"&gt;
   Container
   &lt;div style="position: absolute; top: 10px; right: 10px; background: tomato;"&gt;
@@ -1459,19 +800,23 @@ html.dark-mode .page-footer a {
  <li>Does <strong>not</strong> leave space where it would have been.</li>
  <li>Overlaps other elements freely.</li>
  <li>Useful for dropdowns, tooltips, etc.</li>
-</ul><h3 id="position-fixed"><code>position: fixed</code></h3><p>Positions the element <strong>relative to the browser window</strong> (viewport). It stays in the same spot even when scrolling.</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</ul><h3 id="position-fixed"><code>position: fixed</code></h3><p>Positions the element <strong>relative to the browser window</strong> (viewport). It stays in the same spot even when scrolling.</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-html">&lt;div style="position: fixed; bottom: 10px; right: 10px; background: orange; padding: 10px;"&gt;
   I'm fixed — I stay here even when you scroll!
 &lt;/div&gt;</code></pre>
 </div><ul>
  <li>Great for sticky headers, floating buttons, or pop-ups.</li>
-</ul><div class="snippet-container" id="iKKas">
- <div id="fNh4C_Dialog" class="dialog-backdrop">
+</ul><div class="snippet-container">
+ <div class="button-group-run-edit"><button class="button-run-edit" onclick="runHtmlCode(this,'n0Apz','6p4jZ', false)">Run</button> <button class="button-run-edit" onclick="openEditHtmlCodeDialog('6p4jZ_Dialog','n0Apz')">Edit</button>
+ </div> <iframe id="6p4jZ" class="result_iframe" style="display: none;"></iframe>
+ <div id="6p4jZ_Dialog" class="dialog-backdrop">
   <div class="dialog">
-   <h2>Dialog 1</h2>
-   <div class="controls"><button onclick="renderIframe(this,'1AZhm_Textarea','fNh4C_IFrame')">Run</button> <button onclick="closeAll()">Close</button>
+   <div class="controls"><button onclick="runHtmlCode(this,'n0Apz','6p4jZ_IFrame', true)">Run</button> <button onclick="closeAllHtmlCodeDialog()">Close</button>
    </div>
-   <div class="dialog-content"><textarea id="1AZhm_Textarea" class="textarea_dialog" placeholder="Type HTML here...">&lt;!DOCTYPE html&gt;
+   <div class="dialog-content">
+    <div class="editor-container">
+     <textarea id="n0Apz" class="textarea_dialog" placeholder="Type HTML here...">&lt;!DOCTYPE html&gt;
 &lt;html&gt;
   &lt;head&gt;
     &lt;title&gt;My First Web Page&lt;/title&gt;
@@ -1481,76 +826,46 @@ html.dark-mode .page-footer a {
   I'm fixed — I stay here even when you scroll!
 &lt;/div&gt;
 &lt;/body&gt;
-&lt;/html&gt;</textarea> <iframe id="fNh4C_IFrame" class="iframe_dialog"></iframe>
+&lt;/html&gt;</textarea>
+    </div>
+    <div class="preview-container">
+     <iframe id="6p4jZ_IFrame" class="result_iframe_dialog" style="border: none;"></iframe>
+    </div>
    </div>
   </div>
  </div>
- <div class="snippet-header" onclick="toggleSnippetAndRefresh('iKKas','1AZhm')">
-  Click to Try it <!--<span onclick="toggleSnippetAndRefresh('iKKas','1AZhm')">Click
-			to Try it</span> --> <!-- <span onclick="openDialog('fNh4C_Dialog')">Dialog</span> -->
- </div>
- <div class="snippet-body"><textarea id="1AZhm">&lt;!DOCTYPE html&gt;
-&lt;html&gt;
-  &lt;head&gt;
-    &lt;title&gt;My First Web Page&lt;/title&gt;
-  &lt;/head&gt;
-  &lt;body&gt;
-&lt;div style="position: fixed; bottom: 10px; right: 10px; background: orange; padding: 10px;"&gt;
-  I'm fixed — I stay here even when you scroll!
-&lt;/div&gt;
-&lt;/body&gt;
-&lt;/html&gt;</textarea> <br> <button onclick="renderIframe(this,'1AZhm','fNh4C')">Run</button>
-  <div id="fNh4C_FloatingLog" class="floatingLog" aria-live="polite" role="alert"></div> <iframe id="fNh4C" class="result_iframe" style="display: none;"></iframe>
-  <script>
-			{
-				let editor = CodeMirror.fromTextArea(document
-						.getElementById("1AZhm"), {
+ <script>
+{
+let editor = CodeMirror.fromTextArea(document.getElementById("n0Apz"), {
 					mode : "htmlmixed",
 					lineNumbers : false,
+                    lineWrapping: true,
 					tabSize : 2
-				});
-			    const mode = localStorage.getItem("mode") || "light";  
-			    const newTheme = mode === "dark" ? "material" : "default";
-			    editor.setOption("theme", newTheme);
-			    
-				codeMirrorMap.set("1AZhm", editor);
+});
+const darkmode = localStorage.getItem("mode") || "light";  
+const newTheme = darkmode === "dark" ? "dracula" : "default";
+editor.setSize("50%", "100%");
+editor.setOption("theme", newTheme);
+htmlCodeMirrorMap.set("n0Apz", editor);
+}
 
-				let editor1 = CodeMirror.fromTextArea(document.getElementById("1AZhm_Textarea"), {
-					mode : "htmlmixed",
-					lineNumbers : false,
-					tabSize : 2
-				});
-			    editor1.setOption("theme", newTheme);				
-				
-				codeMirrorMap.set("1AZhm_Textarea", editor1);
-			}
-		    function openDialog(id) {
-		        closeAll();
-		        document.getElementById(id).style.display = 'flex';
-		        setTimeout(() => {
-		        	 codeMirrorMap.get("1AZhm_Textarea").refresh();
-		        }, 100); // 100ms 
-		      }
-
-		      function closeAll() {
-		        document.querySelectorAll('.dialog-backdrop').forEach(el => {
-		          el.style.display = 'none';
-		        });
-		      }			
-		</script>
- </div>
-</div><h3 id="position-sticky"><code>position: sticky</code></h3><p>A hybrid of <code>relative</code> and <code>fixed</code>. The element behaves as <code>relative</code> until a specified threshold (like <code>top: 0</code>), then becomes <code>fixed</code>.</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</script>
+</div><h3 id="position-sticky"><code>position: sticky</code></h3><p>A hybrid of <code>relative</code> and <code>fixed</code>. The element behaves as <code>relative</code> until a specified threshold (like <code>top: 0</code>), then becomes <code>fixed</code>.</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-html">&lt;h2 style="position: sticky; top: 0; background: white;"&gt;I'm sticky!&lt;/h2&gt;</code></pre>
 </div><ul>
  <li>Requires a scrollable container (usually the <code>body</code>).</li>
  <li>Sticks to the top when scrolled past.</li>
-</ul><div class="snippet-container" id="rSASN">
- <div id="K0a4O_Dialog" class="dialog-backdrop">
+</ul><div class="snippet-container">
+ <div class="button-group-run-edit"><button class="button-run-edit" onclick="runHtmlCode(this,'ubzuW','fDsls', false)">Run</button> <button class="button-run-edit" onclick="openEditHtmlCodeDialog('fDsls_Dialog','ubzuW')">Edit</button>
+ </div> <iframe id="fDsls" class="result_iframe" style="display: none;"></iframe>
+ <div id="fDsls_Dialog" class="dialog-backdrop">
   <div class="dialog">
-   <h2>Dialog 1</h2>
-   <div class="controls"><button onclick="renderIframe(this,'jGspI_Textarea','K0a4O_IFrame')">Run</button> <button onclick="closeAll()">Close</button>
+   <div class="controls"><button onclick="runHtmlCode(this,'ubzuW','fDsls_IFrame', true)">Run</button> <button onclick="closeAllHtmlCodeDialog()">Close</button>
    </div>
-   <div class="dialog-content"><textarea id="jGspI_Textarea" class="textarea_dialog" placeholder="Type HTML here...">&lt;!DOCTYPE html&gt;
+   <div class="dialog-content">
+    <div class="editor-container">
+     <textarea id="ubzuW" class="textarea_dialog" placeholder="Type HTML here...">&lt;!DOCTYPE html&gt;
 &lt;html&gt;
   &lt;head&gt;
     &lt;title&gt;My First Web Page&lt;/title&gt;
@@ -1558,62 +873,30 @@ html.dark-mode .page-footer a {
   &lt;body&gt;
 &lt;h2 style="position: sticky; top: 0; background: white;"&gt;I'm sticky!&lt;/h2&gt;
 &lt;/body&gt;
-&lt;/html&gt;</textarea> <iframe id="K0a4O_IFrame" class="iframe_dialog"></iframe>
+&lt;/html&gt;</textarea>
+    </div>
+    <div class="preview-container">
+     <iframe id="fDsls_IFrame" class="result_iframe_dialog" style="border: none;"></iframe>
+    </div>
    </div>
   </div>
  </div>
- <div class="snippet-header" onclick="toggleSnippetAndRefresh('rSASN','jGspI')">
-  Click to Try it <!--<span onclick="toggleSnippetAndRefresh('rSASN','jGspI')">Click
-			to Try it</span> --> <!-- <span onclick="openDialog('K0a4O_Dialog')">Dialog</span> -->
- </div>
- <div class="snippet-body"><textarea id="jGspI">&lt;!DOCTYPE html&gt;
-&lt;html&gt;
-  &lt;head&gt;
-    &lt;title&gt;My First Web Page&lt;/title&gt;
-  &lt;/head&gt;
-  &lt;body&gt;
-&lt;h2 style="position: sticky; top: 0; background: white;"&gt;I'm sticky!&lt;/h2&gt;
-&lt;/body&gt;
-&lt;/html&gt;</textarea> <br> <button onclick="renderIframe(this,'jGspI','K0a4O')">Run</button>
-  <div id="K0a4O_FloatingLog" class="floatingLog" aria-live="polite" role="alert"></div> <iframe id="K0a4O" class="result_iframe" style="display: none;"></iframe>
-  <script>
-			{
-				let editor = CodeMirror.fromTextArea(document
-						.getElementById("jGspI"), {
+ <script>
+{
+let editor = CodeMirror.fromTextArea(document.getElementById("ubzuW"), {
 					mode : "htmlmixed",
 					lineNumbers : false,
+                    lineWrapping: true,
 					tabSize : 2
-				});
-			    const mode = localStorage.getItem("mode") || "light";  
-			    const newTheme = mode === "dark" ? "material" : "default";
-			    editor.setOption("theme", newTheme);
-			    
-				codeMirrorMap.set("jGspI", editor);
+});
+const darkmode = localStorage.getItem("mode") || "light";  
+const newTheme = darkmode === "dark" ? "dracula" : "default";
+editor.setSize("50%", "100%");
+editor.setOption("theme", newTheme);
+htmlCodeMirrorMap.set("ubzuW", editor);
+}
 
-				let editor1 = CodeMirror.fromTextArea(document.getElementById("jGspI_Textarea"), {
-					mode : "htmlmixed",
-					lineNumbers : false,
-					tabSize : 2
-				});
-			    editor1.setOption("theme", newTheme);				
-				
-				codeMirrorMap.set("jGspI_Textarea", editor1);
-			}
-		    function openDialog(id) {
-		        closeAll();
-		        document.getElementById(id).style.display = 'flex';
-		        setTimeout(() => {
-		        	 codeMirrorMap.get("jGspI_Textarea").refresh();
-		        }, 100); // 100ms 
-		      }
-
-		      function closeAll() {
-		        document.querySelectorAll('.dialog-backdrop').forEach(el => {
-		          el.style.display = 'none';
-		        });
-		      }			
-		</script>
- </div>
+</script>
 </div><h3 id="visual-comparison">Visual Comparison</h3><table>
  <thead>
   <tr>
@@ -1661,7 +944,8 @@ html.dark-mode .page-footer a {
    <td>Section headers, nav bars</td>
   </tr>
  </tbody>
-</table><h3 id="example-relative-vs-absolute-vs-fixed">Example: Relative vs. Absolute vs. Fixed</h3><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</table><h3 id="example-relative-vs-absolute-vs-fixed">Example: Relative vs. Absolute vs. Fixed</h3><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-html">&lt;div style="position: relative; height: 200px; background: lightgray;"&gt;
   Relative Container
 
@@ -1671,18 +955,48 @@ html.dark-mode .page-footer a {
 &lt;/div&gt;
 
 &lt;div style="position: fixed; bottom: 0; left: 0; background: navy; color: white; padding: 10px;"&gt;
-  Fixed Footer
+  Fixed <style>
+.site-footer {margin-top: 60px;padding: 20px 0;border-top: 1px solid #eee;text-align: center;font-size: 14px;}
+.site-footer a {text-decoration: none;}
+.light-mode .site-footer {color: #777;border-color: #eee;}
+.dark-mode .site-footer {color: #888;border-color: #333;}
+.light-mode .site-footer a {color: #555;}
+.dark-mode .site-footer a {color: #aaa;}
+.site-footer a:hover {text-decoration: underline;}    
+</style>
+<footer class="site-footer">
+<nav><a href="https://readbytes.github.io">Home</a> |Email:<script type="text/javascript">
+var part1 = 'yinpeng';var part6 = '263';var part2 = Math.pow(2,6);var part3 = String.fromCharCode(part2);var part4 = 'hotmail dot com';var part5 = part1 + String.fromCharCode(part2) + part4;document.write(part1 + part6 + part3 + part4);
+</script>
+| <a id="mode-toggle" href="#">Toggle Dark Mode</a>
+</nav><p>© 2025 — All rights reserved.</p></footer>
+<script>
+const toggleButton = document.getElementById('mode-toggle');
+const body = document.body;
+const savedMode = localStorage.getItem('mode') || 'light';
+body.classList.add(savedMode + '-mode');
+toggleButton.addEventListener('click', () => {
+      const isDark = body.classList.contains('dark-mode');
+      body.classList.toggle('dark-mode', !isDark);
+      body.classList.toggle('light-mode', isDark);
+      localStorage.setItem('mode', isDark ? 'light' : 'dark');
+});
+function copyCode(button) {const code = button.nextElementSibling.innerText;navigator.clipboard.writeText(code).then(() => {button.textContent = 'Copied!';setTimeout(() => { button.textContent = 'Copy'; }, 1500);});}
+</script>
 &lt;/div&gt;</code></pre>
 </div><ul>
  <li>The absolute element is placed inside the gray container.</li>
  <li>The fixed footer stays on screen no matter where you scroll.</li>
-</ul><div class="snippet-container" id="n5Rpc">
- <div id="gEsZ8_Dialog" class="dialog-backdrop">
+</ul><div class="snippet-container">
+ <div class="button-group-run-edit"><button class="button-run-edit" onclick="runHtmlCode(this,'AFbrl','BOkZh', false)">Run</button> <button class="button-run-edit" onclick="openEditHtmlCodeDialog('BOkZh_Dialog','AFbrl')">Edit</button>
+ </div> <iframe id="BOkZh" class="result_iframe" style="display: none;"></iframe>
+ <div id="BOkZh_Dialog" class="dialog-backdrop">
   <div class="dialog">
-   <h2>Dialog 1</h2>
-   <div class="controls"><button onclick="renderIframe(this,'qyw8x_Textarea','gEsZ8_IFrame')">Run</button> <button onclick="closeAll()">Close</button>
+   <div class="controls"><button onclick="runHtmlCode(this,'AFbrl','BOkZh_IFrame', true)">Run</button> <button onclick="closeAllHtmlCodeDialog()">Close</button>
    </div>
-   <div class="dialog-content"><textarea id="qyw8x_Textarea" class="textarea_dialog" placeholder="Type HTML here...">&lt;!DOCTYPE html&gt;
+   <div class="dialog-content">
+    <div class="editor-container">
+     <textarea id="AFbrl" class="textarea_dialog" placeholder="Type HTML here...">&lt;!DOCTYPE html&gt;
 &lt;html&gt;
   &lt;head&gt;
     &lt;title&gt;My First Web Page&lt;/title&gt;
@@ -1697,75 +1011,60 @@ html.dark-mode .page-footer a {
 &lt;/div&gt;
 
 &lt;div style="position: fixed; bottom: 0; left: 0; background: navy; color: white; padding: 10px;"&gt;
-  Fixed Footer
+  Fixed <style>
+.site-footer {margin-top: 60px;padding: 20px 0;border-top: 1px solid #eee;text-align: center;font-size: 14px;}
+.site-footer a {text-decoration: none;}
+.light-mode .site-footer {color: #777;border-color: #eee;}
+.dark-mode .site-footer {color: #888;border-color: #333;}
+.light-mode .site-footer a {color: #555;}
+.dark-mode .site-footer a {color: #aaa;}
+.site-footer a:hover {text-decoration: underline;}    
+</style>
+<footer class="site-footer">
+<nav><a href="https://readbytes.github.io">Home</a> |Email:<script type="text/javascript">
+var part1 = 'yinpeng';var part6 = '263';var part2 = Math.pow(2,6);var part3 = String.fromCharCode(part2);var part4 = 'hotmail dot com';var part5 = part1 + String.fromCharCode(part2) + part4;document.write(part1 + part6 + part3 + part4);
+</script>
+| <a id="mode-toggle" href="#">Toggle Dark Mode</a>
+</nav><p>© 2025 — All rights reserved.</p></footer>
+<script>
+const toggleButton = document.getElementById('mode-toggle');
+const body = document.body;
+const savedMode = localStorage.getItem('mode') || 'light';
+body.classList.add(savedMode + '-mode');
+toggleButton.addEventListener('click', () => {
+      const isDark = body.classList.contains('dark-mode');
+      body.classList.toggle('dark-mode', !isDark);
+      body.classList.toggle('light-mode', isDark);
+      localStorage.setItem('mode', isDark ? 'light' : 'dark');
+});
+function copyCode(button) {const code = button.nextElementSibling.innerText;navigator.clipboard.writeText(code).then(() => {button.textContent = 'Copied!';setTimeout(() => { button.textContent = 'Copy'; }, 1500);});}
+</script>
 &lt;/div&gt;
 &lt;/body&gt;
-&lt;/html&gt;</textarea> <iframe id="gEsZ8_IFrame" class="iframe_dialog"></iframe>
+&lt;/html&gt;</textarea>
+    </div>
+    <div class="preview-container">
+     <iframe id="BOkZh_IFrame" class="result_iframe_dialog" style="border: none;"></iframe>
+    </div>
    </div>
   </div>
  </div>
- <div class="snippet-header" onclick="toggleSnippetAndRefresh('n5Rpc','qyw8x')">
-  Click to Try it <!--<span onclick="toggleSnippetAndRefresh('n5Rpc','qyw8x')">Click
-			to Try it</span> --> <!-- <span onclick="openDialog('gEsZ8_Dialog')">Dialog</span> -->
- </div>
- <div class="snippet-body"><textarea id="qyw8x">&lt;!DOCTYPE html&gt;
-&lt;html&gt;
-  &lt;head&gt;
-    &lt;title&gt;My First Web Page&lt;/title&gt;
-  &lt;/head&gt;
-  &lt;body&gt;
-&lt;div style="position: relative; height: 200px; background: lightgray;"&gt;
-  Relative Container
-
-  &lt;div style="position: absolute; top: 20px; left: 20px; background: lightcoral;"&gt;
-    Absolute Child
-  &lt;/div&gt;
-&lt;/div&gt;
-
-&lt;div style="position: fixed; bottom: 0; left: 0; background: navy; color: white; padding: 10px;"&gt;
-  Fixed Footer
-&lt;/div&gt;
-&lt;/body&gt;
-&lt;/html&gt;</textarea> <br> <button onclick="renderIframe(this,'qyw8x','gEsZ8')">Run</button>
-  <div id="gEsZ8_FloatingLog" class="floatingLog" aria-live="polite" role="alert"></div> <iframe id="gEsZ8" class="result_iframe" style="display: none;"></iframe>
-  <script>
-			{
-				let editor = CodeMirror.fromTextArea(document
-						.getElementById("qyw8x"), {
+ <script>
+{
+let editor = CodeMirror.fromTextArea(document.getElementById("AFbrl"), {
 					mode : "htmlmixed",
 					lineNumbers : false,
+                    lineWrapping: true,
 					tabSize : 2
-				});
-			    const mode = localStorage.getItem("mode") || "light";  
-			    const newTheme = mode === "dark" ? "material" : "default";
-			    editor.setOption("theme", newTheme);
-			    
-				codeMirrorMap.set("qyw8x", editor);
+});
+const darkmode = localStorage.getItem("mode") || "light";  
+const newTheme = darkmode === "dark" ? "dracula" : "default";
+editor.setSize("50%", "100%");
+editor.setOption("theme", newTheme);
+htmlCodeMirrorMap.set("AFbrl", editor);
+}
 
-				let editor1 = CodeMirror.fromTextArea(document.getElementById("qyw8x_Textarea"), {
-					mode : "htmlmixed",
-					lineNumbers : false,
-					tabSize : 2
-				});
-			    editor1.setOption("theme", newTheme);				
-				
-				codeMirrorMap.set("qyw8x_Textarea", editor1);
-			}
-		    function openDialog(id) {
-		        closeAll();
-		        document.getElementById(id).style.display = 'flex';
-		        setTimeout(() => {
-		        	 codeMirrorMap.get("qyw8x_Textarea").refresh();
-		        }, 100); // 100ms 
-		      }
-
-		      function closeAll() {
-		        document.querySelectorAll('.dialog-backdrop').forEach(el => {
-		          el.style.display = 'none';
-		        });
-		      }			
-		</script>
- </div>
+</script>
 </div><h3 id="exercise-ideas">Exercise Ideas</h3><p>✅ <strong>Try it Yourself:</strong></p><ol>
  <li>Create a <code>div</code> with <code>position: relative</code>, then place a smaller <code>div</code> inside it with <code>position: absolute</code>. Move it with <code>top</code> and <code>left</code>.</li>
  <li>Make a <code>header</code> with <code>position: sticky; top: 0;</code> and scroll a long page to see it in action.</li>
@@ -1779,16 +1078,20 @@ html.dark-mode .page-footer a {
 <a href='html-css-for-beginners.htm#css-layout-basics' class="nav-button toc-link">Index</a>
 <a href="#bottom" class="nav-button next">↓</a>
 </div>
-<h2 id='floating-elements-and-clearfix-technique'>5.3 Floating Elements and Clearfix Technique</h2><p>Before modern layout methods like Flexbox and Grid, developers commonly used <strong>floats</strong> to create multi-column layouts or wrap text around images. While not as popular today for major layouts, floats still appear in legacy code and basic designs. Understanding how floats work—and how to fix their quirks—is essential.</p><h3 id="what-is-a-float">What Is a Float?</h3><p>The <code>float</code> property allows an element to “float” to the left or right of its container, causing text and other inline content to wrap around it.</p><h3 id="common-use-case-wrapping-text-around-an-image">Common Use Case: Wrapping Text Around an Image</h3><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+<h2 id='floating-elements-and-clearfix-technique'>5.3 Floating Elements and Clearfix Technique</h2><p>Before modern layout methods like Flexbox and Grid, developers commonly used <strong>floats</strong> to create multi-column layouts or wrap text around images. While not as popular today for major layouts, floats still appear in legacy code and basic designs. Understanding how floats work—and how to fix their quirks—is essential.</p><h3 id="what-is-a-float">What Is a Float?</h3><p>The <code>float</code> property allows an element to “float” to the left or right of its container, causing text and other inline content to wrap around it.</p><h3 id="common-use-case-wrapping-text-around-an-image">Common Use Case: Wrapping Text Around an Image</h3><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-html">&lt;img src="image.jpg" style="float: left; margin-right: 10px;" width="150" alt="Example image"&gt;
 &lt;p&gt;This paragraph wraps around the floated image.&lt;/p&gt;</code></pre>
-</div><div class="snippet-container" id="imGvm">
- <div id="kq2xw_Dialog" class="dialog-backdrop">
+</div><div class="snippet-container">
+ <div class="button-group-run-edit"><button class="button-run-edit" onclick="runHtmlCode(this,'G3oyK','Vv4VY', false)">Run</button> <button class="button-run-edit" onclick="openEditHtmlCodeDialog('Vv4VY_Dialog','G3oyK')">Edit</button>
+ </div> <iframe id="Vv4VY" class="result_iframe" style="display: none;"></iframe>
+ <div id="Vv4VY_Dialog" class="dialog-backdrop">
   <div class="dialog">
-   <h2>Dialog 1</h2>
-   <div class="controls"><button onclick="renderIframe(this,'dM52Z_Textarea','kq2xw_IFrame')">Run</button> <button onclick="closeAll()">Close</button>
+   <div class="controls"><button onclick="runHtmlCode(this,'G3oyK','Vv4VY_IFrame', true)">Run</button> <button onclick="closeAllHtmlCodeDialog()">Close</button>
    </div>
-   <div class="dialog-content"><textarea id="dM52Z_Textarea" class="textarea_dialog" placeholder="Type HTML here...">&lt;!DOCTYPE html&gt;
+   <div class="dialog-content">
+    <div class="editor-container">
+     <textarea id="G3oyK" class="textarea_dialog" placeholder="Type HTML here...">&lt;!DOCTYPE html&gt;
 &lt;html&gt;
   &lt;head&gt;
     &lt;title&gt;My First Web Page&lt;/title&gt;
@@ -1797,63 +1100,30 @@ html.dark-mode .page-footer a {
 &lt;img src="https://readbytes.github.io/images/60x60/2.png" style="float: left; margin-right: 10px;" width="150" alt="Example image"&gt;
 &lt;p&gt;This paragraph wraps around the floated image.&lt;/p&gt;
 &lt;/body&gt;
-&lt;/html&gt;</textarea> <iframe id="kq2xw_IFrame" class="iframe_dialog"></iframe>
+&lt;/html&gt;</textarea>
+    </div>
+    <div class="preview-container">
+     <iframe id="Vv4VY_IFrame" class="result_iframe_dialog" style="border: none;"></iframe>
+    </div>
    </div>
   </div>
  </div>
- <div class="snippet-header" onclick="toggleSnippetAndRefresh('imGvm','dM52Z')">
-  Click to Try it <!--<span onclick="toggleSnippetAndRefresh('imGvm','dM52Z')">Click
-			to Try it</span> --> <!-- <span onclick="openDialog('kq2xw_Dialog')">Dialog</span> -->
- </div>
- <div class="snippet-body"><textarea id="dM52Z">&lt;!DOCTYPE html&gt;
-&lt;html&gt;
-  &lt;head&gt;
-    &lt;title&gt;My First Web Page&lt;/title&gt;
-  &lt;/head&gt;
-  &lt;body&gt;
-&lt;img src="https://readbytes.github.io/images/60x60/2.png" style="float: left; margin-right: 10px;" width="150" alt="Example image"&gt;
-&lt;p&gt;This paragraph wraps around the floated image.&lt;/p&gt;
-&lt;/body&gt;
-&lt;/html&gt;</textarea> <br> <button onclick="renderIframe(this,'dM52Z','kq2xw')">Run</button>
-  <div id="kq2xw_FloatingLog" class="floatingLog" aria-live="polite" role="alert"></div> <iframe id="kq2xw" class="result_iframe" style="display: none;"></iframe>
-  <script>
-			{
-				let editor = CodeMirror.fromTextArea(document
-						.getElementById("dM52Z"), {
+ <script>
+{
+let editor = CodeMirror.fromTextArea(document.getElementById("G3oyK"), {
 					mode : "htmlmixed",
 					lineNumbers : false,
+                    lineWrapping: true,
 					tabSize : 2
-				});
-			    const mode = localStorage.getItem("mode") || "light";  
-			    const newTheme = mode === "dark" ? "material" : "default";
-			    editor.setOption("theme", newTheme);
-			    
-				codeMirrorMap.set("dM52Z", editor);
+});
+const darkmode = localStorage.getItem("mode") || "light";  
+const newTheme = darkmode === "dark" ? "dracula" : "default";
+editor.setSize("50%", "100%");
+editor.setOption("theme", newTheme);
+htmlCodeMirrorMap.set("G3oyK", editor);
+}
 
-				let editor1 = CodeMirror.fromTextArea(document.getElementById("dM52Z_Textarea"), {
-					mode : "htmlmixed",
-					lineNumbers : false,
-					tabSize : 2
-				});
-			    editor1.setOption("theme", newTheme);				
-				
-				codeMirrorMap.set("dM52Z_Textarea", editor1);
-			}
-		    function openDialog(id) {
-		        closeAll();
-		        document.getElementById(id).style.display = 'flex';
-		        setTimeout(() => {
-		        	 codeMirrorMap.get("dM52Z_Textarea").refresh();
-		        }, 100); // 100ms 
-		      }
-
-		      function closeAll() {
-		        document.querySelectorAll('.dialog-backdrop').forEach(el => {
-		          el.style.display = 'none';
-		        });
-		      }			
-		</script>
- </div>
+</script>
 </div><h3 id="float-values">Float Values</h3><table>
  <thead>
   <tr>
@@ -1879,7 +1149,8 @@ html.dark-mode .page-footer a {
    <td>Inherits float value from parent</td>
   </tr>
  </tbody>
-</table><h3 id="example-two-column-layout-using-floats">Example: Two-Column Layout Using Floats</h3><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</table><h3 id="example-two-column-layout-using-floats">Example: Two-Column Layout Using Floats</h3><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-html">&lt;div style="width: 100%;"&gt;
 
   &lt;div style="float: left; width: 70%; background: #e0f7fa;"&gt;
@@ -1894,13 +1165,16 @@ html.dark-mode .page-footer a {
 </div><ul>
  <li>The content floats side by side.</li>
  <li><strong>Important</strong>: The parent container may collapse because floats are removed from the normal document flow.</li>
-</ul><div class="snippet-container" id="BgP3J">
- <div id="kr3Xr_Dialog" class="dialog-backdrop">
+</ul><div class="snippet-container">
+ <div class="button-group-run-edit"><button class="button-run-edit" onclick="runHtmlCode(this,'Trmo4','7FGR5', false)">Run</button> <button class="button-run-edit" onclick="openEditHtmlCodeDialog('7FGR5_Dialog','Trmo4')">Edit</button>
+ </div> <iframe id="7FGR5" class="result_iframe" style="display: none;"></iframe>
+ <div id="7FGR5_Dialog" class="dialog-backdrop">
   <div class="dialog">
-   <h2>Dialog 1</h2>
-   <div class="controls"><button onclick="renderIframe(this,'DXSOi_Textarea','kr3Xr_IFrame')">Run</button> <button onclick="closeAll()">Close</button>
+   <div class="controls"><button onclick="runHtmlCode(this,'Trmo4','7FGR5_IFrame', true)">Run</button> <button onclick="closeAllHtmlCodeDialog()">Close</button>
    </div>
-   <div class="dialog-content"><textarea id="DXSOi_Textarea" class="textarea_dialog" placeholder="Type HTML here...">&lt;!DOCTYPE html&gt;
+   <div class="dialog-content">
+    <div class="editor-container">
+     <textarea id="Trmo4" class="textarea_dialog" placeholder="Type HTML here...">&lt;!DOCTYPE html&gt;
 &lt;html&gt;
   &lt;head&gt;
     &lt;title&gt;My First Web Page&lt;/title&gt;
@@ -1918,84 +1192,46 @@ html.dark-mode .page-footer a {
 
 &lt;/div&gt;
 &lt;/body&gt;
-&lt;/html&gt;</textarea> <iframe id="kr3Xr_IFrame" class="iframe_dialog"></iframe>
+&lt;/html&gt;</textarea>
+    </div>
+    <div class="preview-container">
+     <iframe id="7FGR5_IFrame" class="result_iframe_dialog" style="border: none;"></iframe>
+    </div>
    </div>
   </div>
  </div>
- <div class="snippet-header" onclick="toggleSnippetAndRefresh('BgP3J','DXSOi')">
-  Click to Try it <!--<span onclick="toggleSnippetAndRefresh('BgP3J','DXSOi')">Click
-			to Try it</span> --> <!-- <span onclick="openDialog('kr3Xr_Dialog')">Dialog</span> -->
- </div>
- <div class="snippet-body"><textarea id="DXSOi">&lt;!DOCTYPE html&gt;
-&lt;html&gt;
-  &lt;head&gt;
-    &lt;title&gt;My First Web Page&lt;/title&gt;
-  &lt;/head&gt;
-  &lt;body&gt;
-&lt;div style="width: 100%;"&gt;
-
-  &lt;div style="float: left; width: 70%; background: #e0f7fa;"&gt;
-    Main Content
-  &lt;/div&gt;
-
-  &lt;div style="float: right; width: 25%; background: #ffecb3;"&gt;
-    Sidebar
-  &lt;/div&gt;
-
-&lt;/div&gt;
-&lt;/body&gt;
-&lt;/html&gt;</textarea> <br> <button onclick="renderIframe(this,'DXSOi','kr3Xr')">Run</button>
-  <div id="kr3Xr_FloatingLog" class="floatingLog" aria-live="polite" role="alert"></div> <iframe id="kr3Xr" class="result_iframe" style="display: none;"></iframe>
-  <script>
-			{
-				let editor = CodeMirror.fromTextArea(document
-						.getElementById("DXSOi"), {
+ <script>
+{
+let editor = CodeMirror.fromTextArea(document.getElementById("Trmo4"), {
 					mode : "htmlmixed",
 					lineNumbers : false,
+                    lineWrapping: true,
 					tabSize : 2
-				});
-			    const mode = localStorage.getItem("mode") || "light";  
-			    const newTheme = mode === "dark" ? "material" : "default";
-			    editor.setOption("theme", newTheme);
-			    
-				codeMirrorMap.set("DXSOi", editor);
+});
+const darkmode = localStorage.getItem("mode") || "light";  
+const newTheme = darkmode === "dark" ? "dracula" : "default";
+editor.setSize("50%", "100%");
+editor.setOption("theme", newTheme);
+htmlCodeMirrorMap.set("Trmo4", editor);
+}
 
-				let editor1 = CodeMirror.fromTextArea(document.getElementById("DXSOi_Textarea"), {
-					mode : "htmlmixed",
-					lineNumbers : false,
-					tabSize : 2
-				});
-			    editor1.setOption("theme", newTheme);				
-				
-				codeMirrorMap.set("DXSOi_Textarea", editor1);
-			}
-		    function openDialog(id) {
-		        closeAll();
-		        document.getElementById(id).style.display = 'flex';
-		        setTimeout(() => {
-		        	 codeMirrorMap.get("DXSOi_Textarea").refresh();
-		        }, 100); // 100ms 
-		      }
-
-		      function closeAll() {
-		        document.querySelectorAll('.dialog-backdrop').forEach(el => {
-		          el.style.display = 'none';
-		        });
-		      }			
-		</script>
- </div>
-</div><h3 id="the-problem-collapsed-containers">The Problem: Collapsed Containers</h3><p>When all child elements are floated, the parent container may have <strong>zero height</strong>, collapsing in on itself.</p><h3 id="example">Example:</h3><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</script>
+</div><h3 id="the-problem-collapsed-containers">The Problem: Collapsed Containers</h3><p>When all child elements are floated, the parent container may have <strong>zero height</strong>, collapsing in on itself.</p><h3 id="example">Example:</h3><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-html">&lt;div style="background: #ccc;"&gt;
   &lt;div style="float: left; width: 50%;"&gt;Left&lt;/div&gt;
   &lt;div style="float: right; width: 50%;"&gt;Right&lt;/div&gt;
 &lt;/div&gt;</code></pre>
-</div><p>This container may appear invisible unless you fix it.</p><div class="snippet-container" id="IKPMG">
- <div id="iW8fV_Dialog" class="dialog-backdrop">
+</div><p>This container may appear invisible unless you fix it.</p><div class="snippet-container">
+ <div class="button-group-run-edit"><button class="button-run-edit" onclick="runHtmlCode(this,'gXMSF','cW7hP', false)">Run</button> <button class="button-run-edit" onclick="openEditHtmlCodeDialog('cW7hP_Dialog','gXMSF')">Edit</button>
+ </div> <iframe id="cW7hP" class="result_iframe" style="display: none;"></iframe>
+ <div id="cW7hP_Dialog" class="dialog-backdrop">
   <div class="dialog">
-   <h2>Dialog 1</h2>
-   <div class="controls"><button onclick="renderIframe(this,'Tcq7x_Textarea','iW8fV_IFrame')">Run</button> <button onclick="closeAll()">Close</button>
+   <div class="controls"><button onclick="runHtmlCode(this,'gXMSF','cW7hP_IFrame', true)">Run</button> <button onclick="closeAllHtmlCodeDialog()">Close</button>
    </div>
-   <div class="dialog-content"><textarea id="Tcq7x_Textarea" class="textarea_dialog" placeholder="Type HTML here...">&lt;!DOCTYPE html&gt;
+   <div class="dialog-content">
+    <div class="editor-container">
+     <textarea id="gXMSF" class="textarea_dialog" placeholder="Type HTML here...">&lt;!DOCTYPE html&gt;
 &lt;html&gt;
   &lt;head&gt;
     &lt;title&gt;My First Web Page&lt;/title&gt;
@@ -2006,83 +1242,53 @@ html.dark-mode .page-footer a {
   &lt;div style="float: right; width: 50%;"&gt;Right&lt;/div&gt;
 &lt;/div&gt;
 &lt;/body&gt;
-&lt;/html&gt;</textarea> <iframe id="iW8fV_IFrame" class="iframe_dialog"></iframe>
+&lt;/html&gt;</textarea>
+    </div>
+    <div class="preview-container">
+     <iframe id="cW7hP_IFrame" class="result_iframe_dialog" style="border: none;"></iframe>
+    </div>
    </div>
   </div>
  </div>
- <div class="snippet-header" onclick="toggleSnippetAndRefresh('IKPMG','Tcq7x')">
-  Click to Try it <!--<span onclick="toggleSnippetAndRefresh('IKPMG','Tcq7x')">Click
-			to Try it</span> --> <!-- <span onclick="openDialog('iW8fV_Dialog')">Dialog</span> -->
- </div>
- <div class="snippet-body"><textarea id="Tcq7x">&lt;!DOCTYPE html&gt;
-&lt;html&gt;
-  &lt;head&gt;
-    &lt;title&gt;My First Web Page&lt;/title&gt;
-  &lt;/head&gt;
-  &lt;body&gt;
-&lt;div style="background: #ccc;"&gt;
-  &lt;div style="float: left; width: 50%;"&gt;Left&lt;/div&gt;
-  &lt;div style="float: right; width: 50%;"&gt;Right&lt;/div&gt;
-&lt;/div&gt;
-&lt;/body&gt;
-&lt;/html&gt;</textarea> <br> <button onclick="renderIframe(this,'Tcq7x','iW8fV')">Run</button>
-  <div id="iW8fV_FloatingLog" class="floatingLog" aria-live="polite" role="alert"></div> <iframe id="iW8fV" class="result_iframe" style="display: none;"></iframe>
-  <script>
-			{
-				let editor = CodeMirror.fromTextArea(document
-						.getElementById("Tcq7x"), {
+ <script>
+{
+let editor = CodeMirror.fromTextArea(document.getElementById("gXMSF"), {
 					mode : "htmlmixed",
 					lineNumbers : false,
+                    lineWrapping: true,
 					tabSize : 2
-				});
-			    const mode = localStorage.getItem("mode") || "light";  
-			    const newTheme = mode === "dark" ? "material" : "default";
-			    editor.setOption("theme", newTheme);
-			    
-				codeMirrorMap.set("Tcq7x", editor);
+});
+const darkmode = localStorage.getItem("mode") || "light";  
+const newTheme = darkmode === "dark" ? "dracula" : "default";
+editor.setSize("50%", "100%");
+editor.setOption("theme", newTheme);
+htmlCodeMirrorMap.set("gXMSF", editor);
+}
 
-				let editor1 = CodeMirror.fromTextArea(document.getElementById("Tcq7x_Textarea"), {
-					mode : "htmlmixed",
-					lineNumbers : false,
-					tabSize : 2
-				});
-			    editor1.setOption("theme", newTheme);				
-				
-				codeMirrorMap.set("Tcq7x_Textarea", editor1);
-			}
-		    function openDialog(id) {
-		        closeAll();
-		        document.getElementById(id).style.display = 'flex';
-		        setTimeout(() => {
-		        	 codeMirrorMap.get("Tcq7x_Textarea").refresh();
-		        }, 100); // 100ms 
-		      }
-
-		      function closeAll() {
-		        document.querySelectorAll('.dialog-backdrop').forEach(el => {
-		          el.style.display = 'none';
-		        });
-		      }			
-		</script>
- </div>
-</div><h3 id="the-solution-clearfix">The Solution: Clearfix</h3><p>To fix the collapsing container, you apply a <strong>clearfix</strong>—a way to force the container to recognize the height of its floated children.</p><h3 id="the-clearfix-hack-modern-version">The Clearfix Hack (Modern Version)</h3><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</script>
+</div><h3 id="the-solution-clearfix">The Solution: Clearfix</h3><p>To fix the collapsing container, you apply a <strong>clearfix</strong>—a way to force the container to recognize the height of its floated children.</p><h3 id="the-clearfix-hack-modern-version">The Clearfix Hack (Modern Version)</h3><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-css">.clearfix::after {
   content: "";
   display: table;
   clear: both;
 }</code></pre>
-</div><p>Apply this class to the parent container:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</div><p>Apply this class to the parent container:</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-html">&lt;div class="clearfix" style="background: #ccc;"&gt;
   &lt;div style="float: left; width: 50%;"&gt;Left&lt;/div&gt;
   &lt;div style="float: right; width: 50%;"&gt;Right&lt;/div&gt;
 &lt;/div&gt;</code></pre>
-</div><p>Now the container will stretch to contain the floated children properly.</p><div class="snippet-container" id="JpehA">
- <div id="nM93c_Dialog" class="dialog-backdrop">
+</div><p>Now the container will stretch to contain the floated children properly.</p><div class="snippet-container">
+ <div class="button-group-run-edit"><button class="button-run-edit" onclick="runHtmlCode(this,'6o1nU','C8iuq', false)">Run</button> <button class="button-run-edit" onclick="openEditHtmlCodeDialog('C8iuq_Dialog','6o1nU')">Edit</button>
+ </div> <iframe id="C8iuq" class="result_iframe" style="display: none;"></iframe>
+ <div id="C8iuq_Dialog" class="dialog-backdrop">
   <div class="dialog">
-   <h2>Dialog 1</h2>
-   <div class="controls"><button onclick="renderIframe(this,'K1hFN_Textarea','nM93c_IFrame')">Run</button> <button onclick="closeAll()">Close</button>
+   <div class="controls"><button onclick="runHtmlCode(this,'6o1nU','C8iuq_IFrame', true)">Run</button> <button onclick="closeAllHtmlCodeDialog()">Close</button>
    </div>
-   <div class="dialog-content"><textarea id="K1hFN_Textarea" class="textarea_dialog" placeholder="Type HTML here...">&lt;!DOCTYPE html&gt;
+   <div class="dialog-content">
+    <div class="editor-container">
+     <textarea id="6o1nU" class="textarea_dialog" placeholder="Type HTML here...">&lt;!DOCTYPE html&gt;
 &lt;html lang="en"&gt;
 &lt;head&gt;
   &lt;meta charset="UTF-8"&gt;
@@ -2128,101 +1334,32 @@ html.dark-mode .page-footer a {
   &lt;/div&gt;
 
 &lt;/body&gt;
-&lt;/html&gt;</textarea> <iframe id="nM93c_IFrame" class="iframe_dialog"></iframe>
+&lt;/html&gt;</textarea>
+    </div>
+    <div class="preview-container">
+     <iframe id="C8iuq_IFrame" class="result_iframe_dialog" style="border: none;"></iframe>
+    </div>
    </div>
   </div>
  </div>
- <div class="snippet-header" onclick="toggleSnippetAndRefresh('JpehA','K1hFN')">
-  Click to Try it <!--<span onclick="toggleSnippetAndRefresh('JpehA','K1hFN')">Click
-			to Try it</span> --> <!-- <span onclick="openDialog('nM93c_Dialog')">Dialog</span> -->
- </div>
- <div class="snippet-body"><textarea id="K1hFN">&lt;!DOCTYPE html&gt;
-&lt;html lang="en"&gt;
-&lt;head&gt;
-  &lt;meta charset="UTF-8"&gt;
-  &lt;title&gt;Clearfix Hack Example&lt;/title&gt;
-  &lt;style&gt;
-    .clearfix::after {
-      content: "";
-      display: table;
-      clear: both;
-    }
-
-    .clearfix {
-      background-color: #ccc;
-      padding: 10px;
-      margin: 20px;
-    }
-
-    .clearfix &gt; div {
-      padding: 20px;
-      box-sizing: border-box;
-    }
-
-    .left {
-      float: left;
-      width: 50%;
-      background-color: lightblue;
-    }
-
-    .right {
-      float: right;
-      width: 50%;
-      background-color: lightgreen;
-    }
-  &lt;/style&gt;
-&lt;/head&gt;
-&lt;body&gt;
-
-  &lt;h2&gt;Clearfix Hack Example&lt;/h2&gt;
-
-  &lt;div class="clearfix"&gt;
-    &lt;div class="left"&gt;Left&lt;/div&gt;
-    &lt;div class="right"&gt;Right&lt;/div&gt;
-  &lt;/div&gt;
-
-&lt;/body&gt;
-&lt;/html&gt;</textarea> <br> <button onclick="renderIframe(this,'K1hFN','nM93c')">Run</button>
-  <div id="nM93c_FloatingLog" class="floatingLog" aria-live="polite" role="alert"></div> <iframe id="nM93c" class="result_iframe" style="display: none;"></iframe>
-  <script>
-			{
-				let editor = CodeMirror.fromTextArea(document
-						.getElementById("K1hFN"), {
+ <script>
+{
+let editor = CodeMirror.fromTextArea(document.getElementById("6o1nU"), {
 					mode : "htmlmixed",
 					lineNumbers : false,
+                    lineWrapping: true,
 					tabSize : 2
-				});
-			    const mode = localStorage.getItem("mode") || "light";  
-			    const newTheme = mode === "dark" ? "material" : "default";
-			    editor.setOption("theme", newTheme);
-			    
-				codeMirrorMap.set("K1hFN", editor);
+});
+const darkmode = localStorage.getItem("mode") || "light";  
+const newTheme = darkmode === "dark" ? "dracula" : "default";
+editor.setSize("50%", "100%");
+editor.setOption("theme", newTheme);
+htmlCodeMirrorMap.set("6o1nU", editor);
+}
 
-				let editor1 = CodeMirror.fromTextArea(document.getElementById("K1hFN_Textarea"), {
-					mode : "htmlmixed",
-					lineNumbers : false,
-					tabSize : 2
-				});
-			    editor1.setOption("theme", newTheme);				
-				
-				codeMirrorMap.set("K1hFN_Textarea", editor1);
-			}
-		    function openDialog(id) {
-		        closeAll();
-		        document.getElementById(id).style.display = 'flex';
-		        setTimeout(() => {
-		        	 codeMirrorMap.get("K1hFN_Textarea").refresh();
-		        }, 100); // 100ms 
-		      }
-
-		      function closeAll() {
-		        document.querySelectorAll('.dialog-backdrop').forEach(el => {
-		          el.style.display = 'none';
-		        });
-		      }			
-		</script>
- </div>
-</div><h3 id="clearing-floats-without-clearfix">Clearing Floats Without Clearfix</h3><p>You can also clear floats manually using the <code>clear</code> property.</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</script>
+</div><h3 id="clearing-floats-without-clearfix">Clearing Floats Without Clearfix</h3><p>You can also clear floats manually using the <code>clear</code> property.</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-html">&lt;div style="clear: both;"&gt;&lt;/div&gt;</code></pre>
 </div><p>This element will break below both floated elements.</p><h3 id="summary-float-techniques">Summary: Float Techniques</h3><table>
  <thead>
@@ -2245,7 +1382,8 @@ html.dark-mode .page-footer a {
    <td>Prevent container collapse with floated children</td>
   </tr>
  </tbody>
-</table><h3 id="exercise-simple-float-layout-with-clearfix">Exercise: Simple Float Layout with Clearfix</h3><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</table><h3 id="exercise-simple-float-layout-with-clearfix">Exercise: Simple Float Layout with Clearfix</h3><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-html">&lt;style&gt;
   .container {
     background: #f0f0f0;
@@ -2271,13 +1409,16 @@ html.dark-mode .page-footer a {
   &lt;div class="box"&gt;Box 1&lt;/div&gt;
   &lt;div class="box"&gt;Box 2&lt;/div&gt;
 &lt;/div&gt;</code></pre>
-</div><div class="snippet-container" id="VzNYw">
- <div id="NA2if_Dialog" class="dialog-backdrop">
+</div><div class="snippet-container">
+ <div class="button-group-run-edit"><button class="button-run-edit" onclick="runHtmlCode(this,'LfNll','I6yrk', false)">Run</button> <button class="button-run-edit" onclick="openEditHtmlCodeDialog('I6yrk_Dialog','LfNll')">Edit</button>
+ </div> <iframe id="I6yrk" class="result_iframe" style="display: none;"></iframe>
+ <div id="I6yrk_Dialog" class="dialog-backdrop">
   <div class="dialog">
-   <h2>Dialog 1</h2>
-   <div class="controls"><button onclick="renderIframe(this,'swZZy_Textarea','NA2if_IFrame')">Run</button> <button onclick="closeAll()">Close</button>
+   <div class="controls"><button onclick="runHtmlCode(this,'LfNll','I6yrk_IFrame', true)">Run</button> <button onclick="closeAllHtmlCodeDialog()">Close</button>
    </div>
-   <div class="dialog-content"><textarea id="swZZy_Textarea" class="textarea_dialog" placeholder="Type HTML here...">&lt;!DOCTYPE html&gt;
+   <div class="dialog-content">
+    <div class="editor-container">
+     <textarea id="LfNll" class="textarea_dialog" placeholder="Type HTML here...">&lt;!DOCTYPE html&gt;
 &lt;html lang="en"&gt;
 &lt;head&gt;
   &lt;meta charset="UTF-8"&gt;
@@ -2319,96 +1460,30 @@ html.dark-mode .page-footer a {
   &lt;/div&gt;
 
 &lt;/body&gt;
-&lt;/html&gt;</textarea> <iframe id="NA2if_IFrame" class="iframe_dialog"></iframe>
+&lt;/html&gt;</textarea>
+    </div>
+    <div class="preview-container">
+     <iframe id="I6yrk_IFrame" class="result_iframe_dialog" style="border: none;"></iframe>
+    </div>
    </div>
   </div>
  </div>
- <div class="snippet-header" onclick="toggleSnippetAndRefresh('VzNYw','swZZy')">
-  Click to Try it <!--<span onclick="toggleSnippetAndRefresh('VzNYw','swZZy')">Click
-			to Try it</span> --> <!-- <span onclick="openDialog('NA2if_Dialog')">Dialog</span> -->
- </div>
- <div class="snippet-body"><textarea id="swZZy">&lt;!DOCTYPE html&gt;
-&lt;html lang="en"&gt;
-&lt;head&gt;
-  &lt;meta charset="UTF-8"&gt;
-  &lt;title&gt;Float Layout with Clearfix&lt;/title&gt;
-  &lt;style&gt;
-    .container {
-      background: #f0f0f0;
-      padding: 10px;
-      max-width: 800px;
-      margin: 20px auto;
-      border: 1px solid #ccc;
-    }
-
-    .box {
-      width: 45%;
-      padding: 20px;
-      float: left;
-      margin: 2.5%;
-      background: #c8e6c9;
-      box-sizing: border-box;
-      text-align: center;
-      font-weight: bold;
-    }
-
-    .clearfix::after {
-      content: "";
-      display: table;
-      clear: both;
-    }
-  &lt;/style&gt;
-&lt;/head&gt;
-&lt;body&gt;
-
-  &lt;h2&gt;Exercise: Simple Float Layout with Clearfix&lt;/h2&gt;
-
-  &lt;div class="container clearfix"&gt;
-    &lt;div class="box"&gt;Box 1&lt;/div&gt;
-    &lt;div class="box"&gt;Box 2&lt;/div&gt;
-  &lt;/div&gt;
-
-&lt;/body&gt;
-&lt;/html&gt;</textarea> <br> <button onclick="renderIframe(this,'swZZy','NA2if')">Run</button>
-  <div id="NA2if_FloatingLog" class="floatingLog" aria-live="polite" role="alert"></div> <iframe id="NA2if" class="result_iframe" style="display: none;"></iframe>
-  <script>
-			{
-				let editor = CodeMirror.fromTextArea(document
-						.getElementById("swZZy"), {
+ <script>
+{
+let editor = CodeMirror.fromTextArea(document.getElementById("LfNll"), {
 					mode : "htmlmixed",
 					lineNumbers : false,
+                    lineWrapping: true,
 					tabSize : 2
-				});
-			    const mode = localStorage.getItem("mode") || "light";  
-			    const newTheme = mode === "dark" ? "material" : "default";
-			    editor.setOption("theme", newTheme);
-			    
-				codeMirrorMap.set("swZZy", editor);
+});
+const darkmode = localStorage.getItem("mode") || "light";  
+const newTheme = darkmode === "dark" ? "dracula" : "default";
+editor.setSize("50%", "100%");
+editor.setOption("theme", newTheme);
+htmlCodeMirrorMap.set("LfNll", editor);
+}
 
-				let editor1 = CodeMirror.fromTextArea(document.getElementById("swZZy_Textarea"), {
-					mode : "htmlmixed",
-					lineNumbers : false,
-					tabSize : 2
-				});
-			    editor1.setOption("theme", newTheme);				
-				
-				codeMirrorMap.set("swZZy_Textarea", editor1);
-			}
-		    function openDialog(id) {
-		        closeAll();
-		        document.getElementById(id).style.display = 'flex';
-		        setTimeout(() => {
-		        	 codeMirrorMap.get("swZZy_Textarea").refresh();
-		        }, 100); // 100ms 
-		      }
-
-		      function closeAll() {
-		        document.querySelectorAll('.dialog-backdrop').forEach(el => {
-		          el.style.display = 'none';
-		        });
-		      }			
-		</script>
- </div>
+</script>
 </div><h3 id="when-to-use-floats">When to Use Floats</h3><p>✅ Good for:</p><ul>
  <li>Text-wrapping around images</li>
  <li>Small, simple side-by-side elements</li>
@@ -2423,19 +1498,23 @@ html.dark-mode .page-footer a {
 <a href='html-css-for-beginners.htm#css-layout-basics' class="nav-button toc-link">Index</a>
 <a href="#bottom" class="nav-button next">↓</a>
 </div>
-<h2 id='css-flexbox-introduction-containers-and-items'>5.4 CSS Flexbox Introduction: Containers and Items</h2><p>Modern web layouts require flexibility and responsiveness. CSS <strong>Flexbox</strong> (Flexible Box Layout) is a powerful and intuitive layout tool that allows you to arrange elements in one dimension—<strong>either horizontally or vertically</strong>—with ease.</p><p>Flexbox makes it simple to align, distribute, and reorder items in a container, even when their size is unknown or dynamic.</p><h3 id="flex-container">Flex Container</h3><p>You create a flex container by setting <code>display: flex</code> on a parent element. All <strong>direct children</strong> of this container become <strong>flex items</strong>.</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+<h2 id='css-flexbox-introduction-containers-and-items'>5.4 CSS Flexbox Introduction: Containers and Items</h2><p>Modern web layouts require flexibility and responsiveness. CSS <strong>Flexbox</strong> (Flexible Box Layout) is a powerful and intuitive layout tool that allows you to arrange elements in one dimension—<strong>either horizontally or vertically</strong>—with ease.</p><p>Flexbox makes it simple to align, distribute, and reorder items in a container, even when their size is unknown or dynamic.</p><h3 id="flex-container">Flex Container</h3><p>You create a flex container by setting <code>display: flex</code> on a parent element. All <strong>direct children</strong> of this container become <strong>flex items</strong>.</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-html">&lt;div style="display: flex;"&gt;
   &lt;div&gt;Item 1&lt;/div&gt;
   &lt;div&gt;Item 2&lt;/div&gt;
   &lt;div&gt;Item 3&lt;/div&gt;
 &lt;/div&gt;</code></pre>
-</div><div class="snippet-container" id="OlvxO">
- <div id="JJ7hT_Dialog" class="dialog-backdrop">
+</div><div class="snippet-container">
+ <div class="button-group-run-edit"><button class="button-run-edit" onclick="runHtmlCode(this,'DOTcs','M3c45', false)">Run</button> <button class="button-run-edit" onclick="openEditHtmlCodeDialog('M3c45_Dialog','DOTcs')">Edit</button>
+ </div> <iframe id="M3c45" class="result_iframe" style="display: none;"></iframe>
+ <div id="M3c45_Dialog" class="dialog-backdrop">
   <div class="dialog">
-   <h2>Dialog 1</h2>
-   <div class="controls"><button onclick="renderIframe(this,'ITpJy_Textarea','JJ7hT_IFrame')">Run</button> <button onclick="closeAll()">Close</button>
+   <div class="controls"><button onclick="runHtmlCode(this,'DOTcs','M3c45_IFrame', true)">Run</button> <button onclick="closeAllHtmlCodeDialog()">Close</button>
    </div>
-   <div class="dialog-content"><textarea id="ITpJy_Textarea" class="textarea_dialog" placeholder="Type HTML here...">&lt;!DOCTYPE html&gt;
+   <div class="dialog-content">
+    <div class="editor-container">
+     <textarea id="DOTcs" class="textarea_dialog" placeholder="Type HTML here...">&lt;!DOCTYPE html&gt;
 &lt;html&gt;
   &lt;head&gt;
     &lt;title&gt;My First Web Page&lt;/title&gt;
@@ -2447,74 +1526,40 @@ html.dark-mode .page-footer a {
   &lt;div&gt;Item 3&lt;/div&gt;
 &lt;/div&gt;
 &lt;/body&gt;
-&lt;/html&gt;</textarea> <iframe id="JJ7hT_IFrame" class="iframe_dialog"></iframe>
+&lt;/html&gt;</textarea>
+    </div>
+    <div class="preview-container">
+     <iframe id="M3c45_IFrame" class="result_iframe_dialog" style="border: none;"></iframe>
+    </div>
    </div>
   </div>
  </div>
- <div class="snippet-header" onclick="toggleSnippetAndRefresh('OlvxO','ITpJy')">
-  Click to Try it <!--<span onclick="toggleSnippetAndRefresh('OlvxO','ITpJy')">Click
-			to Try it</span> --> <!-- <span onclick="openDialog('JJ7hT_Dialog')">Dialog</span> -->
- </div>
- <div class="snippet-body"><textarea id="ITpJy">&lt;!DOCTYPE html&gt;
-&lt;html&gt;
-  &lt;head&gt;
-    &lt;title&gt;My First Web Page&lt;/title&gt;
-  &lt;/head&gt;
-  &lt;body&gt;
-&lt;div style="display: flex;"&gt;
-  &lt;div&gt;Item 1&lt;/div&gt;
-  &lt;div&gt;Item 2&lt;/div&gt;
-  &lt;div&gt;Item 3&lt;/div&gt;
-&lt;/div&gt;
-&lt;/body&gt;
-&lt;/html&gt;</textarea> <br> <button onclick="renderIframe(this,'ITpJy','JJ7hT')">Run</button>
-  <div id="JJ7hT_FloatingLog" class="floatingLog" aria-live="polite" role="alert"></div> <iframe id="JJ7hT" class="result_iframe" style="display: none;"></iframe>
-  <script>
-			{
-				let editor = CodeMirror.fromTextArea(document
-						.getElementById("ITpJy"), {
+ <script>
+{
+let editor = CodeMirror.fromTextArea(document.getElementById("DOTcs"), {
 					mode : "htmlmixed",
 					lineNumbers : false,
+                    lineWrapping: true,
 					tabSize : 2
-				});
-			    const mode = localStorage.getItem("mode") || "light";  
-			    const newTheme = mode === "dark" ? "material" : "default";
-			    editor.setOption("theme", newTheme);
-			    
-				codeMirrorMap.set("ITpJy", editor);
+});
+const darkmode = localStorage.getItem("mode") || "light";  
+const newTheme = darkmode === "dark" ? "dracula" : "default";
+editor.setSize("50%", "100%");
+editor.setOption("theme", newTheme);
+htmlCodeMirrorMap.set("DOTcs", editor);
+}
 
-				let editor1 = CodeMirror.fromTextArea(document.getElementById("ITpJy_Textarea"), {
-					mode : "htmlmixed",
-					lineNumbers : false,
-					tabSize : 2
-				});
-			    editor1.setOption("theme", newTheme);				
-				
-				codeMirrorMap.set("ITpJy_Textarea", editor1);
-			}
-		    function openDialog(id) {
-		        closeAll();
-		        document.getElementById(id).style.display = 'flex';
-		        setTimeout(() => {
-		        	 codeMirrorMap.get("ITpJy_Textarea").refresh();
-		        }, 100); // 100ms 
-		      }
-
-		      function closeAll() {
-		        document.querySelectorAll('.dialog-backdrop').forEach(el => {
-		          el.style.display = 'none';
-		        });
-		      }			
-		</script>
- </div>
+</script>
 </div><h3 id="flex-items">Flex Items</h3><p>Flex items are the immediate children of a flex container. Flexbox allows you to control how these items grow, shrink, and align.</p><h3 id="main-axis-and-cross-axis">Main Axis and Cross Axis</h3><ul>
  <li><strong>Main Axis</strong>: The primary direction in which items are laid out.</li>
  <li><strong>Cross Axis</strong>: Perpendicular to the main axis.</li>
-</ul><p>The direction of the <strong>main axis</strong> is defined by the <code>flex-direction</code> property.</p><h3 id="essential-flexbox-properties">Essential Flexbox Properties</h3><h4 id="display-flex"><code>display: flex</code></h4><p>Activates flexbox on a container.</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</ul><p>The direction of the <strong>main axis</strong> is defined by the <code>flex-direction</code> property.</p><h3 id="essential-flexbox-properties">Essential Flexbox Properties</h3><h4 id="display-flex"><code>display: flex</code></h4><p>Activates flexbox on a container.</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-css">.container {
   display: flex;
 }</code></pre>
-</div><h4 id="flex-direction"><code>flex-direction</code></h4><p>Defines the direction of the main axis.</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</div><h4 id="flex-direction"><code>flex-direction</code></h4><p>Defines the direction of the main axis.</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-css">.container {
   display: flex;
   flex-direction: row; /* Default */
@@ -2524,7 +1569,8 @@ html.dark-mode .page-footer a {
  <li><code>row-reverse</code> – horizontal (right to left)</li>
  <li><code>column</code> – vertical (top to bottom)</li>
  <li><code>column-reverse</code> – vertical (bottom to top)</li>
-</ul><h4 id="justify-content"><code>justify-content</code></h4><p>Aligns items <strong>along the main axis</strong>.</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</ul><h4 id="justify-content"><code>justify-content</code></h4><p>Aligns items <strong>along the main axis</strong>.</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-css">.container {
   justify-content: center; /* center horizontally */
 }</code></pre>
@@ -2535,7 +1581,8 @@ html.dark-mode .page-footer a {
  <li><code>space-between</code></li>
  <li><code>space-around</code></li>
  <li><code>space-evenly</code></li>
-</ul><h4 id="align-items"><code>align-items</code></h4><p>Aligns items <strong>along the cross axis</strong>.</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</ul><h4 id="align-items"><code>align-items</code></h4><p>Aligns items <strong>along the cross axis</strong>.</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-css">.container {
   align-items: center; /* center vertically if flex-direction is row */
 }</code></pre>
@@ -2545,7 +1592,8 @@ html.dark-mode .page-footer a {
  <li><code>flex-end</code></li>
  <li><code>center</code></li>
  <li><code>baseline</code></li>
-</ul><h3 id="example-horizontal-flex-container">Example: Horizontal Flex Container</h3><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</ul><h3 id="example-horizontal-flex-container">Example: Horizontal Flex Container</h3><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-html">&lt;style&gt;
   .container {
     display: flex;
@@ -2573,13 +1621,16 @@ html.dark-mode .page-footer a {
 </div><ul>
  <li>Boxes are spaced evenly across the container.</li>
  <li>Items are vertically centered with <code>align-items: center</code>.</li>
-</ul><div class="snippet-container" id="mHMNl">
- <div id="zPhKx_Dialog" class="dialog-backdrop">
+</ul><div class="snippet-container">
+ <div class="button-group-run-edit"><button class="button-run-edit" onclick="runHtmlCode(this,'ciHvH','1t8tz', false)">Run</button> <button class="button-run-edit" onclick="openEditHtmlCodeDialog('1t8tz_Dialog','ciHvH')">Edit</button>
+ </div> <iframe id="1t8tz" class="result_iframe" style="display: none;"></iframe>
+ <div id="1t8tz_Dialog" class="dialog-backdrop">
   <div class="dialog">
-   <h2>Dialog 1</h2>
-   <div class="controls"><button onclick="renderIframe(this,'5CqmK_Textarea','zPhKx_IFrame')">Run</button> <button onclick="closeAll()">Close</button>
+   <div class="controls"><button onclick="runHtmlCode(this,'ciHvH','1t8tz_IFrame', true)">Run</button> <button onclick="closeAllHtmlCodeDialog()">Close</button>
    </div>
-   <div class="dialog-content"><textarea id="5CqmK_Textarea" class="textarea_dialog" placeholder="Type HTML here...">&lt;!DOCTYPE html&gt;
+   <div class="dialog-content">
+    <div class="editor-container">
+     <textarea id="ciHvH" class="textarea_dialog" placeholder="Type HTML here...">&lt;!DOCTYPE html&gt;
 &lt;html lang="en"&gt;
 &lt;head&gt;
   &lt;meta charset="UTF-8"&gt;
@@ -2620,96 +1671,32 @@ html.dark-mode .page-footer a {
   &lt;/div&gt;
 
 &lt;/body&gt;
-&lt;/html&gt;</textarea> <iframe id="zPhKx_IFrame" class="iframe_dialog"></iframe>
+&lt;/html&gt;</textarea>
+    </div>
+    <div class="preview-container">
+     <iframe id="1t8tz_IFrame" class="result_iframe_dialog" style="border: none;"></iframe>
+    </div>
    </div>
   </div>
  </div>
- <div class="snippet-header" onclick="toggleSnippetAndRefresh('mHMNl','5CqmK')">
-  Click to Try it <!--<span onclick="toggleSnippetAndRefresh('mHMNl','5CqmK')">Click
-			to Try it</span> --> <!-- <span onclick="openDialog('zPhKx_Dialog')">Dialog</span> -->
- </div>
- <div class="snippet-body"><textarea id="5CqmK">&lt;!DOCTYPE html&gt;
-&lt;html lang="en"&gt;
-&lt;head&gt;
-  &lt;meta charset="UTF-8"&gt;
-  &lt;title&gt;Horizontal Flex Container&lt;/title&gt;
-  &lt;style&gt;
-    .container {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      height: 100px;
-      background: #f0f0f0;
-      padding: 0 20px;
-      margin: 30px auto;
-      max-width: 600px;
-      border: 1px solid #ccc;
-    }
-
-    .box {
-      width: 100px;
-      height: 50px;
-      background: #4CAF50;
-      color: white;
-      text-align: center;
-      line-height: 50px;
-      font-weight: bold;
-      border-radius: 4px;
-    }
-  &lt;/style&gt;
-&lt;/head&gt;
-&lt;body&gt;
-
-  &lt;h2&gt;Example: Horizontal Flex Container&lt;/h2&gt;
-
-  &lt;div class="container"&gt;
-    &lt;div class="box"&gt;One&lt;/div&gt;
-    &lt;div class="box"&gt;Two&lt;/div&gt;
-    &lt;div class="box"&gt;Three&lt;/div&gt;
-  &lt;/div&gt;
-
-&lt;/body&gt;
-&lt;/html&gt;</textarea> <br> <button onclick="renderIframe(this,'5CqmK','zPhKx')">Run</button>
-  <div id="zPhKx_FloatingLog" class="floatingLog" aria-live="polite" role="alert"></div> <iframe id="zPhKx" class="result_iframe" style="display: none;"></iframe>
-  <script>
-			{
-				let editor = CodeMirror.fromTextArea(document
-						.getElementById("5CqmK"), {
+ <script>
+{
+let editor = CodeMirror.fromTextArea(document.getElementById("ciHvH"), {
 					mode : "htmlmixed",
 					lineNumbers : false,
+                    lineWrapping: true,
 					tabSize : 2
-				});
-			    const mode = localStorage.getItem("mode") || "light";  
-			    const newTheme = mode === "dark" ? "material" : "default";
-			    editor.setOption("theme", newTheme);
-			    
-				codeMirrorMap.set("5CqmK", editor);
+});
+const darkmode = localStorage.getItem("mode") || "light";  
+const newTheme = darkmode === "dark" ? "dracula" : "default";
+editor.setSize("50%", "100%");
+editor.setOption("theme", newTheme);
+htmlCodeMirrorMap.set("ciHvH", editor);
+}
 
-				let editor1 = CodeMirror.fromTextArea(document.getElementById("5CqmK_Textarea"), {
-					mode : "htmlmixed",
-					lineNumbers : false,
-					tabSize : 2
-				});
-			    editor1.setOption("theme", newTheme);				
-				
-				codeMirrorMap.set("5CqmK_Textarea", editor1);
-			}
-		    function openDialog(id) {
-		        closeAll();
-		        document.getElementById(id).style.display = 'flex';
-		        setTimeout(() => {
-		        	 codeMirrorMap.get("5CqmK_Textarea").refresh();
-		        }, 100); // 100ms 
-		      }
-
-		      function closeAll() {
-		        document.querySelectorAll('.dialog-backdrop').forEach(el => {
-		          el.style.display = 'none';
-		        });
-		      }			
-		</script>
- </div>
-</div><h3 id="example-vertical-flex-container">Example: Vertical Flex Container</h3><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</script>
+</div><h3 id="example-vertical-flex-container">Example: Vertical Flex Container</h3><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-html">&lt;style&gt;
   .column-container {
     display: flex;
@@ -2731,13 +1718,16 @@ html.dark-mode .page-footer a {
   &lt;div class="item"&gt;Item B&lt;/div&gt;
   &lt;div class="item"&gt;Item C&lt;/div&gt;
 &lt;/div&gt;</code></pre>
-</div><p>Here, items stack vertically and align to the start of the cross axis (left side).</p><div class="snippet-container" id="IkG2k">
- <div id="TvINI_Dialog" class="dialog-backdrop">
+</div><p>Here, items stack vertically and align to the start of the cross axis (left side).</p><div class="snippet-container">
+ <div class="button-group-run-edit"><button class="button-run-edit" onclick="runHtmlCode(this,'LQxV1','Naak9', false)">Run</button> <button class="button-run-edit" onclick="openEditHtmlCodeDialog('Naak9_Dialog','LQxV1')">Edit</button>
+ </div> <iframe id="Naak9" class="result_iframe" style="display: none;"></iframe>
+ <div id="Naak9_Dialog" class="dialog-backdrop">
   <div class="dialog">
-   <h2>Dialog 1</h2>
-   <div class="controls"><button onclick="renderIframe(this,'ld3u6_Textarea','TvINI_IFrame')">Run</button> <button onclick="closeAll()">Close</button>
+   <div class="controls"><button onclick="runHtmlCode(this,'LQxV1','Naak9_IFrame', true)">Run</button> <button onclick="closeAllHtmlCodeDialog()">Close</button>
    </div>
-   <div class="dialog-content"><textarea id="ld3u6_Textarea" class="textarea_dialog" placeholder="Type HTML here...">&lt;!DOCTYPE html&gt;
+   <div class="dialog-content">
+    <div class="editor-container">
+     <textarea id="LQxV1" class="textarea_dialog" placeholder="Type HTML here...">&lt;!DOCTYPE html&gt;
 &lt;html lang="en"&gt;
 &lt;head&gt;
   &lt;meta charset="UTF-8"&gt;
@@ -2776,93 +1766,30 @@ html.dark-mode .page-footer a {
   &lt;/div&gt;
 
 &lt;/body&gt;
-&lt;/html&gt;</textarea> <iframe id="TvINI_IFrame" class="iframe_dialog"></iframe>
+&lt;/html&gt;</textarea>
+    </div>
+    <div class="preview-container">
+     <iframe id="Naak9_IFrame" class="result_iframe_dialog" style="border: none;"></iframe>
+    </div>
    </div>
   </div>
  </div>
- <div class="snippet-header" onclick="toggleSnippetAndRefresh('IkG2k','ld3u6')">
-  Click to Try it <!--<span onclick="toggleSnippetAndRefresh('IkG2k','ld3u6')">Click
-			to Try it</span> --> <!-- <span onclick="openDialog('TvINI_Dialog')">Dialog</span> -->
- </div>
- <div class="snippet-body"><textarea id="ld3u6">&lt;!DOCTYPE html&gt;
-&lt;html lang="en"&gt;
-&lt;head&gt;
-  &lt;meta charset="UTF-8"&gt;
-  &lt;title&gt;Vertical Flex Container&lt;/title&gt;
-  &lt;style&gt;
-    .column-container {
-      display: flex;
-      flex-direction: column;
-      align-items: flex-start;
-      gap: 10px;
-      padding: 20px;
-      background-color: #f5f5f5;
-      max-width: 200px;
-      margin: 40px auto;
-      border: 1px solid #ddd;
-    }
-
-    .item {
-      background: #2196F3;
-      color: white;
-      padding: 10px;
-      width: 150px;
-      font-weight: bold;
-      border-radius: 4px;
-    }
-  &lt;/style&gt;
-&lt;/head&gt;
-&lt;body&gt;
-
-  &lt;h2 style="text-align: center;"&gt;Example: Vertical Flex Container&lt;/h2&gt;
-
-  &lt;div class="column-container"&gt;
-    &lt;div class="item"&gt;Item A&lt;/div&gt;
-    &lt;div class="item"&gt;Item B&lt;/div&gt;
-    &lt;div class="item"&gt;Item C&lt;/div&gt;
-  &lt;/div&gt;
-
-&lt;/body&gt;
-&lt;/html&gt;</textarea> <br> <button onclick="renderIframe(this,'ld3u6','TvINI')">Run</button>
-  <div id="TvINI_FloatingLog" class="floatingLog" aria-live="polite" role="alert"></div> <iframe id="TvINI" class="result_iframe" style="display: none;"></iframe>
-  <script>
-			{
-				let editor = CodeMirror.fromTextArea(document
-						.getElementById("ld3u6"), {
+ <script>
+{
+let editor = CodeMirror.fromTextArea(document.getElementById("LQxV1"), {
 					mode : "htmlmixed",
 					lineNumbers : false,
+                    lineWrapping: true,
 					tabSize : 2
-				});
-			    const mode = localStorage.getItem("mode") || "light";  
-			    const newTheme = mode === "dark" ? "material" : "default";
-			    editor.setOption("theme", newTheme);
-			    
-				codeMirrorMap.set("ld3u6", editor);
+});
+const darkmode = localStorage.getItem("mode") || "light";  
+const newTheme = darkmode === "dark" ? "dracula" : "default";
+editor.setSize("50%", "100%");
+editor.setOption("theme", newTheme);
+htmlCodeMirrorMap.set("LQxV1", editor);
+}
 
-				let editor1 = CodeMirror.fromTextArea(document.getElementById("ld3u6_Textarea"), {
-					mode : "htmlmixed",
-					lineNumbers : false,
-					tabSize : 2
-				});
-			    editor1.setOption("theme", newTheme);				
-				
-				codeMirrorMap.set("ld3u6_Textarea", editor1);
-			}
-		    function openDialog(id) {
-		        closeAll();
-		        document.getElementById(id).style.display = 'flex';
-		        setTimeout(() => {
-		        	 codeMirrorMap.get("ld3u6_Textarea").refresh();
-		        }, 100); // 100ms 
-		      }
-
-		      function closeAll() {
-		        document.querySelectorAll('.dialog-backdrop').forEach(el => {
-		          el.style.display = 'none';
-		        });
-		      }			
-		</script>
- </div>
+</script>
 </div><h3 id="summary">Summary</h3><table>
  <thead>
   <tr>
@@ -2897,7 +1824,8 @@ html.dark-mode .page-footer a {
 <a href='html-css-for-beginners.htm#css-layout-basics' class="nav-button toc-link">Index</a>
 <a href="#bottom" class="nav-button next">↓</a>
 </div>
-<h2 id='simple-flexbox-layout-examples'>5.5 Simple Flexbox Layout Examples</h2><p>Now that you understand the basics of Flexbox, let’s look at some practical examples. Flexbox makes it easy to build common user interface (UI) patterns such as <strong>navigation bars</strong>, <strong>card layouts</strong>, and <strong>centered content</strong>—all with minimal, readable code.</p><h3 id="example-1-horizontal-navigation-bar">Example 1: Horizontal Navigation Bar</h3><p>A horizontal navigation bar with evenly spaced links:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+<h2 id='simple-flexbox-layout-examples'>5.5 Simple Flexbox Layout Examples</h2><p>Now that you understand the basics of Flexbox, let’s look at some practical examples. Flexbox makes it easy to build common user interface (UI) patterns such as <strong>navigation bars</strong>, <strong>card layouts</strong>, and <strong>centered content</strong>—all with minimal, readable code.</p><h3 id="example-1-horizontal-navigation-bar">Example 1: Horizontal Navigation Bar</h3><p>A horizontal navigation bar with evenly spaced links:</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-html">&lt;style&gt;
   .navbar {
     display: flex;
@@ -2919,13 +1847,16 @@ html.dark-mode .page-footer a {
   &lt;a href="#"&gt;Services&lt;/a&gt;
   &lt;a href="#"&gt;Contact&lt;/a&gt;
 &lt;/div&gt;</code></pre>
-</div><div class="snippet-container" id="zZVN5">
- <div id="BztQa_Dialog" class="dialog-backdrop">
+</div><div class="snippet-container">
+ <div class="button-group-run-edit"><button class="button-run-edit" onclick="runHtmlCode(this,'8tW62','UTzPy', false)">Run</button> <button class="button-run-edit" onclick="openEditHtmlCodeDialog('UTzPy_Dialog','8tW62')">Edit</button>
+ </div> <iframe id="UTzPy" class="result_iframe" style="display: none;"></iframe>
+ <div id="UTzPy_Dialog" class="dialog-backdrop">
   <div class="dialog">
-   <h2>Dialog 1</h2>
-   <div class="controls"><button onclick="renderIframe(this,'Gfr3C_Textarea','BztQa_IFrame')">Run</button> <button onclick="closeAll()">Close</button>
+   <div class="controls"><button onclick="runHtmlCode(this,'8tW62','UTzPy_IFrame', true)">Run</button> <button onclick="closeAllHtmlCodeDialog()">Close</button>
    </div>
-   <div class="dialog-content"><textarea id="Gfr3C_Textarea" class="textarea_dialog" placeholder="Type HTML here...">&lt;!DOCTYPE html&gt;
+   <div class="dialog-content">
+    <div class="editor-container">
+     <textarea id="8tW62" class="textarea_dialog" placeholder="Type HTML here...">&lt;!DOCTYPE html&gt;
 &lt;html&gt;
   &lt;head&gt;
     &lt;title&gt;My First Web Page&lt;/title&gt;
@@ -2952,85 +1883,35 @@ html.dark-mode .page-footer a {
   &lt;a href="#"&gt;Contact&lt;/a&gt;
 &lt;/div&gt;
 &lt;/body&gt;
-&lt;/html&gt;</textarea> <iframe id="BztQa_IFrame" class="iframe_dialog"></iframe>
+&lt;/html&gt;</textarea>
+    </div>
+    <div class="preview-container">
+     <iframe id="UTzPy_IFrame" class="result_iframe_dialog" style="border: none;"></iframe>
+    </div>
    </div>
   </div>
  </div>
- <div class="snippet-header" onclick="toggleSnippetAndRefresh('zZVN5','Gfr3C')">
-  Click to Try it <!--<span onclick="toggleSnippetAndRefresh('zZVN5','Gfr3C')">Click
-			to Try it</span> --> <!-- <span onclick="openDialog('BztQa_Dialog')">Dialog</span> -->
- </div>
- <div class="snippet-body"><textarea id="Gfr3C">&lt;!DOCTYPE html&gt;
-&lt;html&gt;
-  &lt;head&gt;
-    &lt;title&gt;My First Web Page&lt;/title&gt;
-&lt;style&gt;
-  .navbar {
-    display: flex;
-    justify-content: space-around;
-    background: #333;
-    padding: 10px;
-  }
-
-  .navbar a {
-    color: white;
-    text-decoration: none;
-    font-weight: bold;
-  }
-&lt;/style&gt;    
-  &lt;/head&gt;
-  &lt;body&gt;
-&lt;div class="navbar"&gt;
-  &lt;a href="#"&gt;Home&lt;/a&gt;
-  &lt;a href="#"&gt;About&lt;/a&gt;
-  &lt;a href="#"&gt;Services&lt;/a&gt;
-  &lt;a href="#"&gt;Contact&lt;/a&gt;
-&lt;/div&gt;
-&lt;/body&gt;
-&lt;/html&gt;</textarea> <br> <button onclick="renderIframe(this,'Gfr3C','BztQa')">Run</button>
-  <div id="BztQa_FloatingLog" class="floatingLog" aria-live="polite" role="alert"></div> <iframe id="BztQa" class="result_iframe" style="display: none;"></iframe>
-  <script>
-			{
-				let editor = CodeMirror.fromTextArea(document
-						.getElementById("Gfr3C"), {
+ <script>
+{
+let editor = CodeMirror.fromTextArea(document.getElementById("8tW62"), {
 					mode : "htmlmixed",
 					lineNumbers : false,
+                    lineWrapping: true,
 					tabSize : 2
-				});
-			    const mode = localStorage.getItem("mode") || "light";  
-			    const newTheme = mode === "dark" ? "material" : "default";
-			    editor.setOption("theme", newTheme);
-			    
-				codeMirrorMap.set("Gfr3C", editor);
+});
+const darkmode = localStorage.getItem("mode") || "light";  
+const newTheme = darkmode === "dark" ? "dracula" : "default";
+editor.setSize("50%", "100%");
+editor.setOption("theme", newTheme);
+htmlCodeMirrorMap.set("8tW62", editor);
+}
 
-				let editor1 = CodeMirror.fromTextArea(document.getElementById("Gfr3C_Textarea"), {
-					mode : "htmlmixed",
-					lineNumbers : false,
-					tabSize : 2
-				});
-			    editor1.setOption("theme", newTheme);				
-				
-				codeMirrorMap.set("Gfr3C_Textarea", editor1);
-			}
-		    function openDialog(id) {
-		        closeAll();
-		        document.getElementById(id).style.display = 'flex';
-		        setTimeout(() => {
-		        	 codeMirrorMap.get("Gfr3C_Textarea").refresh();
-		        }, 100); // 100ms 
-		      }
-
-		      function closeAll() {
-		        document.querySelectorAll('.dialog-backdrop').forEach(el => {
-		          el.style.display = 'none';
-		        });
-		      }			
-		</script>
- </div>
+</script>
 </div><p><strong>What Flexbox does here:</strong></p><ul>
  <li><code>display: flex</code> turns the <code>.navbar</code> into a flex container.</li>
  <li><code>justify-content: space-around</code> distributes links with equal spacing.</li>
-</ul><h3 id="example-2-card-layout-with-equal-width">Example 2: Card Layout with Equal Width</h3><p>Use Flexbox to display cards in a row that wrap responsively:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</ul><h3 id="example-2-card-layout-with-equal-width">Example 2: Card Layout with Equal Width</h3><p>Use Flexbox to display cards in a row that wrap responsively:</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-html">&lt;style&gt;
   .card-container {
     display: flex;
@@ -3051,13 +1932,16 @@ html.dark-mode .page-footer a {
   &lt;div class="card"&gt;Card 2 content&lt;/div&gt;
   &lt;div class="card"&gt;Card 3 content&lt;/div&gt;
 &lt;/div&gt;</code></pre>
-</div><div class="snippet-container" id="O608A">
- <div id="eTEvn_Dialog" class="dialog-backdrop">
+</div><div class="snippet-container">
+ <div class="button-group-run-edit"><button class="button-run-edit" onclick="runHtmlCode(this,'jpyAS','zFu2a', false)">Run</button> <button class="button-run-edit" onclick="openEditHtmlCodeDialog('zFu2a_Dialog','jpyAS')">Edit</button>
+ </div> <iframe id="zFu2a" class="result_iframe" style="display: none;"></iframe>
+ <div id="zFu2a_Dialog" class="dialog-backdrop">
   <div class="dialog">
-   <h2>Dialog 1</h2>
-   <div class="controls"><button onclick="renderIframe(this,'ryk9c_Textarea','eTEvn_IFrame')">Run</button> <button onclick="closeAll()">Close</button>
+   <div class="controls"><button onclick="runHtmlCode(this,'jpyAS','zFu2a_IFrame', true)">Run</button> <button onclick="closeAllHtmlCodeDialog()">Close</button>
    </div>
-   <div class="dialog-content"><textarea id="ryk9c_Textarea" class="textarea_dialog" placeholder="Type HTML here...">&lt;!DOCTYPE html&gt;
+   <div class="dialog-content">
+    <div class="editor-container">
+     <textarea id="jpyAS" class="textarea_dialog" placeholder="Type HTML here...">&lt;!DOCTYPE html&gt;
 &lt;html&gt;
   &lt;head&gt;
     &lt;title&gt;My First Web Page&lt;/title&gt;
@@ -3083,84 +1967,35 @@ html.dark-mode .page-footer a {
   &lt;div class="card"&gt;Card 3 content&lt;/div&gt;
 &lt;/div&gt;
 &lt;/body&gt;
-&lt;/html&gt;</textarea> <iframe id="eTEvn_IFrame" class="iframe_dialog"></iframe>
+&lt;/html&gt;</textarea>
+    </div>
+    <div class="preview-container">
+     <iframe id="zFu2a_IFrame" class="result_iframe_dialog" style="border: none;"></iframe>
+    </div>
    </div>
   </div>
  </div>
- <div class="snippet-header" onclick="toggleSnippetAndRefresh('O608A','ryk9c')">
-  Click to Try it <!--<span onclick="toggleSnippetAndRefresh('O608A','ryk9c')">Click
-			to Try it</span> --> <!-- <span onclick="openDialog('eTEvn_Dialog')">Dialog</span> -->
- </div>
- <div class="snippet-body"><textarea id="ryk9c">&lt;!DOCTYPE html&gt;
-&lt;html&gt;
-  &lt;head&gt;
-    &lt;title&gt;My First Web Page&lt;/title&gt;
-&lt;style&gt;
-  .card-container {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 20px;
-  }
-
-  .card {
-    flex: 1 1 200px;
-    border: 1px solid #ccc;
-    padding: 15px;
-    background: #fafafa;
-  }
-&lt;/style&gt;    
-  &lt;/head&gt;
-  &lt;body&gt;
-&lt;div class="card-container"&gt;
-  &lt;div class="card"&gt;Card 1 content&lt;/div&gt;
-  &lt;div class="card"&gt;Card 2 content&lt;/div&gt;
-  &lt;div class="card"&gt;Card 3 content&lt;/div&gt;
-&lt;/div&gt;
-&lt;/body&gt;
-&lt;/html&gt;</textarea> <br> <button onclick="renderIframe(this,'ryk9c','eTEvn')">Run</button>
-  <div id="eTEvn_FloatingLog" class="floatingLog" aria-live="polite" role="alert"></div> <iframe id="eTEvn" class="result_iframe" style="display: none;"></iframe>
-  <script>
-			{
-				let editor = CodeMirror.fromTextArea(document
-						.getElementById("ryk9c"), {
+ <script>
+{
+let editor = CodeMirror.fromTextArea(document.getElementById("jpyAS"), {
 					mode : "htmlmixed",
 					lineNumbers : false,
+                    lineWrapping: true,
 					tabSize : 2
-				});
-			    const mode = localStorage.getItem("mode") || "light";  
-			    const newTheme = mode === "dark" ? "material" : "default";
-			    editor.setOption("theme", newTheme);
-			    
-				codeMirrorMap.set("ryk9c", editor);
+});
+const darkmode = localStorage.getItem("mode") || "light";  
+const newTheme = darkmode === "dark" ? "dracula" : "default";
+editor.setSize("50%", "100%");
+editor.setOption("theme", newTheme);
+htmlCodeMirrorMap.set("jpyAS", editor);
+}
 
-				let editor1 = CodeMirror.fromTextArea(document.getElementById("ryk9c_Textarea"), {
-					mode : "htmlmixed",
-					lineNumbers : false,
-					tabSize : 2
-				});
-			    editor1.setOption("theme", newTheme);				
-				
-				codeMirrorMap.set("ryk9c_Textarea", editor1);
-			}
-		    function openDialog(id) {
-		        closeAll();
-		        document.getElementById(id).style.display = 'flex';
-		        setTimeout(() => {
-		        	 codeMirrorMap.get("ryk9c_Textarea").refresh();
-		        }, 100); // 100ms 
-		      }
-
-		      function closeAll() {
-		        document.querySelectorAll('.dialog-backdrop').forEach(el => {
-		          el.style.display = 'none';
-		        });
-		      }			
-		</script>
- </div>
+</script>
 </div><p><strong>What Flexbox does here:</strong></p><ul>
  <li><code>flex: 1 1 200px</code> means each card can grow and shrink, but prefers 200px width.</li>
  <li><code>flex-wrap: wrap</code> allows cards to move to the next line on smaller screens.</li>
-</ul><h3 id="example-3-centering-content-horizontally-and-vertically">Example 3: Centering Content Horizontally and Vertically</h3><p>This layout centers an element both vertically and horizontally in the viewport.</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</ul><h3 id="example-3-centering-content-horizontally-and-vertically">Example 3: Centering Content Horizontally and Vertically</h3><p>This layout centers an element both vertically and horizontally in the viewport.</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-html">&lt;style&gt;
   .center-wrapper {
     display: flex;
@@ -3181,13 +2016,16 @@ html.dark-mode .page-footer a {
 &lt;div class="center-wrapper"&gt;
   &lt;div class="center-box"&gt;Centered Box&lt;/div&gt;
 &lt;/div&gt;</code></pre>
-</div><div class="snippet-container" id="PK5ym">
- <div id="IeTKO_Dialog" class="dialog-backdrop">
+</div><div class="snippet-container">
+ <div class="button-group-run-edit"><button class="button-run-edit" onclick="runHtmlCode(this,'cJ4vL','L665E', false)">Run</button> <button class="button-run-edit" onclick="openEditHtmlCodeDialog('L665E_Dialog','cJ4vL')">Edit</button>
+ </div> <iframe id="L665E" class="result_iframe" style="display: none;"></iframe>
+ <div id="L665E_Dialog" class="dialog-backdrop">
   <div class="dialog">
-   <h2>Dialog 1</h2>
-   <div class="controls"><button onclick="renderIframe(this,'LlRZP_Textarea','IeTKO_IFrame')">Run</button> <button onclick="closeAll()">Close</button>
+   <div class="controls"><button onclick="runHtmlCode(this,'cJ4vL','L665E_IFrame', true)">Run</button> <button onclick="closeAllHtmlCodeDialog()">Close</button>
    </div>
-   <div class="dialog-content"><textarea id="LlRZP_Textarea" class="textarea_dialog" placeholder="Type HTML here...">&lt;!DOCTYPE html&gt;
+   <div class="dialog-content">
+    <div class="editor-container">
+     <textarea id="cJ4vL" class="textarea_dialog" placeholder="Type HTML here...">&lt;!DOCTYPE html&gt;
 &lt;html&gt;
   &lt;head&gt;
     &lt;title&gt;My First Web Page&lt;/title&gt;
@@ -3214,84 +2052,34 @@ html.dark-mode .page-footer a {
   &lt;div class="center-box"&gt;Centered Box&lt;/div&gt;
 &lt;/div&gt;
 &lt;/body&gt;
-&lt;/html&gt;</textarea> <iframe id="IeTKO_IFrame" class="iframe_dialog"></iframe>
+&lt;/html&gt;</textarea>
+    </div>
+    <div class="preview-container">
+     <iframe id="L665E_IFrame" class="result_iframe_dialog" style="border: none;"></iframe>
+    </div>
    </div>
   </div>
  </div>
- <div class="snippet-header" onclick="toggleSnippetAndRefresh('PK5ym','LlRZP')">
-  Click to Try it <!--<span onclick="toggleSnippetAndRefresh('PK5ym','LlRZP')">Click
-			to Try it</span> --> <!-- <span onclick="openDialog('IeTKO_Dialog')">Dialog</span> -->
- </div>
- <div class="snippet-body"><textarea id="LlRZP">&lt;!DOCTYPE html&gt;
-&lt;html&gt;
-  &lt;head&gt;
-    &lt;title&gt;My First Web Page&lt;/title&gt;
-  &lt;/head&gt;
-  &lt;body&gt;
-&lt;style&gt;
-  .center-wrapper {
-    display: flex;
-    justify-content: center;  /* Center horizontally */
-    align-items: center;      /* Center vertically */
-    height: 100vh;
-    background: #f0f0f0;
-  }
-
-  .center-box {
-    padding: 20px;
-    background: #4CAF50;
-    color: white;
-    font-size: 1.5rem;
-  }
-&lt;/style&gt;
-
-&lt;div class="center-wrapper"&gt;
-  &lt;div class="center-box"&gt;Centered Box&lt;/div&gt;
-&lt;/div&gt;
-&lt;/body&gt;
-&lt;/html&gt;</textarea> <br> <button onclick="renderIframe(this,'LlRZP','IeTKO')">Run</button>
-  <div id="IeTKO_FloatingLog" class="floatingLog" aria-live="polite" role="alert"></div> <iframe id="IeTKO" class="result_iframe" style="display: none;"></iframe>
-  <script>
-			{
-				let editor = CodeMirror.fromTextArea(document
-						.getElementById("LlRZP"), {
+ <script>
+{
+let editor = CodeMirror.fromTextArea(document.getElementById("cJ4vL"), {
 					mode : "htmlmixed",
 					lineNumbers : false,
+                    lineWrapping: true,
 					tabSize : 2
-				});
-			    const mode = localStorage.getItem("mode") || "light";  
-			    const newTheme = mode === "dark" ? "material" : "default";
-			    editor.setOption("theme", newTheme);
-			    
-				codeMirrorMap.set("LlRZP", editor);
+});
+const darkmode = localStorage.getItem("mode") || "light";  
+const newTheme = darkmode === "dark" ? "dracula" : "default";
+editor.setSize("50%", "100%");
+editor.setOption("theme", newTheme);
+htmlCodeMirrorMap.set("cJ4vL", editor);
+}
 
-				let editor1 = CodeMirror.fromTextArea(document.getElementById("LlRZP_Textarea"), {
-					mode : "htmlmixed",
-					lineNumbers : false,
-					tabSize : 2
-				});
-			    editor1.setOption("theme", newTheme);				
-				
-				codeMirrorMap.set("LlRZP_Textarea", editor1);
-			}
-		    function openDialog(id) {
-		        closeAll();
-		        document.getElementById(id).style.display = 'flex';
-		        setTimeout(() => {
-		        	 codeMirrorMap.get("LlRZP_Textarea").refresh();
-		        }, 100); // 100ms 
-		      }
-
-		      function closeAll() {
-		        document.querySelectorAll('.dialog-backdrop').forEach(el => {
-		          el.style.display = 'none';
-		        });
-		      }			
-		</script>
- </div>
+</script>
 </div><p><strong>Why use Flexbox here?</strong></p><ul>
  <li>It eliminates the need for tricky margin or positioning hacks to center content.</li>
-</ul><h3 id="example-4-sidebar-layout">Example 4: Sidebar Layout</h3><p>A layout with a fixed-width sidebar and a flexible main content area:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</ul><h3 id="example-4-sidebar-layout">Example 4: Sidebar Layout</h3><p>A layout with a fixed-width sidebar and a flexible main content area:</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-html">&lt;style&gt;
   .layout {
     display: flex;
@@ -3315,13 +2103,16 @@ html.dark-mode .page-footer a {
   &lt;div class="sidebar"&gt;Sidebar&lt;/div&gt;
   &lt;div class="main"&gt;Main content goes here&lt;/div&gt;
 &lt;/div&gt;</code></pre>
-</div><div class="snippet-container" id="Rjk5I">
- <div id="rwJm4_Dialog" class="dialog-backdrop">
+</div><div class="snippet-container">
+ <div class="button-group-run-edit"><button class="button-run-edit" onclick="runHtmlCode(this,'gcxPo','I88PB', false)">Run</button> <button class="button-run-edit" onclick="openEditHtmlCodeDialog('I88PB_Dialog','gcxPo')">Edit</button>
+ </div> <iframe id="I88PB" class="result_iframe" style="display: none;"></iframe>
+ <div id="I88PB_Dialog" class="dialog-backdrop">
   <div class="dialog">
-   <h2>Dialog 1</h2>
-   <div class="controls"><button onclick="renderIframe(this,'4ixY0_Textarea','rwJm4_IFrame')">Run</button> <button onclick="closeAll()">Close</button>
+   <div class="controls"><button onclick="runHtmlCode(this,'gcxPo','I88PB_IFrame', true)">Run</button> <button onclick="closeAllHtmlCodeDialog()">Close</button>
    </div>
-   <div class="dialog-content"><textarea id="4ixY0_Textarea" class="textarea_dialog" placeholder="Type HTML here...">&lt;!DOCTYPE html&gt;
+   <div class="dialog-content">
+    <div class="editor-container">
+     <textarea id="gcxPo" class="textarea_dialog" placeholder="Type HTML here...">&lt;!DOCTYPE html&gt;
 &lt;html&gt;
   &lt;head&gt;
     &lt;title&gt;My First Web Page&lt;/title&gt;
@@ -3351,84 +2142,30 @@ html.dark-mode .page-footer a {
   &lt;div class="main"&gt;Main content goes here&lt;/div&gt;
 &lt;/div&gt;
 &lt;/body&gt;
-&lt;/html&gt;</textarea> <iframe id="rwJm4_IFrame" class="iframe_dialog"></iframe>
+&lt;/html&gt;</textarea>
+    </div>
+    <div class="preview-container">
+     <iframe id="I88PB_IFrame" class="result_iframe_dialog" style="border: none;"></iframe>
+    </div>
    </div>
   </div>
  </div>
- <div class="snippet-header" onclick="toggleSnippetAndRefresh('Rjk5I','4ixY0')">
-  Click to Try it <!--<span onclick="toggleSnippetAndRefresh('Rjk5I','4ixY0')">Click
-			to Try it</span> --> <!-- <span onclick="openDialog('rwJm4_Dialog')">Dialog</span> -->
- </div>
- <div class="snippet-body"><textarea id="4ixY0">&lt;!DOCTYPE html&gt;
-&lt;html&gt;
-  &lt;head&gt;
-    &lt;title&gt;My First Web Page&lt;/title&gt;
-  &lt;/head&gt;
-  &lt;body&gt;
-&lt;style&gt;
-  .layout {
-    display: flex;
-  }
-
-  .sidebar {
-    width: 200px;
-    background: #333;
-    color: white;
-    padding: 15px;
-  }
-
-  .main {
-    flex: 1;
-    padding: 15px;
-    background: #f9f9f9;
-  }
-&lt;/style&gt;
-
-&lt;div class="layout"&gt;
-  &lt;div class="sidebar"&gt;Sidebar&lt;/div&gt;
-  &lt;div class="main"&gt;Main content goes here&lt;/div&gt;
-&lt;/div&gt;
-&lt;/body&gt;
-&lt;/html&gt;</textarea> <br> <button onclick="renderIframe(this,'4ixY0','rwJm4')">Run</button>
-  <div id="rwJm4_FloatingLog" class="floatingLog" aria-live="polite" role="alert"></div> <iframe id="rwJm4" class="result_iframe" style="display: none;"></iframe>
-  <script>
-			{
-				let editor = CodeMirror.fromTextArea(document
-						.getElementById("4ixY0"), {
+ <script>
+{
+let editor = CodeMirror.fromTextArea(document.getElementById("gcxPo"), {
 					mode : "htmlmixed",
 					lineNumbers : false,
+                    lineWrapping: true,
 					tabSize : 2
-				});
-			    const mode = localStorage.getItem("mode") || "light";  
-			    const newTheme = mode === "dark" ? "material" : "default";
-			    editor.setOption("theme", newTheme);
-			    
-				codeMirrorMap.set("4ixY0", editor);
+});
+const darkmode = localStorage.getItem("mode") || "light";  
+const newTheme = darkmode === "dark" ? "dracula" : "default";
+editor.setSize("50%", "100%");
+editor.setOption("theme", newTheme);
+htmlCodeMirrorMap.set("gcxPo", editor);
+}
 
-				let editor1 = CodeMirror.fromTextArea(document.getElementById("4ixY0_Textarea"), {
-					mode : "htmlmixed",
-					lineNumbers : false,
-					tabSize : 2
-				});
-			    editor1.setOption("theme", newTheme);				
-				
-				codeMirrorMap.set("4ixY0_Textarea", editor1);
-			}
-		    function openDialog(id) {
-		        closeAll();
-		        document.getElementById(id).style.display = 'flex';
-		        setTimeout(() => {
-		        	 codeMirrorMap.get("4ixY0_Textarea").refresh();
-		        }, 100); // 100ms 
-		      }
-
-		      function closeAll() {
-		        document.querySelectorAll('.dialog-backdrop').forEach(el => {
-		          el.style.display = 'none';
-		        });
-		      }			
-		</script>
- </div>
+</script>
 </div><p><strong>Flexbox benefits:</strong></p><ul>
  <li>Automatically adjusts the main content width without manual calculations.</li>
  <li>Clean and responsive by default.</li>
@@ -3495,30 +2232,36 @@ html.dark-mode .page-footer a {
 
 <a href='web-front.htm'><div class='book-cover' style='background-color: #f9f6f1;color: #111111;border: 1px solid #ccc;display: flex;justify-content: center;align-items: center;text-align: center;'>More Web Front Books</div></a>
 </div>
-</div>
-  </div>
-  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
-  
-  <script>
-    function copyCode(button) {
-      const code = button.nextElementSibling.innerText;
-      navigator.clipboard.writeText(code).then(() => {
-        button.textContent = 'Copied!';
-        setTimeout(() => { button.textContent = 'Copy'; }, 1500);
-      });
-    }
-  </script>  
-<div id="floatingLog" aria-live="polite" role="alert"></div>
-<footer class="page-footer">
-    <nav>
-      <a href="https://readbytes.github.io">Home</a> | 
-      Email:<script language="JavaScript" type="text/javascript">
+</div><script>
+function copyCode(button) {const code = button.nextElementSibling.innerText;navigator.clipboard.writeText(code).then(() => {button.textContent = 'Copied!';setTimeout(() => { button.textContent = 'Copy'; }, 1500);});}
+</script><div id="floatingLog" aria-live="polite" role="alert"></div></div>
+<style>
+.site-footer {margin-top: 60px;padding: 20px 0;border-top: 1px solid #eee;text-align: center;font-size: 14px;}
+.site-footer a {text-decoration: none;}
+.light-mode .site-footer {color: #777;border-color: #eee;}
+.dark-mode .site-footer {color: #888;border-color: #333;}
+.light-mode .site-footer a {color: #555;}
+.dark-mode .site-footer a {color: #aaa;}
+.site-footer a:hover {text-decoration: underline;}    
+</style>
+<footer class="site-footer">
+<nav><a href="https://readbytes.github.io">Home</a> |Email:<script type="text/javascript">
 var part1 = 'yinpeng';var part6 = '263';var part2 = Math.pow(2,6);var part3 = String.fromCharCode(part2);var part4 = 'hotmail dot com';var part5 = part1 + String.fromCharCode(part2) + part4;document.write(part1 + part6 + part3 + part4);
 </script>
-    </nav>
-  <p>© 2025 — All rights reserved.</p>    
-  </footer>
-
+| <a id="mode-toggle" href="#">Toggle Dark Mode</a>
+</nav><p>© 2025 — All rights reserved.</p></footer>
+<script>
+const toggleButton = document.getElementById('mode-toggle');
+const body = document.body;
+const savedMode = localStorage.getItem('mode') || 'light';
+body.classList.add(savedMode + '-mode');
+toggleButton.addEventListener('click', () => {
+      const isDark = body.classList.contains('dark-mode');
+      body.classList.toggle('dark-mode', !isDark);
+      body.classList.toggle('light-mode', isDark);
+      localStorage.setItem('mode', isDark ? 'light' : 'dark');
+});
+function copyCode(button) {const code = button.nextElementSibling.innerText;navigator.clipboard.writeText(code).then(() => {button.textContent = 'Copied!';setTimeout(() => { button.textContent = 'Copy'; }, 1500);});}
+</script>
 </body>
 </html>

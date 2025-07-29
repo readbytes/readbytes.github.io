@@ -1,275 +1,74 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Table of Content for Java Object-Oriented Design</title>
-  <script>
-  const mode = localStorage.getItem('mode') || 'light';
-  document.documentElement.classList.add(`${mode}-mode`);
-  </script>  
-  <link rel='shortcut icon' href='https://java2s.com/style/favicon.ico'>  
-  <style>
-body {
-  font-family: 'Georgia', serif;
-  padding: 40px;
-  max-width: 800px;
-  margin: auto;
-  transition: background-color 0.3s, color 0.3s;
-}
-  .book-title-toc {
-      font-size: 32px;
-      font-weight: bold; 
-    }
+<meta charset="UTF-8">
+<title>Table of Content for Java Object-Oriented Design</title>
+<link rel='shortcut icon' href='https://readbytes.github.io/images/favicon.ico'>
+<link href="https://fonts.googleapis.com/css2?family=Merriweather&display=swap" rel="stylesheet" />
+<link href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.css" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/theme/dracula.min.css"><style>
+html {scroll-behavior: smooth;}  
+body {font-family: 'Merriweather', serif;;margin: 0;padding: 2rem 1rem;font-size: 15px;line-height: 1.5;transition: background-color 0.3s, color 0.3s;}
+.container {max-width: 750px;margin: 0 auto;padding: 1rem 2rem;}
+.light-mode {background-color: #f8f7f5;color: #333;} 
+.dark-mode {background-color: #121212;color: #e0e0e0;}
+a { text-decoration: none;transition: color 0.2s;}
+a:hover {text-decoration: underline;}
+.light-mode a {color: #555;}
+.dark-mode a {color: #aaa;}
+</style><style>
+.related-book-list {display: flex;flex-wrap: wrap;gap: 20px;}
+.related-books {margin-top: 40px;}
+.related-books h2 {font-size: 22px;margin-bottom: 20px;border-bottom: 2px solid #eee;padding-bottom: 8px;}
+.light-mode .related-books h2 {color: #333;border-color: #eee;}
+.dark-mode .related-books h2 {color: #ddd;border-color: #333;}
+</style><style>
+.book-cover {width: 130px;height: 180px;font-family: Arial, sans-serif;position: relative;overflow: hidden;box-shadow: 2px 2px 4px rgba(0,0,0,0.1);}
+.book-cover-bottom-stripe {position: absolute;bottom: 0;left: 0;height: 5px;width: 100%;}
+.book-cover-title {position: absolute;width: 100%;text-align: center;font-weight: bold;}
+.book-cover-icon {position: absolute;left: 50%;transform: translateX(-50%);display: flex;align-items: center;justify-content: center;}
+.book-cover-author {position: absolute;bottom: 10px;width: 100%;text-align: center;font-size: 8px;color: #333;}
+</style><style>
+.book-title-toc {font-size: 32px;font-weight: bold; }
+.book-subtitle-toc {font-size: 18px;margin-top: 8px;font-style: italic;}
+.book-header {text-align: center;margin-bottom: 40px;}
 
-    .book-subtitle-toc {
-      font-size: 18px; 
-      margin-top: 8px;
-      font-style: italic;
-    }
-.book-header {
-  text-align: center;
-  margin-bottom: 40px;
-}
+.toc-container {border-radius: 10px;padding: 30px;margin-bottom: 40px;box-shadow: 0 8px 20px rgba(0,0,0,0.05);}
+h1 {font-size: 24px;text-align: center;margin-bottom: 30px;letter-spacing: 1px;padding-bottom: 10px;}
+.toc-list,.toc-section-list {list-style: none;padding: 0;margin: 0;}
+.toc-section-list {padding-left: 18px;margin-top: 6px;margin-bottom: 20px; }
+.toc-chapter {padding: 20px 0;}
+.chapter-title,.toc-section {display: flex;justify-content: space-between;padding-top: 4px;}
+.chapter-title {font-size: 17px;font-weight: bold;}
+.chapter-page,.section-page {font-style: italic;}
+ 
+ 
+.light-mode .book-title-toc,.light-mode .chapter-title,.light-mode .book-name {color: #222;}
+.light-mode .book-subtitle-toc,.light-mode .book-sub,.light-mode .chapter-page,.light-mode .section-page {color: #666;}
+.light-mode .toc-container { background: #fff;border: 1px solid #ddd;}
+.light-mode h1 {border-bottom: 2px solid #eee;color: #222;}
+.light-mode .toc-section {  color: #444;}
 
-.toc-container {
-  border-radius: 10px;
-  padding: 30px;
-  margin-bottom: 40px;
-  box-shadow: 0 8px 20px rgba(0,0,0,0.05);
-}
+.light-mode .book-cover { border: 1px solid #ccc;box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);}
+.light-mode .book-title,.light-mode .series-name {color: #fff;}
+.light-mode .book-subtitle,.light-mode .book-footer {color: #aaa;}
 
-h1 {
-  font-size: 24px;
-  text-align: center;
-  margin-bottom: 30px;
-  letter-spacing: 1px;
-  padding-bottom: 10px;
-}
+.dark-mode .book-title-toc,.dark-mode .chapter-title,.dark-mode .book-name {color: #f5f5f5;}
+.dark-mode .book-subtitle-toc,.dark-mode .book-sub,.dark-mode .chapter-page,.dark-mode .section-page {color: #aaa;}
+.dark-mode .toc-container {background: #1e1e1e;border: 1px solid #444;}
 
-.toc-list,
-.toc-section-list {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-}
+.dark-mode h1 {border-bottom: 2px solid #333;color: #eee;}
+.dark-mode .toc-section {color: #bbb;}
 
-.toc-section-list {
-  padding-left: 18px;
-  margin-top: 6px;
-  margin-bottom: 20px; 
-}
+.dark-mode .related-books h2 {color: #ddd;border-bottom: 2px solid #333;}
+.dark-mode .book-title,.dark-mode .series-name {color: #fff;}
+.dark-mode .book-subtitle,.dark-mode .book-footer {color: #bbb;}
+.dark-mode .toc-section {color: #ddd;}
 
-.toc-chapter {
-  padding: 20px 0;
-}
-
-.chapter-title,
-.toc-section {
-  display: flex;
-  justify-content: space-between;
-  padding-top: 4px;
-}
-
-.chapter-title {
-  font-size: 17px;
-  font-weight: bold;
-}
-
-.chapter-page,
-.section-page {
-  font-style: italic;
-}
-
-.related-books {
-  margin-top: 40px;
-}
-
-.related-book-list {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 20px;
-}
-    .book-cover {
-      width: 130px;
-      height: 180px;
-      font-family: Arial, sans-serif;
-      position: relative;
-      overflow: hidden;
-      box-shadow: 2px 2px 4px rgba(0,0,0,0.1);
-    }
-    .book-cover-bottom-stripe {
-      position: absolute;
-      bottom: 0;
-      left: 0;
-      height: 5px;
-      width: 100%;
-    }
-    .book-cover-title {
-      position: absolute;
-      width: 100%;
-      text-align: center;
-      font-weight: bold;
-    }
-     
-    .book-cover-icon {
-      position: absolute;
-      left: 50%;
-      transform: translateX(-50%);
-      display: flex;
-      align-items: center;
-      justify-content: center; 
-    }
-
-    .book-cover-author {
-      position: absolute;
-      bottom: 10px;
-      width: 100%;
-      text-align: center;
-      font-size: 8px;
-      color: #333;
-    }
-
-a {
-  text-decoration: none;
-  transition: color 0.2s;
-}
-
-a:hover {
-  text-decoration: underline;
-}
-.site-footer {
-  margin-top: 60px;
-  padding: 20px 0;
-  border-top: 1px solid #eee;
-  text-align: center;
-  font-size: 14px; 
-}
-/* === Light Mode === */
-html.light-mode {
-  background-color: #fdfdfd;
-  color: #333;
-}
-
-.light-mode .book-title-toc,
-.light-mode .chapter-title,
-.light-mode .book-name {
-  color: #222;
-}
-
-.light-mode .book-subtitle-toc,
-.light-mode .book-sub,
-.light-mode .chapter-page,
-.light-mode .section-page {
-  color: #666;
-}
-
-.light-mode .toc-container {
-  background: #fff;
-  border: 1px solid #ddd;
-}
-
-.light-mode h1 {
-  border-bottom: 2px solid #eee;
-  color: #222;
-}
-
-.light-mode .toc-section {
-  color: #444;
-}
-
-.light-mode .related-books h2 {
-  color: #333;
-  border-bottom: 2px solid #eee;
-}
-
-.light-mode .book-cover { 
-  border: 1px solid #ccc;
-  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
-}
-
-.light-mode .book-title,
-.light-mode .series-name {
-  color: #fff;
-}
-
-.light-mode .book-subtitle,
-.light-mode .book-footer {
-  color: #aaa;
-}
-
-.light-mode .site-footer {
-  color: #777;
-  border-color: #eee;
-}
-
-.light-mode a {
-  color: #555;
-}
-
-/* === Dark Mode === */
-html.dark-mode {
-  background-color: #121212;
-  color: #e0e0e0;
-}
-
-.dark-mode .book-title-toc,
-.dark-mode .chapter-title,
-.dark-mode .book-name {
-  color: #f5f5f5;
-}
-
-.dark-mode .book-subtitle-toc,
-.dark-mode .book-sub,
-.dark-mode .chapter-page,
-.dark-mode .section-page {
-  color: #aaa;
-}
-
-.dark-mode .toc-container {
-  background: #1e1e1e;
-  border: 1px solid #444;
-}
-
-.dark-mode h1 {
-  border-bottom: 2px solid #333;
-  color: #eee;
-}
-
-.dark-mode .toc-section {
-  color: #bbb;
-}
-
-.dark-mode .related-books h2 {
-  color: #ddd;
-  border-bottom: 2px solid #333;
-}
-
-
-.dark-mode .book-title,
-.dark-mode .series-name {
-  color: #fff;
-}
-
-.dark-mode .book-subtitle,
-.dark-mode .book-footer {
-  color: #bbb;
-}
-
-.dark-mode .site-footer {
-  color: #aaa;
-  border-color: #333;
-}
-
-.dark-mode .toc-section {
-  color: #ddd;
-}
-
-
-.dark-mode a {
-  color: #aaa;
-}
-
-/* === Responsive === */
 @media (max-width: 600px) {
   .chapter-title,
   .toc-section {
@@ -282,35 +81,17 @@ html.dark-mode {
     margin-top: 4px;
   }
 }
-  </style>
+
+</style>
 </head>
 <body>
-<button onclick="toggleMode()">Toggle Mode</button>
-<script>
-function toggleMode() {
-    const html = document.documentElement;
-    const isDark = html.classList.contains('dark-mode');
-
-    html.classList.toggle('dark-mode', !isDark);
-    html.classList.toggle('light-mode', isDark);
-
-    localStorage.setItem('mode', isDark ? 'light' : 'dark');
-  }
-</script>
-<div class="book-header">
-  <div class="book-title-toc">Java Object-Oriented Design</div>
-  <div class="book-subtitle-toc">Principles, Patterns, and Practices</div>
-</div>
-
-<div class="toc-container">
-  <h1>Table of Contents</h1>
-  <ul class="toc-list">
-    <li class='toc-chapter'><a href='java-object-oriented-design-introduction-to-java-and-object-oriented-programming.htm'>
+<script>const mode = localStorage.getItem('mode') || 'light';document.documentElement.classList.add(`${mode}-mode`);</script>  
+<div class="container"><div class='book-header'><h1 class='book-title-toc' id = 'top'>Java Object-Oriented Design</h1><h3 class='book-subtitle-toc'>Principles, Patterns, and Practices</h3></div><div class='toc-container'><h1>Table of Contents</h1><ul class='toc-list'><li class='toc-chapter'><a href='java-object-oriented-design-introduction-to-java-and-object-oriented-programming.htm'>
 <div class='chapter-title'>
 <span id='introduction-to-java-and-object-oriented-programming'>Chapter 1 : Introduction to Java and Object-Oriented Programming </span>
 <span class='chapter-page'>1</span>
 </div>
-</a><ul class="toc-section-list"><li class="toc-section">
+</a><ul class='toc-section-list'><li class="toc-section">
 <a href='java-object-oriented-design-introduction-to-java-and-object-oriented-programming.htm#why-java'>
 <span>Why Java?</span></a>
 <span class='section-page'>1</span>
@@ -335,7 +116,7 @@ function toggleMode() {
 <span id='classes-and-objects'>Chapter 2 : Classes and Objects </span>
 <span class='chapter-page'>19</span>
 </div>
-</a><ul class="toc-section-list"><li class="toc-section">
+</a><ul class='toc-section-list'><li class="toc-section">
 <a href='java-object-oriented-design-classes-and-objects.htm#defining-classes-and-creating-objects'>
 <span>Defining Classes and Creating Objects</span></a>
 <span class='section-page'>19</span>
@@ -360,7 +141,7 @@ function toggleMode() {
 <span id='encapsulation'>Chapter 3 : Encapsulation </span>
 <span class='chapter-page'>37</span>
 </div>
-</a><ul class="toc-section-list"><li class="toc-section">
+</a><ul class='toc-section-list'><li class="toc-section">
 <a href='java-object-oriented-design-encapsulation.htm#access-modifiers-private-public-protected-default'>
 <span>Access Modifiers (<code>private</code>, <code>public</code>, <code>protected</code>, default)</span></a>
 <span class='section-page'>37</span>
@@ -381,7 +162,7 @@ function toggleMode() {
 <span id='inheritance'>Chapter 4 : Inheritance </span>
 <span class='chapter-page'>54</span>
 </div>
-</a><ul class="toc-section-list"><li class="toc-section">
+</a><ul class='toc-section-list'><li class="toc-section">
 <a href='java-object-oriented-design-inheritance.htm#extends-keyword-and-inheriting-methods'>
 <span><code>extends</code> Keyword and Inheriting Methods</span></a>
 <span class='section-page'>54</span>
@@ -406,7 +187,7 @@ function toggleMode() {
 <span id='polymorphism'>Chapter 5 : Polymorphism </span>
 <span class='chapter-page'>72</span>
 </div>
-</a><ul class="toc-section-list"><li class="toc-section">
+</a><ul class='toc-section-list'><li class="toc-section">
 <a href='java-object-oriented-design-polymorphism.htm#compile-time-vs-runtime-polymorphism'>
 <span>Compile-time vs Runtime Polymorphism</span></a>
 <span class='section-page'>72</span>
@@ -427,7 +208,7 @@ function toggleMode() {
 <span id='abstraction'>Chapter 6 : Abstraction </span>
 <span class='chapter-page'>90</span>
 </div>
-</a><ul class="toc-section-list"><li class="toc-section">
+</a><ul class='toc-section-list'><li class="toc-section">
 <a href='java-object-oriented-design-abstraction.htm#abstract-classes'>
 <span>Abstract Classes</span></a>
 <span class='section-page'>90</span>
@@ -452,7 +233,7 @@ function toggleMode() {
 <span id='composition-and-aggregation'>Chapter 7 : Composition and Aggregation </span>
 <span class='chapter-page'>110</span>
 </div>
-</a><ul class="toc-section-list"><li class="toc-section">
+</a><ul class='toc-section-list'><li class="toc-section">
 <a href='java-object-oriented-design-composition-and-aggregation.htm#has-a-relationships'>
 <span>&quot;Has-a&quot; Relationships</span></a>
 <span class='section-page'>110</span>
@@ -473,7 +254,7 @@ function toggleMode() {
 <span id='inner-classes-and-anonymous-classes'>Chapter 8 : Inner Classes and Anonymous Classes </span>
 <span class='chapter-page'>134</span>
 </div>
-</a><ul class="toc-section-list"><li class="toc-section">
+</a><ul class='toc-section-list'><li class="toc-section">
 <a href='java-object-oriented-design-inner-classes-and-anonymous-classes.htm#member-classes'>
 <span>Member Classes</span></a>
 <span class='section-page'>134</span>
@@ -494,7 +275,7 @@ function toggleMode() {
 <span id='packages-and-modular-design'>Chapter 9 : Packages and Modular Design </span>
 <span class='chapter-page'>147</span>
 </div>
-</a><ul class="toc-section-list"><li class="toc-section">
+</a><ul class='toc-section-list'><li class="toc-section">
 <a href='java-object-oriented-design-packages-and-modular-design.htm#organizing-code-with-packages'>
 <span>Organizing Code with Packages</span></a>
 <span class='section-page'>147</span>
@@ -511,7 +292,7 @@ function toggleMode() {
 <span id='exception-handling-and-design'>Chapter 10 : Exception Handling and Design </span>
 <span class='chapter-page'>157</span>
 </div>
-</a><ul class="toc-section-list"><li class="toc-section">
+</a><ul class='toc-section-list'><li class="toc-section">
 <a href='java-object-oriented-design-exception-handling-and-design.htm#the-exception-hierarchy'>
 <span>The Exception Hierarchy</span></a>
 <span class='section-page'>157</span>
@@ -532,7 +313,7 @@ function toggleMode() {
 <span id='solid-principles-in-java'>Chapter 11 : SOLID Principles in Java </span>
 <span class='chapter-page'>174</span>
 </div>
-</a><ul class="toc-section-list"><li class="toc-section">
+</a><ul class='toc-section-list'><li class="toc-section">
 <a href='java-object-oriented-design-solid-principles-in-java.htm#single-responsibility-principle'>
 <span>Single Responsibility Principle</span></a>
 <span class='section-page'>174</span>
@@ -557,7 +338,7 @@ function toggleMode() {
 <span id='dry-kiss-yagni-and-other-principles'>Chapter 12 : DRY, KISS, YAGNI, and Other Principles </span>
 <span class='chapter-page'>196</span>
 </div>
-</a><ul class="toc-section-list"><li class="toc-section">
+</a><ul class='toc-section-list'><li class="toc-section">
 <a href='java-object-oriented-design-dry-kiss-yagni-and-other-principles.htm#avoiding-code-duplication-dry'>
 <span>Avoiding Code Duplication (DRY)</span></a>
 <span class='section-page'>196</span>
@@ -574,7 +355,7 @@ function toggleMode() {
 <span id='design-by-contract-and-defensive-programming'>Chapter 13 : Design by Contract and Defensive Programming </span>
 <span class='chapter-page'>204</span>
 </div>
-</a><ul class="toc-section-list"><li class="toc-section">
+</a><ul class='toc-section-list'><li class="toc-section">
 <a href='java-object-oriented-design-design-by-contract-and-defensive-programming.htm#preconditions-postconditions-invariants'>
 <span>Preconditions, Postconditions, Invariants</span></a>
 <span class='section-page'>204</span>
@@ -591,7 +372,7 @@ function toggleMode() {
 <span id='object-oriented-design-patterns-essentials'>Chapter 14 : Object-Oriented Design Patterns (Essentials) </span>
 <span class='chapter-page'>213</span>
 </div>
-</a><ul class="toc-section-list"><li class="toc-section">
+</a><ul class='toc-section-list'><li class="toc-section">
 <a href='java-object-oriented-design-object-oriented-design-patterns-essentials.htm#what-are-design-patterns'>
 <span>What Are Design Patterns?</span></a>
 <span class='section-page'>213</span>
@@ -612,7 +393,7 @@ function toggleMode() {
 <span id='refactoring-to-design'>Chapter 15 : Refactoring to Design </span>
 <span class='chapter-page'>242</span>
 </div>
-</a><ul class="toc-section-list"><li class="toc-section">
+</a><ul class='toc-section-list'><li class="toc-section">
 <a href='java-object-oriented-design-refactoring-to-design.htm#code-smells-and-refactoring'>
 <span>Code Smells and Refactoring</span></a>
 <span class='section-page'>242</span>
@@ -633,7 +414,7 @@ function toggleMode() {
 <span id='generics-and-type-abstraction'>Chapter 16 : Generics and Type Abstraction </span>
 <span class='chapter-page'>257</span>
 </div>
-</a><ul class="toc-section-list"><li class="toc-section">
+</a><ul class='toc-section-list'><li class="toc-section">
 <a href='java-object-oriented-design-generics-and-type-abstraction.htm#generic-classes-and-methods'>
 <span>Generic Classes and Methods</span></a>
 <span class='section-page'>257</span>
@@ -654,7 +435,7 @@ function toggleMode() {
 <span id='enums-records-and-sealed-classes'>Chapter 17 : Enums, Records, and Sealed Classes </span>
 <span class='chapter-page'>271</span>
 </div>
-</a><ul class="toc-section-list"><li class="toc-section">
+</a><ul class='toc-section-list'><li class="toc-section">
 <a href='java-object-oriented-design-enums-records-and-sealed-classes.htm#using-enums-in-ood'>
 <span>Using Enums in OOD</span></a>
 <span class='section-page'>271</span>
@@ -671,7 +452,7 @@ function toggleMode() {
 <span id='lambda-expressions-and-functional-interfaces'>Chapter 18 : Lambda Expressions and Functional Interfaces </span>
 <span class='chapter-page'>283</span>
 </div>
-</a><ul class="toc-section-list"><li class="toc-section">
+</a><ul class='toc-section-list'><li class="toc-section">
 <a href='java-object-oriented-design-lambda-expressions-and-functional-interfaces.htm#what-is-functional-programming-in-java'>
 <span>What is Functional Programming in Java?</span></a>
 <span class='section-page'>283</span>
@@ -692,7 +473,7 @@ function toggleMode() {
 <span id='case-study-1-designing-a-library-system'>Chapter 19 : Case Study 1  Designing a Library System </span>
 <span class='chapter-page'>295</span>
 </div>
-</a><ul class="toc-section-list"><li class="toc-section">
+</a><ul class='toc-section-list'><li class="toc-section">
 <a href='java-object-oriented-design-case-study-1-designing-a-library-system.htm#requirements-analysis'>
 <span>Requirements Analysis</span></a>
 <span class='section-page'>295</span>
@@ -709,7 +490,7 @@ function toggleMode() {
 <span id='case-study-2-online-shopping-cart-system'>Chapter 20 : Case Study 2  Online Shopping Cart System </span>
 <span class='chapter-page'>314</span>
 </div>
-</a><ul class="toc-section-list"><li class="toc-section">
+</a><ul class='toc-section-list'><li class="toc-section">
 <a href='java-object-oriented-design-case-study-2-online-shopping-cart-system.htm#managing-products-and-inventory'>
 <span>Managing Products and Inventory</span></a>
 <span class='section-page'>314</span>
@@ -730,7 +511,7 @@ function toggleMode() {
 <span id='case-study-3-task-manager-app-with-javafx'>Chapter 21 : Case Study 3 Task Manager App with JavaFX </span>
 <span class='chapter-page'>336</span>
 </div>
-</a><ul class="toc-section-list"><li class="toc-section">
+</a><ul class='toc-section-list'><li class="toc-section">
 <a href='java-object-oriented-design-case-study-3-task-manager-app-with-javafx.htm#mvc-in-object-oriented-gui-design'>
 <span>MVC in Object-Oriented GUI Design</span></a>
 <span class='section-page'>336</span>
@@ -747,7 +528,7 @@ function toggleMode() {
 <span id='unit-testing-and-design-with-junit'>Chapter 22 : Unit Testing and Design with JUnit </span>
 <span class='chapter-page'>351</span>
 </div>
-</a><ul class="toc-section-list"><li class="toc-section">
+</a><ul class='toc-section-list'><li class="toc-section">
 <a href='java-object-oriented-design-unit-testing-and-design-with-junit.htm#writing-unit-tests-for-oop-code'>
 <span>Writing Unit Tests for OOP Code</span></a>
 <span class='section-page'>351</span>
@@ -764,7 +545,7 @@ function toggleMode() {
 <span id='clean-code-and-maintainable-design'>Chapter 23 : Clean Code and Maintainable Design </span>
 <span class='chapter-page'>364</span>
 </div>
-</a><ul class="toc-section-list"><li class="toc-section">
+</a><ul class='toc-section-list'><li class="toc-section">
 <a href='java-object-oriented-design-clean-code-and-maintainable-design.htm#naming-formatting-and-readability'>
 <span>Naming, Formatting, and Readability</span></a>
 <span class='section-page'>364</span>
@@ -781,7 +562,7 @@ function toggleMode() {
 <span id='designing-for-change-flexibility-and-scalability'>Chapter 24 : Designing for Change: Flexibility and Scalability </span>
 <span class='chapter-page'>374</span>
 </div>
-</a><ul class="toc-section-list"><li class="toc-section">
+</a><ul class='toc-section-list'><li class="toc-section">
 <a href='java-object-oriented-design-designing-for-change-flexibility-and-scalability.htm#open-ended-design-with-interfaces'>
 <span>Open-Ended Design with Interfaces</span></a>
 <span class='section-page'>374</span>
@@ -793,11 +574,7 @@ function toggleMode() {
 <a href='java-object-oriented-design-designing-for-change-flexibility-and-scalability.htm#designing-apis'>
 <span>Designing APIs</span></a>
 <span class='section-page'>380</span>
-</li></ul></li>
-  </ul>
-</div>
-
-<div class='related-books'>
+</li></ul></li></ul></div><div class='related-books'>
 <h2>Java Introduction Books</h2>
 <div class='related-book-list'>
 <a href="java-for-beginners.htm">
@@ -832,7 +609,7 @@ function toggleMode() {
 
 <a href="java-object-oriented-design.htm">
 <div class="book-cover" style="background-color: #f9f6f1;border: 1px solid #ccc;"> 
-    <div class="book-cover-title" style="font-size: 16px;color: #333;top: 20px;">Java Object-Oriented Design</div>
+    <div class="book-cover-title" style="font-size: 16px;color: #333;top: 10px;">Java Object-Oriented Design</div>
     <div class="book-cover-author">readbytes</div>
     <div class="book-cover-bottom-stripe" style="background-color: #333;"></div>
     <img class="book-cover-icon" style="width: 80px;height: 80px;top: 60px;" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFoAAABaCAYAAAA4qEECAAAGz0lEQVR4Xu2cUWsUVxiGJ0oSFJSCXnmjTZHaCyNYUFtpSYuNK4GWVizU0tvSm14I2d2k2Y2B/ACvhOqF0qq0lFb/gILUQgtNdldLUclNoSIxGlFrbTVJp3s2zGb2/ebMnjPnfJs5ax54aDMzu/PNw7jZbCbjeWlk6FqPlyufrXrDy5b/q/7Xj3Vxmxu1x2QnXsKnW0Hw6URnNdAIiWfPkdo+nkvGxlZ5udLFiCjMVvcp9t325MuH6cEvk2KWtiNbPkMONC1mK2dwXPfITV4gB5ZeL+D46Wew9FrEgbihmN0J8uWHZHjXFMeQWvIT28nAriuOKVXkKj+SIdvG6rGlglx5ng7Xdi7gYbcWOlB723LG/FVkiOdFcewtQSHyC6PXWF1frCi5Kk9ns2JLYuNOI+Rm+vZtJRcWFvhis4I7k8gNBpUpQgvciq3x7oIbDCozCC1YzRN7HjOZkStfidiJVG4wqMxwaEHnEJ3V2HzlCuZKRoKf+LjBoDIxtIDlzB6c7MVs+uCTKsgNBpUZFVrQPUxnNtaIhB8QcYNBZcpCCxjO7EeYTw2Djzq5waAy40ILrL9mD15L8BErPomG3GBQmc1CC6y/9dPC8Dcj3GBQmSqhBZZja/ymhj5YS24wqEzV0AKrsZWw8ItUbjCoTJ3QAovfIM9iVgp9kLbcYFCZuqEF1r5BxmLpugtuMKjM2bt3E+nlSuSYEvgx5l2CbpxIbjCobb39Rd/LTpLj0jaS2mVaERsnkBsMY9taaKHpmR15+ZnFa+G4wTC2rYeundkmsSsXMbO1lw0hNxjGtg2hTc/sBhYvnaUbJZQbDGNbEtok9th3XUuhLV+fzA2GsS2JbBI7WyqEQ9MNDOQGw9iWBDaNvRI6WhIX1X3rtxI6WhI2Sp0zu8bg1RfJCkO5wTC2JVFlqp7ZR37tEWez+OsnutJAbjCMbUnQOFXO7Gz5nAgt/myMrjSQGwxjWxKzmc1/qLlZDV1ZiFhhJDcYxrYkpIqxZ3a1MV1oLjcYxrYkoqpxsckCC3KDYWxLAuooi00WWJAbDGNbEk/XqNhkgQW5wTC2JeGSiG/9MJINucEwtiXRkho+szGSDbnBMLYlwUwMzmyMZENuMIxtSSxTxZmNkWzIDYaxLQllw2pt5QvMVeUGw9iWRDJ3TpzRUxjKVG4wjG0jQpk6JX4E/xpDmcoNhrFtRChDC6eqoSdfwVCmcoNhbEtDGZoZf3nlg/8ISShTV37DEi0JZSpXaM/b5bYYytQ6+UqBxDIRB3dNDGVif2FkKfTY710klok4uGtiLBNfPQH33MNYJuLgromxTCTkSpdJsKTi4K6JsZKaKVzCzFX8DhIsqTi4a2KwpHpeB1ZeBIMlFQdv4s6dn+A7OP/p02dkOxn37j2ob7Nly3u4ugY+V6wYLKlSslcPkmhJxMFjPH78e2zSQE/P+/VtA+7cue/fujXjz84+DG25GDNFoT/EvI1gtCTi4DEGTE7eaFg+NzdPIgVs3/5Rfdn09CzZLur5cXmsNJq+TcmWviLhdMXBJR479k1siIA1a95o+Hpg4Ii/detBf9u2Q/Vlvb2HyePDj8HlsWI0XfuLivc7xXC64uASxVkcFyJARA1/jVy//gd5LD4HLo8Vw+mqTLZynsTTEQeXeOLE+dgQAWvXvtnwdfil49mzufpyfHz4Mbg8Vgyn5w+YMx6MpyMOLnH16j31ECdPXmhYNzNzn0QKCIcWLyvh7TZtGvC7uvbW/r+7e2/DOmVpPHW1GZzYTQKqioPHODX1Zz2G4MmTfxu+7uv7rL5twOPH//iPHv1dM0x4m/n5pW+mAtxvrBhP1QNH92BGNXLlv0hEFXHwJhaLXzZECdi8+d2G7eLo7Hy9ts34+Clc5W/YsI/sM1YMqGbCG6MEYEQVcXBFxT/5jRvf8Ts6dpN1uq5f/5a/bl0fWa4kjdhcYwZ/6yUhm4mDuyZGbO4OzJaMfOVnEjNOHNw1acgYRy3f9ljc2heDysTBXZPElFmwfIPBAAwqEwd3TRJUIisYNUoc3DUxaJTsKNzW2Ht7yG0xKhp5ewgOVGLjcO1iyyKHwbjo/lE6qMsuK9kmV6PisE7K9e5Cl1z5JxI4bOZoxPDO+Ase7vKSL+0ggV0/szNfWLhdMRfirrMY2b0z2/ADolaRu7qHRHbmzB7ZhYeTfsRf9WPoWuwUvhvpH1W4zWXayZZP09gRB7s8nsZx3WeofCg1sTOFD3C89sP3O7x85VLLX0b6i5c96WVa7Y64ZDgzOkyi2DPnHfi8G3e7gqB/eFs10DlP/NlYprgQEQ8V29ys/gT3rbdvrAefLg38D//WQ8dyRJ7yAAAAAElFTkSuQmCC"/>
@@ -843,16 +620,34 @@ function toggleMode() {
 
 <a href='java.htm'><div class='book-cover' style='background-color: #f9f6f1;color: #111111;border: 1px solid #ccc;display: flex;justify-content: center;align-items: center;text-align: center;'>More Java Books</div></a>
 </div>
-</div>
+</div></div>
+<style>
+.site-footer {margin-top: 60px;padding: 20px 0;border-top: 1px solid #eee;text-align: center;font-size: 14px;}
+.site-footer a {text-decoration: none;}
+.light-mode .site-footer {color: #777;border-color: #eee;}
+.dark-mode .site-footer {color: #888;border-color: #333;}
+.light-mode .site-footer a {color: #555;}
+.dark-mode .site-footer a {color: #aaa;}
+.site-footer a:hover {text-decoration: underline;}    
+</style>
 <footer class="site-footer">
-    <nav>
-      <a href="https://readbytes.github.io">Home</a> | 
-      Email:<script language="JavaScript" type="text/javascript">
+<nav><a href="https://readbytes.github.io">Home</a> |Email:<script type="text/javascript">
 var part1 = 'yinpeng';var part6 = '263';var part2 = Math.pow(2,6);var part3 = String.fromCharCode(part2);var part4 = 'hotmail dot com';var part5 = part1 + String.fromCharCode(part2) + part4;document.write(part1 + part6 + part3 + part4);
 </script>
-    </nav>
-  <p>© 2025 — All rights reserved.</p>   
-</footer>
-
+| <a id="mode-toggle" href="#">Toggle Dark Mode</a>
+</nav><p>© 2025 — All rights reserved.</p></footer>
+<script>
+const toggleButton = document.getElementById('mode-toggle');
+const body = document.body;
+const savedMode = localStorage.getItem('mode') || 'light';
+body.classList.add(savedMode + '-mode');
+toggleButton.addEventListener('click', () => {
+      const isDark = body.classList.contains('dark-mode');
+      body.classList.toggle('dark-mode', !isDark);
+      body.classList.toggle('light-mode', isDark);
+      localStorage.setItem('mode', isDark ? 'light' : 'dark');
+});
+function copyCode(button) {const code = button.nextElementSibling.innerText;navigator.clipboard.writeText(code).then(() => {button.textContent = 'Copied!';setTimeout(() => { button.textContent = 'Copy'; }, 1500);});}
+</script>
 </body>
 </html>

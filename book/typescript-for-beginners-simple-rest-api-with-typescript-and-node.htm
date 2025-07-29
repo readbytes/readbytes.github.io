@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Typescript for Beginners Simple REST API with TypeScript and Node</title>
+<link rel='shortcut icon' href='https://readbytes.github.io/images/favicon.ico'>
+<link href="https://fonts.googleapis.com/css2?family=Merriweather&display=swap" rel="stylesheet" />
+<link href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.css" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/theme/dracula.min.css"><style>
+html {scroll-behavior: smooth;}  
+body {font-family: 'Merriweather', serif;;margin: 0;padding: 2rem 1rem;font-size: 15px;line-height: 1.5;transition: background-color 0.3s, color 0.3s;}
+.container {max-width: 750px;margin: 0 auto;padding: 1rem 2rem;}
+.light-mode {background-color: #f8f7f5;color: #333;} 
+.dark-mode {background-color: #121212;color: #e0e0e0;}
+a { text-decoration: none;transition: color 0.2s;}
+a:hover {text-decoration: underline;}
+.light-mode a {color: #555;}
+.dark-mode a {color: #aaa;}
+</style><style>
+.related-book-list {display: flex;flex-wrap: wrap;gap: 20px;}
+.related-books {margin-top: 40px;}
+.related-books h2 {font-size: 22px;margin-bottom: 20px;border-bottom: 2px solid #eee;padding-bottom: 8px;}
+.light-mode .related-books h2 {color: #333;border-color: #eee;}
+.dark-mode .related-books h2 {color: #ddd;border-color: #333;}
+</style><style>
+.book-cover {width: 130px;height: 180px;font-family: Arial, sans-serif;position: relative;overflow: hidden;box-shadow: 2px 2px 4px rgba(0,0,0,0.1);}
+.book-cover-bottom-stripe {position: absolute;bottom: 0;left: 0;height: 5px;width: 100%;}
+.book-cover-title {position: absolute;width: 100%;text-align: center;font-weight: bold;}
+.book-cover-icon {position: absolute;left: 50%;transform: translateX(-50%);display: flex;align-items: center;justify-content: center;}
+.book-cover-author {position: absolute;bottom: 10px;width: 100%;text-align: center;font-size: 8px;color: #333;}
+</style><style>
+.book-title-toc {font-size: 32px;font-weight: bold; }
+.book-subtitle-toc {font-size: 18px;margin-top: 8px;font-style: italic;}
+.book-header {text-align: center;margin-bottom: 40px;}
+
+.toc-container {border-radius: 10px;padding: 30px;margin-bottom: 40px;box-shadow: 0 8px 20px rgba(0,0,0,0.05);}
+h1 {font-size: 24px;text-align: center;margin-bottom: 30px;letter-spacing: 1px;padding-bottom: 10px;}
+.toc-list,.toc-section-list {list-style: none;padding: 0;margin: 0;}
+.toc-section-list {padding-left: 18px;margin-top: 6px;margin-bottom: 20px; }
+.toc-chapter {padding: 20px 0;}
+.chapter-title,.toc-section {display: flex;justify-content: space-between;padding-top: 4px;}
+.chapter-title {font-size: 17px;font-weight: bold;}
+.chapter-page,.section-page {font-style: italic;}
+ 
+ 
+.light-mode .book-title-toc,.light-mode .chapter-title,.light-mode .book-name {color: #222;}
+.light-mode .book-subtitle-toc,.light-mode .book-sub,.light-mode .chapter-page,.light-mode .section-page {color: #666;}
+.light-mode .toc-container { background: #fff;border: 1px solid #ddd;}
+.light-mode h1 {border-bottom: 2px solid #eee;color: #222;}
+.light-mode .toc-section {  color: #444;}
+
+.light-mode .book-cover { border: 1px solid #ccc;box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);}
+.light-mode .book-title,.light-mode .series-name {color: #fff;}
+.light-mode .book-subtitle,.light-mode .book-footer {color: #aaa;}
+
+.dark-mode .book-title-toc,.dark-mode .chapter-title,.dark-mode .book-name {color: #f5f5f5;}
+.dark-mode .book-subtitle-toc,.dark-mode .book-sub,.dark-mode .chapter-page,.dark-mode .section-page {color: #aaa;}
+.dark-mode .toc-container {background: #1e1e1e;border: 1px solid #444;}
+
+.dark-mode h1 {border-bottom: 2px solid #333;color: #eee;}
+.dark-mode .toc-section {color: #bbb;}
+
+.dark-mode .related-books h2 {color: #ddd;border-bottom: 2px solid #333;}
+.dark-mode .book-title,.dark-mode .series-name {color: #fff;}
+.dark-mode .book-subtitle,.dark-mode .book-footer {color: #bbb;}
+.dark-mode .toc-section {color: #ddd;}
+
+@media (max-width: 600px) {
+  .chapter-title,
+  .toc-section {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .chapter-page,
+  .section-page {
+    margin-top: 4px;
+  }
+}
+
+</style><style>
+.light-mode .container {box-shadow: 0 0 15px rgba(0,0,0,0.1);}
+.dark-mode .container {box-shadow: 0 0 15px rgba(255, 255, 255, 0.05);}
+
+h1, h2, h3 {font-weight: 600;margin-top: 2.5rem;margin-bottom: 1rem;line-height: 1.2;}
+h1 { font-size: 1.8rem; }
+h2 { font-size: 1.4rem; }
+h3 { font-size: 1.2rem; }
+
+table {width: 100%;border-collapse: collapse;font-family: sans-serif;font-size: 1em;margin: 1em 0;}
+th, td {padding: 0.6em 1em;text-align: left;border: 1px solid;}
+tr:nth-child(even) {  background-color: inherit;}
+tr:hover { background-color: inherit;}
+
+code {color: #d35400;}
+
+.chapter-navi-section {display: flex;justify-content: space-between;align-items: center;padding-bottom: 10px;padding-top: 10px;}
+.nav-link {color: inherit;text-decoration: none;opacity: 0.5;transition: opacity 0.3s ease, text-decoration 0.3s ease;}
+.nav-link:hover {opacity: 0.9;text-decoration: underline;}
+.prev { text-align: left; }
+.toc-link { text-align: center; }
+.next { text-align: right; }
+
+.download-section {display: flex;align-items: center;justify-content: center;gap: 2rem;padding: 2rem 1rem;max-width: 600px;margin: 3rem auto;border-radius: 12px;box-shadow: 0 4px 10px rgba(0,0,0,0.05);}
+.download-info h2 {margin: 0 0 0.5rem;font-size: 1.2rem;}
+.format-label {margin: 0 0 0.5rem;font-size: 0.95rem;}
+.download-buttons {display: flex;gap: 1rem;}
+.download-button {background-color: #4A90E2;color: white;padding: 0.5em 1.2em;border-radius: 25px;font-size: 0.95rem;text-decoration: none;transition: background-color 0.3s ease;}
+.download-button:hover {background-color: #357ABD;}
+
+.code-block {position: relative;margin-bottom: 1em;}
+.copy-button {background: transparent;color: white;position: absolute;top: 8px;right: 8px;border: none;padding: 4px 8px;font-size: 12px;border-radius: 4px;cursor: pointer;z-index: 1;}
+.copy-button:hover {background-color: #0056b3;}
+
+.snippet-container {overflow: hidden;}
+.snippet-header {padding: 0.75rem 1rem;cursor: pointer;font-size: 1rem;background-color: #eeeeee;color:  #111111; border-radius: 8px;cursor: pointer;box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+.snippet-body {display: none;font-family: monospace;}
+.snippet-container.open .snippet-body {display: block;}
+
+.CodeMirror {border: 2px solid #ccc;border-radius: 4px;resize: vertical;}
+
+.light-mode .format-label {color: #888;}
+.light-mode th {background-color: #f2f2f2;}
+.light-mode tr:nth-child(even) {background-color: #fafafa;}
+.light-mode tr:hover {background-color: #e6f7ff;}
+
+.dark-mode .snippet-header {background-color: #333;color:  #ddd; }
+.dark-mode .format-label {color: #aaa;}
+.dark-mode th {background-color: #333;color: #fff;}
+.dark-mode td {border-color: #444;}
+.dark-mode tr:nth-child(even) {background-color: #2a2a2a;}
+.dark-mode tr:hover {background-color: #2c3e50;}
+
+
+.button-group-run-edit {display: flex;width: 100%;gap: 1rem;}
+.button-run-edit {flex: 1;padding: 1rem;font-size: 1rem;font-weight: 600;border: none;border-radius: 8px;cursor: pointer;transition: background 0.3s, color 0.3s;}
+
+.light-mode .button-run-edit {background-color: #f0f0f0;color: #222;box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);}
+.light-mode .button-run-edit:hover {background-color: #e0e0e0;}
+
+.dark-mode .button-run-edit {background-color: #2a2a2a;color: #f5f5f5;box-shadow: 0 0 10px rgba(255, 255, 255, 0.05);}
+.dark-mode .button-run-edit:hover {background-color: #3a3a3a;}
+
+button { padding: 0.5em 1em; background: green; color: white; border: none; cursor: pointer; }
+button:hover { background: #1e7e34; }
+.result_iframe { width:99%; margin-top: 1em;  resize: both;background-color: #515b63;border:1px solid #ccc;}   
+
+.dialog-backdrop {position: fixed;top: 0;left: 0;width: 100vw;height: 100vh;background: rgba(0,0,0,0.5);display: none;justify-content: center;align-items: center;z-index: 10;}
+.dialog {background: #90979e;padding: 20px;width: 90vw;height: 80vh;border-radius: 8px;box-shadow: 0 0 20px rgba(0,0,0,0.3);display: flex;flex-direction: column;}
+.dialog-content {display: flex;gap: 20px;margin-top: 10px;height: calc(100% - 40px);}
+.editor-container, .preview-container {flex: 1;height: 100%;max-height: 100%;overflow: hidden; }
+.result_iframe_dialog {width: 100%;height: 100%;resize: both;border:1px solid #ccc;overflow: auto; }   
+.CodeMirror {width: 100% !important;height: 100% !important;}
+</style>
+</head>
+<body>
+<script>const mode = localStorage.getItem('mode') || 'light';document.documentElement.classList.add(`${mode}-mode`);</script>  
+<div class="container"><div class = "chapter-navi-section">
+<a href="typescript-for-beginners-building-a-todo-list-in-typescript.htm" class="nav-button prev">←</a>
+<a href='typescript-for-beginners.htm#simple-rest-api-with-typescript-and-node' class="nav-button toc-link">Index</a>
+<a href="typescript-for-beginners-typescript-in-the-browser.htm" class="nav-button next">→</a>
+</div>
+<div class='book-header'><h1 class='book-title-toc' id = 'top'>Simple REST API with TypeScript and Node</h1><h3 class='book-subtitle-toc'>Typescript for Beginners</h3></div><h2 id='setting-up-with-express'>19.1 Setting up with <code>Express</code></h2><p>In this section, you’ll learn how to set up a basic REST API server using <strong>Express</strong> and <strong>TypeScript</strong>. Express is a popular Node.js web framework that makes building web servers and APIs straightforward.</p><h3 id="step-1-initialize-the-project">Step 1: Initialize the Project</h3><p>First, create a new folder for your project and initialize a Node.js project with:</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-bash">mkdir ts-express-api
+cd ts-express-api
+npm init -y</code></pre>
+</div><p>This creates a <code>package.json</code> with default settings.</p><h3 id="step-2-install-dependencies">Step 2: Install Dependencies</h3><p>Next, install the required dependencies:</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-bash">npm install express
+npm install --save-dev typescript ts-node @types/node @types/express</code></pre>
+</div><ul>
+ <li><code>express</code>: The core Express library.</li>
+ <li><code>typescript</code>: The TypeScript compiler.</li>
+ <li><code>ts-node</code>: Allows running TypeScript files directly without manual compilation.</li>
+ <li><code>@types/express</code> and <code>@types/node</code>: Type definitions for Express and Node.js, enabling type safety and IntelliSense.</li>
+</ul><h3 id="step-3-configure-typescript">Step 3: Configure TypeScript</h3><p>Create a <code>tsconfig.json</code> file in your project root with the following minimal configuration:</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-json">{
+  "compilerOptions": {
+    "target": "ES6",                // Target modern JavaScript version
+    "module": "CommonJS",           // Use CommonJS modules (Node.js default)
+    "outDir": "./dist",             // Output directory for compiled JavaScript
+    "rootDir": "./src",             // Root directory of source files
+    "strict": true,                 // Enable strict type checking
+    "esModuleInterop": true         // Enable compatibility with ES modules
+  },
+  "include": ["src/**/*"]
+}</code></pre>
+</div><p>This config ensures TypeScript compiles your source files in <code>src/</code> to <code>dist/</code>.</p><h3 id="step-4-create-the-server-file">Step 4: Create the Server File</h3><p>Inside the <code>src</code> folder (create it if it doesn't exist), create a file <code>index.ts</code>:</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-ts">import express, { Request, Response } from "express";
+
+const app = express();
+const PORT = 3000;
+
+// Middleware example: JSON body parsing
+app.use(express.json());
+
+// Define a simple route that returns "Hello World"
+app.get("/", (req: Request, res: Response) =&gt; {
+  res.send("Hello World");
+});
+
+// Start the server
+app.listen(PORT, () =&gt; {
+  console.log(`Server is running at http://localhost:${PORT}`);
+});</code></pre>
+</div><h3 id="step-5-running-the-server">Step 5: Running the Server</h3><h4 id="option-1-run-with-ts-node-no-manual-compile">Option 1: Run with <code>ts-node</code> (no manual compile)</h4><p>Install <code>ts-node</code> globally or use npx:</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-bash">npx ts-node src/index.ts</code></pre>
+</div><p>This runs your TypeScript file directly.</p><h4 id="option-2-compile-and-run-with-node-js">Option 2: Compile and run with Node.js</h4><p>Compile your code:</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-bash">npx tsc</code></pre>
+</div><p>This compiles TypeScript files to JavaScript in the <code>dist/</code> folder.</p><p>Then run:</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-bash">node dist/index.js</code></pre>
+</div><h3 id="whats-happening-here">Whats Happening Here?</h3><ul>
+ <li><strong>Express app</strong>: You create an Express application instance with <code>express()</code>.</li>
+ <li><strong>Middleware</strong>: <code>app.use(express.json())</code> adds middleware that parses JSON bodies of incoming requests.</li>
+ <li><strong>Route handler</strong>: <code>app.get("/", ...)</code> registers a handler for HTTP GET requests on the root URL <code>/</code>.</li>
+ <li><strong>Listening</strong>: <code>app.listen(PORT, ...)</code> starts the server on the specified port and logs a confirmation.</li>
+</ul><h3 id="summary">Summary</h3><p>You’ve successfully set up a TypeScript-powered Express server that responds with “Hello World”. This setup is the foundation for building REST APIs with type safety, auto-completion, and modern JavaScript features.</p><p>Next, we will explore how to add typed routing and handle HTTP methods with more precision.</p><p><strong>Try it out:</strong> Start your server and open <code>http://localhost:3000</code> in your browser to see your "Hello World" message!</p><div class = "chapter-navi-section">
+<a href="#top" class="nav-button prev">↑</a>
+<a href='typescript-for-beginners.htm#simple-rest-api-with-typescript-and-node' class="nav-button toc-link">Index</a>
+<a href="#bottom" class="nav-button next">↓</a>
+</div>
+<h2 id='routing-and-type-safety'>19.2 Routing and Type Safety</h2><p>In Express, routing refers to defining how your server responds to different HTTP requests and URLs. When using TypeScript, you can leverage its type system to ensure your route handlers handle requests and responses correctly — preventing common runtime errors by catching type issues at compile time.</p><h3 id="typing-express-route-handlers">Typing Express Route Handlers</h3><p>Express route handlers receive <code>Request</code> and <code>Response</code> objects, which you can import and type explicitly for full type safety:</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-ts">import { Request, Response } from "express";</code></pre>
+</div><p>By default, these objects are generic, allowing you to specify types for:</p><ul>
+ <li>Path parameters (<code>params</code>)</li>
+ <li>Query parameters (<code>query</code>)</li>
+ <li>Request body (<code>body</code>)</li>
+</ul><h3 id="example-1-typed-get-route-with-query-parameters">Example 1: Typed GET Route with Query Parameters</h3><p>Suppose you have a route that accepts a search query via URL parameters:</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-ts">import express, { Request, Response } from "express";
+
+const app = express();
+
+interface SearchQuery {
+  term: string;
+  page?: string;  // optional query parameter
+}
+
+app.get("/search", (req: Request&lt;{}, {}, {}, SearchQuery&gt;, res: Response) =&gt; {
+  const searchTerm = req.query.term;
+  const page = req.query.page || "1";
+
+  res.send(`Searching for "${searchTerm}" on page ${page}`);
+});</code></pre>
+</div><ul>
+ <li><p><code>Request&lt;Params, ResBody, ReqBody, ReqQuery&gt;</code>:</p>
+  <ul>
+   <li>Here, <code>Params</code> and <code>ReqBody</code> are empty <code>{}</code> since no path parameters or body are expected.</li>
+   <li><code>ReqQuery</code> is typed as <code>SearchQuery</code> to access typed query params.</li>
+  </ul></li>
+ <li><p>This ensures that accessing <code>req.query.term</code> is type-safe.</p></li>
+</ul><h3 id="example-2-typed-post-route-with-request-body">Example 2: Typed POST Route with Request Body</h3><p>For a POST endpoint expecting JSON data:</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-ts">interface NewUser {
+  username: string;
+  email: string;
+  age?: number; // optional field
+}
+
+app.use(express.json()); // Middleware to parse JSON bodies
+
+app.post("/users", (req: Request&lt;{}, {}, NewUser&gt;, res: Response) =&gt; {
+  const user = req.body;
+  res.status(201).send(`User ${user.username} created successfully.`);
+});</code></pre>
+</div><ul>
+ <li><p>Here, <code>Request&lt;Params, ResBody, ReqBody&gt;</code>:</p>
+  <ul>
+   <li><code>ReqBody</code> is typed as <code>NewUser</code>.</li>
+  </ul></li>
+ <li><p>TypeScript ensures you access valid properties on <code>req.body</code>.</p></li>
+</ul><h3 id="example-3-parameterized-routes-with-path-parameters">Example 3: Parameterized Routes with Path Parameters</h3><p>To define routes with dynamic URL segments (like user IDs):</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-ts">interface UserParams {
+  userId: string;  // URL param is always a string
+}
+
+app.get("/users/:userId", (req: Request&lt;UserParams&gt;, res: Response) =&gt; {
+  const userId = req.params.userId;
+  res.send(`User profile for user ID: ${userId}`);
+});</code></pre>
+</div><ul>
+ <li><code>Request&lt;UserParams&gt;</code> defines the shape of <code>req.params</code>.</li>
+ <li>TypeScript prevents mistakes such as accessing non-existent parameters.</li>
+</ul><h3 id="how-typescript-helps">How TypeScript Helps</h3><ul>
+ <li><strong>Compile-time checks</strong>: Catch typos in parameter names or misuse of request/response properties before running your app.</li>
+ <li><strong>IntelliSense support</strong>: Editors like VSCode offer autocomplete and inline documentation, speeding development.</li>
+ <li><strong>Safer code</strong>: You avoid runtime crashes caused by undefined or incorrectly typed data.</li>
+ <li><strong>Self-documenting code</strong>: Types serve as documentation for expected request shapes.</li>
+</ul><h3 id="summary">Summary</h3><p>Here is a quick reference of <code>Request</code> generics:</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-ts">Request&lt;
+  Params = core.ParamsDictionary,
+  ResBody = any,
+  ReqBody = any,
+  ReqQuery = core.Query
+&gt;</code></pre>
+</div><ul>
+ <li><code>Params</code>: URL path parameters (e.g., <code>/users/:id</code>)</li>
+ <li><code>ResBody</code>: Expected response body type (rarely typed in simple APIs)</li>
+ <li><code>ReqBody</code>: Request body type (for POST/PUT)</li>
+ <li><code>ReqQuery</code>: Query string parameters</li>
+</ul><h3 id="final-notes">Final Notes</h3><ul>
+ <li>Always enable middleware like <code>express.json()</code> to parse JSON bodies before accessing <code>req.body</code>.</li>
+ <li>Define interfaces for request parts to make your API predictable and maintainable.</li>
+ <li>With strong typing, your Express routes become more reliable and easier to refactor safely.</li>
+</ul><div class = "chapter-navi-section">
+<a href="#top" class="nav-button prev">↑</a>
+<a href='typescript-for-beginners.htm#simple-rest-api-with-typescript-and-node' class="nav-button toc-link">Index</a>
+<a href="#bottom" class="nav-button next">↓</a>
+</div>
+<h2 id='working-with-json-data'>19.3 Working with JSON Data</h2><p>Handling JSON data is essential in REST APIs, as JSON is the most common format for sending and receiving structured data over HTTP. In this section, we’ll see how to accept JSON request bodies, validate their structure with TypeScript interfaces, and send typed JSON responses.</p><h3 id="parsing-json-request-bodies">Parsing JSON Request Bodies</h3><p>Express does not parse JSON bodies automatically. To enable this, use the built-in middleware:</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-ts">import express from "express";
+
+const app = express();
+
+app.use(express.json());  // Enables JSON body parsing</code></pre>
+</div><p>The <code>express.json()</code> middleware reads the incoming request body and parses it into a JavaScript object, which becomes available on <code>req.body</code>.</p><h3 id="defining-interfaces-for-json-data">Defining Interfaces for JSON Data</h3><p>Using interfaces, you can clearly specify the expected shape of the incoming and outgoing JSON data.</p><p>For example, let's define a <code>Task</code> interface:</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-ts">interface Task {
+  id: number;
+  title: string;
+  completed: boolean;
+  dueDate?: string;  // Optional ISO date string
+}</code></pre>
+</div><h3 id="accepting-json-data-in-requests">Accepting JSON Data in Requests</h3><p>Here's a POST endpoint that accepts a new task in JSON format:</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-ts">import { Request, Response } from "express";
+
+app.post("/tasks", (req: Request&lt;{}, {}, Task&gt;, res: Response&lt;Task&gt;) =&gt; {
+  const newTask = req.body;
+
+  // Basic validation example
+  if (!newTask.title) {
+    return res.status(400).json({ error: "Title is required" } as any);
+  }
+
+  // Here you would typically save the task to a database
+  console.log("Received task:", newTask);
+
+  // Respond with the created task and 201 status code
+  res.status(201).json(newTask);
+});</code></pre>
+</div><ul>
+ <li>The <code>Request</code> type’s third generic parameter <code>&lt;Task&gt;</code> ensures <code>req.body</code> matches the <code>Task</code> interface.</li>
+ <li>The response type <code>Response&lt;Task&gt;</code> indicates that JSON returned will conform to <code>Task</code>.</li>
+ <li>TypeScript helps you catch missing or mismatched properties during development.</li>
+</ul><h3 id="sending-typed-json-responses">Sending Typed JSON Responses</h3><p>When responding with JSON data, TypeScript allows you to annotate the response type:</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
+ <pre><code class="language-ts">app.get("/tasks/:id", (req: Request&lt;{ id: string }&gt;, res: Response&lt;Task | { error: string }&gt;) =&gt; {
+  const id = Number(req.params.id);
+
+  // Simulate fetching a task
+  const task: Task | undefined = id === 1 ? {
+    id: 1,
+    title: "Learn TypeScript",
+    completed: false,
+  } : undefined;
+
+  if (!task) {
+    return res.status(404).json({ error: "Task not found" });
+  }
+
+  res.json(task);
+});</code></pre>
+</div><p>This ensures the response is either a <code>Task</code> object or an error message, helping clients and developers understand the possible responses.</p><h3 id="basic-validation-tips">Basic Validation Tips</h3><p>While TypeScript enforces types at compile time, it does <strong>not</strong> validate data at runtime. To ensure data integrity:</p><ul>
+ <li>Use simple runtime checks (like in the example above).</li>
+ <li>Consider libraries like <code>zod</code> or <code>io-ts</code> for more comprehensive runtime validation.</li>
+ <li>Always validate external inputs before processing or saving.</li>
+</ul><h3 id="summary">Summary</h3><ul>
+ <li>Use <code>express.json()</code> middleware to parse JSON bodies.</li>
+ <li>Define interfaces to type request and response JSON data.</li>
+ <li>Use TypeScript generics on <code>Request</code> and <code>Response</code> to enforce type safety.</li>
+ <li>Perform basic runtime validation to prevent invalid data processing.</li>
+ <li>Typed JSON handling improves reliability and developer confidence.</li>
+</ul><div class = "chapter-navi-section">
+<a href="typescript-for-beginners-building-a-todo-list-in-typescript.htm" class="nav-button prev">←</a>
+<a href='typescript-for-beginners.htm#simple-rest-api-with-typescript-and-node' class="nav-button toc-link">Index</a>
+<a href="typescript-for-beginners-typescript-in-the-browser.htm" class="nav-button next">→</a>
+</div>
+<section class="download-section">
+  <div class="book-cover" style="background-color: #f9f6f1;border: 1px solid #ccc;"> 
+    <div class="book-cover-title" style="font-size: 18px;color: #333;top: 20px;">Typescript for Beginners</div>
+    <div class="book-cover-author">readbytes</div>
+    <div class="book-cover-bottom-stripe" style="background-color: #333;"></div>
+    <img class="book-cover-icon" style="width: 90px;height: 90px;top: 70px;" src="data:image/png;base64,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"/>
+  </div>
+  <div class="download-info">
+    <h2 id='bottom'>Download This Ebook</h2>
+    <p class="format-label">Available formats:</p>
+    <div class="download-buttons">
+      <a href="typescript-for-beginners.pdf" class="download-button">📄 PDF</a>
+      <a href="typescript-for-beginners.epub" class="download-button">📘 EPUB</a>
+    </div>
+  </div>
+</section><div class='related-books'>
+<h2>Typescript Introduction Books</h2>
+<div class='related-book-list'>
+<a href="typescript-for-beginners.htm">
+<div class="book-cover" style="background-color: #f9f6f1;border: 1px solid #ccc;"> 
+    <div class="book-cover-title" style="font-size: 18px;color: #333;top: 20px;">Typescript for Beginners</div>
+    <div class="book-cover-author">readbytes</div>
+    <div class="book-cover-bottom-stripe" style="background-color: #333;"></div>
+    <img class="book-cover-icon" style="width: 90px;height: 90px;top: 70px;" src="data:image/png;base64,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"/>
+  </div>
+</a>
+
+
+
+<a href='typescript.htm'><div class='book-cover' style='background-color: #f9f6f1;color: #111111;border: 1px solid #ccc;display: flex;justify-content: center;align-items: center;text-align: center;'>More Typescript Books</div></a>
+</div>
+</div><script>
+function copyCode(button) {const code = button.nextElementSibling.innerText;navigator.clipboard.writeText(code).then(() => {button.textContent = 'Copied!';setTimeout(() => { button.textContent = 'Copy'; }, 1500);});}
+</script></div>
+<style>
+.site-footer {margin-top: 60px;padding: 20px 0;border-top: 1px solid #eee;text-align: center;font-size: 14px;}
+.site-footer a {text-decoration: none;}
+.light-mode .site-footer {color: #777;border-color: #eee;}
+.dark-mode .site-footer {color: #888;border-color: #333;}
+.light-mode .site-footer a {color: #555;}
+.dark-mode .site-footer a {color: #aaa;}
+.site-footer a:hover {text-decoration: underline;}    
+</style>
+<footer class="site-footer">
+<nav><a href="https://readbytes.github.io">Home</a> |Email:<script type="text/javascript">
+var part1 = 'yinpeng';var part6 = '263';var part2 = Math.pow(2,6);var part3 = String.fromCharCode(part2);var part4 = 'hotmail dot com';var part5 = part1 + String.fromCharCode(part2) + part4;document.write(part1 + part6 + part3 + part4);
+</script>
+| <a id="mode-toggle" href="#">Toggle Dark Mode</a>
+</nav><p>© 2025 — All rights reserved.</p></footer>
+<script>
+const toggleButton = document.getElementById('mode-toggle');
+const body = document.body;
+const savedMode = localStorage.getItem('mode') || 'light';
+body.classList.add(savedMode + '-mode');
+toggleButton.addEventListener('click', () => {
+      const isDark = body.classList.contains('dark-mode');
+      body.classList.toggle('dark-mode', !isDark);
+      body.classList.toggle('light-mode', isDark);
+      localStorage.setItem('mode', isDark ? 'light' : 'dark');
+});
+function copyCode(button) {const code = button.nextElementSibling.innerText;navigator.clipboard.writeText(code).then(() => {button.textContent = 'Copied!';setTimeout(() => { button.textContent = 'Copy'; }, 1500);});}
+</script>
+</body>
+</html>

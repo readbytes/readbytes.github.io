@@ -1,192 +1,165 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
+<meta charset="UTF-8">
 <title>JavaScript Regex Quantifiers</title>
-<link rel='shortcut icon' href='https://java2s.com/style/favicon.ico'>
+<link rel='shortcut icon' href='https://readbytes.github.io/images/favicon.ico'>
 <link href="https://fonts.googleapis.com/css2?family=Merriweather&display=swap" rel="stylesheet" />
 <link href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
-
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.css" />
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/theme/material.css"> <!-- Dark theme -->
-<script src="https://cdn.jsdelivr.net/npm/typescript@5/lib/typescript.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/htmlmixed/htmlmixed.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/xml/xml.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/css/css.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/javascript/javascript.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/javascript/typescript.min.js"></script>
-<style>
-    #floatingLog {
-      position: fixed;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      background: rgba(20, 20, 20, 0.95);
-      color: white;
-      font-family: monospace;
-      font-size: 14px;
-      padding: 16px 20px;
-      border-radius: 8px;
-      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
-      max-width: 80%;
-      max-height: 200px;
-      overflow-y: auto;
-      display: none;
-      z-index: 9999;
-      pointer-events: none;
-      white-space: pre-wrap;
-      text-align: center;
-    }
-</style>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/theme/dracula.min.css"><style>
+html {scroll-behavior: smooth;}  
+body {font-family: 'Merriweather', serif;;margin: 0;padding: 2rem 1rem;font-size: 15px;line-height: 1.5;transition: background-color 0.3s, color 0.3s;}
+.container {max-width: 750px;margin: 0 auto;padding: 1rem 2rem;}
+.light-mode {background-color: #f8f7f5;color: #333;} 
+.dark-mode {background-color: #121212;color: #e0e0e0;}
+a { text-decoration: none;transition: color 0.2s;}
+a:hover {text-decoration: underline;}
+.light-mode a {color: #555;}
+.dark-mode a {color: #aaa;}
+</style><style>
+.related-book-list {display: flex;flex-wrap: wrap;gap: 20px;}
+.related-books {margin-top: 40px;}
+.related-books h2 {font-size: 22px;margin-bottom: 20px;border-bottom: 2px solid #eee;padding-bottom: 8px;}
+.light-mode .related-books h2 {color: #333;border-color: #eee;}
+.dark-mode .related-books h2 {color: #ddd;border-color: #333;}
+</style><style>
+.book-cover {width: 130px;height: 180px;font-family: Arial, sans-serif;position: relative;overflow: hidden;box-shadow: 2px 2px 4px rgba(0,0,0,0.1);}
+.book-cover-bottom-stripe {position: absolute;bottom: 0;left: 0;height: 5px;width: 100%;}
+.book-cover-title {position: absolute;width: 100%;text-align: center;font-weight: bold;}
+.book-cover-icon {position: absolute;left: 50%;transform: translateX(-50%);display: flex;align-items: center;justify-content: center;}
+.book-cover-author {position: absolute;bottom: 10px;width: 100%;text-align: center;font-size: 8px;color: #333;}
+</style><style>
+.book-title-toc {font-size: 32px;font-weight: bold; }
+.book-subtitle-toc {font-size: 18px;margin-top: 8px;font-style: italic;}
+.book-header {text-align: center;margin-bottom: 40px;}
+
+.toc-container {border-radius: 10px;padding: 30px;margin-bottom: 40px;box-shadow: 0 8px 20px rgba(0,0,0,0.05);}
+h1 {font-size: 24px;text-align: center;margin-bottom: 30px;letter-spacing: 1px;padding-bottom: 10px;}
+.toc-list,.toc-section-list {list-style: none;padding: 0;margin: 0;}
+.toc-section-list {padding-left: 18px;margin-top: 6px;margin-bottom: 20px; }
+.toc-chapter {padding: 20px 0;}
+.chapter-title,.toc-section {display: flex;justify-content: space-between;padding-top: 4px;}
+.chapter-title {font-size: 17px;font-weight: bold;}
+.chapter-page,.section-page {font-style: italic;}
+ 
+ 
+.light-mode .book-title-toc,.light-mode .chapter-title,.light-mode .book-name {color: #222;}
+.light-mode .book-subtitle-toc,.light-mode .book-sub,.light-mode .chapter-page,.light-mode .section-page {color: #666;}
+.light-mode .toc-container { background: #fff;border: 1px solid #ddd;}
+.light-mode h1 {border-bottom: 2px solid #eee;color: #222;}
+.light-mode .toc-section {  color: #444;}
+
+.light-mode .book-cover { border: 1px solid #ccc;box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);}
+.light-mode .book-title,.light-mode .series-name {color: #fff;}
+.light-mode .book-subtitle,.light-mode .book-footer {color: #aaa;}
+
+.dark-mode .book-title-toc,.dark-mode .chapter-title,.dark-mode .book-name {color: #f5f5f5;}
+.dark-mode .book-subtitle-toc,.dark-mode .book-sub,.dark-mode .chapter-page,.dark-mode .section-page {color: #aaa;}
+.dark-mode .toc-container {background: #1e1e1e;border: 1px solid #444;}
+
+.dark-mode h1 {border-bottom: 2px solid #333;color: #eee;}
+.dark-mode .toc-section {color: #bbb;}
+
+.dark-mode .related-books h2 {color: #ddd;border-bottom: 2px solid #333;}
+.dark-mode .book-title,.dark-mode .series-name {color: #fff;}
+.dark-mode .book-subtitle,.dark-mode .book-footer {color: #bbb;}
+.dark-mode .toc-section {color: #ddd;}
+
+@media (max-width: 600px) {
+  .chapter-title,
+  .toc-section {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .chapter-page,
+  .section-page {
+    margin-top: 4px;
+  }
+}
+
+</style><style>
+.light-mode .container {box-shadow: 0 0 15px rgba(0,0,0,0.1);}
+.dark-mode .container {box-shadow: 0 0 15px rgba(255, 255, 255, 0.05);}
+
+h1, h2, h3 {font-weight: 600;margin-top: 2.5rem;margin-bottom: 1rem;line-height: 1.2;}
+h1 { font-size: 1.8rem; }
+h2 { font-size: 1.4rem; }
+h3 { font-size: 1.2rem; }
+
+table {width: 100%;border-collapse: collapse;font-family: sans-serif;font-size: 1em;margin: 1em 0;}
+th, td {padding: 0.6em 1em;text-align: left;border: 1px solid;}
+tr:nth-child(even) {  background-color: inherit;}
+tr:hover { background-color: inherit;}
+
+code {color: #d35400;}
+
+.chapter-navi-section {display: flex;justify-content: space-between;align-items: center;padding-bottom: 10px;padding-top: 10px;}
+.nav-link {color: inherit;text-decoration: none;opacity: 0.5;transition: opacity 0.3s ease, text-decoration 0.3s ease;}
+.nav-link:hover {opacity: 0.9;text-decoration: underline;}
+.prev { text-align: left; }
+.toc-link { text-align: center; }
+.next { text-align: right; }
+
+.download-section {display: flex;align-items: center;justify-content: center;gap: 2rem;padding: 2rem 1rem;max-width: 600px;margin: 3rem auto;border-radius: 12px;box-shadow: 0 4px 10px rgba(0,0,0,0.05);}
+.download-info h2 {margin: 0 0 0.5rem;font-size: 1.2rem;}
+.format-label {margin: 0 0 0.5rem;font-size: 0.95rem;}
+.download-buttons {display: flex;gap: 1rem;}
+.download-button {background-color: #4A90E2;color: white;padding: 0.5em 1.2em;border-radius: 25px;font-size: 0.95rem;text-decoration: none;transition: background-color 0.3s ease;}
+.download-button:hover {background-color: #357ABD;}
+
+.code-block {position: relative;margin-bottom: 1em;}
+.copy-button {background: transparent;color: white;position: absolute;top: 8px;right: 8px;border: none;padding: 4px 8px;font-size: 12px;border-radius: 4px;cursor: pointer;z-index: 1;}
+.copy-button:hover {background-color: #0056b3;}
+
+.snippet-container {overflow: hidden;}
+.snippet-header {padding: 0.75rem 1rem;cursor: pointer;font-size: 1rem;background-color: #eeeeee;color:  #111111; border-radius: 8px;cursor: pointer;box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+.snippet-body {display: none;font-family: monospace;}
+.snippet-container.open .snippet-body {display: block;}
+
+.CodeMirror {border: 2px solid #ccc;border-radius: 4px;resize: vertical;}
+
+.light-mode .format-label {color: #888;}
+.light-mode th {background-color: #f2f2f2;}
+.light-mode tr:nth-child(even) {background-color: #fafafa;}
+.light-mode tr:hover {background-color: #e6f7ff;}
+
+.dark-mode .snippet-header {background-color: #333;color:  #ddd; }
+.dark-mode .format-label {color: #aaa;}
+.dark-mode th {background-color: #333;color: #fff;}
+.dark-mode td {border-color: #444;}
+.dark-mode tr:nth-child(even) {background-color: #2a2a2a;}
+.dark-mode tr:hover {background-color: #2c3e50;}
+
+
+.button-group-run-edit {display: flex;width: 100%;gap: 1rem;}
+.button-run-edit {flex: 1;padding: 1rem;font-size: 1rem;font-weight: 600;border: none;border-radius: 8px;cursor: pointer;transition: background 0.3s, color 0.3s;}
+
+.light-mode .button-run-edit {background-color: #f0f0f0;color: #222;box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);}
+.light-mode .button-run-edit:hover {background-color: #e0e0e0;}
+
+.dark-mode .button-run-edit {background-color: #2a2a2a;color: #f5f5f5;box-shadow: 0 0 10px rgba(255, 255, 255, 0.05);}
+.dark-mode .button-run-edit:hover {background-color: #3a3a3a;}
+
+button { padding: 0.5em 1em; background: green; color: white; border: none; cursor: pointer; }
+button:hover { background: #1e7e34; }
+.result_iframe { width:99%; margin-top: 1em;  resize: both;background-color: #515b63;border:1px solid #ccc;}   
+
+.dialog-backdrop {position: fixed;top: 0;left: 0;width: 100vw;height: 100vh;background: rgba(0,0,0,0.5);display: none;justify-content: center;align-items: center;z-index: 10;}
+.dialog {background: #90979e;padding: 20px;width: 90vw;height: 80vh;border-radius: 8px;box-shadow: 0 0 20px rgba(0,0,0,0.3);display: flex;flex-direction: column;}
+.dialog-content {display: flex;gap: 20px;margin-top: 10px;height: calc(100% - 40px);}
+.editor-container, .preview-container {flex: 1;height: 100%;max-height: 100%;overflow: hidden; }
+.result_iframe_dialog {width: 100%;height: 100%;resize: both;border:1px solid #ccc;overflow: auto; }   
+.CodeMirror {width: 100% !important;height: 100% !important;}
+</style><script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/javascript/javascript.min.js"></script>
 <script>
-  const codeMirrorMap = new Map();
-  const iframeMap = new Map();
-  
- 
-
-  let dismissTimer;
-  function showFloatingLog(message) {
-	const floatingLog = document.getElementById('floatingLog');
-
-    if (floatingLog.style.display !== 'block') {
-      floatingLog.textContent = '';
-      floatingLog.style.display = 'block'; 
-    }
-
-    floatingLog.textContent += message + '\n';
-    floatingLog.scrollTop = floatingLog.scrollHeight; 
-    clearTimeout(dismissTimer);
-    dismissTimer = setTimeout(() => {
-      floatingLog.style.display = 'none';
-      floatingLog.textContent = '';
-    }, 2000);
-  }
-  window.addEventListener('message', (event) => {
-	    if (!iframeMap.has(event.source)) return;
-
-	    if (event.data?.type === 'console-log') {
-	      showFloatingLog(event.data.message);
-	    }
-  });  
-  function renderIframe(button,textarea_id, iframe_id) {
-      const html = codeMirrorMap.get(textarea_id).getValue();
-      const iframe = document.getElementById(iframe_id);
-  
-      const oldIframe = iframe;
-      const newIframe = document.createElement('iframe');
-      newIframe.className ="result_iframe";
-      
-      newIframe.id = iframe_id;
-      oldIframe.replaceWith(newIframe);
- 
-
-      // Track the iframe in the map
-      iframeMap.set(newIframe.contentWindow, button);
-
-      const overrideScript = `
-        <script>
-          (function() {
-            const originalLog = console.log;
-            console.log = function(...args) {
-              originalLog.apply(console, args);
-              window.parent.postMessage({
-                type: 'console-log',
-                message: args.map(a => {
-                  try { return JSON.stringify(a); }
-                  catch { return String(a); }
-                }).join(' ')
-              }, '*');
-            };
-          })();
-        <\/script>
-      `;
-
-      const iframeHTML = `
-        <!DOCTYPE html>
-        <html>
-        <body>
-          ${overrideScript}
-          ${html}
-        </body>
-        </html>
-      `;
- 
-      const doc = newIframe.contentDocument || newIframe.contentWindow.document;
-      doc.open();
-      doc.write(iframeHTML);
-      doc.close();
-
-      
-      setTimeout(() => {
-    	  newIframe.style.height = '0px';
-    	   let contentHeight = Math.max(doc.body.scrollHeight,doc.documentElement.scrollHeight);
- 
-    	//   if(contentHeight < 150 || contentHeight > 600){
-    	//	   contentHeight = 600;
-    	 //  } 
-    	   newIframe.style.height = contentHeight + 'px';
-    	}, 50);      
-      
-  }
-  function renderIframeForClientTypescript(textarea_id, iframe_id) {
-      let code = codeMirrorMap.get(textarea_id).getValue();
-      code = ts.transpile(code);
-      const iframe = document.getElementById(iframe_id);
-      const doc = iframe.contentDocument || iframe.contentWindow.document;
-
-const html = `
-  <!DOCTYPE html>
-  <html>
-    <head>
-      <title>Output</title>
-      <style>
-        body { font-family: monospace; padding: 1em; background: #f4f4f4; color: #222; }
-        pre { white-space: pre-wrap; word-break: break-word; }
-        .error { color: red; }
-      </style>
-    </head>
-    <body>
-      <pre id="log"></pre>
-      <script>
-        (function(){
-          const logEl = document.getElementById('log');
-          const origLog = console.log;
-          const origError = console.error;
-
-          console.log = (...args) => {
-            logEl.textContent += args.join(' ') + '\\n';
-            origLog.apply(console, args);
-          };
-          console.table = (...args) => {
-            logEl.textContent += args.join(' ') + '\\n';
-            origLog.apply(console, args);
-          };
-
-          console.error = (...args) => {
-            logEl.innerHTML +='<span class="error">' + args.join(' ') + '</span>';
-            origError.apply(console, args);
-          };
-          window.addEventListener("error", function (event) {
-              console.error("Caught by event listener:", event.message);
-          });    
-          try {             
-              ${code};
-          } catch (err) {
-            console.error(err.stack || err.message);
-          }
-        })();
-      <\/script>
-    </body>
-  </html>
-`;
-
-      iframe.style.display = "block";
-      iframe.srcdoc = html;  
-  }
-
-    function renderIframeForClientJavascript(textarea_id, iframe_id) {
-        const code = codeMirrorMap.get(textarea_id).getValue();
+  const javascriptCodeMirrorMap = new Map();
+  function runJavascriptCode(button,textarea_id, iframe_id) {
+        const code = javascriptCodeMirrorMap.get(textarea_id).getValue();
         const iframe = document.getElementById(iframe_id);
         const doc = iframe.contentDocument || iframe.contentWindow.document;
 
@@ -237,469 +210,41 @@ const html = `
   `;
         iframe.style.display = "block";
         iframe.srcdoc = html;  
+iframe.onload = function () {
+  const doc = iframe.contentDocument || iframe.contentWindow.document;
+  const contentHeight = Math.max(
+    doc.body.scrollHeight,
+    doc.documentElement.scrollHeight
+  );
+  iframe.style.height = contentHeight + 'px';
+};
+        
     }
-    function toggleSnippetAndRefresh(id, textarea_id) {
-      const box = document.getElementById(id);
-      box.classList.toggle("open");
-      codeMirrorMap.get(textarea_id).refresh();
-    }
-
-  </script>
-  <script>
-  const mode = localStorage.getItem('mode') || 'light';
-  document.documentElement.classList.add(`${mode}-mode`);
-  </script>   
-<style> 
-html {
-  scroll-behavior: smooth;
+function openEditJavascriptCodeDialog(id, textarea_id) {
+		        closeAllJavascriptCodeDialog();
+		        document.getElementById(id).style.display = 'flex';
+         
+ 	        setTimeout(() => {
+		        	 javascriptCodeMirrorMap.get(textarea_id).refresh();
+                   
+ 	        }, 100); // 100ms 
 }
 
-body {
-  font-family: 'Merriweather', serif;
-  margin: 0;
-  padding: 2rem 1rem;
-  font-size: 15px;
-  line-height: 1.5;
-  transition: background-color 0.3s, color 0.3s;
-}
-
-.container {
-  max-width: 700px;
-  margin: 0 auto;
-  padding: 1rem 2rem;
-  box-shadow: 0 0 15px rgba(0,0,0,0.1);
-}
-
-h1, h2, h3 {
-  font-weight: 600;
-  margin-top: 2.5rem;
-  margin-bottom: 1rem;
-  line-height: 1.2;
-}
-
-h1 { font-size: 1.8rem; }
-h2 { font-size: 1.4rem; }
-h3 { font-size: 1.2rem; }
-
-table {
-  width: 100%;
-  border-collapse: collapse;
-  font-family: sans-serif;
-  font-size: 1em;
-  margin: 1em 0;
-}
-
-th, td {
-  padding: 0.6em 1em;
-  text-align: left;
-  border: 1px solid;
-}
-
-tr:nth-child(even) {
-  background-color: inherit;
-}
-
-tr:hover {
-  background-color: inherit;
-}
-
-a {
-  text-decoration: none;
-  transition: color 0.2s;
-}
-
-a:hover {
-  text-decoration: underline;
-}
-
-code {
-  color: #d35400;
-}
-
-.book-title-chapter {
-  font-family: 'Merriweather', serif;
-  font-size: 2rem;
-  font-weight: bold;
-  text-align: center;
-  margin-bottom: 2rem;
-  border-bottom: 2px solid;
-  padding-bottom: 0.5rem;
-}
-
-.book-subtitle-chapter {
-  text-align: center;
-  font-size: 1rem;
-  margin-top: -1rem;
-  margin-bottom: 2rem;
-}
-
-.related-books {
-  margin-top: 40px;
-}
-
-.related-book-list {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 20px;
-}
-
-    .book-cover {
-      width: 130px;
-      height: 180px;
-      font-family: Arial, sans-serif;
-      position: relative;
-      overflow: hidden;      
-      line-height: normal;
-      box-shadow: 2px 2px 4px rgba(0,0,0,0.1);
-    }
-    .book-cover-bottom-stripe {
-      position: absolute;
-      bottom: 0;
-      left: 0;
-      height: 5px;
-      width: 100%;
-    }
-    .book-cover-title {
-      position: absolute;
-      width: 100%;
-      text-align: center;
-      font-weight: bold;
-    }
-     
-    .book-cover-icon {
-      position: absolute;
-      left: 50%;
-      transform: translateX(-50%);
-      display: flex;
-      align-items: center;
-      justify-content: center; 
-    }
-
-    .book-cover-author {
-      position: absolute;
-      bottom: 10px;
-      width: 100%;
-      text-align: center;
-      font-size: 8px;
-      color: #333;
-    }
-
-.page-footer {
-  margin-top: 4rem;
-  padding: 1rem 0;
-  text-align: center;
-  font-size: 0.85rem;
-  border-top: 1px solid;
-}
-
-.chapter-navi-section {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding-bottom: 10px;
-}
-
-.nav-link {
-  color: inherit;
-  text-decoration: none;
-  opacity: 0.5;
-  transition: opacity 0.3s ease, text-decoration 0.3s ease;
-}
-
-.nav-link:hover {
-  opacity: 0.9;
-  text-decoration: underline;
-}
-
-.prev { text-align: left; }
-.toc-link { text-align: center; }
-.next { text-align: right; }
-
-.download-section {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 2rem;
-  padding: 2rem 1rem;
-  max-width: 600px;
-  margin: 3rem auto;
-  border-radius: 12px;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-}
-
-.download-info h2 {
-  margin: 0 0 0.5rem;
-  font-size: 1.2rem;
-}
-
-.format-label {
-  margin: 0 0 0.5rem;
-  font-size: 0.95rem;
-}
-
-.download-buttons {
-  display: flex;
-  gap: 1rem;
-}
-
-.download-button {
-  background-color: #4A90E2;
-  color: white;
-  padding: 0.5em 1.2em;
-  border-radius: 25px;
-  font-size: 0.95rem;
-  text-decoration: none;
-  transition: background-color 0.3s ease;
-}
-
-.download-button:hover {
-  background-color: #357ABD;
-}
-
-.code-block {
-  position: relative;
-  margin-bottom: 1em;
-}
-
-.copy-button {
-  background: transparent;
-  color: white;
-  position: absolute;
-  top: 8px;
-  right: 8px;
-  border: none;
-  padding: 4px 8px;
-  font-size: 12px;
-  border-radius: 4px;
-  cursor: pointer;
-  z-index: 1;
-}
-
-.copy-button:hover {
-  background-color: #0056b3;
-}
-
-.snippet-container {
-  overflow: hidden;
-}
-
-.snippet-header {
-  padding: 0.75rem 1rem;
-  cursor: pointer;
-  font-size: 1rem;
-    background-color: #eeeeee;
-    color:  #111111; 
-    border-radius: 8px;
-    cursor: pointer;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.1);  
-}
-
-.snippet-body {
-  display: none;
-  font-family: monospace;
-}
-
-.snippet-container.open .snippet-body {
-  display: block;
-}
-
-.CodeMirror {
-  border: 2px solid #ccc;
-  border-radius: 4px;
-  resize: vertical;
-}
-
-/* === Light Mode === */
-html.light-mode {
-  background-color: #f8f7f5;
-  color: #333;
-}
-
-html.light-mode .container {
-  background: white;
-}
-
-html.light-mode .book-title-chapter {
-  color: #2c3e50;
-  border-color: #ccc;
-}
-html.light-mode .book-subtitle-chapter{
-  color: #888;
-}
-
-html.light-mode .page-footer,
-html.light-mode .series-name,
-html.light-mode .book-subtitle,
-html.light-mode .format-label {
-  color: #888;
-}
-
-html.light-mode .related-books h2 {
-  color: #333;
-  border-bottom: 2px solid #eee;
-}
-
-html.light-mode .book-title {
-  color: #fff;
-}
-
-html.light-mode .book-cover {
-  border: 1px solid #ccc;
-}
-
-html.light-mode th {
-  background-color: #f2f2f2;
-}
-
-html.light-mode tr:nth-child(even) {
-  background-color: #fafafa;
-}
-
-html.light-mode tr:hover {
-  background-color: #e6f7ff;
-}
-
-html.light-mode a,
-html.light-mode .page-footer a {
-  color: #000;
-}
-
-/* === Dark Mode === */
-html.dark-mode {
-  background-color: #181818;
-  color: #e0e0e0;
-}
-
-html.dark-mode .container {
-  background: #222;
-}
-
-html.dark-mode .book-title-chapter {
-  color: #ddd;
-  border-color: #444;
-}
-
-html.dark-mode .snippet-header {
-    background-color: #333;
-    color:  #ddd; 
-}
-
-
-html.dark-mode .book-subtitle-chapter,
-html.dark-mode .page-footer,
-html.dark-mode .series-name,
-html.dark-mode .book-subtitle,
-html.dark-mode .book-footer,
-html.dark-mode .format-label {
-  color: #aaa;
-}
-
-html.dark-mode .related-books h2 {
-  color: #ddd;
-  border-bottom: 2px solid #333;
-}
-
-html.dark-mode .book-title {
-  color: #fff;
-}
-
-html.dark-mode .book-cover {
-  border: 1px solid #555;
-}
-
-html.dark-mode th {
-  background-color: #333;
-  color: #fff;
-}
-
-html.dark-mode td {
-  border-color: #444;
-}
-
-html.dark-mode tr:nth-child(even) {
-  background-color: #2a2a2a;
-}
-
-html.dark-mode tr:hover {
-  background-color: #2c3e50;
-}
-
-html.dark-mode a,
-html.dark-mode .page-footer a {
-  color: #eee;
-}
-
-    .dialog-backdrop {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100vw;
-      height: 100vh;
-      background: rgba(0,0,0,0.5);
-      display: none;
-      justify-content: center;
-      align-items: center;
-      z-index: 10;
-    }
-
-    .dialog {
-      background: white;
-      padding: 20px;
-      width: 90vw;
-      height: 80vh;
-      border-radius: 8px;
-      box-shadow: 0 0 20px rgba(0,0,0,0.3);
-      display: flex;
-      flex-direction: column;
-    }
-    .dialog-content {
-      display: flex;
-      flex: 1;
-      gap: 20px;
-      margin-top: 10px;
-    }
-    .dialog h2 {
-      margin-top: 0;
-    }
-
-    .textarea_dialog {
-      width: 50%;
-      height: 100%;
-      resize: none;
-      font-family: monospace;
-      font-size: 14px;
-      padding: 10px;
-      box-sizing: border-box;
-      border: 1px solid #ccc;
-    }
-
-    .iframe_dialog {
-      width: 50%;
-      height: 100%;
-      border: 1px solid #ccc;
-    }
-    .controls_dialog {
-      display: flex;
-      justify-content: space-between;
-      margin-top: 10px;
-    }    
-    button { padding: 0.5em 1em; background: green; color: white; border: none; cursor: pointer; }
-    button:hover { background: #1e7e34; }
-    .result_iframe { width:99%; height:200px; margin-top: 1em;  resize: both;border:1px solid #ccc;}        
-</style>
+function closeAllJavascriptCodeDialog() {
+		        document.querySelectorAll('.dialog-backdrop').forEach(el => {
+		          el.style.display = 'none';
+		        });
+}		
+</script>
 </head>
-<body> 
-  <div class="container">
-    <div class = "chapter-navi-section">
+<body>
+<script>const mode = localStorage.getItem('mode') || 'light';document.documentElement.classList.add(`${mode}-mode`);</script>  
+<div class="container"><div class = "chapter-navi-section">
 <a href="javascript-regex-character-classes.htm" class="nav-button prev">←</a>
 <a href='javascript-regex.htm#quantifiers' class="nav-button toc-link">Index</a>
 <a href="javascript-regex-grouping-and-capturing.htm" class="nav-button next">→</a>
 </div>
-
-    <h1 class="book-title-chapter" id = 'top'>Quantifiers</h1>
-    <h3 class="book-subtitle-chapter">JavaScript Regex</h3>   
-    <!-- <h1 class ="chapter-title"></h1> -->
-    <h2 id='basic-quantifiers'>4.1 Basic Quantifiers (<code>*</code>, <code>+</code>, <code>?</code>)</h2><p>Quantifiers in regular expressions specify <strong>how many times</strong> the preceding element (a character, group, or character class) can repeat in a match. The three most basic quantifiers are:</p><ul>
+<div class='book-header'><h1 class='book-title-toc' id = 'top'>Quantifiers</h1><h3 class='book-subtitle-toc'>JavaScript Regex</h3></div><h2 id='basic-quantifiers'>4.1 Basic Quantifiers (<code>*</code>, <code>+</code>, <code>?</code>)</h2><p>Quantifiers in regular expressions specify <strong>how many times</strong> the preceding element (a character, group, or character class) can repeat in a match. The three most basic quantifiers are:</p><ul>
  <li><code>*</code> — matches <strong>zero or more</strong> times</li>
  <li><code>+</code> — matches <strong>one or more</strong> times</li>
  <li><code>?</code> — matches <strong>zero or one</strong> time</li>
@@ -708,52 +253,85 @@ html.dark-mode .page-footer a {
   <pre><code class="language-js">console.log(/\d*/.test(""));        // true (zero digits is allowed)
 console.log(/\d*/.test("12345"));   // true (matches all digits)</code></pre>
  </div>
- <div class="snippet-container" id="H03kZ">
-  <div class="snippet-header" onclick="toggleSnippetAndRefresh('H03kZ','BC7Q4')">
-   Try it in editor
+ <div class="snippet-container">
+  <div class="button-group-run-edit"><button class="button-run-edit" onclick="runJavascriptCode(this,'fCh3G','1XqI4')">Run</button> <button class="button-run-edit" onclick="openEditJavascriptCodeDialog('1XqI4_Dialog','fCh3G')">Edit</button>
+  </div> <iframe id="1XqI4" class="result_iframe" style="display: none;"></iframe>
+  <div id="1XqI4_Dialog" class="dialog-backdrop">
+   <div class="dialog">
+    <div class="controls"><button onclick="runJavascriptCode(this,'fCh3G','1XqI4_IFrame')">Run</button> <button onclick="closeAllJavascriptCodeDialog()">Close</button>
+    </div>
+    <div class="dialog-content">
+     <div class="editor-container">
+      <textarea id="fCh3G" class="textarea_dialog" placeholder="Type HTML here...">console.log(/\d*/.test(""));        // true (zero digits is allowed)
+console.log(/\d*/.test("12345"));   // true (matches all digits)</textarea>
+     </div>
+     <div class="preview-container">
+      <iframe id="1XqI4_IFrame" class="result_iframe_dialog" style="border: none;"></iframe>
+     </div>
+    </div>
+   </div>
   </div>
-  <div class="snippet-body"><textarea id="BC7Q4">console.log(/\d*/.test(""));        // true (zero digits is allowed)
-console.log(/\d*/.test("12345"));   // true (matches all digits)</textarea> <br> <button onclick="renderIframeForClientJavascript('BC7Q4','sWqd2')">Run</button> <iframe id="sWqd2" class="result_iframe" style="display: none;"></iframe>
-   <script>
-  {let editor1 = CodeMirror.fromTextArea(document.getElementById("BC7Q4"), {
-    mode: "javascript",
-    lineNumbers:false,
-    tabSize: 2
-    });
-    const mode = localStorage.getItem("mode") || "light";  
-    const newTheme = mode === "dark" ? "material" : "default";
-    editor1.setOption("theme", newTheme);
+  <script>
+{
+let editor = CodeMirror.fromTextArea(document.getElementById("fCh3G"), {
+					mode : "javascript",
+					lineNumbers : false,
+          lineWrapping: true,
+					tabSize : 2
+});
 
-    codeMirrorMap.set("BC7Q4", editor1);}
-  </script>
-  </div>
+const darkmode = localStorage.getItem("mode") || "light";  
+const newTheme = darkmode === "dark" ? "dracula" : "default";
+editor.setSize("50%", "100%");
+editor.setOption("theme", newTheme);
+javascriptCodeMirrorMap.set("fCh3G", editor);
+}
+
+</script>
  </div>
 </div><p>Here, <code>\d*</code> matches an empty string or any sequence of digits.</p><h3 id="one-or-more"><code>+</code> One or More</h3><p>The <code>+</code> quantifier requires the pattern to appear <strong>at least once</strong> but can repeat indefinitely.</p><p><strong>Example:</strong></p><div>
  <div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
   <pre><code class="language-js">console.log(/a+/.test(""));      // false (requires at least one 'a')
 console.log(/a+/.test("aaa"));   // true (matches three 'a's)</code></pre>
  </div>
- <div class="snippet-container" id="0996E">
-  <div class="snippet-header" onclick="toggleSnippetAndRefresh('0996E','IFTV0')">
-   Try it in editor
+ <div class="snippet-container">
+  <div class="button-group-run-edit"><button class="button-run-edit" onclick="runJavascriptCode(this,'KLocS','cvSex')">Run</button> <button class="button-run-edit" onclick="openEditJavascriptCodeDialog('cvSex_Dialog','KLocS')">Edit</button>
+  </div> <iframe id="cvSex" class="result_iframe" style="display: none;"></iframe>
+  <div id="cvSex_Dialog" class="dialog-backdrop">
+   <div class="dialog">
+    <div class="controls"><button onclick="runJavascriptCode(this,'KLocS','cvSex_IFrame')">Run</button> <button onclick="closeAllJavascriptCodeDialog()">Close</button>
+    </div>
+    <div class="dialog-content">
+     <div class="editor-container">
+      <textarea id="KLocS" class="textarea_dialog" placeholder="Type HTML here...">console.log(/a+/.test(""));      // false (requires at least one 'a')
+console.log(/a+/.test("aaa"));   // true (matches three 'a's)</textarea>
+     </div>
+     <div class="preview-container">
+      <iframe id="cvSex_IFrame" class="result_iframe_dialog" style="border: none;"></iframe>
+     </div>
+    </div>
+   </div>
   </div>
-  <div class="snippet-body"><textarea id="IFTV0">console.log(/a+/.test(""));      // false (requires at least one 'a')
-console.log(/a+/.test("aaa"));   // true (matches three 'a's)</textarea> <br> <button onclick="renderIframeForClientJavascript('IFTV0','zN6Kx')">Run</button> <iframe id="zN6Kx" class="result_iframe" style="display: none;"></iframe>
-   <script>
-  {let editor1 = CodeMirror.fromTextArea(document.getElementById("IFTV0"), {
-    mode: "javascript",
-    lineNumbers:false,
-    tabSize: 2
-    });
-    const mode = localStorage.getItem("mode") || "light";  
-    const newTheme = mode === "dark" ? "material" : "default";
-    editor1.setOption("theme", newTheme);
+  <script>
+{
+let editor = CodeMirror.fromTextArea(document.getElementById("KLocS"), {
+					mode : "javascript",
+					lineNumbers : false,
+          lineWrapping: true,
+					tabSize : 2
+});
 
-    codeMirrorMap.set("IFTV0", editor1);}
-  </script>
-  </div>
+const darkmode = localStorage.getItem("mode") || "light";  
+const newTheme = darkmode === "dark" ? "dracula" : "default";
+editor.setSize("50%", "100%");
+editor.setOption("theme", newTheme);
+javascriptCodeMirrorMap.set("KLocS", editor);
+}
+
+</script>
  </div>
-</div><p>This means <code>a+</code> matches <code>"a"</code>, <code>"aa"</code>, <code>"aaa"</code>, and so on, but <strong>not</strong> an empty string.</p><h3 id="zero-or-one"><code>?</code> Zero or One</h3><p>The <code>?</code> quantifier makes the preceding element <strong>optional</strong>, matching it <strong>once or not at all</strong>.</p><p><strong>Example:</strong></p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</div><p>This means <code>a+</code> matches <code>"a"</code>, <code>"aa"</code>, <code>"aaa"</code>, and so on, but <strong>not</strong> an empty string.</p><h3 id="zero-or-one"><code>?</code> Zero or One</h3><p>The <code>?</code> quantifier makes the preceding element <strong>optional</strong>, matching it <strong>once or not at all</strong>.</p><p><strong>Example:</strong></p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-js">console.log(/colou?r/.test("color"));   // true
 console.log(/colou?r/.test("colour"));  // true
 console.log(/colou?r/.test("colouur")); // false</code></pre>
@@ -791,7 +369,8 @@ console.log(/colou?r/.test("colouur")); // false</code></pre>
 <a href='javascript-regex.htm#quantifiers' class="nav-button toc-link">Index</a>
 <a href="#bottom" class="nav-button next">↓</a>
 </div>
-<h2 id='exact-quantifiers-n-n-n-m'>4.2 Exact Quantifiers (<code>{n}</code>, <code>{n,}</code>, <code>{n,m}</code>)</h2><p>Exact quantifiers allow you to specify <strong>precisely how many times</strong> a pattern should repeat, giving you finer control than the basic quantifiers. These are especially useful when you know the expected length or range of repetitions for the data you want to match.</p><h3 id="n-exactly-n-times"><code>{n}</code> Exactly n Times</h3><p>This quantifier matches the preceding pattern <strong>exactly <code>n</code> times</strong>.</p><p><strong>Example:</strong></p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+<h2 id='exact-quantifiers-n-n-n-m'>4.2 Exact Quantifiers (<code>{n}</code>, <code>{n,}</code>, <code>{n,m}</code>)</h2><p>Exact quantifiers allow you to specify <strong>precisely how many times</strong> a pattern should repeat, giving you finer control than the basic quantifiers. These are especially useful when you know the expected length or range of repetitions for the data you want to match.</p><h3 id="n-exactly-n-times"><code>{n}</code> Exactly n Times</h3><p>This quantifier matches the preceding pattern <strong>exactly <code>n</code> times</strong>.</p><p><strong>Example:</strong></p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-js">console.log(/\d{5}/.test("12345"));  // true (matches exactly 5 digits)
 console.log(/\d{5}/.test("1234"));   // false (only 4 digits)</code></pre>
 </div><p>Here, <code>\d{5}</code> is perfect for matching US zip codes with exactly five digits.</p><h3 id="n-at-least-n-times"><code>{n,}</code> At Least n Times</h3><p>This quantifier matches the preceding pattern <strong>at least <code>n</code> times</strong>, with no upper limit.</p><p><strong>Example:</strong></p><div>
@@ -799,25 +378,41 @@ console.log(/\d{5}/.test("1234"));   // false (only 4 digits)</code></pre>
   <pre><code class="language-js">console.log(/a{3,}/.test("aaaaa"));  // true (5 'a's, which is &gt;= 3)
 console.log(/a{3,}/.test("aa"));      // false (only 2 'a's)</code></pre>
  </div>
- <div class="snippet-container" id="EHsfj">
-  <div class="snippet-header" onclick="toggleSnippetAndRefresh('EHsfj','ad9S7')">
-   Try it in editor
+ <div class="snippet-container">
+  <div class="button-group-run-edit"><button class="button-run-edit" onclick="runJavascriptCode(this,'wLvtx','zQQiM')">Run</button> <button class="button-run-edit" onclick="openEditJavascriptCodeDialog('zQQiM_Dialog','wLvtx')">Edit</button>
+  </div> <iframe id="zQQiM" class="result_iframe" style="display: none;"></iframe>
+  <div id="zQQiM_Dialog" class="dialog-backdrop">
+   <div class="dialog">
+    <div class="controls"><button onclick="runJavascriptCode(this,'wLvtx','zQQiM_IFrame')">Run</button> <button onclick="closeAllJavascriptCodeDialog()">Close</button>
+    </div>
+    <div class="dialog-content">
+     <div class="editor-container">
+      <textarea id="wLvtx" class="textarea_dialog" placeholder="Type HTML here...">console.log(/a{3,}/.test("aaaaa"));  // true (5 'a's, which is &gt;= 3)
+console.log(/a{3,}/.test("aa"));      // false (only 2 'a's)</textarea>
+     </div>
+     <div class="preview-container">
+      <iframe id="zQQiM_IFrame" class="result_iframe_dialog" style="border: none;"></iframe>
+     </div>
+    </div>
+   </div>
   </div>
-  <div class="snippet-body"><textarea id="ad9S7">console.log(/a{3,}/.test("aaaaa"));  // true (5 'a's, which is &gt;= 3)
-console.log(/a{3,}/.test("aa"));      // false (only 2 'a's)</textarea> <br> <button onclick="renderIframeForClientJavascript('ad9S7','vSdtc')">Run</button> <iframe id="vSdtc" class="result_iframe" style="display: none;"></iframe>
-   <script>
-  {let editor1 = CodeMirror.fromTextArea(document.getElementById("ad9S7"), {
-    mode: "javascript",
-    lineNumbers:false,
-    tabSize: 2
-    });
-    const mode = localStorage.getItem("mode") || "light";  
-    const newTheme = mode === "dark" ? "material" : "default";
-    editor1.setOption("theme", newTheme);
+  <script>
+{
+let editor = CodeMirror.fromTextArea(document.getElementById("wLvtx"), {
+					mode : "javascript",
+					lineNumbers : false,
+          lineWrapping: true,
+					tabSize : 2
+});
 
-    codeMirrorMap.set("ad9S7", editor1);}
-  </script>
-  </div>
+const darkmode = localStorage.getItem("mode") || "light";  
+const newTheme = darkmode === "dark" ? "dracula" : "default";
+editor.setSize("50%", "100%");
+editor.setOption("theme", newTheme);
+javascriptCodeMirrorMap.set("wLvtx", editor);
+}
+
+</script>
  </div>
 </div><p>This is useful when you want to ensure a <strong>minimum number of repetitions</strong>, but you don't want to limit the maximum.</p><h3 id="n-m-between-n-and-m-times"><code>{n,m}</code> Between n and m Times</h3><p>This quantifier matches the preceding pattern <strong>at least <code>n</code> times but no more than <code>m</code> times</strong>.</p><p><strong>Example:</strong></p><div>
  <div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
@@ -825,26 +420,42 @@ console.log(/a{3,}/.test("aa"));      // false (only 2 'a's)</textarea> <br> <bu
 console.log(/[A-Za-z]{2,4}/.test("C"));         // false (only 1 letter)
 console.log(/[A-Za-z]{2,4}/.test("Elephant")); // true, but only first 4 letters matched</code></pre>
  </div>
- <div class="snippet-container" id="wjEz3">
-  <div class="snippet-header" onclick="toggleSnippetAndRefresh('wjEz3','UKWCt')">
-   Try it in editor
-  </div>
-  <div class="snippet-body"><textarea id="UKWCt">console.log(/[A-Za-z]{2,4}/.test("Cat"));      // true (3 letters, within 2–4)
+ <div class="snippet-container">
+  <div class="button-group-run-edit"><button class="button-run-edit" onclick="runJavascriptCode(this,'WqyH1','4igST')">Run</button> <button class="button-run-edit" onclick="openEditJavascriptCodeDialog('4igST_Dialog','WqyH1')">Edit</button>
+  </div> <iframe id="4igST" class="result_iframe" style="display: none;"></iframe>
+  <div id="4igST_Dialog" class="dialog-backdrop">
+   <div class="dialog">
+    <div class="controls"><button onclick="runJavascriptCode(this,'WqyH1','4igST_IFrame')">Run</button> <button onclick="closeAllJavascriptCodeDialog()">Close</button>
+    </div>
+    <div class="dialog-content">
+     <div class="editor-container">
+      <textarea id="WqyH1" class="textarea_dialog" placeholder="Type HTML here...">console.log(/[A-Za-z]{2,4}/.test("Cat"));      // true (3 letters, within 2–4)
 console.log(/[A-Za-z]{2,4}/.test("C"));         // false (only 1 letter)
-console.log(/[A-Za-z]{2,4}/.test("Elephant")); // true, but only first 4 letters matched</textarea> <br> <button onclick="renderIframeForClientJavascript('UKWCt','kuJzR')">Run</button> <iframe id="kuJzR" class="result_iframe" style="display: none;"></iframe>
-   <script>
-  {let editor1 = CodeMirror.fromTextArea(document.getElementById("UKWCt"), {
-    mode: "javascript",
-    lineNumbers:false,
-    tabSize: 2
-    });
-    const mode = localStorage.getItem("mode") || "light";  
-    const newTheme = mode === "dark" ? "material" : "default";
-    editor1.setOption("theme", newTheme);
-
-    codeMirrorMap.set("UKWCt", editor1);}
-  </script>
+console.log(/[A-Za-z]{2,4}/.test("Elephant")); // true, but only first 4 letters matched</textarea>
+     </div>
+     <div class="preview-container">
+      <iframe id="4igST_IFrame" class="result_iframe_dialog" style="border: none;"></iframe>
+     </div>
+    </div>
+   </div>
   </div>
+  <script>
+{
+let editor = CodeMirror.fromTextArea(document.getElementById("WqyH1"), {
+					mode : "javascript",
+					lineNumbers : false,
+          lineWrapping: true,
+					tabSize : 2
+});
+
+const darkmode = localStorage.getItem("mode") || "light";  
+const newTheme = darkmode === "dark" ? "dracula" : "default";
+editor.setSize("50%", "100%");
+editor.setOption("theme", newTheme);
+javascriptCodeMirrorMap.set("WqyH1", editor);
+}
+
+</script>
  </div>
 </div><p>It’s useful when you want to match substrings of a certain length range, like abbreviations or short words.</p><h3 id="why-choose-tight-bounds">Why Choose Tight Bounds?</h3><p>Using appropriate bounds helps <strong>prevent overmatching</strong>—matching more characters than intended—which can lead to incorrect results or unexpected behavior.</p><p>For instance, to match a 5-digit zip code, using <code>\d+</code> (one or more digits) might match <code>"1234567"</code> accidentally, but <code>\d{5}</code> strictly matches <strong>only five digits</strong>.</p><h3 id="summary-examples">Summary Examples</h3><div>
  <div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
@@ -860,11 +471,16 @@ console.log(manyAs.test("aaaaa"));   // true
 const shortWord = /[A-Za-z]{2,4}/;
 console.log(shortWord.test("Cat"));  // true</code></pre>
  </div>
- <div class="snippet-container" id="8tRuN">
-  <div class="snippet-header" onclick="toggleSnippetAndRefresh('8tRuN','rh343')">
-   Try it in editor
-  </div>
-  <div class="snippet-body"><textarea id="rh343">// Exactly 5 digits
+ <div class="snippet-container">
+  <div class="button-group-run-edit"><button class="button-run-edit" onclick="runJavascriptCode(this,'FykLt','Hfzlk')">Run</button> <button class="button-run-edit" onclick="openEditJavascriptCodeDialog('Hfzlk_Dialog','FykLt')">Edit</button>
+  </div> <iframe id="Hfzlk" class="result_iframe" style="display: none;"></iframe>
+  <div id="Hfzlk_Dialog" class="dialog-backdrop">
+   <div class="dialog">
+    <div class="controls"><button onclick="runJavascriptCode(this,'FykLt','Hfzlk_IFrame')">Run</button> <button onclick="closeAllJavascriptCodeDialog()">Close</button>
+    </div>
+    <div class="dialog-content">
+     <div class="editor-container">
+      <textarea id="FykLt" class="textarea_dialog" placeholder="Type HTML here...">// Exactly 5 digits
 const zipCode = /\d{5}/;
 console.log(zipCode.test("90210"));  // true
 
@@ -874,20 +490,31 @@ console.log(manyAs.test("aaaaa"));   // true
 
 // Between 2 and 4 letters
 const shortWord = /[A-Za-z]{2,4}/;
-console.log(shortWord.test("Cat"));  // true</textarea> <br> <button onclick="renderIframeForClientJavascript('rh343','tGbWo')">Run</button> <iframe id="tGbWo" class="result_iframe" style="display: none;"></iframe>
-   <script>
-  {let editor1 = CodeMirror.fromTextArea(document.getElementById("rh343"), {
-    mode: "javascript",
-    lineNumbers:false,
-    tabSize: 2
-    });
-    const mode = localStorage.getItem("mode") || "light";  
-    const newTheme = mode === "dark" ? "material" : "default";
-    editor1.setOption("theme", newTheme);
-
-    codeMirrorMap.set("rh343", editor1);}
-  </script>
+console.log(shortWord.test("Cat"));  // true</textarea>
+     </div>
+     <div class="preview-container">
+      <iframe id="Hfzlk_IFrame" class="result_iframe_dialog" style="border: none;"></iframe>
+     </div>
+    </div>
+   </div>
   </div>
+  <script>
+{
+let editor = CodeMirror.fromTextArea(document.getElementById("FykLt"), {
+					mode : "javascript",
+					lineNumbers : false,
+          lineWrapping: true,
+					tabSize : 2
+});
+
+const darkmode = localStorage.getItem("mode") || "light";  
+const newTheme = darkmode === "dark" ? "dracula" : "default";
+editor.setSize("50%", "100%");
+editor.setOption("theme", newTheme);
+javascriptCodeMirrorMap.set("FykLt", editor);
+}
+
+</script>
  </div>
 </div><p>Exact quantifiers give you precise control over pattern repetition, making your regex more accurate and tailored to your specific needs.</p><div class = "chapter-navi-section">
 <a href="#top" class="nav-button prev">↑</a>
@@ -902,36 +529,56 @@ console.log(shortWord.test("Cat"));  // true</textarea> <br> <button onclick="re
  <li><code>+?</code></li>
  <li><code>??</code></li>
  <li><code>{n,m}?</code></li>
-</ul><p>Lazy quantifiers match the <strong>smallest possible portion</strong> that satisfies the pattern.</p><h3 id="why-does-this-matter">Why Does This Matter?</h3><p>Greedy matching can sometimes lead to <strong>overmatching</strong>, especially when working with nested or repeating patterns.</p><h3 id="example-extracting-html-tags">Example: Extracting HTML Tags</h3><p>Suppose you want to extract content inside <code>&lt;p&gt;</code> tags from the string:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</ul><p>Lazy quantifiers match the <strong>smallest possible portion</strong> that satisfies the pattern.</p><h3 id="why-does-this-matter">Why Does This Matter?</h3><p>Greedy matching can sometimes lead to <strong>overmatching</strong>, especially when working with nested or repeating patterns.</p><h3 id="example-extracting-html-tags">Example: Extracting HTML Tags</h3><p>Suppose you want to extract content inside <code>&lt;p&gt;</code> tags from the string:</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-html">&lt;p&gt;First paragraph&lt;/p&gt;&lt;p&gt;Second paragraph&lt;/p&gt;</code></pre>
-</div><p>Using a greedy pattern:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</div><p>Using a greedy pattern:</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-js">console.log(/&lt;p&gt;.*&lt;\/p&gt;/.test("&lt;p&gt;First paragraph&lt;/p&gt;&lt;p&gt;Second paragraph&lt;/p&gt;"));</code></pre>
-</div><p>The <code>.*</code> will match from the first <code>&lt;p&gt;</code> all the way to the last <code>&lt;/p&gt;</code>, capturing both paragraphs <strong>together</strong>:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</div><p>The <code>.*</code> will match from the first <code>&lt;p&gt;</code> all the way to the last <code>&lt;/p&gt;</code>, capturing both paragraphs <strong>together</strong>:</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-bash">"&lt;p&gt;First paragraph&lt;/p&gt;&lt;p&gt;Second paragraph&lt;/p&gt;"</code></pre>
 </div><h3 id="lazy-version">Lazy version:</h3><div>
  <div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
   <pre><code class="language-js">console.log(/&lt;p&gt;.*?&lt;\/p&gt;/.test("&lt;p&gt;First paragraph&lt;/p&gt;&lt;p&gt;Second paragraph&lt;/p&gt;"));</code></pre>
  </div>
- <div class="snippet-container" id="bIYJI">
-  <div class="snippet-header" onclick="toggleSnippetAndRefresh('bIYJI','rjsUM')">
-   Try it in editor
+ <div class="snippet-container">
+  <div class="button-group-run-edit"><button class="button-run-edit" onclick="runJavascriptCode(this,'OGOii','C7JaV')">Run</button> <button class="button-run-edit" onclick="openEditJavascriptCodeDialog('C7JaV_Dialog','OGOii')">Edit</button>
+  </div> <iframe id="C7JaV" class="result_iframe" style="display: none;"></iframe>
+  <div id="C7JaV_Dialog" class="dialog-backdrop">
+   <div class="dialog">
+    <div class="controls"><button onclick="runJavascriptCode(this,'OGOii','C7JaV_IFrame')">Run</button> <button onclick="closeAllJavascriptCodeDialog()">Close</button>
+    </div>
+    <div class="dialog-content">
+     <div class="editor-container">
+      <textarea id="OGOii" class="textarea_dialog" placeholder="Type HTML here...">console.log(/&lt;p&gt;.*?&lt;\/p&gt;/.test("&lt;p&gt;First paragraph&lt;/p&gt;&lt;p&gt;Second paragraph&lt;/p&gt;"));</textarea>
+     </div>
+     <div class="preview-container">
+      <iframe id="C7JaV_IFrame" class="result_iframe_dialog" style="border: none;"></iframe>
+     </div>
+    </div>
+   </div>
   </div>
-  <div class="snippet-body"><textarea id="rjsUM">console.log(/&lt;p&gt;.*?&lt;\/p&gt;/.test("&lt;p&gt;First paragraph&lt;/p&gt;&lt;p&gt;Second paragraph&lt;/p&gt;"));</textarea> <br> <button onclick="renderIframeForClientJavascript('rjsUM','DKVjo')">Run</button> <iframe id="DKVjo" class="result_iframe" style="display: none;"></iframe>
-   <script>
-  {let editor1 = CodeMirror.fromTextArea(document.getElementById("rjsUM"), {
-    mode: "javascript",
-    lineNumbers:false,
-    tabSize: 2
-    });
-    const mode = localStorage.getItem("mode") || "light";  
-    const newTheme = mode === "dark" ? "material" : "default";
-    editor1.setOption("theme", newTheme);
+  <script>
+{
+let editor = CodeMirror.fromTextArea(document.getElementById("OGOii"), {
+					mode : "javascript",
+					lineNumbers : false,
+          lineWrapping: true,
+					tabSize : 2
+});
 
-    codeMirrorMap.set("rjsUM", editor1);}
-  </script>
-  </div>
+const darkmode = localStorage.getItem("mode") || "light";  
+const newTheme = darkmode === "dark" ? "dracula" : "default";
+editor.setSize("50%", "100%");
+editor.setOption("theme", newTheme);
+javascriptCodeMirrorMap.set("OGOii", editor);
+}
+
+</script>
  </div>
-</div><p>The <code>.*?</code> matches the <strong>smallest chunk</strong> between <code>&lt;p&gt;</code> and <code>&lt;/p&gt;</code>, so it captures just:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</div><p>The <code>.*?</code> matches the <strong>smallest chunk</strong> between <code>&lt;p&gt;</code> and <code>&lt;/p&gt;</code>, so it captures just:</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-bash">"&lt;p&gt;First paragraph&lt;/p&gt;"</code></pre>
 </div><h3 id="another-example-matching-quoted-strings">Another Example: Matching Quoted Strings</h3><ul>
  <li><p>Greedy: <code>".*"</code> matches from the first quote to the last quote in:</p> <p><code>"Hello" and "World"</code></p></li>
@@ -967,34 +614,51 @@ console.log(zipCodePattern.test("90210-1234"));   // true
 console.log(zipCodePattern.test("9021"));         // false (only 4 digits)
 console.log(zipCodePattern.test("90210-123"));    // false (only 3 digits after dash)</code></pre>
  </div>
- <div class="snippet-container" id="vYMaC">
-  <div class="snippet-header" onclick="toggleSnippetAndRefresh('vYMaC','A7O4f')">
-   Try it in editor
-  </div>
-  <div class="snippet-body"><textarea id="A7O4f">const zipCodePattern = /^\d{5}(-\d{4})?$/;
+ <div class="snippet-container">
+  <div class="button-group-run-edit"><button class="button-run-edit" onclick="runJavascriptCode(this,'i1FNp','Si7YQ')">Run</button> <button class="button-run-edit" onclick="openEditJavascriptCodeDialog('Si7YQ_Dialog','i1FNp')">Edit</button>
+  </div> <iframe id="Si7YQ" class="result_iframe" style="display: none;"></iframe>
+  <div id="Si7YQ_Dialog" class="dialog-backdrop">
+   <div class="dialog">
+    <div class="controls"><button onclick="runJavascriptCode(this,'i1FNp','Si7YQ_IFrame')">Run</button> <button onclick="closeAllJavascriptCodeDialog()">Close</button>
+    </div>
+    <div class="dialog-content">
+     <div class="editor-container">
+      <textarea id="i1FNp" class="textarea_dialog" placeholder="Type HTML here...">const zipCodePattern = /^\d{5}(-\d{4})?$/;
 
 console.log(zipCodePattern.test("90210"));        // true
 console.log(zipCodePattern.test("90210-1234"));   // true
 console.log(zipCodePattern.test("9021"));         // false (only 4 digits)
-console.log(zipCodePattern.test("90210-123"));    // false (only 3 digits after dash)</textarea> <br> <button onclick="renderIframeForClientJavascript('A7O4f','echwU')">Run</button> <iframe id="echwU" class="result_iframe" style="display: none;"></iframe>
-   <script>
-  {let editor1 = CodeMirror.fromTextArea(document.getElementById("A7O4f"), {
-    mode: "javascript",
-    lineNumbers:false,
-    tabSize: 2
-    });
-    const mode = localStorage.getItem("mode") || "light";  
-    const newTheme = mode === "dark" ? "material" : "default";
-    editor1.setOption("theme", newTheme);
-
-    codeMirrorMap.set("A7O4f", editor1);}
-  </script>
+console.log(zipCodePattern.test("90210-123"));    // false (only 3 digits after dash)</textarea>
+     </div>
+     <div class="preview-container">
+      <iframe id="Si7YQ_IFrame" class="result_iframe_dialog" style="border: none;"></iframe>
+     </div>
+    </div>
+   </div>
   </div>
+  <script>
+{
+let editor = CodeMirror.fromTextArea(document.getElementById("i1FNp"), {
+					mode : "javascript",
+					lineNumbers : false,
+          lineWrapping: true,
+					tabSize : 2
+});
+
+const darkmode = localStorage.getItem("mode") || "light";  
+const newTheme = darkmode === "dark" ? "dracula" : "default";
+editor.setSize("50%", "100%");
+editor.setOption("theme", newTheme);
+javascriptCodeMirrorMap.set("i1FNp", editor);
+}
+
+</script>
  </div>
 </div><ul>
  <li><code>\d{5}</code> matches exactly five digits.</li>
  <li><code>(-\d{4})?</code> optionally matches a dash followed by exactly four digits.</li>
-</ul><h3 id="north-american-phone-numbers">North American Phone Numbers</h3><p>North American phone numbers often include optional parentheses around the area code and separators like spaces, dashes, or dots.</p><p>Example pattern:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</ul><h3 id="north-american-phone-numbers">North American Phone Numbers</h3><p>North American phone numbers often include optional parentheses around the area code and separators like spaces, dashes, or dots.</p><p>Example pattern:</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-js">const phonePattern = /^(\(\d{3}\)|\d{3})[ .-]?\d{3}[ .-]?\d{4}$/;</code></pre>
 </div><ul>
  <li><code>(\(\d{3}\)|\d{3})</code> matches either three digits in parentheses (e.g., <code>(123)</code>) or just three digits.</li>
@@ -1009,31 +673,48 @@ console.log(phonePattern.test("123.456.7890"));    // true
 console.log(phonePattern.test("1234567890"));      // true
 console.log(phonePattern.test("123-45-6789"));     // false (wrong digit count)</code></pre>
  </div>
- <div class="snippet-container" id="tGLbL">
-  <div class="snippet-header" onclick="toggleSnippetAndRefresh('tGLbL','drEhE')">
-   Try it in editor
-  </div>
-  <div class="snippet-body"><textarea id="drEhE">const phonePattern = /^(\(\d{3}\)|\d{3})[ .-]?\d{3}[ .-]?\d{4}$/;
+ <div class="snippet-container">
+  <div class="button-group-run-edit"><button class="button-run-edit" onclick="runJavascriptCode(this,'5kQXj','yNT3l')">Run</button> <button class="button-run-edit" onclick="openEditJavascriptCodeDialog('yNT3l_Dialog','5kQXj')">Edit</button>
+  </div> <iframe id="yNT3l" class="result_iframe" style="display: none;"></iframe>
+  <div id="yNT3l_Dialog" class="dialog-backdrop">
+   <div class="dialog">
+    <div class="controls"><button onclick="runJavascriptCode(this,'5kQXj','yNT3l_IFrame')">Run</button> <button onclick="closeAllJavascriptCodeDialog()">Close</button>
+    </div>
+    <div class="dialog-content">
+     <div class="editor-container">
+      <textarea id="5kQXj" class="textarea_dialog" placeholder="Type HTML here...">const phonePattern = /^(\(\d{3}\)|\d{3})[ .-]?\d{3}[ .-]?\d{4}$/;
 console.log(phonePattern.test("(123) 456-7890"));  // true
 console.log(phonePattern.test("123-456-7890"));    // true
 console.log(phonePattern.test("123.456.7890"));    // true
 console.log(phonePattern.test("1234567890"));      // true
-console.log(phonePattern.test("123-45-6789"));     // false (wrong digit count)</textarea> <br> <button onclick="renderIframeForClientJavascript('drEhE','XMQ7w')">Run</button> <iframe id="XMQ7w" class="result_iframe" style="display: none;"></iframe>
-   <script>
-  {let editor1 = CodeMirror.fromTextArea(document.getElementById("drEhE"), {
-    mode: "javascript",
-    lineNumbers:false,
-    tabSize: 2
-    });
-    const mode = localStorage.getItem("mode") || "light";  
-    const newTheme = mode === "dark" ? "material" : "default";
-    editor1.setOption("theme", newTheme);
-
-    codeMirrorMap.set("drEhE", editor1);}
-  </script>
+console.log(phonePattern.test("123-45-6789"));     // false (wrong digit count)</textarea>
+     </div>
+     <div class="preview-container">
+      <iframe id="yNT3l_IFrame" class="result_iframe_dialog" style="border: none;"></iframe>
+     </div>
+    </div>
+   </div>
   </div>
+  <script>
+{
+let editor = CodeMirror.fromTextArea(document.getElementById("5kQXj"), {
+					mode : "javascript",
+					lineNumbers : false,
+          lineWrapping: true,
+					tabSize : 2
+});
+
+const darkmode = localStorage.getItem("mode") || "light";  
+const newTheme = darkmode === "dark" ? "dracula" : "default";
+editor.setSize("50%", "100%");
+editor.setOption("theme", newTheme);
+javascriptCodeMirrorMap.set("5kQXj", editor);
+}
+
+</script>
  </div>
-</div><h3 id="international-phone-numbers">International Phone Numbers</h3><p>International formats often start with a <strong>plus sign</strong> and <strong>country code</strong>, followed by digits, with optional spaces or dashes.</p><p>Example pattern:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</div><h3 id="international-phone-numbers">International Phone Numbers</h3><p>International formats often start with a <strong>plus sign</strong> and <strong>country code</strong>, followed by digits, with optional spaces or dashes.</p><p>Example pattern:</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-js">const intlPhonePattern = /^\+?\d{1,3}[ -]?\d{1,14}([ -]?\d{1,13})?$/;</code></pre>
 </div><ul>
  <li><code>\+?</code> optionally matches a plus sign.</li>
@@ -1049,28 +730,44 @@ console.log(intlPhonePattern.test("+44-20-1234-5678"));   // true
 console.log(intlPhonePattern.test("1234567890"));         // true (no country code)
 console.log(intlPhonePattern.test("+123"));               // true (just country code)</code></pre>
  </div>
- <div class="snippet-container" id="icnXu">
-  <div class="snippet-header" onclick="toggleSnippetAndRefresh('icnXu','j1EYc')">
-   Try it in editor
-  </div>
-  <div class="snippet-body"><textarea id="j1EYc">const intlPhonePattern = /^\+?\d{1,3}[ -]?\d{1,14}([ -]?\d{1,13})?$/;
+ <div class="snippet-container">
+  <div class="button-group-run-edit"><button class="button-run-edit" onclick="runJavascriptCode(this,'R8Nkr','BP4Yz')">Run</button> <button class="button-run-edit" onclick="openEditJavascriptCodeDialog('BP4Yz_Dialog','R8Nkr')">Edit</button>
+  </div> <iframe id="BP4Yz" class="result_iframe" style="display: none;"></iframe>
+  <div id="BP4Yz_Dialog" class="dialog-backdrop">
+   <div class="dialog">
+    <div class="controls"><button onclick="runJavascriptCode(this,'R8Nkr','BP4Yz_IFrame')">Run</button> <button onclick="closeAllJavascriptCodeDialog()">Close</button>
+    </div>
+    <div class="dialog-content">
+     <div class="editor-container">
+      <textarea id="R8Nkr" class="textarea_dialog" placeholder="Type HTML here...">const intlPhonePattern = /^\+?\d{1,3}[ -]?\d{1,14}([ -]?\d{1,13})?$/;
 console.log(intlPhonePattern.test("+1 123 456 7890"));    // true
 console.log(intlPhonePattern.test("+44-20-1234-5678"));   // true
 console.log(intlPhonePattern.test("1234567890"));         // true (no country code)
-console.log(intlPhonePattern.test("+123"));               // true (just country code)</textarea> <br> <button onclick="renderIframeForClientJavascript('j1EYc','hFWfN')">Run</button> <iframe id="hFWfN" class="result_iframe" style="display: none;"></iframe>
-   <script>
-  {let editor1 = CodeMirror.fromTextArea(document.getElementById("j1EYc"), {
-    mode: "javascript",
-    lineNumbers:false,
-    tabSize: 2
-    });
-    const mode = localStorage.getItem("mode") || "light";  
-    const newTheme = mode === "dark" ? "material" : "default";
-    editor1.setOption("theme", newTheme);
-
-    codeMirrorMap.set("j1EYc", editor1);}
-  </script>
+console.log(intlPhonePattern.test("+123"));               // true (just country code)</textarea>
+     </div>
+     <div class="preview-container">
+      <iframe id="BP4Yz_IFrame" class="result_iframe_dialog" style="border: none;"></iframe>
+     </div>
+    </div>
+   </div>
   </div>
+  <script>
+{
+let editor = CodeMirror.fromTextArea(document.getElementById("R8Nkr"), {
+					mode : "javascript",
+					lineNumbers : false,
+          lineWrapping: true,
+					tabSize : 2
+});
+
+const darkmode = localStorage.getItem("mode") || "light";  
+const newTheme = darkmode === "dark" ? "dracula" : "default";
+editor.setSize("50%", "100%");
+editor.setOption("theme", newTheme);
+javascriptCodeMirrorMap.set("R8Nkr", editor);
+}
+
+</script>
  </div>
 </div><h3 id="summary">Summary</h3><p>Quantifiers allow precise control over how many digits or groups your regex expects, and optional parts help handle various formatting styles. Using <code>test()</code> verifies if an input matches, while <code>match()</code> can extract parts like area codes or extensions for further processing. These examples show how quantifiers and optional groups create flexible and practical regex patterns for everyday data validation.</p><div class = "chapter-navi-section">
 <a href="javascript-regex-character-classes.htm" class="nav-button prev">←</a>
@@ -1148,30 +845,36 @@ console.log(intlPhonePattern.test("+123"));               // true (just country 
 
 <a href='javascript.htm'><div class='book-cover' style='background-color: #f9f6f1;color: #111111;border: 1px solid #ccc;display: flex;justify-content: center;align-items: center;text-align: center;'>More Javascript Books</div></a>
 </div>
-</div>
-  </div>
-  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
-  
-  <script>
-    function copyCode(button) {
-      const code = button.nextElementSibling.innerText;
-      navigator.clipboard.writeText(code).then(() => {
-        button.textContent = 'Copied!';
-        setTimeout(() => { button.textContent = 'Copy'; }, 1500);
-      });
-    }
-  </script>  
-<div id="floatingLog" aria-live="polite" role="alert"></div>
-<footer class="page-footer">
-    <nav>
-      <a href="https://readbytes.github.io">Home</a> | 
-      Email:<script language="JavaScript" type="text/javascript">
+</div><script>
+function copyCode(button) {const code = button.nextElementSibling.innerText;navigator.clipboard.writeText(code).then(() => {button.textContent = 'Copied!';setTimeout(() => { button.textContent = 'Copy'; }, 1500);});}
+</script></div>
+<style>
+.site-footer {margin-top: 60px;padding: 20px 0;border-top: 1px solid #eee;text-align: center;font-size: 14px;}
+.site-footer a {text-decoration: none;}
+.light-mode .site-footer {color: #777;border-color: #eee;}
+.dark-mode .site-footer {color: #888;border-color: #333;}
+.light-mode .site-footer a {color: #555;}
+.dark-mode .site-footer a {color: #aaa;}
+.site-footer a:hover {text-decoration: underline;}    
+</style>
+<footer class="site-footer">
+<nav><a href="https://readbytes.github.io">Home</a> |Email:<script type="text/javascript">
 var part1 = 'yinpeng';var part6 = '263';var part2 = Math.pow(2,6);var part3 = String.fromCharCode(part2);var part4 = 'hotmail dot com';var part5 = part1 + String.fromCharCode(part2) + part4;document.write(part1 + part6 + part3 + part4);
 </script>
-    </nav>
-  <p>© 2025 — All rights reserved.</p>    
-  </footer>
-
+| <a id="mode-toggle" href="#">Toggle Dark Mode</a>
+</nav><p>© 2025 — All rights reserved.</p></footer>
+<script>
+const toggleButton = document.getElementById('mode-toggle');
+const body = document.body;
+const savedMode = localStorage.getItem('mode') || 'light';
+body.classList.add(savedMode + '-mode');
+toggleButton.addEventListener('click', () => {
+      const isDark = body.classList.contains('dark-mode');
+      body.classList.toggle('dark-mode', !isDark);
+      body.classList.toggle('light-mode', isDark);
+      localStorage.setItem('mode', isDark ? 'light' : 'dark');
+});
+function copyCode(button) {const code = button.nextElementSibling.innerText;navigator.clipboard.writeText(code).then(() => {button.textContent = 'Copied!';setTimeout(() => { button.textContent = 'Copy'; }, 1500);});}
+</script>
 </body>
 </html>

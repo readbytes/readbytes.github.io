@@ -1,468 +1,171 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
+<meta charset="UTF-8">
 <title>Java Syntax Generics Syntax</title>
-<link rel='shortcut icon' href='https://java2s.com/style/favicon.ico'>
+<link rel='shortcut icon' href='https://readbytes.github.io/images/favicon.ico'>
 <link href="https://fonts.googleapis.com/css2?family=Merriweather&display=swap" rel="stylesheet" />
 <link href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.css" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/theme/dracula.min.css"><style>
+html {scroll-behavior: smooth;}  
+body {font-family: 'Merriweather', serif;;margin: 0;padding: 2rem 1rem;font-size: 15px;line-height: 1.5;transition: background-color 0.3s, color 0.3s;}
+.container {max-width: 750px;margin: 0 auto;padding: 1rem 2rem;}
+.light-mode {background-color: #f8f7f5;color: #333;} 
+.dark-mode {background-color: #121212;color: #e0e0e0;}
+a { text-decoration: none;transition: color 0.2s;}
+a:hover {text-decoration: underline;}
+.light-mode a {color: #555;}
+.dark-mode a {color: #aaa;}
+</style><style>
+.related-book-list {display: flex;flex-wrap: wrap;gap: 20px;}
+.related-books {margin-top: 40px;}
+.related-books h2 {font-size: 22px;margin-bottom: 20px;border-bottom: 2px solid #eee;padding-bottom: 8px;}
+.light-mode .related-books h2 {color: #333;border-color: #eee;}
+.dark-mode .related-books h2 {color: #ddd;border-color: #333;}
+</style><style>
+.book-cover {width: 130px;height: 180px;font-family: Arial, sans-serif;position: relative;overflow: hidden;box-shadow: 2px 2px 4px rgba(0,0,0,0.1);}
+.book-cover-bottom-stripe {position: absolute;bottom: 0;left: 0;height: 5px;width: 100%;}
+.book-cover-title {position: absolute;width: 100%;text-align: center;font-weight: bold;}
+.book-cover-icon {position: absolute;left: 50%;transform: translateX(-50%);display: flex;align-items: center;justify-content: center;}
+.book-cover-author {position: absolute;bottom: 10px;width: 100%;text-align: center;font-size: 8px;color: #333;}
+</style><style>
+.book-title-toc {font-size: 32px;font-weight: bold; }
+.book-subtitle-toc {font-size: 18px;margin-top: 8px;font-style: italic;}
+.book-header {text-align: center;margin-bottom: 40px;}
 
+.toc-container {border-radius: 10px;padding: 30px;margin-bottom: 40px;box-shadow: 0 8px 20px rgba(0,0,0,0.05);}
+h1 {font-size: 24px;text-align: center;margin-bottom: 30px;letter-spacing: 1px;padding-bottom: 10px;}
+.toc-list,.toc-section-list {list-style: none;padding: 0;margin: 0;}
+.toc-section-list {padding-left: 18px;margin-top: 6px;margin-bottom: 20px; }
+.toc-chapter {padding: 20px 0;}
+.chapter-title,.toc-section {display: flex;justify-content: space-between;padding-top: 4px;}
+.chapter-title {font-size: 17px;font-weight: bold;}
+.chapter-page,.section-page {font-style: italic;}
+ 
+ 
+.light-mode .book-title-toc,.light-mode .chapter-title,.light-mode .book-name {color: #222;}
+.light-mode .book-subtitle-toc,.light-mode .book-sub,.light-mode .chapter-page,.light-mode .section-page {color: #666;}
+.light-mode .toc-container { background: #fff;border: 1px solid #ddd;}
+.light-mode h1 {border-bottom: 2px solid #eee;color: #222;}
+.light-mode .toc-section {  color: #444;}
 
-  <script>
-  const mode = localStorage.getItem('mode') || 'light';
-  document.documentElement.classList.add(`${mode}-mode`);
-  </script>   
-<style> 
-html {
-  scroll-behavior: smooth;
+.light-mode .book-cover { border: 1px solid #ccc;box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);}
+.light-mode .book-title,.light-mode .series-name {color: #fff;}
+.light-mode .book-subtitle,.light-mode .book-footer {color: #aaa;}
+
+.dark-mode .book-title-toc,.dark-mode .chapter-title,.dark-mode .book-name {color: #f5f5f5;}
+.dark-mode .book-subtitle-toc,.dark-mode .book-sub,.dark-mode .chapter-page,.dark-mode .section-page {color: #aaa;}
+.dark-mode .toc-container {background: #1e1e1e;border: 1px solid #444;}
+
+.dark-mode h1 {border-bottom: 2px solid #333;color: #eee;}
+.dark-mode .toc-section {color: #bbb;}
+
+.dark-mode .related-books h2 {color: #ddd;border-bottom: 2px solid #333;}
+.dark-mode .book-title,.dark-mode .series-name {color: #fff;}
+.dark-mode .book-subtitle,.dark-mode .book-footer {color: #bbb;}
+.dark-mode .toc-section {color: #ddd;}
+
+@media (max-width: 600px) {
+  .chapter-title,
+  .toc-section {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .chapter-page,
+  .section-page {
+    margin-top: 4px;
+  }
 }
 
-body {
-  font-family: 'Merriweather', serif;
-  margin: 0;
-  padding: 2rem 1rem;
-  font-size: 15px;
-  line-height: 1.5;
-  transition: background-color 0.3s, color 0.3s;
-}
+</style><style>
+.light-mode .container {box-shadow: 0 0 15px rgba(0,0,0,0.1);}
+.dark-mode .container {box-shadow: 0 0 15px rgba(255, 255, 255, 0.05);}
 
-.container {
-  max-width: 700px;
-  margin: 0 auto;
-  padding: 1rem 2rem;
-  box-shadow: 0 0 15px rgba(0,0,0,0.1);
-}
-
-h1, h2, h3 {
-  font-weight: 600;
-  margin-top: 2.5rem;
-  margin-bottom: 1rem;
-  line-height: 1.2;
-}
-
+h1, h2, h3 {font-weight: 600;margin-top: 2.5rem;margin-bottom: 1rem;line-height: 1.2;}
 h1 { font-size: 1.8rem; }
 h2 { font-size: 1.4rem; }
 h3 { font-size: 1.2rem; }
 
-table {
-  width: 100%;
-  border-collapse: collapse;
-  font-family: sans-serif;
-  font-size: 1em;
-  margin: 1em 0;
-}
+table {width: 100%;border-collapse: collapse;font-family: sans-serif;font-size: 1em;margin: 1em 0;}
+th, td {padding: 0.6em 1em;text-align: left;border: 1px solid;}
+tr:nth-child(even) {  background-color: inherit;}
+tr:hover { background-color: inherit;}
 
-th, td {
-  padding: 0.6em 1em;
-  text-align: left;
-  border: 1px solid;
-}
+code {color: #d35400;}
 
-tr:nth-child(even) {
-  background-color: inherit;
-}
-
-tr:hover {
-  background-color: inherit;
-}
-
-a {
-  text-decoration: none;
-  transition: color 0.2s;
-}
-
-a:hover {
-  text-decoration: underline;
-}
-
-code {
-  color: #d35400;
-}
-
-.book-title-chapter {
-  font-family: 'Merriweather', serif;
-  font-size: 2rem;
-  font-weight: bold;
-  text-align: center;
-  margin-bottom: 2rem;
-  border-bottom: 2px solid;
-  padding-bottom: 0.5rem;
-}
-
-.book-subtitle-chapter {
-  text-align: center;
-  font-size: 1rem;
-  margin-top: -1rem;
-  margin-bottom: 2rem;
-}
-
-.related-books {
-  margin-top: 40px;
-}
-
-.related-book-list {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 20px;
-}
-
-    .book-cover {
-      width: 130px;
-      height: 180px;
-      font-family: Arial, sans-serif;
-      position: relative;
-      overflow: hidden;      
-      line-height: normal;
-      box-shadow: 2px 2px 4px rgba(0,0,0,0.1);
-    }
-    .book-cover-bottom-stripe {
-      position: absolute;
-      bottom: 0;
-      left: 0;
-      height: 5px;
-      width: 100%;
-    }
-    .book-cover-title {
-      position: absolute;
-      width: 100%;
-      text-align: center;
-      font-weight: bold;
-    }
-     
-    .book-cover-icon {
-      position: absolute;
-      left: 50%;
-      transform: translateX(-50%);
-      display: flex;
-      align-items: center;
-      justify-content: center; 
-    }
-
-    .book-cover-author {
-      position: absolute;
-      bottom: 10px;
-      width: 100%;
-      text-align: center;
-      font-size: 8px;
-      color: #333;
-    }
-
-.page-footer {
-  margin-top: 4rem;
-  padding: 1rem 0;
-  text-align: center;
-  font-size: 0.85rem;
-  border-top: 1px solid;
-}
-
-.chapter-navi-section {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding-bottom: 10px;
-}
-
-.nav-link {
-  color: inherit;
-  text-decoration: none;
-  opacity: 0.5;
-  transition: opacity 0.3s ease, text-decoration 0.3s ease;
-}
-
-.nav-link:hover {
-  opacity: 0.9;
-  text-decoration: underline;
-}
-
+.chapter-navi-section {display: flex;justify-content: space-between;align-items: center;padding-bottom: 10px;padding-top: 10px;}
+.nav-link {color: inherit;text-decoration: none;opacity: 0.5;transition: opacity 0.3s ease, text-decoration 0.3s ease;}
+.nav-link:hover {opacity: 0.9;text-decoration: underline;}
 .prev { text-align: left; }
 .toc-link { text-align: center; }
 .next { text-align: right; }
 
-.download-section {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 2rem;
-  padding: 2rem 1rem;
-  max-width: 600px;
-  margin: 3rem auto;
-  border-radius: 12px;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-}
+.download-section {display: flex;align-items: center;justify-content: center;gap: 2rem;padding: 2rem 1rem;max-width: 600px;margin: 3rem auto;border-radius: 12px;box-shadow: 0 4px 10px rgba(0,0,0,0.05);}
+.download-info h2 {margin: 0 0 0.5rem;font-size: 1.2rem;}
+.format-label {margin: 0 0 0.5rem;font-size: 0.95rem;}
+.download-buttons {display: flex;gap: 1rem;}
+.download-button {background-color: #4A90E2;color: white;padding: 0.5em 1.2em;border-radius: 25px;font-size: 0.95rem;text-decoration: none;transition: background-color 0.3s ease;}
+.download-button:hover {background-color: #357ABD;}
 
-.download-info h2 {
-  margin: 0 0 0.5rem;
-  font-size: 1.2rem;
-}
+.code-block {position: relative;margin-bottom: 1em;}
+.copy-button {background: transparent;color: white;position: absolute;top: 8px;right: 8px;border: none;padding: 4px 8px;font-size: 12px;border-radius: 4px;cursor: pointer;z-index: 1;}
+.copy-button:hover {background-color: #0056b3;}
 
-.format-label {
-  margin: 0 0 0.5rem;
-  font-size: 0.95rem;
-}
+.snippet-container {overflow: hidden;}
+.snippet-header {padding: 0.75rem 1rem;cursor: pointer;font-size: 1rem;background-color: #eeeeee;color:  #111111; border-radius: 8px;cursor: pointer;box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+.snippet-body {display: none;font-family: monospace;}
+.snippet-container.open .snippet-body {display: block;}
 
-.download-buttons {
-  display: flex;
-  gap: 1rem;
-}
+.CodeMirror {border: 2px solid #ccc;border-radius: 4px;resize: vertical;}
 
-.download-button {
-  background-color: #4A90E2;
-  color: white;
-  padding: 0.5em 1.2em;
-  border-radius: 25px;
-  font-size: 0.95rem;
-  text-decoration: none;
-  transition: background-color 0.3s ease;
-}
+.light-mode .format-label {color: #888;}
+.light-mode th {background-color: #f2f2f2;}
+.light-mode tr:nth-child(even) {background-color: #fafafa;}
+.light-mode tr:hover {background-color: #e6f7ff;}
 
-.download-button:hover {
-  background-color: #357ABD;
-}
-
-.code-block {
-  position: relative;
-  margin-bottom: 1em;
-}
-
-.copy-button {
-  background: transparent;
-  color: white;
-  position: absolute;
-  top: 8px;
-  right: 8px;
-  border: none;
-  padding: 4px 8px;
-  font-size: 12px;
-  border-radius: 4px;
-  cursor: pointer;
-  z-index: 1;
-}
-
-.copy-button:hover {
-  background-color: #0056b3;
-}
-
-.snippet-container {
-  overflow: hidden;
-}
-
-.snippet-header {
-  padding: 0.75rem 1rem;
-  cursor: pointer;
-  font-size: 1rem;
-    background-color: #eeeeee;
-    color:  #111111; 
-    border-radius: 8px;
-    cursor: pointer;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.1);  
-}
-
-.snippet-body {
-  display: none;
-  font-family: monospace;
-}
-
-.snippet-container.open .snippet-body {
-  display: block;
-}
-
-.CodeMirror {
-  border: 2px solid #ccc;
-  border-radius: 4px;
-  resize: vertical;
-}
-
-/* === Light Mode === */
-html.light-mode {
-  background-color: #f8f7f5;
-  color: #333;
-}
-
-html.light-mode .container {
-  background: white;
-}
-
-html.light-mode .book-title-chapter {
-  color: #2c3e50;
-  border-color: #ccc;
-}
-html.light-mode .book-subtitle-chapter{
-  color: #888;
-}
-
-html.light-mode .page-footer,
-html.light-mode .series-name,
-html.light-mode .book-subtitle,
-html.light-mode .format-label {
-  color: #888;
-}
-
-html.light-mode .related-books h2 {
-  color: #333;
-  border-bottom: 2px solid #eee;
-}
-
-html.light-mode .book-title {
-  color: #fff;
-}
-
-html.light-mode .book-cover {
-  border: 1px solid #ccc;
-}
-
-html.light-mode th {
-  background-color: #f2f2f2;
-}
-
-html.light-mode tr:nth-child(even) {
-  background-color: #fafafa;
-}
-
-html.light-mode tr:hover {
-  background-color: #e6f7ff;
-}
-
-html.light-mode a,
-html.light-mode .page-footer a {
-  color: #000;
-}
-
-/* === Dark Mode === */
-html.dark-mode {
-  background-color: #181818;
-  color: #e0e0e0;
-}
-
-html.dark-mode .container {
-  background: #222;
-}
-
-html.dark-mode .book-title-chapter {
-  color: #ddd;
-  border-color: #444;
-}
-
-html.dark-mode .snippet-header {
-    background-color: #333;
-    color:  #ddd; 
-}
+.dark-mode .snippet-header {background-color: #333;color:  #ddd; }
+.dark-mode .format-label {color: #aaa;}
+.dark-mode th {background-color: #333;color: #fff;}
+.dark-mode td {border-color: #444;}
+.dark-mode tr:nth-child(even) {background-color: #2a2a2a;}
+.dark-mode tr:hover {background-color: #2c3e50;}
 
 
-html.dark-mode .book-subtitle-chapter,
-html.dark-mode .page-footer,
-html.dark-mode .series-name,
-html.dark-mode .book-subtitle,
-html.dark-mode .book-footer,
-html.dark-mode .format-label {
-  color: #aaa;
-}
+.button-group-run-edit {display: flex;width: 100%;gap: 1rem;}
+.button-run-edit {flex: 1;padding: 1rem;font-size: 1rem;font-weight: 600;border: none;border-radius: 8px;cursor: pointer;transition: background 0.3s, color 0.3s;}
 
-html.dark-mode .related-books h2 {
-  color: #ddd;
-  border-bottom: 2px solid #333;
-}
+.light-mode .button-run-edit {background-color: #f0f0f0;color: #222;box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);}
+.light-mode .button-run-edit:hover {background-color: #e0e0e0;}
 
-html.dark-mode .book-title {
-  color: #fff;
-}
+.dark-mode .button-run-edit {background-color: #2a2a2a;color: #f5f5f5;box-shadow: 0 0 10px rgba(255, 255, 255, 0.05);}
+.dark-mode .button-run-edit:hover {background-color: #3a3a3a;}
 
-html.dark-mode .book-cover {
-  border: 1px solid #555;
-}
+button { padding: 0.5em 1em; background: green; color: white; border: none; cursor: pointer; }
+button:hover { background: #1e7e34; }
+.result_iframe { width:99%; margin-top: 1em;  resize: both;background-color: #515b63;border:1px solid #ccc;}   
 
-html.dark-mode th {
-  background-color: #333;
-  color: #fff;
-}
-
-html.dark-mode td {
-  border-color: #444;
-}
-
-html.dark-mode tr:nth-child(even) {
-  background-color: #2a2a2a;
-}
-
-html.dark-mode tr:hover {
-  background-color: #2c3e50;
-}
-
-html.dark-mode a,
-html.dark-mode .page-footer a {
-  color: #eee;
-}
-
-    .dialog-backdrop {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100vw;
-      height: 100vh;
-      background: rgba(0,0,0,0.5);
-      display: none;
-      justify-content: center;
-      align-items: center;
-      z-index: 10;
-    }
-
-    .dialog {
-      background: white;
-      padding: 20px;
-      width: 90vw;
-      height: 80vh;
-      border-radius: 8px;
-      box-shadow: 0 0 20px rgba(0,0,0,0.3);
-      display: flex;
-      flex-direction: column;
-    }
-    .dialog-content {
-      display: flex;
-      flex: 1;
-      gap: 20px;
-      margin-top: 10px;
-    }
-    .dialog h2 {
-      margin-top: 0;
-    }
-
-    .textarea_dialog {
-      width: 50%;
-      height: 100%;
-      resize: none;
-      font-family: monospace;
-      font-size: 14px;
-      padding: 10px;
-      box-sizing: border-box;
-      border: 1px solid #ccc;
-    }
-
-    .iframe_dialog {
-      width: 50%;
-      height: 100%;
-      border: 1px solid #ccc;
-    }
-    .controls_dialog {
-      display: flex;
-      justify-content: space-between;
-      margin-top: 10px;
-    }    
-    button { padding: 0.5em 1em; background: green; color: white; border: none; cursor: pointer; }
-    button:hover { background: #1e7e34; }
-    .result_iframe { width:99%; height:200px; margin-top: 1em;  resize: both;border:1px solid #ccc;}        
+.dialog-backdrop {position: fixed;top: 0;left: 0;width: 100vw;height: 100vh;background: rgba(0,0,0,0.5);display: none;justify-content: center;align-items: center;z-index: 10;}
+.dialog {background: #90979e;padding: 20px;width: 90vw;height: 80vh;border-radius: 8px;box-shadow: 0 0 20px rgba(0,0,0,0.3);display: flex;flex-direction: column;}
+.dialog-content {display: flex;gap: 20px;margin-top: 10px;height: calc(100% - 40px);}
+.editor-container, .preview-container {flex: 1;height: 100%;max-height: 100%;overflow: hidden; }
+.result_iframe_dialog {width: 100%;height: 100%;resize: both;border:1px solid #ccc;overflow: auto; }   
+.CodeMirror {width: 100% !important;height: 100% !important;}
 </style>
 </head>
-<body> 
-  <div class="container">
-    <div class = "chapter-navi-section">
+<body>
+<script>const mode = localStorage.getItem('mode') || 'light';document.documentElement.classList.add(`${mode}-mode`);</script>  
+<div class="container"><div class = "chapter-navi-section">
 <a href="java-syntax-exception-handling-syntax.htm" class="nav-button prev">←</a>
 <a href='java-syntax.htm#generics-syntax' class="nav-button toc-link">Index</a>
 <a href="java-syntax-lambda-expressions-and-method-references.htm" class="nav-button next">→</a>
 </div>
-
-    <h1 class="book-title-chapter" id = 'top'>Generics Syntax</h1>
-    <h3 class="book-subtitle-chapter">Java Syntax</h3>   
-    <!-- <h1 class ="chapter-title"></h1> -->
-    <h2 id='generic-classes'>14.1 Generic Classes</h2><p>Generics are a powerful feature in Java that enable you to write <strong>type-safe</strong>, reusable code by allowing classes, interfaces, and methods to operate on <strong>parameterized types</strong>. Instead of working with raw <code>Object</code> types and casting manually, generics allow you to specify a placeholder for the type that the class will handle, making your code cleaner and less error-prone.</p><h4 id="defining-a-generic-class">Defining a Generic Class</h4><p>A <strong>generic class</strong> is declared by adding a <strong>type parameter</strong> in angle brackets <code>&lt;T&gt;</code> after the class name. The type parameter <code>T</code> is a placeholder that gets replaced by a concrete type when an object of that class is instantiated.</p><p><strong>Syntax:</strong></p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+<div class='book-header'><h1 class='book-title-toc' id = 'top'>Generics Syntax</h1><h3 class='book-subtitle-toc'>Java Syntax</h3></div><h2 id='generic-classes'>14.1 Generic Classes</h2><p>Generics are a powerful feature in Java that enable you to write <strong>type-safe</strong>, reusable code by allowing classes, interfaces, and methods to operate on <strong>parameterized types</strong>. Instead of working with raw <code>Object</code> types and casting manually, generics allow you to specify a placeholder for the type that the class will handle, making your code cleaner and less error-prone.</p><h4 id="defining-a-generic-class">Defining a Generic Class</h4><p>A <strong>generic class</strong> is declared by adding a <strong>type parameter</strong> in angle brackets <code>&lt;T&gt;</code> after the class name. The type parameter <code>T</code> is a placeholder that gets replaced by a concrete type when an object of that class is instantiated.</p><p><strong>Syntax:</strong></p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-java">public class Box&lt;T&gt; {
     private T content;
 
@@ -478,7 +181,8 @@ html.dark-mode .page-footer a {
         this.content = content;
     }
 }</code></pre>
-</div><p>Here, <code>Box&lt;T&gt;</code> is a generic class with a type parameter <code>T</code>. The field <code>content</code> can hold any type that replaces <code>T</code>. The constructor, getter, and setter also work with this generic type.</p><h4 id="using-a-generic-class-with-different-types">Using a Generic Class with Different Types</h4><p>When creating instances of a generic class, you specify the actual type to use in place of <code>T</code>:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</div><p>Here, <code>Box&lt;T&gt;</code> is a generic class with a type parameter <code>T</code>. The field <code>content</code> can hold any type that replaces <code>T</code>. The constructor, getter, and setter also work with this generic type.</p><h4 id="using-a-generic-class-with-different-types">Using a Generic Class with Different Types</h4><p>When creating instances of a generic class, you specify the actual type to use in place of <code>T</code>:</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-java">public class Main {
     public static void main(String[] args) {
         Box&lt;String&gt; stringBox = new Box&lt;&gt;("Hello");
@@ -491,7 +195,8 @@ html.dark-mode .page-footer a {
         System.out.println(doubleBox.getContent());  // Output: 45.67
     }
 }</code></pre>
-</div><p>Here we created three <code>Box</code> objects with different types: <code>String</code>, <code>Integer</code>, and <code>Double</code>. The compiler enforces type safety, ensuring that only the declared type is used. For example, you cannot accidentally put an <code>Integer</code> into a <code>Box&lt;String&gt;</code>.</p><h4 id="generic-classes-with-multiple-type-parameters">Generic Classes with Multiple Type Parameters</h4><p>You can also declare generic classes with <strong>multiple type parameters</strong>, allowing more flexibility:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</div><p>Here we created three <code>Box</code> objects with different types: <code>String</code>, <code>Integer</code>, and <code>Double</code>. The compiler enforces type safety, ensuring that only the declared type is used. For example, you cannot accidentally put an <code>Integer</code> into a <code>Box&lt;String&gt;</code>.</p><h4 id="generic-classes-with-multiple-type-parameters">Generic Classes with Multiple Type Parameters</h4><p>You can also declare generic classes with <strong>multiple type parameters</strong>, allowing more flexibility:</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-java">public class Pair&lt;K, V&gt; {
     private K key;
     private V value;
@@ -509,20 +214,21 @@ html.dark-mode .page-footer a {
         return value;
     }
 }</code></pre>
-</div><p>Usage example:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</div><p>Usage example:</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-java">Pair&lt;String, Integer&gt; entry = new Pair&lt;&gt;("Age", 30);
 System.out.println(entry.getKey() + ": " + entry.getValue());  // Output: Age: 30
 
 Pair&lt;Integer, String&gt; reversedEntry = new Pair&lt;&gt;(100, "Score");
 System.out.println(reversedEntry.getKey() + ": " + reversedEntry.getValue());  // Output: 100: Score</code></pre>
-</div><p>This <code>Pair</code> class can hold any two types, named <code>K</code> and <code>V</code> here for key and value, but you can use any valid identifier for type parameters.</p><div class="snippet-container" id="ZHgUN">
- <div class="snippet-header" onclick="toggleSnippet('ZHgUN')">
+</div><p>This <code>Pair</code> class can hold any two types, named <code>K</code> and <code>V</code> here for key and value, but you can use any valid identifier for type parameters.</p><div class="snippet-container" id="NzGbJ">
+ <div class="snippet-header" onclick="toggleSnippet('NzGbJ')">
   Click to view full runnable Code
  </div>
  <div class="snippet-body">
-  <div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
-   <pre><code class="language-java">
-public class GenericDemo {
+  <div class="code-block">
+   <button class="copy-button" onclick="copyCode(this)">▯</button>
+   <pre><code class="language-java">public class GenericDemo {
 
     // Generic Box class
     public static class Box&lt;T&gt; {
@@ -579,8 +285,7 @@ public class GenericDemo {
         System.out.println(entry.getKey() + ": " + entry.getValue());
         System.out.println(reversedEntry.getKey() + ": " + reversedEntry.getValue());
     }
-} 
-</code></pre>
+}</code></pre>
   </div>
  </div>
 </div><h4 id="benefits-of-using-generic-classes">Benefits of Using Generic Classes</h4><ol>
@@ -602,13 +307,15 @@ public class GenericDemo {
 <a href='java-syntax.htm#generics-syntax' class="nav-button toc-link">Index</a>
 <a href="#bottom" class="nav-button next">↓</a>
 </div>
-<h2 id='generic-methods'>14.2 Generic Methods</h2><p>Generic methods extend the power of generics by allowing you to define methods with their own type parameters—<strong>independent</strong> of whether the enclosing class is generic or not. This means you can write a <strong>single method</strong> that works with various types, improving flexibility and code reuse without having to make the entire class generic.</p><h4 id="syntax-of-a-generic-method">Syntax of a Generic Method</h4><p>A generic method declares its type parameter(s) before the return type, enclosed in angle brackets <code>&lt;&gt;</code>. This signals to the compiler that the method can operate on one or more type parameters.</p><p><strong>Basic syntax:</strong></p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+<h2 id='generic-methods'>14.2 Generic Methods</h2><p>Generic methods extend the power of generics by allowing you to define methods with their own type parameters—<strong>independent</strong> of whether the enclosing class is generic or not. This means you can write a <strong>single method</strong> that works with various types, improving flexibility and code reuse without having to make the entire class generic.</p><h4 id="syntax-of-a-generic-method">Syntax of a Generic Method</h4><p>A generic method declares its type parameter(s) before the return type, enclosed in angle brackets <code>&lt;&gt;</code>. This signals to the compiler that the method can operate on one or more type parameters.</p><p><strong>Basic syntax:</strong></p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-java">public &lt;T&gt; void printArray(T[] array) {
     for (T element : array) {
         System.out.println(element);
     }
 }</code></pre>
-</div><p>Here, <code>&lt;T&gt;</code> declares a generic type parameter <code>T</code> just for the method <code>printArray</code>. The method takes an array of <code>T</code> elements and prints each one. Note that <code>T</code> is a <strong>method-level type parameter</strong>, separate from any generic types the class might have.</p><h4 id="generic-methods-inside-non-generic-classes">Generic Methods Inside Non-Generic Classes</h4><p>You can define generic methods inside <strong>regular (non-generic) classes</strong>. This is common when the generic behavior is limited to a few methods rather than the whole class.</p><p><strong>Example:</strong></p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</div><p>Here, <code>&lt;T&gt;</code> declares a generic type parameter <code>T</code> just for the method <code>printArray</code>. The method takes an array of <code>T</code> elements and prints each one. Note that <code>T</code> is a <strong>method-level type parameter</strong>, separate from any generic types the class might have.</p><h4 id="generic-methods-inside-non-generic-classes">Generic Methods Inside Non-Generic Classes</h4><p>You can define generic methods inside <strong>regular (non-generic) classes</strong>. This is common when the generic behavior is limited to a few methods rather than the whole class.</p><p><strong>Example:</strong></p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-java">public class Utility {
 
     public static &lt;T&gt; void printArray(T[] array) {
@@ -625,7 +332,8 @@ public class GenericDemo {
         return array[0];
     }
 }</code></pre>
-</div><p>Usage:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</div><p>Usage:</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-java">public class Main {
     public static void main(String[] args) {
         Integer[] intArray = {1, 2, 3, 4};
@@ -638,14 +346,14 @@ public class GenericDemo {
         System.out.println("First string: " + Utility.getFirstElement(strArray));  // Output: First string: apple
     }
 }</code></pre>
-</div><p>Notice that the <code>Utility</code> class itself is <strong>not generic</strong>, but the methods are. This pattern is useful for stateless utility methods that operate on different types.</p><div class="snippet-container" id="Z86yZ">
- <div class="snippet-header" onclick="toggleSnippet('Z86yZ')">
+</div><p>Notice that the <code>Utility</code> class itself is <strong>not generic</strong>, but the methods are. This pattern is useful for stateless utility methods that operate on different types.</p><div class="snippet-container" id="IYT3y">
+ <div class="snippet-header" onclick="toggleSnippet('IYT3y')">
   Click to view full runnable Code
  </div>
  <div class="snippet-body">
-  <div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
-   <pre><code class="language-java">
-public class GenericMethodDemo {
+  <div class="code-block">
+   <button class="copy-button" onclick="copyCode(this)">▯</button>
+   <pre><code class="language-java">public class GenericMethodDemo {
 
     // Utility class with generic methods
     public static class Utility {
@@ -679,39 +387,42 @@ public class GenericMethodDemo {
         System.out.println("\nFirst int: " + Utility.getFirstElement(intArray));     // Output: First int: 1
         System.out.println("First string: " + Utility.getFirstElement(strArray));    // Output: First string: apple
     }
-} 
-</code></pre>
+}</code></pre>
   </div>
  </div>
-</div><h4 id="generic-methods-with-multiple-type-parameters">Generic Methods with Multiple Type Parameters</h4><p>Methods can have multiple type parameters, separated by commas:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</div><h4 id="generic-methods-with-multiple-type-parameters">Generic Methods with Multiple Type Parameters</h4><p>Methods can have multiple type parameters, separated by commas:</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-java">public class PairUtil {
 
     public static &lt;K, V&gt; void printPair(K key, V value) {
         System.out.println("Key: " + key + ", Value: " + value);
     }
 }</code></pre>
-</div><p>Usage:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</div><p>Usage:</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-java">PairUtil.printPair("Name", "Alice");
 PairUtil.printPair(1001, 99.5);</code></pre>
-</div><p>This method works with any combination of key and value types.</p><h4 id="generic-return-types">Generic Return Types</h4><p>Generic methods can also return values of generic types. The compiler enforces type safety when the method is called, so you get the correct type inferred automatically:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</div><p>This method works with any combination of key and value types.</p><h4 id="generic-return-types">Generic Return Types</h4><p>Generic methods can also return values of generic types. The compiler enforces type safety when the method is called, so you get the correct type inferred automatically:</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-java">public static &lt;T&gt; T getMiddleElement(T[] array) {
     if (array == null || array.length == 0) {
         return null;
     }
     return array[array.length / 2];
 }</code></pre>
-</div><p>Usage:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</div><p>Usage:</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-java">String[] fruits = {"apple", "banana", "cherry"};
 String middle = Utility.getMiddleElement(fruits);
 System.out.println(middle);  // Output: banana</code></pre>
-</div><p>The method returns a value of the generic type <code>T</code>, inferred by the compiler based on the argument type.</p><div class="snippet-container" id="6y4oq">
- <div class="snippet-header" onclick="toggleSnippet('6y4oq')">
+</div><p>The method returns a value of the generic type <code>T</code>, inferred by the compiler based on the argument type.</p><div class="snippet-container" id="ZhIp6">
+ <div class="snippet-header" onclick="toggleSnippet('ZhIp6')">
   Click to view full runnable Code
  </div>
  <div class="snippet-body">
-  <div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
-   <pre><code class="language-java">
-public class GenericReturnDemo {
+  <div class="code-block">
+   <button class="copy-button" onclick="copyCode(this)">▯</button>
+   <pre><code class="language-java">public class GenericReturnDemo {
 
     // Utility class with a generic method that returns the middle element
     public static class Utility {
@@ -734,8 +445,7 @@ public class GenericReturnDemo {
         System.out.println("Middle fruit: " + middleFruit);   // Output: banana
         System.out.println("Middle number: " + middleNumber); // Output: 30
     }
-} 
-</code></pre>
+}</code></pre>
   </div>
  </div>
 </div><h4 id="benefits-of-generic-methods">Benefits of Generic Methods</h4><ol>
@@ -748,7 +458,8 @@ public class GenericReturnDemo {
  <li>Generic methods can be <strong>static or instance</strong> methods.</li>
  <li>When calling generic methods, you usually don't need to specify the type explicitly; Java infers it based on arguments.</li>
  <li>If needed, you can specify type arguments explicitly:</li>
-</ul><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</ul><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-java">Utility.&lt;String&gt;printArray(new String[]{"a", "b", "c"});</code></pre>
 </div><p>but this is rarely required.</p><h3 id="summary">Summary</h3><ul>
  <li>A <strong>generic method</strong> declares its own type parameter(s)** inside a regular or generic class.</li>
@@ -761,9 +472,11 @@ public class GenericReturnDemo {
 <a href='java-syntax.htm#generics-syntax' class="nav-button toc-link">Index</a>
 <a href="#bottom" class="nav-button next">↓</a>
 </div>
-<h2 id='bounded-type-parameters-t-extends-number'>14.3 Bounded Type Parameters (<code>T extends Number</code>)</h2><p>In Java generics, <strong>bounded type parameters</strong> allow you to restrict the types that can be used as arguments for a generic type. This gives you more control over what types are valid, enabling you to write methods or classes that operate only on a subset of types—while maintaining type safety and flexibility.</p><h4 id="what-are-bounded-type-parameters">What Are Bounded Type Parameters?</h4><p>A bounded type parameter uses the <code>extends</code> keyword to limit the types you can use. Despite the keyword <code>extends</code>, the bound works for both classes and interfaces (including abstract classes), and it means <strong>"is a subtype of"</strong>.</p><p>For example, if you write:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+<h2 id='bounded-type-parameters-t-extends-number'>14.3 Bounded Type Parameters (<code>T extends Number</code>)</h2><p>In Java generics, <strong>bounded type parameters</strong> allow you to restrict the types that can be used as arguments for a generic type. This gives you more control over what types are valid, enabling you to write methods or classes that operate only on a subset of types—while maintaining type safety and flexibility.</p><h4 id="what-are-bounded-type-parameters">What Are Bounded Type Parameters?</h4><p>A bounded type parameter uses the <code>extends</code> keyword to limit the types you can use. Despite the keyword <code>extends</code>, the bound works for both classes and interfaces (including abstract classes), and it means <strong>"is a subtype of"</strong>.</p><p>For example, if you write:</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-java">&lt;T extends Number&gt;</code></pre>
-</div><p>it means that <code>T</code> can be any class that <strong>is a subclass of</strong> <code>Number</code> or <code>Number</code> itself. This includes types like <code>Integer</code>, <code>Double</code>, <code>Float</code>, etc., but <strong>not</strong> types like <code>String</code> or custom classes unrelated to <code>Number</code>.</p><h4 id="why-use-bounded-type-parameters">Why Use Bounded Type Parameters?</h4><p>Suppose you want a method that works only with numeric types, so you can perform numeric operations safely. Without bounds, your generic method would accept any type, including types that cannot be used numerically. Bounded type parameters solve this problem by restricting acceptable types, enabling you to use numeric methods like <code>doubleValue()</code> or <code>intValue()</code> on the generic parameter.</p><h4 id="example-generic-method-with-numeric-bound">Example: Generic Method with Numeric Bound</h4><p>Here is a simple generic method that calculates the sum of an array of numbers:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</div><p>it means that <code>T</code> can be any class that <strong>is a subclass of</strong> <code>Number</code> or <code>Number</code> itself. This includes types like <code>Integer</code>, <code>Double</code>, <code>Float</code>, etc., but <strong>not</strong> types like <code>String</code> or custom classes unrelated to <code>Number</code>.</p><h4 id="why-use-bounded-type-parameters">Why Use Bounded Type Parameters?</h4><p>Suppose you want a method that works only with numeric types, so you can perform numeric operations safely. Without bounds, your generic method would accept any type, including types that cannot be used numerically. Bounded type parameters solve this problem by restricting acceptable types, enabling you to use numeric methods like <code>doubleValue()</code> or <code>intValue()</code> on the generic parameter.</p><h4 id="example-generic-method-with-numeric-bound">Example: Generic Method with Numeric Bound</h4><p>Here is a simple generic method that calculates the sum of an array of numbers:</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-java">public class MathUtils {
 
     // T must extend Number, so only numeric types are allowed
@@ -775,7 +488,8 @@ public class GenericReturnDemo {
         return sum;
     }
 }</code></pre>
-</div><p>Usage:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</div><p>Usage:</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-java">public class Main {
     public static void main(String[] args) {
         Integer[] intArray = {1, 2, 3, 4};
@@ -789,14 +503,14 @@ public class GenericReturnDemo {
         // MathUtils.sumArray(strArray); // Not allowed because String doesn't extend Number
     }
 }</code></pre>
-</div><div class="snippet-container" id="gJQ5L">
- <div class="snippet-header" onclick="toggleSnippet('gJQ5L')">
+</div><div class="snippet-container" id="CdW14">
+ <div class="snippet-header" onclick="toggleSnippet('CdW14')">
   Click to view full runnable Code
  </div>
  <div class="snippet-body">
-  <div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
-   <pre><code class="language-java">
-public class NumericSumDemo {
+  <div class="code-block">
+   <button class="copy-button" onclick="copyCode(this)">▯</button>
+   <pre><code class="language-java">public class NumericSumDemo {
 
     // Math utility class with a generic method to sum numeric arrays
     public static class MathUtils {
@@ -822,13 +536,14 @@ public class NumericSumDemo {
         // String[] strArray = {"a", "b", "c"};
         // System.out.println(MathUtils.sumArray(strArray));
     }
-} 
-</code></pre>
+}</code></pre>
   </div>
  </div>
-</div><h4 id="multiple-bounds">Multiple Bounds</h4><p>Java also allows <strong>multiple bounds</strong> by using <code>&amp;</code> to separate interfaces/classes. For example:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</div><h4 id="multiple-bounds">Multiple Bounds</h4><p>Java also allows <strong>multiple bounds</strong> by using <code>&amp;</code> to separate interfaces/classes. For example:</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-java">&lt;T extends Number &amp; Comparable&lt;T&gt;&gt;</code></pre>
-</div><p>means <code>T</code> must be a subtype of <code>Number</code> <strong>and</strong> implement <code>Comparable&lt;T&gt;</code>. This is useful when you need both numeric behavior and the ability to compare objects.</p><h4 id="bounded-type-parameters-in-classes">Bounded Type Parameters in Classes</h4><p>Bounds can also be applied at the class level:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</div><p>means <code>T</code> must be a subtype of <code>Number</code> <strong>and</strong> implement <code>Comparable&lt;T&gt;</code>. This is useful when you need both numeric behavior and the ability to compare objects.</p><h4 id="bounded-type-parameters-in-classes">Bounded Type Parameters in Classes</h4><p>Bounds can also be applied at the class level:</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-java">public class NumericBox&lt;T extends Number&gt; {
     private T value;
 
@@ -857,19 +572,22 @@ public class NumericSumDemo {
 <a href='java-syntax.htm#generics-syntax' class="nav-button toc-link">Index</a>
 <a href="#bottom" class="nav-button next">↓</a>
 </div>
-<h2 id='wildcards-extends-super'>14.4 Wildcards: <code>?</code>, <code>? extends</code>, <code>? super</code></h2><p>Generics in Java provide great flexibility and type safety, but sometimes you want to write methods that can work with a range of related types without specifying the exact type parameter. This is where <strong>wildcards</strong> come into play. Wildcards allow you to express uncertainty or flexibility in generic type arguments, enabling powerful and reusable APIs.</p><h4 id="what-is-a-wildcard">What Is a Wildcard?</h4><p>The wildcard <code>?</code> represents an <strong>unknown type</strong> in generics. It means "some type, but I don't know which." For example:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+<h2 id='wildcards-extends-super'>14.4 Wildcards: <code>?</code>, <code>? extends</code>, <code>? super</code></h2><p>Generics in Java provide great flexibility and type safety, but sometimes you want to write methods that can work with a range of related types without specifying the exact type parameter. This is where <strong>wildcards</strong> come into play. Wildcards allow you to express uncertainty or flexibility in generic type arguments, enabling powerful and reusable APIs.</p><h4 id="what-is-a-wildcard">What Is a Wildcard?</h4><p>The wildcard <code>?</code> represents an <strong>unknown type</strong> in generics. It means "some type, but I don't know which." For example:</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-java">List&lt;?&gt; list = new ArrayList&lt;String&gt;();</code></pre>
 </div><p>Here, <code>list</code> can hold any kind of <code>List</code>, but you cannot add elements to it (except <code>null</code>) because the exact type is unknown.</p><h4 id="why-use-wildcards">Why Use Wildcards?</h4><p>Wildcards are useful when you want a method to accept generic types of unknown or varying types, especially when the method doesn't need to modify the collection or wants to maintain flexibility.</p><h3 id="wildcard-variants-and-their-meanings">Wildcard Variants and Their Meanings</h3><p>There are three main wildcard forms:</p><ol>
  <li><strong>Unbounded wildcard:</strong> <code>?</code></li>
  <li><strong>Upper bounded wildcard:</strong> <code>? extends Type</code></li>
  <li><strong>Lower bounded wildcard:</strong> <code>? super Type</code></li>
-</ol><h4 id="unbounded-wildcard">Unbounded Wildcard: <code>?</code></h4><p>This represents any type. It's often used when you only need to <strong>read</strong> data but don't care about the specific type.</p><p>Example:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</ol><h4 id="unbounded-wildcard">Unbounded Wildcard: <code>?</code></h4><p>This represents any type. It's often used when you only need to <strong>read</strong> data but don't care about the specific type.</p><p>Example:</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-java">public void printList(List&lt;?&gt; list) {
     for (Object elem : list) {
         System.out.println(elem);
     }
 }</code></pre>
-</div><p>You can call <code>printList</code> with a <code>List&lt;String&gt;</code>, <code>List&lt;Integer&gt;</code>, or any other <code>List&lt;T&gt;</code>. But since the type is unknown, you cannot add elements except <code>null</code> because it might violate type safety.</p><h4 id="upper-bounded-wildcard-extends-type">Upper Bounded Wildcard: <code>? extends Type</code></h4><p>This means the unknown type <strong>is a subtype of</strong> <code>Type</code> (or <code>Type</code> itself). It is useful when you want to <strong>read</strong> from a collection and ensure that everything in it is at least of type <code>Type</code>.</p><p>Example:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</div><p>You can call <code>printList</code> with a <code>List&lt;String&gt;</code>, <code>List&lt;Integer&gt;</code>, or any other <code>List&lt;T&gt;</code>. But since the type is unknown, you cannot add elements except <code>null</code> because it might violate type safety.</p><h4 id="upper-bounded-wildcard-extends-type">Upper Bounded Wildcard: <code>? extends Type</code></h4><p>This means the unknown type <strong>is a subtype of</strong> <code>Type</code> (or <code>Type</code> itself). It is useful when you want to <strong>read</strong> from a collection and ensure that everything in it is at least of type <code>Type</code>.</p><p>Example:</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-java">public double sumNumbers(List&lt;? extends Number&gt; list) {
     double sum = 0.0;
     for (Number num : list) {
@@ -877,7 +595,8 @@ public class NumericSumDemo {
     }
     return sum;
 }</code></pre>
-</div><p>You can pass <code>List&lt;Integer&gt;</code>, <code>List&lt;Double&gt;</code>, or any <code>List</code> of a subclass of <code>Number</code>. This guarantees safe reading since every element is at least a <code>Number</code>.</p><p><strong>Important:</strong> You <strong>cannot add</strong> anything to <code>list</code> except <code>null</code>, because the exact subtype is unknown. For example, if <code>list</code> is actually a <code>List&lt;Double&gt;</code>, adding an <code>Integer</code> would be unsafe.</p><h4 id="lower-bounded-wildcard-super-type">Lower Bounded Wildcard: <code>? super Type</code></h4><p>This means the unknown type is a <strong>supertype of</strong> <code>Type</code> (or <code>Type</code> itself). It is useful when you want to <strong>write</strong> to a collection safely, ensuring you can add elements of a specific type or its subclasses.</p><p>Example:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</div><p>You can pass <code>List&lt;Integer&gt;</code>, <code>List&lt;Double&gt;</code>, or any <code>List</code> of a subclass of <code>Number</code>. This guarantees safe reading since every element is at least a <code>Number</code>.</p><p><strong>Important:</strong> You <strong>cannot add</strong> anything to <code>list</code> except <code>null</code>, because the exact subtype is unknown. For example, if <code>list</code> is actually a <code>List&lt;Double&gt;</code>, adding an <code>Integer</code> would be unsafe.</p><h4 id="lower-bounded-wildcard-super-type">Lower Bounded Wildcard: <code>? super Type</code></h4><p>This means the unknown type is a <strong>supertype of</strong> <code>Type</code> (or <code>Type</code> itself). It is useful when you want to <strong>write</strong> to a collection safely, ensuring you can add elements of a specific type or its subclasses.</p><p>Example:</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-java">public void addIntegers(List&lt;? super Integer&gt; list) {
     list.add(10);
     list.add(20);
@@ -885,7 +604,8 @@ public class NumericSumDemo {
 </div><p>Here, you can pass <code>List&lt;Integer&gt;</code>, <code>List&lt;Number&gt;</code>, or <code>List&lt;Object&gt;</code>. Because the list is guaranteed to accept <code>Integer</code> objects (or their subclasses), it's safe to add <code>Integer</code> values.</p><p><strong>Note:</strong> You cannot safely read specific types out of such a list other than <code>Object</code>, because the exact type could be any supertype.</p><h3 id="practical-summary-pecs-rule">Practical Summary: PECS Rule</h3><p>To remember when to use <code>extends</code> or <code>super</code>, the Java community uses the <strong>PECS</strong> acronym:</p><ul>
  <li><strong>Producer Extends:</strong> If your code only <strong>produces</strong> (reads) values from a generic collection, use <code>? extends T</code>.</li>
  <li><strong>Consumer Super:</strong> If your code only <strong>consumes</strong> (writes to) a generic collection, use <code>? super T</code>.</li>
-</ul><h3 id="example-reading-vs-writing">Example: Reading vs Writing</h3><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</ul><h3 id="example-reading-vs-writing">Example: Reading vs Writing</h3><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-java">public void processNumbers(List&lt;? extends Number&gt; producer) {
     Number n = producer.get(0);  // safe to read as Number
     // producer.add(3); // Compile error! Can't add to ? extends Number
@@ -895,14 +615,14 @@ public void fillNumbers(List&lt;? super Integer&gt; consumer) {
     consumer.add(5);   // safe to add Integer
     // Integer n = consumer.get(0); // Compile error! get() returns Object
 }</code></pre>
-</div><div class="snippet-container" id="niqXU">
- <div class="snippet-header" onclick="toggleSnippet('niqXU')">
+</div><div class="snippet-container" id="1iUw8">
+ <div class="snippet-header" onclick="toggleSnippet('1iUw8')">
   Click to view full runnable Code
  </div>
  <div class="snippet-body">
-  <div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
-   <pre><code class="language-java">
-import java.util.*;
+  <div class="code-block">
+   <button class="copy-button" onclick="copyCode(this)">▯</button>
+   <pre><code class="language-java">import java.util.*;
 
 public class WildcardDemo {
 
@@ -962,8 +682,7 @@ public class WildcardDemo {
         consumer.add(42); // Safe to add Integer
         System.out.println("Added 42 to consumer");
     }
-} 
-</code></pre>
+}</code></pre>
   </div>
  </div>
 </div><h3 id="why-wildcards-matter-avoiding-unsafe-operations">Why Wildcards Matter: Avoiding Unsafe Operations</h3><p>Without wildcards, you might write overly restrictive code or use unsafe casts. Wildcards allow you to express flexible contracts safely.</p><p>For example, a method that accepts <code>List&lt;Number&gt;</code> cannot accept <code>List&lt;Integer&gt;</code>, because generics are <strong>invariant</strong> in Java (<code>List&lt;Integer&gt;</code> is NOT a subtype of <code>List&lt;Number&gt;</code>). Using <code>List&lt;? extends Number&gt;</code> relaxes this restriction, allowing covariance.</p><h3 id="reflection-on-wildcards">Reflection on Wildcards</h3><ul>
@@ -1062,7 +781,7 @@ public class WildcardDemo {
 
 <a href="java-object-oriented-design.htm">
 <div class="book-cover" style="background-color: #f9f6f1;border: 1px solid #ccc;"> 
-    <div class="book-cover-title" style="font-size: 16px;color: #333;top: 20px;">Java Object-Oriented Design</div>
+    <div class="book-cover-title" style="font-size: 16px;color: #333;top: 10px;">Java Object-Oriented Design</div>
     <div class="book-cover-author">readbytes</div>
     <div class="book-cover-bottom-stripe" style="background-color: #333;"></div>
     <img class="book-cover-icon" style="width: 80px;height: 80px;top: 60px;" src="data:image/png;base64,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"/>
@@ -1073,35 +792,38 @@ public class WildcardDemo {
 
 <a href='java.htm'><div class='book-cover' style='background-color: #f9f6f1;color: #111111;border: 1px solid #ccc;display: flex;justify-content: center;align-items: center;text-align: center;'>More Java Books</div></a>
 </div>
-</div>
-  </div>
-  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
-    <script>
-  function toggleSnippet(id) {
-      const box = document.getElementById(id);
-      box.classList.toggle("open");
-  }  
-  </script>
-  <script>
-    function copyCode(button) {
-      const code = button.nextElementSibling.innerText;
-      navigator.clipboard.writeText(code).then(() => {
-        button.textContent = 'Copied!';
-        setTimeout(() => { button.textContent = 'Copy'; }, 1500);
-      });
-    }
-  </script>  
-<div id="floatingLog" aria-live="polite" role="alert"></div>
-<footer class="page-footer">
-    <nav>
-      <a href="https://readbytes.github.io">Home</a> | 
-      Email:<script language="JavaScript" type="text/javascript">
+</div><script>
+function copyCode(button) {const code = button.nextElementSibling.innerText;navigator.clipboard.writeText(code).then(() => {button.textContent = 'Copied!';setTimeout(() => { button.textContent = 'Copy'; }, 1500);});}
+</script><script>
+function toggleSnippet(id) {const box = document.getElementById(id);box.classList.toggle("open");}  
+</script></div>
+<style>
+.site-footer {margin-top: 60px;padding: 20px 0;border-top: 1px solid #eee;text-align: center;font-size: 14px;}
+.site-footer a {text-decoration: none;}
+.light-mode .site-footer {color: #777;border-color: #eee;}
+.dark-mode .site-footer {color: #888;border-color: #333;}
+.light-mode .site-footer a {color: #555;}
+.dark-mode .site-footer a {color: #aaa;}
+.site-footer a:hover {text-decoration: underline;}    
+</style>
+<footer class="site-footer">
+<nav><a href="https://readbytes.github.io">Home</a> |Email:<script type="text/javascript">
 var part1 = 'yinpeng';var part6 = '263';var part2 = Math.pow(2,6);var part3 = String.fromCharCode(part2);var part4 = 'hotmail dot com';var part5 = part1 + String.fromCharCode(part2) + part4;document.write(part1 + part6 + part3 + part4);
 </script>
-    </nav>
-  <p>© 2025 — All rights reserved.</p>    
-  </footer>
-
+| <a id="mode-toggle" href="#">Toggle Dark Mode</a>
+</nav><p>© 2025 — All rights reserved.</p></footer>
+<script>
+const toggleButton = document.getElementById('mode-toggle');
+const body = document.body;
+const savedMode = localStorage.getItem('mode') || 'light';
+body.classList.add(savedMode + '-mode');
+toggleButton.addEventListener('click', () => {
+      const isDark = body.classList.contains('dark-mode');
+      body.classList.toggle('dark-mode', !isDark);
+      body.classList.toggle('light-mode', isDark);
+      localStorage.setItem('mode', isDark ? 'light' : 'dark');
+});
+function copyCode(button) {const code = button.nextElementSibling.innerText;navigator.clipboard.writeText(code).then(() => {button.textContent = 'Copied!';setTimeout(() => { button.textContent = 'Copy'; }, 1500);});}
+</script>
 </body>
 </html>

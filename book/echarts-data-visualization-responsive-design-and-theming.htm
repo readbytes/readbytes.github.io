@@ -1,21 +1,281 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
+<meta charset="UTF-8">
 <title>ECharts Data Visualization Responsive Design and Theming</title>
-<link rel='shortcut icon' href='https://java2s.com/style/favicon.ico'>
+<link rel='shortcut icon' href='https://readbytes.github.io/images/favicon.ico'>
 <link href="https://fonts.googleapis.com/css2?family=Merriweather&display=swap" rel="stylesheet" />
 <link href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
-
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.css" />
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/theme/material.css"> <!-- Dark theme -->
-<script src="https://cdn.jsdelivr.net/npm/typescript@5/lib/typescript.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/htmlmixed/htmlmixed.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/theme/dracula.min.css"><style>
+html {scroll-behavior: smooth;}  
+body {font-family: 'Merriweather', serif;;margin: 0;padding: 2rem 1rem;font-size: 15px;line-height: 1.5;transition: background-color 0.3s, color 0.3s;}
+.container {max-width: 750px;margin: 0 auto;padding: 1rem 2rem;}
+.light-mode {background-color: #f8f7f5;color: #333;} 
+.dark-mode {background-color: #121212;color: #e0e0e0;}
+a { text-decoration: none;transition: color 0.2s;}
+a:hover {text-decoration: underline;}
+.light-mode a {color: #555;}
+.dark-mode a {color: #aaa;}
+</style><style>
+.related-book-list {display: flex;flex-wrap: wrap;gap: 20px;}
+.related-books {margin-top: 40px;}
+.related-books h2 {font-size: 22px;margin-bottom: 20px;border-bottom: 2px solid #eee;padding-bottom: 8px;}
+.light-mode .related-books h2 {color: #333;border-color: #eee;}
+.dark-mode .related-books h2 {color: #ddd;border-color: #333;}
+</style><style>
+.book-cover {width: 130px;height: 180px;font-family: Arial, sans-serif;position: relative;overflow: hidden;box-shadow: 2px 2px 4px rgba(0,0,0,0.1);}
+.book-cover-bottom-stripe {position: absolute;bottom: 0;left: 0;height: 5px;width: 100%;}
+.book-cover-title {position: absolute;width: 100%;text-align: center;font-weight: bold;}
+.book-cover-icon {position: absolute;left: 50%;transform: translateX(-50%);display: flex;align-items: center;justify-content: center;}
+.book-cover-author {position: absolute;bottom: 10px;width: 100%;text-align: center;font-size: 8px;color: #333;}
+</style><style>
+.book-title-toc {font-size: 32px;font-weight: bold; }
+.book-subtitle-toc {font-size: 18px;margin-top: 8px;font-style: italic;}
+.book-header {text-align: center;margin-bottom: 40px;}
+
+.toc-container {border-radius: 10px;padding: 30px;margin-bottom: 40px;box-shadow: 0 8px 20px rgba(0,0,0,0.05);}
+h1 {font-size: 24px;text-align: center;margin-bottom: 30px;letter-spacing: 1px;padding-bottom: 10px;}
+.toc-list,.toc-section-list {list-style: none;padding: 0;margin: 0;}
+.toc-section-list {padding-left: 18px;margin-top: 6px;margin-bottom: 20px; }
+.toc-chapter {padding: 20px 0;}
+.chapter-title,.toc-section {display: flex;justify-content: space-between;padding-top: 4px;}
+.chapter-title {font-size: 17px;font-weight: bold;}
+.chapter-page,.section-page {font-style: italic;}
+ 
+ 
+.light-mode .book-title-toc,.light-mode .chapter-title,.light-mode .book-name {color: #222;}
+.light-mode .book-subtitle-toc,.light-mode .book-sub,.light-mode .chapter-page,.light-mode .section-page {color: #666;}
+.light-mode .toc-container { background: #fff;border: 1px solid #ddd;}
+.light-mode h1 {border-bottom: 2px solid #eee;color: #222;}
+.light-mode .toc-section {  color: #444;}
+
+.light-mode .book-cover { border: 1px solid #ccc;box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);}
+.light-mode .book-title,.light-mode .series-name {color: #fff;}
+.light-mode .book-subtitle,.light-mode .book-footer {color: #aaa;}
+
+.dark-mode .book-title-toc,.dark-mode .chapter-title,.dark-mode .book-name {color: #f5f5f5;}
+.dark-mode .book-subtitle-toc,.dark-mode .book-sub,.dark-mode .chapter-page,.dark-mode .section-page {color: #aaa;}
+.dark-mode .toc-container {background: #1e1e1e;border: 1px solid #444;}
+
+.dark-mode h1 {border-bottom: 2px solid #333;color: #eee;}
+.dark-mode .toc-section {color: #bbb;}
+
+.dark-mode .related-books h2 {color: #ddd;border-bottom: 2px solid #333;}
+.dark-mode .book-title,.dark-mode .series-name {color: #fff;}
+.dark-mode .book-subtitle,.dark-mode .book-footer {color: #bbb;}
+.dark-mode .toc-section {color: #ddd;}
+
+@media (max-width: 600px) {
+  .chapter-title,
+  .toc-section {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .chapter-page,
+  .section-page {
+    margin-top: 4px;
+  }
+}
+
+</style><style>
+.light-mode .container {box-shadow: 0 0 15px rgba(0,0,0,0.1);}
+.dark-mode .container {box-shadow: 0 0 15px rgba(255, 255, 255, 0.05);}
+
+h1, h2, h3 {font-weight: 600;margin-top: 2.5rem;margin-bottom: 1rem;line-height: 1.2;}
+h1 { font-size: 1.8rem; }
+h2 { font-size: 1.4rem; }
+h3 { font-size: 1.2rem; }
+
+table {width: 100%;border-collapse: collapse;font-family: sans-serif;font-size: 1em;margin: 1em 0;}
+th, td {padding: 0.6em 1em;text-align: left;border: 1px solid;}
+tr:nth-child(even) {  background-color: inherit;}
+tr:hover { background-color: inherit;}
+
+code {color: #d35400;}
+
+.chapter-navi-section {display: flex;justify-content: space-between;align-items: center;padding-bottom: 10px;padding-top: 10px;}
+.nav-link {color: inherit;text-decoration: none;opacity: 0.5;transition: opacity 0.3s ease, text-decoration 0.3s ease;}
+.nav-link:hover {opacity: 0.9;text-decoration: underline;}
+.prev { text-align: left; }
+.toc-link { text-align: center; }
+.next { text-align: right; }
+
+.download-section {display: flex;align-items: center;justify-content: center;gap: 2rem;padding: 2rem 1rem;max-width: 600px;margin: 3rem auto;border-radius: 12px;box-shadow: 0 4px 10px rgba(0,0,0,0.05);}
+.download-info h2 {margin: 0 0 0.5rem;font-size: 1.2rem;}
+.format-label {margin: 0 0 0.5rem;font-size: 0.95rem;}
+.download-buttons {display: flex;gap: 1rem;}
+.download-button {background-color: #4A90E2;color: white;padding: 0.5em 1.2em;border-radius: 25px;font-size: 0.95rem;text-decoration: none;transition: background-color 0.3s ease;}
+.download-button:hover {background-color: #357ABD;}
+
+.code-block {position: relative;margin-bottom: 1em;}
+.copy-button {background: transparent;color: white;position: absolute;top: 8px;right: 8px;border: none;padding: 4px 8px;font-size: 12px;border-radius: 4px;cursor: pointer;z-index: 1;}
+.copy-button:hover {background-color: #0056b3;}
+
+.snippet-container {overflow: hidden;}
+.snippet-header {padding: 0.75rem 1rem;cursor: pointer;font-size: 1rem;background-color: #eeeeee;color:  #111111; border-radius: 8px;cursor: pointer;box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+.snippet-body {display: none;font-family: monospace;}
+.snippet-container.open .snippet-body {display: block;}
+
+.CodeMirror {border: 2px solid #ccc;border-radius: 4px;resize: vertical;}
+
+.light-mode .format-label {color: #888;}
+.light-mode th {background-color: #f2f2f2;}
+.light-mode tr:nth-child(even) {background-color: #fafafa;}
+.light-mode tr:hover {background-color: #e6f7ff;}
+
+.dark-mode .snippet-header {background-color: #333;color:  #ddd; }
+.dark-mode .format-label {color: #aaa;}
+.dark-mode th {background-color: #333;color: #fff;}
+.dark-mode td {border-color: #444;}
+.dark-mode tr:nth-child(even) {background-color: #2a2a2a;}
+.dark-mode tr:hover {background-color: #2c3e50;}
+
+
+.button-group-run-edit {display: flex;width: 100%;gap: 1rem;}
+.button-run-edit {flex: 1;padding: 1rem;font-size: 1rem;font-weight: 600;border: none;border-radius: 8px;cursor: pointer;transition: background 0.3s, color 0.3s;}
+
+.light-mode .button-run-edit {background-color: #f0f0f0;color: #222;box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);}
+.light-mode .button-run-edit:hover {background-color: #e0e0e0;}
+
+.dark-mode .button-run-edit {background-color: #2a2a2a;color: #f5f5f5;box-shadow: 0 0 10px rgba(255, 255, 255, 0.05);}
+.dark-mode .button-run-edit:hover {background-color: #3a3a3a;}
+
+button { padding: 0.5em 1em; background: green; color: white; border: none; cursor: pointer; }
+button:hover { background: #1e7e34; }
+.result_iframe { width:99%; margin-top: 1em;  resize: both;background-color: #515b63;border:1px solid #ccc;}   
+
+.dialog-backdrop {position: fixed;top: 0;left: 0;width: 100vw;height: 100vh;background: rgba(0,0,0,0.5);display: none;justify-content: center;align-items: center;z-index: 10;}
+.dialog {background: #90979e;padding: 20px;width: 90vw;height: 80vh;border-radius: 8px;box-shadow: 0 0 20px rgba(0,0,0,0.3);display: flex;flex-direction: column;}
+.dialog-content {display: flex;gap: 20px;margin-top: 10px;height: calc(100% - 40px);}
+.editor-container, .preview-container {flex: 1;height: 100%;max-height: 100%;overflow: hidden; }
+.result_iframe_dialog {width: 100%;height: 100%;resize: both;border:1px solid #ccc;overflow: auto; }   
+.CodeMirror {width: 100% !important;height: 100% !important;}
+</style><script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/htmlmixed/htmlmixed.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/xml/xml.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/css/css.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/javascript/javascript.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/javascript/typescript.min.js"></script>
+<script>
+  const htmlCodeMirrorMap = new Map();
+  const htmlCodeIFrameMap = new Map();
+  let dismissTimer;
+  function showFloatingLog(message) {
+	const floatingLog = document.getElementById('floatingLog');
+
+    if (floatingLog.style.display !== 'block') {
+      floatingLog.textContent = '';
+      floatingLog.style.display = 'block'; 
+    }
+
+    floatingLog.textContent += message + '\n';
+    floatingLog.scrollTop = floatingLog.scrollHeight; 
+    clearTimeout(dismissTimer);
+    dismissTimer = setTimeout(() => {
+      floatingLog.style.display = 'none';
+      floatingLog.textContent = '';
+    }, 2000);
+  }
+  window.addEventListener('message', (event) => {
+	    if (!htmlCodeIFrameMap.has(event.source)) return;
+
+	    if (event.data?.type === 'console-log') {
+	      showFloatingLog(event.data.message);
+	    }
+  });      
+  function runHtmlCode(button,textarea_id, iframe_id, isInDialog) {
+      const html = htmlCodeMirrorMap.get(textarea_id).getValue();
+      const iframe = document.getElementById(iframe_id);
+  
+      const oldIframe = iframe;
+      const newIframe = document.createElement('iframe');
+
+      if(isInDialog){
+         newIframe.className ="result_iframe_dialog";
+      }else{
+         newIframe.className ="result_iframe";
+      }
+      
+      
+      newIframe.id = iframe_id;
+      oldIframe.replaceWith(newIframe);
+ 
+
+      // Track the iframe in the map
+      htmlCodeIFrameMap.set(newIframe.contentWindow, button);
+
+      const overrideScript = `
+        <script>
+          (function() {
+            const originalLog = console.log;
+            console.log = function(...args) {
+              originalLog.apply(console, args);
+              window.parent.postMessage({
+                type: 'console-log',
+                message: args.map(a => {
+                  try { return JSON.stringify(a); }
+                  catch { return String(a); }
+                }).join(' ')
+              }, '*');
+            };
+          })();
+        <\/script>
+      `;
+ 
+      const iframeHTML = `
+        <!DOCTYPE html>
+        <html>
+        <body>
+          ${overrideScript}
+          ${html}
+        </body>
+        </html>
+      `;
+ 
+      const doc = newIframe.contentDocument || newIframe.contentWindow.document;
+      doc.open();
+      doc.write(iframeHTML);
+      doc.close();
+
+if(!isInDialog){ 
+newIframe.onload = function () {
+ 
+    const doc = newIframe.contentDocument || newIframe.contentWindow.document;
+    // Give a short delay to ensure layout is complete
+    setTimeout(() => {
+      const body = doc.body;
+      const html = doc.documentElement;
+
+      const height = Math.max(
+        body.scrollHeight, body.offsetHeight,
+        html.clientHeight, html.scrollHeight, html.offsetHeight
+      );
+
+      newIframe.style.height = height + 'px';
+    }, 50);
+};
+
+}
+      
+  }  
+function openEditHtmlCodeDialog(id, textarea_id) {
+		        closeAllHtmlCodeDialog();
+		        document.getElementById(id).style.display = 'flex';
+         
+ 	        setTimeout(() => {
+		        	 htmlCodeMirrorMap.get(textarea_id).refresh();
+                   
+ 	        }, 100); // 100ms 
+}
+
+function closeAllHtmlCodeDialog() {
+		        document.querySelectorAll('.dialog-backdrop').forEach(el => {
+		          el.style.display = 'none';
+		        });
+}		
+</script> 
 <style>
     #floatingLog {
       position: fixed;
@@ -39,672 +299,22 @@
       text-align: center;
     }
 </style>
-<script>
-  const codeMirrorMap = new Map();
-  const iframeMap = new Map();
-  
- 
-
-  let dismissTimer;
-  function showFloatingLog(message) {
-	const floatingLog = document.getElementById('floatingLog');
-
-    if (floatingLog.style.display !== 'block') {
-      floatingLog.textContent = '';
-      floatingLog.style.display = 'block'; 
-    }
-
-    floatingLog.textContent += message + '\n';
-    floatingLog.scrollTop = floatingLog.scrollHeight; 
-    clearTimeout(dismissTimer);
-    dismissTimer = setTimeout(() => {
-      floatingLog.style.display = 'none';
-      floatingLog.textContent = '';
-    }, 2000);
-  }
-  window.addEventListener('message', (event) => {
-	    if (!iframeMap.has(event.source)) return;
-
-	    if (event.data?.type === 'console-log') {
-	      showFloatingLog(event.data.message);
-	    }
-  });  
-  function renderIframe(button,textarea_id, iframe_id) {
-      const html = codeMirrorMap.get(textarea_id).getValue();
-      const iframe = document.getElementById(iframe_id);
-  
-      const oldIframe = iframe;
-      const newIframe = document.createElement('iframe');
-      newIframe.className ="result_iframe";
-      
-      newIframe.id = iframe_id;
-      oldIframe.replaceWith(newIframe);
- 
-
-      // Track the iframe in the map
-      iframeMap.set(newIframe.contentWindow, button);
-
-      const overrideScript = `
-        <script>
-          (function() {
-            const originalLog = console.log;
-            console.log = function(...args) {
-              originalLog.apply(console, args);
-              window.parent.postMessage({
-                type: 'console-log',
-                message: args.map(a => {
-                  try { return JSON.stringify(a); }
-                  catch { return String(a); }
-                }).join(' ')
-              }, '*');
-            };
-          })();
-        <\/script>
-      `;
-
-      const iframeHTML = `
-        <!DOCTYPE html>
-        <html>
-        <body>
-          ${overrideScript}
-          ${html}
-        </body>
-        </html>
-      `;
- 
-      const doc = newIframe.contentDocument || newIframe.contentWindow.document;
-      doc.open();
-      doc.write(iframeHTML);
-      doc.close();
-
-      
-      setTimeout(() => {
-    	  newIframe.style.height = '0px';
-    	   let contentHeight = Math.max(doc.body.scrollHeight,doc.documentElement.scrollHeight);
- 
-    	//   if(contentHeight < 150 || contentHeight > 600){
-    	//	   contentHeight = 600;
-    	 //  } 
-    	   newIframe.style.height = contentHeight + 'px';
-    	}, 50);      
-      
-  }
-  function renderIframeForClientTypescript(textarea_id, iframe_id) {
-      let code = codeMirrorMap.get(textarea_id).getValue();
-      code = ts.transpile(code);
-      const iframe = document.getElementById(iframe_id);
-      const doc = iframe.contentDocument || iframe.contentWindow.document;
-
-const html = `
-  <!DOCTYPE html>
-  <html>
-    <head>
-      <title>Output</title>
-      <style>
-        body { font-family: monospace; padding: 1em; background: #f4f4f4; color: #222; }
-        pre { white-space: pre-wrap; word-break: break-word; }
-        .error { color: red; }
-      </style>
-    </head>
-    <body>
-      <pre id="log"></pre>
-      <script>
-        (function(){
-          const logEl = document.getElementById('log');
-          const origLog = console.log;
-          const origError = console.error;
-
-          console.log = (...args) => {
-            logEl.textContent += args.join(' ') + '\\n';
-            origLog.apply(console, args);
-          };
-          console.table = (...args) => {
-            logEl.textContent += args.join(' ') + '\\n';
-            origLog.apply(console, args);
-          };
-
-          console.error = (...args) => {
-            logEl.innerHTML +='<span class="error">' + args.join(' ') + '</span>';
-            origError.apply(console, args);
-          };
-          window.addEventListener("error", function (event) {
-              console.error("Caught by event listener:", event.message);
-          });    
-          try {             
-              ${code};
-          } catch (err) {
-            console.error(err.stack || err.message);
-          }
-        })();
-      <\/script>
-    </body>
-  </html>
-`;
-
-      iframe.style.display = "block";
-      iframe.srcdoc = html;  
-  }
-
-    function renderIframeForClientJavascript(textarea_id, iframe_id) {
-        const code = codeMirrorMap.get(textarea_id).getValue();
-        const iframe = document.getElementById(iframe_id);
-        const doc = iframe.contentDocument || iframe.contentWindow.document;
-
-  const html = `
-    <!DOCTYPE html>
-    <html>
-      <head>
-        <title>Output</title>
-        <style>
-          body { font-family: monospace; padding: 1em; background: #1e1e1e; color: #eee; }
-          pre { white-space: pre-wrap; word-break: break-word; }
-          .error { color: red; }
-        </style>
-      </head>
-      <body>
-        <pre id="log"></pre>
-        <script>
-          (function(){
-            const logEl = document.getElementById('log');
-            const origLog = console.log;
-            const origError = console.error;
-
-            console.log = (...args) => {
-              logEl.textContent += args.join(' ') + '\\n';
-              origLog.apply(console, args);
-            };
-            console.table = (...args) => {
-              logEl.textContent += args.join(' ') + '\\n';
-              origLog.apply(console, args);
-            };
-
-            console.error = (...args) => {
-              logEl.innerHTML +='<span class="error">' + args.join(' ') + '</span>';
-              origError.apply(console, args);
-            };
-            window.addEventListener("error", function (event) {
-                console.error("Caught by event listener:", event.message);
-            });    
-            try {
-             ${code}; 
-            } catch (err) {
-              console.error(err.stack || err.message);
-            }
-          })();
-        <\/script>
-      </body>
-    </html>
-  `;
-        iframe.style.display = "block";
-        iframe.srcdoc = html;  
-    }
-    function toggleSnippetAndRefresh(id, textarea_id) {
-      const box = document.getElementById(id);
-      box.classList.toggle("open");
-      codeMirrorMap.get(textarea_id).refresh();
-    }
-
-  </script>
-  <script>
-  const mode = localStorage.getItem('mode') || 'light';
-  document.documentElement.classList.add(`${mode}-mode`);
-  </script>   
-<style> 
-html {
-  scroll-behavior: smooth;
-}
-
-body {
-  font-family: 'Merriweather', serif;
-  margin: 0;
-  padding: 2rem 1rem;
-  font-size: 15px;
-  line-height: 1.5;
-  transition: background-color 0.3s, color 0.3s;
-}
-
-.container {
-  max-width: 700px;
-  margin: 0 auto;
-  padding: 1rem 2rem;
-  box-shadow: 0 0 15px rgba(0,0,0,0.1);
-}
-
-h1, h2, h3 {
-  font-weight: 600;
-  margin-top: 2.5rem;
-  margin-bottom: 1rem;
-  line-height: 1.2;
-}
-
-h1 { font-size: 1.8rem; }
-h2 { font-size: 1.4rem; }
-h3 { font-size: 1.2rem; }
-
-table {
-  width: 100%;
-  border-collapse: collapse;
-  font-family: sans-serif;
-  font-size: 1em;
-  margin: 1em 0;
-}
-
-th, td {
-  padding: 0.6em 1em;
-  text-align: left;
-  border: 1px solid;
-}
-
-tr:nth-child(even) {
-  background-color: inherit;
-}
-
-tr:hover {
-  background-color: inherit;
-}
-
-a {
-  text-decoration: none;
-  transition: color 0.2s;
-}
-
-a:hover {
-  text-decoration: underline;
-}
-
-code {
-  color: #d35400;
-}
-
-.book-title-chapter {
-  font-family: 'Merriweather', serif;
-  font-size: 2rem;
-  font-weight: bold;
-  text-align: center;
-  margin-bottom: 2rem;
-  border-bottom: 2px solid;
-  padding-bottom: 0.5rem;
-}
-
-.book-subtitle-chapter {
-  text-align: center;
-  font-size: 1rem;
-  margin-top: -1rem;
-  margin-bottom: 2rem;
-}
-
-.related-books {
-  margin-top: 40px;
-}
-
-.related-book-list {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 20px;
-}
-
-    .book-cover {
-      width: 130px;
-      height: 180px;
-      font-family: Arial, sans-serif;
-      position: relative;
-      overflow: hidden;      
-      line-height: normal;
-      box-shadow: 2px 2px 4px rgba(0,0,0,0.1);
-    }
-    .book-cover-bottom-stripe {
-      position: absolute;
-      bottom: 0;
-      left: 0;
-      height: 5px;
-      width: 100%;
-    }
-    .book-cover-title {
-      position: absolute;
-      width: 100%;
-      text-align: center;
-      font-weight: bold;
-    }
-     
-    .book-cover-icon {
-      position: absolute;
-      left: 50%;
-      transform: translateX(-50%);
-      display: flex;
-      align-items: center;
-      justify-content: center; 
-    }
-
-    .book-cover-author {
-      position: absolute;
-      bottom: 10px;
-      width: 100%;
-      text-align: center;
-      font-size: 8px;
-      color: #333;
-    }
-
-.page-footer {
-  margin-top: 4rem;
-  padding: 1rem 0;
-  text-align: center;
-  font-size: 0.85rem;
-  border-top: 1px solid;
-}
-
-.chapter-navi-section {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding-bottom: 10px;
-}
-
-.nav-link {
-  color: inherit;
-  text-decoration: none;
-  opacity: 0.5;
-  transition: opacity 0.3s ease, text-decoration 0.3s ease;
-}
-
-.nav-link:hover {
-  opacity: 0.9;
-  text-decoration: underline;
-}
-
-.prev { text-align: left; }
-.toc-link { text-align: center; }
-.next { text-align: right; }
-
-.download-section {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 2rem;
-  padding: 2rem 1rem;
-  max-width: 600px;
-  margin: 3rem auto;
-  border-radius: 12px;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-}
-
-.download-info h2 {
-  margin: 0 0 0.5rem;
-  font-size: 1.2rem;
-}
-
-.format-label {
-  margin: 0 0 0.5rem;
-  font-size: 0.95rem;
-}
-
-.download-buttons {
-  display: flex;
-  gap: 1rem;
-}
-
-.download-button {
-  background-color: #4A90E2;
-  color: white;
-  padding: 0.5em 1.2em;
-  border-radius: 25px;
-  font-size: 0.95rem;
-  text-decoration: none;
-  transition: background-color 0.3s ease;
-}
-
-.download-button:hover {
-  background-color: #357ABD;
-}
-
-.code-block {
-  position: relative;
-  margin-bottom: 1em;
-}
-
-.copy-button {
-  background: transparent;
-  color: white;
-  position: absolute;
-  top: 8px;
-  right: 8px;
-  border: none;
-  padding: 4px 8px;
-  font-size: 12px;
-  border-radius: 4px;
-  cursor: pointer;
-  z-index: 1;
-}
-
-.copy-button:hover {
-  background-color: #0056b3;
-}
-
-.snippet-container {
-  overflow: hidden;
-}
-
-.snippet-header {
-  padding: 0.75rem 1rem;
-  cursor: pointer;
-  font-size: 1rem;
-    background-color: #eeeeee;
-    color:  #111111; 
-    border-radius: 8px;
-    cursor: pointer;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.1);  
-}
-
-.snippet-body {
-  display: none;
-  font-family: monospace;
-}
-
-.snippet-container.open .snippet-body {
-  display: block;
-}
-
-.CodeMirror {
-  border: 2px solid #ccc;
-  border-radius: 4px;
-  resize: vertical;
-}
-
-/* === Light Mode === */
-html.light-mode {
-  background-color: #f8f7f5;
-  color: #333;
-}
-
-html.light-mode .container {
-  background: white;
-}
-
-html.light-mode .book-title-chapter {
-  color: #2c3e50;
-  border-color: #ccc;
-}
-html.light-mode .book-subtitle-chapter{
-  color: #888;
-}
-
-html.light-mode .page-footer,
-html.light-mode .series-name,
-html.light-mode .book-subtitle,
-html.light-mode .format-label {
-  color: #888;
-}
-
-html.light-mode .related-books h2 {
-  color: #333;
-  border-bottom: 2px solid #eee;
-}
-
-html.light-mode .book-title {
-  color: #fff;
-}
-
-html.light-mode .book-cover {
-  border: 1px solid #ccc;
-}
-
-html.light-mode th {
-  background-color: #f2f2f2;
-}
-
-html.light-mode tr:nth-child(even) {
-  background-color: #fafafa;
-}
-
-html.light-mode tr:hover {
-  background-color: #e6f7ff;
-}
-
-html.light-mode a,
-html.light-mode .page-footer a {
-  color: #000;
-}
-
-/* === Dark Mode === */
-html.dark-mode {
-  background-color: #181818;
-  color: #e0e0e0;
-}
-
-html.dark-mode .container {
-  background: #222;
-}
-
-html.dark-mode .book-title-chapter {
-  color: #ddd;
-  border-color: #444;
-}
-
-html.dark-mode .snippet-header {
-    background-color: #333;
-    color:  #ddd; 
-}
-
-
-html.dark-mode .book-subtitle-chapter,
-html.dark-mode .page-footer,
-html.dark-mode .series-name,
-html.dark-mode .book-subtitle,
-html.dark-mode .book-footer,
-html.dark-mode .format-label {
-  color: #aaa;
-}
-
-html.dark-mode .related-books h2 {
-  color: #ddd;
-  border-bottom: 2px solid #333;
-}
-
-html.dark-mode .book-title {
-  color: #fff;
-}
-
-html.dark-mode .book-cover {
-  border: 1px solid #555;
-}
-
-html.dark-mode th {
-  background-color: #333;
-  color: #fff;
-}
-
-html.dark-mode td {
-  border-color: #444;
-}
-
-html.dark-mode tr:nth-child(even) {
-  background-color: #2a2a2a;
-}
-
-html.dark-mode tr:hover {
-  background-color: #2c3e50;
-}
-
-html.dark-mode a,
-html.dark-mode .page-footer a {
-  color: #eee;
-}
-
-    .dialog-backdrop {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100vw;
-      height: 100vh;
-      background: rgba(0,0,0,0.5);
-      display: none;
-      justify-content: center;
-      align-items: center;
-      z-index: 10;
-    }
-
-    .dialog {
-      background: white;
-      padding: 20px;
-      width: 90vw;
-      height: 80vh;
-      border-radius: 8px;
-      box-shadow: 0 0 20px rgba(0,0,0,0.3);
-      display: flex;
-      flex-direction: column;
-    }
-    .dialog-content {
-      display: flex;
-      flex: 1;
-      gap: 20px;
-      margin-top: 10px;
-    }
-    .dialog h2 {
-      margin-top: 0;
-    }
-
-    .textarea_dialog {
-      width: 50%;
-      height: 100%;
-      resize: none;
-      font-family: monospace;
-      font-size: 14px;
-      padding: 10px;
-      box-sizing: border-box;
-      border: 1px solid #ccc;
-    }
-
-    .iframe_dialog {
-      width: 50%;
-      height: 100%;
-      border: 1px solid #ccc;
-    }
-    .controls_dialog {
-      display: flex;
-      justify-content: space-between;
-      margin-top: 10px;
-    }    
-    button { padding: 0.5em 1em; background: green; color: white; border: none; cursor: pointer; }
-    button:hover { background: #1e7e34; }
-    .result_iframe { width:99%; height:200px; margin-top: 1em;  resize: both;border:1px solid #ccc;}        
-</style>
 </head>
-<body> 
-  <div class="container">
-    <div class = "chapter-navi-section">
+<body>
+<script>const mode = localStorage.getItem('mode') || 'light';document.documentElement.classList.add(`${mode}-mode`);</script>  
+<div class="container"><div class = "chapter-navi-section">
 <a href="echarts-data-visualization-interactivity-and-animation.htm" class="nav-button prev">←</a>
 <a href='echarts-data-visualization.htm#responsive-design-and-theming' class="nav-button toc-link">Index</a>
 <a href="echarts-data-visualization-data-management.htm" class="nav-button next">→</a>
 </div>
-
-    <h1 class="book-title-chapter" id = 'top'>Responsive Design and Theming</h1>
-    <h3 class="book-subtitle-chapter">ECharts Data Visualization</h3>   
-    <!-- <h1 class ="chapter-title"></h1> -->
-    <h2 id='making-charts-responsive'>7.1 Making Charts Responsive</h2><p>In today’s multi-device world, ensuring your charts look great and function well on different screen sizes—from desktops to tablets and smartphones—is essential. ECharts provides flexible options and APIs to help you create responsive charts that adapt smoothly to layout changes and varying viewport dimensions.</p><h3 id="using-percentage-based-dimensions">Using Percentage-Based Dimensions</h3><p>When initializing your chart container (<code>div</code>), avoid fixed pixel sizes. Instead, use CSS with relative units like percentages or viewport units to let the chart scale naturally.</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+<div class='book-header'><h1 class='book-title-toc' id = 'top'>Responsive Design and Theming</h1><h3 class='book-subtitle-toc'>ECharts Data Visualization</h3></div><h2 id='making-charts-responsive'>7.1 Making Charts Responsive</h2><p>In today’s multi-device world, ensuring your charts look great and function well on different screen sizes—from desktops to tablets and smartphones—is essential. ECharts provides flexible options and APIs to help you create responsive charts that adapt smoothly to layout changes and varying viewport dimensions.</p><h3 id="using-percentage-based-dimensions">Using Percentage-Based Dimensions</h3><p>When initializing your chart container (<code>div</code>), avoid fixed pixel sizes. Instead, use CSS with relative units like percentages or viewport units to let the chart scale naturally.</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-html">&lt;div id="chart" style="width: 100%; height: 400px;"&gt;&lt;/div&gt;</code></pre>
 </div><ul>
  <li>Setting <code>width: 100%</code> makes the chart fill its parent container horizontally.</li>
  <li>Adjust the height in CSS or using relative units (<code>vh</code>, <code>%</code>) to control vertical sizing.</li>
-</ul><h3 id="calling-resize-on-window-resize">Calling <code>resize()</code> on Window Resize</h3><p>ECharts does <strong>not automatically</strong> detect container size changes. To ensure the chart resizes when the window or container changes, call the <code>resize</code> method on the chart instance:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</ul><h3 id="calling-resize-on-window-resize">Calling <code>resize()</code> on Window Resize</h3><p>ECharts does <strong>not automatically</strong> detect container size changes. To ensure the chart resizes when the window or container changes, call the <code>resize</code> method on the chart instance:</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-js">const chart = echarts.init(document.getElementById('chart'));
 
 // Initial option set
@@ -714,13 +324,16 @@ chart.setOption(option);
 window.addEventListener('resize', () =&gt; {
   chart.resize();
 });</code></pre>
-</div><p>This redraws the chart to fit the new container dimensions, preserving clarity and layout.</p><div class="snippet-container" id="hY1J5">
- <div id="6WQdP_Dialog" class="dialog-backdrop">
+</div><p>This redraws the chart to fit the new container dimensions, preserving clarity and layout.</p><div class="snippet-container">
+ <div class="button-group-run-edit"><button class="button-run-edit" onclick="runHtmlCode(this,'Udbsl','pwjrR', false)">Run</button> <button class="button-run-edit" onclick="openEditHtmlCodeDialog('pwjrR_Dialog','Udbsl')">Edit</button>
+ </div> <iframe id="pwjrR" class="result_iframe" style="display: none;"></iframe>
+ <div id="pwjrR_Dialog" class="dialog-backdrop">
   <div class="dialog">
-   <h2>Dialog 1</h2>
-   <div class="controls"><button onclick="renderIframe(this,'jzUwE_Textarea','6WQdP_IFrame')">Run</button> <button onclick="closeAll()">Close</button>
+   <div class="controls"><button onclick="runHtmlCode(this,'Udbsl','pwjrR_IFrame', true)">Run</button> <button onclick="closeAllHtmlCodeDialog()">Close</button>
    </div>
-   <div class="dialog-content"><textarea id="jzUwE_Textarea" class="textarea_dialog" placeholder="Type HTML here...">&lt;!DOCTYPE html&gt;
+   <div class="dialog-content">
+    <div class="editor-container">
+     <textarea id="Udbsl" class="textarea_dialog" placeholder="Type HTML here...">&lt;!DOCTYPE html&gt;
 &lt;html lang="en"&gt;
 &lt;head&gt;
 &lt;meta charset="UTF-8" /&gt;
@@ -766,101 +379,32 @@ window.addEventListener('resize', () =&gt; {
 &lt;/script&gt;
 
 &lt;/body&gt;
-&lt;/html&gt;</textarea> <iframe id="6WQdP_IFrame" class="iframe_dialog"></iframe>
+&lt;/html&gt;</textarea>
+    </div>
+    <div class="preview-container">
+     <iframe id="pwjrR_IFrame" class="result_iframe_dialog" style="border: none;"></iframe>
+    </div>
    </div>
   </div>
  </div>
- <div class="snippet-header" onclick="toggleSnippetAndRefresh('hY1J5','jzUwE')">
-  Click to Try it <!--<span onclick="toggleSnippetAndRefresh('hY1J5','jzUwE')">Click
-			to Try it</span> --> <!-- <span onclick="openDialog('6WQdP_Dialog')">Dialog</span> -->
- </div>
- <div class="snippet-body"><textarea id="jzUwE">&lt;!DOCTYPE html&gt;
-&lt;html lang="en"&gt;
-&lt;head&gt;
-&lt;meta charset="UTF-8" /&gt;
-&lt;title&gt;ECharts Resize Demo&lt;/title&gt;
-&lt;style&gt;
-  #chart {
-    width: 80vw;
-    height: 400px;
-    margin: 20px auto;
-    border: 1px solid #ccc;
-  }
-&lt;/style&gt;
-&lt;/head&gt;
-&lt;body&gt;
-
-&lt;div id="chart"&gt;&lt;/div&gt;
-
-&lt;script src="https://cdn.jsdelivr.net/npm/echarts@5/dist/echarts.min.js"&gt;&lt;/script&gt;
-&lt;script&gt;
-  const chartDom = document.getElementById('chart');
-  const chart = echarts.init(chartDom);
-
-  const option = {
-    title: { text: 'Resizable Chart', left: 'center' },
-    tooltip: {},
-    xAxis: {
-      type: 'category',
-      data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
-    },
-    yAxis: { type: 'value' },
-    series: [{
-      type: 'bar',
-      data: [120, 200, 150, 80, 70, 110, 130]
-    }]
-  };
-
-  chart.setOption(option);
-
-  // Resize chart on window resize
-  window.addEventListener('resize', () =&gt; {
-    chart.resize();
-  });
-&lt;/script&gt;
-
-&lt;/body&gt;
-&lt;/html&gt;</textarea> <br> <button onclick="renderIframe(this,'jzUwE','6WQdP')">Run</button>
-  <div id="6WQdP_FloatingLog" class="floatingLog" aria-live="polite" role="alert"></div> <iframe id="6WQdP" class="result_iframe" style="display: none;"></iframe>
-  <script>
-			{
-				let editor = CodeMirror.fromTextArea(document
-						.getElementById("jzUwE"), {
+ <script>
+{
+let editor = CodeMirror.fromTextArea(document.getElementById("Udbsl"), {
 					mode : "htmlmixed",
 					lineNumbers : false,
+                    lineWrapping: true,
 					tabSize : 2
-				});
-			    const mode = localStorage.getItem("mode") || "light";  
-			    const newTheme = mode === "dark" ? "material" : "default";
-			    editor.setOption("theme", newTheme);
-			    
-				codeMirrorMap.set("jzUwE", editor);
+});
+const darkmode = localStorage.getItem("mode") || "light";  
+const newTheme = darkmode === "dark" ? "dracula" : "default";
+editor.setSize("50%", "100%");
+editor.setOption("theme", newTheme);
+htmlCodeMirrorMap.set("Udbsl", editor);
+}
 
-				let editor1 = CodeMirror.fromTextArea(document.getElementById("jzUwE_Textarea"), {
-					mode : "htmlmixed",
-					lineNumbers : false,
-					tabSize : 2
-				});
-			    editor1.setOption("theme", newTheme);				
-				
-				codeMirrorMap.set("jzUwE_Textarea", editor1);
-			}
-		    function openDialog(id) {
-		        closeAll();
-		        document.getElementById(id).style.display = 'flex';
-		        setTimeout(() => {
-		        	 codeMirrorMap.get("jzUwE_Textarea").refresh();
-		        }, 100); // 100ms 
-		      }
-
-		      function closeAll() {
-		        document.querySelectorAll('.dialog-backdrop').forEach(el => {
-		          el.style.display = 'none';
-		        });
-		      }			
-		</script>
- </div>
-</div><h3 id="responsive-option-changes-with-media-queries">Responsive Option Changes with <code>media</code> Queries</h3><p>ECharts supports <code>media</code> queries inside the option to change chart configurations based on viewport size or aspect ratio, enabling more granular responsiveness:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</script>
+</div><h3 id="responsive-option-changes-with-media-queries">Responsive Option Changes with <code>media</code> Queries</h3><p>ECharts supports <code>media</code> queries inside the option to change chart configurations based on viewport size or aspect ratio, enabling more granular responsiveness:</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-js">option = {
   // Base options for all screen sizes
   xAxis: { /* ... */ },
@@ -888,13 +432,16 @@ window.addEventListener('resize', () =&gt; {
 </div><ul>
  <li>Use CSS-like queries (<code>maxWidth</code>, <code>minWidth</code>, <code>maxHeight</code>, <code>minHeight</code>) to define breakpoints.</li>
  <li>Provide alternative options optimized for different device sizes or orientations.</li>
-</ul><div class="snippet-container" id="I0jYM">
- <div id="thgtL_Dialog" class="dialog-backdrop">
+</ul><div class="snippet-container">
+ <div class="button-group-run-edit"><button class="button-run-edit" onclick="runHtmlCode(this,'fvTec','xiJ8T', false)">Run</button> <button class="button-run-edit" onclick="openEditHtmlCodeDialog('xiJ8T_Dialog','fvTec')">Edit</button>
+ </div> <iframe id="xiJ8T" class="result_iframe" style="display: none;"></iframe>
+ <div id="xiJ8T_Dialog" class="dialog-backdrop">
   <div class="dialog">
-   <h2>Dialog 1</h2>
-   <div class="controls"><button onclick="renderIframe(this,'ApArv_Textarea','thgtL_IFrame')">Run</button> <button onclick="closeAll()">Close</button>
+   <div class="controls"><button onclick="runHtmlCode(this,'fvTec','xiJ8T_IFrame', true)">Run</button> <button onclick="closeAllHtmlCodeDialog()">Close</button>
    </div>
-   <div class="dialog-content"><textarea id="ApArv_Textarea" class="textarea_dialog" placeholder="Type HTML here...">&lt;!DOCTYPE html&gt;
+   <div class="dialog-content">
+    <div class="editor-container">
+     <textarea id="fvTec" class="textarea_dialog" placeholder="Type HTML here...">&lt;!DOCTYPE html&gt;
 &lt;html lang="en"&gt;
 &lt;head&gt;
 &lt;meta charset="UTF-8" /&gt;
@@ -969,130 +516,32 @@ window.addEventListener('resize', () =&gt; {
 &lt;/script&gt;
 
 &lt;/body&gt;
-&lt;/html&gt;</textarea> <iframe id="thgtL_IFrame" class="iframe_dialog"></iframe>
+&lt;/html&gt;</textarea>
+    </div>
+    <div class="preview-container">
+     <iframe id="xiJ8T_IFrame" class="result_iframe_dialog" style="border: none;"></iframe>
+    </div>
    </div>
   </div>
  </div>
- <div class="snippet-header" onclick="toggleSnippetAndRefresh('I0jYM','ApArv')">
-  Click to Try it <!--<span onclick="toggleSnippetAndRefresh('I0jYM','ApArv')">Click
-			to Try it</span> --> <!-- <span onclick="openDialog('thgtL_Dialog')">Dialog</span> -->
- </div>
- <div class="snippet-body"><textarea id="ApArv">&lt;!DOCTYPE html&gt;
-&lt;html lang="en"&gt;
-&lt;head&gt;
-&lt;meta charset="UTF-8" /&gt;
-&lt;title&gt;ECharts Responsive Media Demo&lt;/title&gt;
-&lt;style&gt;
-  #chart {
-    width: 90vw;
-    height: 400px;
-    margin: 20px auto;
-    border: 1px solid #ccc;
-  }
-&lt;/style&gt;
-&lt;/head&gt;
-&lt;body&gt;
-
-&lt;div id="chart"&gt;&lt;/div&gt;
-
-&lt;script src="https://cdn.jsdelivr.net/npm/echarts@5/dist/echarts.min.js"&gt;&lt;/script&gt;
-&lt;script&gt;
-  const chartDom = document.getElementById('chart');
-  const chart = echarts.init(chartDom);
-
-  const option = {
-    title: { text: 'Responsive Chart Example', left: 'center' },
-    tooltip: {},
-    legend: {
-      data: ['Sales', 'Expenses'],
-      bottom: 10
-    },
-    xAxis: {
-      type: 'category',
-      data: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
-      axisLabel: { show: true }
-    },
-    yAxis: { type: 'value' },
-    series: [
-      {
-        name: 'Sales',
-        type: 'bar',
-        data: [120, 200, 150, 80, 70, 110]
-      },
-      {
-        name: 'Expenses',
-        type: 'bar',
-        data: [90, 140, 130, 70, 60, 100]
-      }
-    ],
-    media: [
-      {
-        query: { maxWidth: 600 },
-        option: {
-          legend: { show: false },
-          xAxis: { axisLabel: { show: false } }
-        }
-      },
-      {
-        query: { minWidth: 601 },
-        option: {
-          legend: { show: true },
-          xAxis: { axisLabel: { show: true } }
-        }
-      }
-    ]
-  };
-
-  chart.setOption(option);
-
-  // Also resize on window resize
-  window.addEventListener('resize', () =&gt; {
-    chart.resize();
-  });
-&lt;/script&gt;
-
-&lt;/body&gt;
-&lt;/html&gt;</textarea> <br> <button onclick="renderIframe(this,'ApArv','thgtL')">Run</button>
-  <div id="thgtL_FloatingLog" class="floatingLog" aria-live="polite" role="alert"></div> <iframe id="thgtL" class="result_iframe" style="display: none;"></iframe>
-  <script>
-			{
-				let editor = CodeMirror.fromTextArea(document
-						.getElementById("ApArv"), {
+ <script>
+{
+let editor = CodeMirror.fromTextArea(document.getElementById("fvTec"), {
 					mode : "htmlmixed",
 					lineNumbers : false,
+                    lineWrapping: true,
 					tabSize : 2
-				});
-			    const mode = localStorage.getItem("mode") || "light";  
-			    const newTheme = mode === "dark" ? "material" : "default";
-			    editor.setOption("theme", newTheme);
-			    
-				codeMirrorMap.set("ApArv", editor);
+});
+const darkmode = localStorage.getItem("mode") || "light";  
+const newTheme = darkmode === "dark" ? "dracula" : "default";
+editor.setSize("50%", "100%");
+editor.setOption("theme", newTheme);
+htmlCodeMirrorMap.set("fvTec", editor);
+}
 
-				let editor1 = CodeMirror.fromTextArea(document.getElementById("ApArv_Textarea"), {
-					mode : "htmlmixed",
-					lineNumbers : false,
-					tabSize : 2
-				});
-			    editor1.setOption("theme", newTheme);				
-				
-				codeMirrorMap.set("ApArv_Textarea", editor1);
-			}
-		    function openDialog(id) {
-		        closeAll();
-		        document.getElementById(id).style.display = 'flex';
-		        setTimeout(() => {
-		        	 codeMirrorMap.get("ApArv_Textarea").refresh();
-		        }, 100); // 100ms 
-		      }
-
-		      function closeAll() {
-		        document.querySelectorAll('.dialog-backdrop').forEach(el => {
-		          el.style.display = 'none';
-		        });
-		      }			
-		</script>
- </div>
-</div><h3 id="responsive-dashboards-handling-multiple-charts">Responsive Dashboards: Handling Multiple Charts</h3><p>In dashboards with multiple charts, ensure each chart resizes independently:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</script>
+</div><h3 id="responsive-dashboards-handling-multiple-charts">Responsive Dashboards: Handling Multiple Charts</h3><p>In dashboards with multiple charts, ensure each chart resizes independently:</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-js">const charts = [
   echarts.init(document.getElementById('chart1')),
   echarts.init(document.getElementById('chart2')),
@@ -1106,13 +555,16 @@ charts.forEach(chart =&gt; chart.setOption(option));
 window.addEventListener('resize', () =&gt; {
   charts.forEach(chart =&gt; chart.resize());
 });</code></pre>
-</div><p>This approach keeps your dashboard layout consistent and interactive across screen sizes.</p><div class="snippet-container" id="hooZT">
- <div id="BaWyv_Dialog" class="dialog-backdrop">
+</div><p>This approach keeps your dashboard layout consistent and interactive across screen sizes.</p><div class="snippet-container">
+ <div class="button-group-run-edit"><button class="button-run-edit" onclick="runHtmlCode(this,'iyMFW','hLdtS', false)">Run</button> <button class="button-run-edit" onclick="openEditHtmlCodeDialog('hLdtS_Dialog','iyMFW')">Edit</button>
+ </div> <iframe id="hLdtS" class="result_iframe" style="display: none;"></iframe>
+ <div id="hLdtS_Dialog" class="dialog-backdrop">
   <div class="dialog">
-   <h2>Dialog 1</h2>
-   <div class="controls"><button onclick="renderIframe(this,'K4i6E_Textarea','BaWyv_IFrame')">Run</button> <button onclick="closeAll()">Close</button>
+   <div class="controls"><button onclick="runHtmlCode(this,'iyMFW','hLdtS_IFrame', true)">Run</button> <button onclick="closeAllHtmlCodeDialog()">Close</button>
    </div>
-   <div class="dialog-content"><textarea id="K4i6E_Textarea" class="textarea_dialog" placeholder="Type HTML here...">&lt;!DOCTYPE html&gt;
+   <div class="dialog-content">
+    <div class="editor-container">
+     <textarea id="iyMFW" class="textarea_dialog" placeholder="Type HTML here...">&lt;!DOCTYPE html&gt;
 &lt;html lang="en"&gt;
 &lt;head&gt;
   &lt;meta charset="UTF-8" /&gt;
@@ -1267,209 +719,30 @@ window.addEventListener('resize', () =&gt; {
     });
   &lt;/script&gt;
 &lt;/body&gt;
-&lt;/html&gt;</textarea> <iframe id="BaWyv_IFrame" class="iframe_dialog"></iframe>
+&lt;/html&gt;</textarea>
+    </div>
+    <div class="preview-container">
+     <iframe id="hLdtS_IFrame" class="result_iframe_dialog" style="border: none;"></iframe>
+    </div>
    </div>
   </div>
  </div>
- <div class="snippet-header" onclick="toggleSnippetAndRefresh('hooZT','K4i6E')">
-  Click to Try it <!--<span onclick="toggleSnippetAndRefresh('hooZT','K4i6E')">Click
-			to Try it</span> --> <!-- <span onclick="openDialog('BaWyv_Dialog')">Dialog</span> -->
- </div>
- <div class="snippet-body"><textarea id="K4i6E">&lt;!DOCTYPE html&gt;
-&lt;html lang="en"&gt;
-&lt;head&gt;
-  &lt;meta charset="UTF-8" /&gt;
-  &lt;title&gt;Multiple ECharts Example with Responsive Resize&lt;/title&gt;
-  &lt;style&gt;
-    body {
-      font-family: Arial, sans-serif;
-      margin: 0;
-      padding: 10px;
-      display: flex;
-      flex-wrap: wrap;
-      gap: 20px;
-      background: #f5f5f5;
-    }
-    .chart-container {
-      background: white;
-      border: 1px solid #ccc;
-      border-radius: 4px;
-      flex: 1 1 300px;
-      min-width: 280px;
-      height: 300px;
-      padding: 10px;
-      box-sizing: border-box;
-    }
-    .chart-title {
-      text-align: center;
-      font-weight: bold;
-      margin-bottom: 8px;
-    }
-  &lt;/style&gt;
-&lt;/head&gt;
-&lt;body&gt;
-
-  &lt;div id="chart1" class="chart-container"&gt;
-    &lt;div class="chart-title"&gt;Bar Chart&lt;/div&gt;
-    &lt;div style="width:100%;height:250px;" id="chart1_inner"&gt;&lt;/div&gt;
-  &lt;/div&gt;
-
-  &lt;div id="chart2" class="chart-container"&gt;
-    &lt;div class="chart-title"&gt;Line Chart&lt;/div&gt;
-    &lt;div style="width:100%;height:250px;" id="chart2_inner"&gt;&lt;/div&gt;
-  &lt;/div&gt;
-
-  &lt;div id="chart3" class="chart-container"&gt;
-    &lt;div class="chart-title"&gt;Pie Chart&lt;/div&gt;
-    &lt;div style="width:100%;height:250px;" id="chart3_inner"&gt;&lt;/div&gt;
-  &lt;/div&gt;
-
-  &lt;!-- ECharts library from CDN --&gt;
-  &lt;script src="https://cdn.jsdelivr.net/npm/echarts@5/dist/echarts.min.js"&gt;&lt;/script&gt;
-  &lt;script&gt;
-    // Initialize charts
-    const chart1 = echarts.init(document.getElementById('chart1_inner'));
-    const chart2 = echarts.init(document.getElementById('chart2_inner'));
-    const chart3 = echarts.init(document.getElementById('chart3_inner'));
-
-    // Bar chart option with responsive media query
-    const option1 = {
-      title: { text: 'Sales by Region', left: 'center' },
-      tooltip: {},
-      xAxis: {
-        type: 'category',
-        data: ['North', 'South', 'East', 'West']
-      },
-      yAxis: { type: 'value' },
-      series: [{
-        type: 'bar',
-        data: [320, 450, 300, 500],
-        itemStyle: { color: '#5470C6' }
-      }],
-      media: [
-        {
-          query: { maxWidth: 400 },
-          option: {
-            xAxis: { axisLabel: { show: false } },
-            title: { textStyle: { fontSize: 12 } }
-          }
-        }
-      ]
-    };
-
-    // Line chart option with responsive media query
-    const option2 = {
-      title: { text: 'Monthly Sales', left: 'center' },
-      tooltip: { trigger: 'axis' },
-      xAxis: {
-        type: 'category',
-        data: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun']
-      },
-      yAxis: { type: 'value' },
-      series: [{
-        type: 'line',
-        data: [120, 200, 150, 80, 70, 110],
-        smooth: true,
-        areaStyle: { color: 'rgba(84, 112, 198, 0.4)' },
-        symbol: 'circle',
-        symbolSize: 6
-      }],
-      media: [
-        {
-          query: { maxWidth: 400 },
-          option: {
-            title: { textStyle: { fontSize: 12 } },
-            series: [{ symbolSize: 3 }]
-          }
-        }
-      ]
-    };
-
-    // Pie chart option with responsive media query
-    const option3 = {
-      title: { text: 'Market Share', left: 'center' },
-      tooltip: { trigger: 'item', formatter: '{b}: {c} ({d}%)' },
-      legend: { orient: 'horizontal', bottom: 10 },
-      series: [{
-        type: 'pie',
-        radius: ['40%', '70%'],
-        data: [
-          { value: 335, name: 'Company A' },
-          { value: 310, name: 'Company B' },
-          { value: 234, name: 'Company C' },
-          { value: 135, name: 'Company D' }
-        ],
-        label: {
-          formatter: '{b}: {d}%',
-          fontWeight: 'bold',
-          fontSize: 12
-        },
-        labelLine: { smooth: true }
-      }],
-      media: [
-        {
-          query: { maxWidth: 400 },
-          option: {
-            legend: { show: false },
-            series: [{ label: { fontSize: 8 } }]
-          }
-        }
-      ]
-    };
-
-    // Set options on each chart
-    chart1.setOption(option1);
-    chart2.setOption(option2);
-    chart3.setOption(option3);
-
-    // Resize all charts on window resize
-    window.addEventListener('resize', () =&gt; {
-      chart1.resize();
-      chart2.resize();
-      chart3.resize();
-    });
-  &lt;/script&gt;
-&lt;/body&gt;
-&lt;/html&gt;</textarea> <br> <button onclick="renderIframe(this,'K4i6E','BaWyv')">Run</button>
-  <div id="BaWyv_FloatingLog" class="floatingLog" aria-live="polite" role="alert"></div> <iframe id="BaWyv" class="result_iframe" style="display: none;"></iframe>
-  <script>
-			{
-				let editor = CodeMirror.fromTextArea(document
-						.getElementById("K4i6E"), {
+ <script>
+{
+let editor = CodeMirror.fromTextArea(document.getElementById("iyMFW"), {
 					mode : "htmlmixed",
 					lineNumbers : false,
+                    lineWrapping: true,
 					tabSize : 2
-				});
-			    const mode = localStorage.getItem("mode") || "light";  
-			    const newTheme = mode === "dark" ? "material" : "default";
-			    editor.setOption("theme", newTheme);
-			    
-				codeMirrorMap.set("K4i6E", editor);
+});
+const darkmode = localStorage.getItem("mode") || "light";  
+const newTheme = darkmode === "dark" ? "dracula" : "default";
+editor.setSize("50%", "100%");
+editor.setOption("theme", newTheme);
+htmlCodeMirrorMap.set("iyMFW", editor);
+}
 
-				let editor1 = CodeMirror.fromTextArea(document.getElementById("K4i6E_Textarea"), {
-					mode : "htmlmixed",
-					lineNumbers : false,
-					tabSize : 2
-				});
-			    editor1.setOption("theme", newTheme);				
-				
-				codeMirrorMap.set("K4i6E_Textarea", editor1);
-			}
-		    function openDialog(id) {
-		        closeAll();
-		        document.getElementById(id).style.display = 'flex';
-		        setTimeout(() => {
-		        	 codeMirrorMap.get("K4i6E_Textarea").refresh();
-		        }, 100); // 100ms 
-		      }
-
-		      function closeAll() {
-		        document.querySelectorAll('.dialog-backdrop').forEach(el => {
-		          el.style.display = 'none';
-		        });
-		      }			
-		</script>
- </div>
+</script>
 </div><h3 id="summary">Summary</h3><table>
  <thead>
   <tr>
@@ -1541,20 +814,24 @@ window.addEventListener('resize', () =&gt; {
    <td>High contrast theme for dark environments</td>
   </tr>
  </tbody>
-</table><h3 id="applying-a-built-in-theme">Applying a Built-in Theme</h3><p>To apply a theme, pass its name as the second argument when initializing the chart:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</table><h3 id="applying-a-built-in-theme">Applying a Built-in Theme</h3><p>To apply a theme, pass its name as the second argument when initializing the chart:</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-js">// Use the 'dark' built-in theme
 const chart = echarts.init(document.getElementById('chart'), 'dark');
 
 chart.setOption({
   // Your chart option here
 });</code></pre>
-</div><div class="snippet-container" id="YYq1Z">
- <div id="RzWV4_Dialog" class="dialog-backdrop">
+</div><div class="snippet-container">
+ <div class="button-group-run-edit"><button class="button-run-edit" onclick="runHtmlCode(this,'jwUI8','RJXb7', false)">Run</button> <button class="button-run-edit" onclick="openEditHtmlCodeDialog('RJXb7_Dialog','jwUI8')">Edit</button>
+ </div> <iframe id="RJXb7" class="result_iframe" style="display: none;"></iframe>
+ <div id="RJXb7_Dialog" class="dialog-backdrop">
   <div class="dialog">
-   <h2>Dialog 1</h2>
-   <div class="controls"><button onclick="renderIframe(this,'HH0O6_Textarea','RzWV4_IFrame')">Run</button> <button onclick="closeAll()">Close</button>
+   <div class="controls"><button onclick="runHtmlCode(this,'jwUI8','RJXb7_IFrame', true)">Run</button> <button onclick="closeAllHtmlCodeDialog()">Close</button>
    </div>
-   <div class="dialog-content"><textarea id="HH0O6_Textarea" class="textarea_dialog" placeholder="Type HTML here...">&lt;!DOCTYPE html&gt;
+   <div class="dialog-content">
+    <div class="editor-container">
+     <textarea id="jwUI8" class="textarea_dialog" placeholder="Type HTML here...">&lt;!DOCTYPE html&gt;
 &lt;html lang="en"&gt;
 &lt;head&gt;
   &lt;meta charset="UTF-8" /&gt;
@@ -1618,119 +895,32 @@ chart.setOption({
     });
   &lt;/script&gt;
 &lt;/body&gt;
-&lt;/html&gt;</textarea> <iframe id="RzWV4_IFrame" class="iframe_dialog"></iframe>
+&lt;/html&gt;</textarea>
+    </div>
+    <div class="preview-container">
+     <iframe id="RJXb7_IFrame" class="result_iframe_dialog" style="border: none;"></iframe>
+    </div>
    </div>
   </div>
  </div>
- <div class="snippet-header" onclick="toggleSnippetAndRefresh('YYq1Z','HH0O6')">
-  Click to Try it <!--<span onclick="toggleSnippetAndRefresh('YYq1Z','HH0O6')">Click
-			to Try it</span> --> <!-- <span onclick="openDialog('RzWV4_Dialog')">Dialog</span> -->
- </div>
- <div class="snippet-body"><textarea id="HH0O6">&lt;!DOCTYPE html&gt;
-&lt;html lang="en"&gt;
-&lt;head&gt;
-  &lt;meta charset="UTF-8" /&gt;
-  &lt;title&gt;ECharts Dark Theme Example&lt;/title&gt;
-  &lt;style&gt;
-    /* Full viewport height and remove default margin */
-    body, html {
-      margin: 0;
-      padding: 0;
-      height: 100vh;
-      background-color: #333;
-    }
-    /* Chart container fills viewport */
-    #chart {
-      width: 100%;
-      height: 100%;
-    }
-  &lt;/style&gt;
-&lt;/head&gt;
-&lt;body&gt;
-  &lt;div id="chart"&gt;&lt;/div&gt;
-
-  &lt;!-- ECharts library from CDN --&gt;
-  &lt;script src="https://cdn.jsdelivr.net/npm/echarts@5/dist/echarts.min.js"&gt;&lt;/script&gt;
-
-  &lt;script&gt;
-    // Initialize chart with 'dark' theme
-    const chart = echarts.init(document.getElementById('chart'), 'dark');
-
-    const option = {
-      title: {
-        text: 'Sales Overview',
-        left: 'center',
-        textStyle: { color: '#fff' }
-      },
-      tooltip: {},
-      xAxis: {
-        type: 'category',
-        data: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
-        axisLine: { lineStyle: { color: '#aaa' } }
-      },
-      yAxis: {
-        type: 'value',
-        axisLine: { lineStyle: { color: '#aaa' } },
-        splitLine: { lineStyle: { color: '#555' } }
-      },
-      series: [{
-        type: 'bar',
-        data: [120, 200, 150, 80, 70, 110],
-        itemStyle: {
-          color: '#3398DB'
-        }
-      }]
-    };
-
-    chart.setOption(option);
-
-    // Handle window resize for responsiveness
-    window.addEventListener('resize', () =&gt; {
-      chart.resize();
-    });
-  &lt;/script&gt;
-&lt;/body&gt;
-&lt;/html&gt;</textarea> <br> <button onclick="renderIframe(this,'HH0O6','RzWV4')">Run</button>
-  <div id="RzWV4_FloatingLog" class="floatingLog" aria-live="polite" role="alert"></div> <iframe id="RzWV4" class="result_iframe" style="display: none;"></iframe>
-  <script>
-			{
-				let editor = CodeMirror.fromTextArea(document
-						.getElementById("HH0O6"), {
+ <script>
+{
+let editor = CodeMirror.fromTextArea(document.getElementById("jwUI8"), {
 					mode : "htmlmixed",
 					lineNumbers : false,
+                    lineWrapping: true,
 					tabSize : 2
-				});
-			    const mode = localStorage.getItem("mode") || "light";  
-			    const newTheme = mode === "dark" ? "material" : "default";
-			    editor.setOption("theme", newTheme);
-			    
-				codeMirrorMap.set("HH0O6", editor);
+});
+const darkmode = localStorage.getItem("mode") || "light";  
+const newTheme = darkmode === "dark" ? "dracula" : "default";
+editor.setSize("50%", "100%");
+editor.setOption("theme", newTheme);
+htmlCodeMirrorMap.set("jwUI8", editor);
+}
 
-				let editor1 = CodeMirror.fromTextArea(document.getElementById("HH0O6_Textarea"), {
-					mode : "htmlmixed",
-					lineNumbers : false,
-					tabSize : 2
-				});
-			    editor1.setOption("theme", newTheme);				
-				
-				codeMirrorMap.set("HH0O6_Textarea", editor1);
-			}
-		    function openDialog(id) {
-		        closeAll();
-		        document.getElementById(id).style.display = 'flex';
-		        setTimeout(() => {
-		        	 codeMirrorMap.get("HH0O6_Textarea").refresh();
-		        }, 100); // 100ms 
-		      }
-
-		      function closeAll() {
-		        document.querySelectorAll('.dialog-backdrop').forEach(el => {
-		          el.style.display = 'none';
-		        });
-		      }			
-		</script>
- </div>
-</div><h3 id="creating-your-own-custom-theme">Creating Your Own Custom Theme</h3><p>Custom themes allow you to override colors, fonts, and other style properties globally across charts.</p><h3 id="step-1-define-a-theme-object">Step 1: Define a Theme Object</h3><p>A theme object contains properties such as <code>color</code>, <code>backgroundColor</code>, <code>textStyle</code>, and component-specific styles.</p><p>Example of a simple custom theme:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</script>
+</div><h3 id="creating-your-own-custom-theme">Creating Your Own Custom Theme</h3><p>Custom themes allow you to override colors, fonts, and other style properties globally across charts.</p><h3 id="step-1-define-a-theme-object">Step 1: Define a Theme Object</h3><p>A theme object contains properties such as <code>color</code>, <code>backgroundColor</code>, <code>textStyle</code>, and component-specific styles.</p><p>Example of a simple custom theme:</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-js">const myTheme = {
   color: ['#5470C6', '#91CC75', '#FAC858', '#EE6666', '#73C0DE'],  // Custom color palette
   backgroundColor: '#f5f5f5',  // Chart background color
@@ -1756,21 +946,26 @@ chart.setOption({
     }
   }
 };</code></pre>
-</div><h3 id="step-2-register-the-theme-with-echarts">Step 2: Register the Theme with ECharts</h3><p>Register your theme under a unique name using <code>echarts.registerTheme</code> before initializing charts:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</div><h3 id="step-2-register-the-theme-with-echarts">Step 2: Register the Theme with ECharts</h3><p>Register your theme under a unique name using <code>echarts.registerTheme</code> before initializing charts:</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-js">echarts.registerTheme('myCustomTheme', myTheme);</code></pre>
-</div><h3 id="step-3-use-your-custom-theme">Step 3: Use Your Custom Theme</h3><p>Apply your registered theme by name when creating chart instances:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</div><h3 id="step-3-use-your-custom-theme">Step 3: Use Your Custom Theme</h3><p>Apply your registered theme by name when creating chart instances:</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-js">const chart = echarts.init(document.getElementById('chart'), 'myCustomTheme');
 
 chart.setOption({
   // Chart configuration here
 });</code></pre>
-</div><div class="snippet-container" id="YWO0D">
- <div id="HanVl_Dialog" class="dialog-backdrop">
+</div><div class="snippet-container">
+ <div class="button-group-run-edit"><button class="button-run-edit" onclick="runHtmlCode(this,'XVujo','udTq1', false)">Run</button> <button class="button-run-edit" onclick="openEditHtmlCodeDialog('udTq1_Dialog','XVujo')">Edit</button>
+ </div> <iframe id="udTq1" class="result_iframe" style="display: none;"></iframe>
+ <div id="udTq1_Dialog" class="dialog-backdrop">
   <div class="dialog">
-   <h2>Dialog 1</h2>
-   <div class="controls"><button onclick="renderIframe(this,'ZGIDD_Textarea','HanVl_IFrame')">Run</button> <button onclick="closeAll()">Close</button>
+   <div class="controls"><button onclick="runHtmlCode(this,'XVujo','udTq1_IFrame', true)">Run</button> <button onclick="closeAllHtmlCodeDialog()">Close</button>
    </div>
-   <div class="dialog-content"><textarea id="ZGIDD_Textarea" class="textarea_dialog" placeholder="Type HTML here...">&lt;!DOCTYPE html&gt;
+   <div class="dialog-content">
+    <div class="editor-container">
+     <textarea id="XVujo" class="textarea_dialog" placeholder="Type HTML here...">&lt;!DOCTYPE html&gt;
 &lt;html lang="en"&gt;
 &lt;head&gt;
   &lt;meta charset="UTF-8" /&gt;
@@ -1857,141 +1052,30 @@ chart.setOption({
     });
   &lt;/script&gt;
 &lt;/body&gt;
-&lt;/html&gt;</textarea> <iframe id="HanVl_IFrame" class="iframe_dialog"></iframe>
+&lt;/html&gt;</textarea>
+    </div>
+    <div class="preview-container">
+     <iframe id="udTq1_IFrame" class="result_iframe_dialog" style="border: none;"></iframe>
+    </div>
    </div>
   </div>
  </div>
- <div class="snippet-header" onclick="toggleSnippetAndRefresh('YWO0D','ZGIDD')">
-  Click to Try it <!--<span onclick="toggleSnippetAndRefresh('YWO0D','ZGIDD')">Click
-			to Try it</span> --> <!-- <span onclick="openDialog('HanVl_Dialog')">Dialog</span> -->
- </div>
- <div class="snippet-body"><textarea id="ZGIDD">&lt;!DOCTYPE html&gt;
-&lt;html lang="en"&gt;
-&lt;head&gt;
-  &lt;meta charset="UTF-8" /&gt;
-  &lt;title&gt;Custom ECharts Theme Demo&lt;/title&gt;
-  &lt;style&gt;
-    body, html {
-      margin: 0; padding: 0; height: 100vh;
-      background-color: #f5f5f5;
-      font-family: Arial, sans-serif;
-    }
-    #chart {
-      width: 100%;
-      height: 100%;
-    }
-  &lt;/style&gt;
-&lt;/head&gt;
-&lt;body&gt;
-  &lt;div id="chart"&gt;&lt;/div&gt;
-
-  &lt;!-- ECharts library --&gt;
-  &lt;script src="https://cdn.jsdelivr.net/npm/echarts@5/dist/echarts.min.js"&gt;&lt;/script&gt;
-  &lt;script&gt;
-    // Step 1: Define a custom theme object
-    const myTheme = {
-      color: ['#5470C6', '#91CC75', '#FAC858', '#EE6666', '#73C0DE'],  // Custom palette
-      backgroundColor: '#f5f5f5',  // Light gray background
-      textStyle: {
-        fontFamily: 'Arial, sans-serif',
-        color: '#333'
-      },
-      title: {
-        textStyle: {
-          fontWeight: 'bold',
-          color: '#444'
-        }
-      },
-      tooltip: {
-        backgroundColor: 'rgba(50, 50, 50, 0.7)',
-        textStyle: {
-          color: '#fff'
-        }
-      },
-      legend: {
-        textStyle: {
-          color: '#666'
-        }
-      }
-    };
-
-    // Step 2: Register the custom theme
-    echarts.registerTheme('myCustomTheme', myTheme);
-
-    // Step 3: Initialize chart with the custom theme
-    const chart = echarts.init(document.getElementById('chart'), 'myCustomTheme');
-
-    // Sample chart option
-    const option = {
-      title: {
-        text: 'Monthly Sales',
-        left: 'center'
-      },
-      tooltip: {
-        trigger: 'axis'
-      },
-      xAxis: {
-        type: 'category',
-        data: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun']
-      },
-      yAxis: {
-        type: 'value'
-      },
-      series: [{
-        name: 'Sales',
-        type: 'bar',
-        data: [120, 200, 150, 80, 70, 110]
-      }]
-    };
-
-    chart.setOption(option);
-
-    // Resize on window size change
-    window.addEventListener('resize', () =&gt; {
-      chart.resize();
-    });
-  &lt;/script&gt;
-&lt;/body&gt;
-&lt;/html&gt;</textarea> <br> <button onclick="renderIframe(this,'ZGIDD','HanVl')">Run</button>
-  <div id="HanVl_FloatingLog" class="floatingLog" aria-live="polite" role="alert"></div> <iframe id="HanVl" class="result_iframe" style="display: none;"></iframe>
-  <script>
-			{
-				let editor = CodeMirror.fromTextArea(document
-						.getElementById("ZGIDD"), {
+ <script>
+{
+let editor = CodeMirror.fromTextArea(document.getElementById("XVujo"), {
 					mode : "htmlmixed",
 					lineNumbers : false,
+                    lineWrapping: true,
 					tabSize : 2
-				});
-			    const mode = localStorage.getItem("mode") || "light";  
-			    const newTheme = mode === "dark" ? "material" : "default";
-			    editor.setOption("theme", newTheme);
-			    
-				codeMirrorMap.set("ZGIDD", editor);
+});
+const darkmode = localStorage.getItem("mode") || "light";  
+const newTheme = darkmode === "dark" ? "dracula" : "default";
+editor.setSize("50%", "100%");
+editor.setOption("theme", newTheme);
+htmlCodeMirrorMap.set("XVujo", editor);
+}
 
-				let editor1 = CodeMirror.fromTextArea(document.getElementById("ZGIDD_Textarea"), {
-					mode : "htmlmixed",
-					lineNumbers : false,
-					tabSize : 2
-				});
-			    editor1.setOption("theme", newTheme);				
-				
-				codeMirrorMap.set("ZGIDD_Textarea", editor1);
-			}
-		    function openDialog(id) {
-		        closeAll();
-		        document.getElementById(id).style.display = 'flex';
-		        setTimeout(() => {
-		        	 codeMirrorMap.get("ZGIDD_Textarea").refresh();
-		        }, 100); // 100ms 
-		      }
-
-		      function closeAll() {
-		        document.querySelectorAll('.dialog-backdrop').forEach(el => {
-		          el.style.display = 'none';
-		        });
-		      }			
-		</script>
- </div>
+</script>
 </div><h3 id="tips-for-custom-themes">Tips for Custom Themes</h3><ul>
  <li>Define a consistent color palette to unify your charts’ look.</li>
  <li>Customize component styles like <code>title</code>, <code>legend</code>, <code>tooltip</code>, and <code>axis</code> for full control.</li>
@@ -2039,16 +1123,19 @@ chart.setOption({
  <li>Use color palettes that are friendly to colorblind users; avoid relying solely on color to convey information.</li>
  <li>Utilize tools like <a href="https://colorbrewer2.org/">ColorBrewer</a> or <a href="https://color.adobe.com/create">Adobe Color</a> to select palettes optimized for accessibility.</li>
  <li>Include shapes, patterns, or labels in addition to color for differentiation.</li>
-</ul><h3 id="detecting-and-supporting-dark-mode">Detecting and Supporting Dark Mode</h3><p>Dark mode reduces eye strain in low-light environments by inverting typical light backgrounds to dark tones. Supporting dark mode in your charts enhances user experience on devices and platforms that offer this feature.</p><h3 id="detecting-dark-mode-with-css-media-query">Detecting Dark Mode with CSS Media Query</h3><p>You can detect if a user prefers dark mode using JavaScript and the <code>prefers-color-scheme</code> media query:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</ul><h3 id="detecting-and-supporting-dark-mode">Detecting and Supporting Dark Mode</h3><p>Dark mode reduces eye strain in low-light environments by inverting typical light backgrounds to dark tones. Supporting dark mode in your charts enhances user experience on devices and platforms that offer this feature.</p><h3 id="detecting-dark-mode-with-css-media-query">Detecting Dark Mode with CSS Media Query</h3><p>You can detect if a user prefers dark mode using JavaScript and the <code>prefers-color-scheme</code> media query:</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-js">const isDarkMode = window.matchMedia &amp;&amp; window.matchMedia('(prefers-color-scheme: dark)').matches;</code></pre>
 </div><p>Use this boolean to load appropriate chart themes or styles.</p><h3 id="toggling-dark-mode-in-echarts">Toggling Dark Mode in ECharts</h3><ol>
  <li><strong>Use built-in themes:</strong> ECharts includes a <code>dark</code> theme designed for dark backgrounds and high contrast.</li>
-</ol><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</ol><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-js">const theme = isDarkMode ? 'dark' : 'light';
 const chart = echarts.init(document.getElementById('chart'), theme);</code></pre>
 </div><ol start="2">
  <li><strong>Dynamic theme switching:</strong> Allow users to toggle between modes and update the chart accordingly.</li>
-</ol><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</ol><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-js">function switchTheme(isDark) {
   const themeName = isDark ? 'dark' : 'light';
   chart.dispose();
@@ -2058,7 +1145,8 @@ const chart = echarts.init(document.getElementById('chart'), theme);</code></pre
 }</code></pre>
 </div><ol start="3">
  <li><strong>Custom dark mode styling:</strong> When creating your own themes, adapt background colors, axis lines, text colors, and tooltip styles to suit dark environments.</li>
-</ol><h3 id="example-accessible-color-palette-in-dark-mode">Example: Accessible Color Palette in Dark Mode</h3><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</ol><h3 id="example-accessible-color-palette-in-dark-mode">Example: Accessible Color Palette in Dark Mode</h3><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-js">const darkTheme = {
   backgroundColor: '#121212',
   color: ['#90caf9', '#f48fb1', '#ce93d8', '#81c784', '#ffb74d'],
@@ -2136,9 +1224,19 @@ echarts.registerTheme('customDark', darkTheme);</code></pre>
 </a>
 
 
+<a href="javascript-html5-animation.htm">
+<div class="book-cover" style="background-color: #f9f6f1;border: 1px solid #ccc;"> 
+    <div class="book-cover-title" style="font-size: 16px;color: #333;top: 10px;">JavaScript HTML5 Animation</div>
+    <div class="book-cover-author">readbytes</div>
+    <div class="book-cover-bottom-stripe" style="background-color: #333;"></div>
+    <img class="book-cover-icon" style="width: 120px;height: 120px;top: 60px;" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFoAAABaCAYAAAA4qEECAAACw0lEQVR4Xu3WvWoUURjG8dXGS9BK7awECysR78Ab8RqUmZGE3QmKmEJUxEarFJJCFK0sbGzEThBEJFjEbbQwsOLOcZZl2cN/PvbMx+6cCc8PHpLs2fN+DAmbwUBERERERERERERERERERERERDYrDqaPRmFiFokjc4vvkZriKDmyH25hgmTMu3Vk6iKDgTnBO73HJV3CGq5YZ1V4v5dGoTnLxarErrW9bU7HobmRvv52GCaf06/f0t/+L7Ofd0Jzad4vW8MlcWAu2716hwv5HXOF8/dCdhH/wx28Nwqmj7lEX8JdvMbh82LjWZtJ/9up1Ie7eI3D58XGszZj+/3LrRf38VL6ofKKg+fFxrM28+Ng2efeKHueF+7kJQ5dFBvPug538hKHLooedEMcepGqeN8148P5/edPs2d2yvpwJy9xaC7mivdd41KDeD4Mkn3u5R0OXZSyRZvEpe6bl8v3zb7n+SzcyyvDoTnPgYti41nTvH+3uubD+/Pw9UW4m1fSAcccuCjrfNBthLt5hcOWZZMPuk4f7uYVDlsWG8/ajO3ge6VeP7mfN3KG7TyTyfJB7+9VetD+/lZzUF+y9ywxTx5kX18V7ucNDtr3cD8vjILkBQfte+5smXPcs3Mc8jgkjpKEe3aOQx6XcM/OccDjEu7ZOQ7YNKzvIv2c+Mg6TROG5iT7dIoDNou5xvqusrUaJko+sUenMgM2CGtXxXpNMgyT16zfKQ5YN6xbF+vWze6uOcXanUr/xP5yyBqZsm5dO6E5k1O/cljXCxyyalivqbTmH/aoGtb0AoeskvimucB6bWCfKmEtr3BYxxyxTpty+q1OZK6zjncyQ5dnwvvrkNO3JOYu73srO3xOtsxV3lunTP+c8E5vxKH5wGVGt81Fvm+T0hm+2vPEUfKP7xERERERERERERERERERERERERGRbv0HldRbu8sOVfIAAAAASUVORK5CYII="/>
+  </div>
+</a>
+
+
 <a href="javascript-dom-programming.htm">
 <div class="book-cover" style="background-color: #f9f6f1;border: 1px solid #ccc;"> 
-    <div class="book-cover-title" style="font-size: 16px;color: #333;top: 20px;">JavaScript DOM Programming</div>
+    <div class="book-cover-title" style="font-size: 16px;color: #333;top: 10px;">JavaScript DOM Programming</div>
     <div class="book-cover-author">readbytes</div>
     <div class="book-cover-bottom-stripe" style="background-color: #333;"></div>
     <img class="book-cover-icon" style="width: 90px;height: 90px;top: 60px;" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFoAAABaCAYAAAA4qEECAAADUklEQVR4Xu2dv47TQBDGI0RDczY9rwMlrwEFBweC/t4EXRwaXuI6WiSaOLkCIZ6BCqTgPRFr8zkbnPF4Zuydn/RVuzsz33eSlX/2LRYRm1Xxe1MVOzY19eL6/6NzfqCw/ilEvXc2Mwh7pNiuyks8O1T1snyNfVLgWQ5hjxbcyCHskaJelVd4drCW5Vvsk6JzlkHYo6XXph5Q6hwEfUZASDhLqUOZ+Ri96vTa1ANKHQ+aAKWOB02AUseDJkCp40EToNTxoAlQ6njQBCh1PGgClDrZBs0l7JEi23eGXMIeKTbVxSs8O1Trm4tL7JMCz3IIe7Rsq+IXbh6iUA97nALPDxXWP4W29w5xMVwbG67rOBVR76LNAA9aiKyCbq49L0QbRmgGHXuul8VLXB+F3IPGtdGIm0o21gpay+89Gs01gtbwecDPz08eSQ8hHTT6C55xjwh3q+IZDhO0u148wL0cSAR93cyOfoKCV9wryu528RCHmpuCR/StRvOy7w8OOHUFT+jTDHdV+RwHnpqCB/SVFRLXaGfhQYvhQQvhQQvhQQvhQf8DXyZNXehPnW+fisc45FwUvKFfNXC4uQn9qvD1Y1maG4qB2NP3xiOui1NX5Zv9QNuq+IDrU6Xx8n7vq16WV7guTvxKYH1TvsP1qWLOl7mBmDDny9xATJjzZW4gJsz5MjcQE+Z8mRuICXO+zA3EhDlf5gZiwpwvcwMxYc6XuYGYMOfL3EBMmPNlbiAmzPkyNxAT5nyZG4gJc778Y1Ih/IN/QeKh5ij0q8acv5z9YenL2T045NSF/rIhfiWQ9Q9oxsaDFsKDFsKDFsKDFsKDjqj9ZqFx8dvfRubWb+gcn+Yv/hSHuh9swrcoh9nRT5DaLcpf/KZ7GXAIXB8D6aADGj5btJprBB3Q8nvQGNfGRCvogLjntT+8SubhVVohBzSDDoh6F20GeNBCzCZo7Qeh4vmhwvqnEPWOmzmEPVJk9Vhj3Mgh7JHi4LLApTMuL52zDMIeLb029YBSh+v6G85S6lBmPkavOr029YBSx4MmQKnjQROg1PGgCVDqeNAEKHU8aAKUOh40AUodD5oApU62QXMJe6TI9p0hl7BHitz+XTX3j2DO+gHKkfODhPVPsRnZ+1+tJg8Iaaje6wAAAABJRU5ErkJggg=="/>
@@ -2148,7 +1246,7 @@ echarts.registerTheme('customDark', darkTheme);</code></pre>
 
 <a href="javascript-data-visualization.htm">
 <div class="book-cover" style="background-color: #f9f6f1;border: 1px solid #ccc;"> 
-    <div class="book-cover-title" style="font-size: 16px;color: #333;top: 20px;">JavaScript Data Visualization</div>
+    <div class="book-cover-title" style="font-size: 16px;color: #333;top: 10px;">JavaScript Data Visualization</div>
     <div class="book-cover-author">readbytes</div>
     <div class="book-cover-bottom-stripe" style="background-color: #333;"></div>
     <img class="book-cover-icon" style="width: 90px;height: 90px;top: 60px;" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFoAAABaCAYAAAA4qEECAAAC0UlEQVR4Xu3dMWsUURSG4fwr2U6zJI0WKZSAaa0EG7tU2giWimLETrQQQRCxUDsbK3+IYOWCiFU06IQz356ZuffOvXdm4A28ze585OxDsLDZnR3zs1pf+rHavXhKWdpY2/Mf50HKEMgV+4cs/1z8/v6OMiTYm9Zfsz5M42r9VQNdLqArBXSlgK4U0JUCulKLgrb39aW7ObQY6PXl/S3Qrs6e1f3ULQZaMYfS/dTZ2xYDvff6g9tS7ge6YEBXCuhKAV0poCsFdKWArtQk0G9e3Tt9dnLc2+dPD1sboCOzv2Ool8/vujsFBtpJMYfydgoMtFMqWOpuLtnbgC6YvQ3ogtnbgC6YvQ3ogtnbgC6YvQ3ogtnbgC6YvQ3ogtnboqCvHR20xn11/UKF6gNL3Y1JP0dXV68fbG01+3wUtP6yvp4+OXZ3CtUHlrpL7ew/tvRz9KV7zT4LtGmW0O+/fnRr3l86tH4u/Xwhv88+C7QJ6MhdakBH7lIDOnKXGtCRu9SAjtylBnTkLjWgI3e67evnt7fnG6BH7EJqdkCP2IXU7IAesft169DN2wE9YqfAQDt35NgpMNDOHTl2Cgy0c0eOnQID7dxhXwvJ2ykw0M4d9rWQvJ0CA+3cYV8LydspMNDOHfa1C/cfuQ3tFBho5w77mgID/f99oCeGDsnbKXBp6JDUR7PPAm12QO8CvVXzfhe0QoWC6fOhOwUOhX7w4rGbt+vKPgu02QE9YqfAi4Meai7QITU7oEfsQmp2s4S+cfumW/P+XKDvXFm7ebtZQusBeshcoL8c7rt5O6BH7BQYaOeOHDsFBtq5I8dOgYF27sixU2CgnTty7BQYaOeOHDsFBtq5I8dOgRcHPVQXdEhT7Wb536RDAQ30Vs1uNtAUF9CVArpSQFcK6EoBXSmgK9WG5qtQi2RNV803KsuLlDn7RcpgF6qF3Pz8fWOjD1JyrS9g/wOlHj3Oru4PcQAAAABJRU5ErkJggg=="/>
@@ -2209,30 +1307,36 @@ echarts.registerTheme('customDark', darkTheme);</code></pre>
 
 <a href='javascript.htm'><div class='book-cover' style='background-color: #f9f6f1;color: #111111;border: 1px solid #ccc;display: flex;justify-content: center;align-items: center;text-align: center;'>More Javascript Books</div></a>
 </div>
-</div>
-  </div>
-  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
-  
-  <script>
-    function copyCode(button) {
-      const code = button.nextElementSibling.innerText;
-      navigator.clipboard.writeText(code).then(() => {
-        button.textContent = 'Copied!';
-        setTimeout(() => { button.textContent = 'Copy'; }, 1500);
-      });
-    }
-  </script>  
-<div id="floatingLog" aria-live="polite" role="alert"></div>
-<footer class="page-footer">
-    <nav>
-      <a href="https://readbytes.github.io">Home</a> | 
-      Email:<script language="JavaScript" type="text/javascript">
+</div><script>
+function copyCode(button) {const code = button.nextElementSibling.innerText;navigator.clipboard.writeText(code).then(() => {button.textContent = 'Copied!';setTimeout(() => { button.textContent = 'Copy'; }, 1500);});}
+</script><div id="floatingLog" aria-live="polite" role="alert"></div></div>
+<style>
+.site-footer {margin-top: 60px;padding: 20px 0;border-top: 1px solid #eee;text-align: center;font-size: 14px;}
+.site-footer a {text-decoration: none;}
+.light-mode .site-footer {color: #777;border-color: #eee;}
+.dark-mode .site-footer {color: #888;border-color: #333;}
+.light-mode .site-footer a {color: #555;}
+.dark-mode .site-footer a {color: #aaa;}
+.site-footer a:hover {text-decoration: underline;}    
+</style>
+<footer class="site-footer">
+<nav><a href="https://readbytes.github.io">Home</a> |Email:<script type="text/javascript">
 var part1 = 'yinpeng';var part6 = '263';var part2 = Math.pow(2,6);var part3 = String.fromCharCode(part2);var part4 = 'hotmail dot com';var part5 = part1 + String.fromCharCode(part2) + part4;document.write(part1 + part6 + part3 + part4);
 </script>
-    </nav>
-  <p>© 2025 — All rights reserved.</p>    
-  </footer>
-
+| <a id="mode-toggle" href="#">Toggle Dark Mode</a>
+</nav><p>© 2025 — All rights reserved.</p></footer>
+<script>
+const toggleButton = document.getElementById('mode-toggle');
+const body = document.body;
+const savedMode = localStorage.getItem('mode') || 'light';
+body.classList.add(savedMode + '-mode');
+toggleButton.addEventListener('click', () => {
+      const isDark = body.classList.contains('dark-mode');
+      body.classList.toggle('dark-mode', !isDark);
+      body.classList.toggle('light-mode', isDark);
+      localStorage.setItem('mode', isDark ? 'light' : 'dark');
+});
+function copyCode(button) {const code = button.nextElementSibling.innerText;navigator.clipboard.writeText(code).then(() => {button.textContent = 'Copied!';setTimeout(() => { button.textContent = 'Copy'; }, 1500);});}
+</script>
 </body>
 </html>

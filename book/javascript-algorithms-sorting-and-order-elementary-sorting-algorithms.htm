@@ -1,192 +1,165 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
+<meta charset="UTF-8">
 <title>JavaScript Algorithms Sorting and Order: Elementary Sorting Algorithms</title>
-<link rel='shortcut icon' href='https://java2s.com/style/favicon.ico'>
+<link rel='shortcut icon' href='https://readbytes.github.io/images/favicon.ico'>
 <link href="https://fonts.googleapis.com/css2?family=Merriweather&display=swap" rel="stylesheet" />
 <link href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
-
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.css" />
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/theme/material.css"> <!-- Dark theme -->
-<script src="https://cdn.jsdelivr.net/npm/typescript@5/lib/typescript.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/htmlmixed/htmlmixed.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/xml/xml.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/css/css.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/javascript/javascript.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/javascript/typescript.min.js"></script>
-<style>
-    #floatingLog {
-      position: fixed;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      background: rgba(20, 20, 20, 0.95);
-      color: white;
-      font-family: monospace;
-      font-size: 14px;
-      padding: 16px 20px;
-      border-radius: 8px;
-      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
-      max-width: 80%;
-      max-height: 200px;
-      overflow-y: auto;
-      display: none;
-      z-index: 9999;
-      pointer-events: none;
-      white-space: pre-wrap;
-      text-align: center;
-    }
-</style>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/theme/dracula.min.css"><style>
+html {scroll-behavior: smooth;}  
+body {font-family: 'Merriweather', serif;;margin: 0;padding: 2rem 1rem;font-size: 15px;line-height: 1.5;transition: background-color 0.3s, color 0.3s;}
+.container {max-width: 750px;margin: 0 auto;padding: 1rem 2rem;}
+.light-mode {background-color: #f8f7f5;color: #333;} 
+.dark-mode {background-color: #121212;color: #e0e0e0;}
+a { text-decoration: none;transition: color 0.2s;}
+a:hover {text-decoration: underline;}
+.light-mode a {color: #555;}
+.dark-mode a {color: #aaa;}
+</style><style>
+.related-book-list {display: flex;flex-wrap: wrap;gap: 20px;}
+.related-books {margin-top: 40px;}
+.related-books h2 {font-size: 22px;margin-bottom: 20px;border-bottom: 2px solid #eee;padding-bottom: 8px;}
+.light-mode .related-books h2 {color: #333;border-color: #eee;}
+.dark-mode .related-books h2 {color: #ddd;border-color: #333;}
+</style><style>
+.book-cover {width: 130px;height: 180px;font-family: Arial, sans-serif;position: relative;overflow: hidden;box-shadow: 2px 2px 4px rgba(0,0,0,0.1);}
+.book-cover-bottom-stripe {position: absolute;bottom: 0;left: 0;height: 5px;width: 100%;}
+.book-cover-title {position: absolute;width: 100%;text-align: center;font-weight: bold;}
+.book-cover-icon {position: absolute;left: 50%;transform: translateX(-50%);display: flex;align-items: center;justify-content: center;}
+.book-cover-author {position: absolute;bottom: 10px;width: 100%;text-align: center;font-size: 8px;color: #333;}
+</style><style>
+.book-title-toc {font-size: 32px;font-weight: bold; }
+.book-subtitle-toc {font-size: 18px;margin-top: 8px;font-style: italic;}
+.book-header {text-align: center;margin-bottom: 40px;}
+
+.toc-container {border-radius: 10px;padding: 30px;margin-bottom: 40px;box-shadow: 0 8px 20px rgba(0,0,0,0.05);}
+h1 {font-size: 24px;text-align: center;margin-bottom: 30px;letter-spacing: 1px;padding-bottom: 10px;}
+.toc-list,.toc-section-list {list-style: none;padding: 0;margin: 0;}
+.toc-section-list {padding-left: 18px;margin-top: 6px;margin-bottom: 20px; }
+.toc-chapter {padding: 20px 0;}
+.chapter-title,.toc-section {display: flex;justify-content: space-between;padding-top: 4px;}
+.chapter-title {font-size: 17px;font-weight: bold;}
+.chapter-page,.section-page {font-style: italic;}
+ 
+ 
+.light-mode .book-title-toc,.light-mode .chapter-title,.light-mode .book-name {color: #222;}
+.light-mode .book-subtitle-toc,.light-mode .book-sub,.light-mode .chapter-page,.light-mode .section-page {color: #666;}
+.light-mode .toc-container { background: #fff;border: 1px solid #ddd;}
+.light-mode h1 {border-bottom: 2px solid #eee;color: #222;}
+.light-mode .toc-section {  color: #444;}
+
+.light-mode .book-cover { border: 1px solid #ccc;box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);}
+.light-mode .book-title,.light-mode .series-name {color: #fff;}
+.light-mode .book-subtitle,.light-mode .book-footer {color: #aaa;}
+
+.dark-mode .book-title-toc,.dark-mode .chapter-title,.dark-mode .book-name {color: #f5f5f5;}
+.dark-mode .book-subtitle-toc,.dark-mode .book-sub,.dark-mode .chapter-page,.dark-mode .section-page {color: #aaa;}
+.dark-mode .toc-container {background: #1e1e1e;border: 1px solid #444;}
+
+.dark-mode h1 {border-bottom: 2px solid #333;color: #eee;}
+.dark-mode .toc-section {color: #bbb;}
+
+.dark-mode .related-books h2 {color: #ddd;border-bottom: 2px solid #333;}
+.dark-mode .book-title,.dark-mode .series-name {color: #fff;}
+.dark-mode .book-subtitle,.dark-mode .book-footer {color: #bbb;}
+.dark-mode .toc-section {color: #ddd;}
+
+@media (max-width: 600px) {
+  .chapter-title,
+  .toc-section {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .chapter-page,
+  .section-page {
+    margin-top: 4px;
+  }
+}
+
+</style><style>
+.light-mode .container {box-shadow: 0 0 15px rgba(0,0,0,0.1);}
+.dark-mode .container {box-shadow: 0 0 15px rgba(255, 255, 255, 0.05);}
+
+h1, h2, h3 {font-weight: 600;margin-top: 2.5rem;margin-bottom: 1rem;line-height: 1.2;}
+h1 { font-size: 1.8rem; }
+h2 { font-size: 1.4rem; }
+h3 { font-size: 1.2rem; }
+
+table {width: 100%;border-collapse: collapse;font-family: sans-serif;font-size: 1em;margin: 1em 0;}
+th, td {padding: 0.6em 1em;text-align: left;border: 1px solid;}
+tr:nth-child(even) {  background-color: inherit;}
+tr:hover { background-color: inherit;}
+
+code {color: #d35400;}
+
+.chapter-navi-section {display: flex;justify-content: space-between;align-items: center;padding-bottom: 10px;padding-top: 10px;}
+.nav-link {color: inherit;text-decoration: none;opacity: 0.5;transition: opacity 0.3s ease, text-decoration 0.3s ease;}
+.nav-link:hover {opacity: 0.9;text-decoration: underline;}
+.prev { text-align: left; }
+.toc-link { text-align: center; }
+.next { text-align: right; }
+
+.download-section {display: flex;align-items: center;justify-content: center;gap: 2rem;padding: 2rem 1rem;max-width: 600px;margin: 3rem auto;border-radius: 12px;box-shadow: 0 4px 10px rgba(0,0,0,0.05);}
+.download-info h2 {margin: 0 0 0.5rem;font-size: 1.2rem;}
+.format-label {margin: 0 0 0.5rem;font-size: 0.95rem;}
+.download-buttons {display: flex;gap: 1rem;}
+.download-button {background-color: #4A90E2;color: white;padding: 0.5em 1.2em;border-radius: 25px;font-size: 0.95rem;text-decoration: none;transition: background-color 0.3s ease;}
+.download-button:hover {background-color: #357ABD;}
+
+.code-block {position: relative;margin-bottom: 1em;}
+.copy-button {background: transparent;color: white;position: absolute;top: 8px;right: 8px;border: none;padding: 4px 8px;font-size: 12px;border-radius: 4px;cursor: pointer;z-index: 1;}
+.copy-button:hover {background-color: #0056b3;}
+
+.snippet-container {overflow: hidden;}
+.snippet-header {padding: 0.75rem 1rem;cursor: pointer;font-size: 1rem;background-color: #eeeeee;color:  #111111; border-radius: 8px;cursor: pointer;box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+.snippet-body {display: none;font-family: monospace;}
+.snippet-container.open .snippet-body {display: block;}
+
+.CodeMirror {border: 2px solid #ccc;border-radius: 4px;resize: vertical;}
+
+.light-mode .format-label {color: #888;}
+.light-mode th {background-color: #f2f2f2;}
+.light-mode tr:nth-child(even) {background-color: #fafafa;}
+.light-mode tr:hover {background-color: #e6f7ff;}
+
+.dark-mode .snippet-header {background-color: #333;color:  #ddd; }
+.dark-mode .format-label {color: #aaa;}
+.dark-mode th {background-color: #333;color: #fff;}
+.dark-mode td {border-color: #444;}
+.dark-mode tr:nth-child(even) {background-color: #2a2a2a;}
+.dark-mode tr:hover {background-color: #2c3e50;}
+
+
+.button-group-run-edit {display: flex;width: 100%;gap: 1rem;}
+.button-run-edit {flex: 1;padding: 1rem;font-size: 1rem;font-weight: 600;border: none;border-radius: 8px;cursor: pointer;transition: background 0.3s, color 0.3s;}
+
+.light-mode .button-run-edit {background-color: #f0f0f0;color: #222;box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);}
+.light-mode .button-run-edit:hover {background-color: #e0e0e0;}
+
+.dark-mode .button-run-edit {background-color: #2a2a2a;color: #f5f5f5;box-shadow: 0 0 10px rgba(255, 255, 255, 0.05);}
+.dark-mode .button-run-edit:hover {background-color: #3a3a3a;}
+
+button { padding: 0.5em 1em; background: green; color: white; border: none; cursor: pointer; }
+button:hover { background: #1e7e34; }
+.result_iframe { width:99%; margin-top: 1em;  resize: both;background-color: #515b63;border:1px solid #ccc;}   
+
+.dialog-backdrop {position: fixed;top: 0;left: 0;width: 100vw;height: 100vh;background: rgba(0,0,0,0.5);display: none;justify-content: center;align-items: center;z-index: 10;}
+.dialog {background: #90979e;padding: 20px;width: 90vw;height: 80vh;border-radius: 8px;box-shadow: 0 0 20px rgba(0,0,0,0.3);display: flex;flex-direction: column;}
+.dialog-content {display: flex;gap: 20px;margin-top: 10px;height: calc(100% - 40px);}
+.editor-container, .preview-container {flex: 1;height: 100%;max-height: 100%;overflow: hidden; }
+.result_iframe_dialog {width: 100%;height: 100%;resize: both;border:1px solid #ccc;overflow: auto; }   
+.CodeMirror {width: 100% !important;height: 100% !important;}
+</style><script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/javascript/javascript.min.js"></script>
 <script>
-  const codeMirrorMap = new Map();
-  const iframeMap = new Map();
-  
- 
-
-  let dismissTimer;
-  function showFloatingLog(message) {
-	const floatingLog = document.getElementById('floatingLog');
-
-    if (floatingLog.style.display !== 'block') {
-      floatingLog.textContent = '';
-      floatingLog.style.display = 'block'; 
-    }
-
-    floatingLog.textContent += message + '\n';
-    floatingLog.scrollTop = floatingLog.scrollHeight; 
-    clearTimeout(dismissTimer);
-    dismissTimer = setTimeout(() => {
-      floatingLog.style.display = 'none';
-      floatingLog.textContent = '';
-    }, 2000);
-  }
-  window.addEventListener('message', (event) => {
-	    if (!iframeMap.has(event.source)) return;
-
-	    if (event.data?.type === 'console-log') {
-	      showFloatingLog(event.data.message);
-	    }
-  });  
-  function renderIframe(button,textarea_id, iframe_id) {
-      const html = codeMirrorMap.get(textarea_id).getValue();
-      const iframe = document.getElementById(iframe_id);
-  
-      const oldIframe = iframe;
-      const newIframe = document.createElement('iframe');
-      newIframe.className ="result_iframe";
-      
-      newIframe.id = iframe_id;
-      oldIframe.replaceWith(newIframe);
- 
-
-      // Track the iframe in the map
-      iframeMap.set(newIframe.contentWindow, button);
-
-      const overrideScript = `
-        <script>
-          (function() {
-            const originalLog = console.log;
-            console.log = function(...args) {
-              originalLog.apply(console, args);
-              window.parent.postMessage({
-                type: 'console-log',
-                message: args.map(a => {
-                  try { return JSON.stringify(a); }
-                  catch { return String(a); }
-                }).join(' ')
-              }, '*');
-            };
-          })();
-        <\/script>
-      `;
-
-      const iframeHTML = `
-        <!DOCTYPE html>
-        <html>
-        <body>
-          ${overrideScript}
-          ${html}
-        </body>
-        </html>
-      `;
- 
-      const doc = newIframe.contentDocument || newIframe.contentWindow.document;
-      doc.open();
-      doc.write(iframeHTML);
-      doc.close();
-
-      
-      setTimeout(() => {
-    	  newIframe.style.height = '0px';
-    	   let contentHeight = Math.max(doc.body.scrollHeight,doc.documentElement.scrollHeight);
- 
-    	//   if(contentHeight < 150 || contentHeight > 600){
-    	//	   contentHeight = 600;
-    	 //  } 
-    	   newIframe.style.height = contentHeight + 'px';
-    	}, 50);      
-      
-  }
-  function renderIframeForClientTypescript(textarea_id, iframe_id) {
-      let code = codeMirrorMap.get(textarea_id).getValue();
-      code = ts.transpile(code);
-      const iframe = document.getElementById(iframe_id);
-      const doc = iframe.contentDocument || iframe.contentWindow.document;
-
-const html = `
-  <!DOCTYPE html>
-  <html>
-    <head>
-      <title>Output</title>
-      <style>
-        body { font-family: monospace; padding: 1em; background: #f4f4f4; color: #222; }
-        pre { white-space: pre-wrap; word-break: break-word; }
-        .error { color: red; }
-      </style>
-    </head>
-    <body>
-      <pre id="log"></pre>
-      <script>
-        (function(){
-          const logEl = document.getElementById('log');
-          const origLog = console.log;
-          const origError = console.error;
-
-          console.log = (...args) => {
-            logEl.textContent += args.join(' ') + '\\n';
-            origLog.apply(console, args);
-          };
-          console.table = (...args) => {
-            logEl.textContent += args.join(' ') + '\\n';
-            origLog.apply(console, args);
-          };
-
-          console.error = (...args) => {
-            logEl.innerHTML +='<span class="error">' + args.join(' ') + '</span>';
-            origError.apply(console, args);
-          };
-          window.addEventListener("error", function (event) {
-              console.error("Caught by event listener:", event.message);
-          });    
-          try {             
-              ${code};
-          } catch (err) {
-            console.error(err.stack || err.message);
-          }
-        })();
-      <\/script>
-    </body>
-  </html>
-`;
-
-      iframe.style.display = "block";
-      iframe.srcdoc = html;  
-  }
-
-    function renderIframeForClientJavascript(textarea_id, iframe_id) {
-        const code = codeMirrorMap.get(textarea_id).getValue();
+  const javascriptCodeMirrorMap = new Map();
+  function runJavascriptCode(button,textarea_id, iframe_id) {
+        const code = javascriptCodeMirrorMap.get(textarea_id).getValue();
         const iframe = document.getElementById(iframe_id);
         const doc = iframe.contentDocument || iframe.contentWindow.document;
 
@@ -237,469 +210,42 @@ const html = `
   `;
         iframe.style.display = "block";
         iframe.srcdoc = html;  
+iframe.onload = function () {
+  const doc = iframe.contentDocument || iframe.contentWindow.document;
+  const contentHeight = Math.max(
+    doc.body.scrollHeight,
+    doc.documentElement.scrollHeight
+  );
+  iframe.style.height = contentHeight + 'px';
+};
+        
     }
-    function toggleSnippetAndRefresh(id, textarea_id) {
-      const box = document.getElementById(id);
-      box.classList.toggle("open");
-      codeMirrorMap.get(textarea_id).refresh();
-    }
-
-  </script>
-  <script>
-  const mode = localStorage.getItem('mode') || 'light';
-  document.documentElement.classList.add(`${mode}-mode`);
-  </script>   
-<style> 
-html {
-  scroll-behavior: smooth;
+function openEditJavascriptCodeDialog(id, textarea_id) {
+		        closeAllJavascriptCodeDialog();
+		        document.getElementById(id).style.display = 'flex';
+         
+ 	        setTimeout(() => {
+		        	 javascriptCodeMirrorMap.get(textarea_id).refresh();
+                   
+ 	        }, 100); // 100ms 
 }
 
-body {
-  font-family: 'Merriweather', serif;
-  margin: 0;
-  padding: 2rem 1rem;
-  font-size: 15px;
-  line-height: 1.5;
-  transition: background-color 0.3s, color 0.3s;
-}
-
-.container {
-  max-width: 700px;
-  margin: 0 auto;
-  padding: 1rem 2rem;
-  box-shadow: 0 0 15px rgba(0,0,0,0.1);
-}
-
-h1, h2, h3 {
-  font-weight: 600;
-  margin-top: 2.5rem;
-  margin-bottom: 1rem;
-  line-height: 1.2;
-}
-
-h1 { font-size: 1.8rem; }
-h2 { font-size: 1.4rem; }
-h3 { font-size: 1.2rem; }
-
-table {
-  width: 100%;
-  border-collapse: collapse;
-  font-family: sans-serif;
-  font-size: 1em;
-  margin: 1em 0;
-}
-
-th, td {
-  padding: 0.6em 1em;
-  text-align: left;
-  border: 1px solid;
-}
-
-tr:nth-child(even) {
-  background-color: inherit;
-}
-
-tr:hover {
-  background-color: inherit;
-}
-
-a {
-  text-decoration: none;
-  transition: color 0.2s;
-}
-
-a:hover {
-  text-decoration: underline;
-}
-
-code {
-  color: #d35400;
-}
-
-.book-title-chapter {
-  font-family: 'Merriweather', serif;
-  font-size: 2rem;
-  font-weight: bold;
-  text-align: center;
-  margin-bottom: 2rem;
-  border-bottom: 2px solid;
-  padding-bottom: 0.5rem;
-}
-
-.book-subtitle-chapter {
-  text-align: center;
-  font-size: 1rem;
-  margin-top: -1rem;
-  margin-bottom: 2rem;
-}
-
-.related-books {
-  margin-top: 40px;
-}
-
-.related-book-list {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 20px;
-}
-
-    .book-cover {
-      width: 130px;
-      height: 180px;
-      font-family: Arial, sans-serif;
-      position: relative;
-      overflow: hidden;      
-      line-height: normal;
-      box-shadow: 2px 2px 4px rgba(0,0,0,0.1);
-    }
-    .book-cover-bottom-stripe {
-      position: absolute;
-      bottom: 0;
-      left: 0;
-      height: 5px;
-      width: 100%;
-    }
-    .book-cover-title {
-      position: absolute;
-      width: 100%;
-      text-align: center;
-      font-weight: bold;
-    }
-     
-    .book-cover-icon {
-      position: absolute;
-      left: 50%;
-      transform: translateX(-50%);
-      display: flex;
-      align-items: center;
-      justify-content: center; 
-    }
-
-    .book-cover-author {
-      position: absolute;
-      bottom: 10px;
-      width: 100%;
-      text-align: center;
-      font-size: 8px;
-      color: #333;
-    }
-
-.page-footer {
-  margin-top: 4rem;
-  padding: 1rem 0;
-  text-align: center;
-  font-size: 0.85rem;
-  border-top: 1px solid;
-}
-
-.chapter-navi-section {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding-bottom: 10px;
-}
-
-.nav-link {
-  color: inherit;
-  text-decoration: none;
-  opacity: 0.5;
-  transition: opacity 0.3s ease, text-decoration 0.3s ease;
-}
-
-.nav-link:hover {
-  opacity: 0.9;
-  text-decoration: underline;
-}
-
-.prev { text-align: left; }
-.toc-link { text-align: center; }
-.next { text-align: right; }
-
-.download-section {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 2rem;
-  padding: 2rem 1rem;
-  max-width: 600px;
-  margin: 3rem auto;
-  border-radius: 12px;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-}
-
-.download-info h2 {
-  margin: 0 0 0.5rem;
-  font-size: 1.2rem;
-}
-
-.format-label {
-  margin: 0 0 0.5rem;
-  font-size: 0.95rem;
-}
-
-.download-buttons {
-  display: flex;
-  gap: 1rem;
-}
-
-.download-button {
-  background-color: #4A90E2;
-  color: white;
-  padding: 0.5em 1.2em;
-  border-radius: 25px;
-  font-size: 0.95rem;
-  text-decoration: none;
-  transition: background-color 0.3s ease;
-}
-
-.download-button:hover {
-  background-color: #357ABD;
-}
-
-.code-block {
-  position: relative;
-  margin-bottom: 1em;
-}
-
-.copy-button {
-  background: transparent;
-  color: white;
-  position: absolute;
-  top: 8px;
-  right: 8px;
-  border: none;
-  padding: 4px 8px;
-  font-size: 12px;
-  border-radius: 4px;
-  cursor: pointer;
-  z-index: 1;
-}
-
-.copy-button:hover {
-  background-color: #0056b3;
-}
-
-.snippet-container {
-  overflow: hidden;
-}
-
-.snippet-header {
-  padding: 0.75rem 1rem;
-  cursor: pointer;
-  font-size: 1rem;
-    background-color: #eeeeee;
-    color:  #111111; 
-    border-radius: 8px;
-    cursor: pointer;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.1);  
-}
-
-.snippet-body {
-  display: none;
-  font-family: monospace;
-}
-
-.snippet-container.open .snippet-body {
-  display: block;
-}
-
-.CodeMirror {
-  border: 2px solid #ccc;
-  border-radius: 4px;
-  resize: vertical;
-}
-
-/* === Light Mode === */
-html.light-mode {
-  background-color: #f8f7f5;
-  color: #333;
-}
-
-html.light-mode .container {
-  background: white;
-}
-
-html.light-mode .book-title-chapter {
-  color: #2c3e50;
-  border-color: #ccc;
-}
-html.light-mode .book-subtitle-chapter{
-  color: #888;
-}
-
-html.light-mode .page-footer,
-html.light-mode .series-name,
-html.light-mode .book-subtitle,
-html.light-mode .format-label {
-  color: #888;
-}
-
-html.light-mode .related-books h2 {
-  color: #333;
-  border-bottom: 2px solid #eee;
-}
-
-html.light-mode .book-title {
-  color: #fff;
-}
-
-html.light-mode .book-cover {
-  border: 1px solid #ccc;
-}
-
-html.light-mode th {
-  background-color: #f2f2f2;
-}
-
-html.light-mode tr:nth-child(even) {
-  background-color: #fafafa;
-}
-
-html.light-mode tr:hover {
-  background-color: #e6f7ff;
-}
-
-html.light-mode a,
-html.light-mode .page-footer a {
-  color: #000;
-}
-
-/* === Dark Mode === */
-html.dark-mode {
-  background-color: #181818;
-  color: #e0e0e0;
-}
-
-html.dark-mode .container {
-  background: #222;
-}
-
-html.dark-mode .book-title-chapter {
-  color: #ddd;
-  border-color: #444;
-}
-
-html.dark-mode .snippet-header {
-    background-color: #333;
-    color:  #ddd; 
-}
-
-
-html.dark-mode .book-subtitle-chapter,
-html.dark-mode .page-footer,
-html.dark-mode .series-name,
-html.dark-mode .book-subtitle,
-html.dark-mode .book-footer,
-html.dark-mode .format-label {
-  color: #aaa;
-}
-
-html.dark-mode .related-books h2 {
-  color: #ddd;
-  border-bottom: 2px solid #333;
-}
-
-html.dark-mode .book-title {
-  color: #fff;
-}
-
-html.dark-mode .book-cover {
-  border: 1px solid #555;
-}
-
-html.dark-mode th {
-  background-color: #333;
-  color: #fff;
-}
-
-html.dark-mode td {
-  border-color: #444;
-}
-
-html.dark-mode tr:nth-child(even) {
-  background-color: #2a2a2a;
-}
-
-html.dark-mode tr:hover {
-  background-color: #2c3e50;
-}
-
-html.dark-mode a,
-html.dark-mode .page-footer a {
-  color: #eee;
-}
-
-    .dialog-backdrop {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100vw;
-      height: 100vh;
-      background: rgba(0,0,0,0.5);
-      display: none;
-      justify-content: center;
-      align-items: center;
-      z-index: 10;
-    }
-
-    .dialog {
-      background: white;
-      padding: 20px;
-      width: 90vw;
-      height: 80vh;
-      border-radius: 8px;
-      box-shadow: 0 0 20px rgba(0,0,0,0.3);
-      display: flex;
-      flex-direction: column;
-    }
-    .dialog-content {
-      display: flex;
-      flex: 1;
-      gap: 20px;
-      margin-top: 10px;
-    }
-    .dialog h2 {
-      margin-top: 0;
-    }
-
-    .textarea_dialog {
-      width: 50%;
-      height: 100%;
-      resize: none;
-      font-family: monospace;
-      font-size: 14px;
-      padding: 10px;
-      box-sizing: border-box;
-      border: 1px solid #ccc;
-    }
-
-    .iframe_dialog {
-      width: 50%;
-      height: 100%;
-      border: 1px solid #ccc;
-    }
-    .controls_dialog {
-      display: flex;
-      justify-content: space-between;
-      margin-top: 10px;
-    }    
-    button { padding: 0.5em 1em; background: green; color: white; border: none; cursor: pointer; }
-    button:hover { background: #1e7e34; }
-    .result_iframe { width:99%; height:200px; margin-top: 1em;  resize: both;border:1px solid #ccc;}        
-</style>
+function closeAllJavascriptCodeDialog() {
+		        document.querySelectorAll('.dialog-backdrop').forEach(el => {
+		          el.style.display = 'none';
+		        });
+}		
+</script>
 </head>
-<body> 
-  <div class="container">
-    <div class = "chapter-navi-section">
+<body>
+<script>const mode = localStorage.getItem('mode') || 'light';document.documentElement.classList.add(`${mode}-mode`);</script>  
+<div class="container"><div class = "chapter-navi-section">
 <a href="javascript-algorithms-mathematical-tools-lightweight.htm" class="nav-button prev">←</a>
 <a href='javascript-algorithms.htm#sorting-and-order-elementary-sorting-algorithms' class="nav-button toc-link">Index</a>
 <a href="javascript-algorithms-sorting-and-order-divide-and-conquer.htm" class="nav-button next">→</a>
 </div>
-
-    <h1 class="book-title-chapter" id = 'top'>Sorting and Order: Elementary Sorting Algorithms</h1>
-    <h3 class="book-subtitle-chapter">JavaScript Algorithms</h3>   
-    <!-- <h1 class ="chapter-title"></h1> -->
-    <h2 id='bubble-sort'>4.1 Bubble Sort</h2><p>Bubble sort is one of the simplest sorting algorithms—both to understand and to implement. It works by <strong>repeatedly stepping through a list</strong>, comparing adjacent elements, and <strong>swapping them if they are in the wrong order</strong>. This "bubbling" process pushes the largest unsorted element to the end of the array with each full pass, much like how bubbles rise to the surface of water.</p><p>Despite its simplicity, bubble sort is <strong>inefficient for large datasets</strong> and is rarely used in production code. However, it's a great educational tool for introducing algorithmic thinking, comparisons, and swaps.</p><h3 id="how-bubble-sort-works">How Bubble Sort Works</h3><p>Let’s break it down step-by-step with an example. Consider this array:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+<div class='book-header'><h1 class='book-title-toc' id = 'top'>Sorting and Order: Elementary Sorting Algorithms</h1><h3 class='book-subtitle-toc'>JavaScript Algorithms</h3></div><h2 id='bubble-sort'>4.1 Bubble Sort</h2><p>Bubble sort is one of the simplest sorting algorithms—both to understand and to implement. It works by <strong>repeatedly stepping through a list</strong>, comparing adjacent elements, and <strong>swapping them if they are in the wrong order</strong>. This "bubbling" process pushes the largest unsorted element to the end of the array with each full pass, much like how bubbles rise to the surface of water.</p><p>Despite its simplicity, bubble sort is <strong>inefficient for large datasets</strong> and is rarely used in production code. However, it's a great educational tool for introducing algorithmic thinking, comparisons, and swaps.</p><h3 id="how-bubble-sort-works">How Bubble Sort Works</h3><p>Let’s break it down step-by-step with an example. Consider this array:</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-bash">[5, 3, 8, 4, 2]</code></pre>
 </div><p><strong>Pass 1</strong>:</p><ul>
  <li>Compare 5 and 3 → Swap → <code>[3, 5, 8, 4, 2]</code></li>
@@ -710,10 +256,14 @@ html.dark-mode .page-footer a {
  <li>Compare 3 and 5 → No Swap</li>
  <li>Compare 5 and 4 → Swap → <code>[3, 4, 5, 2, 8]</code></li>
  <li>Compare 5 and 2 → Swap → <code>[3, 4, 2, 5, 8]</code></li>
-</ul><p>And so on, until the array is fully sorted.</p><div class="snippet-container" id="<!DOCTYPE html>
-<html lang=&quot;en&quot;>
+</ul><p>And so on, until the array is fully sorted.</p><div class="snippet-container"><iframe id="5zk3m" class="result_iframe" style="border:none;"></iframe>
+ <script>
+const iframe = document.getElementById("5zk3m");
+const doc = iframe.contentDocument || iframe.contentWindow.document;
+doc.open();doc.write(`<!DOCTYPE html>
+<html lang="en">
 <head>
-  <meta charset=&quot;UTF-8&quot;>
+  <meta charset="UTF-8">
   <title>Bubble Sort Step Visualizer</title>
   <style>
     canvas {
@@ -731,8 +281,8 @@ html.dark-mode .page-footer a {
 </head>
 <body>
 
-<canvas id=&quot;canvas&quot; width=&quot;500&quot; height=&quot;300&quot;></canvas>
-<button id=&quot;next&quot;>Show Next Step in bubble sort</button>
+<canvas id="canvas" width="500" height="300"></canvas>
+<button id="next">Show Next Step in bubble sort</button>
 
 <script>
 const canvas = document.getElementById('canvas');
@@ -762,8 +312,8 @@ function drawArray(highlightA = -1, highlightB = -1, swapProgress = 0) {
     ctx.fillStyle = (idx === highlightA || idx === highlightB) ? 'red' : 'steelblue';
 
     let offsetX = 0;
-    if (idx === highlightA &amp;&amp; swapProgress) offsetX = (barWidth + spacing) * swapProgress;
-    if (idx === highlightB &amp;&amp; swapProgress) offsetX = -(barWidth + spacing) * swapProgress;
+    if (idx === highlightA && swapProgress) offsetX = (barWidth + spacing) * swapProgress;
+    if (idx === highlightB && swapProgress) offsetX = -(barWidth + spacing) * swapProgress;
 
     ctx.fillRect(x + offsetX, y, barWidth, height);
     ctx.fillStyle = 'black';
@@ -831,153 +381,7 @@ drawArray();
 
 // Button handler
 nextBtn.addEventListener('click', stepSort);
-</script>
-
-</body>
-</html>ID"><textarea id="RADWU" style="display: none;">&lt;!DOCTYPE html&gt;
-&lt;html lang="en"&gt;
-&lt;head&gt;
-  &lt;meta charset="UTF-8"&gt;
-  &lt;title&gt;Bubble Sort Step Visualizer&lt;/title&gt;
-  &lt;style&gt;
-    canvas {
-      border: 1px solid #ccc;
-      display: block;
-      margin: 20px auto;
-    }
-    button {
-      display: block;
-      margin: 0 auto;
-      padding: 10px 20px;
-      font-size: 16px;
-    }
-  &lt;/style&gt;
-&lt;/head&gt;
-&lt;body&gt;
-
-&lt;canvas id="canvas" width="500" height="300"&gt;&lt;/canvas&gt;
-&lt;button id="next"&gt;Show Next Step in bubble sort&lt;/button&gt;
-
-&lt;script&gt;
-const canvas = document.getElementById('canvas');
-const ctx = canvas.getContext('2d');
-const nextBtn = document.getElementById('next');
-
-// Settings
-const array = [100, 200, 80, 160, 120];
-const barWidth = 60;
-const spacing = 20;
-const baseY = 280;
-
-// Bubble Sort indices
-let i = 0;
-let j = 0;
-let phase = 'compare'; // 'compare' or 'swap'
-let animProgress = 0;
-let animationId = null;
-let isSwapping = false;
-
-function drawArray(highlightA = -1, highlightB = -1, swapProgress = 0) {
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-  array.forEach((height, idx) =&gt; {
-    const x = spacing + idx * (barWidth + spacing);
-    const y = baseY - height;
-
-    ctx.fillStyle = (idx === highlightA || idx === highlightB) ? 'red' : 'steelblue';
-
-    let offsetX = 0;
-    if (idx === highlightA &amp;&amp; swapProgress) offsetX = (barWidth + spacing) * swapProgress;
-    if (idx === highlightB &amp;&amp; swapProgress) offsetX = -(barWidth + spacing) * swapProgress;
-
-    ctx.fillRect(x + offsetX, y, barWidth, height);
-    ctx.fillStyle = 'black';
-    ctx.fillText(array[idx], x + offsetX + 20, baseY + 15);
-  });
-}
-
-function animateSwap(a, b, callback) {
-  isSwapping = true;
-  animProgress = 0;
-
-  function step() {
-    animProgress += 0.05;
-    if (animProgress &gt;= 1) {
-      // Swap values in the array
-      [array[a], array[b]] = [array[b], array[a]];
-      isSwapping = false;
-      drawArray();
-      cancelAnimationFrame(animationId);
-      callback();
-      return;
-    }
-    drawArray(a, b, animProgress);
-    animationId = requestAnimationFrame(step);
-  }
-
-  step();
-}
-
-function stepSort() {
-  if (isSwapping) return;
-
-  if (i &lt; array.length - 1) {
-    if (j &lt; array.length - i - 1) {
-      const a = j;
-      const b = j + 1;
-
-      if (phase === 'compare') {
-        drawArray(a, b); // Highlight comparison
-        phase = 'swap';
-      } else if (phase === 'swap') {
-        if (array[a] &gt; array[b]) {
-          animateSwap(a, b, () =&gt; {
-            j++;
-            phase = 'compare';
-          });
-        } else {
-          drawArray(); // No swap needed
-          j++;
-          phase = 'compare';
-        }
-      }
-    } else {
-      j = 0;
-      i++;
-    }
-  } else {
-    drawArray(); // Final state
-    nextBtn.disabled = true;
-  }
-}
-
-// Initial draw
-drawArray();
-
-// Button handler
-nextBtn.addEventListener('click', stepSort);
-&lt;/script&gt;
-
-&lt;/body&gt;
-&lt;/html&gt;</textarea> <iframe id="O1OkM" class="result_iframe" style="border:none;"></iframe>
- <script>{
-const textarea = document.getElementById("RADWU");
-const iframe = document.getElementById("O1OkM");
-const html = textarea.value;
-const iframeHTML = `${html}`;
-const doc = iframe.contentDocument || iframe.contentWindow.document;
-doc.open();
-doc.write(iframeHTML);
-doc.close();
-setTimeout(() => {
-   iframe.style.height = '0px';
-   let contentHeight = Math.max(doc.body.scrollHeight,doc.documentElement.scrollHeight);
-  // if(contentHeight < 10 || contentHeight > 800){
-//	   contentHeight = 800;
- //  } 
-   iframe.style.height = contentHeight + 'px';
-}, 50);
-}
-		</script>
+</script> `);doc.close(); setTimeout(() =&gt; { iframe.style.height = '0px'; let contentHeight = Math.max(doc.body.scrollHeight,doc.documentElement.scrollHeight); iframe.style.height = contentHeight + 'px'; }, 50); 
 </div><h3 id="javascript-implementation">JavaScript Implementation</h3><p>Here’s a clean implementation of bubble sort in JavaScript, with comments to explain each part:</p><div>
  <div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
   <pre><code class="language-js">function bubbleSort(arr) {
@@ -1004,11 +408,16 @@ setTimeout(() => {
 // Example
 console.log(bubbleSort([5, 3, 8, 4, 2])); // Output: [2, 3, 4, 5, 8]</code></pre>
  </div>
- <div class="snippet-container" id="43u3D">
-  <div class="snippet-header" onclick="toggleSnippetAndRefresh('43u3D','zS4MU')">
-   Try it in editor
-  </div>
-  <div class="snippet-body"><textarea id="zS4MU">function bubbleSort(arr) {
+ <div class="snippet-container">
+  <div class="button-group-run-edit"><button class="button-run-edit" onclick="runJavascriptCode(this,'t4pzy','ut2yG')">Run</button> <button class="button-run-edit" onclick="openEditJavascriptCodeDialog('ut2yG_Dialog','t4pzy')">Edit</button>
+  </div> <iframe id="ut2yG" class="result_iframe" style="display: none;"></iframe>
+  <div id="ut2yG_Dialog" class="dialog-backdrop">
+   <div class="dialog">
+    <div class="controls"><button onclick="runJavascriptCode(this,'t4pzy','ut2yG_IFrame')">Run</button> <button onclick="closeAllJavascriptCodeDialog()">Close</button>
+    </div>
+    <div class="dialog-content">
+     <div class="editor-container">
+      <textarea id="t4pzy" class="textarea_dialog" placeholder="Type HTML here...">function bubbleSort(arr) {
   let swapped;
   const n = arr.length;
 
@@ -1030,22 +439,34 @@ console.log(bubbleSort([5, 3, 8, 4, 2])); // Output: [2, 3, 4, 5, 8]</code></pre
 }
 
 // Example
-console.log(bubbleSort([5, 3, 8, 4, 2])); // Output: [2, 3, 4, 5, 8]</textarea> <br> <button onclick="renderIframeForClientJavascript('zS4MU','X9FMe')">Run</button> <iframe id="X9FMe" class="result_iframe" style="display: none;"></iframe>
-   <script>
-  {let editor1 = CodeMirror.fromTextArea(document.getElementById("zS4MU"), {
-    mode: "javascript",
-    lineNumbers:false,
-    tabSize: 2
-    });
-    const mode = localStorage.getItem("mode") || "light";  
-    const newTheme = mode === "dark" ? "material" : "default";
-    editor1.setOption("theme", newTheme);
-
-    codeMirrorMap.set("zS4MU", editor1);}
-  </script>
+console.log(bubbleSort([5, 3, 8, 4, 2])); // Output: [2, 3, 4, 5, 8]</textarea>
+     </div>
+     <div class="preview-container">
+      <iframe id="ut2yG_IFrame" class="result_iframe_dialog" style="border: none;"></iframe>
+     </div>
+    </div>
+   </div>
   </div>
+  <script>
+{
+let editor = CodeMirror.fromTextArea(document.getElementById("t4pzy"), {
+					mode : "javascript",
+					lineNumbers : false,
+          lineWrapping: true,
+					tabSize : 2
+});
+
+const darkmode = localStorage.getItem("mode") || "light";  
+const newTheme = darkmode === "dark" ? "dracula" : "default";
+editor.setSize("50%", "100%");
+editor.setOption("theme", newTheme);
+javascriptCodeMirrorMap.set("t4pzy", editor);
+}
+
+</script>
  </div>
-</div><p>This version uses a <code>do...while</code> loop to continue looping until a full pass completes with no swaps—indicating the array is sorted.</p><h3 id="visualization-of-the-sorting-process">Visualization of the Sorting Process</h3><p>Here’s a text-based step-by-step visualization of the array <code>[5, 3, 8, 4, 2]</code>:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</div><p>This version uses a <code>do...while</code> loop to continue looping until a full pass completes with no swaps—indicating the array is sorted.</p><h3 id="visualization-of-the-sorting-process">Visualization of the Sorting Process</h3><p>Here’s a text-based step-by-step visualization of the array <code>[5, 3, 8, 4, 2]</code>:</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-bash">Start:     [5, 3, 8, 4, 2]
 Pass 1:    [3, 5, 4, 2, 8]
 Pass 2:    [3, 4, 2, 5, 8]
@@ -1066,7 +487,8 @@ Sorted:    [2, 3, 4, 5, 8]</code></pre>
  <li>Compares it with elements before it.</li>
  <li>Shifts larger elements one position to the right.</li>
  <li>Inserts the picked element into its correct spot.</li>
-</ol><p>Let’s walk through an example with this array:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</ol><p>Let’s walk through an example with this array:</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-bash">[4, 3, 1, 5, 2]</code></pre>
 </div><ul>
  <li>First element <code>4</code> is already "sorted".</li>
@@ -1074,10 +496,14 @@ Sorted:    [2, 3, 4, 5, 8]</code></pre>
  <li>Compare <code>1</code> with <code>4</code>, <code>3</code> → Insert at the start: <code>[1, 3, 4, 5, 2]</code></li>
  <li>Compare <code>5</code> → Already in correct place.</li>
  <li>Compare <code>2</code> with <code>5</code>, <code>4</code>, <code>3</code> → Insert before <code>3</code>: <code>[1, 2, 3, 4, 5]</code></li>
-</ul><div class="snippet-container" id="<!DOCTYPE html>
-<html lang=&quot;en&quot;>
+</ul><div class="snippet-container"><iframe id="K2Jxn" class="result_iframe" style="border:none;"></iframe>
+ <script>
+const iframe = document.getElementById("K2Jxn");
+const doc = iframe.contentDocument || iframe.contentWindow.document;
+doc.open();doc.write(`<!DOCTYPE html>
+<html lang="en">
 <head>
-  <meta charset=&quot;UTF-8&quot;>
+  <meta charset="UTF-8">
   <title>Insertion Sort with Detailed Step Explanation</title>
   <style>
     #list {
@@ -1115,9 +541,9 @@ Sorted:    [2, 3, 4, 5, 8]</code></pre>
 </head>
 <body>
 
-<div id=&quot;list&quot;></div>
-<div id=&quot;explanation&quot;></div>
-<button id=&quot;next&quot;>Next Step</button>
+<div id="list"></div>
+<div id="explanation"></div>
+<button id="next">Next Step</button>
 
 <script>
 const values = [3, 2, 1, 6, 5, 7, 9, 0, 4, 8];
@@ -1160,131 +586,6 @@ function explain(msg) {
 function step() {
   if (i >= values.length) {
     renderArray({ sortedEnd: values.length });
-    explain(&quot;Sorting complete.&quot;);
-    document.getElementById('next').disabled = true;
-    return;
-  }
-
-  if (phase === 'start') {
-    key = values[i];
-    originalIndex = i;
-    j = i - 1;
-    renderArray({ keyIndex: i, compareIndex: j, sortedEnd: i });
-    explain(`Compare ${values[j]} and ${key} (key at index ${i})`);
-    phase = 'shift';
-  } else if (phase === 'shift') {
-    if (j >= 0 &amp;&amp; values[j] > key) {
-      values[j + 1] = values[j]; // shift right
-      renderArray({ keyIndex: originalIndex, hideIndex: j + 1, sortedEnd: i });
-      explain(`Shift ${values[j]} from index ${j} → index ${j + 1}`);
-      j--;
-    } else {
-      phase = 'insert';
-    }
-  } else if (phase === 'insert') {
-    values[j + 1] = key;
-    renderArray({ keyIndex: j + 1, sortedEnd: i + 1 });
-    explain(`Insert ${key} (from index ${originalIndex}) at index ${j + 1}`);
-    i++;
-    phase = 'start';
-  }
-}
-
-// Initial render
-renderArray({ sortedEnd: 1 });
-explain(&quot;Start with first element sorted&quot;);
-
-// Button
-document.getElementById('next').addEventListener('click', step);
-</script>
-
-</body>
-</html>ID"><textarea id="7vebI" style="display: none;">&lt;!DOCTYPE html&gt;
-&lt;html lang="en"&gt;
-&lt;head&gt;
-  &lt;meta charset="UTF-8"&gt;
-  &lt;title&gt;Insertion Sort with Detailed Step Explanation&lt;/title&gt;
-  &lt;style&gt;
-    #list {
-      font-family: monospace;
-      text-align: center;
-      margin-top: 40px;
-      font-size: 24px;
-      letter-spacing: 12px;
-    }
-    #explanation {
-      text-align: center;
-      margin-top: 20px;
-      font-size: 18px;
-      font-family: sans-serif;
-    }
-    .sorted {
-      color: black;
-    }
-    .unsorted {
-      color: gray;
-    }
-    .key {
-      color: red;
-    }
-    .empty {
-      visibility: hidden;
-    }
-    button {
-      display: block;
-      margin: 30px auto;
-      padding: 10px 20px;
-      font-size: 18px;
-    }
-  &lt;/style&gt;
-&lt;/head&gt;
-&lt;body&gt;
-
-&lt;div id="list"&gt;&lt;/div&gt;
-&lt;div id="explanation"&gt;&lt;/div&gt;
-&lt;button id="next"&gt;Next Step&lt;/button&gt;
-
-&lt;script&gt;
-const values = [3, 2, 1, 6, 5, 7, 9, 0, 4, 8];
-let i = 1;
-let j;
-let key = null;
-let originalIndex = null;
-let phase = 'start'; // 'start', 'shift', 'insert'
-let explanationDiv = document.getElementById('explanation');
-
-function renderArray({ keyIndex = -1, compareIndex = -1, sortedEnd = 0, hideIndex = -1 } = {}) {
-  const listDiv = document.getElementById('list');
-  listDiv.innerHTML = '';
-
-  values.forEach((val, idx) =&gt; {
-    const span = document.createElement('span');
-
-    if (idx === hideIndex) {
-      span.textContent = val;
-      span.className = 'empty';
-    } else if (idx === keyIndex) {
-      span.textContent = val;
-      span.className = 'key';
-    } else if (idx &lt; sortedEnd) {
-      span.textContent = val;
-      span.className = 'sorted';
-    } else {
-      span.textContent = val;
-      span.className = 'unsorted';
-    }
-
-    listDiv.appendChild(span);
-  });
-}
-
-function explain(msg) {
-  explanationDiv.textContent = msg;
-}
-
-function step() {
-  if (i &gt;= values.length) {
-    renderArray({ sortedEnd: values.length });
     explain("Sorting complete.");
     document.getElementById('next').disabled = true;
     return;
@@ -1298,7 +599,7 @@ function step() {
     explain(`Compare ${values[j]} and ${key} (key at index ${i})`);
     phase = 'shift';
   } else if (phase === 'shift') {
-    if (j &gt;= 0 &amp;&amp; values[j] &gt; key) {
+    if (j >= 0 && values[j] > key) {
       values[j + 1] = values[j]; // shift right
       renderArray({ keyIndex: originalIndex, hideIndex: j + 1, sortedEnd: i });
       explain(`Shift ${values[j]} from index ${j} → index ${j + 1}`);
@@ -1321,29 +622,7 @@ explain("Start with first element sorted");
 
 // Button
 document.getElementById('next').addEventListener('click', step);
-&lt;/script&gt;
-
-&lt;/body&gt;
-&lt;/html&gt;</textarea> <iframe id="XmAX8" class="result_iframe" style="border:none;"></iframe>
- <script>{
-const textarea = document.getElementById("7vebI");
-const iframe = document.getElementById("XmAX8");
-const html = textarea.value;
-const iframeHTML = `${html}`;
-const doc = iframe.contentDocument || iframe.contentWindow.document;
-doc.open();
-doc.write(iframeHTML);
-doc.close();
-setTimeout(() => {
-   iframe.style.height = '0px';
-   let contentHeight = Math.max(doc.body.scrollHeight,doc.documentElement.scrollHeight);
-  // if(contentHeight < 10 || contentHeight > 800){
-//	   contentHeight = 800;
- //  } 
-   iframe.style.height = contentHeight + 'px';
-}, 50);
-}
-		</script>
+</script> `);doc.close(); setTimeout(() =&gt; { iframe.style.height = '0px'; let contentHeight = Math.max(doc.body.scrollHeight,doc.documentElement.scrollHeight); iframe.style.height = contentHeight + 'px'; }, 50); 
 </div><h3 id="javascript-implementation">JavaScript Implementation</h3><p>Here’s a clean implementation of insertion sort with explanatory comments:</p><div>
  <div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
   <pre><code class="language-js">function insertionSort(arr) {
@@ -1367,11 +646,16 @@ setTimeout(() => {
 // Example
 console.log(insertionSort([4, 3, 1, 5, 2])); // Output: [1, 2, 3, 4, 5]</code></pre>
  </div>
- <div class="snippet-container" id="dELEb">
-  <div class="snippet-header" onclick="toggleSnippetAndRefresh('dELEb','yJaOP')">
-   Try it in editor
-  </div>
-  <div class="snippet-body"><textarea id="yJaOP">function insertionSort(arr) {
+ <div class="snippet-container">
+  <div class="button-group-run-edit"><button class="button-run-edit" onclick="runJavascriptCode(this,'iS3Fs','1ZtJE')">Run</button> <button class="button-run-edit" onclick="openEditJavascriptCodeDialog('1ZtJE_Dialog','iS3Fs')">Edit</button>
+  </div> <iframe id="1ZtJE" class="result_iframe" style="display: none;"></iframe>
+  <div id="1ZtJE_Dialog" class="dialog-backdrop">
+   <div class="dialog">
+    <div class="controls"><button onclick="runJavascriptCode(this,'iS3Fs','1ZtJE_IFrame')">Run</button> <button onclick="closeAllJavascriptCodeDialog()">Close</button>
+    </div>
+    <div class="dialog-content">
+     <div class="editor-container">
+      <textarea id="iS3Fs" class="textarea_dialog" placeholder="Type HTML here...">function insertionSort(arr) {
   for (let i = 1; i &lt; arr.length; i++) {
     let current = arr[i];       // Element to insert
     let j = i - 1;
@@ -1390,22 +674,34 @@ console.log(insertionSort([4, 3, 1, 5, 2])); // Output: [1, 2, 3, 4, 5]</code></
 }
 
 // Example
-console.log(insertionSort([4, 3, 1, 5, 2])); // Output: [1, 2, 3, 4, 5]</textarea> <br> <button onclick="renderIframeForClientJavascript('yJaOP','VyEEO')">Run</button> <iframe id="VyEEO" class="result_iframe" style="display: none;"></iframe>
-   <script>
-  {let editor1 = CodeMirror.fromTextArea(document.getElementById("yJaOP"), {
-    mode: "javascript",
-    lineNumbers:false,
-    tabSize: 2
-    });
-    const mode = localStorage.getItem("mode") || "light";  
-    const newTheme = mode === "dark" ? "material" : "default";
-    editor1.setOption("theme", newTheme);
-
-    codeMirrorMap.set("yJaOP", editor1);}
-  </script>
+console.log(insertionSort([4, 3, 1, 5, 2])); // Output: [1, 2, 3, 4, 5]</textarea>
+     </div>
+     <div class="preview-container">
+      <iframe id="1ZtJE_IFrame" class="result_iframe_dialog" style="border: none;"></iframe>
+     </div>
+    </div>
+   </div>
   </div>
+  <script>
+{
+let editor = CodeMirror.fromTextArea(document.getElementById("iS3Fs"), {
+					mode : "javascript",
+					lineNumbers : false,
+          lineWrapping: true,
+					tabSize : 2
+});
+
+const darkmode = localStorage.getItem("mode") || "light";  
+const newTheme = darkmode === "dark" ? "dracula" : "default";
+editor.setSize("50%", "100%");
+editor.setOption("theme", newTheme);
+javascriptCodeMirrorMap.set("iS3Fs", editor);
+}
+
+</script>
  </div>
-</div><h3 id="visualizing-insertion-sort">Visualizing Insertion Sort</h3><p>Let’s visualize the sorting process on <code>[4, 3, 1, 5, 2]</code>:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</div><h3 id="visualizing-insertion-sort">Visualizing Insertion Sort</h3><p>Let’s visualize the sorting process on <code>[4, 3, 1, 5, 2]</code>:</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-bash">Initial:      [4, 3, 1, 5, 2]
 Step 1:       [3, 4, 1, 5, 2]   // Insert 3 before 4
 Step 2:       [1, 3, 4, 5, 2]   // Insert 1 before 3
@@ -1462,11 +758,16 @@ console.log("Reversed data:");
 benchmarkSort("Insertion Sort", insertionSort, smallReversed);
 benchmarkSort("Bubble Sort", bubbleSort, smallReversed);</code></pre>
  </div>
- <div class="snippet-container" id="fu4hk">
-  <div class="snippet-header" onclick="toggleSnippetAndRefresh('fu4hk','rQnUF')">
-   Try it in editor
-  </div>
-  <div class="snippet-body"><textarea id="rQnUF">function bubbleSort(arr) {
+ <div class="snippet-container">
+  <div class="button-group-run-edit"><button class="button-run-edit" onclick="runJavascriptCode(this,'dHbGU','vkMoT')">Run</button> <button class="button-run-edit" onclick="openEditJavascriptCodeDialog('vkMoT_Dialog','dHbGU')">Edit</button>
+  </div> <iframe id="vkMoT" class="result_iframe" style="display: none;"></iframe>
+  <div id="vkMoT_Dialog" class="dialog-backdrop">
+   <div class="dialog">
+    <div class="controls"><button onclick="runJavascriptCode(this,'dHbGU','vkMoT_IFrame')">Run</button> <button onclick="closeAllJavascriptCodeDialog()">Close</button>
+    </div>
+    <div class="dialog-content">
+     <div class="editor-container">
+      <textarea id="dHbGU" class="textarea_dialog" placeholder="Type HTML here...">function bubbleSort(arr) {
   let swapped;
   do {
     swapped = false;
@@ -1513,22 +814,34 @@ benchmarkSort("Bubble Sort", bubbleSort, smallSorted);
 
 console.log("Reversed data:");
 benchmarkSort("Insertion Sort", insertionSort, smallReversed);
-benchmarkSort("Bubble Sort", bubbleSort, smallReversed);</textarea> <br> <button onclick="renderIframeForClientJavascript('rQnUF','Zsf7z')">Run</button> <iframe id="Zsf7z" class="result_iframe" style="display: none;"></iframe>
-   <script>
-  {let editor1 = CodeMirror.fromTextArea(document.getElementById("rQnUF"), {
-    mode: "javascript",
-    lineNumbers:false,
-    tabSize: 2
-    });
-    const mode = localStorage.getItem("mode") || "light";  
-    const newTheme = mode === "dark" ? "material" : "default";
-    editor1.setOption("theme", newTheme);
-
-    codeMirrorMap.set("rQnUF", editor1);}
-  </script>
+benchmarkSort("Bubble Sort", bubbleSort, smallReversed);</textarea>
+     </div>
+     <div class="preview-container">
+      <iframe id="vkMoT_IFrame" class="result_iframe_dialog" style="border: none;"></iframe>
+     </div>
+    </div>
+   </div>
   </div>
+  <script>
+{
+let editor = CodeMirror.fromTextArea(document.getElementById("dHbGU"), {
+					mode : "javascript",
+					lineNumbers : false,
+          lineWrapping: true,
+					tabSize : 2
+});
+
+const darkmode = localStorage.getItem("mode") || "light";  
+const newTheme = darkmode === "dark" ? "dracula" : "default";
+editor.setSize("50%", "100%");
+editor.setOption("theme", newTheme);
+javascriptCodeMirrorMap.set("dHbGU", editor);
+}
+
+</script>
  </div>
-</div><p><strong>Expected Results (Varies by System):</strong></p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</div><p><strong>Expected Results (Varies by System):</strong></p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-bash">Nearly sorted data:
 Insertion Sort took 0.12 ms
 Bubble Sort took 5.87 ms
@@ -1559,10 +872,14 @@ Bubble Sort took 10.92 ms</code></pre>
  <li>Pass 2: Minimum is <code>3</code> → already in place</li>
  <li>Pass 3: Minimum is <code>4</code> → swap with <code>8</code> → <code>[2, 3, 4, 8, 5]</code></li>
  <li>Pass 4: Minimum is <code>5</code> → swap with <code>8</code> → <code>[2, 3, 4, 5, 8]</code></li>
-</ul><p>Each pass places one element in its final position.</p><div class="snippet-container" id="<!DOCTYPE html>
-<html lang=&quot;en&quot;>
+</ul><p>Each pass places one element in its final position.</p><div class="snippet-container"><iframe id="l3iUq" class="result_iframe" style="border:none;"></iframe>
+ <script>
+const iframe = document.getElementById("l3iUq");
+const doc = iframe.contentDocument || iframe.contentWindow.document;
+doc.open();doc.write(`<!DOCTYPE html>
+<html lang="en">
 <head>
-  <meta charset=&quot;UTF-8&quot;>
+  <meta charset="UTF-8">
   <title>Selection Sort Visualized</title>
   <style>
     #list {
@@ -1600,9 +917,9 @@ Bubble Sort took 10.92 ms</code></pre>
 </head>
 <body>
 
-<div id=&quot;list&quot;></div>
-<div id=&quot;explanation&quot;></div>
-<button id=&quot;next&quot;>Next Step</button>
+<div id="list"></div>
+<div id="explanation"></div>
+<button id="next">Next Step</button>
 
 <script>
 const values = [100, 200, 80, 160, 120];
@@ -1639,7 +956,7 @@ function explain(msg) {
 function step() {
   if (i >= values.length) {
     render({ sortedEnd: values.length });
-    explain(&quot;Sorting complete.&quot;);
+    explain("Sorting complete.");
     document.getElementById('next').disabled = true;
     return;
   }
@@ -1680,161 +997,11 @@ function step() {
 
 // Initial draw
 render({ sortedEnd: 0 });
-explain(&quot;Start Selection Sort&quot;);
-
-// Button
-document.getElementById('next').addEventListener('click', step);
-</script>
-
-</body>
-</html>ID"><textarea id="ogCvI" style="display: none;">&lt;!DOCTYPE html&gt;
-&lt;html lang="en"&gt;
-&lt;head&gt;
-  &lt;meta charset="UTF-8"&gt;
-  &lt;title&gt;Selection Sort Visualized&lt;/title&gt;
-  &lt;style&gt;
-    #list {
-      font-family: monospace;
-      text-align: center;
-      margin-top: 40px;
-      font-size: 24px;
-      letter-spacing: 12px;
-    }
-    #explanation {
-      text-align: center;
-      margin-top: 20px;
-      font-size: 18px;
-      font-family: sans-serif;
-    }
-    .sorted {
-      color: black;
-    }
-    .unsorted {
-      color: gray;
-    }
-    .selected {
-      color: red;
-    }
-    .min {
-      color: goldenrod;
-    }
-    button {
-      display: block;
-      margin: 30px auto;
-      padding: 10px 20px;
-      font-size: 18px;
-    }
-  &lt;/style&gt;
-&lt;/head&gt;
-&lt;body&gt;
-
-&lt;div id="list"&gt;&lt;/div&gt;
-&lt;div id="explanation"&gt;&lt;/div&gt;
-&lt;button id="next"&gt;Next Step&lt;/button&gt;
-
-&lt;script&gt;
-const values = [100, 200, 80, 160, 120];
-let i = 0;                 // current index to place min value
-let j = 1;                 // current scan index
-let minIndex = 0;          // index of the current minimum
-let phase = 'scan';        // 'scan' | 'swap' | 'next'
-const explanation = document.getElementById('explanation');
-
-function render({ selected = -1, min = -1, sortedEnd = 0 } = {}) {
-  const list = document.getElementById('list');
-  list.innerHTML = '';
-
-  values.forEach((val, idx) =&gt; {
-    const span = document.createElement('span');
-    span.textContent = val + ' ';
-    if (idx &lt; sortedEnd) {
-      span.className = 'sorted';
-    } else if (idx === selected) {
-      span.className = 'selected';
-    } else if (idx === min) {
-      span.className = 'min';
-    } else {
-      span.className = 'unsorted';
-    }
-    list.appendChild(span);
-  });
-}
-
-function explain(msg) {
-  explanation.textContent = msg;
-}
-
-function step() {
-  if (i &gt;= values.length) {
-    render({ sortedEnd: values.length });
-    explain("Sorting complete.");
-    document.getElementById('next').disabled = true;
-    return;
-  }
-
-  if (phase === 'scan') {
-    render({ selected: i, min: minIndex, sortedEnd: i });
-    if (j &lt; values.length) {
-      explain(`Compare ${values[j]} and current min ${values[minIndex]}`);
-      if (values[j] &lt; values[minIndex]) {
-        minIndex = j;
-      }
-      j++;
-    } else {
-      phase = 'swap';
-    }
-  } else if (phase === 'swap') {
-    if (minIndex !== i) {
-      explain(`Swap ${values[i]} (index ${i}) with ${values[minIndex]} (index ${minIndex})`);
-      [values[i], values[minIndex]] = [values[minIndex], values[i]];
-    } else {
-      explain(`No swap needed, ${values[i]} is already minimum`);
-    }
-    render({ sortedEnd: i + 1 });
-    phase = 'next';
-  } else if (phase === 'next') {
-    i++;
-    j = i + 1;
-    minIndex = i;
-    if (i &lt; values.length) {
-      phase = 'scan';
-      render({ selected: i, min: minIndex, sortedEnd: i });
-      explain(`Start scanning for minimum from index ${i}`);
-    } else {
-      step(); // end
-    }
-  }
-}
-
-// Initial draw
-render({ sortedEnd: 0 });
 explain("Start Selection Sort");
 
 // Button
 document.getElementById('next').addEventListener('click', step);
-&lt;/script&gt;
-
-&lt;/body&gt;
-&lt;/html&gt;</textarea> <iframe id="dowBb" class="result_iframe" style="border:none;"></iframe>
- <script>{
-const textarea = document.getElementById("ogCvI");
-const iframe = document.getElementById("dowBb");
-const html = textarea.value;
-const iframeHTML = `${html}`;
-const doc = iframe.contentDocument || iframe.contentWindow.document;
-doc.open();
-doc.write(iframeHTML);
-doc.close();
-setTimeout(() => {
-   iframe.style.height = '0px';
-   let contentHeight = Math.max(doc.body.scrollHeight,doc.documentElement.scrollHeight);
-  // if(contentHeight < 10 || contentHeight > 800){
-//	   contentHeight = 800;
- //  } 
-   iframe.style.height = contentHeight + 'px';
-}, 50);
-}
-		</script>
+</script> `);doc.close(); setTimeout(() =&gt; { iframe.style.height = '0px'; let contentHeight = Math.max(doc.body.scrollHeight,doc.documentElement.scrollHeight); iframe.style.height = contentHeight + 'px'; }, 50); 
 </div><h3 id="javascript-implementation">JavaScript Implementation</h3><p>Here’s a clean and annotated version of selection sort in JavaScript:</p><div>
  <div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
   <pre><code class="language-js">function selectionSort(arr) {
@@ -1862,11 +1029,16 @@ setTimeout(() => {
 // Example usage
 console.log(selectionSort([5, 3, 8, 4, 2])); // Output: [2, 3, 4, 5, 8]</code></pre>
  </div>
- <div class="snippet-container" id="FsqTZ">
-  <div class="snippet-header" onclick="toggleSnippetAndRefresh('FsqTZ','7FXsY')">
-   Try it in editor
-  </div>
-  <div class="snippet-body"><textarea id="7FXsY">function selectionSort(arr) {
+ <div class="snippet-container">
+  <div class="button-group-run-edit"><button class="button-run-edit" onclick="runJavascriptCode(this,'vQiSU','G4hn2')">Run</button> <button class="button-run-edit" onclick="openEditJavascriptCodeDialog('G4hn2_Dialog','vQiSU')">Edit</button>
+  </div> <iframe id="G4hn2" class="result_iframe" style="display: none;"></iframe>
+  <div id="G4hn2_Dialog" class="dialog-backdrop">
+   <div class="dialog">
+    <div class="controls"><button onclick="runJavascriptCode(this,'vQiSU','G4hn2_IFrame')">Run</button> <button onclick="closeAllJavascriptCodeDialog()">Close</button>
+    </div>
+    <div class="dialog-content">
+     <div class="editor-container">
+      <textarea id="vQiSU" class="textarea_dialog" placeholder="Type HTML here...">function selectionSort(arr) {
   const n = arr.length;
 
   for (let i = 0; i &lt; n - 1; i++) {
@@ -1889,20 +1061,31 @@ console.log(selectionSort([5, 3, 8, 4, 2])); // Output: [2, 3, 4, 5, 8]</code></
 }
 
 // Example usage
-console.log(selectionSort([5, 3, 8, 4, 2])); // Output: [2, 3, 4, 5, 8]</textarea> <br> <button onclick="renderIframeForClientJavascript('7FXsY','z0hUC')">Run</button> <iframe id="z0hUC" class="result_iframe" style="display: none;"></iframe>
-   <script>
-  {let editor1 = CodeMirror.fromTextArea(document.getElementById("7FXsY"), {
-    mode: "javascript",
-    lineNumbers:false,
-    tabSize: 2
-    });
-    const mode = localStorage.getItem("mode") || "light";  
-    const newTheme = mode === "dark" ? "material" : "default";
-    editor1.setOption("theme", newTheme);
-
-    codeMirrorMap.set("7FXsY", editor1);}
-  </script>
+console.log(selectionSort([5, 3, 8, 4, 2])); // Output: [2, 3, 4, 5, 8]</textarea>
+     </div>
+     <div class="preview-container">
+      <iframe id="G4hn2_IFrame" class="result_iframe_dialog" style="border: none;"></iframe>
+     </div>
+    </div>
+   </div>
   </div>
+  <script>
+{
+let editor = CodeMirror.fromTextArea(document.getElementById("vQiSU"), {
+					mode : "javascript",
+					lineNumbers : false,
+          lineWrapping: true,
+					tabSize : 2
+});
+
+const darkmode = localStorage.getItem("mode") || "light";  
+const newTheme = darkmode === "dark" ? "dracula" : "default";
+editor.setSize("50%", "100%");
+editor.setOption("theme", newTheme);
+javascriptCodeMirrorMap.set("vQiSU", editor);
+}
+
+</script>
  </div>
 </div><h3 id="performance-characteristics">Performance Characteristics</h3><table>
  <thead>
@@ -2009,7 +1192,7 @@ console.log(selectionSort([5, 3, 8, 4, 2])); // Output: [2, 3, 4, 5, 8]</textare
 
 <a href="javascript-coding-best-practices.htm">
 <div class="book-cover" style="background-color: #f9f6f1;border: 1px solid #ccc;"> 
-    <div class="book-cover-title" style="font-size: 16px;color: #333;top: 20px;">JavaScript Coding Best Practices</div>
+    <div class="book-cover-title" style="font-size: 16px;color: #333;top: 10px;">JavaScript Coding Best Practices</div>
     <div class="book-cover-author">readbytes</div>
     <div class="book-cover-bottom-stripe" style="background-color: #333;"></div>
     <img class="book-cover-icon" style="width: 80px;height: 80px;top: 80px;" src='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFoAAABaCAYAAAA4qEECAAADdklEQVR4Xu2dPW/UMBjHH0QRlRA7MDDBgBAbH4ABNsRCQXwHFpAQQwVKws1IwMaXYO/M1I0VWEC8bIgy81LO53sS54l9OSe2G7f/n/S/c2zXefpT4g6nXIkAAADkQUFvqKR9JECUyw4lbXYmIqGyaYpWHXtNBwhCST8XbpcH2jyIQ+1XvRS0VQ+8opPzvrfLvDfayLpRDpmKbpMh+lw90N1jkCFhlNvFsXqxieb2Np2tx0A/EJ0IiE6Et2iOKVqOmQEa6aNXNLdxRfsB0YmA6ER4i+bYRMs5MoqK7nf6x6ai76KS6cG1Mr2iuW0TDdxAdCIgOhHeojku0XJejMQ41x063rvmGOQaa4jeXry7Rd+a/9yLqGFk/5g09T/vjKmUdK2eMwRv0dx2iQZ2IDoR3qI5q0Tv07HO/IPIlJA1BRGt/rDI+QeRKSFr6hXN7VWiQReIToS36JLOrxT9mk7QjK63YiLHQiQHBojWcYmW88wTyL5QyQFZa69obrtEAzsQnQiIToS3aI5LtJw3NGPX8//Zm/U5Y2DWpegVzW2XaGAHohMB0YnwFs2xiZZzYkSf50un35YpIWvqFc1tm+jHdDpqfM71iE615h80QUUDNxCdCG/RHJdoOW9IFPpzuu7YmHRrfFn3xUbWsIbob4t3t+hd0g/DDEtF75brbHTGxqap8ceyb6Pui423aG67RAM7EJ0Ib9ElfXSKruirV44SA0Tr2ETLOX05SsjfuVc0t22igRuITgREJ8JbNMcULcfMAI300Sua27ii/YDoREB0IrxFI+PSKxqEBaITAdGJaIlG4mfxUtA9qugGEiHKrSEaW0csstyjO7djBmQnWn9GqZ98bR5S2pXTJkeGopXYX/VxRXtZXNUt0TO6KMcnh9wu5PFUKehCI7qkv3J8krDcXCQrKvpjis6jaEVBVxfJhdpv+yo5I+eBgSiXrbuvOfgtpCPj0zgl/pJu9QA9CEvzpQTLL+uu6F9jHgSBfSq3LWa0Zbn0kTEp6G5b8lRQxYXYwviWBQ5Cygm51qGipJ2gcvTtuyO7Ae9roQi93qFBSXlKV2T3YJ7RZYi2EUNKjDWz5gldiiJFrTmbrw2WxNpPY62bLVrIZ9k9mpI+QbRJTBkx186OmDJirp0FJT2o99BUqeihLOPwo//hWVdGzBT0QZYBAAAA/AcQ1vXmtMbyGwAAAABJRU5ErkJggg=='/>
@@ -2050,30 +1233,36 @@ console.log(selectionSort([5, 3, 8, 4, 2])); // Output: [2, 3, 4, 5, 8]</textare
 
 <a href='javascript.htm'><div class='book-cover' style='background-color: #f9f6f1;color: #111111;border: 1px solid #ccc;display: flex;justify-content: center;align-items: center;text-align: center;'>More Javascript Books</div></a>
 </div>
-</div>
-  </div>
-  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
-  
-  <script>
-    function copyCode(button) {
-      const code = button.nextElementSibling.innerText;
-      navigator.clipboard.writeText(code).then(() => {
-        button.textContent = 'Copied!';
-        setTimeout(() => { button.textContent = 'Copy'; }, 1500);
-      });
-    }
-  </script>  
-<div id="floatingLog" aria-live="polite" role="alert"></div>
-<footer class="page-footer">
-    <nav>
-      <a href="https://readbytes.github.io">Home</a> | 
-      Email:<script language="JavaScript" type="text/javascript">
+</div><script>
+function copyCode(button) {const code = button.nextElementSibling.innerText;navigator.clipboard.writeText(code).then(() => {button.textContent = 'Copied!';setTimeout(() => { button.textContent = 'Copy'; }, 1500);});}
+</script></div>
+<style>
+.site-footer {margin-top: 60px;padding: 20px 0;border-top: 1px solid #eee;text-align: center;font-size: 14px;}
+.site-footer a {text-decoration: none;}
+.light-mode .site-footer {color: #777;border-color: #eee;}
+.dark-mode .site-footer {color: #888;border-color: #333;}
+.light-mode .site-footer a {color: #555;}
+.dark-mode .site-footer a {color: #aaa;}
+.site-footer a:hover {text-decoration: underline;}    
+</style>
+<footer class="site-footer">
+<nav><a href="https://readbytes.github.io">Home</a> |Email:<script type="text/javascript">
 var part1 = 'yinpeng';var part6 = '263';var part2 = Math.pow(2,6);var part3 = String.fromCharCode(part2);var part4 = 'hotmail dot com';var part5 = part1 + String.fromCharCode(part2) + part4;document.write(part1 + part6 + part3 + part4);
 </script>
-    </nav>
-  <p>© 2025 — All rights reserved.</p>    
-  </footer>
-
+| <a id="mode-toggle" href="#">Toggle Dark Mode</a>
+</nav><p>© 2025 — All rights reserved.</p></footer>
+<script>
+const toggleButton = document.getElementById('mode-toggle');
+const body = document.body;
+const savedMode = localStorage.getItem('mode') || 'light';
+body.classList.add(savedMode + '-mode');
+toggleButton.addEventListener('click', () => {
+      const isDark = body.classList.contains('dark-mode');
+      body.classList.toggle('dark-mode', !isDark);
+      body.classList.toggle('light-mode', isDark);
+      localStorage.setItem('mode', isDark ? 'light' : 'dark');
+});
+function copyCode(button) {const code = button.nextElementSibling.innerText;navigator.clipboard.writeText(code).then(() => {button.textContent = 'Copied!';setTimeout(() => { button.textContent = 'Copy'; }, 1500);});}
+</script>
 </body>
 </html>

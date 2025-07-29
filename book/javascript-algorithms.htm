@@ -1,275 +1,74 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Table of Content for JavaScript Algorithms</title>
-  <script>
-  const mode = localStorage.getItem('mode') || 'light';
-  document.documentElement.classList.add(`${mode}-mode`);
-  </script>  
-  <link rel='shortcut icon' href='https://java2s.com/style/favicon.ico'>  
-  <style>
-body {
-  font-family: 'Georgia', serif;
-  padding: 40px;
-  max-width: 800px;
-  margin: auto;
-  transition: background-color 0.3s, color 0.3s;
-}
-  .book-title-toc {
-      font-size: 32px;
-      font-weight: bold; 
-    }
+<meta charset="UTF-8">
+<title>Table of Content for JavaScript Algorithms</title>
+<link rel='shortcut icon' href='https://readbytes.github.io/images/favicon.ico'>
+<link href="https://fonts.googleapis.com/css2?family=Merriweather&display=swap" rel="stylesheet" />
+<link href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.css" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/theme/dracula.min.css"><style>
+html {scroll-behavior: smooth;}  
+body {font-family: 'Merriweather', serif;;margin: 0;padding: 2rem 1rem;font-size: 15px;line-height: 1.5;transition: background-color 0.3s, color 0.3s;}
+.container {max-width: 750px;margin: 0 auto;padding: 1rem 2rem;}
+.light-mode {background-color: #f8f7f5;color: #333;} 
+.dark-mode {background-color: #121212;color: #e0e0e0;}
+a { text-decoration: none;transition: color 0.2s;}
+a:hover {text-decoration: underline;}
+.light-mode a {color: #555;}
+.dark-mode a {color: #aaa;}
+</style><style>
+.related-book-list {display: flex;flex-wrap: wrap;gap: 20px;}
+.related-books {margin-top: 40px;}
+.related-books h2 {font-size: 22px;margin-bottom: 20px;border-bottom: 2px solid #eee;padding-bottom: 8px;}
+.light-mode .related-books h2 {color: #333;border-color: #eee;}
+.dark-mode .related-books h2 {color: #ddd;border-color: #333;}
+</style><style>
+.book-cover {width: 130px;height: 180px;font-family: Arial, sans-serif;position: relative;overflow: hidden;box-shadow: 2px 2px 4px rgba(0,0,0,0.1);}
+.book-cover-bottom-stripe {position: absolute;bottom: 0;left: 0;height: 5px;width: 100%;}
+.book-cover-title {position: absolute;width: 100%;text-align: center;font-weight: bold;}
+.book-cover-icon {position: absolute;left: 50%;transform: translateX(-50%);display: flex;align-items: center;justify-content: center;}
+.book-cover-author {position: absolute;bottom: 10px;width: 100%;text-align: center;font-size: 8px;color: #333;}
+</style><style>
+.book-title-toc {font-size: 32px;font-weight: bold; }
+.book-subtitle-toc {font-size: 18px;margin-top: 8px;font-style: italic;}
+.book-header {text-align: center;margin-bottom: 40px;}
 
-    .book-subtitle-toc {
-      font-size: 18px; 
-      margin-top: 8px;
-      font-style: italic;
-    }
-.book-header {
-  text-align: center;
-  margin-bottom: 40px;
-}
+.toc-container {border-radius: 10px;padding: 30px;margin-bottom: 40px;box-shadow: 0 8px 20px rgba(0,0,0,0.05);}
+h1 {font-size: 24px;text-align: center;margin-bottom: 30px;letter-spacing: 1px;padding-bottom: 10px;}
+.toc-list,.toc-section-list {list-style: none;padding: 0;margin: 0;}
+.toc-section-list {padding-left: 18px;margin-top: 6px;margin-bottom: 20px; }
+.toc-chapter {padding: 20px 0;}
+.chapter-title,.toc-section {display: flex;justify-content: space-between;padding-top: 4px;}
+.chapter-title {font-size: 17px;font-weight: bold;}
+.chapter-page,.section-page {font-style: italic;}
+ 
+ 
+.light-mode .book-title-toc,.light-mode .chapter-title,.light-mode .book-name {color: #222;}
+.light-mode .book-subtitle-toc,.light-mode .book-sub,.light-mode .chapter-page,.light-mode .section-page {color: #666;}
+.light-mode .toc-container { background: #fff;border: 1px solid #ddd;}
+.light-mode h1 {border-bottom: 2px solid #eee;color: #222;}
+.light-mode .toc-section {  color: #444;}
 
-.toc-container {
-  border-radius: 10px;
-  padding: 30px;
-  margin-bottom: 40px;
-  box-shadow: 0 8px 20px rgba(0,0,0,0.05);
-}
+.light-mode .book-cover { border: 1px solid #ccc;box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);}
+.light-mode .book-title,.light-mode .series-name {color: #fff;}
+.light-mode .book-subtitle,.light-mode .book-footer {color: #aaa;}
 
-h1 {
-  font-size: 24px;
-  text-align: center;
-  margin-bottom: 30px;
-  letter-spacing: 1px;
-  padding-bottom: 10px;
-}
+.dark-mode .book-title-toc,.dark-mode .chapter-title,.dark-mode .book-name {color: #f5f5f5;}
+.dark-mode .book-subtitle-toc,.dark-mode .book-sub,.dark-mode .chapter-page,.dark-mode .section-page {color: #aaa;}
+.dark-mode .toc-container {background: #1e1e1e;border: 1px solid #444;}
 
-.toc-list,
-.toc-section-list {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-}
+.dark-mode h1 {border-bottom: 2px solid #333;color: #eee;}
+.dark-mode .toc-section {color: #bbb;}
 
-.toc-section-list {
-  padding-left: 18px;
-  margin-top: 6px;
-  margin-bottom: 20px; 
-}
+.dark-mode .related-books h2 {color: #ddd;border-bottom: 2px solid #333;}
+.dark-mode .book-title,.dark-mode .series-name {color: #fff;}
+.dark-mode .book-subtitle,.dark-mode .book-footer {color: #bbb;}
+.dark-mode .toc-section {color: #ddd;}
 
-.toc-chapter {
-  padding: 20px 0;
-}
-
-.chapter-title,
-.toc-section {
-  display: flex;
-  justify-content: space-between;
-  padding-top: 4px;
-}
-
-.chapter-title {
-  font-size: 17px;
-  font-weight: bold;
-}
-
-.chapter-page,
-.section-page {
-  font-style: italic;
-}
-
-.related-books {
-  margin-top: 40px;
-}
-
-.related-book-list {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 20px;
-}
-    .book-cover {
-      width: 130px;
-      height: 180px;
-      font-family: Arial, sans-serif;
-      position: relative;
-      overflow: hidden;
-      box-shadow: 2px 2px 4px rgba(0,0,0,0.1);
-    }
-    .book-cover-bottom-stripe {
-      position: absolute;
-      bottom: 0;
-      left: 0;
-      height: 5px;
-      width: 100%;
-    }
-    .book-cover-title {
-      position: absolute;
-      width: 100%;
-      text-align: center;
-      font-weight: bold;
-    }
-     
-    .book-cover-icon {
-      position: absolute;
-      left: 50%;
-      transform: translateX(-50%);
-      display: flex;
-      align-items: center;
-      justify-content: center; 
-    }
-
-    .book-cover-author {
-      position: absolute;
-      bottom: 10px;
-      width: 100%;
-      text-align: center;
-      font-size: 8px;
-      color: #333;
-    }
-
-a {
-  text-decoration: none;
-  transition: color 0.2s;
-}
-
-a:hover {
-  text-decoration: underline;
-}
-.site-footer {
-  margin-top: 60px;
-  padding: 20px 0;
-  border-top: 1px solid #eee;
-  text-align: center;
-  font-size: 14px; 
-}
-/* === Light Mode === */
-html.light-mode {
-  background-color: #fdfdfd;
-  color: #333;
-}
-
-.light-mode .book-title-toc,
-.light-mode .chapter-title,
-.light-mode .book-name {
-  color: #222;
-}
-
-.light-mode .book-subtitle-toc,
-.light-mode .book-sub,
-.light-mode .chapter-page,
-.light-mode .section-page {
-  color: #666;
-}
-
-.light-mode .toc-container {
-  background: #fff;
-  border: 1px solid #ddd;
-}
-
-.light-mode h1 {
-  border-bottom: 2px solid #eee;
-  color: #222;
-}
-
-.light-mode .toc-section {
-  color: #444;
-}
-
-.light-mode .related-books h2 {
-  color: #333;
-  border-bottom: 2px solid #eee;
-}
-
-.light-mode .book-cover { 
-  border: 1px solid #ccc;
-  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
-}
-
-.light-mode .book-title,
-.light-mode .series-name {
-  color: #fff;
-}
-
-.light-mode .book-subtitle,
-.light-mode .book-footer {
-  color: #aaa;
-}
-
-.light-mode .site-footer {
-  color: #777;
-  border-color: #eee;
-}
-
-.light-mode a {
-  color: #555;
-}
-
-/* === Dark Mode === */
-html.dark-mode {
-  background-color: #121212;
-  color: #e0e0e0;
-}
-
-.dark-mode .book-title-toc,
-.dark-mode .chapter-title,
-.dark-mode .book-name {
-  color: #f5f5f5;
-}
-
-.dark-mode .book-subtitle-toc,
-.dark-mode .book-sub,
-.dark-mode .chapter-page,
-.dark-mode .section-page {
-  color: #aaa;
-}
-
-.dark-mode .toc-container {
-  background: #1e1e1e;
-  border: 1px solid #444;
-}
-
-.dark-mode h1 {
-  border-bottom: 2px solid #333;
-  color: #eee;
-}
-
-.dark-mode .toc-section {
-  color: #bbb;
-}
-
-.dark-mode .related-books h2 {
-  color: #ddd;
-  border-bottom: 2px solid #333;
-}
-
-
-.dark-mode .book-title,
-.dark-mode .series-name {
-  color: #fff;
-}
-
-.dark-mode .book-subtitle,
-.dark-mode .book-footer {
-  color: #bbb;
-}
-
-.dark-mode .site-footer {
-  color: #aaa;
-  border-color: #333;
-}
-
-.dark-mode .toc-section {
-  color: #ddd;
-}
-
-
-.dark-mode a {
-  color: #aaa;
-}
-
-/* === Responsive === */
 @media (max-width: 600px) {
   .chapter-title,
   .toc-section {
@@ -282,35 +81,17 @@ html.dark-mode {
     margin-top: 4px;
   }
 }
-  </style>
+
+</style>
 </head>
 <body>
-<button onclick="toggleMode()">Toggle Mode</button>
-<script>
-function toggleMode() {
-    const html = document.documentElement;
-    const isDark = html.classList.contains('dark-mode');
-
-    html.classList.toggle('dark-mode', !isDark);
-    html.classList.toggle('light-mode', isDark);
-
-    localStorage.setItem('mode', isDark ? 'light' : 'dark');
-  }
-</script>
-<div class="book-header">
-  <div class="book-title-toc">JavaScript Algorithms</div>
-  <div class="book-subtitle-toc">Guide to Problem Solving and Data Structures</div>
-</div>
-
-<div class="toc-container">
-  <h1>Table of Contents</h1>
-  <ul class="toc-list">
-    <li class='toc-chapter'><a href='javascript-algorithms-introduction.htm'>
+<script>const mode = localStorage.getItem('mode') || 'light';document.documentElement.classList.add(`${mode}-mode`);</script>  
+<div class="container"><div class='book-header'><h1 class='book-title-toc' id = 'top'>JavaScript Algorithms</h1><h3 class='book-subtitle-toc'>Guide to Problem Solving and Data Structures</h3></div><div class='toc-container'><h1>Table of Contents</h1><ul class='toc-list'><li class='toc-chapter'><a href='javascript-algorithms-introduction.htm'>
 <div class='chapter-title'>
 <span id='introduction'>Chapter 1 : Introduction </span>
 <span class='chapter-page'>1</span>
 </div>
-</a><ul class="toc-section-list"><li class="toc-section">
+</a><ul class='toc-section-list'><li class="toc-section">
 <a href='javascript-algorithms-introduction.htm#why-study-algorithms-in-javascript'>
 <span>Why Study Algorithms in JavaScript?</span></a>
 <span class='section-page'>1</span>
@@ -327,7 +108,7 @@ function toggleMode() {
 <span id='analyzing-algorithms'>Chapter 2 : Analyzing Algorithms </span>
 <span class='chapter-page'>7</span>
 </div>
-</a><ul class="toc-section-list"><li class="toc-section">
+</a><ul class='toc-section-list'><li class="toc-section">
 <a href='javascript-algorithms-analyzing-algorithms.htm#time-and-space-complexity'>
 <span>Time and Space Complexity</span></a>
 <span class='section-page'>7</span>
@@ -344,7 +125,7 @@ function toggleMode() {
 <span id='mathematical-tools-lightweight'>Chapter 3 : Mathematical Tools (Lightweight) </span>
 <span class='chapter-page'>14</span>
 </div>
-</a><ul class="toc-section-list"><li class="toc-section">
+</a><ul class='toc-section-list'><li class="toc-section">
 <a href='javascript-algorithms-mathematical-tools-lightweight.htm#logarithms-exponents-and-series'>
 <span>Logarithms, Exponents, and Series</span></a>
 <span class='section-page'>14</span>
@@ -361,7 +142,7 @@ function toggleMode() {
 <span id='sorting-and-order-elementary-sorting-algorithms'>Chapter 4 : Sorting and Order: Elementary Sorting Algorithms </span>
 <span class='chapter-page'>21</span>
 </div>
-</a><ul class="toc-section-list"><li class="toc-section">
+</a><ul class='toc-section-list'><li class="toc-section">
 <a href='javascript-algorithms-sorting-and-order-elementary-sorting-algorithms.htm#bubble-sort'>
 <span>Bubble Sort</span></a>
 <span class='section-page'>21</span>
@@ -378,7 +159,7 @@ function toggleMode() {
 <span id='sorting-and-order-divide-and-conquer'>Chapter 5 : Sorting and Order: Divide and Conquer </span>
 <span class='chapter-page'>41</span>
 </div>
-</a><ul class="toc-section-list"><li class="toc-section">
+</a><ul class='toc-section-list'><li class="toc-section">
 <a href='javascript-algorithms-sorting-and-order-divide-and-conquer.htm#merge-sort'>
 <span>Merge Sort</span></a>
 <span class='section-page'>41</span>
@@ -395,7 +176,7 @@ function toggleMode() {
 <span id='sorting-and-order-linear-time-sorting'>Chapter 6 : Sorting and Order: Linear-Time Sorting </span>
 <span class='chapter-page'>68</span>
 </div>
-</a><ul class="toc-section-list"><li class="toc-section">
+</a><ul class='toc-section-list'><li class="toc-section">
 <a href='javascript-algorithms-sorting-and-order-linear-time-sorting.htm#counting-sort'>
 <span>Counting Sort</span></a>
 <span class='section-page'>68</span>
@@ -416,7 +197,7 @@ function toggleMode() {
 <span id='arrays-and-linked-lists'>Chapter 7 : Arrays and Linked Lists </span>
 <span class='chapter-page'>79</span>
 </div>
-</a><ul class="toc-section-list"><li class="toc-section">
+</a><ul class='toc-section-list'><li class="toc-section">
 <a href='javascript-algorithms-arrays-and-linked-lists.htm#native-arrays-and-their-limits'>
 <span>Native Arrays and Their Limits</span></a>
 <span class='section-page'>79</span>
@@ -429,7 +210,7 @@ function toggleMode() {
 <span id='stacks-and-queues'>Chapter 8 : Stacks and Queues </span>
 <span class='chapter-page'>112</span>
 </div>
-</a><ul class="toc-section-list"><li class="toc-section">
+</a><ul class='toc-section-list'><li class="toc-section">
 <a href='javascript-algorithms-stacks-and-queues.htm#implementing-from-scratch'>
 <span>Implementing from Scratch</span></a>
 <span class='section-page'>112</span>
@@ -442,7 +223,7 @@ function toggleMode() {
 <span id='hash-tables'>Chapter 9 : Hash Tables </span>
 <span class='chapter-page'>128</span>
 </div>
-</a><ul class="toc-section-list"><li class="toc-section">
+</a><ul class='toc-section-list'><li class="toc-section">
 <a href='javascript-algorithms-hash-tables.htm#javascript-objects-and-map'>
 <span>JavaScript Objects and <code>Map</code></span></a>
 <span class='section-page'>128</span>
@@ -459,7 +240,7 @@ function toggleMode() {
 <span id='trees-and-binary-search-trees'>Chapter 10 : Trees and Binary Search Trees </span>
 <span class='chapter-page'>140</span>
 </div>
-</a><ul class="toc-section-list"><li class="toc-section">
+</a><ul class='toc-section-list'><li class="toc-section">
 <a href='javascript-algorithms-trees-and-binary-search-trees.htm#recursive-tree-traversals'>
 <span>Recursive Tree Traversals</span></a>
 <span class='section-page'>140</span>
@@ -476,7 +257,7 @@ function toggleMode() {
 <span id='heaps-and-priority-queues'>Chapter 11 : Heaps and Priority Queues </span>
 <span class='chapter-page'>165</span>
 </div>
-</a><ul class="toc-section-list"><li class="toc-section">
+</a><ul class='toc-section-list'><li class="toc-section">
 <a href='javascript-algorithms-heaps-and-priority-queues.htm#min-heap-max-heap'>
 <span>Min-Heap, Max-Heap</span></a>
 <span class='section-page'>165</span>
@@ -493,7 +274,7 @@ function toggleMode() {
 <span id='balanced-search-trees'>Chapter 12 : Balanced Search Trees </span>
 <span class='chapter-page'>187</span>
 </div>
-</a><ul class="toc-section-list"><li class="toc-section">
+</a><ul class='toc-section-list'><li class="toc-section">
 <a href='javascript-algorithms-balanced-search-trees.htm#red-black-trees-conceptual-overview'>
 <span>Red-Black Trees (Conceptual Overview)</span></a>
 <span class='section-page'>187</span>
@@ -510,7 +291,7 @@ function toggleMode() {
 <span id='graph-representations'>Chapter 13 : Graph Representations </span>
 <span class='chapter-page'>204</span>
 </div>
-</a><ul class="toc-section-list"><li class="toc-section">
+</a><ul class='toc-section-list'><li class="toc-section">
 <a href='javascript-algorithms-graph-representations.htm#adjacency-lists-and-matrices-in-js'>
 <span>Adjacency Lists and Matrices in JS</span></a>
 <span class='section-page'>204</span>
@@ -527,7 +308,7 @@ function toggleMode() {
 <span id='graphs-traversals'>Chapter 14 : Graphs: Traversals </span>
 <span class='chapter-page'>218</span>
 </div>
-</a><ul class="toc-section-list"><li class="toc-section">
+</a><ul class='toc-section-list'><li class="toc-section">
 <a href='javascript-algorithms-graphs-traversals.htm#breadth-first-search-bfs'>
 <span>Breadth-First Search (BFS)</span></a>
 <span class='section-page'>218</span>
@@ -544,7 +325,7 @@ function toggleMode() {
 <span id='graph-shortest-paths'>Chapter 15 : Graph Shortest Paths </span>
 <span class='chapter-page'>233</span>
 </div>
-</a><ul class="toc-section-list"><li class="toc-section">
+</a><ul class='toc-section-list'><li class="toc-section">
 <a href='javascript-algorithms-graph-shortest-paths.htm#dijkstra-s-algorithm'>
 <span>Dijkstra’s Algorithm</span></a>
 <span class='section-page'>234</span>
@@ -561,7 +342,7 @@ function toggleMode() {
 <span id='minimum-spanning-trees'>Chapter 16 : Minimum Spanning Trees </span>
 <span class='chapter-page'>264</span>
 </div>
-</a><ul class="toc-section-list"><li class="toc-section">
+</a><ul class='toc-section-list'><li class="toc-section">
 <a href='javascript-algorithms-minimum-spanning-trees.htm#prim-s-algorithm'>
 <span>Prim’s Algorithm</span></a>
 <span class='section-page'>264</span>
@@ -578,7 +359,7 @@ function toggleMode() {
 <span id='principles-of-dynamic-programming'>Chapter 17 : Principles of Dynamic Programming </span>
 <span class='chapter-page'>284</span>
 </div>
-</a><ul class="toc-section-list"><li class="toc-section">
+</a><ul class='toc-section-list'><li class="toc-section">
 <a href='javascript-algorithms-principles-of-dynamic-programming.htm#overlapping-subproblems-and-memoization'>
 <span>Overlapping Subproblems and Memoization</span></a>
 <span class='section-page'>284</span>
@@ -591,7 +372,7 @@ function toggleMode() {
 <span id='principles-of-dynamic-programming-classic-problems'>Chapter 18 : Principles of Dynamic Programming Classic Problems </span>
 <span class='chapter-page'>290</span>
 </div>
-</a><ul class="toc-section-list"><li class="toc-section">
+</a><ul class='toc-section-list'><li class="toc-section">
 <a href='javascript-algorithms-principles-of-dynamic-programming-classic-problems.htm#fibonacci-variants'>
 <span>Fibonacci Variants</span></a>
 <span class='section-page'>290</span>
@@ -612,7 +393,7 @@ function toggleMode() {
 <span id='greedy-algorithms'>Chapter 19 : Greedy Algorithms </span>
 <span class='chapter-page'>304</span>
 </div>
-</a><ul class="toc-section-list"><li class="toc-section">
+</a><ul class='toc-section-list'><li class="toc-section">
 <a href='javascript-algorithms-greedy-algorithms.htm#when-greedy-works'>
 <span>When Greedy Works</span></a>
 <span class='section-page'>304</span>
@@ -633,7 +414,7 @@ function toggleMode() {
 <span id='backtracking-and-recursion'>Chapter 20 : Backtracking and Recursion </span>
 <span class='chapter-page'>331</span>
 </div>
-</a><ul class="toc-section-list"><li class="toc-section">
+</a><ul class='toc-section-list'><li class="toc-section">
 <a href='javascript-algorithms-backtracking-and-recursion.htm#combinatorial-problems'>
 <span>Combinatorial Problems</span></a>
 <span class='section-page'>331</span>
@@ -650,7 +431,7 @@ function toggleMode() {
 <span id='real-world-applications'>Chapter 21 : Real-World Applications </span>
 <span class='chapter-page'>344</span>
 </div>
-</a><ul class="toc-section-list"><li class="toc-section">
+</a><ul class='toc-section-list'><li class="toc-section">
 <a href='javascript-algorithms-real-world-applications.htm#autocomplete-with-tries'>
 <span>Autocomplete with Tries</span></a>
 <span class='section-page'>344</span>
@@ -671,7 +452,7 @@ function toggleMode() {
 <span id='algorithmic-thinking-in-practice'>Chapter 22 : Algorithmic Thinking in Practice </span>
 <span class='chapter-page'>360</span>
 </div>
-</a><ul class="toc-section-list"><li class="toc-section">
+</a><ul class='toc-section-list'><li class="toc-section">
 <a href='javascript-algorithms-algorithmic-thinking-in-practice.htm#how-to-approach-a-problem'>
 <span>How to Approach a Problem</span></a>
 <span class='section-page'>360</span>
@@ -683,11 +464,7 @@ function toggleMode() {
 <a href='javascript-algorithms-algorithmic-thinking-in-practice.htm#thinking-in-constraints'>
 <span>Thinking in Constraints</span></a>
 <span class='section-page'>366</span>
-</li></ul></li>
-  </ul>
-</div>
-
-<div class='related-books'>
+</li></ul></li></ul></div><div class='related-books'>
 <h2>Javascript In-Depth Books</h2>
 <div class='related-book-list'>
 <a href="javascript-clean-code.htm">
@@ -702,7 +479,7 @@ function toggleMode() {
 
 <a href="javascript-coding-best-practices.htm">
 <div class="book-cover" style="background-color: #f9f6f1;border: 1px solid #ccc;"> 
-    <div class="book-cover-title" style="font-size: 16px;color: #333;top: 20px;">JavaScript Coding Best Practices</div>
+    <div class="book-cover-title" style="font-size: 16px;color: #333;top: 10px;">JavaScript Coding Best Practices</div>
     <div class="book-cover-author">readbytes</div>
     <div class="book-cover-bottom-stripe" style="background-color: #333;"></div>
     <img class="book-cover-icon" style="width: 80px;height: 80px;top: 80px;" src='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFoAAABaCAYAAAA4qEECAAADdklEQVR4Xu2dPW/UMBjHH0QRlRA7MDDBgBAbH4ABNsRCQXwHFpAQQwVKws1IwMaXYO/M1I0VWEC8bIgy81LO53sS54l9OSe2G7f/n/S/c2zXefpT4g6nXIkAAADkQUFvqKR9JECUyw4lbXYmIqGyaYpWHXtNBwhCST8XbpcH2jyIQ+1XvRS0VQ+8opPzvrfLvDfayLpRDpmKbpMh+lw90N1jkCFhlNvFsXqxieb2Np2tx0A/EJ0IiE6Et2iOKVqOmQEa6aNXNLdxRfsB0YmA6ER4i+bYRMs5MoqK7nf6x6ai76KS6cG1Mr2iuW0TDdxAdCIgOhHeojku0XJejMQ41x063rvmGOQaa4jeXry7Rd+a/9yLqGFk/5g09T/vjKmUdK2eMwRv0dx2iQZ2IDoR3qI5q0Tv07HO/IPIlJA1BRGt/rDI+QeRKSFr6hXN7VWiQReIToS36JLOrxT9mk7QjK63YiLHQiQHBojWcYmW88wTyL5QyQFZa69obrtEAzsQnQiIToS3aI5LtJw3NGPX8//Zm/U5Y2DWpegVzW2XaGAHohMB0YnwFs2xiZZzYkSf50un35YpIWvqFc1tm+jHdDpqfM71iE615h80QUUDNxCdCG/RHJdoOW9IFPpzuu7YmHRrfFn3xUbWsIbob4t3t+hd0g/DDEtF75brbHTGxqap8ceyb6Pui423aG67RAM7EJ0Ib9ElfXSKruirV44SA0Tr2ETLOX05SsjfuVc0t22igRuITgREJ8JbNMcULcfMAI300Sua27ii/YDoREB0IrxFI+PSKxqEBaITAdGJaIlG4mfxUtA9qugGEiHKrSEaW0csstyjO7djBmQnWn9GqZ98bR5S2pXTJkeGopXYX/VxRXtZXNUt0TO6KMcnh9wu5PFUKehCI7qkv3J8krDcXCQrKvpjis6jaEVBVxfJhdpv+yo5I+eBgSiXrbuvOfgtpCPj0zgl/pJu9QA9CEvzpQTLL+uu6F9jHgSBfSq3LWa0Zbn0kTEp6G5b8lRQxYXYwviWBQ5Cygm51qGipJ2gcvTtuyO7Ae9roQi93qFBSXlKV2T3YJ7RZYi2EUNKjDWz5gldiiJFrTmbrw2WxNpPY62bLVrIZ9k9mpI+QbRJTBkx186OmDJirp0FJT2o99BUqeihLOPwo//hWVdGzBT0QZYBAAAA/AcQ1vXmtMbyGwAAAABJRU5ErkJggg=='/>
@@ -743,16 +520,34 @@ function toggleMode() {
 
 <a href='javascript.htm'><div class='book-cover' style='background-color: #f9f6f1;color: #111111;border: 1px solid #ccc;display: flex;justify-content: center;align-items: center;text-align: center;'>More Javascript Books</div></a>
 </div>
-</div>
+</div></div>
+<style>
+.site-footer {margin-top: 60px;padding: 20px 0;border-top: 1px solid #eee;text-align: center;font-size: 14px;}
+.site-footer a {text-decoration: none;}
+.light-mode .site-footer {color: #777;border-color: #eee;}
+.dark-mode .site-footer {color: #888;border-color: #333;}
+.light-mode .site-footer a {color: #555;}
+.dark-mode .site-footer a {color: #aaa;}
+.site-footer a:hover {text-decoration: underline;}    
+</style>
 <footer class="site-footer">
-    <nav>
-      <a href="https://readbytes.github.io">Home</a> | 
-      Email:<script language="JavaScript" type="text/javascript">
+<nav><a href="https://readbytes.github.io">Home</a> |Email:<script type="text/javascript">
 var part1 = 'yinpeng';var part6 = '263';var part2 = Math.pow(2,6);var part3 = String.fromCharCode(part2);var part4 = 'hotmail dot com';var part5 = part1 + String.fromCharCode(part2) + part4;document.write(part1 + part6 + part3 + part4);
 </script>
-    </nav>
-  <p>© 2025 — All rights reserved.</p>   
-</footer>
-
+| <a id="mode-toggle" href="#">Toggle Dark Mode</a>
+</nav><p>© 2025 — All rights reserved.</p></footer>
+<script>
+const toggleButton = document.getElementById('mode-toggle');
+const body = document.body;
+const savedMode = localStorage.getItem('mode') || 'light';
+body.classList.add(savedMode + '-mode');
+toggleButton.addEventListener('click', () => {
+      const isDark = body.classList.contains('dark-mode');
+      body.classList.toggle('dark-mode', !isDark);
+      body.classList.toggle('light-mode', isDark);
+      localStorage.setItem('mode', isDark ? 'light' : 'dark');
+});
+function copyCode(button) {const code = button.nextElementSibling.innerText;navigator.clipboard.writeText(code).then(() => {button.textContent = 'Copied!';setTimeout(() => { button.textContent = 'Copy'; }, 1500);});}
+</script>
 </body>
 </html>

@@ -1,468 +1,170 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
+<meta charset="UTF-8">
 <title>C Pointers Debugging and Common Pointer Errors</title>
-<link rel='shortcut icon' href='https://java2s.com/style/favicon.ico'>
+<link rel='shortcut icon' href='https://readbytes.github.io/images/favicon.ico'>
 <link href="https://fonts.googleapis.com/css2?family=Merriweather&display=swap" rel="stylesheet" />
 <link href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.css" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/theme/dracula.min.css"><style>
+html {scroll-behavior: smooth;}  
+body {font-family: 'Merriweather', serif;;margin: 0;padding: 2rem 1rem;font-size: 15px;line-height: 1.5;transition: background-color 0.3s, color 0.3s;}
+.container {max-width: 750px;margin: 0 auto;padding: 1rem 2rem;}
+.light-mode {background-color: #f8f7f5;color: #333;} 
+.dark-mode {background-color: #121212;color: #e0e0e0;}
+a { text-decoration: none;transition: color 0.2s;}
+a:hover {text-decoration: underline;}
+.light-mode a {color: #555;}
+.dark-mode a {color: #aaa;}
+</style><style>
+.related-book-list {display: flex;flex-wrap: wrap;gap: 20px;}
+.related-books {margin-top: 40px;}
+.related-books h2 {font-size: 22px;margin-bottom: 20px;border-bottom: 2px solid #eee;padding-bottom: 8px;}
+.light-mode .related-books h2 {color: #333;border-color: #eee;}
+.dark-mode .related-books h2 {color: #ddd;border-color: #333;}
+</style><style>
+.book-cover {width: 130px;height: 180px;font-family: Arial, sans-serif;position: relative;overflow: hidden;box-shadow: 2px 2px 4px rgba(0,0,0,0.1);}
+.book-cover-bottom-stripe {position: absolute;bottom: 0;left: 0;height: 5px;width: 100%;}
+.book-cover-title {position: absolute;width: 100%;text-align: center;font-weight: bold;}
+.book-cover-icon {position: absolute;left: 50%;transform: translateX(-50%);display: flex;align-items: center;justify-content: center;}
+.book-cover-author {position: absolute;bottom: 10px;width: 100%;text-align: center;font-size: 8px;color: #333;}
+</style><style>
+.book-title-toc {font-size: 32px;font-weight: bold; }
+.book-subtitle-toc {font-size: 18px;margin-top: 8px;font-style: italic;}
+.book-header {text-align: center;margin-bottom: 40px;}
 
+.toc-container {border-radius: 10px;padding: 30px;margin-bottom: 40px;box-shadow: 0 8px 20px rgba(0,0,0,0.05);}
+h1 {font-size: 24px;text-align: center;margin-bottom: 30px;letter-spacing: 1px;padding-bottom: 10px;}
+.toc-list,.toc-section-list {list-style: none;padding: 0;margin: 0;}
+.toc-section-list {padding-left: 18px;margin-top: 6px;margin-bottom: 20px; }
+.toc-chapter {padding: 20px 0;}
+.chapter-title,.toc-section {display: flex;justify-content: space-between;padding-top: 4px;}
+.chapter-title {font-size: 17px;font-weight: bold;}
+.chapter-page,.section-page {font-style: italic;}
+ 
+ 
+.light-mode .book-title-toc,.light-mode .chapter-title,.light-mode .book-name {color: #222;}
+.light-mode .book-subtitle-toc,.light-mode .book-sub,.light-mode .chapter-page,.light-mode .section-page {color: #666;}
+.light-mode .toc-container { background: #fff;border: 1px solid #ddd;}
+.light-mode h1 {border-bottom: 2px solid #eee;color: #222;}
+.light-mode .toc-section {  color: #444;}
 
-  <script>
-  const mode = localStorage.getItem('mode') || 'light';
-  document.documentElement.classList.add(`${mode}-mode`);
-  </script>   
-<style> 
-html {
-  scroll-behavior: smooth;
+.light-mode .book-cover { border: 1px solid #ccc;box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);}
+.light-mode .book-title,.light-mode .series-name {color: #fff;}
+.light-mode .book-subtitle,.light-mode .book-footer {color: #aaa;}
+
+.dark-mode .book-title-toc,.dark-mode .chapter-title,.dark-mode .book-name {color: #f5f5f5;}
+.dark-mode .book-subtitle-toc,.dark-mode .book-sub,.dark-mode .chapter-page,.dark-mode .section-page {color: #aaa;}
+.dark-mode .toc-container {background: #1e1e1e;border: 1px solid #444;}
+
+.dark-mode h1 {border-bottom: 2px solid #333;color: #eee;}
+.dark-mode .toc-section {color: #bbb;}
+
+.dark-mode .related-books h2 {color: #ddd;border-bottom: 2px solid #333;}
+.dark-mode .book-title,.dark-mode .series-name {color: #fff;}
+.dark-mode .book-subtitle,.dark-mode .book-footer {color: #bbb;}
+.dark-mode .toc-section {color: #ddd;}
+
+@media (max-width: 600px) {
+  .chapter-title,
+  .toc-section {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .chapter-page,
+  .section-page {
+    margin-top: 4px;
+  }
 }
 
-body {
-  font-family: 'Merriweather', serif;
-  margin: 0;
-  padding: 2rem 1rem;
-  font-size: 15px;
-  line-height: 1.5;
-  transition: background-color 0.3s, color 0.3s;
-}
+</style><style>
+.light-mode .container {box-shadow: 0 0 15px rgba(0,0,0,0.1);}
+.dark-mode .container {box-shadow: 0 0 15px rgba(255, 255, 255, 0.05);}
 
-.container {
-  max-width: 700px;
-  margin: 0 auto;
-  padding: 1rem 2rem;
-  box-shadow: 0 0 15px rgba(0,0,0,0.1);
-}
-
-h1, h2, h3 {
-  font-weight: 600;
-  margin-top: 2.5rem;
-  margin-bottom: 1rem;
-  line-height: 1.2;
-}
-
+h1, h2, h3 {font-weight: 600;margin-top: 2.5rem;margin-bottom: 1rem;line-height: 1.2;}
 h1 { font-size: 1.8rem; }
 h2 { font-size: 1.4rem; }
 h3 { font-size: 1.2rem; }
 
-table {
-  width: 100%;
-  border-collapse: collapse;
-  font-family: sans-serif;
-  font-size: 1em;
-  margin: 1em 0;
-}
+table {width: 100%;border-collapse: collapse;font-family: sans-serif;font-size: 1em;margin: 1em 0;}
+th, td {padding: 0.6em 1em;text-align: left;border: 1px solid;}
+tr:nth-child(even) {  background-color: inherit;}
+tr:hover { background-color: inherit;}
 
-th, td {
-  padding: 0.6em 1em;
-  text-align: left;
-  border: 1px solid;
-}
+code {color: #d35400;}
 
-tr:nth-child(even) {
-  background-color: inherit;
-}
-
-tr:hover {
-  background-color: inherit;
-}
-
-a {
-  text-decoration: none;
-  transition: color 0.2s;
-}
-
-a:hover {
-  text-decoration: underline;
-}
-
-code {
-  color: #d35400;
-}
-
-.book-title-chapter {
-  font-family: 'Merriweather', serif;
-  font-size: 2rem;
-  font-weight: bold;
-  text-align: center;
-  margin-bottom: 2rem;
-  border-bottom: 2px solid;
-  padding-bottom: 0.5rem;
-}
-
-.book-subtitle-chapter {
-  text-align: center;
-  font-size: 1rem;
-  margin-top: -1rem;
-  margin-bottom: 2rem;
-}
-
-.related-books {
-  margin-top: 40px;
-}
-
-.related-book-list {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 20px;
-}
-
-    .book-cover {
-      width: 130px;
-      height: 180px;
-      font-family: Arial, sans-serif;
-      position: relative;
-      overflow: hidden;      
-      line-height: normal;
-      box-shadow: 2px 2px 4px rgba(0,0,0,0.1);
-    }
-    .book-cover-bottom-stripe {
-      position: absolute;
-      bottom: 0;
-      left: 0;
-      height: 5px;
-      width: 100%;
-    }
-    .book-cover-title {
-      position: absolute;
-      width: 100%;
-      text-align: center;
-      font-weight: bold;
-    }
-     
-    .book-cover-icon {
-      position: absolute;
-      left: 50%;
-      transform: translateX(-50%);
-      display: flex;
-      align-items: center;
-      justify-content: center; 
-    }
-
-    .book-cover-author {
-      position: absolute;
-      bottom: 10px;
-      width: 100%;
-      text-align: center;
-      font-size: 8px;
-      color: #333;
-    }
-
-.page-footer {
-  margin-top: 4rem;
-  padding: 1rem 0;
-  text-align: center;
-  font-size: 0.85rem;
-  border-top: 1px solid;
-}
-
-.chapter-navi-section {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding-bottom: 10px;
-}
-
-.nav-link {
-  color: inherit;
-  text-decoration: none;
-  opacity: 0.5;
-  transition: opacity 0.3s ease, text-decoration 0.3s ease;
-}
-
-.nav-link:hover {
-  opacity: 0.9;
-  text-decoration: underline;
-}
-
+.chapter-navi-section {display: flex;justify-content: space-between;align-items: center;padding-bottom: 10px;padding-top: 10px;}
+.nav-link {color: inherit;text-decoration: none;opacity: 0.5;transition: opacity 0.3s ease, text-decoration 0.3s ease;}
+.nav-link:hover {opacity: 0.9;text-decoration: underline;}
 .prev { text-align: left; }
 .toc-link { text-align: center; }
 .next { text-align: right; }
 
-.download-section {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 2rem;
-  padding: 2rem 1rem;
-  max-width: 600px;
-  margin: 3rem auto;
-  border-radius: 12px;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-}
+.download-section {display: flex;align-items: center;justify-content: center;gap: 2rem;padding: 2rem 1rem;max-width: 600px;margin: 3rem auto;border-radius: 12px;box-shadow: 0 4px 10px rgba(0,0,0,0.05);}
+.download-info h2 {margin: 0 0 0.5rem;font-size: 1.2rem;}
+.format-label {margin: 0 0 0.5rem;font-size: 0.95rem;}
+.download-buttons {display: flex;gap: 1rem;}
+.download-button {background-color: #4A90E2;color: white;padding: 0.5em 1.2em;border-radius: 25px;font-size: 0.95rem;text-decoration: none;transition: background-color 0.3s ease;}
+.download-button:hover {background-color: #357ABD;}
 
-.download-info h2 {
-  margin: 0 0 0.5rem;
-  font-size: 1.2rem;
-}
+.code-block {position: relative;margin-bottom: 1em;}
+.copy-button {background: transparent;color: white;position: absolute;top: 8px;right: 8px;border: none;padding: 4px 8px;font-size: 12px;border-radius: 4px;cursor: pointer;z-index: 1;}
+.copy-button:hover {background-color: #0056b3;}
 
-.format-label {
-  margin: 0 0 0.5rem;
-  font-size: 0.95rem;
-}
+.snippet-container {overflow: hidden;}
+.snippet-header {padding: 0.75rem 1rem;cursor: pointer;font-size: 1rem;background-color: #eeeeee;color:  #111111; border-radius: 8px;cursor: pointer;box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+.snippet-body {display: none;font-family: monospace;}
+.snippet-container.open .snippet-body {display: block;}
 
-.download-buttons {
-  display: flex;
-  gap: 1rem;
-}
+.CodeMirror {border: 2px solid #ccc;border-radius: 4px;resize: vertical;}
 
-.download-button {
-  background-color: #4A90E2;
-  color: white;
-  padding: 0.5em 1.2em;
-  border-radius: 25px;
-  font-size: 0.95rem;
-  text-decoration: none;
-  transition: background-color 0.3s ease;
-}
+.light-mode .format-label {color: #888;}
+.light-mode th {background-color: #f2f2f2;}
+.light-mode tr:nth-child(even) {background-color: #fafafa;}
+.light-mode tr:hover {background-color: #e6f7ff;}
 
-.download-button:hover {
-  background-color: #357ABD;
-}
-
-.code-block {
-  position: relative;
-  margin-bottom: 1em;
-}
-
-.copy-button {
-  background: transparent;
-  color: white;
-  position: absolute;
-  top: 8px;
-  right: 8px;
-  border: none;
-  padding: 4px 8px;
-  font-size: 12px;
-  border-radius: 4px;
-  cursor: pointer;
-  z-index: 1;
-}
-
-.copy-button:hover {
-  background-color: #0056b3;
-}
-
-.snippet-container {
-  overflow: hidden;
-}
-
-.snippet-header {
-  padding: 0.75rem 1rem;
-  cursor: pointer;
-  font-size: 1rem;
-    background-color: #eeeeee;
-    color:  #111111; 
-    border-radius: 8px;
-    cursor: pointer;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.1);  
-}
-
-.snippet-body {
-  display: none;
-  font-family: monospace;
-}
-
-.snippet-container.open .snippet-body {
-  display: block;
-}
-
-.CodeMirror {
-  border: 2px solid #ccc;
-  border-radius: 4px;
-  resize: vertical;
-}
-
-/* === Light Mode === */
-html.light-mode {
-  background-color: #f8f7f5;
-  color: #333;
-}
-
-html.light-mode .container {
-  background: white;
-}
-
-html.light-mode .book-title-chapter {
-  color: #2c3e50;
-  border-color: #ccc;
-}
-html.light-mode .book-subtitle-chapter{
-  color: #888;
-}
-
-html.light-mode .page-footer,
-html.light-mode .series-name,
-html.light-mode .book-subtitle,
-html.light-mode .format-label {
-  color: #888;
-}
-
-html.light-mode .related-books h2 {
-  color: #333;
-  border-bottom: 2px solid #eee;
-}
-
-html.light-mode .book-title {
-  color: #fff;
-}
-
-html.light-mode .book-cover {
-  border: 1px solid #ccc;
-}
-
-html.light-mode th {
-  background-color: #f2f2f2;
-}
-
-html.light-mode tr:nth-child(even) {
-  background-color: #fafafa;
-}
-
-html.light-mode tr:hover {
-  background-color: #e6f7ff;
-}
-
-html.light-mode a,
-html.light-mode .page-footer a {
-  color: #000;
-}
-
-/* === Dark Mode === */
-html.dark-mode {
-  background-color: #181818;
-  color: #e0e0e0;
-}
-
-html.dark-mode .container {
-  background: #222;
-}
-
-html.dark-mode .book-title-chapter {
-  color: #ddd;
-  border-color: #444;
-}
-
-html.dark-mode .snippet-header {
-    background-color: #333;
-    color:  #ddd; 
-}
+.dark-mode .snippet-header {background-color: #333;color:  #ddd; }
+.dark-mode .format-label {color: #aaa;}
+.dark-mode th {background-color: #333;color: #fff;}
+.dark-mode td {border-color: #444;}
+.dark-mode tr:nth-child(even) {background-color: #2a2a2a;}
+.dark-mode tr:hover {background-color: #2c3e50;}
 
 
-html.dark-mode .book-subtitle-chapter,
-html.dark-mode .page-footer,
-html.dark-mode .series-name,
-html.dark-mode .book-subtitle,
-html.dark-mode .book-footer,
-html.dark-mode .format-label {
-  color: #aaa;
-}
+.button-group-run-edit {display: flex;width: 100%;gap: 1rem;}
+.button-run-edit {flex: 1;padding: 1rem;font-size: 1rem;font-weight: 600;border: none;border-radius: 8px;cursor: pointer;transition: background 0.3s, color 0.3s;}
 
-html.dark-mode .related-books h2 {
-  color: #ddd;
-  border-bottom: 2px solid #333;
-}
+.light-mode .button-run-edit {background-color: #f0f0f0;color: #222;box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);}
+.light-mode .button-run-edit:hover {background-color: #e0e0e0;}
 
-html.dark-mode .book-title {
-  color: #fff;
-}
+.dark-mode .button-run-edit {background-color: #2a2a2a;color: #f5f5f5;box-shadow: 0 0 10px rgba(255, 255, 255, 0.05);}
+.dark-mode .button-run-edit:hover {background-color: #3a3a3a;}
 
-html.dark-mode .book-cover {
-  border: 1px solid #555;
-}
+button { padding: 0.5em 1em; background: green; color: white; border: none; cursor: pointer; }
+button:hover { background: #1e7e34; }
+.result_iframe { width:99%; margin-top: 1em;  resize: both;background-color: #515b63;border:1px solid #ccc;}   
 
-html.dark-mode th {
-  background-color: #333;
-  color: #fff;
-}
-
-html.dark-mode td {
-  border-color: #444;
-}
-
-html.dark-mode tr:nth-child(even) {
-  background-color: #2a2a2a;
-}
-
-html.dark-mode tr:hover {
-  background-color: #2c3e50;
-}
-
-html.dark-mode a,
-html.dark-mode .page-footer a {
-  color: #eee;
-}
-
-    .dialog-backdrop {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100vw;
-      height: 100vh;
-      background: rgba(0,0,0,0.5);
-      display: none;
-      justify-content: center;
-      align-items: center;
-      z-index: 10;
-    }
-
-    .dialog {
-      background: white;
-      padding: 20px;
-      width: 90vw;
-      height: 80vh;
-      border-radius: 8px;
-      box-shadow: 0 0 20px rgba(0,0,0,0.3);
-      display: flex;
-      flex-direction: column;
-    }
-    .dialog-content {
-      display: flex;
-      flex: 1;
-      gap: 20px;
-      margin-top: 10px;
-    }
-    .dialog h2 {
-      margin-top: 0;
-    }
-
-    .textarea_dialog {
-      width: 50%;
-      height: 100%;
-      resize: none;
-      font-family: monospace;
-      font-size: 14px;
-      padding: 10px;
-      box-sizing: border-box;
-      border: 1px solid #ccc;
-    }
-
-    .iframe_dialog {
-      width: 50%;
-      height: 100%;
-      border: 1px solid #ccc;
-    }
-    .controls_dialog {
-      display: flex;
-      justify-content: space-between;
-      margin-top: 10px;
-    }    
-    button { padding: 0.5em 1em; background: green; color: white; border: none; cursor: pointer; }
-    button:hover { background: #1e7e34; }
-    .result_iframe { width:99%; height:200px; margin-top: 1em;  resize: both;border:1px solid #ccc;}        
+.dialog-backdrop {position: fixed;top: 0;left: 0;width: 100vw;height: 100vh;background: rgba(0,0,0,0.5);display: none;justify-content: center;align-items: center;z-index: 10;}
+.dialog {background: #90979e;padding: 20px;width: 90vw;height: 80vh;border-radius: 8px;box-shadow: 0 0 20px rgba(0,0,0,0.3);display: flex;flex-direction: column;}
+.dialog-content {display: flex;gap: 20px;margin-top: 10px;height: calc(100% - 40px);}
+.editor-container, .preview-container {flex: 1;height: 100%;max-height: 100%;overflow: hidden; }
+.result_iframe_dialog {width: 100%;height: 100%;resize: both;border:1px solid #ccc;overflow: auto; }   
+.CodeMirror {width: 100% !important;height: 100% !important;}
 </style>
 </head>
-<body> 
-  <div class="container">
-    <div class = "chapter-navi-section">
+<body>
+<script>const mode = localStorage.getItem('mode') || 'light';document.documentElement.classList.add(`${mode}-mode`);</script>  
+<div class="container"><div class = "chapter-navi-section">
 <a href="c-pointers-pointers-and-system-programming.htm" class="nav-button prev">←</a>
 <a href='c-pointers.htm#debugging-and-common-pointer-errors' class="nav-button toc-link">Index</a>
 <a href="c-pointers-best-practices-and-optimization-tips.htm" class="nav-button next">→</a>
 </div>
-
-    <h1 class="book-title-chapter" id = 'top'>Debugging and Common Pointer Errors</h1>
-    <h3 class="book-subtitle-chapter">C Pointers</h3>   
-    <!-- <h1 class ="chapter-title"></h1> -->
-    <h2 id='common-pointer-mistakes-dangling-wild-null-pointers'>14.1 Common Pointer Mistakes: Dangling, Wild, Null Pointers</h2><p>Pointers are powerful tools in C, but misuse can lead to serious bugs and program crashes. Understanding common pointer mistakes is essential for safe programming. This section explains three typical pointer-related errors: <strong>dangling pointers</strong>, <strong>wild pointers</strong>, and <strong>null pointers</strong> — their causes, symptoms, and consequences.</p><h3 id="dangling-pointers">Dangling Pointers</h3><p><strong>Definition:</strong> A <em>dangling pointer</em> is a pointer that continues to reference a memory location after the memory has been freed or deallocated.</p><h3 id="how-it-happens">How It Happens:</h3><ul>
+<div class='book-header'><h1 class='book-title-toc' id = 'top'>Debugging and Common Pointer Errors</h1><h3 class='book-subtitle-toc'>C Pointers</h3></div><h2 id='common-pointer-mistakes-dangling-wild-null-pointers'>14.1 Common Pointer Mistakes: Dangling, Wild, Null Pointers</h2><p>Pointers are powerful tools in C, but misuse can lead to serious bugs and program crashes. Understanding common pointer mistakes is essential for safe programming. This section explains three typical pointer-related errors: <strong>dangling pointers</strong>, <strong>wild pointers</strong>, and <strong>null pointers</strong> — their causes, symptoms, and consequences.</p><h3 id="dangling-pointers">Dangling Pointers</h3><p><strong>Definition:</strong> A <em>dangling pointer</em> is a pointer that continues to reference a memory location after the memory has been freed or deallocated.</p><h3 id="how-it-happens">How It Happens:</h3><ul>
  <li>Memory is allocated dynamically (e.g., via <code>malloc</code>).</li>
  <li>The memory is freed with <code>free()</code>.</li>
  <li>The pointer still holds the old address, but the memory at that address may now be invalid or reused.</li>
@@ -470,7 +172,8 @@ html.dark-mode .page-footer a {
  <li>Accessing or dereferencing a dangling pointer often leads to <strong>undefined behavior</strong>.</li>
  <li>Programs might crash (segmentation fault), produce corrupted data, or behave erratically.</li>
  <li>Errors can be intermittent and hard to reproduce, making debugging difficult.</li>
-</ul><h3 id="example">Example:</h3><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</ul><h3 id="example">Example:</h3><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-c">int *ptr = malloc(sizeof(int));
 *ptr = 42;
 free(ptr);      // Memory freed
@@ -478,7 +181,8 @@ printf("%d\n", *ptr); // Dangling pointer dereference — undefined behavior!</c
 </div><h3 id="prevention">Prevention:</h3><ul>
  <li>After freeing memory, set the pointer to <code>NULL</code> to avoid accidental use.</li>
  <li>Avoid using pointers after their memory has been freed.</li>
-</ul><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</ul><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-c">free(ptr);
 ptr = NULL;  // Safe: prevents dangling pointer access</code></pre>
 </div><h3 id="wild-pointers">Wild Pointers</h3><p><strong>Definition:</strong> A <em>wild pointer</em> is an uninitialized pointer that points to an unknown or arbitrary memory location.</p><h3 id="how-it-happens">How It Happens:</h3><ul>
@@ -487,13 +191,15 @@ ptr = NULL;  // Safe: prevents dangling pointer access</code></pre>
 </ul><h3 id="symptoms">Symptoms:</h3><ul>
  <li>Dereferencing a wild pointer can cause segmentation faults or corrupt memory.</li>
  <li>The program behavior is unpredictable and often crashes immediately.</li>
-</ul><h3 id="example">Example:</h3><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</ul><h3 id="example">Example:</h3><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-c">int *ptr;         // Wild pointer (uninitialized)
 *ptr = 100;       // Using uninitialized pointer — dangerous!</code></pre>
 </div><h3 id="prevention">Prevention:</h3><ul>
  <li>Always initialize pointers either to a valid memory address or to <code>NULL</code>.</li>
  <li>Use tools like static analyzers or compiler warnings to detect uninitialized pointers.</li>
-</ul><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</ul><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-c">int *ptr = NULL;  // Safe initialization</code></pre>
 </div><h3 id="null-pointers">Null Pointers</h3><p><strong>Definition:</strong> A <em>null pointer</em> is a pointer that explicitly points to nothing (address zero).</p><h3 id="how-it-happens">How It Happens:</h3><ul>
  <li>Explicitly assigned <code>NULL</code>.</li>
@@ -501,13 +207,15 @@ ptr = NULL;  // Safe: prevents dangling pointer access</code></pre>
 </ul><h3 id="symptoms">Symptoms:</h3><ul>
  <li>Dereferencing a null pointer results in a <strong>segmentation fault</strong> or program crash.</li>
  <li>Unlike dangling or wild pointers, null pointers are easier to detect because they have a defined value.</li>
-</ul><h3 id="example">Example:</h3><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</ul><h3 id="example">Example:</h3><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-c">int *ptr = NULL;
 printf("%d\n", *ptr);  // Dereferencing NULL causes crash</code></pre>
 </div><h3 id="prevention">Prevention:</h3><ul>
  <li>Always check if a pointer is <code>NULL</code> before dereferencing.</li>
  <li>Use null pointers intentionally to indicate "no valid object."</li>
-</ul><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</ul><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-c">if (ptr != NULL) {
     // Safe to dereference
     printf("%d\n", *ptr);
@@ -558,7 +266,8 @@ printf("%d\n", *ptr);  // Dereferencing NULL causes crash</code></pre>
  <li>Overwriting a pointer to allocated memory without freeing the original block.</li>
  <li>Losing pointer references due to premature scope exit or reassignment.</li>
  <li>Circular references or complex data structures where cleanup is incomplete.</li>
-</ul><h3 id="example-of-a-memory-leak">Example of a Memory Leak:</h3><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</ul><h3 id="example-of-a-memory-leak">Example of a Memory Leak:</h3><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-c">void leak_example() {
     int *data = malloc(100 * sizeof(int)); // allocate memory
     if (!data) return;
@@ -574,7 +283,8 @@ printf("%d\n", *ptr);  // Dereferencing NULL causes crash</code></pre>
 </ul><h4 id="initialize-pointers-and-nullify-after-freeing">Initialize Pointers and Nullify After Freeing</h4><ul>
  <li>Initialize pointers to <code>NULL</code> to avoid wild pointers.</li>
  <li>After calling <code>free()</code>, set the pointer to <code>NULL</code> to prevent accidental reuse.</li>
-</ul><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</ul><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-c">free(ptr);
 ptr = NULL;</code></pre>
 </div><h4 id="use-helper-functions-and-abstractions">Use Helper Functions and Abstractions</h4><ul>
@@ -590,13 +300,15 @@ ptr = NULL;</code></pre>
  <li>A widely used memory analysis tool on Linux and Unix.</li>
  <li>Detects memory leaks, uninitialized memory access, and invalid frees.</li>
  <li>Usage example:</li>
-</ul><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</ul><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-bash">valgrind --leak-check=full ./your_program</code></pre>
 </div><p><strong>AddressSanitizer (ASan)</strong></p><ul>
  <li>A fast memory error detector available with GCC and Clang.</li>
  <li>Detects leaks, buffer overflows, use-after-free, and more.</li>
  <li>Compile with:</li>
-</ul><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</ul><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-bash">gcc -fsanitize=address -g your_program.c -o your_program
 ./your_program</code></pre>
 </div><h3 id="summary">Summary</h3><p>Memory leaks degrade program performance and reliability by wasting memory resources. Prevent leaks by:</p><ul>
@@ -616,14 +328,17 @@ ptr = NULL;</code></pre>
  <li>Double frees or invalid frees</li>
 </ul><h3 id="how-to-use-valgrind">How to Use Valgrind</h3><ol>
  <li><p>Compile your program with debugging symbols for better error messages:</p>
-  <div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+  <div class="code-block">
+   <button class="copy-button" onclick="copyCode(this)">▯</button>
    <pre><code class="language-bash">gcc -g program.c -o program</code></pre>
   </div></li>
  <li><p>Run the program with Valgrind:</p>
-  <div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+  <div class="code-block">
+   <button class="copy-button" onclick="copyCode(this)">▯</button>
    <pre><code class="language-bash">valgrind --leak-check=full ./program</code></pre>
   </div></li>
-</ol><h3 id="sample-valgrind-output">Sample Valgrind Output</h3><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</ol><h3 id="sample-valgrind-output">Sample Valgrind Output</h3><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-text">==12345== Memcheck, a memory error detector
 ==12345== LEAK SUMMARY:
 ==12345==    definitely lost: 40 bytes in 1 blocks
@@ -640,14 +355,17 @@ ptr = NULL;</code></pre>
  <li>Double-free and invalid free</li>
 </ul><h4 id="how-to-use-addresssanitizer">How to Use AddressSanitizer</h4><ol>
  <li><p>Compile your program with ASan enabled:</p>
-  <div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+  <div class="code-block">
+   <button class="copy-button" onclick="copyCode(this)">▯</button>
    <pre><code class="language-bash">gcc -fsanitize=address -g program.c -o program</code></pre>
   </div></li>
  <li><p>Run your program as usual:</p>
-  <div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+  <div class="code-block">
+   <button class="copy-button" onclick="copyCode(this)">▯</button>
    <pre><code class="language-bash">./program</code></pre>
   </div></li>
-</ol><h4 id="sample-addresssanitizer-output">Sample AddressSanitizer Output</h4><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</ol><h4 id="sample-addresssanitizer-output">Sample AddressSanitizer Output</h4><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-text">=================================================================
 ==12345==ERROR: AddressSanitizer: heap-use-after-free on address 0x602000000010 at pc 0x0000004006b7 bp 0x7ffca5d1c2a0 sp 0x7ffca5d1c298
 READ of size 4 at 0x602000000010 thread T0
@@ -684,7 +402,8 @@ READ of size 4 at 0x602000000010 thread T0
 <a href='c-pointers.htm#debugging-and-common-pointer-errors' class="nav-button toc-link">Index</a>
 <a href="#bottom" class="nav-button next">↓</a>
 </div>
-<h2 id='examples-safe-pointer-practices-and-debugging-scenarios'>14.4 Examples: Safe Pointer Practices and Debugging Scenarios</h2><p>Working with pointers in C requires great care, as improper usage often leads to difficult-to-trace bugs such as segmentation faults, memory leaks, or data corruption. In this section, we'll look at common pointer mistakes, how debugging tools help find them, and best practices to write safe, maintainable pointer code.</p><h3 id="example-1-dangling-pointer-and-use-after-free">Example 1: Dangling Pointer and Use-After-Free</h3><h4 id="problem-code">Problem Code</h4><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+<h2 id='examples-safe-pointer-practices-and-debugging-scenarios'>14.4 Examples: Safe Pointer Practices and Debugging Scenarios</h2><p>Working with pointers in C requires great care, as improper usage often leads to difficult-to-trace bugs such as segmentation faults, memory leaks, or data corruption. In this section, we'll look at common pointer mistakes, how debugging tools help find them, and best practices to write safe, maintainable pointer code.</p><h3 id="example-1-dangling-pointer-and-use-after-free">Example 1: Dangling Pointer and Use-After-Free</h3><h4 id="problem-code">Problem Code</h4><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-c">#include &lt;stdio.h&gt;
 #include &lt;stdlib.h&gt;
 
@@ -701,14 +420,16 @@ int main() {
 </div><h4 id="issue">Issue</h4><ul>
  <li>After <code>free(ptr)</code>, <code>ptr</code> becomes a dangling pointer.</li>
  <li>Accessing <code>*ptr</code> leads to undefined behavior, possible crash or corrupted data.</li>
-</ul><h4 id="using-valgrind-or-asan">Using Valgrind or ASan</h4><p>Running this code with Valgrind or AddressSanitizer would report a <strong>use-after-free</strong> error, pinpointing the invalid access.</p><h4 id="fix">Fix</h4><p>Always set pointers to <code>NULL</code> after freeing:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</ul><h4 id="using-valgrind-or-asan">Using Valgrind or ASan</h4><p>Running this code with Valgrind or AddressSanitizer would report a <strong>use-after-free</strong> error, pinpointing the invalid access.</p><h4 id="fix">Fix</h4><p>Always set pointers to <code>NULL</code> after freeing:</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-c">free(ptr);
 ptr = NULL;  // Avoid dangling pointer
 
 if (ptr != NULL) {
     printf("Value: %d\n", *ptr);  // Safe check
 }</code></pre>
-</div><h3 id="example-2-wild-pointer-uninitialized-pointer">Example 2: Wild Pointer (Uninitialized Pointer)</h3><h4 id="problem-code">Problem Code</h4><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</div><h3 id="example-2-wild-pointer-uninitialized-pointer">Example 2: Wild Pointer (Uninitialized Pointer)</h3><h4 id="problem-code">Problem Code</h4><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-c">#include &lt;stdio.h&gt;
 
 int main() {
@@ -720,16 +441,19 @@ int main() {
 </div><h4 id="issue">Issue</h4><ul>
  <li><code>ptr</code> is uninitialized and points to an unpredictable memory address.</li>
  <li>Writing or reading through it causes segmentation fault or corrupts memory.</li>
-</ul><h4 id="debugging">Debugging</h4><p>Tools report invalid memory access or segmentation fault at the line dereferencing <code>ptr</code>.</p><h4 id="fix">Fix</h4><p>Always initialize pointers:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</ul><h4 id="debugging">Debugging</h4><p>Tools report invalid memory access or segmentation fault at the line dereferencing <code>ptr</code>.</p><h4 id="fix">Fix</h4><p>Always initialize pointers:</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-c">int x = 10;
 int *ptr = &amp;x;  // Initialize pointer to valid memory
 *ptr = 20;      // Safe usage</code></pre>
-</div><p>Or initialize to <code>NULL</code> if no address yet:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</div><p>Or initialize to <code>NULL</code> if no address yet:</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-c">int *ptr = NULL;
 if (ptr != NULL) {
     // Safe to dereference
 }</code></pre>
-</div><h3 id="example-3-memory-leak-detection">Example 3: Memory Leak Detection</h3><h4 id="problem-code">Problem Code</h4><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</div><h3 id="example-3-memory-leak-detection">Example 3: Memory Leak Detection</h3><h4 id="problem-code">Problem Code</h4><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-c">#include &lt;stdlib.h&gt;
 
 void allocate_memory() {
@@ -739,7 +463,8 @@ void allocate_memory() {
 </div><h4 id="issue">Issue</h4><ul>
  <li>Memory allocated but never freed leads to leaks.</li>
  <li>Over time, program consumes more memory and may crash.</li>
-</ul><h4 id="using-valgrind">Using Valgrind</h4><p>Valgrind detects this leak and reports how many bytes were "definitely lost" with stack trace showing allocation point.</p><h4 id="fix">Fix</h4><p>Always pair every <code>malloc</code> with <code>free</code>:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</ul><h4 id="using-valgrind">Using Valgrind</h4><p>Valgrind detects this leak and reports how many bytes were "definitely lost" with stack trace showing allocation point.</p><h4 id="fix">Fix</h4><p>Always pair every <code>malloc</code> with <code>free</code>:</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-c">void allocate_memory() {
     int *arr = malloc(10 * sizeof(int));
     if (arr == NULL) {
@@ -808,30 +533,36 @@ void allocate_memory() {
 
 <a href='c.htm'><div class='book-cover' style='background-color: #f9f6f1;color: #111111;border: 1px solid #ccc;display: flex;justify-content: center;align-items: center;text-align: center;'>More C Books</div></a>
 </div>
-</div>
-  </div>
-  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
-  
-  <script>
-    function copyCode(button) {
-      const code = button.nextElementSibling.innerText;
-      navigator.clipboard.writeText(code).then(() => {
-        button.textContent = 'Copied!';
-        setTimeout(() => { button.textContent = 'Copy'; }, 1500);
-      });
-    }
-  </script>  
-<div id="floatingLog" aria-live="polite" role="alert"></div>
-<footer class="page-footer">
-    <nav>
-      <a href="https://readbytes.github.io">Home</a> | 
-      Email:<script language="JavaScript" type="text/javascript">
+</div><script>
+function copyCode(button) {const code = button.nextElementSibling.innerText;navigator.clipboard.writeText(code).then(() => {button.textContent = 'Copied!';setTimeout(() => { button.textContent = 'Copy'; }, 1500);});}
+</script></div>
+<style>
+.site-footer {margin-top: 60px;padding: 20px 0;border-top: 1px solid #eee;text-align: center;font-size: 14px;}
+.site-footer a {text-decoration: none;}
+.light-mode .site-footer {color: #777;border-color: #eee;}
+.dark-mode .site-footer {color: #888;border-color: #333;}
+.light-mode .site-footer a {color: #555;}
+.dark-mode .site-footer a {color: #aaa;}
+.site-footer a:hover {text-decoration: underline;}    
+</style>
+<footer class="site-footer">
+<nav><a href="https://readbytes.github.io">Home</a> |Email:<script type="text/javascript">
 var part1 = 'yinpeng';var part6 = '263';var part2 = Math.pow(2,6);var part3 = String.fromCharCode(part2);var part4 = 'hotmail dot com';var part5 = part1 + String.fromCharCode(part2) + part4;document.write(part1 + part6 + part3 + part4);
 </script>
-    </nav>
-  <p>© 2025 — All rights reserved.</p>    
-  </footer>
-
+| <a id="mode-toggle" href="#">Toggle Dark Mode</a>
+</nav><p>© 2025 — All rights reserved.</p></footer>
+<script>
+const toggleButton = document.getElementById('mode-toggle');
+const body = document.body;
+const savedMode = localStorage.getItem('mode') || 'light';
+body.classList.add(savedMode + '-mode');
+toggleButton.addEventListener('click', () => {
+      const isDark = body.classList.contains('dark-mode');
+      body.classList.toggle('dark-mode', !isDark);
+      body.classList.toggle('light-mode', isDark);
+      localStorage.setItem('mode', isDark ? 'light' : 'dark');
+});
+function copyCode(button) {const code = button.nextElementSibling.innerText;navigator.clipboard.writeText(code).then(() => {button.textContent = 'Copied!';setTimeout(() => { button.textContent = 'Copy'; }, 1500);});}
+</script>
 </body>
 </html>

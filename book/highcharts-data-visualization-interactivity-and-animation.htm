@@ -1,21 +1,281 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
+<meta charset="UTF-8">
 <title>Highcharts Data Visualization Interactivity and Animation</title>
-<link rel='shortcut icon' href='https://java2s.com/style/favicon.ico'>
+<link rel='shortcut icon' href='https://readbytes.github.io/images/favicon.ico'>
 <link href="https://fonts.googleapis.com/css2?family=Merriweather&display=swap" rel="stylesheet" />
 <link href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
-
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.css" />
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/theme/material.css"> <!-- Dark theme -->
-<script src="https://cdn.jsdelivr.net/npm/typescript@5/lib/typescript.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/htmlmixed/htmlmixed.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/theme/dracula.min.css"><style>
+html {scroll-behavior: smooth;}  
+body {font-family: 'Merriweather', serif;;margin: 0;padding: 2rem 1rem;font-size: 15px;line-height: 1.5;transition: background-color 0.3s, color 0.3s;}
+.container {max-width: 750px;margin: 0 auto;padding: 1rem 2rem;}
+.light-mode {background-color: #f8f7f5;color: #333;} 
+.dark-mode {background-color: #121212;color: #e0e0e0;}
+a { text-decoration: none;transition: color 0.2s;}
+a:hover {text-decoration: underline;}
+.light-mode a {color: #555;}
+.dark-mode a {color: #aaa;}
+</style><style>
+.related-book-list {display: flex;flex-wrap: wrap;gap: 20px;}
+.related-books {margin-top: 40px;}
+.related-books h2 {font-size: 22px;margin-bottom: 20px;border-bottom: 2px solid #eee;padding-bottom: 8px;}
+.light-mode .related-books h2 {color: #333;border-color: #eee;}
+.dark-mode .related-books h2 {color: #ddd;border-color: #333;}
+</style><style>
+.book-cover {width: 130px;height: 180px;font-family: Arial, sans-serif;position: relative;overflow: hidden;box-shadow: 2px 2px 4px rgba(0,0,0,0.1);}
+.book-cover-bottom-stripe {position: absolute;bottom: 0;left: 0;height: 5px;width: 100%;}
+.book-cover-title {position: absolute;width: 100%;text-align: center;font-weight: bold;}
+.book-cover-icon {position: absolute;left: 50%;transform: translateX(-50%);display: flex;align-items: center;justify-content: center;}
+.book-cover-author {position: absolute;bottom: 10px;width: 100%;text-align: center;font-size: 8px;color: #333;}
+</style><style>
+.book-title-toc {font-size: 32px;font-weight: bold; }
+.book-subtitle-toc {font-size: 18px;margin-top: 8px;font-style: italic;}
+.book-header {text-align: center;margin-bottom: 40px;}
+
+.toc-container {border-radius: 10px;padding: 30px;margin-bottom: 40px;box-shadow: 0 8px 20px rgba(0,0,0,0.05);}
+h1 {font-size: 24px;text-align: center;margin-bottom: 30px;letter-spacing: 1px;padding-bottom: 10px;}
+.toc-list,.toc-section-list {list-style: none;padding: 0;margin: 0;}
+.toc-section-list {padding-left: 18px;margin-top: 6px;margin-bottom: 20px; }
+.toc-chapter {padding: 20px 0;}
+.chapter-title,.toc-section {display: flex;justify-content: space-between;padding-top: 4px;}
+.chapter-title {font-size: 17px;font-weight: bold;}
+.chapter-page,.section-page {font-style: italic;}
+ 
+ 
+.light-mode .book-title-toc,.light-mode .chapter-title,.light-mode .book-name {color: #222;}
+.light-mode .book-subtitle-toc,.light-mode .book-sub,.light-mode .chapter-page,.light-mode .section-page {color: #666;}
+.light-mode .toc-container { background: #fff;border: 1px solid #ddd;}
+.light-mode h1 {border-bottom: 2px solid #eee;color: #222;}
+.light-mode .toc-section {  color: #444;}
+
+.light-mode .book-cover { border: 1px solid #ccc;box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);}
+.light-mode .book-title,.light-mode .series-name {color: #fff;}
+.light-mode .book-subtitle,.light-mode .book-footer {color: #aaa;}
+
+.dark-mode .book-title-toc,.dark-mode .chapter-title,.dark-mode .book-name {color: #f5f5f5;}
+.dark-mode .book-subtitle-toc,.dark-mode .book-sub,.dark-mode .chapter-page,.dark-mode .section-page {color: #aaa;}
+.dark-mode .toc-container {background: #1e1e1e;border: 1px solid #444;}
+
+.dark-mode h1 {border-bottom: 2px solid #333;color: #eee;}
+.dark-mode .toc-section {color: #bbb;}
+
+.dark-mode .related-books h2 {color: #ddd;border-bottom: 2px solid #333;}
+.dark-mode .book-title,.dark-mode .series-name {color: #fff;}
+.dark-mode .book-subtitle,.dark-mode .book-footer {color: #bbb;}
+.dark-mode .toc-section {color: #ddd;}
+
+@media (max-width: 600px) {
+  .chapter-title,
+  .toc-section {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .chapter-page,
+  .section-page {
+    margin-top: 4px;
+  }
+}
+
+</style><style>
+.light-mode .container {box-shadow: 0 0 15px rgba(0,0,0,0.1);}
+.dark-mode .container {box-shadow: 0 0 15px rgba(255, 255, 255, 0.05);}
+
+h1, h2, h3 {font-weight: 600;margin-top: 2.5rem;margin-bottom: 1rem;line-height: 1.2;}
+h1 { font-size: 1.8rem; }
+h2 { font-size: 1.4rem; }
+h3 { font-size: 1.2rem; }
+
+table {width: 100%;border-collapse: collapse;font-family: sans-serif;font-size: 1em;margin: 1em 0;}
+th, td {padding: 0.6em 1em;text-align: left;border: 1px solid;}
+tr:nth-child(even) {  background-color: inherit;}
+tr:hover { background-color: inherit;}
+
+code {color: #d35400;}
+
+.chapter-navi-section {display: flex;justify-content: space-between;align-items: center;padding-bottom: 10px;padding-top: 10px;}
+.nav-link {color: inherit;text-decoration: none;opacity: 0.5;transition: opacity 0.3s ease, text-decoration 0.3s ease;}
+.nav-link:hover {opacity: 0.9;text-decoration: underline;}
+.prev { text-align: left; }
+.toc-link { text-align: center; }
+.next { text-align: right; }
+
+.download-section {display: flex;align-items: center;justify-content: center;gap: 2rem;padding: 2rem 1rem;max-width: 600px;margin: 3rem auto;border-radius: 12px;box-shadow: 0 4px 10px rgba(0,0,0,0.05);}
+.download-info h2 {margin: 0 0 0.5rem;font-size: 1.2rem;}
+.format-label {margin: 0 0 0.5rem;font-size: 0.95rem;}
+.download-buttons {display: flex;gap: 1rem;}
+.download-button {background-color: #4A90E2;color: white;padding: 0.5em 1.2em;border-radius: 25px;font-size: 0.95rem;text-decoration: none;transition: background-color 0.3s ease;}
+.download-button:hover {background-color: #357ABD;}
+
+.code-block {position: relative;margin-bottom: 1em;}
+.copy-button {background: transparent;color: white;position: absolute;top: 8px;right: 8px;border: none;padding: 4px 8px;font-size: 12px;border-radius: 4px;cursor: pointer;z-index: 1;}
+.copy-button:hover {background-color: #0056b3;}
+
+.snippet-container {overflow: hidden;}
+.snippet-header {padding: 0.75rem 1rem;cursor: pointer;font-size: 1rem;background-color: #eeeeee;color:  #111111; border-radius: 8px;cursor: pointer;box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+.snippet-body {display: none;font-family: monospace;}
+.snippet-container.open .snippet-body {display: block;}
+
+.CodeMirror {border: 2px solid #ccc;border-radius: 4px;resize: vertical;}
+
+.light-mode .format-label {color: #888;}
+.light-mode th {background-color: #f2f2f2;}
+.light-mode tr:nth-child(even) {background-color: #fafafa;}
+.light-mode tr:hover {background-color: #e6f7ff;}
+
+.dark-mode .snippet-header {background-color: #333;color:  #ddd; }
+.dark-mode .format-label {color: #aaa;}
+.dark-mode th {background-color: #333;color: #fff;}
+.dark-mode td {border-color: #444;}
+.dark-mode tr:nth-child(even) {background-color: #2a2a2a;}
+.dark-mode tr:hover {background-color: #2c3e50;}
+
+
+.button-group-run-edit {display: flex;width: 100%;gap: 1rem;}
+.button-run-edit {flex: 1;padding: 1rem;font-size: 1rem;font-weight: 600;border: none;border-radius: 8px;cursor: pointer;transition: background 0.3s, color 0.3s;}
+
+.light-mode .button-run-edit {background-color: #f0f0f0;color: #222;box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);}
+.light-mode .button-run-edit:hover {background-color: #e0e0e0;}
+
+.dark-mode .button-run-edit {background-color: #2a2a2a;color: #f5f5f5;box-shadow: 0 0 10px rgba(255, 255, 255, 0.05);}
+.dark-mode .button-run-edit:hover {background-color: #3a3a3a;}
+
+button { padding: 0.5em 1em; background: green; color: white; border: none; cursor: pointer; }
+button:hover { background: #1e7e34; }
+.result_iframe { width:99%; margin-top: 1em;  resize: both;background-color: #515b63;border:1px solid #ccc;}   
+
+.dialog-backdrop {position: fixed;top: 0;left: 0;width: 100vw;height: 100vh;background: rgba(0,0,0,0.5);display: none;justify-content: center;align-items: center;z-index: 10;}
+.dialog {background: #90979e;padding: 20px;width: 90vw;height: 80vh;border-radius: 8px;box-shadow: 0 0 20px rgba(0,0,0,0.3);display: flex;flex-direction: column;}
+.dialog-content {display: flex;gap: 20px;margin-top: 10px;height: calc(100% - 40px);}
+.editor-container, .preview-container {flex: 1;height: 100%;max-height: 100%;overflow: hidden; }
+.result_iframe_dialog {width: 100%;height: 100%;resize: both;border:1px solid #ccc;overflow: auto; }   
+.CodeMirror {width: 100% !important;height: 100% !important;}
+</style><script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/htmlmixed/htmlmixed.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/xml/xml.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/css/css.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/javascript/javascript.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/javascript/typescript.min.js"></script>
+<script>
+  const htmlCodeMirrorMap = new Map();
+  const htmlCodeIFrameMap = new Map();
+  let dismissTimer;
+  function showFloatingLog(message) {
+	const floatingLog = document.getElementById('floatingLog');
+
+    if (floatingLog.style.display !== 'block') {
+      floatingLog.textContent = '';
+      floatingLog.style.display = 'block'; 
+    }
+
+    floatingLog.textContent += message + '\n';
+    floatingLog.scrollTop = floatingLog.scrollHeight; 
+    clearTimeout(dismissTimer);
+    dismissTimer = setTimeout(() => {
+      floatingLog.style.display = 'none';
+      floatingLog.textContent = '';
+    }, 2000);
+  }
+  window.addEventListener('message', (event) => {
+	    if (!htmlCodeIFrameMap.has(event.source)) return;
+
+	    if (event.data?.type === 'console-log') {
+	      showFloatingLog(event.data.message);
+	    }
+  });      
+  function runHtmlCode(button,textarea_id, iframe_id, isInDialog) {
+      const html = htmlCodeMirrorMap.get(textarea_id).getValue();
+      const iframe = document.getElementById(iframe_id);
+  
+      const oldIframe = iframe;
+      const newIframe = document.createElement('iframe');
+
+      if(isInDialog){
+         newIframe.className ="result_iframe_dialog";
+      }else{
+         newIframe.className ="result_iframe";
+      }
+      
+      
+      newIframe.id = iframe_id;
+      oldIframe.replaceWith(newIframe);
+ 
+
+      // Track the iframe in the map
+      htmlCodeIFrameMap.set(newIframe.contentWindow, button);
+
+      const overrideScript = `
+        <script>
+          (function() {
+            const originalLog = console.log;
+            console.log = function(...args) {
+              originalLog.apply(console, args);
+              window.parent.postMessage({
+                type: 'console-log',
+                message: args.map(a => {
+                  try { return JSON.stringify(a); }
+                  catch { return String(a); }
+                }).join(' ')
+              }, '*');
+            };
+          })();
+        <\/script>
+      `;
+ 
+      const iframeHTML = `
+        <!DOCTYPE html>
+        <html>
+        <body>
+          ${overrideScript}
+          ${html}
+        </body>
+        </html>
+      `;
+ 
+      const doc = newIframe.contentDocument || newIframe.contentWindow.document;
+      doc.open();
+      doc.write(iframeHTML);
+      doc.close();
+
+if(!isInDialog){ 
+newIframe.onload = function () {
+ 
+    const doc = newIframe.contentDocument || newIframe.contentWindow.document;
+    // Give a short delay to ensure layout is complete
+    setTimeout(() => {
+      const body = doc.body;
+      const html = doc.documentElement;
+
+      const height = Math.max(
+        body.scrollHeight, body.offsetHeight,
+        html.clientHeight, html.scrollHeight, html.offsetHeight
+      );
+
+      newIframe.style.height = height + 'px';
+    }, 50);
+};
+
+}
+      
+  }  
+function openEditHtmlCodeDialog(id, textarea_id) {
+		        closeAllHtmlCodeDialog();
+		        document.getElementById(id).style.display = 'flex';
+         
+ 	        setTimeout(() => {
+		        	 htmlCodeMirrorMap.get(textarea_id).refresh();
+                   
+ 	        }, 100); // 100ms 
+}
+
+function closeAllHtmlCodeDialog() {
+		        document.querySelectorAll('.dialog-backdrop').forEach(el => {
+		          el.style.display = 'none';
+		        });
+}		
+</script> 
 <style>
     #floatingLog {
       position: fixed;
@@ -39,672 +299,21 @@
       text-align: center;
     }
 </style>
-<script>
-  const codeMirrorMap = new Map();
-  const iframeMap = new Map();
-  
- 
-
-  let dismissTimer;
-  function showFloatingLog(message) {
-	const floatingLog = document.getElementById('floatingLog');
-
-    if (floatingLog.style.display !== 'block') {
-      floatingLog.textContent = '';
-      floatingLog.style.display = 'block'; 
-    }
-
-    floatingLog.textContent += message + '\n';
-    floatingLog.scrollTop = floatingLog.scrollHeight; 
-    clearTimeout(dismissTimer);
-    dismissTimer = setTimeout(() => {
-      floatingLog.style.display = 'none';
-      floatingLog.textContent = '';
-    }, 2000);
-  }
-  window.addEventListener('message', (event) => {
-	    if (!iframeMap.has(event.source)) return;
-
-	    if (event.data?.type === 'console-log') {
-	      showFloatingLog(event.data.message);
-	    }
-  });  
-  function renderIframe(button,textarea_id, iframe_id) {
-      const html = codeMirrorMap.get(textarea_id).getValue();
-      const iframe = document.getElementById(iframe_id);
-  
-      const oldIframe = iframe;
-      const newIframe = document.createElement('iframe');
-      newIframe.className ="result_iframe";
-      
-      newIframe.id = iframe_id;
-      oldIframe.replaceWith(newIframe);
- 
-
-      // Track the iframe in the map
-      iframeMap.set(newIframe.contentWindow, button);
-
-      const overrideScript = `
-        <script>
-          (function() {
-            const originalLog = console.log;
-            console.log = function(...args) {
-              originalLog.apply(console, args);
-              window.parent.postMessage({
-                type: 'console-log',
-                message: args.map(a => {
-                  try { return JSON.stringify(a); }
-                  catch { return String(a); }
-                }).join(' ')
-              }, '*');
-            };
-          })();
-        <\/script>
-      `;
-
-      const iframeHTML = `
-        <!DOCTYPE html>
-        <html>
-        <body>
-          ${overrideScript}
-          ${html}
-        </body>
-        </html>
-      `;
- 
-      const doc = newIframe.contentDocument || newIframe.contentWindow.document;
-      doc.open();
-      doc.write(iframeHTML);
-      doc.close();
-
-      
-      setTimeout(() => {
-    	  newIframe.style.height = '0px';
-    	   let contentHeight = Math.max(doc.body.scrollHeight,doc.documentElement.scrollHeight);
- 
-    	//   if(contentHeight < 150 || contentHeight > 600){
-    	//	   contentHeight = 600;
-    	 //  } 
-    	   newIframe.style.height = contentHeight + 'px';
-    	}, 50);      
-      
-  }
-  function renderIframeForClientTypescript(textarea_id, iframe_id) {
-      let code = codeMirrorMap.get(textarea_id).getValue();
-      code = ts.transpile(code);
-      const iframe = document.getElementById(iframe_id);
-      const doc = iframe.contentDocument || iframe.contentWindow.document;
-
-const html = `
-  <!DOCTYPE html>
-  <html>
-    <head>
-      <title>Output</title>
-      <style>
-        body { font-family: monospace; padding: 1em; background: #f4f4f4; color: #222; }
-        pre { white-space: pre-wrap; word-break: break-word; }
-        .error { color: red; }
-      </style>
-    </head>
-    <body>
-      <pre id="log"></pre>
-      <script>
-        (function(){
-          const logEl = document.getElementById('log');
-          const origLog = console.log;
-          const origError = console.error;
-
-          console.log = (...args) => {
-            logEl.textContent += args.join(' ') + '\\n';
-            origLog.apply(console, args);
-          };
-          console.table = (...args) => {
-            logEl.textContent += args.join(' ') + '\\n';
-            origLog.apply(console, args);
-          };
-
-          console.error = (...args) => {
-            logEl.innerHTML +='<span class="error">' + args.join(' ') + '</span>';
-            origError.apply(console, args);
-          };
-          window.addEventListener("error", function (event) {
-              console.error("Caught by event listener:", event.message);
-          });    
-          try {             
-              ${code};
-          } catch (err) {
-            console.error(err.stack || err.message);
-          }
-        })();
-      <\/script>
-    </body>
-  </html>
-`;
-
-      iframe.style.display = "block";
-      iframe.srcdoc = html;  
-  }
-
-    function renderIframeForClientJavascript(textarea_id, iframe_id) {
-        const code = codeMirrorMap.get(textarea_id).getValue();
-        const iframe = document.getElementById(iframe_id);
-        const doc = iframe.contentDocument || iframe.contentWindow.document;
-
-  const html = `
-    <!DOCTYPE html>
-    <html>
-      <head>
-        <title>Output</title>
-        <style>
-          body { font-family: monospace; padding: 1em; background: #1e1e1e; color: #eee; }
-          pre { white-space: pre-wrap; word-break: break-word; }
-          .error { color: red; }
-        </style>
-      </head>
-      <body>
-        <pre id="log"></pre>
-        <script>
-          (function(){
-            const logEl = document.getElementById('log');
-            const origLog = console.log;
-            const origError = console.error;
-
-            console.log = (...args) => {
-              logEl.textContent += args.join(' ') + '\\n';
-              origLog.apply(console, args);
-            };
-            console.table = (...args) => {
-              logEl.textContent += args.join(' ') + '\\n';
-              origLog.apply(console, args);
-            };
-
-            console.error = (...args) => {
-              logEl.innerHTML +='<span class="error">' + args.join(' ') + '</span>';
-              origError.apply(console, args);
-            };
-            window.addEventListener("error", function (event) {
-                console.error("Caught by event listener:", event.message);
-            });    
-            try {
-             ${code}; 
-            } catch (err) {
-              console.error(err.stack || err.message);
-            }
-          })();
-        <\/script>
-      </body>
-    </html>
-  `;
-        iframe.style.display = "block";
-        iframe.srcdoc = html;  
-    }
-    function toggleSnippetAndRefresh(id, textarea_id) {
-      const box = document.getElementById(id);
-      box.classList.toggle("open");
-      codeMirrorMap.get(textarea_id).refresh();
-    }
-
-  </script>
-  <script>
-  const mode = localStorage.getItem('mode') || 'light';
-  document.documentElement.classList.add(`${mode}-mode`);
-  </script>   
-<style> 
-html {
-  scroll-behavior: smooth;
-}
-
-body {
-  font-family: 'Merriweather', serif;
-  margin: 0;
-  padding: 2rem 1rem;
-  font-size: 15px;
-  line-height: 1.5;
-  transition: background-color 0.3s, color 0.3s;
-}
-
-.container {
-  max-width: 700px;
-  margin: 0 auto;
-  padding: 1rem 2rem;
-  box-shadow: 0 0 15px rgba(0,0,0,0.1);
-}
-
-h1, h2, h3 {
-  font-weight: 600;
-  margin-top: 2.5rem;
-  margin-bottom: 1rem;
-  line-height: 1.2;
-}
-
-h1 { font-size: 1.8rem; }
-h2 { font-size: 1.4rem; }
-h3 { font-size: 1.2rem; }
-
-table {
-  width: 100%;
-  border-collapse: collapse;
-  font-family: sans-serif;
-  font-size: 1em;
-  margin: 1em 0;
-}
-
-th, td {
-  padding: 0.6em 1em;
-  text-align: left;
-  border: 1px solid;
-}
-
-tr:nth-child(even) {
-  background-color: inherit;
-}
-
-tr:hover {
-  background-color: inherit;
-}
-
-a {
-  text-decoration: none;
-  transition: color 0.2s;
-}
-
-a:hover {
-  text-decoration: underline;
-}
-
-code {
-  color: #d35400;
-}
-
-.book-title-chapter {
-  font-family: 'Merriweather', serif;
-  font-size: 2rem;
-  font-weight: bold;
-  text-align: center;
-  margin-bottom: 2rem;
-  border-bottom: 2px solid;
-  padding-bottom: 0.5rem;
-}
-
-.book-subtitle-chapter {
-  text-align: center;
-  font-size: 1rem;
-  margin-top: -1rem;
-  margin-bottom: 2rem;
-}
-
-.related-books {
-  margin-top: 40px;
-}
-
-.related-book-list {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 20px;
-}
-
-    .book-cover {
-      width: 130px;
-      height: 180px;
-      font-family: Arial, sans-serif;
-      position: relative;
-      overflow: hidden;      
-      line-height: normal;
-      box-shadow: 2px 2px 4px rgba(0,0,0,0.1);
-    }
-    .book-cover-bottom-stripe {
-      position: absolute;
-      bottom: 0;
-      left: 0;
-      height: 5px;
-      width: 100%;
-    }
-    .book-cover-title {
-      position: absolute;
-      width: 100%;
-      text-align: center;
-      font-weight: bold;
-    }
-     
-    .book-cover-icon {
-      position: absolute;
-      left: 50%;
-      transform: translateX(-50%);
-      display: flex;
-      align-items: center;
-      justify-content: center; 
-    }
-
-    .book-cover-author {
-      position: absolute;
-      bottom: 10px;
-      width: 100%;
-      text-align: center;
-      font-size: 8px;
-      color: #333;
-    }
-
-.page-footer {
-  margin-top: 4rem;
-  padding: 1rem 0;
-  text-align: center;
-  font-size: 0.85rem;
-  border-top: 1px solid;
-}
-
-.chapter-navi-section {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding-bottom: 10px;
-}
-
-.nav-link {
-  color: inherit;
-  text-decoration: none;
-  opacity: 0.5;
-  transition: opacity 0.3s ease, text-decoration 0.3s ease;
-}
-
-.nav-link:hover {
-  opacity: 0.9;
-  text-decoration: underline;
-}
-
-.prev { text-align: left; }
-.toc-link { text-align: center; }
-.next { text-align: right; }
-
-.download-section {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 2rem;
-  padding: 2rem 1rem;
-  max-width: 600px;
-  margin: 3rem auto;
-  border-radius: 12px;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-}
-
-.download-info h2 {
-  margin: 0 0 0.5rem;
-  font-size: 1.2rem;
-}
-
-.format-label {
-  margin: 0 0 0.5rem;
-  font-size: 0.95rem;
-}
-
-.download-buttons {
-  display: flex;
-  gap: 1rem;
-}
-
-.download-button {
-  background-color: #4A90E2;
-  color: white;
-  padding: 0.5em 1.2em;
-  border-radius: 25px;
-  font-size: 0.95rem;
-  text-decoration: none;
-  transition: background-color 0.3s ease;
-}
-
-.download-button:hover {
-  background-color: #357ABD;
-}
-
-.code-block {
-  position: relative;
-  margin-bottom: 1em;
-}
-
-.copy-button {
-  background: transparent;
-  color: white;
-  position: absolute;
-  top: 8px;
-  right: 8px;
-  border: none;
-  padding: 4px 8px;
-  font-size: 12px;
-  border-radius: 4px;
-  cursor: pointer;
-  z-index: 1;
-}
-
-.copy-button:hover {
-  background-color: #0056b3;
-}
-
-.snippet-container {
-  overflow: hidden;
-}
-
-.snippet-header {
-  padding: 0.75rem 1rem;
-  cursor: pointer;
-  font-size: 1rem;
-    background-color: #eeeeee;
-    color:  #111111; 
-    border-radius: 8px;
-    cursor: pointer;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.1);  
-}
-
-.snippet-body {
-  display: none;
-  font-family: monospace;
-}
-
-.snippet-container.open .snippet-body {
-  display: block;
-}
-
-.CodeMirror {
-  border: 2px solid #ccc;
-  border-radius: 4px;
-  resize: vertical;
-}
-
-/* === Light Mode === */
-html.light-mode {
-  background-color: #f8f7f5;
-  color: #333;
-}
-
-html.light-mode .container {
-  background: white;
-}
-
-html.light-mode .book-title-chapter {
-  color: #2c3e50;
-  border-color: #ccc;
-}
-html.light-mode .book-subtitle-chapter{
-  color: #888;
-}
-
-html.light-mode .page-footer,
-html.light-mode .series-name,
-html.light-mode .book-subtitle,
-html.light-mode .format-label {
-  color: #888;
-}
-
-html.light-mode .related-books h2 {
-  color: #333;
-  border-bottom: 2px solid #eee;
-}
-
-html.light-mode .book-title {
-  color: #fff;
-}
-
-html.light-mode .book-cover {
-  border: 1px solid #ccc;
-}
-
-html.light-mode th {
-  background-color: #f2f2f2;
-}
-
-html.light-mode tr:nth-child(even) {
-  background-color: #fafafa;
-}
-
-html.light-mode tr:hover {
-  background-color: #e6f7ff;
-}
-
-html.light-mode a,
-html.light-mode .page-footer a {
-  color: #000;
-}
-
-/* === Dark Mode === */
-html.dark-mode {
-  background-color: #181818;
-  color: #e0e0e0;
-}
-
-html.dark-mode .container {
-  background: #222;
-}
-
-html.dark-mode .book-title-chapter {
-  color: #ddd;
-  border-color: #444;
-}
-
-html.dark-mode .snippet-header {
-    background-color: #333;
-    color:  #ddd; 
-}
-
-
-html.dark-mode .book-subtitle-chapter,
-html.dark-mode .page-footer,
-html.dark-mode .series-name,
-html.dark-mode .book-subtitle,
-html.dark-mode .book-footer,
-html.dark-mode .format-label {
-  color: #aaa;
-}
-
-html.dark-mode .related-books h2 {
-  color: #ddd;
-  border-bottom: 2px solid #333;
-}
-
-html.dark-mode .book-title {
-  color: #fff;
-}
-
-html.dark-mode .book-cover {
-  border: 1px solid #555;
-}
-
-html.dark-mode th {
-  background-color: #333;
-  color: #fff;
-}
-
-html.dark-mode td {
-  border-color: #444;
-}
-
-html.dark-mode tr:nth-child(even) {
-  background-color: #2a2a2a;
-}
-
-html.dark-mode tr:hover {
-  background-color: #2c3e50;
-}
-
-html.dark-mode a,
-html.dark-mode .page-footer a {
-  color: #eee;
-}
-
-    .dialog-backdrop {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100vw;
-      height: 100vh;
-      background: rgba(0,0,0,0.5);
-      display: none;
-      justify-content: center;
-      align-items: center;
-      z-index: 10;
-    }
-
-    .dialog {
-      background: white;
-      padding: 20px;
-      width: 90vw;
-      height: 80vh;
-      border-radius: 8px;
-      box-shadow: 0 0 20px rgba(0,0,0,0.3);
-      display: flex;
-      flex-direction: column;
-    }
-    .dialog-content {
-      display: flex;
-      flex: 1;
-      gap: 20px;
-      margin-top: 10px;
-    }
-    .dialog h2 {
-      margin-top: 0;
-    }
-
-    .textarea_dialog {
-      width: 50%;
-      height: 100%;
-      resize: none;
-      font-family: monospace;
-      font-size: 14px;
-      padding: 10px;
-      box-sizing: border-box;
-      border: 1px solid #ccc;
-    }
-
-    .iframe_dialog {
-      width: 50%;
-      height: 100%;
-      border: 1px solid #ccc;
-    }
-    .controls_dialog {
-      display: flex;
-      justify-content: space-between;
-      margin-top: 10px;
-    }    
-    button { padding: 0.5em 1em; background: green; color: white; border: none; cursor: pointer; }
-    button:hover { background: #1e7e34; }
-    .result_iframe { width:99%; height:200px; margin-top: 1em;  resize: both;border:1px solid #ccc;}        
-</style>
 </head>
-<body> 
-  <div class="container">
-    <div class = "chapter-navi-section">
+<body>
+<script>const mode = localStorage.getItem('mode') || 'light';document.documentElement.classList.add(`${mode}-mode`);</script>  
+<div class="container"><div class = "chapter-navi-section">
 <a href="highcharts-data-visualization-advanced-features.htm" class="nav-button prev">←</a>
 <a href='highcharts-data-visualization.htm#interactivity-and-animation' class="nav-button toc-link">Index</a>
 <a href="highcharts-data-visualization-responsive-design-and-theming.htm" class="nav-button next">→</a>
 </div>
-
-    <h1 class="book-title-chapter" id = 'top'>Interactivity and Animation</h1>
-    <h3 class="book-subtitle-chapter">Highcharts Data Visualization</h3>   
-    <!-- <h1 class ="chapter-title"></h1> -->
-    <h2 id='mouse-and-touch-events'>6.1 Mouse and Touch Events</h2><p>Highcharts provides robust support for <strong>mouse and touch interactions</strong>, allowing you to attach custom behaviors to chart elements like points, series, and axes. These events make your charts more engaging and interactive—whether you're building dashboards, analytics apps, or dynamic visual storytelling experiences.</p><p>In this section, you’ll learn how to use <code>click</code>, <code>mouseOver</code>, and <code>touch</code> events to add interactive features like opening modals, highlighting related elements, or triggering external actions.</p><h3 id="event-handling-in-highcharts">Event Handling in Highcharts</h3><p>Highcharts lets you attach event handlers to:</p><ul>
+<div class='book-header'><h1 class='book-title-toc' id = 'top'>Interactivity and Animation</h1><h3 class='book-subtitle-toc'>Highcharts Data Visualization</h3></div><h2 id='mouse-and-touch-events'>6.1 Mouse and Touch Events</h2><p>Highcharts provides robust support for <strong>mouse and touch interactions</strong>, allowing you to attach custom behaviors to chart elements like points, series, and axes. These events make your charts more engaging and interactive—whether you're building dashboards, analytics apps, or dynamic visual storytelling experiences.</p><p>In this section, you’ll learn how to use <code>click</code>, <code>mouseOver</code>, and <code>touch</code> events to add interactive features like opening modals, highlighting related elements, or triggering external actions.</p><h3 id="event-handling-in-highcharts">Event Handling in Highcharts</h3><p>Highcharts lets you attach event handlers to:</p><ul>
  <li><strong>Chart-wide events</strong> (e.g., <code>click</code> on the background)</li>
  <li><strong>Individual data points</strong> (e.g., bar or pie slice clicks)</li>
  <li><strong>Series</strong> (e.g., hovering over an entire line)</li>
  <li><strong>Legend items</strong>, <strong>axes</strong>, and more</li>
-</ul><p>These events are specified within the <code>plotOptions</code> or <code>chart.events</code> configuration.</p><h3 id="example-1-clicking-a-column-to-open-a-modal">Example 1: Clicking a Column to Open a Modal</h3><p>You can attach a <code>click</code> event to individual points like this:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</ul><p>These events are specified within the <code>plotOptions</code> or <code>chart.events</code> configuration.</p><h3 id="example-1-clicking-a-column-to-open-a-modal">Example 1: Clicking a Column to Open a Modal</h3><p>You can attach a <code>click</code> event to individual points like this:</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-js">Highcharts.chart('container', {
   chart: { type: 'column' },
   title: { text: 'Revenue by Product' },
@@ -722,13 +331,16 @@ html.dark-mode .page-footer a {
     }
   }]
 });</code></pre>
-</div><div class="snippet-container" id="dgaay">
- <div id="lOdwG_Dialog" class="dialog-backdrop">
+</div><div class="snippet-container">
+ <div class="button-group-run-edit"><button class="button-run-edit" onclick="runHtmlCode(this,'b8zlx','3cuhO', false)">Run</button> <button class="button-run-edit" onclick="openEditHtmlCodeDialog('3cuhO_Dialog','b8zlx')">Edit</button>
+ </div> <iframe id="3cuhO" class="result_iframe" style="display: none;"></iframe>
+ <div id="3cuhO_Dialog" class="dialog-backdrop">
   <div class="dialog">
-   <h2>Dialog 1</h2>
-   <div class="controls"><button onclick="renderIframe(this,'PYNLi_Textarea','lOdwG_IFrame')">Run</button> <button onclick="closeAll()">Close</button>
+   <div class="controls"><button onclick="runHtmlCode(this,'b8zlx','3cuhO_IFrame', true)">Run</button> <button onclick="closeAllHtmlCodeDialog()">Close</button>
    </div>
-   <div class="dialog-content"><textarea id="PYNLi_Textarea" class="textarea_dialog" placeholder="Type HTML here...">&lt;!DOCTYPE html&gt;
+   <div class="dialog-content">
+    <div class="editor-container">
+     <textarea id="b8zlx" class="textarea_dialog" placeholder="Type HTML here...">&lt;!DOCTYPE html&gt;
 &lt;html lang="en"&gt;
 &lt;head&gt;
   &lt;meta charset="UTF-8" /&gt;
@@ -760,90 +372,35 @@ html.dark-mode .page-footer a {
     });
   &lt;/script&gt;
 &lt;/body&gt;
-&lt;/html&gt;</textarea> <iframe id="lOdwG_IFrame" class="iframe_dialog"></iframe>
+&lt;/html&gt;</textarea>
+    </div>
+    <div class="preview-container">
+     <iframe id="3cuhO_IFrame" class="result_iframe_dialog" style="border: none;"></iframe>
+    </div>
    </div>
   </div>
  </div>
- <div class="snippet-header" onclick="toggleSnippetAndRefresh('dgaay','PYNLi')">
-  Click to Try it <!--<span onclick="toggleSnippetAndRefresh('dgaay','PYNLi')">Click
-			to Try it</span> --> <!-- <span onclick="openDialog('lOdwG_Dialog')">Dialog</span> -->
- </div>
- <div class="snippet-body"><textarea id="PYNLi">&lt;!DOCTYPE html&gt;
-&lt;html lang="en"&gt;
-&lt;head&gt;
-  &lt;meta charset="UTF-8" /&gt;
-  &lt;title&gt;Column Click Event Example&lt;/title&gt;
-  &lt;script src="https://code.highcharts.com/highcharts.js"&gt;&lt;/script&gt;
-&lt;/head&gt;
-&lt;body&gt;
-  &lt;h2&gt;Revenue by Product (Click Column)&lt;/h2&gt;
-
-  &lt;div id="container" style="width: 600px; height: 400px;"&gt;&lt;/div&gt;
-
-  &lt;script&gt;
-    Highcharts.chart('container', {
-      chart: { type: 'column' },
-      title: { text: 'Revenue by Product' },
-      xAxis: { categories: ['Product A', 'Product B', 'Product C'] },
-      series: [{
-        name: 'Revenue',
-        data: [100, 200, 150],
-        point: {
-          events: {
-            click: function () {
-              alert('You clicked on ' + this.category + ' with value ' + this.y);
-              // Replace alert with modal logic if desired
-            }
-          }
-        }
-      }]
-    });
-  &lt;/script&gt;
-&lt;/body&gt;
-&lt;/html&gt;</textarea> <br> <button onclick="renderIframe(this,'PYNLi','lOdwG')">Run</button>
-  <div id="lOdwG_FloatingLog" class="floatingLog" aria-live="polite" role="alert"></div> <iframe id="lOdwG" class="result_iframe" style="display: none;"></iframe>
-  <script>
-			{
-				let editor = CodeMirror.fromTextArea(document
-						.getElementById("PYNLi"), {
+ <script>
+{
+let editor = CodeMirror.fromTextArea(document.getElementById("b8zlx"), {
 					mode : "htmlmixed",
 					lineNumbers : false,
+                    lineWrapping: true,
 					tabSize : 2
-				});
-			    const mode = localStorage.getItem("mode") || "light";  
-			    const newTheme = mode === "dark" ? "material" : "default";
-			    editor.setOption("theme", newTheme);
-			    
-				codeMirrorMap.set("PYNLi", editor);
+});
+const darkmode = localStorage.getItem("mode") || "light";  
+const newTheme = darkmode === "dark" ? "dracula" : "default";
+editor.setSize("50%", "100%");
+editor.setOption("theme", newTheme);
+htmlCodeMirrorMap.set("b8zlx", editor);
+}
 
-				let editor1 = CodeMirror.fromTextArea(document.getElementById("PYNLi_Textarea"), {
-					mode : "htmlmixed",
-					lineNumbers : false,
-					tabSize : 2
-				});
-			    editor1.setOption("theme", newTheme);				
-				
-				codeMirrorMap.set("PYNLi_Textarea", editor1);
-			}
-		    function openDialog(id) {
-		        closeAll();
-		        document.getElementById(id).style.display = 'flex';
-		        setTimeout(() => {
-		        	 codeMirrorMap.get("PYNLi_Textarea").refresh();
-		        }, 100); // 100ms 
-		      }
-
-		      function closeAll() {
-		        document.querySelectorAll('.dialog-backdrop').forEach(el => {
-		          el.style.display = 'none';
-		        });
-		      }			
-		</script>
- </div>
+</script>
 </div><h3 id="what-s-happening">What's Happening?</h3><ul>
  <li><code>point.events.click</code> is triggered when a user clicks on a bar.</li>
  <li><code>this</code> refers to the point object (with <code>category</code>, <code>y</code>, and more).</li>
-</ul><p>You can replace the <code>alert</code> with custom functions like opening a modal or navigating to a detail page.</p><h3 id="example-2-highlighting-related-points-on-hover">Example 2: Highlighting Related Points on Hover</h3><p>You can change the visual appearance of related data when hovering over a point:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</ul><p>You can replace the <code>alert</code> with custom functions like opening a modal or navigating to a detail page.</p><h3 id="example-2-highlighting-related-points-on-hover">Example 2: Highlighting Related Points on Hover</h3><p>You can change the visual appearance of related data when hovering over a point:</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-js">plotOptions: {
   series: {
     point: {
@@ -858,13 +415,16 @@ html.dark-mode .page-footer a {
     }
   }
 }</code></pre>
-</div><p>This example changes the color of a bar or point on hover, then resets it on mouse out.</p><div class="snippet-container" id="efvpt">
- <div id="Zt23K_Dialog" class="dialog-backdrop">
+</div><p>This example changes the color of a bar or point on hover, then resets it on mouse out.</p><div class="snippet-container">
+ <div class="button-group-run-edit"><button class="button-run-edit" onclick="runHtmlCode(this,'POLO1','fcFWp', false)">Run</button> <button class="button-run-edit" onclick="openEditHtmlCodeDialog('fcFWp_Dialog','POLO1')">Edit</button>
+ </div> <iframe id="fcFWp" class="result_iframe" style="display: none;"></iframe>
+ <div id="fcFWp_Dialog" class="dialog-backdrop">
   <div class="dialog">
-   <h2>Dialog 1</h2>
-   <div class="controls"><button onclick="renderIframe(this,'eBKvu_Textarea','Zt23K_IFrame')">Run</button> <button onclick="closeAll()">Close</button>
+   <div class="controls"><button onclick="runHtmlCode(this,'POLO1','fcFWp_IFrame', true)">Run</button> <button onclick="closeAllHtmlCodeDialog()">Close</button>
    </div>
-   <div class="dialog-content"><textarea id="eBKvu_Textarea" class="textarea_dialog" placeholder="Type HTML here...">&lt;!DOCTYPE html&gt;
+   <div class="dialog-content">
+    <div class="editor-container">
+     <textarea id="POLO1" class="textarea_dialog" placeholder="Type HTML here...">&lt;!DOCTYPE html&gt;
 &lt;html lang="en"&gt;
 &lt;head&gt;
   &lt;meta charset="UTF-8" /&gt;
@@ -902,93 +462,32 @@ html.dark-mode .page-footer a {
     });
   &lt;/script&gt;
 &lt;/body&gt;
-&lt;/html&gt;</textarea> <iframe id="Zt23K_IFrame" class="iframe_dialog"></iframe>
+&lt;/html&gt;</textarea>
+    </div>
+    <div class="preview-container">
+     <iframe id="fcFWp_IFrame" class="result_iframe_dialog" style="border: none;"></iframe>
+    </div>
    </div>
   </div>
  </div>
- <div class="snippet-header" onclick="toggleSnippetAndRefresh('efvpt','eBKvu')">
-  Click to Try it <!--<span onclick="toggleSnippetAndRefresh('efvpt','eBKvu')">Click
-			to Try it</span> --> <!-- <span onclick="openDialog('Zt23K_Dialog')">Dialog</span> -->
- </div>
- <div class="snippet-body"><textarea id="eBKvu">&lt;!DOCTYPE html&gt;
-&lt;html lang="en"&gt;
-&lt;head&gt;
-  &lt;meta charset="UTF-8" /&gt;
-  &lt;title&gt;Highlight Points on Hover Example&lt;/title&gt;
-  &lt;script src="https://code.highcharts.com/highcharts.js"&gt;&lt;/script&gt;
-&lt;/head&gt;
-&lt;body&gt;
-  &lt;h2&gt;Hover to Highlight Points&lt;/h2&gt;
-
-  &lt;div id="container" style="width: 600px; height: 400px;"&gt;&lt;/div&gt;
-
-  &lt;script&gt;
-    Highcharts.chart('container', {
-      chart: { type: 'column' },
-      title: { text: 'Sales by Product' },
-      xAxis: { categories: ['Product A', 'Product B', 'Product C'] },
-      series: [{
-        name: 'Sales',
-        data: [100, 200, 150]
-      }],
-      plotOptions: {
-        series: {
-          point: {
-            events: {
-              mouseOver: function () {
-                this.update({ color: 'orange' });
-              },
-              mouseOut: function () {
-                this.update({ color: undefined }); // reset to default
-              }
-            }
-          }
-        }
-      }
-    });
-  &lt;/script&gt;
-&lt;/body&gt;
-&lt;/html&gt;</textarea> <br> <button onclick="renderIframe(this,'eBKvu','Zt23K')">Run</button>
-  <div id="Zt23K_FloatingLog" class="floatingLog" aria-live="polite" role="alert"></div> <iframe id="Zt23K" class="result_iframe" style="display: none;"></iframe>
-  <script>
-			{
-				let editor = CodeMirror.fromTextArea(document
-						.getElementById("eBKvu"), {
+ <script>
+{
+let editor = CodeMirror.fromTextArea(document.getElementById("POLO1"), {
 					mode : "htmlmixed",
 					lineNumbers : false,
+                    lineWrapping: true,
 					tabSize : 2
-				});
-			    const mode = localStorage.getItem("mode") || "light";  
-			    const newTheme = mode === "dark" ? "material" : "default";
-			    editor.setOption("theme", newTheme);
-			    
-				codeMirrorMap.set("eBKvu", editor);
+});
+const darkmode = localStorage.getItem("mode") || "light";  
+const newTheme = darkmode === "dark" ? "dracula" : "default";
+editor.setSize("50%", "100%");
+editor.setOption("theme", newTheme);
+htmlCodeMirrorMap.set("POLO1", editor);
+}
 
-				let editor1 = CodeMirror.fromTextArea(document.getElementById("eBKvu_Textarea"), {
-					mode : "htmlmixed",
-					lineNumbers : false,
-					tabSize : 2
-				});
-			    editor1.setOption("theme", newTheme);				
-				
-				codeMirrorMap.set("eBKvu_Textarea", editor1);
-			}
-		    function openDialog(id) {
-		        closeAll();
-		        document.getElementById(id).style.display = 'flex';
-		        setTimeout(() => {
-		        	 codeMirrorMap.get("eBKvu_Textarea").refresh();
-		        }, 100); // 100ms 
-		      }
-
-		      function closeAll() {
-		        document.querySelectorAll('.dialog-backdrop').forEach(el => {
-		          el.style.display = 'none';
-		        });
-		      }			
-		</script>
- </div>
-</div><h3 id="example-3-handling-touch-events">Example 3: Handling Touch Events</h3><p>Highcharts supports touch events on mobile devices natively. The same <code>click</code> and <code>hover</code> events work on touchscreens, but you can also detect device type and customize the experience:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</script>
+</div><h3 id="example-3-handling-touch-events">Example 3: Handling Touch Events</h3><p>Highcharts supports touch events on mobile devices natively. The same <code>click</code> and <code>hover</code> events work on touchscreens, but you can also detect device type and customize the experience:</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-js">plotOptions: {
   series: {
     point: {
@@ -1002,13 +501,16 @@ html.dark-mode .page-footer a {
     }
   }
 }</code></pre>
-</div><div class="snippet-container" id="dRSYs">
- <div id="aUsOe_Dialog" class="dialog-backdrop">
+</div><div class="snippet-container">
+ <div class="button-group-run-edit"><button class="button-run-edit" onclick="runHtmlCode(this,'LYs3K','MWy5W', false)">Run</button> <button class="button-run-edit" onclick="openEditHtmlCodeDialog('MWy5W_Dialog','LYs3K')">Edit</button>
+ </div> <iframe id="MWy5W" class="result_iframe" style="display: none;"></iframe>
+ <div id="MWy5W_Dialog" class="dialog-backdrop">
   <div class="dialog">
-   <h2>Dialog 1</h2>
-   <div class="controls"><button onclick="renderIframe(this,'kfZl9_Textarea','aUsOe_IFrame')">Run</button> <button onclick="closeAll()">Close</button>
+   <div class="controls"><button onclick="runHtmlCode(this,'LYs3K','MWy5W_IFrame', true)">Run</button> <button onclick="closeAllHtmlCodeDialog()">Close</button>
    </div>
-   <div class="dialog-content"><textarea id="kfZl9_Textarea" class="textarea_dialog" placeholder="Type HTML here...">&lt;!DOCTYPE html&gt;
+   <div class="dialog-content">
+    <div class="editor-container">
+     <textarea id="LYs3K" class="textarea_dialog" placeholder="Type HTML here...">&lt;!DOCTYPE html&gt;
 &lt;html lang="en"&gt;
 &lt;head&gt;
   &lt;meta charset="UTF-8" /&gt;
@@ -1048,95 +550,32 @@ html.dark-mode .page-footer a {
     });
   &lt;/script&gt;
 &lt;/body&gt;
-&lt;/html&gt;</textarea> <iframe id="aUsOe_IFrame" class="iframe_dialog"></iframe>
+&lt;/html&gt;</textarea>
+    </div>
+    <div class="preview-container">
+     <iframe id="MWy5W_IFrame" class="result_iframe_dialog" style="border: none;"></iframe>
+    </div>
    </div>
   </div>
  </div>
- <div class="snippet-header" onclick="toggleSnippetAndRefresh('dRSYs','kfZl9')">
-  Click to Try it <!--<span onclick="toggleSnippetAndRefresh('dRSYs','kfZl9')">Click
-			to Try it</span> --> <!-- <span onclick="openDialog('aUsOe_Dialog')">Dialog</span> -->
- </div>
- <div class="snippet-body"><textarea id="kfZl9">&lt;!DOCTYPE html&gt;
-&lt;html lang="en"&gt;
-&lt;head&gt;
-  &lt;meta charset="UTF-8" /&gt;
-  &lt;title&gt;Touch Event Handling Example&lt;/title&gt;
-  &lt;script src="https://code.highcharts.com/highcharts.js"&gt;&lt;/script&gt;
-&lt;/head&gt;
-&lt;body&gt;
-  &lt;h2&gt;Touch Event Detection on Data Points&lt;/h2&gt;
-
-  &lt;div id="container" style="width: 600px; height: 400px;"&gt;&lt;/div&gt;
-
-  &lt;script&gt;
-    Highcharts.chart('container', {
-      chart: { type: 'column' },
-      title: { text: 'Sales by Product' },
-      xAxis: { categories: ['Product A', 'Product B', 'Product C'] },
-      series: [{
-        name: 'Sales',
-        data: [100, 200, 150]
-      }],
-      plotOptions: {
-        series: {
-          point: {
-            events: {
-              click: function () {
-                if ('ontouchstart' in window) {
-                  console.log('Touch tap on ' + this.category);
-                  alert('Touch tap on ' + this.category);
-                } else {
-                  alert('Clicked on ' + this.category);
-                }
-              }
-            }
-          }
-        }
-      }
-    });
-  &lt;/script&gt;
-&lt;/body&gt;
-&lt;/html&gt;</textarea> <br> <button onclick="renderIframe(this,'kfZl9','aUsOe')">Run</button>
-  <div id="aUsOe_FloatingLog" class="floatingLog" aria-live="polite" role="alert"></div> <iframe id="aUsOe" class="result_iframe" style="display: none;"></iframe>
-  <script>
-			{
-				let editor = CodeMirror.fromTextArea(document
-						.getElementById("kfZl9"), {
+ <script>
+{
+let editor = CodeMirror.fromTextArea(document.getElementById("LYs3K"), {
 					mode : "htmlmixed",
 					lineNumbers : false,
+                    lineWrapping: true,
 					tabSize : 2
-				});
-			    const mode = localStorage.getItem("mode") || "light";  
-			    const newTheme = mode === "dark" ? "material" : "default";
-			    editor.setOption("theme", newTheme);
-			    
-				codeMirrorMap.set("kfZl9", editor);
+});
+const darkmode = localStorage.getItem("mode") || "light";  
+const newTheme = darkmode === "dark" ? "dracula" : "default";
+editor.setSize("50%", "100%");
+editor.setOption("theme", newTheme);
+htmlCodeMirrorMap.set("LYs3K", editor);
+}
 
-				let editor1 = CodeMirror.fromTextArea(document.getElementById("kfZl9_Textarea"), {
-					mode : "htmlmixed",
-					lineNumbers : false,
-					tabSize : 2
-				});
-			    editor1.setOption("theme", newTheme);				
-				
-				codeMirrorMap.set("kfZl9_Textarea", editor1);
-			}
-		    function openDialog(id) {
-		        closeAll();
-		        document.getElementById(id).style.display = 'flex';
-		        setTimeout(() => {
-		        	 codeMirrorMap.get("kfZl9_Textarea").refresh();
-		        }, 100); // 100ms 
-		      }
-
-		      function closeAll() {
-		        document.querySelectorAll('.dialog-backdrop').forEach(el => {
-		          el.style.display = 'none';
-		        });
-		      }			
-		</script>
- </div>
-</div><h3 id="chart-level-event-example">Chart-Level Event Example</h3><p>To respond to clicks anywhere in the chart background:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</script>
+</div><h3 id="chart-level-event-example">Chart-Level Event Example</h3><p>To respond to clicks anywhere in the chart background:</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-js">chart: {
   events: {
     click: function (event) {
@@ -1186,7 +625,8 @@ html.dark-mode .page-footer a {
  <li>Monitor stock prices, sensor data, or server metrics in real time</li>
  <li>Reflect user input or external events</li>
  <li>Keep visualizations fresh without reloading the page</li>
-</ul><p>Highcharts provides a simple API to update existing charts without reinitializing them.</p><h3 id="method-1-adding-points-with-series-addpoint">Method 1: Adding Points with <code>series.addPoint()</code></h3><p>Use this when you want to <strong>append new data</strong> to an existing chart—ideal for time-series data like live traffic, CPU usage, or stock tickers.</p><h3 id="example-add-a-point-every-second">Example: Add a Point Every Second</h3><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</ul><p>Highcharts provides a simple API to update existing charts without reinitializing them.</p><h3 id="method-1-adding-points-with-series-addpoint">Method 1: Adding Points with <code>series.addPoint()</code></h3><p>Use this when you want to <strong>append new data</strong> to an existing chart—ideal for time-series data like live traffic, CPU usage, or stock tickers.</p><h3 id="example-add-a-point-every-second">Example: Add a Point Every Second</h3><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-html">&lt;div id="container"&gt;&lt;/div&gt;
 &lt;script&gt;
 const chart = Highcharts.chart('container', {
@@ -1207,13 +647,16 @@ setInterval(() =&gt; {
   chart.series[0].addPoint([x, y], true, chart.series[0].data.length &gt;= 20);
 }, 1000);
 &lt;/script&gt;</code></pre>
-</div><div class="snippet-container" id="uWGLO">
- <div id="g5ZUf_Dialog" class="dialog-backdrop">
+</div><div class="snippet-container">
+ <div class="button-group-run-edit"><button class="button-run-edit" onclick="runHtmlCode(this,'SbMtG','nmVfa', false)">Run</button> <button class="button-run-edit" onclick="openEditHtmlCodeDialog('nmVfa_Dialog','SbMtG')">Edit</button>
+ </div> <iframe id="nmVfa" class="result_iframe" style="display: none;"></iframe>
+ <div id="nmVfa_Dialog" class="dialog-backdrop">
   <div class="dialog">
-   <h2>Dialog 1</h2>
-   <div class="controls"><button onclick="renderIframe(this,'WEong_Textarea','g5ZUf_IFrame')">Run</button> <button onclick="closeAll()">Close</button>
+   <div class="controls"><button onclick="runHtmlCode(this,'SbMtG','nmVfa_IFrame', true)">Run</button> <button onclick="closeAllHtmlCodeDialog()">Close</button>
    </div>
-   <div class="dialog-content"><textarea id="WEong_Textarea" class="textarea_dialog" placeholder="Type HTML here...">&lt;!DOCTYPE html&gt;
+   <div class="dialog-content">
+    <div class="editor-container">
+     <textarea id="SbMtG" class="textarea_dialog" placeholder="Type HTML here...">&lt;!DOCTYPE html&gt;
 &lt;html lang="en"&gt;
 &lt;head&gt;
   &lt;meta charset="UTF-8" /&gt;
@@ -1263,104 +706,30 @@ setInterval(() =&gt; {
     });
   &lt;/script&gt;
 &lt;/body&gt;
-&lt;/html&gt;</textarea> <iframe id="g5ZUf_IFrame" class="iframe_dialog"></iframe>
+&lt;/html&gt;</textarea>
+    </div>
+    <div class="preview-container">
+     <iframe id="nmVfa_IFrame" class="result_iframe_dialog" style="border: none;"></iframe>
+    </div>
    </div>
   </div>
  </div>
- <div class="snippet-header" onclick="toggleSnippetAndRefresh('uWGLO','WEong')">
-  Click to Try it <!--<span onclick="toggleSnippetAndRefresh('uWGLO','WEong')">Click
-			to Try it</span> --> <!-- <span onclick="openDialog('g5ZUf_Dialog')">Dialog</span> -->
- </div>
- <div class="snippet-body"><textarea id="WEong">&lt;!DOCTYPE html&gt;
-&lt;html lang="en"&gt;
-&lt;head&gt;
-  &lt;meta charset="UTF-8" /&gt;
-  &lt;title&gt;Live Data Stream Example&lt;/title&gt;
-  &lt;script src="https://code.highcharts.com/highcharts.js"&gt;&lt;/script&gt;
-&lt;/head&gt;
-&lt;body&gt;
-  &lt;h2&gt;Live Data Stream (Appending Points)&lt;/h2&gt;
-
-  &lt;div id="container" style="width: 700px; height: 400px;"&gt;&lt;/div&gt;
-
-  &lt;script&gt;
-    const chart = Highcharts.chart('container', {
-      chart: {
-        type: 'line',
-        animation: Highcharts.svg, // use SVG animation
-        marginRight: 10,
-        events: {
-          load: function () {
-            // Set up the updating of the chart each second
-            const series = this.series[0];
-            setInterval(() =&gt; {
-              const x = (new Date()).getTime(); // current time
-              const y = Math.floor(Math.random() * 100);
-              series.addPoint([x, y], true, series.data.length &gt;= 20);
-            }, 1000);
-          }
-        }
-      },
-      title: { text: 'Live Data Stream' },
-      xAxis: {
-        type: 'datetime',
-        tickPixelInterval: 150
-      },
-      yAxis: {
-        title: { text: 'Random value' },
-        max: 100,
-        min: 0
-      },
-      series: [{
-        name: 'Random Data',
-        data: (function () {
-          // Generate initial empty data array or seed with initial points if you like
-          return [];
-        })()
-      }]
-    });
-  &lt;/script&gt;
-&lt;/body&gt;
-&lt;/html&gt;</textarea> <br> <button onclick="renderIframe(this,'WEong','g5ZUf')">Run</button>
-  <div id="g5ZUf_FloatingLog" class="floatingLog" aria-live="polite" role="alert"></div> <iframe id="g5ZUf" class="result_iframe" style="display: none;"></iframe>
-  <script>
-			{
-				let editor = CodeMirror.fromTextArea(document
-						.getElementById("WEong"), {
+ <script>
+{
+let editor = CodeMirror.fromTextArea(document.getElementById("SbMtG"), {
 					mode : "htmlmixed",
 					lineNumbers : false,
+                    lineWrapping: true,
 					tabSize : 2
-				});
-			    const mode = localStorage.getItem("mode") || "light";  
-			    const newTheme = mode === "dark" ? "material" : "default";
-			    editor.setOption("theme", newTheme);
-			    
-				codeMirrorMap.set("WEong", editor);
+});
+const darkmode = localStorage.getItem("mode") || "light";  
+const newTheme = darkmode === "dark" ? "dracula" : "default";
+editor.setSize("50%", "100%");
+editor.setOption("theme", newTheme);
+htmlCodeMirrorMap.set("SbMtG", editor);
+}
 
-				let editor1 = CodeMirror.fromTextArea(document.getElementById("WEong_Textarea"), {
-					mode : "htmlmixed",
-					lineNumbers : false,
-					tabSize : 2
-				});
-			    editor1.setOption("theme", newTheme);				
-				
-				codeMirrorMap.set("WEong_Textarea", editor1);
-			}
-		    function openDialog(id) {
-		        closeAll();
-		        document.getElementById(id).style.display = 'flex';
-		        setTimeout(() => {
-		        	 codeMirrorMap.get("WEong_Textarea").refresh();
-		        }, 100); // 100ms 
-		      }
-
-		      function closeAll() {
-		        document.querySelectorAll('.dialog-backdrop').forEach(el => {
-		          el.style.display = 'none';
-		        });
-		      }			
-		</script>
- </div>
+</script>
 </div><h3 id="notes">Notes</h3><ul>
  <li><p><code>addPoint([x, y], redraw, shift)</code>:</p>
   <ul>
@@ -1371,7 +740,8 @@ setInterval(() =&gt; {
  <li>You want to <strong>replace the entire dataset</strong></li>
  <li>You’re syncing with a new API response</li>
  <li>You're switching between different views (e.g., daily vs monthly)</li>
-</ul><h3 id="example-replace-data-on-button-click">Example: Replace Data on Button Click</h3><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</ul><h3 id="example-replace-data-on-button-click">Example: Replace Data on Button Click</h3><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-js">document.getElementById('update').addEventListener('click', () =&gt; {
   const newData = Array.from({ length: 10 }, () =&gt; Math.floor(Math.random() * 50));
   chart.series[0].setData(newData, true);
@@ -1397,10 +767,12 @@ setInterval(() =&gt; {
    <td>Reduces visual lag during rapid updates</td>
   </tr>
  </tbody>
-</table><h3 id="example-batched-updates-without-animation">Example: Batched Updates Without Animation</h3><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</table><h3 id="example-batched-updates-without-animation">Example: Batched Updates Without Animation</h3><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-js">chart.series[0].addPoint([x, y], false); // Don’t redraw yet
 chart.redraw();                          // Redraw once per batch</code></pre>
-</div><p>You can also turn off animation temporarily:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</div><p>You can also turn off animation temporarily:</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-js">chart.update({
   plotOptions: {
     series: {
@@ -1410,15 +782,18 @@ chart.redraw();                          // Redraw once per batch</code></pre>
 });</code></pre>
 </div><h3 id="updating-other-chart-properties">Updating Other Chart Properties</h3><p>You can update more than just data. Try changing:</p><ul>
  <li><p><strong>Title</strong></p>
-  <div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+  <div class="code-block">
+   <button class="copy-button" onclick="copyCode(this)">▯</button>
    <pre><code class="language-js">chart.setTitle({ text: 'Updated Title' });</code></pre>
   </div></li>
  <li><p><strong>Axis extremes</strong></p>
-  <div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+  <div class="code-block">
+   <button class="copy-button" onclick="copyCode(this)">▯</button>
    <pre><code class="language-js">chart.xAxis[0].setExtremes(min, max);</code></pre>
   </div></li>
  <li><p><strong>Color or style</strong></p>
-  <div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+  <div class="code-block">
+   <button class="copy-button" onclick="copyCode(this)">▯</button>
    <pre><code class="language-js">chart.series[0].update({ color: 'red' });</code></pre>
   </div></li>
 </ul><h3 id="summary">Summary</h3><ul>
@@ -1439,7 +814,8 @@ chart.redraw();                          // Redraw once per batch</code></pre>
  <li>Time series</li>
  <li>Financial/stock charts</li>
  <li>Sensor or log data</li>
-</ul><h3 id="example-enable-x-axis-zooming">Example: Enable X-Axis Zooming</h3><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</ul><h3 id="example-enable-x-axis-zooming">Example: Enable X-Axis Zooming</h3><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-js">Highcharts.chart('container', {
   chart: {
     zoomType: 'x' // can also be 'y' or 'xy'
@@ -1453,13 +829,16 @@ chart.redraw();                          // Redraw once per batch</code></pre>
     data: generateTimeSeries() // your function to return timestamped data
   }]
 });</code></pre>
-</div><div class="snippet-container" id="uoH01">
- <div id="tYpHD_Dialog" class="dialog-backdrop">
+</div><div class="snippet-container">
+ <div class="button-group-run-edit"><button class="button-run-edit" onclick="runHtmlCode(this,'YwEGB','irCfK', false)">Run</button> <button class="button-run-edit" onclick="openEditHtmlCodeDialog('irCfK_Dialog','YwEGB')">Edit</button>
+ </div> <iframe id="irCfK" class="result_iframe" style="display: none;"></iframe>
+ <div id="irCfK_Dialog" class="dialog-backdrop">
   <div class="dialog">
-   <h2>Dialog 1</h2>
-   <div class="controls"><button onclick="renderIframe(this,'jMWDz_Textarea','tYpHD_IFrame')">Run</button> <button onclick="closeAll()">Close</button>
+   <div class="controls"><button onclick="runHtmlCode(this,'YwEGB','irCfK_IFrame', true)">Run</button> <button onclick="closeAllHtmlCodeDialog()">Close</button>
    </div>
-   <div class="dialog-content"><textarea id="jMWDz_Textarea" class="textarea_dialog" placeholder="Type HTML here...">&lt;!DOCTYPE html&gt;
+   <div class="dialog-content">
+    <div class="editor-container">
+     <textarea id="YwEGB" class="textarea_dialog" placeholder="Type HTML here...">&lt;!DOCTYPE html&gt;
 &lt;html lang="en"&gt;
 &lt;head&gt;
   &lt;meta charset="UTF-8" /&gt;
@@ -1505,100 +884,30 @@ chart.redraw();                          // Redraw once per batch</code></pre>
     });
   &lt;/script&gt;
 &lt;/body&gt;
-&lt;/html&gt;</textarea> <iframe id="tYpHD_IFrame" class="iframe_dialog"></iframe>
+&lt;/html&gt;</textarea>
+    </div>
+    <div class="preview-container">
+     <iframe id="irCfK_IFrame" class="result_iframe_dialog" style="border: none;"></iframe>
+    </div>
    </div>
   </div>
  </div>
- <div class="snippet-header" onclick="toggleSnippetAndRefresh('uoH01','jMWDz')">
-  Click to Try it <!--<span onclick="toggleSnippetAndRefresh('uoH01','jMWDz')">Click
-			to Try it</span> --> <!-- <span onclick="openDialog('tYpHD_Dialog')">Dialog</span> -->
- </div>
- <div class="snippet-body"><textarea id="jMWDz">&lt;!DOCTYPE html&gt;
-&lt;html lang="en"&gt;
-&lt;head&gt;
-  &lt;meta charset="UTF-8" /&gt;
-  &lt;title&gt;X-Axis Zoom Example&lt;/title&gt;
-  &lt;script src="https://code.highcharts.com/highcharts.js"&gt;&lt;/script&gt;
-&lt;/head&gt;
-&lt;body&gt;
-  &lt;h2&gt;Website Traffic Over Time (Zoomable X-Axis)&lt;/h2&gt;
-
-  &lt;div id="container" style="width: 700px; height: 400px;"&gt;&lt;/div&gt;
-
-  &lt;script&gt;
-    // Generate sample timestamped data (last 30 days, 1 point per day)
-    function generateTimeSeries() {
-      const data = [];
-      const now = Date.now();
-      const day = 24 * 3600 * 1000;
-
-      for (let i = 30; i &gt;= 0; i--) {
-        data.push([
-          now - i * day,
-          Math.floor(50 + Math.random() * 100)
-        ]);
-      }
-      return data;
-    }
-
-    Highcharts.chart('container', {
-      chart: {
-        zoomType: 'x'
-      },
-      title: { text: 'Website Traffic Over Time' },
-      xAxis: {
-        type: 'datetime'
-      },
-      yAxis: {
-        title: { text: 'Visitors' }
-      },
-      series: [{
-        name: 'Visitors',
-        data: generateTimeSeries()
-      }]
-    });
-  &lt;/script&gt;
-&lt;/body&gt;
-&lt;/html&gt;</textarea> <br> <button onclick="renderIframe(this,'jMWDz','tYpHD')">Run</button>
-  <div id="tYpHD_FloatingLog" class="floatingLog" aria-live="polite" role="alert"></div> <iframe id="tYpHD" class="result_iframe" style="display: none;"></iframe>
-  <script>
-			{
-				let editor = CodeMirror.fromTextArea(document
-						.getElementById("jMWDz"), {
+ <script>
+{
+let editor = CodeMirror.fromTextArea(document.getElementById("YwEGB"), {
 					mode : "htmlmixed",
 					lineNumbers : false,
+                    lineWrapping: true,
 					tabSize : 2
-				});
-			    const mode = localStorage.getItem("mode") || "light";  
-			    const newTheme = mode === "dark" ? "material" : "default";
-			    editor.setOption("theme", newTheme);
-			    
-				codeMirrorMap.set("jMWDz", editor);
+});
+const darkmode = localStorage.getItem("mode") || "light";  
+const newTheme = darkmode === "dark" ? "dracula" : "default";
+editor.setSize("50%", "100%");
+editor.setOption("theme", newTheme);
+htmlCodeMirrorMap.set("YwEGB", editor);
+}
 
-				let editor1 = CodeMirror.fromTextArea(document.getElementById("jMWDz_Textarea"), {
-					mode : "htmlmixed",
-					lineNumbers : false,
-					tabSize : 2
-				});
-			    editor1.setOption("theme", newTheme);				
-				
-				codeMirrorMap.set("jMWDz_Textarea", editor1);
-			}
-		    function openDialog(id) {
-		        closeAll();
-		        document.getElementById(id).style.display = 'flex';
-		        setTimeout(() => {
-		        	 codeMirrorMap.get("jMWDz_Textarea").refresh();
-		        }, 100); // 100ms 
-		      }
-
-		      function closeAll() {
-		        document.querySelectorAll('.dialog-backdrop').forEach(el => {
-		          el.style.display = 'none';
-		        });
-		      }			
-		</script>
- </div>
+</script>
 </div><h3 id="zoomtype-options"><code>zoomType</code> Options</h3><table>
  <thead>
   <tr>
@@ -1620,7 +929,8 @@ chart.redraw();                          // Redraw once per batch</code></pre>
    <td>Zoom in both directions</td>
   </tr>
  </tbody>
-</table><h3 id="enabling-panning">Enabling Panning</h3><p>Panning allows users to <strong>click and drag</strong> the chart area (with a modifier key, like Shift) to navigate after zooming in.</p><h3 id="example-enable-panning-with-shift-key">Example: Enable Panning with Shift Key</h3><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</table><h3 id="enabling-panning">Enabling Panning</h3><p>Panning allows users to <strong>click and drag</strong> the chart area (with a modifier key, like Shift) to navigate after zooming in.</p><h3 id="example-enable-panning-with-shift-key">Example: Enable Panning with Shift Key</h3><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-js">chart: {
   zoomType: 'x',
   panning: {
@@ -1629,7 +939,8 @@ chart.redraw();                          // Redraw once per batch</code></pre>
   },
   panKey: 'shift' // Hold Shift + drag to pan
 }</code></pre>
-</div><p>This allows intuitive exploration: users zoom in to see details, then pan left or right without resetting the zoom.</p><h3 id="adding-a-scrollbar">Adding a Scrollbar</h3><p>Scrollbars provide another navigation option, particularly for <strong>large datasets or long category axes</strong>. Highcharts can display scrollbars automatically when you set a <code>min</code>/<code>max</code> window that is smaller than the full dataset.</p><h3 id="example-horizontal-scrollbar-for-category-axis">Example: Horizontal Scrollbar for Category Axis</h3><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</div><p>This allows intuitive exploration: users zoom in to see details, then pan left or right without resetting the zoom.</p><h3 id="adding-a-scrollbar">Adding a Scrollbar</h3><p>Scrollbars provide another navigation option, particularly for <strong>large datasets or long category axes</strong>. Highcharts can display scrollbars automatically when you set a <code>min</code>/<code>max</code> window that is smaller than the full dataset.</p><h3 id="example-horizontal-scrollbar-for-category-axis">Example: Horizontal Scrollbar for Category Axis</h3><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-js">Highcharts.chart('container', {
   chart: {
     type: 'column'
@@ -1650,13 +961,16 @@ chart.redraw();                          // Redraw once per batch</code></pre>
 });</code></pre>
 </div><blockquote>
  <p>🔍 Use <code>min</code> and <code>max</code> to define the initial viewable range. The scrollbar will appear if the full axis has more items than shown.</p>
-</blockquote><div class="snippet-container" id="t6vPH">
- <div id="PWLLw_Dialog" class="dialog-backdrop">
+</blockquote><div class="snippet-container">
+ <div class="button-group-run-edit"><button class="button-run-edit" onclick="runHtmlCode(this,'8NaTH','zC28k', false)">Run</button> <button class="button-run-edit" onclick="openEditHtmlCodeDialog('zC28k_Dialog','8NaTH')">Edit</button>
+ </div> <iframe id="zC28k" class="result_iframe" style="display: none;"></iframe>
+ <div id="zC28k_Dialog" class="dialog-backdrop">
   <div class="dialog">
-   <h2>Dialog 1</h2>
-   <div class="controls"><button onclick="renderIframe(this,'ElFOa_Textarea','PWLLw_IFrame')">Run</button> <button onclick="closeAll()">Close</button>
+   <div class="controls"><button onclick="runHtmlCode(this,'8NaTH','zC28k_IFrame', true)">Run</button> <button onclick="closeAllHtmlCodeDialog()">Close</button>
    </div>
-   <div class="dialog-content"><textarea id="ElFOa_Textarea" class="textarea_dialog" placeholder="Type HTML here...">&lt;!DOCTYPE html&gt;
+   <div class="dialog-content">
+    <div class="editor-container">
+     <textarea id="8NaTH" class="textarea_dialog" placeholder="Type HTML here...">&lt;!DOCTYPE html&gt;
 &lt;html lang="en"&gt;
 &lt;head&gt;
   &lt;meta charset="UTF-8" /&gt;
@@ -1688,86 +1002,30 @@ chart.redraw();                          // Redraw once per batch</code></pre>
     });
   &lt;/script&gt;
 &lt;/body&gt;
-&lt;/html&gt;</textarea> <iframe id="PWLLw_IFrame" class="iframe_dialog"></iframe>
+&lt;/html&gt;</textarea>
+    </div>
+    <div class="preview-container">
+     <iframe id="zC28k_IFrame" class="result_iframe_dialog" style="border: none;"></iframe>
+    </div>
    </div>
   </div>
  </div>
- <div class="snippet-header" onclick="toggleSnippetAndRefresh('t6vPH','ElFOa')">
-  Click to Try it <!--<span onclick="toggleSnippetAndRefresh('t6vPH','ElFOa')">Click
-			to Try it</span> --> <!-- <span onclick="openDialog('PWLLw_Dialog')">Dialog</span> -->
- </div>
- <div class="snippet-body"><textarea id="ElFOa">&lt;!DOCTYPE html&gt;
-&lt;html lang="en"&gt;
-&lt;head&gt;
-  &lt;meta charset="UTF-8" /&gt;
-  &lt;title&gt;Horizontal Scrollbar on Category Axis&lt;/title&gt;
-  &lt;script src="https://code.highcharts.com/highcharts.js"&gt;&lt;/script&gt;
-  &lt;script src="https://code.highcharts.com/modules/scrollbar.js"&gt;&lt;/script&gt;
-&lt;/head&gt;
-&lt;body&gt;
-  &lt;h2&gt;Product Sales by Region with Horizontal Scrollbar&lt;/h2&gt;
-
-  &lt;div id="container" style="width: 700px; height: 400px;"&gt;&lt;/div&gt;
-
-  &lt;script&gt;
-    Highcharts.chart('container', {
-      chart: { type: 'column' },
-      title: { text: 'Product Sales by Region' },
-      xAxis: {
-        categories: ['North', 'South', 'East', 'West', 'Central', 'Asia', 'Europe', 'Africa'],
-        min: 0,
-        max: 3, // Show only first 4 categories initially
-        scrollbar: { enabled: true },
-        // Enable navigator for a nicer experience (optional)
-        // navigator: { enabled: true }
-      },
-      series: [{
-        name: 'Sales',
-        data: [100, 200, 150, 300, 120, 180, 90, 60]
-      }]
-    });
-  &lt;/script&gt;
-&lt;/body&gt;
-&lt;/html&gt;</textarea> <br> <button onclick="renderIframe(this,'ElFOa','PWLLw')">Run</button>
-  <div id="PWLLw_FloatingLog" class="floatingLog" aria-live="polite" role="alert"></div> <iframe id="PWLLw" class="result_iframe" style="display: none;"></iframe>
-  <script>
-			{
-				let editor = CodeMirror.fromTextArea(document
-						.getElementById("ElFOa"), {
+ <script>
+{
+let editor = CodeMirror.fromTextArea(document.getElementById("8NaTH"), {
 					mode : "htmlmixed",
 					lineNumbers : false,
+                    lineWrapping: true,
 					tabSize : 2
-				});
-			    const mode = localStorage.getItem("mode") || "light";  
-			    const newTheme = mode === "dark" ? "material" : "default";
-			    editor.setOption("theme", newTheme);
-			    
-				codeMirrorMap.set("ElFOa", editor);
+});
+const darkmode = localStorage.getItem("mode") || "light";  
+const newTheme = darkmode === "dark" ? "dracula" : "default";
+editor.setSize("50%", "100%");
+editor.setOption("theme", newTheme);
+htmlCodeMirrorMap.set("8NaTH", editor);
+}
 
-				let editor1 = CodeMirror.fromTextArea(document.getElementById("ElFOa_Textarea"), {
-					mode : "htmlmixed",
-					lineNumbers : false,
-					tabSize : 2
-				});
-			    editor1.setOption("theme", newTheme);				
-				
-				codeMirrorMap.set("ElFOa_Textarea", editor1);
-			}
-		    function openDialog(id) {
-		        closeAll();
-		        document.getElementById(id).style.display = 'flex';
-		        setTimeout(() => {
-		        	 codeMirrorMap.get("ElFOa_Textarea").refresh();
-		        }, 100); // 100ms 
-		      }
-
-		      function closeAll() {
-		        document.querySelectorAll('.dialog-backdrop').forEach(el => {
-		          el.style.display = 'none';
-		        });
-		      }			
-		</script>
- </div>
+</script>
 </div><h3 id="use-case-stock-and-financial-charts">Use Case: Stock and Financial Charts</h3><p>Interactive navigation features are especially valuable in stock and financial charts:</p><ul>
  <li>Zoom in to a specific date range</li>
  <li>Scroll across years of data</li>
@@ -1806,7 +1064,8 @@ chart.redraw();                          // Redraw once per batch</code></pre>
  <li>Customize animation duration and easing</li>
  <li>Control animation when adding or updating data</li>
  <li>Animate redraws for smoother updates</li>
-</ul><h3 id="animating-initial-chart-rendering">Animating Initial Chart Rendering</h3><p>By default, Highcharts animates the initial rendering of series. You can configure the animation duration and easing using the <code>plotOptions.series.animation</code> object.</p><h3 id="example-custom-initial-animation">Example: Custom Initial Animation</h3><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</ul><h3 id="animating-initial-chart-rendering">Animating Initial Chart Rendering</h3><p>By default, Highcharts animates the initial rendering of series. You can configure the animation duration and easing using the <code>plotOptions.series.animation</code> object.</p><h3 id="example-custom-initial-animation">Example: Custom Initial Animation</h3><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-js">Highcharts.chart('container', {
   chart: { type: 'column' },
   title: { text: 'Quarterly Revenue' },
@@ -1823,13 +1082,16 @@ chart.redraw();                          // Redraw once per batch</code></pre>
     data: [120, 180, 140, 200]
   }]
 });</code></pre>
-</div><div class="snippet-container" id="3mXTM">
- <div id="aZU1r_Dialog" class="dialog-backdrop">
+</div><div class="snippet-container">
+ <div class="button-group-run-edit"><button class="button-run-edit" onclick="runHtmlCode(this,'sIWHh','e2NRU', false)">Run</button> <button class="button-run-edit" onclick="openEditHtmlCodeDialog('e2NRU_Dialog','sIWHh')">Edit</button>
+ </div> <iframe id="e2NRU" class="result_iframe" style="display: none;"></iframe>
+ <div id="e2NRU_Dialog" class="dialog-backdrop">
   <div class="dialog">
-   <h2>Dialog 1</h2>
-   <div class="controls"><button onclick="renderIframe(this,'k9Ue0_Textarea','aZU1r_IFrame')">Run</button> <button onclick="closeAll()">Close</button>
+   <div class="controls"><button onclick="runHtmlCode(this,'sIWHh','e2NRU_IFrame', true)">Run</button> <button onclick="closeAllHtmlCodeDialog()">Close</button>
    </div>
-   <div class="dialog-content"><textarea id="k9Ue0_Textarea" class="textarea_dialog" placeholder="Type HTML here...">&lt;!DOCTYPE html&gt;
+   <div class="dialog-content">
+    <div class="editor-container">
+     <textarea id="sIWHh" class="textarea_dialog" placeholder="Type HTML here...">&lt;!DOCTYPE html&gt;
 &lt;html lang="en"&gt;
 &lt;head&gt;
   &lt;meta charset="UTF-8" /&gt;
@@ -1860,85 +1122,30 @@ chart.redraw();                          // Redraw once per batch</code></pre>
     });
   &lt;/script&gt;
 &lt;/body&gt;
-&lt;/html&gt;</textarea> <iframe id="aZU1r_IFrame" class="iframe_dialog"></iframe>
+&lt;/html&gt;</textarea>
+    </div>
+    <div class="preview-container">
+     <iframe id="e2NRU_IFrame" class="result_iframe_dialog" style="border: none;"></iframe>
+    </div>
    </div>
   </div>
  </div>
- <div class="snippet-header" onclick="toggleSnippetAndRefresh('3mXTM','k9Ue0')">
-  Click to Try it <!--<span onclick="toggleSnippetAndRefresh('3mXTM','k9Ue0')">Click
-			to Try it</span> --> <!-- <span onclick="openDialog('aZU1r_Dialog')">Dialog</span> -->
- </div>
- <div class="snippet-body"><textarea id="k9Ue0">&lt;!DOCTYPE html&gt;
-&lt;html lang="en"&gt;
-&lt;head&gt;
-  &lt;meta charset="UTF-8" /&gt;
-  &lt;title&gt;Custom Initial Animation Example&lt;/title&gt;
-  &lt;script src="https://code.highcharts.com/highcharts.js"&gt;&lt;/script&gt;
-&lt;/head&gt;
-&lt;body&gt;
-  &lt;h2&gt;Quarterly Revenue with Custom Animation&lt;/h2&gt;
-
-  &lt;div id="container" style="width: 700px; height: 400px;"&gt;&lt;/div&gt;
-
-  &lt;script&gt;
-    Highcharts.chart('container', {
-      chart: { type: 'column' },
-      title: { text: 'Quarterly Revenue' },
-      plotOptions: {
-        series: {
-          animation: {
-            duration: 1500,
-            easing: 'easeOutBounce'
-          }
-        }
-      },
-      series: [{
-        name: 'Revenue',
-        data: [120, 180, 140, 200]
-      }]
-    });
-  &lt;/script&gt;
-&lt;/body&gt;
-&lt;/html&gt;</textarea> <br> <button onclick="renderIframe(this,'k9Ue0','aZU1r')">Run</button>
-  <div id="aZU1r_FloatingLog" class="floatingLog" aria-live="polite" role="alert"></div> <iframe id="aZU1r" class="result_iframe" style="display: none;"></iframe>
-  <script>
-			{
-				let editor = CodeMirror.fromTextArea(document
-						.getElementById("k9Ue0"), {
+ <script>
+{
+let editor = CodeMirror.fromTextArea(document.getElementById("sIWHh"), {
 					mode : "htmlmixed",
 					lineNumbers : false,
+                    lineWrapping: true,
 					tabSize : 2
-				});
-			    const mode = localStorage.getItem("mode") || "light";  
-			    const newTheme = mode === "dark" ? "material" : "default";
-			    editor.setOption("theme", newTheme);
-			    
-				codeMirrorMap.set("k9Ue0", editor);
+});
+const darkmode = localStorage.getItem("mode") || "light";  
+const newTheme = darkmode === "dark" ? "dracula" : "default";
+editor.setSize("50%", "100%");
+editor.setOption("theme", newTheme);
+htmlCodeMirrorMap.set("sIWHh", editor);
+}
 
-				let editor1 = CodeMirror.fromTextArea(document.getElementById("k9Ue0_Textarea"), {
-					mode : "htmlmixed",
-					lineNumbers : false,
-					tabSize : 2
-				});
-			    editor1.setOption("theme", newTheme);				
-				
-				codeMirrorMap.set("k9Ue0_Textarea", editor1);
-			}
-		    function openDialog(id) {
-		        closeAll();
-		        document.getElementById(id).style.display = 'flex';
-		        setTimeout(() => {
-		        	 codeMirrorMap.get("k9Ue0_Textarea").refresh();
-		        }, 100); // 100ms 
-		      }
-
-		      function closeAll() {
-		        document.querySelectorAll('.dialog-backdrop').forEach(el => {
-		          el.style.display = 'none';
-		        });
-		      }			
-		</script>
- </div>
+</script>
 </div><h3 id="supported-easing-types">Supported Easing Types</h3><p>Highcharts supports common CSS-like easing values:</p><ul>
  <li><code>'linear'</code></li>
  <li><code>'easeInQuad'</code></li>
@@ -1947,7 +1154,8 @@ chart.redraw();                          // Redraw once per batch</code></pre>
  <li><code>'easeOutBounce'</code> (fun for playful UIs!)</li>
 </ul><blockquote>
  <p>For full control, you can supply a custom easing function via Highcharts’ internal animation engine.</p>
-</blockquote><h3 id="animating-data-updates">Animating Data Updates</h3><p>When a chart is updated dynamically using <code>setData()</code>, <code>addPoint()</code>, or <code>series.update()</code>, Highcharts animates the transition if animation is enabled.</p><h3 id="example-animate-updated-data">Example: Animate Updated Data</h3><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</blockquote><h3 id="animating-data-updates">Animating Data Updates</h3><p>When a chart is updated dynamically using <code>setData()</code>, <code>addPoint()</code>, or <code>series.update()</code>, Highcharts animates the transition if animation is enabled.</p><h3 id="example-animate-updated-data">Example: Animate Updated Data</h3><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-js">const chart = Highcharts.chart('container', {
   chart: { type: 'line' },
   series: [{
@@ -1965,13 +1173,16 @@ setTimeout(() =&gt; {
 }, 2000);</code></pre>
 </div><blockquote>
  <p>The third parameter of <code>setData()</code> is an animation config object.</p>
-</blockquote><div class="snippet-container" id="m9o8v">
- <div id="OCFY4_Dialog" class="dialog-backdrop">
+</blockquote><div class="snippet-container">
+ <div class="button-group-run-edit"><button class="button-run-edit" onclick="runHtmlCode(this,'KSGg7','cnvjx', false)">Run</button> <button class="button-run-edit" onclick="openEditHtmlCodeDialog('cnvjx_Dialog','KSGg7')">Edit</button>
+ </div> <iframe id="cnvjx" class="result_iframe" style="display: none;"></iframe>
+ <div id="cnvjx_Dialog" class="dialog-backdrop">
   <div class="dialog">
-   <h2>Dialog 1</h2>
-   <div class="controls"><button onclick="renderIframe(this,'XmyFU_Textarea','OCFY4_IFrame')">Run</button> <button onclick="closeAll()">Close</button>
+   <div class="controls"><button onclick="runHtmlCode(this,'KSGg7','cnvjx_IFrame', true)">Run</button> <button onclick="closeAllHtmlCodeDialog()">Close</button>
    </div>
-   <div class="dialog-content"><textarea id="XmyFU_Textarea" class="textarea_dialog" placeholder="Type HTML here...">&lt;!DOCTYPE html&gt;
+   <div class="dialog-content">
+    <div class="editor-container">
+     <textarea id="KSGg7" class="textarea_dialog" placeholder="Type HTML here...">&lt;!DOCTYPE html&gt;
 &lt;html lang="en"&gt;
 &lt;head&gt;
   &lt;meta charset="UTF-8" /&gt;
@@ -2002,98 +1213,47 @@ setTimeout(() =&gt; {
     }, 2000);
   &lt;/script&gt;
 &lt;/body&gt;
-&lt;/html&gt;</textarea> <iframe id="OCFY4_IFrame" class="iframe_dialog"></iframe>
+&lt;/html&gt;</textarea>
+    </div>
+    <div class="preview-container">
+     <iframe id="cnvjx_IFrame" class="result_iframe_dialog" style="border: none;"></iframe>
+    </div>
    </div>
   </div>
  </div>
- <div class="snippet-header" onclick="toggleSnippetAndRefresh('m9o8v','XmyFU')">
-  Click to Try it <!--<span onclick="toggleSnippetAndRefresh('m9o8v','XmyFU')">Click
-			to Try it</span> --> <!-- <span onclick="openDialog('OCFY4_Dialog')">Dialog</span> -->
- </div>
- <div class="snippet-body"><textarea id="XmyFU">&lt;!DOCTYPE html&gt;
-&lt;html lang="en"&gt;
-&lt;head&gt;
-  &lt;meta charset="UTF-8" /&gt;
-  &lt;title&gt;Animate Updated Data Example&lt;/title&gt;
-  &lt;script src="https://code.highcharts.com/highcharts.js"&gt;&lt;/script&gt;
-&lt;/head&gt;
-&lt;body&gt;
-  &lt;h2&gt;Animate Updated Data on Line Chart&lt;/h2&gt;
-
-  &lt;div id="container" style="width: 700px; height: 400px;"&gt;&lt;/div&gt;
-
-  &lt;script&gt;
-    const chart = Highcharts.chart('container', {
-      chart: { type: 'line' },
-      title: { text: 'Live Score' },
-      series: [{
-        name: 'Live Score',
-        data: [10, 20, 30, 40]
-      }]
-    });
-
-    // Update data after 2 seconds with animation
-    setTimeout(() =&gt; {
-      chart.series[0].setData([15, 25, 35, 45], true, {
-        duration: 1000,
-        easing: 'easeOutBounce'
-      });
-    }, 2000);
-  &lt;/script&gt;
-&lt;/body&gt;
-&lt;/html&gt;</textarea> <br> <button onclick="renderIframe(this,'XmyFU','OCFY4')">Run</button>
-  <div id="OCFY4_FloatingLog" class="floatingLog" aria-live="polite" role="alert"></div> <iframe id="OCFY4" class="result_iframe" style="display: none;"></iframe>
-  <script>
-			{
-				let editor = CodeMirror.fromTextArea(document
-						.getElementById("XmyFU"), {
+ <script>
+{
+let editor = CodeMirror.fromTextArea(document.getElementById("KSGg7"), {
 					mode : "htmlmixed",
 					lineNumbers : false,
+                    lineWrapping: true,
 					tabSize : 2
-				});
-			    const mode = localStorage.getItem("mode") || "light";  
-			    const newTheme = mode === "dark" ? "material" : "default";
-			    editor.setOption("theme", newTheme);
-			    
-				codeMirrorMap.set("XmyFU", editor);
+});
+const darkmode = localStorage.getItem("mode") || "light";  
+const newTheme = darkmode === "dark" ? "dracula" : "default";
+editor.setSize("50%", "100%");
+editor.setOption("theme", newTheme);
+htmlCodeMirrorMap.set("KSGg7", editor);
+}
 
-				let editor1 = CodeMirror.fromTextArea(document.getElementById("XmyFU_Textarea"), {
-					mode : "htmlmixed",
-					lineNumbers : false,
-					tabSize : 2
-				});
-			    editor1.setOption("theme", newTheme);				
-				
-				codeMirrorMap.set("XmyFU_Textarea", editor1);
-			}
-		    function openDialog(id) {
-		        closeAll();
-		        document.getElementById(id).style.display = 'flex';
-		        setTimeout(() => {
-		        	 codeMirrorMap.get("XmyFU_Textarea").refresh();
-		        }, 100); // 100ms 
-		      }
-
-		      function closeAll() {
-		        document.querySelectorAll('.dialog-backdrop').forEach(el => {
-		          el.style.display = 'none';
-		        });
-		      }			
-		</script>
- </div>
-</div><h3 id="redrawing-with-animation">Redrawing with Animation</h3><p>When you make multiple changes—like axis extremes, title updates, or color changes—you can use <code>chart.redraw()</code> with animation.</p><h3 id="example-animated-redraw">Example: Animated Redraw</h3><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</script>
+</div><h3 id="redrawing-with-animation">Redrawing with Animation</h3><p>When you make multiple changes—like axis extremes, title updates, or color changes—you can use <code>chart.redraw()</code> with animation.</p><h3 id="example-animated-redraw">Example: Animated Redraw</h3><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-js">chart.series[0].addPoint(50, false); // No redraw yet
 chart.series[0].addPoint(60, false); // Still batching
 chart.redraw({ duration: 800 });     // Now animate the update</code></pre>
-</div><p>This technique ensures that multiple updates are processed smoothly without triggering several redraws.</p><h3 id="animating-axis-transitions">Animating Axis Transitions</h3><p>Axes can also animate when you change their extremes using <code>setExtremes()</code>.</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</div><p>This technique ensures that multiple updates are processed smoothly without triggering several redraws.</p><h3 id="animating-axis-transitions">Animating Axis Transitions</h3><p>Axes can also animate when you change their extremes using <code>setExtremes()</code>.</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-js">chart.xAxis[0].setExtremes(2, 6, true, { duration: 600, easing: 'easeInOutQuad' });</code></pre>
-</div><p>This is particularly helpful in zoomable time-series charts where axes move frequently.</p><h3 id="turning-off-animation">Turning Off Animation</h3><p>For performance or UX reasons, you might want to disable animations:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</div><p>This is particularly helpful in zoomable time-series charts where axes move frequently.</p><h3 id="turning-off-animation">Turning Off Animation</h3><p>For performance or UX reasons, you might want to disable animations:</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-js">plotOptions: {
   series: {
     animation: false
   }
 }</code></pre>
-</div><p>Or selectively disable animation on a method call:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</div><p>Or selectively disable animation on a method call:</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-js">series.setData(newData, true, false); // Third param: animation = false</code></pre>
 </div><h3 id="best-practices">Best Practices</h3><table>
  <thead>
@@ -2158,9 +1318,19 @@ chart.redraw({ duration: 800 });     // Now animate the update</code></pre>
 </a>
 
 
+<a href="javascript-html5-animation.htm">
+<div class="book-cover" style="background-color: #f9f6f1;border: 1px solid #ccc;"> 
+    <div class="book-cover-title" style="font-size: 16px;color: #333;top: 10px;">JavaScript HTML5 Animation</div>
+    <div class="book-cover-author">readbytes</div>
+    <div class="book-cover-bottom-stripe" style="background-color: #333;"></div>
+    <img class="book-cover-icon" style="width: 120px;height: 120px;top: 60px;" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFoAAABaCAYAAAA4qEECAAACw0lEQVR4Xu3WvWoUURjG8dXGS9BK7awECysR78Ab8RqUmZGE3QmKmEJUxEarFJJCFK0sbGzEThBEJFjEbbQwsOLOcZZl2cN/PvbMx+6cCc8PHpLs2fN+DAmbwUBERERERERERERERERERERERDYrDqaPRmFiFokjc4vvkZriKDmyH25hgmTMu3Vk6iKDgTnBO73HJV3CGq5YZ1V4v5dGoTnLxarErrW9bU7HobmRvv52GCaf06/f0t/+L7Ofd0Jzad4vW8MlcWAu2716hwv5HXOF8/dCdhH/wx28Nwqmj7lEX8JdvMbh82LjWZtJ/9up1Ie7eI3D58XGszZj+/3LrRf38VL6ofKKg+fFxrM28+Ng2efeKHueF+7kJQ5dFBvPug538hKHLooedEMcepGqeN8148P5/edPs2d2yvpwJy9xaC7mivdd41KDeD4Mkn3u5R0OXZSyRZvEpe6bl8v3zb7n+SzcyyvDoTnPgYti41nTvH+3uubD+/Pw9UW4m1fSAcccuCjrfNBthLt5hcOWZZMPuk4f7uYVDlsWG8/ajO3ge6VeP7mfN3KG7TyTyfJB7+9VetD+/lZzUF+y9ywxTx5kX18V7ucNDtr3cD8vjILkBQfte+5smXPcs3Mc8jgkjpKEe3aOQx6XcM/OccDjEu7ZOQ7YNKzvIv2c+Mg6TROG5iT7dIoDNou5xvqusrUaJko+sUenMgM2CGtXxXpNMgyT16zfKQ5YN6xbF+vWze6uOcXanUr/xP5yyBqZsm5dO6E5k1O/cljXCxyyalivqbTmH/aoGtb0AoeskvimucB6bWCfKmEtr3BYxxyxTpty+q1OZK6zjncyQ5dnwvvrkNO3JOYu73srO3xOtsxV3lunTP+c8E5vxKH5wGVGt81Fvm+T0hm+2vPEUfKP7xERERERERERERERERERERERERGRbv0HldRbu8sOVfIAAAAASUVORK5CYII="/>
+  </div>
+</a>
+
+
 <a href="javascript-dom-programming.htm">
 <div class="book-cover" style="background-color: #f9f6f1;border: 1px solid #ccc;"> 
-    <div class="book-cover-title" style="font-size: 16px;color: #333;top: 20px;">JavaScript DOM Programming</div>
+    <div class="book-cover-title" style="font-size: 16px;color: #333;top: 10px;">JavaScript DOM Programming</div>
     <div class="book-cover-author">readbytes</div>
     <div class="book-cover-bottom-stripe" style="background-color: #333;"></div>
     <img class="book-cover-icon" style="width: 90px;height: 90px;top: 60px;" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFoAAABaCAYAAAA4qEECAAADUklEQVR4Xu2dv47TQBDGI0RDczY9rwMlrwEFBweC/t4EXRwaXuI6WiSaOLkCIZ6BCqTgPRFr8zkbnPF4Zuydn/RVuzsz33eSlX/2LRYRm1Xxe1MVOzY19eL6/6NzfqCw/ilEvXc2Mwh7pNiuyks8O1T1snyNfVLgWQ5hjxbcyCHskaJelVd4drCW5Vvsk6JzlkHYo6XXph5Q6hwEfUZASDhLqUOZ+Ri96vTa1ANKHQ+aAKWOB02AUseDJkCp40EToNTxoAlQ6njQBCh1PGgClDrZBs0l7JEi23eGXMIeKTbVxSs8O1Trm4tL7JMCz3IIe7Rsq+IXbh6iUA97nALPDxXWP4W29w5xMVwbG67rOBVR76LNAA9aiKyCbq49L0QbRmgGHXuul8VLXB+F3IPGtdGIm0o21gpay+89Gs01gtbwecDPz08eSQ8hHTT6C55xjwh3q+IZDhO0u148wL0cSAR93cyOfoKCV9wryu528RCHmpuCR/StRvOy7w8OOHUFT+jTDHdV+RwHnpqCB/SVFRLXaGfhQYvhQQvhQQvhQQvhQf8DXyZNXehPnW+fisc45FwUvKFfNXC4uQn9qvD1Y1maG4qB2NP3xiOui1NX5Zv9QNuq+IDrU6Xx8n7vq16WV7guTvxKYH1TvsP1qWLOl7mBmDDny9xATJjzZW4gJsz5MjcQE+Z8mRuICXO+zA3EhDlf5gZiwpwvcwMxYc6XuYGYMOfL3EBMmPNlbiAmzPkyNxAT5nyZG4gJc778Y1Ih/IN/QeKh5ij0q8acv5z9YenL2T045NSF/rIhfiWQ9Q9oxsaDFsKDFsKDFsKDFsKDjqj9ZqFx8dvfRubWb+gcn+Yv/hSHuh9swrcoh9nRT5DaLcpf/KZ7GXAIXB8D6aADGj5btJprBB3Q8nvQGNfGRCvogLjntT+8SubhVVohBzSDDoh6F20GeNBCzCZo7Qeh4vmhwvqnEPWOmzmEPVJk9Vhj3Mgh7JHi4LLApTMuL52zDMIeLb029YBSh+v6G85S6lBmPkavOr029YBSx4MmQKnjQROg1PGgCVDqeNAEKHU8aAKUOh40AUodD5oApU62QXMJe6TI9p0hl7BHitz+XTX3j2DO+gHKkfODhPVPsRnZ+1+tJg8Iaaje6wAAAABJRU5ErkJggg=="/>
@@ -2170,7 +1340,7 @@ chart.redraw({ duration: 800 });     // Now animate the update</code></pre>
 
 <a href="javascript-data-visualization.htm">
 <div class="book-cover" style="background-color: #f9f6f1;border: 1px solid #ccc;"> 
-    <div class="book-cover-title" style="font-size: 16px;color: #333;top: 20px;">JavaScript Data Visualization</div>
+    <div class="book-cover-title" style="font-size: 16px;color: #333;top: 10px;">JavaScript Data Visualization</div>
     <div class="book-cover-author">readbytes</div>
     <div class="book-cover-bottom-stripe" style="background-color: #333;"></div>
     <img class="book-cover-icon" style="width: 90px;height: 90px;top: 60px;" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFoAAABaCAYAAAA4qEECAAAC0UlEQVR4Xu3dMWsUURSG4fwr2U6zJI0WKZSAaa0EG7tU2giWimLETrQQQRCxUDsbK3+IYOWCiFU06IQz356ZuffOvXdm4A28ze585OxDsLDZnR3zs1pf+rHavXhKWdpY2/Mf50HKEMgV+4cs/1z8/v6OMiTYm9Zfsz5M42r9VQNdLqArBXSlgK4U0JUCulKLgrb39aW7ObQY6PXl/S3Qrs6e1f3ULQZaMYfS/dTZ2xYDvff6g9tS7ge6YEBXCuhKAV0poCsFdKWArtQk0G9e3Tt9dnLc2+dPD1sboCOzv2Ool8/vujsFBtpJMYfydgoMtFMqWOpuLtnbgC6YvQ3ogtnbgC6YvQ3ogtnbgC6YvQ3ogtnbgC6YvQ3ogtnboqCvHR20xn11/UKF6gNL3Y1JP0dXV68fbG01+3wUtP6yvp4+OXZ3CtUHlrpL7ew/tvRz9KV7zT4LtGmW0O+/fnRr3l86tH4u/Xwhv88+C7QJ6MhdakBH7lIDOnKXGtCRu9SAjtylBnTkLjWgI3e67evnt7fnG6BH7EJqdkCP2IXU7IAesft169DN2wE9YqfAQDt35NgpMNDOHTl2Cgy0c0eOnQID7dxhXwvJ2ykw0M4d9rWQvJ0CA+3cYV8LydspMNDOHfa1C/cfuQ3tFBho5w77mgID/f99oCeGDsnbKXBp6JDUR7PPAm12QO8CvVXzfhe0QoWC6fOhOwUOhX7w4rGbt+vKPgu02QE9YqfAi4Meai7QITU7oEfsQmp2s4S+cfumW/P+XKDvXFm7ebtZQusBeshcoL8c7rt5O6BH7BQYaOeOHDsFBtq5I8dOgYF27sixU2CgnTty7BQYaOeOHDsFBtq5I8dOgRcHPVQXdEhT7Wb536RDAQ30Vs1uNtAUF9CVArpSQFcK6EoBXSmgK9WG5qtQi2RNV803KsuLlDn7RcpgF6qF3Pz8fWOjD1JyrS9g/wOlHj3Oru4PcQAAAABJRU5ErkJggg=="/>
@@ -2231,30 +1401,36 @@ chart.redraw({ duration: 800 });     // Now animate the update</code></pre>
 
 <a href='javascript.htm'><div class='book-cover' style='background-color: #f9f6f1;color: #111111;border: 1px solid #ccc;display: flex;justify-content: center;align-items: center;text-align: center;'>More Javascript Books</div></a>
 </div>
-</div>
-  </div>
-  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
-  
-  <script>
-    function copyCode(button) {
-      const code = button.nextElementSibling.innerText;
-      navigator.clipboard.writeText(code).then(() => {
-        button.textContent = 'Copied!';
-        setTimeout(() => { button.textContent = 'Copy'; }, 1500);
-      });
-    }
-  </script>  
-<div id="floatingLog" aria-live="polite" role="alert"></div>
-<footer class="page-footer">
-    <nav>
-      <a href="https://readbytes.github.io">Home</a> | 
-      Email:<script language="JavaScript" type="text/javascript">
+</div><script>
+function copyCode(button) {const code = button.nextElementSibling.innerText;navigator.clipboard.writeText(code).then(() => {button.textContent = 'Copied!';setTimeout(() => { button.textContent = 'Copy'; }, 1500);});}
+</script><div id="floatingLog" aria-live="polite" role="alert"></div></div>
+<style>
+.site-footer {margin-top: 60px;padding: 20px 0;border-top: 1px solid #eee;text-align: center;font-size: 14px;}
+.site-footer a {text-decoration: none;}
+.light-mode .site-footer {color: #777;border-color: #eee;}
+.dark-mode .site-footer {color: #888;border-color: #333;}
+.light-mode .site-footer a {color: #555;}
+.dark-mode .site-footer a {color: #aaa;}
+.site-footer a:hover {text-decoration: underline;}    
+</style>
+<footer class="site-footer">
+<nav><a href="https://readbytes.github.io">Home</a> |Email:<script type="text/javascript">
 var part1 = 'yinpeng';var part6 = '263';var part2 = Math.pow(2,6);var part3 = String.fromCharCode(part2);var part4 = 'hotmail dot com';var part5 = part1 + String.fromCharCode(part2) + part4;document.write(part1 + part6 + part3 + part4);
 </script>
-    </nav>
-  <p>© 2025 — All rights reserved.</p>    
-  </footer>
-
+| <a id="mode-toggle" href="#">Toggle Dark Mode</a>
+</nav><p>© 2025 — All rights reserved.</p></footer>
+<script>
+const toggleButton = document.getElementById('mode-toggle');
+const body = document.body;
+const savedMode = localStorage.getItem('mode') || 'light';
+body.classList.add(savedMode + '-mode');
+toggleButton.addEventListener('click', () => {
+      const isDark = body.classList.contains('dark-mode');
+      body.classList.toggle('dark-mode', !isDark);
+      body.classList.toggle('light-mode', isDark);
+      localStorage.setItem('mode', isDark ? 'light' : 'dark');
+});
+function copyCode(button) {const code = button.nextElementSibling.innerText;navigator.clipboard.writeText(code).then(() => {button.textContent = 'Copied!';setTimeout(() => { button.textContent = 'Copy'; }, 1500);});}
+</script>
 </body>
 </html>

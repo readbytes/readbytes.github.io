@@ -1,468 +1,171 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
+<meta charset="UTF-8">
 <title>Java IO and NIO Practical Java IO and NIO Examples</title>
-<link rel='shortcut icon' href='https://java2s.com/style/favicon.ico'>
+<link rel='shortcut icon' href='https://readbytes.github.io/images/favicon.ico'>
 <link href="https://fonts.googleapis.com/css2?family=Merriweather&display=swap" rel="stylesheet" />
 <link href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.css" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/theme/dracula.min.css"><style>
+html {scroll-behavior: smooth;}  
+body {font-family: 'Merriweather', serif;;margin: 0;padding: 2rem 1rem;font-size: 15px;line-height: 1.5;transition: background-color 0.3s, color 0.3s;}
+.container {max-width: 750px;margin: 0 auto;padding: 1rem 2rem;}
+.light-mode {background-color: #f8f7f5;color: #333;} 
+.dark-mode {background-color: #121212;color: #e0e0e0;}
+a { text-decoration: none;transition: color 0.2s;}
+a:hover {text-decoration: underline;}
+.light-mode a {color: #555;}
+.dark-mode a {color: #aaa;}
+</style><style>
+.related-book-list {display: flex;flex-wrap: wrap;gap: 20px;}
+.related-books {margin-top: 40px;}
+.related-books h2 {font-size: 22px;margin-bottom: 20px;border-bottom: 2px solid #eee;padding-bottom: 8px;}
+.light-mode .related-books h2 {color: #333;border-color: #eee;}
+.dark-mode .related-books h2 {color: #ddd;border-color: #333;}
+</style><style>
+.book-cover {width: 130px;height: 180px;font-family: Arial, sans-serif;position: relative;overflow: hidden;box-shadow: 2px 2px 4px rgba(0,0,0,0.1);}
+.book-cover-bottom-stripe {position: absolute;bottom: 0;left: 0;height: 5px;width: 100%;}
+.book-cover-title {position: absolute;width: 100%;text-align: center;font-weight: bold;}
+.book-cover-icon {position: absolute;left: 50%;transform: translateX(-50%);display: flex;align-items: center;justify-content: center;}
+.book-cover-author {position: absolute;bottom: 10px;width: 100%;text-align: center;font-size: 8px;color: #333;}
+</style><style>
+.book-title-toc {font-size: 32px;font-weight: bold; }
+.book-subtitle-toc {font-size: 18px;margin-top: 8px;font-style: italic;}
+.book-header {text-align: center;margin-bottom: 40px;}
 
+.toc-container {border-radius: 10px;padding: 30px;margin-bottom: 40px;box-shadow: 0 8px 20px rgba(0,0,0,0.05);}
+h1 {font-size: 24px;text-align: center;margin-bottom: 30px;letter-spacing: 1px;padding-bottom: 10px;}
+.toc-list,.toc-section-list {list-style: none;padding: 0;margin: 0;}
+.toc-section-list {padding-left: 18px;margin-top: 6px;margin-bottom: 20px; }
+.toc-chapter {padding: 20px 0;}
+.chapter-title,.toc-section {display: flex;justify-content: space-between;padding-top: 4px;}
+.chapter-title {font-size: 17px;font-weight: bold;}
+.chapter-page,.section-page {font-style: italic;}
+ 
+ 
+.light-mode .book-title-toc,.light-mode .chapter-title,.light-mode .book-name {color: #222;}
+.light-mode .book-subtitle-toc,.light-mode .book-sub,.light-mode .chapter-page,.light-mode .section-page {color: #666;}
+.light-mode .toc-container { background: #fff;border: 1px solid #ddd;}
+.light-mode h1 {border-bottom: 2px solid #eee;color: #222;}
+.light-mode .toc-section {  color: #444;}
 
-  <script>
-  const mode = localStorage.getItem('mode') || 'light';
-  document.documentElement.classList.add(`${mode}-mode`);
-  </script>   
-<style> 
-html {
-  scroll-behavior: smooth;
+.light-mode .book-cover { border: 1px solid #ccc;box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);}
+.light-mode .book-title,.light-mode .series-name {color: #fff;}
+.light-mode .book-subtitle,.light-mode .book-footer {color: #aaa;}
+
+.dark-mode .book-title-toc,.dark-mode .chapter-title,.dark-mode .book-name {color: #f5f5f5;}
+.dark-mode .book-subtitle-toc,.dark-mode .book-sub,.dark-mode .chapter-page,.dark-mode .section-page {color: #aaa;}
+.dark-mode .toc-container {background: #1e1e1e;border: 1px solid #444;}
+
+.dark-mode h1 {border-bottom: 2px solid #333;color: #eee;}
+.dark-mode .toc-section {color: #bbb;}
+
+.dark-mode .related-books h2 {color: #ddd;border-bottom: 2px solid #333;}
+.dark-mode .book-title,.dark-mode .series-name {color: #fff;}
+.dark-mode .book-subtitle,.dark-mode .book-footer {color: #bbb;}
+.dark-mode .toc-section {color: #ddd;}
+
+@media (max-width: 600px) {
+  .chapter-title,
+  .toc-section {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .chapter-page,
+  .section-page {
+    margin-top: 4px;
+  }
 }
 
-body {
-  font-family: 'Merriweather', serif;
-  margin: 0;
-  padding: 2rem 1rem;
-  font-size: 15px;
-  line-height: 1.5;
-  transition: background-color 0.3s, color 0.3s;
-}
+</style><style>
+.light-mode .container {box-shadow: 0 0 15px rgba(0,0,0,0.1);}
+.dark-mode .container {box-shadow: 0 0 15px rgba(255, 255, 255, 0.05);}
 
-.container {
-  max-width: 700px;
-  margin: 0 auto;
-  padding: 1rem 2rem;
-  box-shadow: 0 0 15px rgba(0,0,0,0.1);
-}
-
-h1, h2, h3 {
-  font-weight: 600;
-  margin-top: 2.5rem;
-  margin-bottom: 1rem;
-  line-height: 1.2;
-}
-
+h1, h2, h3 {font-weight: 600;margin-top: 2.5rem;margin-bottom: 1rem;line-height: 1.2;}
 h1 { font-size: 1.8rem; }
 h2 { font-size: 1.4rem; }
 h3 { font-size: 1.2rem; }
 
-table {
-  width: 100%;
-  border-collapse: collapse;
-  font-family: sans-serif;
-  font-size: 1em;
-  margin: 1em 0;
-}
+table {width: 100%;border-collapse: collapse;font-family: sans-serif;font-size: 1em;margin: 1em 0;}
+th, td {padding: 0.6em 1em;text-align: left;border: 1px solid;}
+tr:nth-child(even) {  background-color: inherit;}
+tr:hover { background-color: inherit;}
 
-th, td {
-  padding: 0.6em 1em;
-  text-align: left;
-  border: 1px solid;
-}
+code {color: #d35400;}
 
-tr:nth-child(even) {
-  background-color: inherit;
-}
-
-tr:hover {
-  background-color: inherit;
-}
-
-a {
-  text-decoration: none;
-  transition: color 0.2s;
-}
-
-a:hover {
-  text-decoration: underline;
-}
-
-code {
-  color: #d35400;
-}
-
-.book-title-chapter {
-  font-family: 'Merriweather', serif;
-  font-size: 2rem;
-  font-weight: bold;
-  text-align: center;
-  margin-bottom: 2rem;
-  border-bottom: 2px solid;
-  padding-bottom: 0.5rem;
-}
-
-.book-subtitle-chapter {
-  text-align: center;
-  font-size: 1rem;
-  margin-top: -1rem;
-  margin-bottom: 2rem;
-}
-
-.related-books {
-  margin-top: 40px;
-}
-
-.related-book-list {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 20px;
-}
-
-    .book-cover {
-      width: 130px;
-      height: 180px;
-      font-family: Arial, sans-serif;
-      position: relative;
-      overflow: hidden;      
-      line-height: normal;
-      box-shadow: 2px 2px 4px rgba(0,0,0,0.1);
-    }
-    .book-cover-bottom-stripe {
-      position: absolute;
-      bottom: 0;
-      left: 0;
-      height: 5px;
-      width: 100%;
-    }
-    .book-cover-title {
-      position: absolute;
-      width: 100%;
-      text-align: center;
-      font-weight: bold;
-    }
-     
-    .book-cover-icon {
-      position: absolute;
-      left: 50%;
-      transform: translateX(-50%);
-      display: flex;
-      align-items: center;
-      justify-content: center; 
-    }
-
-    .book-cover-author {
-      position: absolute;
-      bottom: 10px;
-      width: 100%;
-      text-align: center;
-      font-size: 8px;
-      color: #333;
-    }
-
-.page-footer {
-  margin-top: 4rem;
-  padding: 1rem 0;
-  text-align: center;
-  font-size: 0.85rem;
-  border-top: 1px solid;
-}
-
-.chapter-navi-section {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding-bottom: 10px;
-}
-
-.nav-link {
-  color: inherit;
-  text-decoration: none;
-  opacity: 0.5;
-  transition: opacity 0.3s ease, text-decoration 0.3s ease;
-}
-
-.nav-link:hover {
-  opacity: 0.9;
-  text-decoration: underline;
-}
-
+.chapter-navi-section {display: flex;justify-content: space-between;align-items: center;padding-bottom: 10px;padding-top: 10px;}
+.nav-link {color: inherit;text-decoration: none;opacity: 0.5;transition: opacity 0.3s ease, text-decoration 0.3s ease;}
+.nav-link:hover {opacity: 0.9;text-decoration: underline;}
 .prev { text-align: left; }
 .toc-link { text-align: center; }
 .next { text-align: right; }
 
-.download-section {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 2rem;
-  padding: 2rem 1rem;
-  max-width: 600px;
-  margin: 3rem auto;
-  border-radius: 12px;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-}
+.download-section {display: flex;align-items: center;justify-content: center;gap: 2rem;padding: 2rem 1rem;max-width: 600px;margin: 3rem auto;border-radius: 12px;box-shadow: 0 4px 10px rgba(0,0,0,0.05);}
+.download-info h2 {margin: 0 0 0.5rem;font-size: 1.2rem;}
+.format-label {margin: 0 0 0.5rem;font-size: 0.95rem;}
+.download-buttons {display: flex;gap: 1rem;}
+.download-button {background-color: #4A90E2;color: white;padding: 0.5em 1.2em;border-radius: 25px;font-size: 0.95rem;text-decoration: none;transition: background-color 0.3s ease;}
+.download-button:hover {background-color: #357ABD;}
 
-.download-info h2 {
-  margin: 0 0 0.5rem;
-  font-size: 1.2rem;
-}
+.code-block {position: relative;margin-bottom: 1em;}
+.copy-button {background: transparent;color: white;position: absolute;top: 8px;right: 8px;border: none;padding: 4px 8px;font-size: 12px;border-radius: 4px;cursor: pointer;z-index: 1;}
+.copy-button:hover {background-color: #0056b3;}
 
-.format-label {
-  margin: 0 0 0.5rem;
-  font-size: 0.95rem;
-}
+.snippet-container {overflow: hidden;}
+.snippet-header {padding: 0.75rem 1rem;cursor: pointer;font-size: 1rem;background-color: #eeeeee;color:  #111111; border-radius: 8px;cursor: pointer;box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+.snippet-body {display: none;font-family: monospace;}
+.snippet-container.open .snippet-body {display: block;}
 
-.download-buttons {
-  display: flex;
-  gap: 1rem;
-}
+.CodeMirror {border: 2px solid #ccc;border-radius: 4px;resize: vertical;}
 
-.download-button {
-  background-color: #4A90E2;
-  color: white;
-  padding: 0.5em 1.2em;
-  border-radius: 25px;
-  font-size: 0.95rem;
-  text-decoration: none;
-  transition: background-color 0.3s ease;
-}
+.light-mode .format-label {color: #888;}
+.light-mode th {background-color: #f2f2f2;}
+.light-mode tr:nth-child(even) {background-color: #fafafa;}
+.light-mode tr:hover {background-color: #e6f7ff;}
 
-.download-button:hover {
-  background-color: #357ABD;
-}
-
-.code-block {
-  position: relative;
-  margin-bottom: 1em;
-}
-
-.copy-button {
-  background: transparent;
-  color: white;
-  position: absolute;
-  top: 8px;
-  right: 8px;
-  border: none;
-  padding: 4px 8px;
-  font-size: 12px;
-  border-radius: 4px;
-  cursor: pointer;
-  z-index: 1;
-}
-
-.copy-button:hover {
-  background-color: #0056b3;
-}
-
-.snippet-container {
-  overflow: hidden;
-}
-
-.snippet-header {
-  padding: 0.75rem 1rem;
-  cursor: pointer;
-  font-size: 1rem;
-    background-color: #eeeeee;
-    color:  #111111; 
-    border-radius: 8px;
-    cursor: pointer;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.1);  
-}
-
-.snippet-body {
-  display: none;
-  font-family: monospace;
-}
-
-.snippet-container.open .snippet-body {
-  display: block;
-}
-
-.CodeMirror {
-  border: 2px solid #ccc;
-  border-radius: 4px;
-  resize: vertical;
-}
-
-/* === Light Mode === */
-html.light-mode {
-  background-color: #f8f7f5;
-  color: #333;
-}
-
-html.light-mode .container {
-  background: white;
-}
-
-html.light-mode .book-title-chapter {
-  color: #2c3e50;
-  border-color: #ccc;
-}
-html.light-mode .book-subtitle-chapter{
-  color: #888;
-}
-
-html.light-mode .page-footer,
-html.light-mode .series-name,
-html.light-mode .book-subtitle,
-html.light-mode .format-label {
-  color: #888;
-}
-
-html.light-mode .related-books h2 {
-  color: #333;
-  border-bottom: 2px solid #eee;
-}
-
-html.light-mode .book-title {
-  color: #fff;
-}
-
-html.light-mode .book-cover {
-  border: 1px solid #ccc;
-}
-
-html.light-mode th {
-  background-color: #f2f2f2;
-}
-
-html.light-mode tr:nth-child(even) {
-  background-color: #fafafa;
-}
-
-html.light-mode tr:hover {
-  background-color: #e6f7ff;
-}
-
-html.light-mode a,
-html.light-mode .page-footer a {
-  color: #000;
-}
-
-/* === Dark Mode === */
-html.dark-mode {
-  background-color: #181818;
-  color: #e0e0e0;
-}
-
-html.dark-mode .container {
-  background: #222;
-}
-
-html.dark-mode .book-title-chapter {
-  color: #ddd;
-  border-color: #444;
-}
-
-html.dark-mode .snippet-header {
-    background-color: #333;
-    color:  #ddd; 
-}
+.dark-mode .snippet-header {background-color: #333;color:  #ddd; }
+.dark-mode .format-label {color: #aaa;}
+.dark-mode th {background-color: #333;color: #fff;}
+.dark-mode td {border-color: #444;}
+.dark-mode tr:nth-child(even) {background-color: #2a2a2a;}
+.dark-mode tr:hover {background-color: #2c3e50;}
 
 
-html.dark-mode .book-subtitle-chapter,
-html.dark-mode .page-footer,
-html.dark-mode .series-name,
-html.dark-mode .book-subtitle,
-html.dark-mode .book-footer,
-html.dark-mode .format-label {
-  color: #aaa;
-}
+.button-group-run-edit {display: flex;width: 100%;gap: 1rem;}
+.button-run-edit {flex: 1;padding: 1rem;font-size: 1rem;font-weight: 600;border: none;border-radius: 8px;cursor: pointer;transition: background 0.3s, color 0.3s;}
 
-html.dark-mode .related-books h2 {
-  color: #ddd;
-  border-bottom: 2px solid #333;
-}
+.light-mode .button-run-edit {background-color: #f0f0f0;color: #222;box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);}
+.light-mode .button-run-edit:hover {background-color: #e0e0e0;}
 
-html.dark-mode .book-title {
-  color: #fff;
-}
+.dark-mode .button-run-edit {background-color: #2a2a2a;color: #f5f5f5;box-shadow: 0 0 10px rgba(255, 255, 255, 0.05);}
+.dark-mode .button-run-edit:hover {background-color: #3a3a3a;}
 
-html.dark-mode .book-cover {
-  border: 1px solid #555;
-}
+button { padding: 0.5em 1em; background: green; color: white; border: none; cursor: pointer; }
+button:hover { background: #1e7e34; }
+.result_iframe { width:99%; margin-top: 1em;  resize: both;background-color: #515b63;border:1px solid #ccc;}   
 
-html.dark-mode th {
-  background-color: #333;
-  color: #fff;
-}
-
-html.dark-mode td {
-  border-color: #444;
-}
-
-html.dark-mode tr:nth-child(even) {
-  background-color: #2a2a2a;
-}
-
-html.dark-mode tr:hover {
-  background-color: #2c3e50;
-}
-
-html.dark-mode a,
-html.dark-mode .page-footer a {
-  color: #eee;
-}
-
-    .dialog-backdrop {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100vw;
-      height: 100vh;
-      background: rgba(0,0,0,0.5);
-      display: none;
-      justify-content: center;
-      align-items: center;
-      z-index: 10;
-    }
-
-    .dialog {
-      background: white;
-      padding: 20px;
-      width: 90vw;
-      height: 80vh;
-      border-radius: 8px;
-      box-shadow: 0 0 20px rgba(0,0,0,0.3);
-      display: flex;
-      flex-direction: column;
-    }
-    .dialog-content {
-      display: flex;
-      flex: 1;
-      gap: 20px;
-      margin-top: 10px;
-    }
-    .dialog h2 {
-      margin-top: 0;
-    }
-
-    .textarea_dialog {
-      width: 50%;
-      height: 100%;
-      resize: none;
-      font-family: monospace;
-      font-size: 14px;
-      padding: 10px;
-      box-sizing: border-box;
-      border: 1px solid #ccc;
-    }
-
-    .iframe_dialog {
-      width: 50%;
-      height: 100%;
-      border: 1px solid #ccc;
-    }
-    .controls_dialog {
-      display: flex;
-      justify-content: space-between;
-      margin-top: 10px;
-    }    
-    button { padding: 0.5em 1em; background: green; color: white; border: none; cursor: pointer; }
-    button:hover { background: #1e7e34; }
-    .result_iframe { width:99%; height:200px; margin-top: 1em;  resize: both;border:1px solid #ccc;}        
+.dialog-backdrop {position: fixed;top: 0;left: 0;width: 100vw;height: 100vh;background: rgba(0,0,0,0.5);display: none;justify-content: center;align-items: center;z-index: 10;}
+.dialog {background: #90979e;padding: 20px;width: 90vw;height: 80vh;border-radius: 8px;box-shadow: 0 0 20px rgba(0,0,0,0.3);display: flex;flex-direction: column;}
+.dialog-content {display: flex;gap: 20px;margin-top: 10px;height: calc(100% - 40px);}
+.editor-container, .preview-container {flex: 1;height: 100%;max-height: 100%;overflow: hidden; }
+.result_iframe_dialog {width: 100%;height: 100%;resize: both;border:1px solid #ccc;overflow: auto; }   
+.CodeMirror {width: 100% !important;height: 100% !important;}
 </style>
 </head>
-<body> 
-  <div class="container">
-    <div class = "chapter-navi-section">
+<body>
+<script>const mode = localStorage.getItem('mode') || 'light';document.documentElement.classList.add(`${mode}-mode`);</script>  
+<div class="container"><div class = "chapter-navi-section">
 <a href="java-io-and-nio-working-with-character-sets-and-encodings.htm" class="nav-button prev">←</a>
 <a href='java-io-and-nio.htm#practical-java-io-and-nio-examples' class="nav-button toc-link">Index</a>
 <a href="java-io-and-nio-performance-and-tuning.htm" class="nav-button next">→</a>
 </div>
-
-    <h1 class="book-title-chapter" id = 'top'>Practical Java IO and NIO Examples</h1>
-    <h3 class="book-subtitle-chapter">Java IO and NIO</h3>   
-    <!-- <h1 class ="chapter-title"></h1> -->
-    <h2 id='file-copying-and-moving'>10.1 File Copying and Moving</h2><p>File manipulation—copying and moving files—is a common requirement in many Java applications, whether for backup, organization, or processing workflows. Java provides multiple APIs to accomplish these tasks: the traditional I/O streams (<code>FileInputStream</code>/<code>FileOutputStream</code>) and the modern NIO (<code>java.nio.file.Files</code>) utilities introduced since Java 7.</p><p>This tutorial covers both approaches with practical examples, explaining their differences, advantages, and use cases.</p><h3 id="traditional-io-approach-copying-files-using-streams">Traditional IO Approach: Copying Files Using Streams</h3><p>Before Java 7, the common way to copy a file was to open input and output streams and manually transfer bytes. This approach gives you low-level control but requires careful resource management and more code.</p><h3 id="copying-a-file-using-fileinputstream-and-fileoutputstream">Copying a File Using <code>FileInputStream</code> and <code>FileOutputStream</code></h3><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+<div class='book-header'><h1 class='book-title-toc' id = 'top'>Practical Java IO and NIO Examples</h1><h3 class='book-subtitle-toc'>Java IO and NIO</h3></div><h2 id='file-copying-and-moving'>10.1 File Copying and Moving</h2><p>File manipulation—copying and moving files—is a common requirement in many Java applications, whether for backup, organization, or processing workflows. Java provides multiple APIs to accomplish these tasks: the traditional I/O streams (<code>FileInputStream</code>/<code>FileOutputStream</code>) and the modern NIO (<code>java.nio.file.Files</code>) utilities introduced since Java 7.</p><p>This tutorial covers both approaches with practical examples, explaining their differences, advantages, and use cases.</p><h3 id="traditional-io-approach-copying-files-using-streams">Traditional IO Approach: Copying Files Using Streams</h3><p>Before Java 7, the common way to copy a file was to open input and output streams and manually transfer bytes. This approach gives you low-level control but requires careful resource management and more code.</p><h3 id="copying-a-file-using-fileinputstream-and-fileoutputstream">Copying a File Using <code>FileInputStream</code> and <code>FileOutputStream</code></h3><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-java">import java.io.*;
 
 public class FileCopyTraditional {
@@ -497,7 +200,8 @@ public class FileCopyTraditional {
  <li>The <code>buffer</code> temporarily stores chunks of bytes during transfer, improving efficiency.</li>
  <li>The <code>try-with-resources</code> statement ensures streams are closed automatically, avoiding resource leaks.</li>
  <li>This method works on any JVM version, but it requires manual buffer management and error handling.</li>
-</ul><h3 id="moving-files-using-traditional-io">Moving Files Using Traditional IO</h3><p>Moving a file by streams requires copying the file contents and then deleting the original file:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</ul><h3 id="moving-files-using-traditional-io">Moving Files Using Traditional IO</h3><p>Moving a file by streams requires copying the file contents and then deleting the original file:</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-java">import java.io.*;
 
 public class FileMoveTraditional {
@@ -538,7 +242,8 @@ public class FileMoveTraditional {
  <li>Move is done by copying and deleting the source file.</li>
  <li>This approach is less efficient and more error-prone because deletion might fail or leave duplicates.</li>
  <li>It does not handle atomic moves or filesystem-specific optimizations.</li>
-</ul><h3 id="modern-nio-approach-using-java-nio-file-files">Modern NIO Approach: Using <code>java.nio.file.Files</code></h3><p>Java 7 introduced the NIO.2 package (<code>java.nio.file</code>), which simplifies file operations with the <code>Files</code> utility class. It provides methods such as <code>Files.copy()</code> and <code>Files.move()</code>, which are easier to use, safer, and more powerful.</p><h3 id="copying-files-using-files-copy">Copying Files Using <code>Files.copy()</code></h3><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</ul><h3 id="modern-nio-approach-using-java-nio-file-files">Modern NIO Approach: Using <code>java.nio.file.Files</code></h3><p>Java 7 introduced the NIO.2 package (<code>java.nio.file</code>), which simplifies file operations with the <code>Files</code> utility class. It provides methods such as <code>Files.copy()</code> and <code>Files.move()</code>, which are easier to use, safer, and more powerful.</p><h3 id="copying-files-using-files-copy">Copying Files Using <code>Files.copy()</code></h3><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-java">import java.io.*;
 import java.nio.file.*;
 
@@ -564,7 +269,8 @@ public class FileCopyNIO {
   </ul></li>
  <li><p><code>Files.copy()</code> can also copy directories recursively with additional logic.</p></li>
  <li><p>It automatically handles resource management and buffering internally.</p></li>
-</ul><h3 id="moving-files-using-files-move">Moving Files Using <code>Files.move()</code></h3><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</ul><h3 id="moving-files-using-files-move">Moving Files Using <code>Files.move()</code></h3><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-java">import java.io.*;
 import java.nio.file.*;
 
@@ -650,9 +356,11 @@ public class FileMoveNIO {
  <li>Registering a directory (<code>Path</code>) with a <code>WatchService</code>.</li>
  <li>Listening asynchronously for events on the registered directory.</li>
  <li>Retrieving and processing the events as they occur.</li>
-</ol><h3 id="step-1-obtain-a-watchservice">Step 1: Obtain a WatchService</h3><p>You create a <code>WatchService</code> from the file system's default provider:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</ol><h3 id="step-1-obtain-a-watchservice">Step 1: Obtain a WatchService</h3><p>You create a <code>WatchService</code> from the file system's default provider:</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-Java">WatchService watchService = FileSystems.getDefault().newWatchService();</code></pre>
-</div><p>This service will be used to register directories and poll for events.</p><h3 id="step-2-register-a-directory-with-the-watchservice">Step 2: Register a Directory with the WatchService</h3><p>You register a <code>Path</code> representing a directory with the <code>WatchService</code>, specifying which event kinds to watch:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</div><p>This service will be used to register directories and poll for events.</p><h3 id="step-2-register-a-directory-with-the-watchservice">Step 2: Register a Directory with the WatchService</h3><p>You register a <code>Path</code> representing a directory with the <code>WatchService</code>, specifying which event kinds to watch:</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-Java">Path dir = Paths.get("path/to/directory");
 
 dir.register(watchService, 
@@ -662,7 +370,8 @@ dir.register(watchService,
 </div><p>You can register multiple directories if needed.</p><h3 id="step-3-poll-and-process-events">Step 3: Poll and Process Events</h3><p>Events are retrieved as <code>WatchKey</code> instances from the <code>WatchService</code>. You can use blocking or non-blocking polling:</p><ul>
  <li><code>watchService.take()</code> blocks until an event occurs.</li>
  <li><code>watchService.poll()</code> returns immediately, possibly returning <code>null</code> if no event is available.</li>
-</ul><p>Each <code>WatchKey</code> contains one or more <code>WatchEvent</code>s, each describing an event kind and the affected file relative to the registered directory.</p><h3 id="complete-java-example-directory-file-watcher">Complete Java Example: Directory File Watcher</h3><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</ul><p>Each <code>WatchKey</code> contains one or more <code>WatchEvent</code>s, each describing an event kind and the affected file relative to the registered directory.</p><h3 id="complete-java-example-directory-file-watcher">Complete Java Example: Directory File Watcher</h3><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-java">import java.io.IOException;
 import java.nio.file.*;
 import static java.nio.file.StandardWatchEventKinds.*;
@@ -769,7 +478,8 @@ public class DirectoryWatcher {
  <li>Channels register with the selector, specifying which operations they’re interested in (e.g., accept, read, write).</li>
  <li>The selector’s <code>select()</code> method blocks until one or more registered channels are ready for any of the requested operations.</li>
  <li>The thread processes ready channels and then calls <code>select()</code> again.</li>
-</ul><h3 id="step-1-setting-up-the-serversocketchannel">Step 1: Setting up the ServerSocketChannel</h3><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</ul><h3 id="step-1-setting-up-the-serversocketchannel">Step 1: Setting up the ServerSocketChannel</h3><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-Java">ServerSocketChannel serverChannel = ServerSocketChannel.open();
 serverChannel.bind(new InetSocketAddress(8080));
 serverChannel.configureBlocking(false);  // Non-blocking mode</code></pre>
@@ -777,13 +487,15 @@ serverChannel.configureBlocking(false);  // Non-blocking mode</code></pre>
  <li>Open the server socket channel.</li>
  <li>Bind it to port 8080.</li>
  <li>Set it to non-blocking mode to work with the selector.</li>
-</ul><h3 id="step-2-creating-the-selector-and-registering-the-server-channel">Step 2: Creating the Selector and Registering the Server Channel</h3><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</ul><h3 id="step-2-creating-the-selector-and-registering-the-server-channel">Step 2: Creating the Selector and Registering the Server Channel</h3><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-Java">Selector selector = Selector.open();
 serverChannel.register(selector, SelectionKey.OP_ACCEPT);</code></pre>
 </div><ul>
  <li>Open a selector.</li>
  <li>Register the server socket channel with the selector for <strong>accept</strong> events (new incoming connections).</li>
-</ul><h3 id="step-3-event-loop-with-selector">Step 3: Event Loop with Selector</h3><p>The server runs an event loop, calling <code>selector.select()</code> to wait for events, then handling each ready channel accordingly.</p><h3 id="step-4-accepting-connections-and-registering-client-channels">Step 4: Accepting Connections and Registering Client Channels</h3><p>When the server socket channel is ready to accept, you call <code>accept()</code>, configure the new socket channel as non-blocking, and register it with the selector for <strong>read</strong> events.</p><h3 id="step-5-reading-data-from-client-channels">Step 5: Reading Data from Client Channels</h3><p>When a socket channel is ready for reading, you read bytes into a buffer. For simplicity, we assume the request fits into one read. (In production, you'd accumulate and parse incrementally.)</p><h3 id="step-6-parsing-http-requests-and-writing-responses">Step 6: Parsing HTTP Requests and Writing Responses</h3><p>We parse the request line (e.g., <code>GET / HTTP/1.1</code>), ignore headers for simplicity, and respond with a simple HTTP 200 OK message with a plain text body.</p><h3 id="full-working-java-code">Full Working Java Code</h3><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</ul><h3 id="step-3-event-loop-with-selector">Step 3: Event Loop with Selector</h3><p>The server runs an event loop, calling <code>selector.select()</code> to wait for events, then handling each ready channel accordingly.</p><h3 id="step-4-accepting-connections-and-registering-client-channels">Step 4: Accepting Connections and Registering Client Channels</h3><p>When the server socket channel is ready to accept, you call <code>accept()</code>, configure the new socket channel as non-blocking, and register it with the selector for <strong>read</strong> events.</p><h3 id="step-5-reading-data-from-client-channels">Step 5: Reading Data from Client Channels</h3><p>When a socket channel is ready for reading, you read bytes into a buffer. For simplicity, we assume the request fits into one read. (In production, you'd accumulate and parse incrementally.)</p><h3 id="step-6-parsing-http-requests-and-writing-responses">Step 6: Parsing HTTP Requests and Writing Responses</h3><p>We parse the request line (e.g., <code>GET / HTTP/1.1</code>), ignore headers for simplicity, and respond with a simple HTTP 200 OK message with a plain text body.</p><h3 id="full-working-java-code">Full Working Java Code</h3><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-java">import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
@@ -938,7 +650,8 @@ public class SimpleNIOServer {
  <li><p><strong>Monitor Resource Usage:</strong> Logs can indicate if streams or channels were properly closed.</p></li>
  <li><p><strong>Detect Encoding Issues Early:</strong> Logging the charset used during read/write helps ensure encoding consistency.</p></li>
  <li><p><strong>Track Data Flow:</strong> Debug logs can show what data was read/written, aiding in diagnosing corruption or unexpected input.</p></li>
-</ul><h3 id="using-javas-built-in-logging-java-util-logging">Using Javas Built-in Logging (<code>java.util.logging</code>)</h3><p>Java provides a built-in logging API in the <code>java.util.logging</code> package. Here’s an example demonstrating logging around an IO operation with proper error handling:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</ul><h3 id="using-javas-built-in-logging-java-util-logging">Using Javas Built-in Logging (<code>java.util.logging</code>)</h3><p>Java provides a built-in logging API in the <code>java.util.logging</code> package. Here’s an example demonstrating logging around an IO operation with proper error handling:</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-java">import java.io.*;
 import java.nio.charset.Charset;
 import java.util.logging.*;
@@ -977,7 +690,8 @@ public class LoggingIOExample {
  <li>Log each line read with <code>fine</code> level (debug-level logs; can be enabled in detailed debug mode).</li>
  <li>Log exceptions with full stack traces using <code>logger.log(Level.SEVERE, message, exception)</code>.</li>
  <li>Properly close resources using try-with-resources.</li>
-</ul><h3 id="configuring-logging-levels">Configuring Logging Levels</h3><p>By default, <code>java.util.logging</code> shows logs of level INFO and above. To see DEBUG-level logs (<code>FINE</code>), configure the logging level programmatically or via a properties file.</p><h3 id="using-slf4j-for-io-logging">Using SLF4J for IO Logging</h3><p>SLF4J (Simple Logging Facade for Java) is widely used in enterprise applications for flexible logging abstraction. SLF4J works with popular backends like Logback or Log4j.</p><h3 id="example-of-logging-io-operations-with-slf4j">Example of Logging IO Operations with SLF4J</h3><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</ul><h3 id="configuring-logging-levels">Configuring Logging Levels</h3><p>By default, <code>java.util.logging</code> shows logs of level INFO and above. To see DEBUG-level logs (<code>FINE</code>), configure the logging level programmatically or via a properties file.</p><h3 id="using-slf4j-for-io-logging">Using SLF4J for IO Logging</h3><p>SLF4J (Simple Logging Facade for Java) is widely used in enterprise applications for flexible logging abstraction. SLF4J works with popular backends like Logback or Log4j.</p><h3 id="example-of-logging-io-operations-with-slf4j">Example of Logging IO Operations with SLF4J</h3><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-java">import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -1010,7 +724,8 @@ public class Slf4jLoggingIOExample {
  <li>Separate log levels (<code>info</code>, <code>debug</code>, <code>error</code>) provide flexible control.</li>
  <li>Log exceptions with the exception object to get stack traces.</li>
  <li>SLF4J makes it easy to switch logging implementations without changing application code.</li>
-</ul><p><strong>Debugging Tips for IO Issues</strong></p><h3 id="log-byte-buffers-and-content-dumps">Log Byte Buffers and Content Dumps</h3><p>When reading raw bytes (e.g., from network sockets or files), logging hex dumps or base64 representations of data helps spot corruption.</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</ul><p><strong>Debugging Tips for IO Issues</strong></p><h3 id="log-byte-buffers-and-content-dumps">Log Byte Buffers and Content Dumps</h3><p>When reading raw bytes (e.g., from network sockets or files), logging hex dumps or base64 representations of data helps spot corruption.</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-java">private static void logBufferContent(ByteBuffer buffer, Logger logger) {
     byte[] bytes = new byte[buffer.remaining()];
     buffer.get(bytes);
@@ -1036,7 +751,8 @@ public class Slf4jLoggingIOExample {
 </ul><h3 id="how-to-buffer-in-java">How to Buffer in Java?</h3><p>Java provides buffered wrappers:</p><ul>
  <li><code>BufferedInputStream</code> and <code>BufferedOutputStream</code> for byte streams.</li>
  <li><code>BufferedReader</code> and <code>BufferedWriter</code> for character streams.</li>
-</ul><h3 id="example-buffered-file-copy">Example: Buffered File Copy</h3><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</ul><h3 id="example-buffered-file-copy">Example: Buffered File Copy</h3><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-java">import java.io.*;
 
 public class BufferedFileCopy {
@@ -1053,7 +769,8 @@ public class BufferedFileCopy {
 }</code></pre>
 </div><h3 id="performance-tip">Performance Tip:</h3><p>Use at least an 8KB buffer size (<code>8192</code> bytes) for disk IO; smaller buffers may increase overhead, while excessively large buffers waste memory and may cause GC pressure.</p><h3 id="always-use-try-with-resources-to-avoid-resource-leaks">Always Use Try-With-Resources to Avoid Resource Leaks</h3><p>Open IO resources (streams, readers, sockets) must be closed promptly to release system resources like file descriptors.</p><h3 id="why-avoid-leaks">Why Avoid Leaks?</h3><ul>
  <li>Unclosed resources can cause application slowdowns, file locking issues, or even crashes due to exhaustion of handles.</li>
-</ul><h3 id="javas-solution-try-with-resources">Javas Solution: Try-With-Resources</h3><p>Since Java 7, the <strong>try-with-resources</strong> statement ensures automatic closing:</p><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</ul><h3 id="javas-solution-try-with-resources">Javas Solution: Try-With-Resources</h3><p>Since Java 7, the <strong>try-with-resources</strong> statement ensures automatic closing:</p><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-Java">try (BufferedReader reader = new BufferedReader(new FileReader("input.txt"))) {
     String line;
     while ((line = reader.readLine()) != null) {
@@ -1108,12 +825,14 @@ public class BufferedFileCopy {
  <li><strong>Avoid unnecessary flushes:</strong> Flushing buffers too frequently forces OS-level writes.</li>
  <li><strong>Use lazy loading:</strong> Only load data when necessary.</li>
  <li><strong>Compress data:</strong> To reduce the amount transferred over networks or stored on disk.</li>
-</ul><h3 id="use-direct-byte-buffers-with-nio-for-network-io">Use Direct Byte Buffers with NIO for Network IO</h3><p>Java NIO provides <strong>direct byte buffers</strong> (<code>ByteBuffer.allocateDirect()</code>) that allocate memory outside the JVM heap and can improve IO performance by avoiding an extra copy between Java heap and OS buffers.</p><h3 id="example">Example:</h3><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</ul><h3 id="use-direct-byte-buffers-with-nio-for-network-io">Use Direct Byte Buffers with NIO for Network IO</h3><p>Java NIO provides <strong>direct byte buffers</strong> (<code>ByteBuffer.allocateDirect()</code>) that allocate memory outside the JVM heap and can improve IO performance by avoiding an extra copy between Java heap and OS buffers.</p><h3 id="example">Example:</h3><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-java">ByteBuffer buffer = ByteBuffer.allocateDirect(8192);</code></pre>
 </div><p>Use direct buffers cautiously—they are more expensive to create and clean up, but beneficial for long-lived buffers in high-performance networking.</p><h3 id="avoid-blocking-calls-in-critical-threads">Avoid Blocking Calls in Critical Threads</h3><p>If you use traditional IO in UI or event-driven applications, blocking calls can freeze the program.</p><ul>
  <li>Use asynchronous IO (<code>AsynchronousFileChannel</code>, <code>AsynchronousSocketChannel</code>).</li>
  <li>Offload blocking IO calls to separate worker threads.</li>
-</ul><h3 id="examples-combining-best-practices">Examples Combining Best Practices</h3><h4 id="reading-a-text-file-efficiently">Reading a Text File Efficiently</h4><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</ul><h3 id="examples-combining-best-practices">Examples Combining Best Practices</h3><h4 id="reading-a-text-file-efficiently">Reading a Text File Efficiently</h4><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-java">import java.io.*;
 import java.nio.charset.StandardCharsets;
 
@@ -1136,7 +855,8 @@ public class EfficientFileReader {
  <li>Uses buffering (<code>BufferedReader</code>).</li>
  <li>Specifies charset explicitly.</li>
  <li>Uses try-with-resources for safety.</li>
-</ul><h4 id="writing-to-a-network-socket-with-nio">Writing to a Network Socket with NIO</h4><div class="code-block"><button class="copy-button" onclick="copyCode(this)">▯</button>
+</ul><h4 id="writing-to-a-network-socket-with-nio">Writing to a Network Socket with NIO</h4><div class="code-block">
+ <button class="copy-button" onclick="copyCode(this)">▯</button>
  <pre><code class="language-java">import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
@@ -1276,30 +996,36 @@ public class NIONetworkWriteExample {
 
 <a href='java.htm'><div class='book-cover' style='background-color: #f9f6f1;color: #111111;border: 1px solid #ccc;display: flex;justify-content: center;align-items: center;text-align: center;'>More Java Books</div></a>
 </div>
-</div>
-  </div>
-  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
-  
-  <script>
-    function copyCode(button) {
-      const code = button.nextElementSibling.innerText;
-      navigator.clipboard.writeText(code).then(() => {
-        button.textContent = 'Copied!';
-        setTimeout(() => { button.textContent = 'Copy'; }, 1500);
-      });
-    }
-  </script>  
-<div id="floatingLog" aria-live="polite" role="alert"></div>
-<footer class="page-footer">
-    <nav>
-      <a href="https://readbytes.github.io">Home</a> | 
-      Email:<script language="JavaScript" type="text/javascript">
+</div><script>
+function copyCode(button) {const code = button.nextElementSibling.innerText;navigator.clipboard.writeText(code).then(() => {button.textContent = 'Copied!';setTimeout(() => { button.textContent = 'Copy'; }, 1500);});}
+</script></div>
+<style>
+.site-footer {margin-top: 60px;padding: 20px 0;border-top: 1px solid #eee;text-align: center;font-size: 14px;}
+.site-footer a {text-decoration: none;}
+.light-mode .site-footer {color: #777;border-color: #eee;}
+.dark-mode .site-footer {color: #888;border-color: #333;}
+.light-mode .site-footer a {color: #555;}
+.dark-mode .site-footer a {color: #aaa;}
+.site-footer a:hover {text-decoration: underline;}    
+</style>
+<footer class="site-footer">
+<nav><a href="https://readbytes.github.io">Home</a> |Email:<script type="text/javascript">
 var part1 = 'yinpeng';var part6 = '263';var part2 = Math.pow(2,6);var part3 = String.fromCharCode(part2);var part4 = 'hotmail dot com';var part5 = part1 + String.fromCharCode(part2) + part4;document.write(part1 + part6 + part3 + part4);
 </script>
-    </nav>
-  <p>© 2025 — All rights reserved.</p>    
-  </footer>
-
+| <a id="mode-toggle" href="#">Toggle Dark Mode</a>
+</nav><p>© 2025 — All rights reserved.</p></footer>
+<script>
+const toggleButton = document.getElementById('mode-toggle');
+const body = document.body;
+const savedMode = localStorage.getItem('mode') || 'light';
+body.classList.add(savedMode + '-mode');
+toggleButton.addEventListener('click', () => {
+      const isDark = body.classList.contains('dark-mode');
+      body.classList.toggle('dark-mode', !isDark);
+      body.classList.toggle('light-mode', isDark);
+      localStorage.setItem('mode', isDark ? 'light' : 'dark');
+});
+function copyCode(button) {const code = button.nextElementSibling.innerText;navigator.clipboard.writeText(code).then(() => {button.textContent = 'Copied!';setTimeout(() => { button.textContent = 'Copy'; }, 1500);});}
+</script>
 </body>
 </html>
